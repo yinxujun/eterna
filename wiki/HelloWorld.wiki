@@ -51,15 +51,3 @@
 *before-init* 是在生成html对象前执行的脚本，使用javascript语法，可以在脚本中设置checkResult（boolean类型，默认为true）的值，如果设置为false的话，该html对象就不会输出。<br>
 <br>
 *init-script* 是在生成html对象后执行的脚本(包括生成完所有的子对象之后)。使用javascript语法。<br>
-开始此部分之前，请先进行按《[http://code.google.com/p/eterna/wiki/config 如何配置]》进行初始设置。下面所有的代码都写在my.xml中。<br><br><br>
-
-=如何编写`HelloWorld`=
-{{{
-<export name="helloWorld.export" path="{page.view}" viewName="helloWorld.view"/>
-<model name="helloWorld" transactionType="notNeed" modelExportName="helloWorld.export"/>
-<view name="helloWorld.view">
-   <component name="text" type="center">
-      <component-param>text:"hello world!"</component-param>
-   </component>
-</view>
-}}}
