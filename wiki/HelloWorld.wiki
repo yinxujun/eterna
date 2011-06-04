@@ -46,7 +46,7 @@
  * objValue是html对象的值属性，格式为字符串
  * text是html对象的内部文本，格式为字符串
  * html是html对象的内部超文本，格式为字符串
-在"objName"，"objValue"，"text"，"html"的定义中，可以用"[html]:"标记开始表示内容是html文本，还可以用"[script]:"标记开始表示内容是需要执行的脚本。<br>
+在"objName"，"objValue"，"text"，"html"的定义中，可以用"`[html]:`"标记开始表示内容是html文本，还可以用"`[script]:`"标记开始表示内容是需要执行的脚本。<br>
 <br>
 *before-init* 是在生成html对象前执行的脚本，使用javascript语法，可以在脚本中设置checkResult（boolean类型，默认为true）的值，如果设置为false的话，该html对象就不会输出。<br>
 <br>
