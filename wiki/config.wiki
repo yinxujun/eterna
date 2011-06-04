@@ -1,0 +1,41 @@
+#labels 如何配置,Phase-Support
+=web.xml中servlet的定义=
+{{{
+<servlet>
+   <servlet-name>test</servlet-name>
+   <servlet-class>self.micromagic.app.EternaServlet</servlet-class>
+   <init-param>
+      <param-name>initFiles</param-name>
+      <param-value>cp:test/my.xml</param-value>
+   </init-param>
+</servlet>
+<servlet-mapping>
+   <servlet-name>test</servlet-name>
+   <url-pattern>/test.do</url-pattern>
+</servlet-mapping>
+}}}
+
+参数initFiles，指配置文件，多个文件可以用";"分割。如果是以"cp:"开头的，表示是classpath中的路径。
+
+如果想要xml修改后能够自动加载，那可以自己定义一个类继承`self.micromagic.app.EternaServlet`，并且实现`self.micromagic.eterna.share.EternaInitialize`接口。然后定义如下方法：
+{{{
+private static long autoReloadTime()
+{
+   return 10000L;
+}
+}}}
+此方法必须是静态的，返回类型为long，表示两次判断文件是否有更新的最新间隔时间，单位为毫秒，上面例子中最小间隔时间为10秒。<br>
+将web.xml中，相关的servlet类换成你自己定义的类，这样就会在xml文件更新后自动加载了。
+<br><br>
+
+
+=如何使用dtd=
+有人说xml配置起来麻烦，但如果xml编写的时候有提示呢，那是不是就和写java代码一样。<br>
+下图为如何在eclipse中配置dtd文件。<br>
+[http://eterna.googlecode.com/files/eclipse_dtd.gif]<br>
+此功能在eclipse的windows——>preferences——>Files and Editors菜单中，点击add后就能出现下半部分，按图中的配置进行设置。<br>
+这样，你的xml起始部分按如下代码书写就能有自动提示了。
+{{{
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_3.dtd">
+}}}
