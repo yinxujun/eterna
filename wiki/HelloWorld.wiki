@@ -67,6 +67,7 @@ component还有以下几个子节点，用于定义其他的属性，"component-
 ===为什么要这样定义界面===
 这时，你应该会问这样定义界面有什么好处，写的代码反而比直接写html标签多。<br>
 这里的回答是，规范化结构便于处理引擎的解析，也便于自己的属性的设置。如：name和id这两个属性，就会和html中的同名属性相冲突，这里将html的属性移到了component-param子节点的attr中，将html的style属性中的内容到了component-param子节点的ccs中，来避免这些冲突。<br>
-另外，规范化的结构也便于自己定义界面对象，是界面对象能够重用，这样节省的工作量远比多写一些代码的量大。如何定义界面对象，见《[http://code.google.com/p/eterna/wiki/SelfViewObj 自定义界面对象]》。<br>
+另外，规范化的结构也便于自己定义界面对象，使界面对象能够重用，这样节省的工作量远比多写一些代码的量大。<br>
+如何定义界面对象，见《[http://code.google.com/p/eterna/wiki/SelfViewObj 自定义界面对象]》。<br>
 <br>
-ps：界面是通过jQuery来生成的，所以很多名称有jQuery的影子。
+ps：界面是通过jQuery来生成的，所以你会发现上面的很多名称有jQuery的影子。
