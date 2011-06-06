@@ -1,5 +1,5 @@
 #summary 自定义界面对象
-#labels Phase-Support
+#labels Phase-Implementation,Featured
 
 =如何定义自己的界面对象=
 
