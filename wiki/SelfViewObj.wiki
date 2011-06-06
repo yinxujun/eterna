@@ -12,7 +12,7 @@
    <component name="no_lable" type="span" comParam="text:'否'"/>
 </typical-component>
 }}}
-以上代码我们定义了一个选择“是”和“否”的单选按钮，这样我们在需要的地方，使用 *replacement* 节点就可以使用它。具体代码如下：
+以上代码我们定义了一个选择“是”和“否”的单选按钮，这样我们在需要的地方，用 *replacement* 标签就可以使用它。具体代码如下：
 {{{
 <replacement name="yn" baseComponentName="boolean_component"/>
 }}}
