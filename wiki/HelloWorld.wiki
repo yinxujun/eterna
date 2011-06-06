@@ -13,7 +13,7 @@
    </component>
 </view>
 }}}
-然后我们在地址栏里输入 _起始url_ /test.do?model=helloWorld，就可以看到效果了。<br>
+然后我们在地址栏里输入`[起始url]`/test.do?model=helloWorld，就可以看到效果了。<br>
 <br>
 ==model==
 此对象为业务层的入口，其主要属性如下：
