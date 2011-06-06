@@ -1,4 +1,6 @@
-#labels 如何配置,Phase-Support
+#summary 如何配置
+#labels Phase-Support
+
 =web.xml中servlet的定义=
 {{{
 <servlet>
