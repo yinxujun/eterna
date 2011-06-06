@@ -17,37 +17,37 @@
 <br>
 ==model==
 此对象为业务层的入口，其主要属性如下：
- * name，该model的名称，也是请求此业务的入口名称，必须进行设置。
- * transactionType，事务的类型，notNeed表示不需要数据库连接，默认值为requare，表示加入现有事务，如果当前没有事务，则新建一个。
- * modelExportName，表示业务执行完后跳转的方向，可以不设置，那就不会发生跳转。
- * errorExportName，表示发生异常时跳转的方向，可以不设置。
+  * name，该model的名称，也是请求此业务的入口名称，必须进行设置。
+  * transactionType，事务的类型，notNeed表示不需要数据库连接，默认值为requare，表示加入现有事务，如果当前没有事务，则新建一个。
+  * modelExportName，表示业务执行完后跳转的方向，可以不设置，那就不会发生跳转。
+  * errorExportName，表示发生异常时跳转的方向，可以不设置。
 <br>
 ==export==
 跳转的定义，表示跳转的方向，其主要属性如下：
- * name，跳转的名称，给model中的modelExportName及errorExportName属性使用。
- * path，对应jsp文件或其他页面路径
- * redirect，是否要重定向
- * modelName，转向下一个model的名称
- * viewName，用来展现界面的view的名称
+  * name，跳转的名称，给model中的modelExportName及errorExportName属性使用。
+  * path，对应jsp文件或其他页面路径
+  * redirect，是否要重定向
+  * modelName，转向下一个model的名称
+  * viewName，用来展现界面的view的名称
 注：如果定义了modelName，则path和redirect就不能定义<br>
 <br>
 ==view==
 界面的定义，主要属性就一个：name，给export中的viewName使用。<br>
 <br>
 *component* 为view中最常用的子节点，他和html中的标签对应。主要属性如下：
- * name，这个component的标识，
- * type，这个component的类型，同html中各个标签的名称。如：div、span、center等。对于input标签，type的格式为：input-[类型]。如："input-text"，"input-checkbox"，"input-submit"等。
+  * name，这个component的标识，
+  * type，这个component的类型，同html中各个标签的名称。如：div、span、center等。对于input标签，type的格式为：input-[类型]。如："input-text"，"input-checkbox"，"input-submit"等。
 <br>
 *component* 还有以下几个子节点，用于定义其他的属性，"component-param"，"before-init"，"init-script"。<br>
 <br>
 *component-param* 节点中定义的是生成html对象的参数，格式为JSON类型。主要需设置的名称有：
- * attr是html对象的属性，格式为JSON类型，如：rowSpan:"2",id:"test"等。
- * css是html对象的style属下，格式为JSON类型，如："background-color":"red"，display:"none"等。
- * className是html对象的class，格式为字符串
- * objName是html对象的名称属性，格式为字符串
- * objValue是html对象的值属性，格式为字符串
- * text是html对象的内部文本，格式为字符串
- * html是html对象的内部超文本，格式为字符串
+  * attr是html对象的属性，格式为JSON类型，如：rowSpan:"2",id:"test"等。
+  * css是html对象的style属下，格式为JSON类型，如："background-color":"red"，display:"none"等。
+  * className是html对象的class，格式为字符串
+  * objName是html对象的名称属性，格式为字符串
+  * objValue是html对象的值属性，格式为字符串
+  * text是html对象的内部文本，格式为字符串
+  * html是html对象的内部超文本，格式为字符串
 在"objName"，"objValue"，"text"，"html"的定义中，可以用"`[html]:`"标记开始表示内容是html文本，还可以用"`[script]:`"标记开始表示内容是需要执行的脚本。<br>
 <br>
 *before-init* 是在生成html对象前执行的脚本，使用javascript语法，可以在脚本中设置checkResult（boolean类型，默认为true）的值，如果设置为false的话，该html对象就不会输出。<br>
