@@ -1,7 +1,6 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
-<br>
 ==1.3.2==
 eterna.js中调整了弹出窗口对parentEterna的初始化过程。<br>
 调整self.micromagic.app.NoParamQueryExecute类对数据库链接的获取, 可以对transactionType设为notNeed, 此类会在需要的时候自己来获取数据库链接。<br>
