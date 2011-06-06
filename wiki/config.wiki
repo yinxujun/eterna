@@ -1,5 +1,5 @@
 #summary 如何配置
-#labels Phase-Support
+#labels Phase-Implementation,Featured
 
 =web.xml中servlet的定义=
 {{{
