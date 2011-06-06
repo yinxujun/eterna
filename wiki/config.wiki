@@ -152,15 +152,15 @@ _page_init.initView();
 %>
 }}}
 此页面的功能有：
- # 根据view对象，生成json
- # 根据json对象，生成界面
- # 判断js文件是否已引用，不重复引用
- # 给界面生成一个独立的命名空间，这样在portlet中就不会发生冲突
+  # 根据view对象，生成json
+  # 根据json对象，生成界面
+  # 判断js文件是否已引用，不重复引用
+  # 给界面生成一个独立的命名空间，这样在portlet中就不会发生冲突
 <br><br>
 
 
 =公共配置=
 公共配置文件为：micromagic_config.properties，此文件一般放在WEB-INF\classes目录下。<br>
 里面的主要属性有以下几个：
- # self.micromagic.eterna.digester.initfiles，全局配置文件，这些文件中的配置对象在各个子配置中都可以使用。
- # page.view，通用视图的jsp文件，一般设为/view.jsp，这样export的path属性就可以设为${page.view}，如果文件有变动就只需改变page.view的值，而不用改动所有export的path属性。
+  # self.micromagic.eterna.digester.initfiles，全局配置文件，这些文件中的配置对象在各个子配置中都可以使用。
+  # page.view，通用视图的jsp文件，一般设为/view.jsp，这样export的path属性就可以设为${page.view}，如果文件有变动就只需改变page.view的值，而不用改动所有export的path属性。
