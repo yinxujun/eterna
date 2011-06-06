@@ -33,12 +33,14 @@
 <br>
 ==view==
 界面的定义，主要属性就一个：name，给export中的viewName使用。<br>
+在view的子节点中，定义界面中的每一个元素。<br>
 <br>
-*component* 为view中最常用的子节点，他和html中的标签对应。主要属性如下：
-  * name，这个component的标识，
-  * type，这个component的类型，同html中各个标签的名称。如：div、span、center等。对于input标签，type的格式为：input-[类型]。如："input-text"，"input-checkbox"，"input-submit"等。
+===component===
+component为view中最常用的子节点，他和html中的标签对应。主要属性如下：
+  * name，这个component的标识
+  * type，这个component的类型，同html中各个标签的名称。如：div、span、center等。对于input标签，type的格式为：input-[类型]。如："input-text"，"input-checkbox"，"input-submit"等
 <br>
-*component* 还有以下几个子节点，用于定义其他的属性，"component-param"，"before-init"，"init-script"。<br>
+component还有以下几个子节点，用于定义其他的属性，"component-param"，"before-init"，"init-script"，"events"。<br>
 <br>
 *component-param* 节点中定义的是生成html对象的参数，格式为JSON类型。主要需设置的名称有：
   * attr是html对象的属性，格式为JSON类型，如：rowSpan:"2",id:"test"等。
@@ -53,3 +55,18 @@
 *before-init* 是在生成html对象前执行的脚本，使用javascript语法，可以在脚本中设置checkResult（boolean类型，默认为true）的值，如果设置为false的话，该html对象就不会输出。<br>
 <br>
 *init-script* 是在生成html对象后执行的脚本(包括生成完所有的子对象之后)。使用javascript语法。<br>
+<br>
+*events* 是html对象的事件列表，每个事件定义在子节点event中，例子如下：
+{{{
+<events>
+  <event name="click">alert("我被点击了");</event>
+  <event name="dblclick">alert("我被双击了");</event>
+</events>
+}}}
+<br>
+===为什么要这样定义界面===
+这时，你应该会问这样定义界面有什么好处，写的代码反而比直接写html标签多。<br>
+这里的回答是，规范化结构便于处理引擎的解析，也便于自己的属性的设置。如：name和id这两个属性，就会和html中的同名属性相冲突，这里将html的属性移到了component-param子节点的attr中，将html的style属性中的内容到了component-param子节点的ccs中，来避免这些冲突。<br>
+另外，规范化的结构也便于自己定义界面对象，是界面对象能够重用，这样节省的工作量远比多写一些代码的量大。如何定义界面对象，见《[http://code.google.com/p/eterna/wiki/SelfViewObj 自定义界面对象]》。<br>
+<br>
+ps：界面是通过jQuery来生成的，所以很多名称有jQuery的影子。
