@@ -16,9 +16,9 @@ self.micromagic.eterna.model.AppData:中增加了addAppMessage方法。<br>
 修复了多层重用typical-replacement时的一个问题。<br>
 修正了self.micromagic.app.NoParamQueryExecute类中的一个错误。<br>
 增加了self.micromagic.app.ExportCSV类，作用为导出csv格式的数据流。<br>
------------------------------------------<br>
+----
 <br>
-1.3.0<br>
+==1.3.0==
 self.micromagic.eterna.search.ConditionPropertyGenerator:中的多个方法做了调整。<br>
 self.micromagic.eterna.search.ConditionProperty:中的多个方法做了调整。<br>
 self.micromagic.eterna.sql.SQLParameterGenerator:中的多个方法做了调整。<br>
@@ -33,16 +33,16 @@ search节点下，condition-propertys节点下，condition-property节点增加�
 修正了app运行日志记录时的一个严重错误。<br>
 增加了一个默认的builder: checkNull，用于判断是否为空。值为1检查是否为空，值为0检查是否不为空。<br>
 self.micromagic.eterna.share.DataSourceManager:中调整了addDataSource方法的参数。<br>
------------------------------------------<br>
+----
 <br>
-1.2.1<br>
+==1.2.1==
 修正了当因position设置model没有执行时，app运行日志记录错误的问题。<br>
 更新了self.micromagic.util.AttributeComponent类，增加attrName中值的动态处理。<br>
 修正了init-param节点中定义了调用方法的元素无效的问题。<br>
 补充了app运行日志显示的内容。<br>
------------------------------------------<br>
+----
 <br>
-1.2.0<br>
+==1.2.0==
 修正了cell节点当设置了typicalComponentName又将titleSize设为0后出错的问题。<br>
 修正了param-bind节点中generator属性设置无效等问题。<br>
 修正了配置文件继承时出错的问题。<br>
@@ -50,9 +50,9 @@ self.micromagic.eterna.sql.ResultIterator:中增加了preFetch和getCurrentRow�
 增加了self.micromagic.util.AttributeComponent类，作用为输出静态的html。<br>
 增加了self.micromagic.eterna.model.AppDataLogExecute类，作用为输出当前运行时的变量值。<br>
 增加了app运行日志，可以查询系统运行的过程。<br>
------------------------------------------<br>
+----
 <br>
-1.1.0<br>
+==1.1.0==
 为了性能将query的forwardOnly属性的默认值改为"true"。<br>
 修复了在query节点的readers节点中设置readerOrder时出错的问题。<br>
 search-execute节点中增加了searchCountName属性，用于设置总记录数查询结果放入data中使用的名称。<br>
@@ -61,21 +61,21 @@ search节点中增加了countType属性，用于设置计算总记录数的方�
 去掉了self.micromagic.eterna.model.DataErrorException类，因为没有使用。<br>
 去掉了table-form和table-list中的parent属性，因为无法使用。<br>
 调整了eterna.js中真的loop类型控件，增加了只设置循环次数的方式。<br>
------------------------------------------<br>
+----
 <br>
-1.0.3<br>
+==1.0.3==
 调整了在event中初始化eg_temp的方式。<br>
 修复了replacement节点生成中的一个问题。<br>
------------------------------------------<br>
+----
 <br>
-1.0.2<br>
+==1.0.2==
 修复了重用typical-replacement时的一个问题。<br>
 在event中也可以使用eg_temp、webObj、objConfig这几个和当前节点环境相关的变量了。<br>
 修复了body文本设置trimLine和noLine属性时会影响后面的同类配置的问题。<br>
 增加了self.micromagic.app.ExportExcelExecute类，作用为导出excel。<br>
------------------------------------------<br>
+----
 <br>
-1.0.1<br>
+==1.0.1==
 修复了在update和query节点中设置logType及attribute时出错的问题。<br>
 self.micromagic.eterna.sql.SpecialLog:中更新了logSQL方法。<br>
 self.micromagic.eterna.sql.SQLAdapter:中增加了getAttributeh和getAttributeNames方法。<br>
@@ -85,9 +85,9 @@ micromagic_config.properties文件中增加了self.micromagic.useEternaLog属性
 修改了dtd文件：<br>
 在model节点中增加了frontModelName属性，用于设置只对此model有效的frontModel。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-1.0.0<br>
+==1.0.0==
 self.micromagic.eterna.search.ColumnSetting:中的getColumnSetting方法的参数做了调整。<br>
 如果程序中实现的以上接口，需要重新实现。<br>
 self.micromagic.eterna.sql.QueryAdapter中增加了setMultipleOrder方法，可设置多列排序。<br>
@@ -107,9 +107,9 @@ factory下增加了user-manager节点，用于定义管理用户的实现类。<
 factory下增加了data-source-manager节点，用于定义数据源的管理器(目前只能通过jndi绑定数据源)。<br>
 一些子节点的定义去掉了顺序的要求。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.9.0<br>
+==0.9.0==
 修复了使用replacement的一个bug。<br>
 增加了self.micromagic.util包中MemoryStream和MemoryChars的磁盘缓存功能。<br>
 修改了dtd文件：<br>
@@ -117,17 +117,17 @@ factory下增加了data-source-manager节点，用于定义数据源的管理器
 节点before-init、init-script、component-param、title-param、init-param中的值可以设置到属性中<br>
 名称分别为beforeInit、initScript、comParam、titleParam、initParam。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.8.1<br>
+==0.8.1==
 修复了使用replacement的一个bug。<br>
 修改了dtd文件，tr节点可以设置name属性。<br>
 增加了内存日志自动清理的功能。<br>
 增加了前置model的设置。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.8.0<br>
+==0.8.0==
 self.micromagic.eterna.model.ModelCaller:中增加了initModelCaller方法。<br>
 self.micromagic.eterna.view.StringCoder:中增加了initStringCoder方法。<br>
 self.micromagic.eterna.search.ParameterSetting:中增加了initParameterSetting方法。<br>
@@ -144,9 +144,9 @@ model节点中增加了dataSourceName属性。<br>
 增加了special-log节点，用于配置特殊的sql日志的记录。<br>
 调整了eterna.js中生成table-form的方法。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.7.0<br>
+==0.7.0==
 增加了配置文件的继承关系及相关的获取方法。<br>
 在reader和condition-property的attribute中增加了containerParam和titleParam的设置。<br>
 修复的eterna.js中table-list当某行不生成时eg_temp.rowNum不正确的问题。<br>
@@ -158,27 +158,27 @@ model节点中增加了dataSourceName属性。<br>
 调整了配置文件的继承模式。<br>
 修改了dtd文件中的一些错误。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.6.0<br>
+==0.6.0==
 增加了query和update节点中单独设置sql日志记录方式的属性logType。<br>
 在search-execute节点中增加了保持链接的查询方式将holdConnection设为true。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.5.3<br>
+==0.5.3==
 修复的eterna.js中table-form的一个bug。<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.5.2<br>
+==0.5.2==
 self.micromagic.app.ReadExcelExecute:修改了单元格读取的方式。<br>
 self.micromagic.eterna.model.impl.ModelCallerImpl:修改了返回错误状态的export后未回滚的错误。<br>
 将self.micromagic.eterna.model.ModelFilter改为self.micromagic.app.EternaFilter<br>
 修改了例子中的相关文件。<br>
------------------------------------------<br>
+----
 <br>
-0.5.1<br>
+==0.5.1==
 self.micromagic.app.ReadExcelExecute:增加了needRowIndex的设置, 标识是否需要行号列; 增加了错误数据的记录。<br>
 self.micromagic.eterna.model.impl.ModelCallerImpl:将是否执行完的标志设置代码后移，这样在返回错误状态的export后也会回滚。<br>
 修改了例子中的相关文件。
