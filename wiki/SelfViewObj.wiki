@@ -1,0 +1,24 @@
+#summary 自定义界面对象
+#labels Phase-Support
+
+=如何定义自己的界面对象=
+
+{{{
+<typical-component name="boolean_component" type="div">
+   <component name="yes" type="input-radio"/>
+   <component name="yes_lable" type="span" comParam="text:'是'"/>
+   <component name="no" type="input-radio"/>
+   <component name="yes_lable" type="span" comParam="text:'否'"/>
+</typical-component>
+}}}
+以上代码我们定义了一个选择“是”和“否”的单选按钮，这样我们在需要的地方，使用 *replacement* 节点就可以使用它。具体代码如下：
+{{{
+<replacement name="yn" baseComponentName="boolean_component"/>
+}}}
+<br>
+
+=replacement=
+
+引用已定义的一个已定义的界面对象，主要属性如下：
+  * name，这个replacement的标识
+  * baseComponentName，引用的界面对象的名称
