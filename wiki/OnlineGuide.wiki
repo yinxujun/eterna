@@ -1,3 +1,5 @@
-#labels Phase-Implementation,在线解答
-对此项目有任何建议或问题可以在这里提出。
+#summary 在线解答
+#labels Phase-Implementation
+
+对此项目有任何建议或问题可以在这里提出。<br>
 另外，源代码在发布包中，如：eterna-1.0.0.zip，例子中没有eterna的源代码。
