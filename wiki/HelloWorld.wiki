@@ -1,5 +1,5 @@
 #summary 第一个例子HelloWorld
-#labels Phase-Support
+#labels Phase-Implementation
 
 开始此部分之前，请先进行按《[http://code.google.com/p/eterna/wiki/config 如何配置]》进行初始设置。下面所有的代码都写在my.xml中。<br><br><br>
 
