@@ -1,15 +1,16 @@
-#labels Phase-Requirements,版本更新信息
-版本更新日志<br>
+#summary 版本更新日志
+#labels Phase-Requirements
+
 <br>
-1.3.2<br>
+==1.3.2==
 eterna.js中调整了弹出窗口对parentEterna的初始化过程。<br>
 调整self.micromagic.app.NoParamQueryExecute类对数据库链接的获取, 可以对transactionType设为notNeed, 此类会在需要的时候自己来获取数据库链接。<br>
 增加了self.micromagic.app.SpellCoderExecute类，作用为将中文转换为拼音编码。<br>
 micromagic_config.properties配置文件中增加了self.micromagic.parent.properties属性，指向要读取的父配置文件，父配置文件中的同名属性不会被读取进来。<br>
 micromagic_config.properties配置文件中增加了self.micromagic.eterna.digester.subinitfiles属性，指定要进行全局初始化的子文件列表，子文件列表中的对象会覆盖掉全局初始化的文件列表中的同名对象。<br>
------------------------------------------<br>
+----
 <br>
-1.3.1<br>
+==1.3.1==
 app运行日志中增加了信息日志和sql日志的显示。<br>
 self.micromagic.eterna.model.AppData:中增加了addAppMessage方法。<br>
 修复了多层重用typical-replacement时的一个问题。<br>
