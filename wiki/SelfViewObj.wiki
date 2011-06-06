@@ -12,7 +12,7 @@
    <component name="no_lable" type="span" comParam="text:'否'"/>
 </typical-component>
 }}}
-以上代码我们定义了一个选择“是”和“否”的单选按钮，这样我们在需要的地方，用 *replacement* 标签就可以使用它。具体代码如下：
+以上代码我们定义了一个选择“是”和“否”的单选框，这样我们在需要的地方，用 *replacement* 标签就可以使用它。具体代码如下：
 {{{
 <replacement name="yn" baseComponentName="boolean_component"/>
 }}}
@@ -114,12 +114,12 @@
    </component>
 </typical-component>
 }}}
-以上代码，“是”和“否”的默认值为“1”和“0”，控件的默认名称为：“yn”，可以通过设置：eg_temp.name、eg_temp.param下的yesValue、noValue、yesLable、noLable、checkedValue这些值来控制控件的值，后面显示的标签以及选中的值。
+以上代码，“是”和“否”的默认值为“1”和“0”，控件的默认名称为：“yn”，可以通过设置：eg_temp.name、eg_temp.param下的yesValue、noValue、yesLable、noLable、checkedValue这些值来控制单选框的值，以及后面显示的标签，选中的单选框。
 {{{
 eterna_addWillInitObj(webObj);
 }}}
-表示将此控件添加到待初始化列表中，在页面加载完毕后，会触发此控件的willInit事件。<br>
-这里将设置checked的代码放到checked中，是为了处理IE中，checkbox和radio控件移到后，会将checked属性清空。<br>
+上面这段代码，表示将此控件添加到待初始化列表中，在页面加载完毕后，会触发此控件的willInit事件。<br>
+这里将设置checked的代码放到willInit中，是为了处理使用IE浏览器时，checkbox和radio控件移动后，会将checked属性清空。<br>
 <br>
 也许你会认为这样定义一个界面对象也太麻烦了，但使用时就能省很多工作，不是吗？<br>
 例子中eterna_globe.xml文件里已经定义了一些常用的界面对象。
