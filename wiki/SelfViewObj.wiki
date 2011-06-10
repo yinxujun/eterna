@@ -122,4 +122,38 @@ eterna_addWillInitObj(webObj);
 这里将设置checked的代码放到willInit中，是为了处理使用IE浏览器时，checkbox和radio控件移动后，会将checked属性清空。<br>
 <br>
 也许你会认为这样定义一个界面对象也太麻烦了，但使用时就能省很多工作，不是吗？<br>
-例子中eterna_globe.xml文件里已经定义了一些常用的界面对象。
+例子中eterna_globe.xml文件里已经定义了一些常用的界面对象。<br>
+<br>
+==子节点替换==
+如果只定义的界面对象只能引用，那功能还是有限的，更强的功能是子节点替换。<br>
+何为子节点替换？就是在引用自定义的界面对象时，你可以换掉其中的任意子节点，来满足特殊的效果。<br>
+{{{
+<typical-component name="sample" type="div">
+   <component-param>css:{position:'relative',border:'4px #b9002c solid',padding:'24px'}</component-param>
+   <component name='lt' type="span">
+      <component-param>css:{position:'absolute',width:'23px',height:'23px','background-image':'url(border.gif)',top:'-4px',left:'-4px','background-position':'left top'}</component-param>
+   </component>
+   <component name='lb' type="span">
+      <component-param>css:{position:'absolute',width:'23px',height:'23px','background-image':'url(border.gif)',bottom:'-5px',left:'-4px','background-position':'left bottom'}</component-param>
+   </component>
+   <component name='rt' type="span">
+      <component-param>css:{position:'absolute',width:'23px',height:'23px','background-image':'url(border.gif)',top:'-4px',right:'-4px','background-position':'right top'}</component-param>
+   </component>
+   <component name='rb' type="span">
+      <component-param>css:{position:'absolute',width:'23px',height:'23px','background-image':'url(border.gif)',bottom:'-5px',right:'-4px','background-position':'right bottom'}</component-param>
+   </component>
+   <component name="title" type="none"/>
+   <component name="body" type="none"/>
+</typical-component>
+}}}
+如这段代码，定义了一个四角为圆弧的边框，*border.gif* 为一个空心圆的图片。title和body为待替换的节点，下面为引用这个自定义界面对象的代码。
+{{{
+<replacement name="border" baseComponentName="sample;title,body">
+   <component name="title" type="span" comParam="text:'标题'"/>
+   <component name="body" type="div">
+      ... 
+   </component>
+</replacement>
+}}}
+上面这段代码中，baseComponentName的值除了设置了引用的自定义界面对象的名称，还指定了要替换的子节点的名称，“;”后面的部分，多个名称之间用“,”分隔。里面名称为title和body的两个子节点即为要替换的子节点，他们会代替原先界面对象中的同名节点在界面上出现。<br>
+这样自己定义的界面对象重用的方式是不是更多了，你不用考虑如何提供接口和参数，只需要把界面对象定义出来，并且给每个节点赋上唯一的名称就行了。使用时可以根据自己的需要，将不合适的节点换成自己重新定义的，你有多大的想象空间，这框架就能给你多大的发挥空间，还不快自己试一下。
