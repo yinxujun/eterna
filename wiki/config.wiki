@@ -42,6 +42,7 @@ private static long autoReloadTime()
 <?xml version="1.0" encoding="GBK"?>
 <!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_3.dtd">
 }}}
+这就是为什么用xml来配置，而不用json的原因。大部分的xml编辑工具，在有dtd或schema的时候，写xml就会变得很容易，而json还没有什么好的编辑工具。<br>
 <br><br>
 
 
