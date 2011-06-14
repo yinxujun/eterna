@@ -56,4 +56,4 @@ dataSource.url=jdbc:h2:~/test
 dataSource.user=sa
 dataSource.password=sa
 }}}
-h2的jdbc的jar包就是他的运行包，bin目录下的h2-[版本号].jar文件。
+h2的jdbc的jar包就是他的运行包，bin目录下的h2-`[版本号]`.jar文件。
