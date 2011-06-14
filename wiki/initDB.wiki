@@ -51,7 +51,7 @@ micromagic_config.properties文件中的数据库连接可按如下配置，如�
 dataSource.autoCommit=false
 dataSource.description=h2
 dataSource.driverClass=org.h2.Driver
-dataSource.maxCount=3
+dataSource.maxCount=1
 dataSource.url=jdbc:h2:~/test
 dataSource.user=sa
 dataSource.password=sa
