@@ -43,4 +43,5 @@ COMEDATE DATE,
 MEMO VARCHAR(200)
 );
 }}}
-如果你没有可用的数据库，可以下载h2作为，下载地址为[http://www.h2database.com/html/main.html]，这是个纯java写的数据库。
+如果你没有可用的数据库，可以下载h2，官网地址为[http://www.h2database.com/]，这是个纯java写的迷你型数据库。
+注：需要jdk1.5以上运行。
