@@ -2,7 +2,6 @@
 #labels Phase-Implementation
 
 =数据库初始化=
-
 例子中使用的相关表的初始化语句如下：
 {{{
 CREATE TABLE MY_TABLE (
@@ -43,5 +42,18 @@ COMEDATE DATE,
 MEMO VARCHAR(200)
 );
 }}}
-如果你没有可用的数据库，可以下载h2，官网地址为[http://www.h2database.com/]，这是个纯java写的迷你型数据库。
-注：需要jdk1.5以上运行。
+如果你没有可用的数据库，可以下载h2，官网地址为[http://www.h2database.com/]，这是个纯java写的迷你型数据库。<br>
+注：需要jdk1.5以上运行。<br>
+<br>
+==配置JDBC==
+micromagic_config.properties文件中的数据库连接可按如下配置，如果不是使用默认的库，或使用的是其他数据库，请自行修改相关配置。
+{{{
+dataSource.autoCommit=false
+dataSource.description=h2
+dataSource.driverClass=org.h2.Driver
+dataSource.maxCount=3
+dataSource.url=jdbc:h2:~/test
+dataSource.user=sa
+dataSource.password=sa
+}}}
+h2的jdbc的jar包就是他的运行包，bin目录下的h2-[版本号].jar文件。
