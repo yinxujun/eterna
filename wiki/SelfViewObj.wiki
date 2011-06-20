@@ -43,6 +43,13 @@
 下面介绍两个常用的属性：
   * name，当前控件应设置的名称，框架对input、select等控件的名称是这么处理的，先判断objName有没有设置，然后在判断有没有eg_temp.name。
   * param，此属性一般是json对象，用于配置需要设置的控件属性。
+  * dataName：指目前上下文环境中的数据对象的名称，如：eternaData.records[eg_temp.dataName]。
+  * srcName：指目前上下文环境中的数据对象的源数据名称，如：eternaData.records[eg_temp.dataName][eg_temp.srcName]。
+  * rowNum：指目前上下文环境中所在表格的行数索引。
+  * columnCount：指目前上下文环境中所在表格的列数。
+  * index：指目前上下文环境中的数据对象所在的索引值，如：{$eternaFunction:getData_value}(eg_temp.dataName, eg_temp.srcName, eg_temp.index)。
+  * valueObj：目前上下文环境中需要使用的value对象，里面有exists，value，dataName，srcName等属性。
+  * rowType：生成表格时标识当前行的类型，如 beforeTable，afterTable，row，title，beforeTitle，afterTitle，beforeRow，afterRow。
 <br>
 ==webObj==
 这是另一个重要的环境变量，是当前控件的jQuery对象，如：jQuery(this)。<br>
