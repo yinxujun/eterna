@@ -2,11 +2,11 @@
 #labels Phase-Implementation,Featured
 
 =从request-parameter中取值=
-因为request中的参数都是以数组形式存放的，getRequestParameter方法是获取数组的第一个值。但如果你使用trans-execute时，如果不做任何处理，取出来的是一个数组。
+因为request中的参数都是以数组形式存放的，程序中使用的getRequestParameter方法是获取数组的第一个值。但如果你使用trans-execute时，如果不做任何处理，取出来的就是一个数组。
 {{{
 <trans-execute from="request-parameter:XXX" to="cache:0"/>
 }}}
-如上面这段代码，放入cache:0中的是个字符串数组，而不是一个字符串。所以，在从request-parameter中取值时，要增加getFirstString操作，代码如下。
+如上面这段代码，放入cache:0中的是个字符串数组，而不是一个字符串。所以，在从request-parameter中取值时，要增加getFirstString操作，代码如下：
 {{{
 <trans-execute from="request-parameter:XXX" opt="getFirstString" to="cache:0"/>
 }}}
