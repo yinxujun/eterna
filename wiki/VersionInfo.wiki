@@ -1,6 +1,20 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.4.0==
+对一些长期保存的字符串将其放入字符串池, 这样可节省30%以上的内存空间。<br>
+将update-execute节点下错误的属性名mutiType，改为正确的multiType。<br>
+增加了resource节点，用于配置可在view中引用的文本资源。<br>
+将错误的类名self.micromagic.util.MutiConditionBuilder，改为正确的MultiConditionBuilder。<br>
+将错误的类名self.micromagic.util.MutiOutputStream，改为正确的MultiOutputStream。<br>
+将错误的类名self.micromagic.util.MutiTemplateFormat，改为正确的MultiTemplateFormat。<br>
+script代码中增加了{$ef:name}、{$efV:name}、{$data:name}、{$dataV:name}、{$res:name}、{$resV:name}、{$typical:name}、{$typicalV:name}、{$res:name}、{$resV:name}等扩展语法。<br>
+增加了self.micromagic.app.CallQuery类，可以调用带返回参数的存储过程。<br>
+export的redirect设为true后，在Servlet下有效。<br>
+使用的jQuery版本更新到1.6.2。<br>
+eterna.js中调整了弹出窗口的锁定方式。<br>
+----
+<br>
 ==1.3.2==
 eterna.js中调整了弹出窗口对parentEterna的初始化过程。<br>
 调整self.micromagic.app.NoParamQueryExecute类对数据库链接的获取, 可以对transactionType设为notNeed, 此类会在需要的时候自己来获取数据库链接。<br>
