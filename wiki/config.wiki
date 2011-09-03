@@ -49,11 +49,12 @@ private static long autoReloadTime()
 =通用显示界面=
 最终的页面是通过jsp来显示了，但这里只需要一个jsp页面就行了，如例子中的view.jsp。
 {{{
-<%@ page session="false" contentType="text/html;charset=UTF-8" pageEncoding="GBK"%><%@ 
-    page import ="self.micromagic.eterna.model.AppData,
+<%@ page session="false" contentType="text/html;charset=UTF-8" pageEncoding="GBK"%>
+<%@ page import ="self.micromagic.eterna.model.AppData,
                   self.micromagic.app.WebApp,
                   self.micromagic.eterna.view.ViewAdapter,
-                  self.micromagic.eterna.view.BaseManager"%><%
+                  self.micromagic.eterna.view.BaseManager"%>
+<%
    String dataType = request.getParameter(ViewAdapter.DATA_TYPE);
    if (ViewAdapter.DATA_TYPE_ONLYRECORD.equals(dataType)
          || ViewAdapter.DATA_TYPE_ALL.equals(dataType))
@@ -68,30 +69,69 @@ private static long autoReloadTime()
    else
    {
       String root = request.getContextPath();
-      boolean eterna_initialized = request.getAttribute(BaseManager.ETERNA_INITIALIZED_FLAG) != null;
       int eternaId = BaseManager.createEternaId();
-%><html>
+%>
+
+<html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta http-equiv="pragma" content="no-cache">
-<%
-      if (!eterna_initialized)
-      {
-         request.setAttribute(BaseManager.ETERNA_INITIALIZED_FLAG, "1");
-%>
-<script language="javascript" src="<%= root %>/eterna/jquery.js"></script>
 <script language="javascript">
-jQuery.noConflict();
-var _page_init;
+if (typeof _page_init == "undefined")
+{
+   window._page_init = {};
+   window._loadScript = function (src, scriptFlag, recall)
+   {
+      (function() {
+         var scriptObj = document.createElement('script');
+         scriptObj.type = 'text/javascript';
+         scriptObj.async = true;
+         scriptObj.src = src;
+         scriptObj.scriptFlag = scriptFlag;
+         var s = document.getElementsByTagName('script')[0];
+         s.parentNode.insertBefore(scriptObj, s);
+         if (scriptObj.readyState) //IE
+         {
+            scriptObj.onreadystatechange = function()
+            {
+               if (scriptObj.readyState == "complete" || scriptObj.readyState == "loaded")
+               {
+                   window._page_init[scriptObj.scriptFlag] = true;
+                   if (recall != null) recall();
+               }
+           };
+         }
+         else //Others
+         {
+            scriptObj.onload = function()
+            {
+                window._page_init[scriptObj.scriptFlag] = true;
+                if (recall != null) recall();
+            };
+         }
+      })();
+   };
+   window._loadEterna = function () {
+      jQuery.noConflict();
+      window._loadScript('<%= root %>/eterna/eterna.js', 'eterna');
+   };
+   (function() {
+      var styleObj = document.createElement('link');
+      styleObj.type = 'text/css';
+      styleObj.rel = 'stylesheet';
+      styleObj.href = '<%= root %>/res/sample.css';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(styleObj, s);
+   })();
+   window._loadScript('<%= root %>/eterna/jquery.js', 'jQuery', window._loadEterna);
+   window._loadScript('<%= root %>/My97DatePicker/WdatePicker.js', 'WdatePicker');
+}
 </script>
-<script language="javascript" src="<%= root %>/eterna/eterna.js"></script>
-<%
-      }
-%>
 <script language="javascript">
 
 function page_eterna_<%= eternaId %>()
 {
+
 <%
       ViewAdapter view = (ViewAdapter) request.getAttribute(WebApp.VIEW_TAG);
       AppData data = (AppData) request.getAttribute(WebApp.APPDATA_TAG);
@@ -108,44 +148,59 @@ function page_eterna_<%= eternaId %>()
 
       String pDebug = request.getParameter("debug");
 %>
+
 var eterna_debug = <%= pDebug != null ? pDebug : view != null ? view.getDebug() + "" : "0" %>;
 var _eterna;
+
 this.initView = function()
 {
 <%
       if (view != null)
       {
 %>
-   jQuery(document).ready(function(){
-      var divObj = jQuery("#print_<%= eternaId %>");
+   var divObj = jQuery("#eternaShow_<%= eternaId %>");
 <%
          if (width != null)
          {
 %>
-      divObj.css("width", "<%= width %>");
+   divObj.css("width", "<%= width %>");
 <%
          }
          if (height != null)
          {
 %>
-      divObj.css("height", "<%= height %>");
+   divObj.css("height", "<%= height %>");
 <%
          }
 %>
-      _eterna = new Eterna(eternaData, eterna_debug, divObj)
-      _eterna.reInit();
-   });
+   _eterna = new Eterna(eternaData, eterna_debug, divObj)
+   _eterna.reInit();
 <%
       }
 %>
 }
+
 } <% /* end function page_eterna_XXX */ %>
-_page_init = new page_eterna_<%= eternaId %>();
-_page_init.initView();
 </script>
+<style type="text/css">
+body {
+}
+</style>
 </head>
 <body>
-<div id="print_<%= eternaId %>" class="eternaFrame"></div>
+<div id="eternaShow_<%= eternaId %>" class="eternaFrame"></div>
+<script language="javascript">
+function init_page_eterna_<%= eternaId %>()
+{
+   if (!window._page_init["jQuery"] || !window._page_init["eterna"])
+   {
+      setTimeout(init_page_eterna_<%= eternaId %>, 100);
+      return;
+   }
+   new page_eterna_<%= eternaId %>().initView();
+}
+setTimeout(init_page_eterna_<%= eternaId %>, 100);
+</script>
 </body>
 </html>
 <%
