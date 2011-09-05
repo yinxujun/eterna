@@ -11,3 +11,16 @@
 <trans-execute from="request-parameter:XXX" opt="getFirstString" to="cache:0"/>
 }}}
 这是刚使用的人经常犯的错误，当然如果你确实要以数组的方式取出多个参数，那就不必加这个操作了。
+<br>
+=多行结果集与单行结果集=
+并不是只有一条记录的结果集就是单行结果集，这两类数据的结构及使用的场景是不同的。多行结果集用在`table-list`上，单行结果集用在`table-form`上。<br>
+一般，直接查询出的结果是个多行结果集的结构，要获得单行结果集的结构，需要通过`getFirstRow`操作来获取。
+{{{
+<!-- 获取多行结果集 -->
+<query-execute queryName="XXXX"/>
+<trans-execute from="stack" to="data:multiRow"/>
+
+<!-- 获取单行结果集 -->
+<query-execute queryName="XXXX"/>
+<trans-execute from="stack" opt="getFirstRow" to="data:oneRow"/>
+}}}
