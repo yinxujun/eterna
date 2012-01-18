@@ -1,6 +1,12 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.4.1==
+完善了数据库日志，在参数列表中增加了参数的名称。<br>
+修复了reader-manager节点设置readerOrder属性时发生的错误。<br>
+修复了多层重用typical-replacement时的一个问题。<br>
+eterna.js中修复了ef_formatNumber方法的一个错误。<br>
+----
 ==1.4.0==
 对一些长期保存的字符串将其放入字符串池, 这样可节省30%以上的内存空间。<br>
 将update-execute节点下错误的属性名mutiType，改为正确的multiType。<br>
