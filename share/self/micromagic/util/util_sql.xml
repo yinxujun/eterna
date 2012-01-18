@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+一些代码表的操作语句, 以及一些常用的
+format, builder等
+-->
+<eterna-config>
+   <factory>
+
+      <objs>
+         <constant name="util.userSetting.table" value="UserSetting"/>
+         <constant name="util.code.table" value="CodeItem"/>
+
+
+         <query name="util.get.userSetting">
+            <prepared-sql>
+               SELECT settingOrder, setting
+               FROM #const(util.userSetting.table)
+               WHERE username = ? AND settingName = ?
+               ORDER BY settingOrder
+            </prepared-sql>
+            <readers>
+               <reader name="settingOrder" type="int" colIndex="1"/>
+               <reader name="setting" type="String" colIndex="2"/>
+            </readers>
+            <parameters>
+               <parameter name="username" index="1"/>
+               <parameter name="settingName"/>
+            </parameters>
+         </query>
+
+         <update name="util.insert.userSetting">
+            <prepared-sql>
+               INSERT INTO #const(util.userSetting.table)
+               (username, settingName, settingOrder, setting)
+               VALUES (?, ?, ?, ?)
+            </prepared-sql>
+            <parameters>
+               <parameter name="username" index="1"/>
+               <parameter name="settingName"/>
+               <parameter name="settingOrder"/>
+               <parameter name="setting"/>
+            </parameters>
+         </update>
+
+         <update name="util.delete.userSetting">
+            <prepared-sql>
+               DELETE FROM #const(util.userSetting.table)
+               WHERE username = ? AND settingName = ?
+            </prepared-sql>
+            <parameters>
+               <parameter name="username" index="1"/>
+               <parameter name="settingName"/>
+            </parameters>
+         </update>
+
+         <query name="util.get.codes">
+            <prepared-sql>
+               SELECT codeId, codeValue, codeIndex
+               FROM #const(util.code.table)
+               WHERE typeId = ?
+               ORDER BY codeIndex
+            </prepared-sql>
+            <readers>
+               <reader name="codeId" type="String" colIndex="1"/>
+               <reader name="codeValue" type="String" colIndex="2"/>
+               <reader name="codeIndex" type="int" colIndex="3"/>
+            </readers>
+            <parameters>
+               <parameter name="typeId" index="1"/>
+            </parameters>
+         </query>
+
+         <query name="util.get.codes.other_table">
+            <prepared-sql>
+               SELECT #sub[$], #sub[$]#sub[, $] FROM #sub[$]
+               #sub[WHERE $]
+               #sub[ORDER BY $]
+            </prepared-sql>
+            <readers>
+               <reader name="codeId" type="String" colIndex="1"/>
+               <reader name="codeValue" type="String" colIndex="2"/>
+               <reader name="codeIndex" type="int" colIndex="3"/>
+            </readers>
+         </query>
+
+         <query name="util.check.code.in_table">
+            <prepared-sql>
+               SELECT count(*) FROM #sub WHERE #sub = ?
+            </prepared-sql>
+            <readers>
+               <reader name="count" type="int" colIndex="1"/>
+            </readers>
+            <parameters>
+               <parameter name="codeId" index="1"/>
+            </parameters>
+         </query>
+
+         <update name="util.insert.code">
+            <prepared-sql>
+               INSERT INTO #const(util.code.table) (typeId, codeId, codeValue, codeIndex)
+               VALUES (?, ?, ?, ?)
+            </prepared-sql>
+            <parameters>
+               <parameter name="typeId" index="1"/>
+               <parameter name="codeId"/>
+               <parameter name="codeValue"/>
+               <parameter name="codeIndex"/>
+            </parameters>
+         </update>
+
+         <update name="util.insert.code.other_table">
+            <prepared-sql>
+               INSERT INTO #sub[$] (#sub[$], #sub[$]#sub[, $])
+               VALUES (?, ?#param(1)[, ?])
+            </prepared-sql>
+            <parameters>
+               <parameter name="codeId" index="1"/>
+               <parameter name="codeValue"/>
+               <parameter name="codeIndex"/>
+            </parameters>
+         </update>
+
+         <update name="util.update.code">
+            <prepared-sql>
+               UPDATE #const(util.code.table) SET codeValue = ?, codeIndex = ?
+               WHERE typeId = ? AND codeId = ?
+            </prepared-sql>
+            <parameters>
+               <parameter name="codeValue" index="1"/>
+               <parameter name="codeIndex"/>
+               <parameter name="typeId"/>
+               <parameter name="codeId"/>
+            </parameters>
+         </update>
+
+         <update name="util.update.code.other_table">
+            <prepared-sql>
+               UPDATE #sub[$] SET #sub[$] = ?#sub[, $]#param(1)[ = ?]
+               WHERE #sub[$] = ?
+            </prepared-sql>
+            <parameters>
+               <parameter name="codeValue" index="1"/>
+               <parameter name="codeIndex"/>
+               <parameter name="codeId"/>
+            </parameters>
+         </update>
+
+         <update name="util.delete.code">
+            <prepared-sql>
+               DELETE FROM #const(util.code.table)
+               WHERE typeId = ? AND codeId = ?
+            </prepared-sql>
+            <parameters>
+               <parameter name="typeId" index="1"/>
+               <parameter name="codeId"/>
+            </parameters>
+         </update>
+
+         <update name="util.delete.code.other_table">
+            <prepared-sql>
+               DELETE FROM #sub[$]
+               WHERE #sub[$] = ?
+            </prepared-sql>
+            <parameters>
+               <parameter name="codeId" index="1"/>
+            </parameters>
+         </update>
+
+
+      </objs>
+   </factory>
+
+</eterna-config>
