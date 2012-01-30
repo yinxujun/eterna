@@ -4,8 +4,7 @@
 <!--
 一些公用方法及组件
 使用时需要定义getHeadURL方法, 用于生成访问的地址头, 例子如下:
-<function name="getHeadURL" param="modelName, dataType">
-   <![CDATA[
+<function name="getHeadURL" param="modelName, dataType"><![CDATA[
    var urlHead = "";
    if ({$data:servletPath} != null)
    {
@@ -24,8 +23,7 @@
       }
    }
    return urlHead;
-   ]]>
-</function>
+]]></function>
 -->
 <eterna-config>
 
@@ -118,8 +116,7 @@
          <resource name="needSelected">请先选择！</resource>
 
          <!-- 检查表单, 触发表单中每个控件的check事件 -->
-         <function name="checkForm" param="formObj">
-            <![CDATA[
+         <function name="checkForm" param="formObj"><![CDATA[
             {$data:___checkResult} = {pass:true,msg:[]};
             {$ef:triggerEvents}(formObj, "check");
             if (!{$data:___checkResult}.pass)
@@ -139,12 +136,10 @@
                }
             }
             return {$data:___checkResult}.pass;
-            ]]>
-         </function>
+         ]]></function>
          <resource name="checkFormError">表单填写有错误, 请检查！</resource>
          <!-- 触发某个节点下所有控件的[eventName]事件 -->
-         <function name="triggerEvents" param="rootObj, eventName">
-            <![CDATA[
+         <function name="triggerEvents" param="rootObj, eventName"><![CDATA[
             var oldEventName = eg_cache.eventName;
             eg_cache.eventName = eventName;
             jQuery("*", rootObj).each(function (){
@@ -156,8 +151,37 @@
             	}
             });
             eg_cache.eventName = oldEventName;
-            ]]>
-         </function>
+         ]]></function>
+
+         <!-- 触发某个节点下所有控件的[eventName]事件 -->
+         <function name="swapAttributeComponentSubs" param="theObj, configData"><![CDATA[
+            if (configData.subs != null)
+            {
+               for (var i = 0; i < configData.subs.length; i++)
+               {
+                  var name = configData.subs[i].name;
+                  var pObj = jQuery("[swapId='" + ef_toScriptString(name) + "']", theObj);
+                  if (pObj.size() == 1)
+                  {
+                     var tmpCom = _eterna.createComponent(configData.subs[i], pObj);
+                     if (tmpCom != null)
+                     {
+                        pObj.after(tmpCom);
+                     }
+                     else
+                     {
+                        var subs = pObj.children();
+                        var maxCount = subs.size();
+                        for (var j = maxCount - 1; j >= 0; j--)
+                        {
+                           pObj.after(subs.eq(j));
+                        }
+                     }
+                     pObj.remove();
+                  }
+               }
+            }
+         ]]></function>
 
          <!-- 删除json对象中的某个属性 -->
          <function name="deleteData_attr" param="data, name, objCreater">
@@ -241,8 +265,7 @@
          </function>
 
          <!-- 解析map对象, 生成多个hidden对象 -->
-         <function name="parseData_map_toObj" param="data, name, parentObj, noClear">
-            <![CDATA[
+         <function name="parseData_map_toObj" param="data, name, parentObj, noClear"><![CDATA[
             if (data == null)
             {
                return;
@@ -258,8 +281,7 @@
                tmpObj.val(key);
                parentObj.append(tmpObj);
             }
-            ]]>
-         </function>
+         ]]></function>
 
          <!-- 根据数据(两个字符串或一维数组, 第一个为key第二个为value), 生成map对象 -->
          <function name="createData_map2" param="value1, value2, param1, param2">
@@ -455,8 +477,7 @@
          </function>
 
          <!-- 更新结果集中的值 -->
-         <function name="setData_value" param="dataName, srcName, index, value">
-            <![CDATA[
+         <function name="setData_value" param="dataName, srcName, index, value"><![CDATA[
             if (dataName == null)
             {
                return null;
@@ -504,8 +525,7 @@
                }
             }
             return oldValue;
-            ]]>
-         </function>
+         ]]></function>
 
 
          <!--
@@ -1150,8 +1170,7 @@
             </component>
          </typical-component>
 
-         <function name="doPageChanged" param="changeNum, newPage, pageSize, dataName">
-            <![CDATA[
+         <function name="doPageChanged" param="changeNum, newPage, pageSize, dataName"><![CDATA[
             if ({$data:___pageChanged} == null || !{$data:___pageChanged})
             {
                {$data:___pageChanged} = 1;
@@ -1177,8 +1196,7 @@
                alert("searchURL:" + theForm.attr("action"));
             }
             theForm.submit();
-            ]]>
-         </function>
+         ]]></function>
 
          <typical-component name="search_page_form" type="none">
             <before-init>
