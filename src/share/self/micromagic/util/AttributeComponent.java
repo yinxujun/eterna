@@ -18,7 +18,7 @@ import self.micromagic.eterna.model.AppData;
  * 通过factory中attribute的值来生成这个component. <p>
  * component的类型必须设为none, 必须在component中设置名称为attrName的属性,
  * 该值为所使用的factory中attribute的名称.
- * 此component中不可设置子component.
+ * 子component将会替换swapId相同的子节点.
  */
 public final class AttributeComponent extends ComponentImpl
       implements Component, ComponentGenerator
@@ -79,7 +79,7 @@ public final class AttributeComponent extends ComponentImpl
 
       if (autoSet)
       {
-         String myScript = "webObj.html(objConfig.bodyString);";
+         String myScript = "webObj.html(objConfig.bodyString);\n{$ef:swapAttributeComponentSubs}(webObj, objConfig);\n";
          if (this.initScript != null)
          {
             this.initScript = this.initScript + myScript;
@@ -100,17 +100,11 @@ public final class AttributeComponent extends ComponentImpl
       }
    }
 
-   public void addComponent(Component com)
-         throws ConfigurationException
-   {
-      throw new ConfigurationException("Can't add sub component in AttributeComponent.");
-   }
-
    public void printSpecialBody(Writer out, AppData data, ViewAdapter view)
          throws IOException, ConfigurationException
    {
       super.printSpecialBody(out, data, view);
-      out.write(",bodyString:");
+      out.write(",noSub:1,bodyString:");
       out.write("\"");
       out.write(this.stringCoder.toJsonString(this.bodyHTML));
       out.write("\"");
