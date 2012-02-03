@@ -4,12 +4,23 @@ package self.micromagic.eterna.sql.converter;
 import java.text.NumberFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringRef;
 
 public class IntegerConverter extends ObjectConverter
 {
    private Integer DEFAULT_VALUE = Utility.INTEGER_0;
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("int");
+      }
+      return TypeManager.TYPE_INTEGER;
+   }
 
    public int getResult(Object result)
          throws ConfigurationException

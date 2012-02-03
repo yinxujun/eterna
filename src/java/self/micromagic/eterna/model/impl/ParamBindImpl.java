@@ -55,32 +55,41 @@ public class ParamBindImpl extends AbstractGenerator
       this.subSQL = subSQL;
    }
 
-   public void setSrc(String src)
+   public void setSrc(String theSrc)
          throws ConfigurationException
    {
-      this.paramSrc = src;
+      this.paramSrc = theSrc;
 
       for (int i = 0; i < AppData.MAP_NAMES.length; i++)
       {
-         if (AppData.MAP_NAMES[i].equals(src))
+         if (AppData.MAP_NAMES[i].equals(theSrc))
          {
             this.mapIndex = i;
             this.mapBind = true;
             return;
          }
       }
-      if (src != null)
+      for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
       {
-         if (src.startsWith("stack"))
+         if (AppData.MAP_SHORT_NAMES[i].equals(theSrc))
+         {
+            this.mapIndex = i;
+            this.mapBind = true;
+            return;
+         }
+      }
+      if (theSrc != null)
+      {
+         if (theSrc.startsWith("stack"))
          {
             this.mapIndex = -1;
             this.mapBind = false;
             this.popStack = true;
-            if (src.length() > 5)
+            if (theSrc.length() > 5)
             {
-               if (src.charAt(5) == ':')
+               if (theSrc.charAt(5) == ':')
                {
-                  String tmp = src.substring(6);
+                  String tmp = theSrc.substring(6);
                   if ("pop".equals(tmp))
                   {
                      return;
@@ -113,16 +122,16 @@ public class ParamBindImpl extends AbstractGenerator
                return;
             }
          }
-         else if (src.startsWith("cache"))
+         else if (theSrc.startsWith("cache"))
          {
             this.mapIndex = -1;
             this.mapBind = false;
             this.cacheIndex = 0;
-            if (src.length() > 5)
+            if (theSrc.length() > 5)
             {
-               if (src.charAt(5) == ':')
+               if (theSrc.charAt(5) == ':')
                {
-                  String tmp = src.substring(6);
+                  String tmp = theSrc.substring(6);
                   try
                   {
                      this.cacheIndex = Integer.parseInt(tmp);
@@ -137,7 +146,7 @@ public class ParamBindImpl extends AbstractGenerator
             }
          }
       }
-      throw new ConfigurationException("Error bind src:" + src + ".");
+      throw new ConfigurationException("Error bind src:" + theSrc + ".");
    }
 
    public void setNames(String names)

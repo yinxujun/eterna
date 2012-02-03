@@ -1,6 +1,8 @@
 
 package self.micromagic.eterna.sql.converter;
 
+import self.micromagic.util.StringRef;
+
 public interface ValueConverter
 {
    /**
@@ -13,6 +15,13 @@ public interface ValueConverter
     * 设置是否要抛出异常, 当无法转换成目标类型时.
     */
    void setNeedThrow(boolean need);
+
+   /**
+    * 获得要转换的目标类型代码.
+    *
+    * @param typeName   将会被设为目标类型的名称, 如果不需要可设为null
+    */
+   int getConvertType(StringRef typeName);
 
    /**
     * 对一个对象进行类型转换, 转换成所要求的类型.

@@ -2,10 +2,21 @@
 package self.micromagic.eterna.sql.converter;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class BooleanConverter extends ObjectConverter
 {
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("boolean");
+      }
+      return TypeManager.TYPE_BOOLEAN;
+   }
+
    public boolean getResult(Object result)
          throws ConfigurationException
    {

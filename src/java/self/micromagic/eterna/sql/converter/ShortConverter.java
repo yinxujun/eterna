@@ -2,11 +2,22 @@
 package self.micromagic.eterna.sql.converter;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class ShortConverter extends ObjectConverter
 {
    private Short DEFAULT_VALUE = new Short((short) 0);
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("short");
+      }
+      return TypeManager.TYPE_SHORT;
+   }
 
    public short getResult(Object result)
          throws ConfigurationException

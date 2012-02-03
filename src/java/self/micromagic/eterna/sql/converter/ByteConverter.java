@@ -2,11 +2,22 @@
 package self.micromagic.eterna.sql.converter;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class ByteConverter extends ObjectConverter
 {
    private Byte DEFAULT_VALUE = new Byte((byte) 0);
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("byte");
+      }
+      return TypeManager.TYPE_BYTE;
+   }
 
    public byte getResult(Object result)
          throws ConfigurationException

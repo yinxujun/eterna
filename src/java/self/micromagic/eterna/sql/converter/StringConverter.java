@@ -5,10 +5,21 @@ import java.io.Reader;
 import java.io.IOException;
 
 import self.micromagic.util.MemoryChars;
+import self.micromagic.util.StringRef;
+import self.micromagic.eterna.share.TypeManager;
 
 public class StringConverter extends ObjectConverter
 {
    public static int MAX_BUFFER = 10240;
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("String");
+      }
+      return TypeManager.TYPE_STRING;
+   }
 
    public Object convert(Object value)
    {

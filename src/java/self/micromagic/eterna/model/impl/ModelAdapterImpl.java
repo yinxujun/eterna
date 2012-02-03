@@ -145,6 +145,12 @@ public class ModelAdapterImpl extends AbstractGenerator
          log.warn("The model [" + this.getName() + "] isn't execute because the position.");
          return null;
       }
+      boolean hasModelPos = (data.position & AppData.POSITION_MODEL) != 0;
+      // 如果原先不存在model的位置则添加
+      if (!hasModelPos)
+      {
+         data.position |= AppData.POSITION_MODEL;
+      }
       Object[] caches = null;
       if (this.keepCaches)
       {
@@ -180,6 +186,12 @@ public class ModelAdapterImpl extends AbstractGenerator
       }
       finally
       {
+         // 如果原先不存在model的位置则去除
+         if (!hasModelPos)
+         {
+            data.position |= AppData.POSITION_MODEL;
+            data.position ^= AppData.POSITION_MODEL;
+         }
          if (needLogApp)
          {
             data.endNode((Throwable) errorRef.getObject(), data.export);
@@ -317,6 +329,10 @@ public class ModelAdapterImpl extends AbstractGenerator
          else if ("special".equals(pos))
          {
             this.allowPositions |= AppData.POSITION_SPECIAL;
+         }
+         else if ("model".equals(pos))
+         {
+            this.allowPositions |= AppData.POSITION_MODEL;
          }
          else if ("other1".equals(pos) || "other".equals(pos))
          {

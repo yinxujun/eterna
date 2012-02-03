@@ -6,11 +6,22 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryStream;
+import self.micromagic.util.StringRef;
 
 public class BytesConverter extends ObjectConverter
 {
    public static int MAX_BUFFER = 1024 * 1024 * 16;
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Bytes");
+      }
+      return TypeManager.TYPE_BYTES;
+   }
 
    public byte[] getResult(Object result)
          throws ConfigurationException
@@ -21,7 +32,7 @@ public class BytesConverter extends ObjectConverter
       }
       catch (Exception ex)
       {
-         throw getErrorTypeException(result, "bytes");
+         throw getErrorTypeException(result, "Bytes");
       }
    }
 
@@ -52,7 +63,7 @@ public class BytesConverter extends ObjectConverter
          }
          else
          {
-            throw new ClassCastException(getCastErrorMessage(value, "bytes"));
+            throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
          }
       }
       if (value instanceof byte[])
@@ -63,7 +74,7 @@ public class BytesConverter extends ObjectConverter
       {
          return this.convertToBytes((String) value, charset);
       }
-      throw new ClassCastException(getCastErrorMessage(value, "bytes"));
+      throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
    }
 
    public byte[] convertToBytes(String value)
@@ -90,7 +101,7 @@ public class BytesConverter extends ObjectConverter
       }
       catch (UnsupportedEncodingException ex)
       {
-         throw new ClassCastException(getCastErrorMessage(value, "bytes"));
+         throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
       }
    }
 
@@ -112,7 +123,7 @@ public class BytesConverter extends ObjectConverter
             {
                throw (RuntimeException) ex;
             }
-            throw new ClassCastException(getCastErrorMessage(value, "bytes"));
+            throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
          }
          else
          {
@@ -135,7 +146,7 @@ public class BytesConverter extends ObjectConverter
             {
                throw (RuntimeException) ex;
             }
-            throw new ClassCastException(getCastErrorMessage(value, "bytes"));
+            throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
          }
          else
          {

@@ -5,10 +5,21 @@ import java.text.ParseException;
 import java.text.DateFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.FormatTool;
+import self.micromagic.util.StringRef;
 
 public class TimeConverter extends ObjectConverter
 {
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Time");
+      }
+      return TypeManager.TYPE_TIME;
+   }
+
    public java.sql.Time getResult(Object result)
          throws ConfigurationException
    {
