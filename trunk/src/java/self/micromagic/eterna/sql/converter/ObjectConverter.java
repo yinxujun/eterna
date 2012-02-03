@@ -2,6 +2,8 @@
 package self.micromagic.eterna.sql.converter;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
+import self.micromagic.util.StringRef;
 
 public class ObjectConverter
       implements ValueConverter
@@ -16,6 +18,15 @@ public class ObjectConverter
    public void setNeedThrow(boolean need)
    {
       this.needThrow = need;
+   }
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Object");
+      }
+      return TypeManager.TYPE_OBJECT;
    }
 
    public Object convert(Object value)

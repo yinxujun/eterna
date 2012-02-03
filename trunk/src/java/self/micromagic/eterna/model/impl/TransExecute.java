@@ -32,6 +32,7 @@ import self.micromagic.eterna.sql.converter.TimestampConverter;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.StringRef;
 import org.dom4j.Element;
 
 public class TransExecute extends AbstractExecute
@@ -47,7 +48,6 @@ public class TransExecute extends AbstractExecute
    protected boolean removeFrom = false;
    protected boolean mustExist = true;
 
-   protected String toText;
    protected String toName;
    protected int toMapIndex = -1;
    protected int toCacheIndex = -1;
@@ -63,21 +63,6 @@ public class TransExecute extends AbstractExecute
          return;
       }
       super.initialize(model);
-   }
-
-   public Object create()
-   {
-      return this.createExecute();
-   }
-
-   public Execute createExecute()
-   {
-      return this;
-   }
-
-   public ModelAdapter getModelAdapter()
-   {
-      return this.model;
    }
 
    public String getExecuteType()
@@ -101,24 +86,36 @@ public class TransExecute extends AbstractExecute
       this.pushResult = push;
    }
 
-   public void setFrom(String from)
+   public void setFrom(String theFrom)
          throws ConfigurationException
    {
-      int index = from.indexOf(':');
+      int index = theFrom.indexOf(':');
       String fromParam = null;
       if (index != -1)
       {
-         fromParam = from.substring(index + 1);
-         from = from.substring(0, index);
+         fromParam = theFrom.substring(index + 1);
+         theFrom = theFrom.substring(0, index);
       }
 
       for (int i = 0; i < AppData.MAP_NAMES.length; i++)
       {
-         if (AppData.MAP_NAMES[i].equals(from))
+         if (AppData.MAP_NAMES[i].equals(theFrom))
          {
             this.fromMapIndex = i;
             this.fromMap = true;
             break;
+         }
+      }
+      if (!this.fromMap)
+      {
+         for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
+         {
+            if (AppData.MAP_SHORT_NAMES[i].equals(theFrom))
+            {
+               this.fromMapIndex = i;
+               this.fromMap = true;
+               break;
+            }
          }
       }
       if (this.fromMap)
@@ -129,7 +126,7 @@ public class TransExecute extends AbstractExecute
             return;
          }
       }
-      else if ("stack".equals(from))
+      else if ("stack".equals(theFrom))
       {
          this.popStack = true;
          if ("pop".equals(fromParam) || fromParam == null)
@@ -158,7 +155,7 @@ public class TransExecute extends AbstractExecute
             }
          }
       }
-      else if ("cache".equals(from))
+      else if ("cache".equals(theFrom))
       {
          this.fromCacheIndex = 0;
          if (fromParam != null)
@@ -175,7 +172,7 @@ public class TransExecute extends AbstractExecute
             return;
          }
       }
-      else if ("value".equals(from))
+      else if ("value".equals(theFrom))
       {
          if (fromParam != null)
          {
@@ -184,7 +181,7 @@ public class TransExecute extends AbstractExecute
          }
       }
 
-      throw new ConfigurationException("Error from:" + from + ".");
+      throw new ConfigurationException("Error from:" + theFrom + ".");
    }
 
    public void setRemoveFrom(boolean remove)
@@ -296,23 +293,34 @@ public class TransExecute extends AbstractExecute
       }
    }
 
-   public void setTo(String toStr)
+   public void setTo(String theTo)
          throws ConfigurationException
    {
-      int index = toStr.indexOf(':');
+      int index = theTo.indexOf(':');
       String toParam = null;
       if (index != -1)
       {
-         toParam = toStr.substring(index + 1);
-         toStr = toStr.substring(0, index);
+         toParam = theTo.substring(index + 1);
+         theTo = theTo.substring(0, index);
       }
 
       for (int i = 0; i < AppData.MAP_NAMES.length; i++)
       {
-         if (AppData.MAP_NAMES[i].equals(toStr))
+         if (AppData.MAP_NAMES[i].equals(theTo))
          {
             this.toMapIndex = i;
             break;
+         }
+      }
+      if (this.toMapIndex == -1)
+      {
+         for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
+         {
+            if (AppData.MAP_SHORT_NAMES[i].equals(theTo))
+            {
+               this.toMapIndex = i;
+               break;
+            }
          }
       }
       if (this.toMapIndex != -1)
@@ -323,7 +331,7 @@ public class TransExecute extends AbstractExecute
             return;
          }
       }
-      else if ("cache".equals(toStr))
+      else if ("cache".equals(theTo))
       {
          this.toCacheIndex = 0;
          if (toParam != null)
@@ -341,7 +349,7 @@ public class TransExecute extends AbstractExecute
          }
       }
 
-      throw new ConfigurationException("Error to:" + toStr + ".");
+      throw new ConfigurationException("Error to:" + theTo + ".");
    }
 
    public ModelExport execute(AppData data, Connection conn)
@@ -402,6 +410,7 @@ public class TransExecute extends AbstractExecute
          }
       }
       Element nowNode = null;
+      Element vToNode = null;
       if (AppData.getAppLogType() != 0)
       {
          nowNode = data.getCurrentNode();
@@ -409,15 +418,48 @@ public class TransExecute extends AbstractExecute
       if (nowNode != null)
       {
          Element vNode = nowNode.addElement("value-from");
+         if (this.removeFrom)
+         {
+            vNode.addAttribute("removeFrom", "true");
+         }
+         if (this.fromValue != null)
+         {
+            vNode.addAttribute("fromValue", this.fromValue);
+         }
+         else if (this.fromMap)
+         {
+            vNode.addAttribute("fromMap", AppData.MAP_NAMES[this.fromMapIndex] + ":" + this.fromName);
+         }
+         else if (this.fromCacheIndex != -1)
+         {
+            vNode.addAttribute("fromCache", String.valueOf(this.fromCacheIndex));
+         }
+         else
+         {
+            vNode.addAttribute("fromStack", this.peekIndex != -1 ? "pop" : "peek:" + this.peekIndex);
+         }
          AppDataLogExecute.printObject(vNode, value);
+         vToNode = nowNode.addElement("value-to");
+         if (this.isPushResult())
+         {
+            vToNode.addAttribute("pushResult", "true");
+         }
+         if (this.toMapIndex != -1)
+         {
+            vToNode.addAttribute("toMap", AppData.MAP_NAMES[this.toMapIndex] + ":" + this.toName);
+         }
+         else if (this.toCacheIndex != -1)
+         {
+            vToNode.addAttribute("toCache", String.valueOf(this.toCacheIndex));
+         }
       }
       if (this.opt != null && value != null)
       {
          value = this.opt.change(value);
-         if (nowNode != null)
+         if (vToNode != null)
          {
-            Element vNode = nowNode.addElement("value-to");
-            AppDataLogExecute.printObject(vNode, value);
+            vToNode.addAttribute("opt", this.opt.toString());
+            AppDataLogExecute.printObject(vToNode, value);
          }
       }
 
@@ -483,6 +525,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return (this.useFormated ? "getFormated:" : "getObject:") + this.param;
+      }
+
    }
 
    private static class TransMapValue
@@ -516,6 +563,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return "getMapValue:" + this.param;
+      }
+
    }
 
    private static class TransStrings
@@ -544,6 +596,11 @@ public class TransExecute extends AbstractExecute
             return value;
          }
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
+      }
+
+      public String toString()
+      {
+         return "getFirstString";
       }
 
    }
@@ -579,6 +636,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return "getFirstString";
+      }
+
    }
 
    private static class TransNext
@@ -605,6 +667,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return "getNext";
+      }
+
    }
 
    private static class TransToResultIterator
@@ -628,6 +695,11 @@ public class TransExecute extends AbstractExecute
             return ((SearchAdapter.Result) value).queryResult;
          }
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
+      }
+
+      public String toString()
+      {
+         return "toResultIterator";
       }
 
    }
@@ -671,6 +743,11 @@ public class TransExecute extends AbstractExecute
             return value;
          }
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
+      }
+
+      public String toString()
+      {
+         return "beforeFirst";
       }
 
    }
@@ -726,6 +803,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return "getFirstRow";
+      }
+
    }
 
    private static class TransToArray
@@ -778,6 +860,11 @@ public class TransExecute extends AbstractExecute
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
+      public String toString()
+      {
+         return "toArray:" + this.param;
+      }
+
    }
 
    private static class TransToWatendType
@@ -794,6 +881,18 @@ public class TransExecute extends AbstractExecute
             throws ConfigurationException
       {
          return this.converter.convert(value);
+      }
+
+      public String toString()
+      {
+         StringRef type = new StringRef();
+         this.converter.getConvertType(type);
+         String typeName = "Unkown";
+         if (type.getString() != null && type.getString().length() > 0)
+         {
+            typeName = type.getString();
+         }
+         return "convert:" + typeName;
       }
 
    }

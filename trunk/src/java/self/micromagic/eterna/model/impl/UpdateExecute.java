@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.Execute;
-import self.micromagic.eterna.model.UpdateExecuteGenerator;
+import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.ParamSetManager;
-import self.micromagic.eterna.model.ModelAdapter;
+import self.micromagic.eterna.model.UpdateExecuteGenerator;
 import self.micromagic.eterna.sql.UpdateAdapter;
-import org.dom4j.Element;
 
 public class UpdateExecute extends SQLExecute
       implements Execute, UpdateExecuteGenerator
@@ -29,8 +29,7 @@ public class UpdateExecute extends SQLExecute
          return;
       }
       super.initialize(model);
-
-      this.updateAdapterIndex = this.getModelAdapter().getFactory().getUpdateAdapterId(this.getName());
+      this.updateAdapterIndex = this.factory.getUpdateAdapterId(this.getName());
    }
 
    public String getExecuteType()
@@ -66,7 +65,7 @@ public class UpdateExecute extends SQLExecute
       }
       if (update == null)
       {
-         update = this.getModelAdapter().getFactory().createUpdateAdapter(this.updateAdapterIndex);
+         update = this.factory.createUpdateAdapter(this.updateAdapterIndex);
          if (this.sqlCacheIndex != -1)
          {
             data.caches[this.sqlCacheIndex] = update;

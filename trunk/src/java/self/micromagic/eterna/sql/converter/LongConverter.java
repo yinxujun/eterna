@@ -4,11 +4,22 @@ package self.micromagic.eterna.sql.converter;
 import java.text.NumberFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class LongConverter extends ObjectConverter
 {
    private Long DEFAULT_VALUE = new Long(0L);
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("long");
+      }
+      return TypeManager.TYPE_LONG;
+   }
 
    public long getResult(Object result)
          throws ConfigurationException

@@ -77,7 +77,7 @@
 
 
 <!-- "Position"事物处理的类型.
-     可选值有: (servlet|portletAction|portletRender|special|other1|other2|other3)
+     可选值有: (servlet|portletAction|portletRender|special|model|other1|other2|other3)
      如果有多个值, 之间用","分隔
 -->
 <!ENTITY % Positions "CDATA">

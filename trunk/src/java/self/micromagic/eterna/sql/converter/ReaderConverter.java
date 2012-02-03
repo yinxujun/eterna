@@ -6,10 +6,21 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryChars;
+import self.micromagic.util.StringRef;
 
 public class ReaderConverter extends ObjectConverter
 {
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Reader");
+      }
+      return TypeManager.TYPE_READER;
+   }
+
    public Reader getResult(Object result)
          throws ConfigurationException
    {

@@ -7,11 +7,22 @@ import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryStream;
+import self.micromagic.util.StringRef;
 import org.apache.commons.fileupload.FileItem;
 
 public class StreamConverter extends ObjectConverter
 {
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Stream");
+      }
+      return TypeManager.TYPE_STREAM;
+   }
+
    public InputStream getResult(Object result)
          throws ConfigurationException
    {
@@ -21,7 +32,7 @@ public class StreamConverter extends ObjectConverter
       }
       catch (Exception ex)
       {
-         throw getErrorTypeException(result, "InputStream");
+         throw getErrorTypeException(result, "Stream");
       }
    }
 
@@ -63,7 +74,7 @@ public class StreamConverter extends ObjectConverter
       {
          return this.convertToStream((String) value, charset);
       }
-      throw new ClassCastException(getCastErrorMessage(value, "InputStream"));
+      throw new ClassCastException(getCastErrorMessage(value, "Stream"));
    }
 
    public InputStream convertToStream(String value)
@@ -112,7 +123,7 @@ public class StreamConverter extends ObjectConverter
             {
                throw (RuntimeException) ex;
             }
-            throw new ClassCastException(getCastErrorMessage(value, "InputStream"));
+            throw new ClassCastException(getCastErrorMessage(value, "Stream"));
          }
          else
          {
@@ -135,7 +146,7 @@ public class StreamConverter extends ObjectConverter
             {
                throw (RuntimeException) ex;
             }
-            throw new ClassCastException(getCastErrorMessage(value, "InputStream"));
+            throw new ClassCastException(getCastErrorMessage(value, "Stream"));
          }
          else
          {

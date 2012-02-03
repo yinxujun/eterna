@@ -14,6 +14,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
+import self.micromagic.eterna.share.EternaFactory;
 import org.dom4j.Element;
 
 
@@ -126,6 +127,7 @@ public class SearchExecute extends AbstractExecute
       {
          searchName = (String) data.getRequestAttributeMap().get(this.searchNameTag);
       }
+      EternaFactory f = this.getModelAdapter().getFactory();
       if (searchName != null)
       {
          if (AppData.getAppLogType() != 0)
@@ -157,7 +159,7 @@ public class SearchExecute extends AbstractExecute
                nowNode.addAttribute("doExecute", String.valueOf(this.doExecute));
             }
          }
-         SearchAdapter search = this.model.getFactory().createSearchAdapter(searchName);
+         SearchAdapter search = f.createSearchAdapter(searchName);
          if (this.searchCacheIdnex != -1)
          {
             data.caches[this.searchCacheIdnex] = search;
@@ -213,7 +215,7 @@ public class SearchExecute extends AbstractExecute
             raMap.remove(SearchManager.FORCE_DEAL_CONDITION);
          }
       }
-      data.dataMap.put(SEARCH_MANAGER_ATTRIBUTES, this.model.getFactory().getSearchManagerAttributes());
+      data.dataMap.put(SEARCH_MANAGER_ATTRIBUTES, f.getSearchManagerAttributes());
       return null;
    }
 

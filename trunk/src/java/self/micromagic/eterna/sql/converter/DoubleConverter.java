@@ -4,11 +4,22 @@ package self.micromagic.eterna.sql.converter;
 import java.text.NumberFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class DoubleConverter extends ObjectConverter
 {
    private Double DEFAULT_VALUE = new Double(0.0);
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("double");
+      }
+      return TypeManager.TYPE_DOUBLE;
+   }
 
    public double getResult(Object result)
          throws ConfigurationException

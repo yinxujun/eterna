@@ -35,8 +35,7 @@ public class QueryExecute extends SQLExecute
          return;
       }
       super.initialize(model);
-
-      this.queryAdapterIndex = this.getModelAdapter().getFactory().getQueryAdapterId(this.getName());
+      this.queryAdapterIndex = this.factory.getQueryAdapterId(this.getName());
    }
 
    public String getExecuteType()
@@ -98,7 +97,7 @@ public class QueryExecute extends SQLExecute
       }
       if (query == null)
       {
-         query = this.getModelAdapter().getFactory().createQueryAdapter(this.queryAdapterIndex);
+         query = this.factory.createQueryAdapter(this.queryAdapterIndex);
          if (this.sqlCacheIndex != -1)
          {
             data.caches[this.sqlCacheIndex] = query;
@@ -114,7 +113,7 @@ public class QueryExecute extends SQLExecute
          query.setMaxRows(this.count);
       }
       query.setTotalCount(this.countType);
-      UserManager um = this.getModelAdapter().getFactory().getUserManager();
+      UserManager um = this.factory.getUserManager();
       if (um != null)
       {
          User user = um.getUser(data);
@@ -132,6 +131,20 @@ public class QueryExecute extends SQLExecute
       {
          Element nowNode = data.getCurrentNode();
          nowNode.addAttribute("queryName", query.getName());
+         String countTypeStr = "err";
+         if (this.countType == QueryAdapter.TOTAL_COUNT_AUTO)
+         {
+            countTypeStr = "auto";
+         }
+         else if (this.countType == QueryAdapter.TOTAL_COUNT_COUNT)
+         {
+            countTypeStr = "count";
+         }
+         else if (this.countType == QueryAdapter.TOTAL_COUNT_NONE)
+         {
+            countTypeStr = "none";
+         }
+         nowNode.addAttribute("countType", countTypeStr);
          if (this.start != 1)
          {
             nowNode.addAttribute("start", String.valueOf(this.start));

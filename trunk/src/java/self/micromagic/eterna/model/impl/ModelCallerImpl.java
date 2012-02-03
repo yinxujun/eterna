@@ -231,23 +231,29 @@ public class ModelCallerImpl
    {
       if (preConn.getObject() != null)
       {
-         Map map;
-         if (preConn.getObject() instanceof Connection)
+         Object refObj = preConn.getObject();
+         if (refObj instanceof Connection)
          {
-            Connection tmpConn = (Connection) preConn.getObject();
-            map = new HashMap();
-            map.put(this.defaultDataSourceName, tmpConn);
-            preConn.setObject(map);
-            map.put(dsName, conn);
+            if (dsName == null || dsName.equals(this.defaultDataSourceName))
+            {
+               preConn.setObject(conn);
+            }
+            else
+            {
+               Connection tmpConn = (Connection) refObj;
+               Map map = new HashMap();
+               map.put(this.defaultDataSourceName, tmpConn);
+               preConn.setObject(map);
+               map.put(dsName, conn);
+            }
          }
-         else if (preConn.getObject() instanceof Map)
+         else if (refObj instanceof Map)
          {
-            map = (Map) preConn.getObject();
-            map.put(dsName, conn);
+            ((Map) refObj).put(dsName, conn);
          }
          else
          {
-            AppData.log.error("Error preConn type:" + preConn.getObject().getClass() + ".");
+            AppData.log.error("Error preConn type:" + refObj.getClass() + ".");
          }
       }
       else
@@ -272,30 +278,31 @@ public class ModelCallerImpl
       Connection oldConn = null;
       if (preConn.getObject() != null)
       {
+         Object refObj = preConn.getObject();
          if (dsName == null || dsName.equals(this.defaultDataSourceName))
          {
-            if (preConn.getObject() instanceof Connection)
+            if (refObj instanceof Connection)
             {
-               oldConn = (Connection) preConn.getObject();
+               oldConn = (Connection) refObj;
             }
-            else if (preConn.getObject() instanceof Map)
+            else if (refObj instanceof Map)
             {
-               oldConn = (Connection) ((Map) preConn.getObject()).get(this.defaultDataSourceName);
+               oldConn = (Connection) ((Map) refObj).get(this.defaultDataSourceName);
             }
             else
             {
-               AppData.log.error("Error preConn type:" + preConn.getObject().getClass() + ".");
+               AppData.log.error("Error preConn type:" + refObj.getClass() + ".");
             }
          }
          else
          {
-            if (preConn.getObject() instanceof Map)
+            if (refObj instanceof Map)
             {
-               oldConn = (Connection) ((Map) preConn.getObject()).get(dsName);
+               oldConn = (Connection) ((Map) refObj).get(dsName);
             }
-            else if (!(preConn.getObject() instanceof Connection))
+            else if (!(refObj instanceof Connection))
             {
-               AppData.log.error("Error preConn type:" + preConn.getObject().getClass() + ".");
+               AppData.log.error("Error preConn type:" + refObj.getClass() + ".");
             }
          }
       }
@@ -394,16 +401,17 @@ public class ModelCallerImpl
                   }
                   this.closeConnection(myConn);
                   // oldConn不为空, 则设回原来的conn
-                  this.setPreConnection(myConn, preConn, dsName);
+                  this.setPreConnection(oldConn, preConn, dsName);
                }
                break;
             case ModelAdapter.T_NONE:
                this.closeConnection(myConn);
                break;
+            case ModelAdapter.T_HOLD:
+               break;
             case ModelAdapter.T_IDLE:
                this.closeConnection(myConn);
                break;
-            case ModelAdapter.T_HOLD:
             case ModelAdapter.T_NOTNEED:
                break;
          }

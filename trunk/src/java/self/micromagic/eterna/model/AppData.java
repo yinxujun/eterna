@@ -46,15 +46,19 @@ public class AppData
    public static final int POSITION_PORTLET_ACTION = 0x10;
    public static final int POSITION_PORTLET_RENDER = 0x20;
    public static final int POSITION_SPECIAL = 0x100;
+   public static final int POSITION_MODEL = 0x200;
    public static final int POSITION_OTHER1 = 0x1000;
    public static final int POSITION_OTHER2 = 0x2000;
    public static final int POSITION_OTHER3 = 0x4000;
 
    public static final String REQUEST_PARAMETER_MAP_NAME = "request-parameter";
+   public static final String REQUEST_PARAMETER_MAP_SHORT_NAME = "RP";
    public static final int REQUEST_PARAMETER_MAP = 0;
    public static final String REQUEST_ATTRIBUTE_MAP_NAME = "request-attribute";
+   public static final String REQUEST_ATTRIBUTE_MAP_SHORT_NAME = "RA";
    public static final int REQUEST_ATTRIBUTE_MAP = 1;
    public static final String SESSION_ATTRIBUTE_MAP_NAME = "session-attribute";
+   public static final String SESSION_ATTRIBUTE_MAP_SHORT_NAME = "SA";
    public static final int SESSION_ATTRIBUTE_MAP = 2;
    public static final String DATA_MAP_NAME = "data";
    public static final int DATA_MAP = 3;
@@ -62,6 +66,10 @@ public class AppData
    public static final String[] MAP_NAMES = {
       REQUEST_PARAMETER_MAP_NAME, REQUEST_ATTRIBUTE_MAP_NAME,
       SESSION_ATTRIBUTE_MAP_NAME, DATA_MAP_NAME
+   };
+   public static final String[] MAP_SHORT_NAMES = {
+      REQUEST_PARAMETER_MAP_SHORT_NAME, REQUEST_ATTRIBUTE_MAP_SHORT_NAME,
+      SESSION_ATTRIBUTE_MAP_SHORT_NAME
    };
 
    private static int APP_LOG_TYPE = 0;
@@ -451,6 +459,36 @@ public class AppData
          return (HttpServletRequest) this.request;
       }
       return null;
+   }
+
+   /**
+    * 获取客户端的IP地址. <p>
+    * 如果前端有HTTP服务器转发的话, 可以设置<code>agentNames</code>代理名称列表,
+    * 来获取真正的客户端IP.
+    *
+    * @param agentNames   代理名称列表, 如果没有可以设为<code>null</code>
+    * @return    客户端的IP地址
+    */
+   public String getRemoteAddr(String[] agentNames)
+   {
+      HttpServletRequest request = this.getHttpServletRequest();
+      if (request == null)
+      {
+         return null;
+      }
+      if (agentNames != null)
+      {
+         for (int i = 0; i < agentNames.length; i++)
+         {
+            String ip = request.getHeader(agentNames[i]);
+            if (ip != null)
+            {
+               int index = ip.indexOf(';');
+               return index == -1 ? ip : ip.substring(0, index);
+            }
+         }
+      }
+      return request.getRemoteAddr();
    }
 
    public HttpServletResponse getHttpServletResponse()

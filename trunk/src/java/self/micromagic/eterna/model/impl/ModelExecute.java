@@ -11,6 +11,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.ModelExecuteGenerator;
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.ObjectRef;
 
 public class ModelExecute extends AbstractExecute
@@ -77,15 +78,15 @@ public class ModelExecute extends AbstractExecute
    {
       if (this.exeModelIndex != -1)
       {
+         EternaFactory f = this.getModelAdapter().getFactory();
          ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
-         ModelAdapter tmpModel = this.getModelAdapter().getFactory().createModelAdapter(this.exeModelIndex);
+         ModelAdapter tmpModel = f.createModelAdapter(this.exeModelIndex);
          int tType = this.transactionType == -1 ? tmpModel.getTransactionType() : this.transactionType;
          if (this.noJump)
          {
             try
             {
-               this.getModelAdapter().getFactory().getModelCaller().callModel(
-                     data, tmpModel, this.export, tType, preConn);
+               f.getModelCaller().callModel(data, tmpModel, this.export, tType, preConn);
             }
             catch (Throwable ex)
             {
@@ -94,8 +95,7 @@ public class ModelExecute extends AbstractExecute
          }
          else
          {
-            return this.getModelAdapter().getFactory().getModelCaller().callModel(
-                  data, tmpModel, this.export, tType, preConn);
+            return f.getModelCaller().callModel(data, tmpModel, this.export, tType, preConn);
          }
       }
       return this.export;

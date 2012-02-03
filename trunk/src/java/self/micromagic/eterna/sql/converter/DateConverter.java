@@ -5,10 +5,21 @@ import java.text.ParseException;
 import java.text.DateFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.FormatTool;
+import self.micromagic.util.StringRef;
 
 public class DateConverter extends ObjectConverter
 {
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("Date");
+      }
+      return TypeManager.TYPE_DATE;
+   }
+
    public java.sql.Date getResult(Object result)
          throws ConfigurationException
    {
@@ -18,7 +29,7 @@ public class DateConverter extends ObjectConverter
       }
       catch (Exception ex)
       {
-         throw getErrorTypeException(result, "Data");
+         throw getErrorTypeException(result, "Date");
       }
    }
 

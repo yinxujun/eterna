@@ -12,6 +12,7 @@ import self.micromagic.eterna.model.Execute;
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ParamBind;
 import self.micromagic.eterna.model.ParamSetManager;
+import self.micromagic.eterna.share.EternaFactory;
 
 public abstract class SQLExecute extends AbstractExecute
       implements Execute
@@ -20,6 +21,7 @@ public abstract class SQLExecute extends AbstractExecute
    protected boolean pushResult = true;
    protected int sqlCacheIndex = -1;
    protected boolean doExecute = true;
+   protected EternaFactory factory;
 
    public void initialize(ModelAdapter model)
          throws ConfigurationException
@@ -29,6 +31,7 @@ public abstract class SQLExecute extends AbstractExecute
          return;
       }
       super.initialize(model);
+      this.factory = model.getFactory();
       Iterator itr = this.binds.iterator();
       while (itr.hasNext())
       {

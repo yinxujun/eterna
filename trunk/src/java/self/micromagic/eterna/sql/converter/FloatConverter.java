@@ -2,11 +2,22 @@
 package self.micromagic.eterna.sql.converter;
 
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 
 public class FloatConverter extends ObjectConverter
 {
    private Float DEFAULT_VALUE = new Float(0.0F);
+
+   public int getConvertType(StringRef typeName)
+   {
+      if (typeName != null)
+      {
+         typeName.setString("float");
+      }
+      return TypeManager.TYPE_FLOAT;
+   }
 
    public float getResult(Object result)
          throws ConfigurationException

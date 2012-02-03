@@ -15,6 +15,7 @@ import self.micromagic.eterna.model.CheckOperator;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.ObjectCreateRule;
+import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
@@ -118,6 +119,7 @@ public class CheckExecute extends AbstractExecute
       ModelExport export;
       ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
       int loopCount = 0;
+      EternaFactory f = this.getModelAdapter().getFactory();
       do
       {
          Object obj1 = this.obj1Index != -1 ? data.caches[this.obj1Index] : null;
@@ -143,10 +145,9 @@ public class CheckExecute extends AbstractExecute
          {
             if (this.trueModelIndex != -1)
             {
-               ModelAdapter tmpModel = this.getModelAdapter().getFactory().createModelAdapter(this.trueModelIndex);
+               ModelAdapter tmpModel = f.createModelAdapter(this.trueModelIndex);
                int tType = this.trueTransactionType == -1 ? tmpModel.getTransactionType() : this.trueTransactionType;
-               export = this.getModelAdapter().getFactory().getModelCaller().callModel(
-                     data, tmpModel, this.trueExport, tType, preConn);
+               export = f.getModelCaller().callModel(data, tmpModel, this.trueExport, tType, preConn);
             }
             else
             {
@@ -157,10 +158,9 @@ public class CheckExecute extends AbstractExecute
          {
             if (this.falseModelIndex != -1)
             {
-               ModelAdapter tmpModel = this.getModelAdapter().getFactory().createModelAdapter(this.falseModelIndex);
+               ModelAdapter tmpModel = f.createModelAdapter(this.falseModelIndex);
                int tType = this.falseTransactionType == -1 ? tmpModel.getTransactionType() : this.falseTransactionType;
-               export = this.getModelAdapter().getFactory().getModelCaller().callModel(
-                     data, tmpModel, this.falseExport, tType, preConn);
+               export = f.getModelCaller().callModel(data, tmpModel, this.falseExport, tType, preConn);
             }
             else
             {
