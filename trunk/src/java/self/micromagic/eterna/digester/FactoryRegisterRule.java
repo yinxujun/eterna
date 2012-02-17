@@ -4,10 +4,19 @@ package self.micromagic.eterna.digester;
 import org.xml.sax.Attributes;
 import self.micromagic.eterna.share.Factory;
 
+/**
+ * 注册一个工厂的初始化规则.
+ */
 public class FactoryRegisterRule extends ObjectCreateRule
 {
    protected String registerName = null;
 
+   /**
+    * @param className        工厂的实现类, 如果配置中没有指定会将此作为默认值
+    * @param attributeName    配置中哪个属性名指定工厂的实现类
+    * @param classType        工厂实现的接口类
+    * @param registerName     注册此工厂的分类名
+    */
    public FactoryRegisterRule(String className, String attributeName, Class classType,
          String registerName)
    {
@@ -15,12 +24,17 @@ public class FactoryRegisterRule extends ObjectCreateRule
       this.registerName = registerName;
    }
 
+   /**
+    * @param className        工厂的实现类, 如果配置中没有指定会将此作为默认值
+    * @param attributeName    配置中哪个属性名指定工厂的实现类
+    * @param classType        工厂实现的接口类
+    */
    public FactoryRegisterRule(String className, String attributeName, Class classType)
    {
       this(className, attributeName, classType, null);
    }
 
-   public void begin(String namespace, String name, Attributes attributes)
+   public void myBegin(String namespace, String name, Attributes attributes)
          throws Exception
    {
       String realClassName = ObjectCreateRule.getClassName(

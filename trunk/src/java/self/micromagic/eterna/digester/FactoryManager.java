@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,33 +53,78 @@ import self.micromagic.coder.Base64;
  *
  * self.micromagic.eterna.digester.loadDefaultConfig
  * 全局初始化时是否要载入默认的配置
- * cp:self/micromagic/eterna/share/eterna_share.xml
+ * cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;
  *
  */
 public class FactoryManager
 {
+   public static final Log log = Utility.createLog("eterna");
+
+   /**
+    * 要进行全局初始化的文件列表.
+    */
    public static final String INIT_FILES_PROPERTY
          = "self.micromagic.eterna.digester.initfiles";
+
+   /**
+    * 要进行全局初始化的子文件列表, 子文件列表中的对象会覆盖掉全局初始化
+    * 的文件列表中的同名对象.
+    */
    public static final String INIT_SUBFILES_PROPERTY
          = "self.micromagic.eterna.digester.subinitfiles";
+
+   /**
+    * 要进行全局初始化的类名列表.
+    */
    public static final String INIT_CLASSES_PROPERTY
          = "self.micromagic.eterna.digester.initClasses";
+
+   /**
+    * 全局初始化时是否要载入默认的配置.
+    */
    public static final String LOAD_DEFAULT_CONFIG
          = "self.micromagic.eterna.digester.loadDefaultConfig";
+
+   /**
+    * 全局初始化时要载入的默认配置.
+    */
    public static final String DEFAULT_CONFIG_FILE
          = "cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;";
 
+   /**
+    * 实例初始化的文件列表.
+    */
    public static final String CONFIG_INIT_FILES = "initFiles";
+
+   /**
+    * 实例初始化的父文件列表.
+    */
    public static final String CONFIG_INIT_PARENTFILES = "parentFiles";
+
+   /**
+    * 实例初始化的配置列表.
+    */
    public static final String CONFIG_INIT_NAME = "initConfig";
+
+   /**
+    * 实例初始化的父配置列表.
+    */
    public static final String CONFIG_INIT_PARENTNAME = "parentConfig";
+
+   /**
+    * 初始化时使用的线程缓存.
+    */
    public static final String ETERNA_INIT_CACHE = "eterna.init.cache";
 
+   /**
+    * 默认需要加载的工厂EternaFactory.
+    */
    public static final String ETERNA_FACTORY
          = "self.micromagic.eterna.EternaFactory";
 
-   public static final Log log = Utility.createLog("eterna");
-
+   /**
+    * 初始化时是否需要对脚本语言进行语法检查.
+    */
    public static final String CHECK_GRAMMER_PROPERTY
          = "self.micromagic.eterna.digester.checkGrammer";
    private static boolean checkGrammer = true;
@@ -112,26 +156,45 @@ public class FactoryManager
       }
    }
 
+   /**
+    * 是否在初始化父配置
+    */
    public static boolean isSuperInit()
    {
       return superInitLevel > 0;
    }
 
+   /**
+    * 初始化父配置的level等级, 0为基本配置 1为第一级 2为第二级 ...
+    */
    public static int getSuperInitLevel()
    {
       return superInitLevel;
    }
 
+   /**
+    * 初始化时是否需要对脚本语言进行语法检查.
+    */
    public static boolean isCheckGrammer()
    {
       return checkGrammer;
    }
 
+   /**
+    * 设置初始化时是否需要对脚本语言进行语法检查.
+    *
+    * @param check   设成true为需要
+    */
    public static void setCheckGrammer(String check)
    {
       checkGrammer = "true".equalsIgnoreCase(check);
    }
 
+   /**
+    * 生成一个记录SQL日志的节点.
+    *
+    * @param name   SQL的类型名称
+    */
    public static synchronized Element createLogNode(String name)
    {
       if (logDocument == null)
@@ -163,6 +226,12 @@ public class FactoryManager
       return logs.addElement(name);
    }
 
+   /**
+    * 将记录的日志输出.
+    *
+    * @param out     日志的输出流
+    * @param clear   是否要在输出完后清空日志
+    */
    public static synchronized void printLog(Writer out, boolean clear)
          throws IOException
    {
@@ -180,16 +249,26 @@ public class FactoryManager
       }
    }
 
+   /**
+    * 获得当前正在初始化的Factory.
+    * 只有在初始化时才会返回值, 否则返回null.
+    */
    public static Factory getCurrentFactory()
    {
       return currentFactory;
    }
 
+   /**
+    * 获得全局的工厂管理器的实例.
+    */
    public static FactoryManager.Instance getGlobeFactoryManager()
    {
       return globeInstance;
    }
 
+   /**
+    * 根据 基础配置 各级父配置 生成配置字符串.
+    */
    private static String getConfig(String initConfig, String[] parentConfig)
    {
       List result = new ArrayList();
@@ -225,6 +304,12 @@ public class FactoryManager
       return buf.toString();
    }
 
+   /**
+    * 解析配置.
+    *
+    * @param config    要解析的配置
+    * @param result    解析完的结果列表, 本次解析的结果也要放进去
+    */
    private static void parseConfig(String config, List result)
    {
       String temp;
@@ -251,11 +336,23 @@ public class FactoryManager
       result.add(buf.toString());
    }
 
+   /**
+    * 根据一个类获取工厂管理器的实例.
+    * 会将[类名.xml]作为配置来读取.
+    *
+    * @param baseClass    初始化的基础类
+    */
    public static FactoryManager.Instance createClassFactoryManager(Class baseClass)
    {
       return createClassFactoryManager(baseClass, null);
    }
 
+   /**
+    * 根据一个类及配置获取工厂管理器的实例.
+    *
+    * @param baseClass    初始化的基础类
+    * @param initConfig   初始化的配置
+    */
    public static FactoryManager.Instance createClassFactoryManager(Class baseClass, String initConfig)
    {
       String conf = getConfig(initConfig, null);
@@ -273,18 +370,42 @@ public class FactoryManager
       return createClassFactoryManager(baseClass, null, initConfig, null, false);
    }
 
+   /**
+    * 根据一个类及配置获取工厂管理器的实例.
+    *
+    * @param baseClass    初始化的基础类
+    * @param initConfig   初始化的配置
+    * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+    */
    public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
          String initConfig, boolean registry)
    {
       return createClassFactoryManager(baseClass, null, initConfig, null, registry);
    }
 
+   /**
+    * 根据一个类及配置获取工厂管理器的实例.
+    *
+    * @param baseClass    初始化的基础类
+    * @param baseObj      基础类的一个实例
+    * @param initConfig   初始化的配置
+    * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+    */
    public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
          Object baseObj, String initConfig, boolean registry)
    {
       return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
    }
 
+   /**
+    * 根据一个类及配置获取工厂管理器的实例.
+    *
+    * @param baseClass        初始化的基础类
+    * @param baseObj          基础类的一个实例
+    * @param initConfig       初始化的配置
+    * @param parentConfig     初始化的父配置
+    * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+    */
    public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
          Object baseObj, String initConfig, String[] parentConfig, boolean registry)
    {
@@ -296,6 +417,16 @@ public class FactoryManager
       return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig, instanceClass, registry);
    }
 
+   /**
+    * 根据一个类及配置获取工厂管理器的实例.
+    *
+    * @param baseClass        初始化的基础类
+    * @param baseObj          基础类的一个实例
+    * @param initConfig       初始化的配置
+    * @param parentConfig     初始化的父配置
+    * @param instanceClass    工厂管理器的实现类
+    * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+    */
    public static synchronized FactoryManager.Instance createClassFactoryManager(Class baseClass,
          Object baseObj, String initConfig, String[] parentConfig, Class instanceClass, boolean registry)
    {
@@ -388,6 +519,16 @@ public class FactoryManager
       return instance;
    }
 
+   /**
+    * 从工厂管理器的实现类中寻找一个合适的构造函数.
+    *
+    * @param params           出参, 构造类时使用的参数
+    * @param baseClass        初始化的基础类
+    * @param baseObj          基础类的一个实例
+    * @param initConfig       初始化的配置
+    * @param parentConfig     初始化的父配置
+    * @param instanceClass    工厂管理器的实现类
+    */
    private static Constructor findConstructor(Class instanceClass, ObjectRef params, Class baseClass,
          Object baseObj, String initConfig, String[] parentConfig)
    {
@@ -437,11 +578,19 @@ public class FactoryManager
       return constructor;
    }
 
+   /**
+    * (重新)初始化所有的工厂管理器的实例.
+    */
    public static void reInitEterna()
    {
       reInitEterna(null);
    }
 
+   /**
+    * (重新)初始化所有的工厂管理器的实例.
+    *
+    * @param msg        出参, 初始化过程中返回的信息
+    */
    public static synchronized void reInitEterna(StringRef msg)
    {
       current = globeInstance;
@@ -456,40 +605,70 @@ public class FactoryManager
       current = globeInstance;
    }
 
+   /**
+    * 从当前工厂管理器的实例中获取一个工厂实例.
+    *
+    * @param name          工厂的名称
+    * @param className     工厂的实现类名称
+    */
    public static synchronized Factory getFactory(String name, String className)
          throws ConfigurationException
    {
       return current.getFactory(name, className);
    }
 
+   /**
+    * 将一个工厂实例设置到当前工厂管理器的实例中.
+    *
+    * @param name          工厂的名称
+    * @param factory       工厂实例
+    */
    static synchronized void addFactory(String name, Factory factory)
          throws ConfigurationException
    {
       current.addFactory(name, factory);
    }
 
+   /**
+    * 从全局工厂理器的实例中获取一个EternaFactory实例.
+    */
    public static EternaFactory getEternaFactory()
          throws ConfigurationException
    {
       return globeInstance.getEternaFactory();
    }
 
+   /**
+    * 获取初始化的缓存.
+    */
    public static Map getInitCache()
    {
       Map cache = (Map) ThreadCache.getInstance().getProperty(ETERNA_INIT_CACHE);
       return cache;
    }
 
+   /**
+    * 设置初始化的缓存.
+    */
    public static void setInitCache(Map cache)
    {
       ThreadCache.getInstance().setProperty(ETERNA_INIT_CACHE, cache);
    }
 
+   /**
+    * 处理配置中的引用信息.
+    */
    private static String resolveLocate(String locate)
    {
       return Utility.resolveDynamicPropnames(locate);
    }
 
+   /**
+    * 根据地址及基础类获取配置的数据流.
+    *
+    * @param locate       配置的地址
+    * @param baseClass    初始化的基础类
+    */
    private static InputStream getConfigStream(String locate, Class baseClass)
          throws IOException
    {
@@ -526,6 +705,9 @@ public class FactoryManager
       }
    }
 
+   /**
+    * 获取xml的解析器.
+    */
    private static Digester createDigester()
    {
       Digester digester = new Digester();
@@ -615,6 +797,9 @@ public class FactoryManager
 
    }
 
+   /**
+    * FactoryManager的实例接口的抽象实现类, 实现了一些公用的方法.
+    */
    public static abstract class AbstractInstance
          implements Instance
    {
@@ -666,7 +851,7 @@ public class FactoryManager
       }
 
       /**
-       * (重新)初始化工厂
+       * (重新)初始化工厂管理器
        * @param msg  存放初始化的返回信息
        */
       public void reInit(StringRef msg)
@@ -987,6 +1172,9 @@ public class FactoryManager
 
    }
 
+   /**
+    * 全局FactoryManager的实例的实现类.
+    */
    private static class GlobeImpl extends AbstractInstance
          implements Instance
    {
@@ -1125,6 +1313,9 @@ public class FactoryManager
 
    }
 
+   /**
+    * 基于类的FactoryManager的实例的实现类.
+    */
    private static class ClassImpl extends AbstractInstance
          implements Instance
    {
@@ -1301,13 +1492,17 @@ public class FactoryManager
 
    }
 
+   /**
+    * 基于类的FactoryManager的实例的实现类, 同时会检测配置是否有更新,
+    * 如果更新过会自动重新初始化.
+    */
    private static class AutoReloadImpl extends ClassImpl
          implements Instance
    {
       private long preInitTime;
       private long preCheckTime;
       private long autoReloadTime;
-      private String[] configs;
+      private ConfigMonitor[] monitors = null;
       private boolean atInitialize = false;
 
       private Map initCache = null;
@@ -1327,34 +1522,31 @@ public class FactoryManager
                }
             }
          }
-         this.configs = new String[tempList.size()];
-         tempList.toArray(this.configs);
+         if (tempList.size() > 0)
+         {
+            this.monitors = new ConfigMonitor[tempList.size()];
+            tempList.toArray(this.monitors);
+         }
          this.autoReloadTime = autoReloadTime < 200 ? 200 : autoReloadTime;
       }
 
-      private String parseFileName(String fileName)
+      private ConfigMonitor parseFileName(String fileName, URL url)
       {
          File file = new File(fileName);
          if (file.isFile())
          {
-            return fileName;
+            return new ConfigMonitor(file);
          }
-         try
+         if (url != null)
          {
-            fileName = URLDecoder.decode(fileName, "UTF-8");
-            file = new File(fileName);
-            if (file.isFile())
-            {
-               return fileName;
-            }
+            return new ConfigMonitor(url);
          }
-         catch (Throwable ex) {}
          return null;
       }
 
       private List getFiles(String config)
       {
-         String temp;
+         ConfigMonitor temp;
          List result = new ArrayList();
          if (config == null)
          {
@@ -1362,7 +1554,7 @@ public class FactoryManager
                   this.baseClass.getName().replace('.', '/') + ".xml");
             if (url != null && "file".equals(url.getProtocol()))
             {
-               temp = this.parseFileName(url.getFile());
+               temp = this.parseFileName(url.getFile(), url);
                if (temp != null)
                {
                   result.add(temp);
@@ -1374,26 +1566,34 @@ public class FactoryManager
             StringTokenizer token = new StringTokenizer(FactoryManager.resolveLocate(config), ";");
             while (token.hasMoreTokens())
             {
-               temp = token.nextToken().trim();
-               if (temp.length() == 0)
+               String tStr = token.nextToken().trim();
+               if (tStr.length() == 0)
                {
                   continue;
                }
-               if (temp.startsWith("cp:"))
+               if (tStr.startsWith("cp:"))
                {
-                  URL url = this.baseClass.getClassLoader().getResource(temp.substring(3));
+                  URL url = this.baseClass.getClassLoader().getResource(tStr.substring(3));
                   if (url != null && "file".equals(url.getProtocol()))
                   {
-                     temp = this.parseFileName(url.getFile());
+                     temp = this.parseFileName(url.getFile(), url);
                      if (temp != null)
                      {
                         result.add(temp);
                      }
                   }
                }
+               else if (tStr.startsWith("http:"))
+               {
+                  try
+                  {
+                     result.add(new URL(tStr));
+                  }
+                  catch (IOException ex) {}
+               }
                else
                {
-                  temp = this.parseFileName(temp);
+                  temp = this.parseFileName(tStr, null);
                   if (temp != null)
                   {
                      result.add(temp);
@@ -1451,13 +1651,12 @@ public class FactoryManager
             }
          }
          if (System.currentTimeMillis() - this.autoReloadTime > this.preCheckTime
-               && this.configs != null)
+               && this.monitors != null)
          {
             boolean needReload = false;
-            for (int i = 0; i < configs.length; i++)
+            for (int i = 0; i < this.monitors.length; i++)
             {
-               File f = new File(this.configs[i]);
-               long lm = f.lastModified();
+               long lm = this.monitors[i].getLastModified();
                if (lm > this.preInitTime)
                {
                   needReload = true;
@@ -1500,6 +1699,61 @@ public class FactoryManager
       {
          this.checkReload();
          return super.getEternaFactory();
+      }
+
+   }
+
+   /**
+    * 配置更新的检测器.
+    */
+   private static class ConfigMonitor
+   {
+      private File configFile = null;
+      private URL configURL = null;
+      private boolean valid = true;
+
+      public ConfigMonitor(File configFile)
+      {
+         this.configFile = configFile;
+      }
+
+      public ConfigMonitor(URL configURL)
+      {
+         this.configURL = configURL;
+      }
+
+      public boolean isValid()
+      {
+         return this.valid;
+      }
+
+      public long getLastModified()
+      {
+         if (this.valid)
+         {
+            try
+            {
+               if (this.configFile == null)
+               {
+                  return this.configURL.openConnection().getLastModified();
+               }
+               else
+               {
+                  return this.configFile.lastModified();
+               }
+            }
+            catch (Throwable ex)
+            {
+               StringBuffer buf = new StringBuffer(128);
+               buf.append("Error in check configFile:[").append(this.configFile)
+                     .append("], configURL:[").append(this.configURL).append("].");
+               log.error(buf, ex);
+               this.configFile = null;
+               this.configURL = null;
+               this.valid = false;
+            }
+         }
+         return 0L;
       }
 
    }

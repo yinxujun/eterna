@@ -22,8 +22,15 @@ import org.apache.commons.digester.RuleSetBase;
 import org.apache.commons.beanutils.MethodUtils;
 import org.xml.sax.Attributes;
 
+/**
+ * 公共的初始化规则集.
+ */
 public class ShareSet extends RuleSetBase
 {
+   public ShareSet()
+   {
+   }
+
    public void addRuleInstances(Digester digester)
    {
       this.addSameCheckRule(digester);

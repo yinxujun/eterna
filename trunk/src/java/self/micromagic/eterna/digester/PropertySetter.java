@@ -11,6 +11,9 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringTool;
 
+/**
+ * 各类属性的设置, 通过PropertySetRule来调用.
+ */
 public abstract class PropertySetter
 {
    protected static final Log log = FactoryManager.log;
@@ -20,46 +23,96 @@ public abstract class PropertySetter
    protected String methodName;
    protected int objectIndex = 0;
 
+   /**
+    * @param methodName     设置属性调用的方法
+    */
    public PropertySetter(String methodName)
    {
       this.methodName = methodName;
    }
 
+   /**
+    * @param methodName     设置属性调用的方法
+    * @param objectIndex    被设置属性对象在堆栈中的索引值
+    */
    public PropertySetter(String methodName, int objectIndex)
    {
       this.methodName = methodName;
       this.objectIndex = objectIndex;
    }
 
+   /**
+    * 设置所属的解析器.
+    */
    public void setDigester(Digester digester)
    {
       this.digester = digester;
    }
 
+   /**
+    * 设置属性对象在堆栈中的索引值.
+    */
    public void setObjectIndex(int index)
    {
       this.objectIndex = index;
    }
 
+   /**
+    * 设置的属性是否必须存在.
+    */
    public abstract boolean isMustExist();
 
+   /**
+    * 准备设置的属性.
+    *
+    * @param namespace      xml配置文件的命名空间
+    * @param name           当前xml元素的名称
+    * @param attributes     当前xml元素的属性集
+    * @return               准备好的属性对象
+    */
    public abstract Object prepareProperty(String namespace, String name, Attributes attributes)
          throws Exception;
 
+   /**
+    * 根据文本内容准备设置的属性.
+    *
+    * @param namespace      xml配置文件的命名空间
+    * @param name           当前xml元素的名称
+    * @param text           当前xml元素的文本对象
+    * @return               准备好的属性对象
+    */
    public Object prepareProperty(String namespace, String name, BodyText text)
          throws Exception
    {
       return null;
    }
 
+   /**
+    * 是否需要xml元素的文本内容.
+    */
    public boolean requireBodyValue()
    {
       return false;
    }
 
+   /**
+    * 将准备好的属性设置到对象中.
+    */
    public abstract void setProperty()
          throws Exception;
 
+   /**
+    * 准备属性并将其设置到对象中. <p>
+    * 其调用的代码如下:
+    * <blockquote><pre>
+    * this.prepareProperty(namespace, name, attributes);
+    * this.setProperty();
+    * </pre></blockquote>
+    *
+    * @param namespace      xml配置文件的命名空间
+    * @param name           当前xml元素的名称
+    * @param attributes     当前xml元素的属性集
+    */
    public void setProperty(String namespace, String name, Attributes attributes)
          throws Exception
    {
@@ -69,36 +122,9 @@ public abstract class PropertySetter
 
 }
 
-class EmptyPropertySetter extends PropertySetter
-{
-   public final static Class[] EMPTY_TYPE = new Class[0];
-   public final static Object[] EMPTY_VALUE = new Object[0];
-
-   public EmptyPropertySetter(String methodName)
-   {
-      super(methodName);
-   }
-
-   public boolean isMustExist()
-   {
-      return false;
-   }
-
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      return null;
-   }
-
-   public void setProperty()
-         throws Exception
-   {
-      Object obj = this.digester.peek(this.objectIndex);
-      MethodUtils.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
-   }
-
-}
-
+/**
+ * 单属性设置的公共类.
+ */
 abstract class SinglePropertySetter extends PropertySetter
 {
    public final static Class[] STRING_TYPE = new Class[]{String.class};
@@ -118,6 +144,11 @@ abstract class SinglePropertySetter extends PropertySetter
     */
    boolean needIntern = true;
 
+   /**
+    * @param attributeName   从xml属性集中获取值的名称
+    * @param methodName      设置属性调用的方法
+    * @param mustExist       xml属性集中是否必须存在需要的值
+    */
    public SinglePropertySetter(String attributeName, String methodName, boolean mustExist)
    {
       super(methodName);
@@ -125,6 +156,11 @@ abstract class SinglePropertySetter extends PropertySetter
       this.mustExist = mustExist;
    }
 
+   /**
+    * @param attributeName   从xml属性集中获取值的名称
+    * @param methodName      设置属性调用的方法
+    * @param defaultValue    xml属性集中不存在在需要的值是使用的默认值
+    */
    public SinglePropertySetter(String attributeName, String methodName, String defaultValue)
    {
       super(methodName);
@@ -133,21 +169,37 @@ abstract class SinglePropertySetter extends PropertySetter
       this.mustExist = false;
    }
 
+   /**
+    * 是否要对获取的字符串进行intern处理.
+    */
    public boolean isNeedIntern()
    {
       return this.needIntern;
    }
 
+   /**
+    * 设置是否要对获取的字符串进行intern处理.
+    */
    public void setNeedIntern(boolean needIntern)
    {
       this.needIntern = needIntern;
    }
 
+   /**
+    * 设置的属性是否必须存在.
+    */
    public boolean isMustExist()
    {
       return this.mustExist;
    }
 
+   /**
+    * 从xml属性集中获取值.
+    *
+    * @param namespace      xml配置文件的命名空间
+    * @param name           当前xml元素的名称
+    * @param attributes     当前xml元素的属性集
+    */
    protected String getValue(String namespace, String name, Attributes attributes)
          throws InvalidAttributesException
    {
@@ -168,6 +220,9 @@ abstract class SinglePropertySetter extends PropertySetter
       return this.needIntern ? StringTool.intern(value) : value;
    }
 
+   /**
+    * 将准备好的属性设置到对象中.
+    */
    public void setProperty()
          throws Exception
    {
@@ -191,6 +246,9 @@ abstract class SinglePropertySetter extends PropertySetter
 
 }
 
+/**
+ * 根据设置的类名构造对象, 并将其设置属性.
+ */
 class ObjectPropertySetter extends SinglePropertySetter
 {
    protected Class classType;
@@ -206,6 +264,9 @@ class ObjectPropertySetter extends SinglePropertySetter
       this.type = new Class[]{this.classType};
    }
 
+   /**
+    * 从xml属性集中(或默认值)获取类名并生成对象.
+    */
    protected void setMyObject(String namespace, String name, Attributes attributes)
          throws Exception
    {
@@ -229,6 +290,9 @@ class ObjectPropertySetter extends SinglePropertySetter
       return this.theObject;
    }
 
+   /**
+    * 设置value属性, 在setProperty方法中会调用此方法生成设置的值.
+    */
    protected void setMyValue()
          throws Exception
    {
@@ -258,6 +322,9 @@ class ObjectPropertySetter extends SinglePropertySetter
    }
 }
 
+/**
+ * 设置Generator生成的属性.
+ */
 class GeneratorPropertySetter extends ObjectPropertySetter
 {
    protected Generator generator;
@@ -306,6 +373,9 @@ class GeneratorPropertySetter extends ObjectPropertySetter
 
 }
 
+/**
+ * 设置从堆栈中获取的属性.
+ */
 class StackPropertySetter extends SinglePropertySetter
 {
    protected Class classType;
@@ -343,6 +413,9 @@ class StackPropertySetter extends SinglePropertySetter
 
 }
 
+/**
+ * 设置String类型的属性.
+ */
 class StringPropertySetter extends SinglePropertySetter
 {
    public StringPropertySetter(String attributeName, String methodName, boolean mustExist)
@@ -381,6 +454,9 @@ class StringPropertySetter extends SinglePropertySetter
 
 }
 
+/**
+ * 设置从body中获取的String类型的属性.
+ */
 class BodyPropertySetter extends StringPropertySetter
 {
    private boolean trimLines = true;
@@ -453,6 +529,9 @@ class BodyPropertySetter extends StringPropertySetter
 
 }
 
+/**
+ * 设置boolean类型的属性.
+ */
 class BooleanPropertySetter extends SinglePropertySetter
 {
    public BooleanPropertySetter(String attributeName, String methodName, boolean mustExist)
@@ -485,7 +564,9 @@ class BooleanPropertySetter extends SinglePropertySetter
 
 }
 
-
+/**
+ * 设置int类型的属性.
+ */
 class IntegerPropertySetter extends SinglePropertySetter
 {
    public IntegerPropertySetter(String attributeName, String methodName, boolean mustExist)
@@ -536,4 +617,36 @@ class IntegerPropertySetter extends SinglePropertySetter
 
 }
 
+/**
+ * 不设置任何属性, 只调用一个无参的方法.
+ */
+class EmptyPropertySetter extends PropertySetter
+{
+   public final static Class[] EMPTY_TYPE = new Class[0];
+   public final static Object[] EMPTY_VALUE = new Object[0];
+
+   public EmptyPropertySetter(String methodName)
+   {
+      super(methodName);
+   }
+
+   public boolean isMustExist()
+   {
+      return false;
+   }
+
+   public Object prepareProperty(String namespace, String name, Attributes attributes)
+         throws Exception
+   {
+      return null;
+   }
+
+   public void setProperty()
+         throws Exception
+   {
+      Object obj = this.digester.peek(this.objectIndex);
+      MethodUtils.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
+   }
+
+}
 

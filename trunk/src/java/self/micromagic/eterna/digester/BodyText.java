@@ -5,8 +5,134 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * xml配置中的body文本对象
+ */
 public class BodyText
 {
+   private static final char NEW_LINE = '\n';
+
+   private List elements = new ArrayList();
+   private int count = 0;
+   private CharElement preElement = null;
+   private String cacheStr = null;
+   private String cacheTrim = null;
+
+   /**
+    * 添加一段字符块.
+    *
+    * @param ch       字符块
+    * @param start    起始位置
+    * @param length   取的字符个数
+    * @return         返回本对象
+    */
+   public BodyText append(char[] ch, int start, int length)
+   {
+      this.append(ch, start, length, true);
+      return this;
+   }
+
+   /**
+    * 添加一段字符块.
+    *
+    * @param ch            字符块
+    * @param start         起始位置
+    * @param length        取的字符个数
+    * @param unbindLine    是否需要将字符块中的每一行拆分开来
+    * @return              返回本对象
+    */
+   BodyText append(char[] ch, int start, int length, boolean unbindLine)
+   {
+      this.cacheStr = null;
+      this.cacheTrim = null;
+      CharElement temp;
+      if (unbindLine)
+      {
+         int preStart = start;
+         int end = start + length;
+         for (int i = start; i < end; i++)
+         {
+            if (ch[i] == BodyText.NEW_LINE)
+            {
+               temp = new CharElement(ch, preStart, i - preStart + 1, this.preElement);
+               this.elements.add(temp);
+               this.preElement = temp;
+               preStart = i + 1;
+            }
+         }
+         if (preStart < end)
+         {
+            temp = new CharElement(ch, preStart, end - preStart, this.preElement);
+            this.elements.add(temp);
+            this.preElement = temp;
+         }
+      }
+      else
+      {
+         this.elements.add(new CharElement(ch, start, length, null));
+         this.preElement = null;
+      }
+      this.count += length;
+      return this;
+   }
+
+   /**
+    * 将文本块转为字符串, 此方法不会去除每一行两边的空格.
+    */
+   public String toString()
+   {
+      if (this.cacheStr == null)
+      {
+         StringBuffer sb = new StringBuffer(this.count);
+         int size = this.elements.size();
+         Iterator itr = this.elements.iterator();
+         for (int i = 0; i < size; i++)
+         {
+            ((CharElement) itr.next()).appendTo(sb);
+         }
+         this.cacheStr = sb.toString();
+      }
+      return this.cacheStr;
+   }
+
+   /**
+    * 将文本块转为字符串, 此方法会去除每一行两边的空格.
+    * 但是最后一行右边的空格不会去除.
+    *
+    * @param noLine     是否将换行符替换为空格
+    */
+   public String trimEveryLineSpace(boolean noLine)
+   {
+      if (this.cacheTrim == null || noLine)
+      {
+         int size = this.elements.size();
+         Iterator itr = this.elements.iterator();
+         int tempCount = 0;
+         for (int i = 0; i < size; i++)
+         {
+            tempCount += ((CharElement) itr.next()).trimSpacelength();
+         }
+         StringBuffer sb = new StringBuffer(tempCount);
+         itr = this.elements.iterator();
+         for (int i = 0; i < size; i++)
+         {
+            ((CharElement) itr.next()).trimSpaceAppendTo(sb, noLine);
+         }
+         if (noLine)
+         {
+            return sb.toString();
+         }
+         else
+         {
+            this.cacheTrim = sb.toString();
+         }
+      }
+      return this.cacheTrim;
+   }
+
+   /**
+    * 文本对象的字符元素
+    */
    private class CharElement
    {
       public final int length;
@@ -142,104 +268,6 @@ public class BodyText
                + (this.endNewLine ? 1 : 0);
       }
 
-   }
-
-   private static final char NEW_LINE = '\n';
-
-   private List elements = new ArrayList();
-
-   private int count = 0;
-
-   private CharElement preElement = null;
-
-   private String cacheStr = null;
-
-   private String cacheTrim = null;
-
-   public BodyText append(char[] ch, int start, int length)
-   {
-      this.append(ch, start, length, true);
-      return this;
-   }
-
-   public BodyText append(char[] ch, int start, int length, boolean unbindLine)
-   {
-      this.cacheStr = null;
-      this.cacheTrim = null;
-      CharElement temp;
-      if (unbindLine)
-      {
-         int preStart = start;
-         int end = start + length;
-         for (int i = start; i < end; i++)
-         {
-            if (ch[i] == BodyText.NEW_LINE)
-            {
-               temp = new CharElement(ch, preStart, i - preStart + 1, this.preElement);
-               this.elements.add(temp);
-               this.preElement = temp;
-               preStart = i + 1;
-            }
-         }
-         if (preStart < end)
-         {
-            temp = new CharElement(ch, preStart, end - preStart, this.preElement);
-            this.elements.add(temp);
-            this.preElement = temp;
-         }
-      }
-      else
-      {
-         this.elements.add(new CharElement(ch, start, length, null));
-         this.preElement = null;
-      }
-      this.count += length;
-      return this;
-   }
-
-   public String toString()
-   {
-      if (this.cacheStr == null)
-      {
-         StringBuffer sb = new StringBuffer(this.count);
-         int size = this.elements.size();
-         Iterator itr = this.elements.iterator();
-         for (int i = 0; i < size; i++)
-         {
-            ((CharElement) itr.next()).appendTo(sb);
-         }
-         this.cacheStr = sb.toString();
-      }
-      return this.cacheStr;
-   }
-
-   public String trimEveryLineSpace(boolean noLine)
-   {
-      if (this.cacheTrim == null || noLine)
-      {
-         int size = this.elements.size();
-         Iterator itr = this.elements.iterator();
-         int tempCount = 0;
-         for (int i = 0; i < size; i++)
-         {
-            tempCount += ((CharElement) itr.next()).trimSpacelength();
-         }
-         StringBuffer sb = new StringBuffer(tempCount);
-         itr = this.elements.iterator();
-         for (int i = 0; i < size; i++)
-         {
-            ((CharElement) itr.next()).trimSpaceAppendTo(sb, noLine);
-         }
-         if (noLine)
-         {
-            return sb.toString();
-         }
-         else
-         {
-            this.cacheTrim = sb.toString();
-         }
-      }
-      return this.cacheTrim;
    }
 
 }

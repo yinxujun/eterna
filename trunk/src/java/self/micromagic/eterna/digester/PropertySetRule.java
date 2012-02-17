@@ -4,12 +4,19 @@ package self.micromagic.eterna.digester;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.Attributes;
 
+/**
+ * 设置对象属性的初始化规则.
+ */
 public class PropertySetRule extends MyRule
 {
    protected PropertySetter[] setters;
    protected PropertySetter singleSetter;
    protected boolean pushStack = true;
 
+   /**
+    * @param setters     需要设置的多个属性
+    * @param pushStack   是否需要将设置的值压入堆栈中, 默认为true
+    */
    public PropertySetRule(PropertySetter[] setters, boolean pushStack)
    {
       this.setters = setters;
@@ -20,16 +27,29 @@ public class PropertySetRule extends MyRule
       }
    }
 
+   /**
+    * @param setter      需要设置的属性
+    * @param pushStack   是否需要将设置的值压入堆栈中, 默认为true
+    */
    public PropertySetRule(PropertySetter setter, boolean pushStack)
    {
       this(new PropertySetter[]{setter}, pushStack);
    }
 
+   /**
+    * @param setter      需要设置的属性
+    */
    public PropertySetRule(PropertySetter setter)
    {
       this(new PropertySetter[]{setter}, true);
    }
 
+   /**
+    * @param attributeName   配置中获取值的属性
+    * @param methodName      设置属性值的方法
+    * @param mustExist       xml属性集中是否必须存在需要的值
+    * @param pushStack       是否需要将设置的值压入堆栈中, 默认为true
+    */
    public PropertySetRule(String attributeName, String methodName,
          boolean mustExist, boolean pushStack)
    {

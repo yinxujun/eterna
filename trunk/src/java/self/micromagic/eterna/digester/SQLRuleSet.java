@@ -26,6 +26,9 @@ import self.micromagic.eterna.sql.impl.UpdateAdapterImpl;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
 
+/**
+ * SQL模块初始化的规则集.
+ */
 public class SQLRuleSet extends RuleSetBase
 {
    public SQLRuleSet()
