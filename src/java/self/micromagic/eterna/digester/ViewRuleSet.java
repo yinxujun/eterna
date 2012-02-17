@@ -25,26 +25,11 @@ import self.micromagic.eterna.view.impl.FunctionImpl;
 import self.micromagic.eterna.view.impl.TR;
 import self.micromagic.eterna.view.impl.ResourceImpl;
 
+/**
+ * view模块初始化的规则集.
+ */
 public class ViewRuleSet extends RuleSetBase
 {
-   public static final String[] ROOT_PATHS = {
-      "eterna-config/factory/objs/view",
-      "eterna-config/factory/objs/typical-replacement",
-      "eterna-config/factory/objs/typical-component",
-   };
-
-   public static boolean checkRoot(String path)
-   {
-      for (int i = 0; i < ROOT_PATHS.length; i++)
-      {
-         if (path.startsWith(ROOT_PATHS[i]))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
-
    public ViewRuleSet()
    {
    }
@@ -537,7 +522,7 @@ public class ViewRuleSet extends RuleSetBase
       public Object prepareProperty(String namespace, String name, Attributes attributes)
             throws Exception
       {
-         if (checkRoot(this.digester.getMatch()))
+         if (StackRule.checkRoot(this.digester.getMatch(), StackRule.VIEW_ROOT_PATHS))
          {
             boolean parentPass = false;
             Object obj = this.digester.peek(this.objectIndex);

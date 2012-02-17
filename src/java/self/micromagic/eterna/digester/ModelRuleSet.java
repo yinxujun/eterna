@@ -21,6 +21,9 @@ import self.micromagic.eterna.model.impl.CheckExecute;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringTool;
 
+/**
+ * model模块初始化的规则集.
+ */
 public class ModelRuleSet extends RuleSetBase
 {
    public ModelRuleSet()

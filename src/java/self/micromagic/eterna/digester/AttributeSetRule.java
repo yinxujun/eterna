@@ -5,10 +5,27 @@ import org.apache.commons.beanutils.MethodUtils;
 import org.xml.sax.Attributes;
 import self.micromagic.util.StringTool;
 
+/**
+ * 设置对象的属性值{key, value}对.
+ */
 public class AttributeSetRule extends MyRule
 {
+   /**
+    * 如果value的属性为<code>$useBodyText</code>, 则需要使用body中的文本作为value值.
+    */
    public static final String USE_BODY_TEXT = "$useBodyText";
+
+   /**
+    * 如果value的属性为<code>$useBodyText.NO_trimLine</code>, 则需要使用body中的文本
+    * 作为value值, 并且不对每一行进行去除两边空格的处理.
+    */
    public static final String USE_BODY_TEXT_NOTRIMLINE = "$useBodyText.NO_trimLine";
+
+   /**
+    * 如果value的属性为<code>$useBodyText.NO_line</code>, 则需要使用body中的文本
+    * 作为value值, 并且将所有的换行替换成空格.
+    */
+   public static final String USE_BODY_TEXT_NOLINE = "$useBodyText.NO_line";
 
    private String method;
    private String attributeNameTag;
@@ -20,7 +37,13 @@ public class AttributeSetRule extends MyRule
    private String bodyValue = null;
    private Object object = null;
    private boolean trimLine = true;
+   private boolean noLine = false;
 
+   /**
+    * 默认的构造函数. <p>
+    * 默认调用的方法名为setAttribute
+    * 默认读取的属性名为name和value
+    */
    public AttributeSetRule()
    {
       this.method = "setAttribute";
@@ -29,6 +52,14 @@ public class AttributeSetRule extends MyRule
       this.valueType = Object.class;
    }
 
+   /**
+    * 定制调用的方法和读取的属性名.
+    *
+    * @param method              调用的方法名
+    * @param attributeNameTag    读取设置名称的属性名
+    * @param attributeValueTag   读取设置值的属性名
+    * @param valueType           设置的值的类型
+    */
    public AttributeSetRule(String method, String attributeNameTag, String attributeValueTag,
          Class valueType)
    {
@@ -56,9 +87,10 @@ public class AttributeSetRule extends MyRule
       this.bodyValue = null;
       this.object = this.digester.peek();
       this.useBodyText = false;
+      this.trimLine = true;
+      this.noLine = false;
       if (USE_BODY_TEXT.equals(this.value))
       {
-         this.trimLine = true;
          this.useBodyText = true;
       }
       else if (USE_BODY_TEXT_NOTRIMLINE.equals(this.value))
@@ -66,12 +98,17 @@ public class AttributeSetRule extends MyRule
          this.trimLine = false;
          this.useBodyText = true;
       }
+      else if (USE_BODY_TEXT_NOLINE.equals(this.value))
+      {
+         this.noLine = true;
+         this.useBodyText = true;
+      }
    }
 
    public void myBody(String namespace, String name, BodyText text)
          throws Exception
    {
-      this.bodyValue = this.trimLine ? text.trimEveryLineSpace(false) : text.toString();
+      this.bodyValue = this.trimLine ? text.trimEveryLineSpace(this.noLine) : text.toString();
    }
 
    public void myEnd(String namespace, String name) throws Exception
@@ -90,7 +127,7 @@ public class AttributeSetRule extends MyRule
       {
          FactoryManager.log.error("Method invoke error. method:" + this.method + "  param:(Stirng, "
                +  this.valueType.getName() + ")  obj:" + this.object.getClass()
-               + "  valuetype:(" + this.name + ", " + this.value + ")");
+               + "  value:(" + this.name + ", " + this.value + ")");
          throw ex;
       }
    }

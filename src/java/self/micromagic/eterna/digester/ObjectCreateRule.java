@@ -7,6 +7,10 @@ import java.util.Map;
 import org.xml.sax.Attributes;
 import self.micromagic.util.Utility;
 
+/**
+ * 生成一个类的实例的初始化规则.
+ * 被生成的类必须有一个无参的构造函数.
+ */
 public class ObjectCreateRule extends MyRule
 {
    public static final Class[] defaultConstructorParamClass = new Class[0];
@@ -16,6 +20,11 @@ public class ObjectCreateRule extends MyRule
    protected String className = null;
    protected Class classType = null;
 
+   /**
+    * @param className           要生成实例的类名, 如果配置中没有指定会将此作为默认值
+    * @param attributeName       配置中哪个属性名指定类名
+    * @param classType           实现的接口类或父类, 生成完后会进行类型检查
+    */
    public ObjectCreateRule(String className, String attributeName, Class classType)
    {
       this.className = className;
@@ -23,6 +32,13 @@ public class ObjectCreateRule extends MyRule
       this.classType = classType;
    }
 
+   /**
+    * 获得要生成实例的类名.
+    *
+    * @param attributeName       配置中哪个属性名指定类名
+    * @param className           要生成实例的类名, 如果配置中没有指定会将此作为默认值
+    * @param attributes          当前xml元素的属性集
+    */
    public static String getClassName(String attributeName, String className, Attributes attributes)
    {
       String realClassName = className;
@@ -37,12 +53,26 @@ public class ObjectCreateRule extends MyRule
       return realClassName;
    }
 
+   /**
+    * 根据指定的类名生成实例. <p>
+    * 在不能生成时会抛出异常.
+    *
+    * @param className    要生成实例的类名
+    */
    public static Object createObject(String className)
          throws ClassNotFoundException, InstantiationException, IllegalAccessException
    {
       return createObject(className, true);
    }
 
+   /**
+    * 根据指定的类名生成实例. <p>
+    * 如果不是必须生成, 在不能生成时返回null.
+    * 如果必须生成, 在不能生成时会抛出异常.
+    *
+    * @param className    要生成实例的类名
+    * @param mustCreate   是否必须生成, 默认为true.
+    */
    public static Object createObject(String className, boolean mustCreate)
          throws ClassNotFoundException, InstantiationException, IllegalAccessException
    {
@@ -79,6 +109,15 @@ public class ObjectCreateRule extends MyRule
       }
    }
 
+   /**
+    * 根据指定的类名生成实例. <p>
+    * 如果不是必须生成, 在不能生成时返回null.
+    * 如果必须生成, 在不能生成时会抛出异常.
+    *
+    * @param className    要生成实例的类名
+    * @param loader       载入类所使用的ClassLoader.
+    * @param mustCreate   是否必须生成, 默认为true.
+    */
    public static Object createObject(String className, ClassLoader loader, boolean mustCreate)
          throws ClassNotFoundException, InstantiationException, IllegalAccessException
    {
@@ -109,6 +148,13 @@ public class ObjectCreateRule extends MyRule
       }
    }
 
+   /**
+    * 检查实例的类型是否符合指定的接口或类, 如果不符合则会抛出异常.
+    *
+    * @param classType                      需要符合的接口或类
+    * @param instance                       被检查的实例
+    * @throws InvalidAttributesException    类型不符合时抛出的异常.
+    */
    public static void checkType(Class classType, Object instance)
          throws InvalidAttributesException
    {

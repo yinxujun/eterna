@@ -18,6 +18,9 @@ import self.micromagic.eterna.search.impl.SearchAdapterImpl;
 import self.micromagic.eterna.search.impl.SearchManagerImpl;
 import self.micromagic.eterna.share.AbstractGenerator;
 
+/**
+ * search模块初始化的规则集.
+ */
 public class SearchRuleSet extends RuleSetBase
 {
    public SearchRuleSet()
