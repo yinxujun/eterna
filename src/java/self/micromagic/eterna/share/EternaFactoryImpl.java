@@ -43,13 +43,14 @@ import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.eterna.view.Resource;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.impl.StringCoderImpl;
 import self.micromagic.util.Utility;
 
 public class EternaFactoryImpl extends AbstractFactory
       implements EternaFactory
 {
-   protected final static Log log = Utility.createLog("eterna");
+   protected final static Log log = Tool.log;
 
    private EternaFactory shareEternaFactory;
    private EternaFactoryImpl sameShare;
@@ -317,6 +318,15 @@ public class EternaFactoryImpl extends AbstractFactory
          // 初始化, string-coder
          ObjectLogRule.setObjName("stringCoder");
          this.stringCoder.initStringCoder(this);
+
+         // 初始化, DataPrinter
+         itr = this.dataPrinterMap.values().iterator();
+         while (itr.hasNext())
+         {
+            DataPrinter dataPrinter = (DataPrinter) itr.next();
+            ObjectLogRule.setObjName("dataPrinter", dataPrinter.getName());
+            dataPrinter.initialize(this);
+         }
 
          // 初始化, Typical Component
          itr = this.typicalComponentMap.values().iterator();
@@ -1087,6 +1097,7 @@ public class EternaFactoryImpl extends AbstractFactory
 
    private String viewGlobalSetting;
    private Map typicalComponentMap = new HashMap();
+   private Map dataPrinterMap = new HashMap();
    private Map functionMap = new HashMap();
    private Map resourceMap = new HashMap();
    private StringCoder defaultStringCoder = new StringCoderImpl();
@@ -1106,6 +1117,37 @@ public class EternaFactoryImpl extends AbstractFactory
          }
       }
       return this.viewGlobalSetting;
+   }
+
+   public DataPrinter getDataPrinter(String name)
+         throws ConfigurationException
+   {
+      DataPrinter result = (DataPrinter) this.dataPrinterMap.get(name);
+      if (result == null && this.shareEternaFactory != null)
+      {
+         result = this.shareEternaFactory.getDataPrinter(name);
+      }
+      return result;
+   }
+
+   public void addDataPrinter(String name, DataPrinter dataPrinter)
+         throws ConfigurationException
+   {
+      if (this.dataPrinterMap.containsKey(name))
+      {
+         if (!FactoryManager.isSuperInit())
+         {
+            log.warn("Duplicate DataPrinter [" + name + "].");
+         }
+      }
+      else if (dataPrinter != null)
+      {
+         if (this.initialized)
+         {
+            dataPrinter.initialize(this);
+         }
+         this.dataPrinterMap.put(name, dataPrinter);
+      }
    }
 
    public Function getFunction(String name)

@@ -308,6 +308,7 @@ public class ModelCallerImpl
       }
       Connection myConn = null;
       boolean executed = false;
+      Object oldHoldedFlag = null;
       switch (tType)
       {
          case ModelAdapter.T_REQUARED:
@@ -332,6 +333,9 @@ public class ModelCallerImpl
          case ModelAdapter.T_HOLD:
             myConn = this.getConnection(model);
             myConn.setAutoCommit(true);
+            // 将原来的链接保持标志保存下来
+            oldHoldedFlag = data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED);
+            data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "0");
             break;
          case ModelAdapter.T_IDLE:
             myConn = this.getConnection(model);
@@ -408,6 +412,13 @@ public class ModelCallerImpl
                this.closeConnection(myConn);
                break;
             case ModelAdapter.T_HOLD:
+               if (!"1".equals(data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED)))
+               {
+                  // 如果数据库链接保存标志不为"1", 表示业务没有接管数据库链接, 这里需要将其释放
+                  this.closeConnection(myConn);
+               }
+               // 恢复原来的链接保持标志
+               data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, oldHoldedFlag);
                break;
             case ModelAdapter.T_IDLE:
                this.closeConnection(myConn);

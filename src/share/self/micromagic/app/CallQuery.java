@@ -17,9 +17,8 @@ import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
-import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 import self.micromagic.eterna.sql.impl.QueryAdapterImpl;
-import self.micromagic.eterna.sql.impl.ResultRowImpl;
+import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 
 public class CallQuery extends QueryAdapterImpl
 {
@@ -87,7 +86,7 @@ public class CallQuery extends QueryAdapterImpl
          }
          call.execute();
 
-         CustomResultIterator critr = new CustomResultIterator(readerList);
+         CustomResultIterator critr = new CustomResultIterator(rm, this.getPermission0());
          if (readerList.size() > 0)
          {
             Object[] values = new Object[readerList.size()];
@@ -101,7 +100,7 @@ public class CallQuery extends QueryAdapterImpl
                   values[i] = reader.readCall(call, index);
                }
             }
-            critr.addRow(new ResultRowImpl(values, critr, rm, this.getPermission0()));
+            critr.createRow(values, true);
          }
          critr.addedOver();
          result = critr;

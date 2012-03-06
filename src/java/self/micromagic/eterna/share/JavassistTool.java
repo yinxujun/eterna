@@ -16,7 +16,6 @@ import self.micromagic.util.Utility;
 
 class JavassistTool
 {
-
    /**
     * bean处理类的id
     */
@@ -35,10 +34,14 @@ class JavassistTool
     * @return                    返回相应的处理类
     */
    static Object createBeanProcesser(Class beanClass, Class interfaceClass, String methodHead,
-         String beanParamName, String unitTemplate, String primitiveTemplate, String[] imports)
+         String beanParamName, String unitTemplate, String primitiveTemplate, String linkTemplate,
+         String[] imports)
          throws NotFoundException, CannotCompileException, InstantiationException, IllegalAccessException
    {
-      javassist.ClassPool pool = ClassPool.getDefault();
+      ClassPool pool = ClassPool.getDefault();
+      pool.appendClassPath(new ClassClassPath(beanClass));
+      pool.appendClassPath(new ClassClassPath(interfaceClass));
+      pool.appendClassPath(new ClassClassPath(JavassistTool.class));
       String namePrefix = "eterna.bp_" + (BEAN_PROCESSER_ID++) + ".";
       CtClass cc = pool.makeClass(namePrefix + beanClass.getName());
       cc.addInterface(pool.get(interfaceClass.getName()));
@@ -54,12 +57,18 @@ class JavassistTool
       function.append(methodHead).append("\n{\n");
       function.append(beanClass.getName()).append(" beanObj = (")
             .append(beanClass.getName()).append(") ").append(beanParamName).append(";\n");
+      boolean first = true;
 
       Map dataMap = new HashMap();
 
       Field[] fields = Tool.getBeanFields(beanClass);
       for (int i = 0; i < fields.length; i++)
       {
+         if (!first)
+         {
+            function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap)).append("\n");
+         }
+         first = false;
          dataMap.clear();
          Field f = fields[i];
          dataMap.put("name", f.getName());
@@ -71,6 +80,7 @@ class JavassistTool
             dataMap.put("primitive", pType);
             dataMap.put("u_primitive", Character.toUpperCase(pType.charAt(0)) + pType.substring(1));
             dataMap.put("value", "String.valueOf(beanObj." + f.getName() + ")");
+            dataMap.put("o_value", "beanObj." + f.getName());
             function.append(Utility.resolveDynamicPropnames(primitiveTemplate, dataMap)).append("\n");
          }
          else
@@ -82,12 +92,13 @@ class JavassistTool
       Method[] methods = Tool.getBeanMethods(beanClass);
       for (int i = 0; i < methods.length; i++)
       {
-         Method m = methods[i];
-         String fname = m.getName();
-         if (fname.length() > 3)
+         if (!first)
          {
-            fname = Character.toLowerCase(fname.charAt(3)) + fname.substring(4);
+            function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap)).append("\n");
          }
+         first = false;
+         Method m = methods[i];
+         String fname = Tool.getBeanAttrName(m.getName());
          dataMap.put("name", m.getName());
          dataMap.put("l_name", fname);
          dataMap.put("type", "method");
@@ -97,6 +108,7 @@ class JavassistTool
             dataMap.put("primitive", pType);
             dataMap.put("u_primitive", Character.toUpperCase(pType.charAt(0)) + pType.substring(1));
             dataMap.put("value", "String.valueOf(beanObj." + m.getName() + "())");
+            dataMap.put("o_value", "beanObj." + m.getName() + "()");
             function.append(Utility.resolveDynamicPropnames(primitiveTemplate, dataMap)).append("\n");
          }
          else

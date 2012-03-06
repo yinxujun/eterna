@@ -3,34 +3,24 @@ package self.micromagic.eterna.view.impl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Array;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.search.SearchAdapter;
-import self.micromagic.eterna.search.SearchManager;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.sql.ResultIterator;
-import self.micromagic.eterna.sql.ResultMetaData;
-import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.eterna.view.BaseManager;
 import self.micromagic.eterna.view.Component;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.Function;
+import self.micromagic.eterna.view.Resource;
 import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
-import self.micromagic.eterna.view.Resource;
 import self.micromagic.util.MemoryChars;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
@@ -48,6 +38,9 @@ public class ViewAdapterImpl extends AbstractGenerator
    protected String beforeInit;
    protected String initScript;
    protected String dynamicViewRes;
+   protected String defaultDataType = DATA_TYPE_WEB;
+   protected String dataPrinterName = DEFAULT_DATA_PRINTER_NAME;
+   protected DataPrinter dataPrinter;
 
    private ViewAdapterGenerator.ModifiableViewRes viewRes = new ModifiableViewResImpl();
 
@@ -62,8 +55,14 @@ public class ViewAdapterImpl extends AbstractGenerator
       {
          this.initialized = true;
 
-         this.dynamicViewRes = BaseManager.dealScriptPart(
-               this.viewRes, this.dynamicViewRes, BaseManager.GRAMMER_TYPE_NONE, factory);
+         this.dynamicViewRes = ViewTool.dealScriptPart(
+               this.viewRes, this.dynamicViewRes, ViewTool.GRAMMER_TYPE_NONE, factory);
+         this.dataPrinter = factory.getDataPrinter(this.dataPrinterName);
+         if (this.dataPrinter == null)
+         {
+            throw new ConfigurationException("Not found DataPrinter [" + this.dataPrinterName
+                  + "] in view [" + this.getName() + "].");
+         }
 
          Iterator componentItr = this.getComponents();
          while (componentItr.hasNext())
@@ -72,15 +71,15 @@ public class ViewAdapterImpl extends AbstractGenerator
             com.initialize(factory, null);
             this.viewRes.addAll(com.getViewRes());
          }
-         this.beforeInit = BaseManager.dealScriptPart(
-               this.viewRes, this.beforeInit, BaseManager.GRAMMER_TYPE_EXPRESSION, factory);
-         this.initScript = BaseManager.dealScriptPart(
-               this.viewRes, this.initScript, BaseManager.GRAMMER_TYPE_EXPRESSION, factory);
+         this.beforeInit = ViewTool.dealScriptPart(
+               this.viewRes, this.beforeInit, ViewTool.GRAMMER_TYPE_EXPRESSION, factory);
+         this.initScript = ViewTool.dealScriptPart(
+               this.viewRes, this.initScript, ViewTool.GRAMMER_TYPE_EXPRESSION, factory);
 
          this.stringCoder = factory.getStringCoder();
          this.viewGlobalSetting = this.getFactory().getViewGlobalSetting();
-         this.viewGlobalSetting = BaseManager.dealScriptPart(
-               this.viewRes, this.viewGlobalSetting, BaseManager.GRAMMER_TYPE_JSON, factory);
+         this.viewGlobalSetting = ViewTool.dealScriptPart(
+               this.viewRes, this.viewGlobalSetting, ViewTool.GRAMMER_TYPE_JSON, factory);
 
          // 这里需要新建一个set, 因为执行过程中会改变原来的数据集
          Set typicalSet = new HashSet(this.viewRes.getTypicalComponentNames());
@@ -122,6 +121,32 @@ public class ViewAdapterImpl extends AbstractGenerator
    public ViewAdapter.ViewRes getViewRes()
    {
       return this.viewRes;
+   }
+
+   public void setDataPrinterName(String dpName)
+   {
+      this.dataPrinterName = dpName;
+   }
+
+   public DataPrinter getDataPrinter()
+   {
+      return this.dataPrinter;
+   }
+
+   public void setDefaultDataType(String type)
+   {
+      this.defaultDataType = type;
+   }
+
+   public String getDefaultDataType()
+   {
+      return this.defaultDataType;
+   }
+
+   public String getDataType(AppData data)
+   {
+      String dt = data.getRequestParameter(DATA_TYPE);
+      return dt == null ? this.defaultDataType : dt;
    }
 
    public int getDebug()
@@ -270,7 +295,7 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write("function(");
          out.write(fn.getParam());
          out.write("){try{");
-         out.write("return eternaData.eFns[\"_ef_");
+         out.write("return $E.F[\"_ef_");
          out.write(this.stringCoder.toJsonString(key));
          out.write("\"](");
          out.write(fn.getParam());
@@ -278,7 +303,7 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write("if (eterna_debug >= ED_FN_CALLED){");
          out.write("eterna_fn_stack.push(new Array(\"");
          out.write(this.stringCoder.toJsonString(key));
-         out.write("\", eternaData.eFns[\"_ef_");
+         out.write("\", $E.F[\"_ef_");
          out.write(this.stringCoder.toJsonString(key));
          out.write("\"]");
          String[] params = StringTool.separateString(fn.getParam(), ",", true);
@@ -305,7 +330,7 @@ public class ViewAdapterImpl extends AbstractGenerator
       }
    }
 
-   public void printResource(Writer out, String name, Resource resource)
+   protected void printResource(Writer out, String name, Resource resource)
          throws IOException, ConfigurationException
    {
       out.write("\"");
@@ -313,7 +338,7 @@ public class ViewAdapterImpl extends AbstractGenerator
       out.write("\":");
       out.write("function(){");
       out.write("var resArray = ");
-      this.printIterator(out, resource.getParsedRessource());
+      this.dataPrinter.printIterator(out, resource.getParsedRessource());
       out.write(";return eterna_getResourceValue(resArray, arguments);");
       out.write("}");
    }
@@ -321,36 +346,52 @@ public class ViewAdapterImpl extends AbstractGenerator
    public void printView(Writer out, AppData data)
          throws IOException, ConfigurationException
    {
-      String dataType = data.getRequestParameter(DATA_TYPE);
-      boolean webData = !DATA_TYPE_ONLYRECORD.equalsIgnoreCase(dataType);
+      String dataType = this.getDataType(data);
+      boolean webData = true;
+      boolean restData = false;
+      if (DATA_TYPE_DATA.equals(dataType))
+      {
+         webData = false;
+      }
+      else if (DATA_TYPE_REST.equals(dataType))
+      {
+         webData = false;
+         restData = true;
+      }
 
       out.write("{");
 
       if (webData)
       {
-         out.write("global:{");
+         out.write("G:{");
          out.write(this.getFactory().getViewGlobalSetting());
          out.write("},\n");
       }
 
-      out.write("records:{");
-      out.write("root:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(data.contextRoot));
-      out.write("\"");
-      out.write(",modelNameTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(this.getFactory().getModelNameTag()));
-      out.write("\"");
-      if (data.modelName != null)
+      if (!restData)
       {
-         out.write(",modelName:");
+         out.write("D:{");
+         out.write("root:");
          out.write("\"");
-         out.write(this.stringCoder.toJsonString(data.modelName));
+         out.write(this.stringCoder.toJsonString(data.contextRoot));
          out.write("\"");
+         out.write(",modelNameTag:");
+         out.write("\"");
+         out.write(this.stringCoder.toJsonString(this.getFactory().getModelNameTag()));
+         out.write("\"");
+         if (data.modelName != null)
+         {
+            out.write(",modelName:");
+            out.write("\"");
+            out.write(this.stringCoder.toJsonString(data.modelName));
+            out.write("\"");
+         }
       }
-      this.printDataMap(out, data.dataMap);
-      out.write("}");
+      this.dataPrinter.printData(out, data.dataMap, !restData);
+      if (!restData)
+      {
+         out.write("}");
+      }
 
       if (webData)
       {
@@ -380,7 +421,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                      }
                   }
 
-                  out.write(",\nview:[");
+                  out.write(",\nV:[");
                   Iterator itr = this.getComponents();
                   while (itr.hasNext())
                   {
@@ -413,7 +454,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                   data.setSpcialDataMap(USED_TYPICAL_COMPONENTS, typical);
                   if (typical != null)
                   {
-                     out.write(",\ntypical:{");
+                     out.write(",\nT:{");
                      this.printTypical(out, data, typical, null);
                      out.write("}");
                   }
@@ -421,7 +462,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                   Map fnMap = (Map) data.getSpcialData(VIEW_CACHE, DYNAMIC_FUNCTIONS);
                   if (fnMap != null)
                   {
-                     BaseManager.putAllFunction(fnMap, this.viewRes.getFunctionMap());
+                     ViewTool.putAllFunction(fnMap, this.viewRes.getFunctionMap());
                   }
                   else
                   {
@@ -430,7 +471,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                   Iterator entrys = fnMap.entrySet().iterator();
                   if (fnMap.size() > 0)
                   {
-                     out.write(",\neFns:{");
+                     out.write(",\nF:{");
                      boolean hasFunction = false;
                      while (entrys.hasNext())
                      {
@@ -465,7 +506,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                   if (resourceSet.size() > 0)
                   {
                      Iterator resources = resourceSet.iterator();
-                     out.write(",\nres:{");
+                     out.write(",\nR:{");
                      boolean hasResource = false;
                      while (resources.hasNext())
                      {
@@ -571,335 +612,6 @@ public class ViewAdapterImpl extends AbstractGenerator
             this.printTypical(out, data, newTypical, allMap);
          }
       }
-   }
-
-   private void printDataMap(Writer out, Map data)
-         throws IOException, ConfigurationException
-   {
-      Iterator entrys = data.entrySet().iterator();
-      while (entrys.hasNext())
-      {
-         Map.Entry entry = (Map.Entry) entrys.next();
-         String key = (String) entry.getKey();
-         Object value = entry.getValue();
-         if (value != null)
-         {
-            // 输出dataMap时，需要先输出","，因为前面会有其它数据
-            out.write(",\"");
-            out.write(this.stringCoder.toJsonString(key));
-            out.write("\":");
-            this.printObject(out, value);
-         }
-      }
-   }
-
-   private void printMap(Writer out, Map data)
-         throws IOException, ConfigurationException
-   {
-      Iterator entrys = data.entrySet().iterator();
-      while (entrys.hasNext())
-      {
-         Map.Entry entry = (Map.Entry) entrys.next();
-         String key = (String) entry.getKey();
-         Object value = entry.getValue();
-         if (value != null)
-         {
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(key));
-            out.write("\":");
-            this.printObject(out, value);
-         }
-         if (value != null && entrys.hasNext())
-         {
-            out.write(",");
-         }
-      }
-   }
-
-   private void printObject(Writer out, Object value)
-         throws IOException, ConfigurationException
-   {
-      try
-      {
-         if (value instanceof ResultRow)
-         {
-            out.write("{");
-            ResultRow row = (ResultRow) value;
-            ResultMetaData rmd = row.getResultIterator().getMetaData();
-            int count = rmd.getColumnCount();
-            boolean firstSetted = false;
-            for (int i = 1; i <= count; i++)
-            {
-               if (rmd.getColumnReader(i).isValid())
-               {
-                  if (firstSetted)
-                  {
-                     out.write(",");
-                  }
-                  firstSetted = true;
-                  out.write("\"");
-                  out.write(this.stringCoder.toJsonString(rmd.getColumnName(i)));
-                  out.write("\":\"");
-                  out.write(this.stringCoder.toJsonString(row.getFormated(i)));
-                  out.write("\"");
-               }
-            }
-            out.write("}");
-         }
-         else if (value instanceof SearchManager)
-         {
-            SearchManager sm = (SearchManager) value;
-            Iterator itr = sm.getConditions().iterator();
-            boolean hasValue = false;
-            out.write("{");
-            while (itr.hasNext())
-            {
-               SearchManager.Condition con = (SearchManager.Condition) itr.next();
-               if (con.value != null)
-               {
-                  if (hasValue)
-                  {
-                     out.write(",");
-                  }
-                  hasValue = true;
-                  out.write("\"");
-                  out.write(this.stringCoder.toJsonString(con.name));
-                  out.write("\":\"");
-                  out.write(this.stringCoder.toJsonString(con.value));
-                  out.write("\"");
-               }
-            }
-            out.write("}");
-         }
-         else if (value instanceof ResultIterator)
-         {
-            out.write("{");
-            this.printResultIterator(out, (ResultIterator) value);
-            out.write("}");
-         }
-         else if (value instanceof Collection)
-         {
-            this.printCollection(out, (Collection) value);
-         }
-         else if (value instanceof SearchAdapter.Result)
-         {
-            out.write("{");
-            SearchAdapter.Result result = (SearchAdapter.Result) value;
-            this.printResultIterator(out, result.queryResult);
-            out.write(",pageNum:");
-            out.write(String.valueOf(result.pageNum));
-            out.write(",pageSize:");
-            out.write(String.valueOf(result.pageSize));
-            out.write(",searchName:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(result.searchName));
-            out.write("\"");
-            if (result.queryResult.isRealRecordCountAvailable())
-            {
-               out.write(",totalCount:");
-               out.write(String.valueOf(result.queryResult.getRealRecordCount()));
-            }
-            if (result.singleOrderName != null)
-            {
-               out.write(",orderName:");
-               out.write("\"");
-               out.write(this.stringCoder.toJsonString(result.singleOrderName));
-               out.write("\"");
-               out.write(",orderDesc:");
-               out.write(result.singleOrderDesc ? "1" : "0");
-            }
-            out.write(",hasNextPage:");
-            out.write(result.queryResult.isHasMoreRecord() ? "1" : "0");
-            out.write("}");
-         }
-         else if (value instanceof SearchManager.Attributes)
-         {
-            out.write("{");
-            this.printSearchAttributes(out, (SearchManager.Attributes) value);
-            out.write("}");
-         }
-         else if (value instanceof String)
-         {
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString((String) value));
-            out.write("\"");
-         }
-         else if (value instanceof Number || value instanceof Boolean)
-         {
-            out.write(value.toString());
-         }
-         else if (value instanceof Map)
-         {
-            out.write("{");
-            this.printMap(out, (Map) value);
-            out.write("}");
-         }
-         else if (value.getClass().isArray())
-         {
-            try
-            {
-               this.printCollection(out, Arrays.asList((Object[]) value));
-            }
-            catch (ClassCastException cce)
-            {
-               int length = Array.getLength(value);
-               ArrayList arr = new ArrayList(length);
-               for (int i = 0; i < length; i++)
-               {
-                  arr.add(Array.get(value, i));
-               }
-               this.printIterator(out, arr.iterator());
-            }
-         }
-         else
-         {
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(value.toString()));
-            out.write("\"");
-         }
-      }
-      catch (SQLException ex)
-      {
-         log.error("SQL error in printObject.", ex);
-         throw new ConfigurationException(ex);
-      }
-   }
-
-   private void printSearchAttributes(Writer out, SearchManager.Attributes sma)
-         throws IOException
-   {
-      out.write("pageNumTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.pageNumTag));
-      out.write("\"");
-      out.write(",pageSizeTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.pageSizeTag));
-      out.write("\"");
-      out.write(",querySettingTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.querySettingTag));
-      out.write("\"");
-      out.write(",queryTypeClear:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeClear));
-      out.write("\"");
-      out.write(",queryTypeReset:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeReset));
-      out.write("\"");
-      out.write(",queryTypeTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeTag));
-      out.write("\"");
-   }
-
-   private void printCollection(Writer out, Collection collection)
-         throws IOException, ConfigurationException
-   {
-      if (collection.size() > 0)
-      {
-         /*
-         这里去掉的对第一个元素是否是ResultRow的判断, 因为ResultIterator中
-         增加了copy方法, 可以生成副本. 这样就不需要复制到List中了.
-         Object obj = collection.iterator().next();
-         if (obj instanceof ResultRow)
-         {
-            ResultRow row = (ResultRow) obj;
-            ResultMetaData rmd = row.getResultIterator().getMetaData();
-            // 由于结果集对象是在外部加"{}"对，所以对于Collection的结果集
-            // 需要在这里加"{}"对。
-            out.write("{");
-            this.printIterator(out, collection.iterator(), rmd, collection.size());
-            out.write("}");
-         }
-         else
-         */
-         {
-            this.printIterator(out, collection.iterator());
-         }
-      }
-      else
-      {
-         out.write("[]");
-      }
-   }
-
-   private void printResultIterator(Writer out, ResultIterator ritr)
-         throws IOException, ConfigurationException, SQLException
-   {
-      this.printIterator(out ,ritr, ritr.getMetaData(), ritr.getRecordCount());
-   }
-
-   private void printIterator(Writer out, Iterator itr)
-         throws IOException, ConfigurationException
-   {
-      out.write("[");
-      while (itr.hasNext())
-      {
-         Object value = itr.next();
-         if (value != null)
-         {
-            this.printObject(out, value);
-         }
-         else
-         {
-            out.write("null");
-         }
-         if (itr.hasNext())
-         {
-            out.write(",");
-         }
-      }
-      out.write("]");
-   }
-
-   private void printIterator(Writer out, Iterator itr, ResultMetaData rmd, int recordCount)
-         throws IOException, ConfigurationException, SQLException
-   {
-      int count = rmd.getColumnCount();
-      out.write("names:{");
-      boolean firstSetted = false;
-      for (int i = 1; i <= count; i++)
-      {
-         if (rmd.getColumnReader(i).isValid())
-         {
-            if (firstSetted)
-            {
-               out.write(",");
-            }
-            firstSetted = true;
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(rmd.getColumnName(i)));
-            out.write("\":");
-            out.write(String.valueOf(i));
-         }
-      }
-      out.write("}");
-      out.write(",rowCount:");
-      out.write(String.valueOf(recordCount));
-      out.write(",rows:[");
-      while (itr.hasNext())
-      {
-         ResultRow row = (ResultRow) itr.next();
-         out.write("[");
-         for (int i = 1; i <= count; i++)
-         {
-            if (i > 1)
-            {
-               out.write(",");
-            }
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(row.getFormated(i)));
-            out.write("\"");
-         }
-         out.write("]");
-         if (itr.hasNext())
-         {
-            out.write(",");
-         }
-      }
-      out.write("]");
    }
 
    public ViewAdapter createViewAdapter()

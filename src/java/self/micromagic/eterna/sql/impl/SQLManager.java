@@ -10,9 +10,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.Tool;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.util.StringTool;
-import self.micromagic.util.Utility;
 
 public class SQLManager
 {
@@ -37,7 +37,7 @@ public class SQLManager
    public static final char TEMPLATE_BEGIN = '[';
    public static final char TEMPLATE_END = ']';
 
-   protected static final Log log = Utility.createLog("eterna");
+   protected static final Log log = Tool.log;
 
 
    private PartSQL[] partSQLs = new PartSQL[0];

@@ -122,7 +122,7 @@ public abstract class AbstractTable extends ComponentImpl
    {
       if (nowSub.getSrcName() == null && typical.getSrcName() != null)
       {
-         if (BaseManager.TYPICAL_SAME_AS_NAME.equals(typical.getSrcName()))
+         if (ViewTool.TYPICAL_SAME_AS_NAME.equals(typical.getSrcName()))
          {
             nowSub.setSrcName(nowSub.getName());
          }
@@ -135,7 +135,7 @@ public abstract class AbstractTable extends ComponentImpl
       if (nowSub.getCaption() == null && typical.getCaption() != null && typical.getCaption().length() > 0)
       {
          // 对于标题, 必须不为空字符串才可设置
-         if (BaseManager.TYPICAL_SAME_AS_NAME.equals(typical.getCaption()))
+         if (ViewTool.TYPICAL_SAME_AS_NAME.equals(typical.getCaption()))
          {
             nowSub.setCaption(nowSub.getName());
          }
@@ -169,12 +169,12 @@ public abstract class AbstractTable extends ComponentImpl
          }
          else
          {
-            nowSub.setBeforeInit(BaseManager.addParentScript(nowSub.getBeforeInit(), typical.getBeforeInit()));
+            nowSub.setBeforeInit(ViewTool.addParentScript(nowSub.getBeforeInit(), typical.getBeforeInit()));
          }
       }
       if (typical.getInitScript() != null)
       {
-         nowSub.setInitScript(BaseManager.addParentScript(nowSub.getInitScript(), typical.getInitScript()));
+         nowSub.setInitScript(ViewTool.addParentScript(nowSub.getInitScript(), typical.getInitScript()));
       }
       if (!nowSub.ignoreGlobalContainerParamSetted && typical.isIgnoreGlobalContainerParam())
       {
@@ -376,7 +376,7 @@ public abstract class AbstractTable extends ComponentImpl
          {
             return true;
          }
-         if (BaseManager.TYPICAL_NAME.equals(name))
+         if (ViewTool.TYPICAL_NAME.equals(name))
          {
             return true;
          }
@@ -478,7 +478,7 @@ public abstract class AbstractTable extends ComponentImpl
          }
          if (this.getTypicalComponent() != null)
          {
-            String idName = BaseManager.createTypicalComponentName(data, this.getTypicalComponent());
+            String idName = ViewTool.createTypicalComponentName(data, this.getTypicalComponent());
             out.write(",typicalComponent:");
             out.write("\"");
             out.write(this.stringCoder.toJsonString(idName));
@@ -611,14 +611,14 @@ public abstract class AbstractTable extends ComponentImpl
          if (this.viewRes == null)
          {
             this.viewRes = super.getModifiableViewRes();
-            this.titleParam = BaseManager.dealScriptPart(
-                  this.viewRes, this.titleParam, BaseManager.GRAMMER_TYPE_JSON, this.getFactory());
-            this.initParam = BaseManager.dealScriptPart(
-                  this.viewRes, this.initParam, BaseManager.GRAMMER_TYPE_JSON, this.getFactory());
-            this.caption = BaseManager.dealScriptPart(
-                  this.viewRes, this.caption, BaseManager.GRAMMER_TYPE_NONE, this.getFactory());
-            this.defaultValue = BaseManager.dealScriptPart(
-                  this.viewRes, this.defaultValue, BaseManager.GRAMMER_TYPE_NONE, this.getFactory());
+            this.titleParam = ViewTool.dealScriptPart(
+                  this.viewRes, this.titleParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
+            this.initParam = ViewTool.dealScriptPart(
+                  this.viewRes, this.initParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
+            this.caption = ViewTool.dealScriptPart(
+                  this.viewRes, this.caption, ViewTool.GRAMMER_TYPE_NONE, this.getFactory());
+            this.defaultValue = ViewTool.dealScriptPart(
+                  this.viewRes, this.defaultValue, ViewTool.GRAMMER_TYPE_NONE, this.getFactory());
             if (this.typicalComponent != null)
             {
                this.viewRes.addAll(this.typicalComponent.getViewRes());

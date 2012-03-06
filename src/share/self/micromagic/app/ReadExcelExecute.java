@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.Format;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.text.Format;
 
 import jxl.BooleanCell;
 import jxl.Cell;
@@ -34,7 +34,6 @@ import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.impl.ResultReaders;
-import self.micromagic.eterna.sql.impl.ResultRowImpl;
 import self.micromagic.util.Utility;
 
 public class ReadExcelExecute extends AbstractExecute
@@ -184,7 +183,7 @@ public class ReadExcelExecute extends AbstractExecute
             book = Workbook.getWorkbook(in, ws);
          }
          Sheet sheet = book.getSheet(this.sheetIndex);
-         CustomResultIterator eri = new CustomResultIterator(this.readerManager.getReaderList());
+         CustomResultIterator eri = new CustomResultIterator(this.readerManager, null);
          CustomResultIterator errorList = null;
          int errorCount = 0;
          Map errorMap = null;
@@ -253,7 +252,7 @@ public class ReadExcelExecute extends AbstractExecute
                         values[j] = cell.getContents();
                         if (errorList == null)
                         {
-                           errorList = new CustomResultIterator(this.readerManager.getReaderList());
+                           errorList = new CustomResultIterator(this.readerManager, null);
                            errorMap = new HashMap();
                         }
                         hasError = true;
@@ -275,13 +274,12 @@ public class ReadExcelExecute extends AbstractExecute
             }
             if (!allEmpty || !this.skipEmptyRow)
             {
-               ResultRow rr = new ResultRowImpl(values, eri, this.readerManager, null);
+               ResultRow rr = eri.createRow(values);;
                if (hasError)
                {
-                  errorList.addRow(new ResultRowImpl(values, errorList, this.readerManager, null));
+                  errorList.addRow(rr);
                   errorCount++;
                }
-               eri.addRow(rr);
             }
          }
          eri.addedOver();

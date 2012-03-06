@@ -29,6 +29,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.container.RequestParameterMap;
@@ -37,7 +38,7 @@ public class AppData
 {
    public static final String APP_LOG_PROPERTY = "self.micromagic.eterna.app.logType";
    public static final String CACHE_NAME = "self.micromagic.eterna.model.APP_DATA";
-   public static final Log log = Utility.createLog("eterna");
+   public static final Log log = Tool.log;
 
    public static final int POSITION_NONE = 0;
    public static final int POSITION_ALL = -1;

@@ -49,8 +49,8 @@ public class FunctionImpl extends AbstractGenerator
       if (this.viewRes == null)
       {
          this.viewRes = new ModifiableViewResImpl();
-         this.scriptBody = BaseManager.dealScriptPart(
-               this.viewRes, this.scriptBody, BaseManager.GRAMMER_TYPE_EXPRESSION, this.getFactory());
+         this.scriptBody = ViewTool.dealScriptPart(
+               this.viewRes, this.scriptBody, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
       }
       return this.viewRes;
    }

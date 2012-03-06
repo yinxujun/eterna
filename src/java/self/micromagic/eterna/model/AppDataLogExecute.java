@@ -10,14 +10,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.dom4j.Element;
 import org.apache.commons.collections.ReferenceMap;
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.search.SearchAdapter;
@@ -96,49 +95,50 @@ public class AppDataLogExecute extends AbstractExecute
    /**
     * BeanPrinter生成
     */
-   private static Map beanPrinterMap = new HashMap();
+   private static Map beanPrinterMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
    private static BeanPrinter getBeanPrinter(Class beanClass)
    {
-      try
+      BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+      if (bp == null)
       {
-         Map bpMap = (Map) beanPrinterMap.get(beanClass.getName());
          synchronized (beanPrinterMap)
          {
-            if (bpMap == null)
-            {
-               bpMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
-               beanPrinterMap.put(beanClass.getName(), bpMap);
-            }
-            BeanPrinter bp = (BeanPrinter) bpMap.get(beanClass);
+            // 再获取一次, 如果其他线程已处理了, 这里就不用做了
+            bp = (BeanPrinter) beanPrinterMap.get(beanClass);
             if (bp == null)
             {
-               String mh = "public void print(AppDataLogExecute$Printer p,"
-                     + " Element parent, Object value) throws Exception";
-               String ut = "Element nowNode = parent.addElement(\"${type}\");"
-                     + "nowNode.addAttribute(\"name\", \"${l_name}\");"
-                     + "p.printObject(nowNode, ${value});";
-               String pt = "Element nowNode = parent.addElement(\"${type}\");"
-                     + "nowNode.addAttribute(\"name\", \"${l_name}\");"
-                     + "nowNode.addAttribute(\"type\", \"${u_primitive}\");"
-                     + "nowNode.addAttribute(\"value\", ${value});";
-               String[] imports = new String[]{
-                  AppDataLogExecute.class.getPackage().getName(),
-                  Element.class.getPackage().getName(),
-                  beanClass.getPackage().getName()
-               };
-               bp = (BeanPrinter) Tool.createBeanProcesser(
-                     beanClass, BeanPrinter.class, mh, "value", ut, pt, imports);
-               if (bp == null)
+               try
+               {
+                  String mh = "public void print(AppDataLogExecute$Printer p,"
+                        + " Element parent, Object value) throws Exception";
+                  String ut = "Element nowNode = parent.addElement(\"${type}\");"
+                        + "nowNode.addAttribute(\"name\", \"${l_name}\");"
+                        + "p.printObject(nowNode, ${value});";
+                  String pt = "Element nowNode = parent.addElement(\"${type}\");"
+                        + "nowNode.addAttribute(\"name\", \"${l_name}\");"
+                        + "nowNode.addAttribute(\"type\", \"${primitive}\");"
+                        + "nowNode.addAttribute(\"value\", ${value});";
+                  String[] imports = new String[]{
+                     AppDataLogExecute.class.getPackage().getName(),
+                     Element.class.getPackage().getName(),
+                     beanClass.getPackage().getName()
+                  };
+                  bp = (BeanPrinter) Tool.createBeanProcesser(
+                        beanClass, BeanPrinter.class, mh, "value", ut, pt, "", imports);
+                  if (bp == null)
+                  {
+                     bp = new BeanPrinterImpl(beanClass);
+                  }
+               }
+               catch (Throwable ex)
                {
                   bp = new BeanPrinterImpl(beanClass);
                }
-               bpMap.put(beanClass, bp);
             }
-            return bp;
+            beanPrinterMap.put(beanClass, bp);
          }
       }
-      catch (Throwable ex) {}
-      return new BeanPrinterImpl(beanClass);
+      return bp;
    }
 
    public static interface BeanPrinter

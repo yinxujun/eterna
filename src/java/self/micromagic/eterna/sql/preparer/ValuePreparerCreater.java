@@ -2,16 +2,24 @@
 package self.micromagic.eterna.sql.preparer;
 
 /**
- * Created by IntelliJ IDEA.
- * User: micromagic
- * Date: 2009-3-3
- * Time: 11:06:07
- * To change this template use Options | File Templates.
+ * 值准备器的创建者.
  */
 public abstract class ValuePreparerCreater
 {
+   /**
+    * 根据一个Object类型的值创建一个值准备器.
+    *
+    * @param value    值
+    * @return      值准备器
+    */
    public abstract ValuePreparer createPreparer(Object value);
 
+   /**
+    * 根据一个String类型的值创建一个值准备器.
+    *
+    * @param value    值
+    * @return      值准备器
+    */
    public abstract ValuePreparer createPreparer(String value);
 
 }

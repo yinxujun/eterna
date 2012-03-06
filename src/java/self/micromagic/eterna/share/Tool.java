@@ -12,16 +12,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.Jdk14Factory;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * 一些辅助工具
+ * 框架中需要用到的一些公共方法.
  */
 public class Tool
 {
+   public static final Log log = Utility.createLog("eterna");
+
    public static final String CAPTION_TRANSLATE_TAG = "caption.translate";
    public static final String CAPTION_TRANSLATE_MAP_TAG = "caption.translate.map";
    public static final String CAPTION_TRANSLATE_MAP_FACTORY_TAG = "caption.translate.map.factory";
@@ -113,12 +116,12 @@ public class Tool
    private static Set beanClassNameSet = new HashSet();
 
    /**
-    * 注册作为bean的类, 多个类名之间用";"隔开
+    * 注册作为bean的类, 多个类名之间用","或";"隔开
     */
    public static void registerBean(String classNames)
    {
       String[] names = StringTool.separateString(
-            Utility.resolveDynamicPropnames(classNames), ";", true);
+            Utility.resolveDynamicPropnames(classNames), ",;", true);
       for (int i = 0; i < names.length; i++)
       {
          beanClassNameSet.add(names[i]);
@@ -189,6 +192,34 @@ public class Tool
       return (Method[]) result.toArray(new Method[0]);
    }
 
+   /**
+    * 将bean类中的一个方法名转换成属性名称
+    */
+   public static String getBeanAttrName(String methodName)
+   {
+      if (methodName.length() > 3)
+      {
+         if (methodName.substring(0, 3).equalsIgnoreCase("get"))
+         {
+            if (methodName.length() == 4)
+            {
+               return Character.toLowerCase(methodName.charAt(3)) + "";
+            }
+            boolean upperCase = false;
+            for (int i = 4; i < methodName.length() && i < 6; i++)
+            {
+               if (!Character.isUpperCase(methodName.charAt(i)))
+               {
+                  upperCase = false;
+               }
+            }
+            return upperCase ? methodName.substring(3)
+               : Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+         }
+      }
+      return methodName;
+   }
+
    private static int CBP_LOG_TYPE = 0;
    public static void setCreateBeanPrinterLogType(String type)
    {
@@ -217,22 +248,24 @@ public class Tool
     * @param beanParamName       bean参数的名称
     * @param unitTemplate        单元代码模板
     * @param primitiveTemplate   基本类型单元代码模板
+    * @param linkTemplate        两个类型单元之间的连接模板
     * @param imports             要引入的包
     * @return                    返回相应的处理类
     */
    public static Object createBeanProcesser(Class beanClass, Class interfaceClass, String methodHead,
-         String beanParamName, String unitTemplate, String primitiveTemplate, String[] imports)
+         String beanParamName, String unitTemplate, String primitiveTemplate, String linkTemplate,
+         String[] imports)
    {
       try
       {
          return JavassistTool.createBeanProcesser(beanClass, interfaceClass, methodHead,
-               beanParamName, unitTemplate, primitiveTemplate, imports);
+               beanParamName, unitTemplate, primitiveTemplate, linkTemplate, imports);
       }
       catch (Throwable ex)
       {
          if (CBP_LOG_TYPE == 1)
          {
-            EternaFactoryImpl.log.error("Error in createBeanPrinter.", ex);
+            log.error("Error in createBeanPrinter.", ex);
          }
          return null;
       }

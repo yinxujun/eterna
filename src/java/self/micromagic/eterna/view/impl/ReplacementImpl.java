@@ -365,10 +365,10 @@ public class ReplacementImpl extends ComponentImpl
       }
 
       String parentScript = base.getBeforeInit();
-      this.beforeInit = BaseManager.addParentScript(this.beforeInit, parentScript);
+      this.beforeInit = ViewTool.addParentScript(this.beforeInit, parentScript);
 
       parentScript = base.getInitScript();
-      this.initScript = BaseManager.addParentScript(this.initScript, parentScript);
+      this.initScript = ViewTool.addParentScript(this.initScript, parentScript);
    }
 
    public Map getDirectMatchMap()
@@ -387,7 +387,7 @@ public class ReplacementImpl extends ComponentImpl
    {
       if (this.linkTypical)
       {
-         String idName = BaseManager.createTypicalComponentName(data, this.baseComponent);
+         String idName = ViewTool.createTypicalComponentName(data, this.baseComponent);
          out.write(",typicalComponent:");
          out.write("\"");
          out.write(this.stringCoder.toJsonString(idName));
