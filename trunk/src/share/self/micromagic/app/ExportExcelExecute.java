@@ -77,13 +77,9 @@ public class ExportExcelExecute extends AbstractExportExecute
       }
       finally
       {
-         // 如果transactionType为hold, 要自行管理数据库链接的释放
-         if (ritr == null && this.holdConnection)
+         if (ritr != null)
          {
-            conn.close();
-         }
-         else
-         {
+            // 这里可能是需要接管数据库链接, 所以使用完后需要自行释放
             ritr.close();
          }
          if (out != null)

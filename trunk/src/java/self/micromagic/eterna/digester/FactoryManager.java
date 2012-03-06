@@ -32,6 +32,7 @@ import self.micromagic.eterna.share.EternaFactoryImpl;
 import self.micromagic.eterna.share.EternaInitialize;
 import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.Utility;
 import self.micromagic.util.ObjectRef;
@@ -58,7 +59,7 @@ import self.micromagic.coder.Base64;
  */
 public class FactoryManager
 {
-   public static final Log log = Utility.createLog("eterna");
+   public static final Log log = Tool.log;
 
    /**
     * 要进行全局初始化的文件列表.
@@ -714,7 +715,7 @@ public class FactoryManager
 
       // Register our local copy of the DTDs that we can find
       URL url = FactoryManager.class.getClassLoader().getResource(
-            "self/micromagic/eterna/digester/eterna_1_4.dtd");
+            "self/micromagic/eterna/digester/eterna_1_5.dtd");
       digester.register("eterna", url.toString());
 
       digester.addRuleSet(new ShareSet());

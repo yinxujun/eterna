@@ -16,6 +16,7 @@ import self.micromagic.eterna.view.TableListGenerator;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.eterna.view.Function;
 import self.micromagic.eterna.view.Resource;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.impl.ComponentImpl;
 import self.micromagic.eterna.view.impl.ReplacementImpl;
 import self.micromagic.eterna.view.impl.TableFormImpl;
@@ -24,6 +25,7 @@ import self.micromagic.eterna.view.impl.ViewAdapterImpl;
 import self.micromagic.eterna.view.impl.FunctionImpl;
 import self.micromagic.eterna.view.impl.TR;
 import self.micromagic.eterna.view.impl.ResourceImpl;
+import self.micromagic.eterna.view.impl.DataPrinterImpl;
 
 /**
  * view模块初始化的规则集.
@@ -53,6 +55,8 @@ public class ViewRuleSet extends RuleSetBase
 
       setters = new PropertySetter[] {
          new StringPropertySetter("name", "setName", true),
+         new StringPropertySetter("dataPrinterName", "setDataPrinterName", false),
+         new StringPropertySetter("defaultDataType", "setDefaultDataType", false),
          new StringPropertySetter("width", "setWidth", false),
          new StringPropertySetter("height", "setHeight", false),
          new StringPropertySetter("beforeInit", "setBeforeInit", false, false),
@@ -80,6 +84,22 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("eterna-config/factory/string-coder", new PropertySetRule(setter));
       digester.addRule("eterna-config/factory/string-coder",
             new ObjectLogRule("name", "StringCoder"));
+
+
+      //--------------------------------------------------------------------------------
+      // 构造DataPrinter
+      setter = new GeneratorPropertySetter("generator", "addDataPrinter",
+            DataPrinterImpl.class.getName(), DataPrinter.class, true);
+      digester.addRule("eterna-config/factory/objs/data-printer",
+            new PropertySetRule(setter));
+
+      setter = new StringPropertySetter("name", "setName", true);
+      digester.addRule("eterna-config/factory/objs/data-printer",
+            new PropertySetRule(setter, false));
+      digester.addRule("eterna-config/factory/objs/data-printer",
+            new ObjectLogRule("name", "DataPrinter"));
+      digester.addRule("eterna-config/factory/objs/data-printer/attribute",
+            new AttributeSetRule());
 
 
       //--------------------------------------------------------------------------------

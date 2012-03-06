@@ -24,6 +24,7 @@ import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.eterna.view.Function;
 import self.micromagic.eterna.view.Resource;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.ModelAdapter;
@@ -332,6 +333,21 @@ public interface EternaFactory extends Factory
    public static final String VIEW_GLOBAL_SETTING = "view.global.setting";
 
    String getViewGlobalSetting() throws ConfigurationException;
+
+   /**
+    * 获得一个数据集输出器.
+    *
+    * @param name       数据集输出器的名称.
+    */
+   DataPrinter getDataPrinter(String name) throws ConfigurationException;
+
+   /**
+    * 设置一个数据集输出器.
+    *
+    * @param name            数据集输出器的名称.
+    * @param dataPrinter     要设置的数据集输出器.
+    */
+   void addDataPrinter(String name, DataPrinter dataPrinter) throws ConfigurationException;
 
    Function getFunction(String name) throws ConfigurationException;
 

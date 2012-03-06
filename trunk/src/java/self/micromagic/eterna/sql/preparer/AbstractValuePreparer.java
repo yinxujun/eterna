@@ -2,12 +2,12 @@
 package self.micromagic.eterna.sql.preparer;
 
 import org.apache.commons.logging.Log;
-import self.micromagic.util.Utility;
+import self.micromagic.eterna.share.Tool;
 
 public abstract class AbstractValuePreparer
       implements ValuePreparer
 {
-   protected static final Log log = Utility.createLog("eterna");
+   protected static final Log log = Tool.log;
 
    protected int index;
    protected String name;

@@ -18,9 +18,18 @@ public interface ModelAdapter
    public static final String MODEL_CACHE = "model.cache";
 
    /**
-    * model缓存中存储preConn的名称.
+    * model缓存中存储当前正在使用的数据库链接的名称.
     */
    public static final String PRE_CONN = "preConn";
+
+   /**
+    * model缓存中存储业务是否已接管了数据库链接的控制权. <p>
+    * 设置样例:
+    * data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
+    *
+    * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
+    */
+   public static final String CONN_HOLDED = "connHolded";
 
    /**
     * 设置需前置执行的model.

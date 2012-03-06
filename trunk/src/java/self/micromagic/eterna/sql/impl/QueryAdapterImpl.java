@@ -30,6 +30,7 @@ import self.micromagic.eterna.sql.converter.StreamConverter;
 import self.micromagic.eterna.sql.converter.ReaderConverter;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
+import self.micromagic.eterna.model.ModelAdapter;
 import org.dom4j.Element;
 
 public class QueryAdapterImpl extends AbstractQueryAdapter
@@ -91,6 +92,8 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
          }
          List readerList = this.getReaderManager0(rs).getReaderList(this.getPermission0());
          result = new ResultSetIteratorImpl(conn, stmt, rs, this.getReaderManager0(null), readerList);
+         // 查询执行完成, 表示已接管了数据库链接的控制, 可以设置链接接管标志
+         AppData.getCurrentData().addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
          return result;
       }
       catch (ConfigurationException ex)

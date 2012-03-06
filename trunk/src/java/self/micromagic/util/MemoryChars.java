@@ -186,7 +186,7 @@ public class MemoryChars
       }
       catch (Exception ex)
       {
-         Utility.createLog("micromagic").error("Error in create file:" + this.diskCacheFile + ".", ex);
+         Utility.createLog("io").error("Error in create file:" + this.diskCacheFile + ".", ex);
       }
       this.inMemory = false;
       this.blockList = null;

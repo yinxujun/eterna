@@ -14,6 +14,11 @@ import self.micromagic.eterna.share.EternaFactory;
 public interface ViewAdapter
 {
    /**
+    * 默认的数据集输出器的名称
+    */
+   public static final String DEFAULT_DATA_PRINTER_NAME = "dataPrinter";
+
+   /**
     * 基本的debug等级, 这个等级之上的debug才会输出信息
     */
    public static final int ETERNA_VIEW_DEBUG_BASE = 0x10;
@@ -42,7 +47,7 @@ public interface ViewAdapter
     * BaseManager.addDynamicFunction(Map)
     *
     * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    * @see    self.micromagic.eterna.view.BaseManager#addDynamicFunction(Map)
+    * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicFunction(Map)
     */
    public static final String DYNAMIC_FUNCTIONS = "dynamic.functions";
 
@@ -53,7 +58,7 @@ public interface ViewAdapter
     * BaseManager.addDynamicResourceName(String)
     *
     * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    * @see    self.micromagic.eterna.view.BaseManager#addDynamicResourceName(String)
+    * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicResourceName(String)
     */
    public static final String DYNAMIC_RESOURCE_NAMES = "dynamic.resource.names";
 
@@ -67,12 +72,45 @@ public interface ViewAdapter
     */
    public static final String TYPICAL_COMPONENTS_MAP = "TypicalComponents_MAP";
 
-   public static final String DATA_TYPE = "dataType";
-   public static final String DATA_TYPE_ONLYRECORD = "onlyRecord";
+
+   /**
+    * 通过参数设置dataType值使用的名称.
+    */
+   public static final String DATA_TYPE = "___dataType";
+
+   /**
+    * 仅需要输出数据部分的数据类型.
+    * @deprecated
+    */
+   public static final String DATA_TYPE_ONLYRECORD = "data";
+
+   /**
+    * 仅需要输出数据部分的数据类型.
+    */
+   public static final String DATA_TYPE_DATA = "data";
+
+   /**
+    * 去除框架的数据结构, 仅保留数据部分, 可以作为REST的返回值.
+    */
+   public static final String DATA_TYPE_REST = "REST";
+
+   /**
+    * 输出框架结构的所有数据.
+    */
    public static final String DATA_TYPE_ALL = "all";
+
+   /**
+    * 输出展现的页面.
+    */
    public static final String DATA_TYPE_WEB = "web";
 
    String getName() throws ConfigurationException;
+
+   DataPrinter getDataPrinter() throws ConfigurationException;
+
+   String getDefaultDataType() throws ConfigurationException;
+
+   String getDataType(AppData data) throws ConfigurationException;
 
    EternaFactory getFactory() throws ConfigurationException;
 

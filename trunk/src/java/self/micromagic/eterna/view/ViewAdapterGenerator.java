@@ -8,6 +8,10 @@ public interface ViewAdapterGenerator extends AdapterGenerator
 {
    void setName(String name) throws ConfigurationException;
 
+   void setDataPrinterName(String dpName) throws ConfigurationException;
+
+   void setDefaultDataType(String type) throws ConfigurationException;
+
    void setDynamicViewRes(String res) throws ConfigurationException;
 
    void addComponent(Component com) throws ConfigurationException;

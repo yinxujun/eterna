@@ -307,12 +307,12 @@ public class ComponentImpl extends AbstractGenerator
       if (this.viewRes == null)
       {
          this.viewRes = new ModifiableViewResImpl();
-         this.beforeInit = BaseManager.dealScriptPart(
-               this.viewRes, this.beforeInit, BaseManager.GRAMMER_TYPE_EXPRESSION, this.getFactory());
-         this.initScript = BaseManager.dealScriptPart(
-               this.viewRes, this.initScript, BaseManager.GRAMMER_TYPE_EXPRESSION, this.getFactory());
-         this.componentParam = BaseManager.dealScriptPart(
-               this.viewRes, this.componentParam, BaseManager.GRAMMER_TYPE_JSON, this.getFactory());
+         this.beforeInit = ViewTool.dealScriptPart(
+               this.viewRes, this.beforeInit, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
+         this.initScript = ViewTool.dealScriptPart(
+               this.viewRes, this.initScript, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
+         this.componentParam = ViewTool.dealScriptPart(
+               this.viewRes, this.componentParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
 
          Iterator eventItr = this.getEvents();
          while (eventItr.hasNext())
@@ -398,10 +398,10 @@ public class ComponentImpl extends AbstractGenerator
          if (this.viewRes == null)
          {
             this.viewRes = new ModifiableViewResImpl();
-            this.scriptBody = BaseManager.dealScriptPart(
-                  this.viewRes, this.scriptBody, BaseManager.GRAMMER_TYPE_EXPRESSION, this.getComponent().getFactory());
-            this.param = BaseManager.dealScriptPart(
-                  this.viewRes, this.param, BaseManager.GRAMMER_TYPE_NONE, this.getComponent().getFactory());
+            this.scriptBody = ViewTool.dealScriptPart(
+                  this.viewRes, this.scriptBody, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getComponent().getFactory());
+            this.param = ViewTool.dealScriptPart(
+                  this.viewRes, this.param, ViewTool.GRAMMER_TYPE_NONE, this.getComponent().getFactory());
          }
          return this.viewRes;
       }

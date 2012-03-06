@@ -27,6 +27,7 @@ abstract public class AbstractResultSetIterator
 
    private boolean hasNext = false;
    private boolean isMovedNext = false;
+   private boolean closed = false;
 
    public AbstractResultSetIterator(Connection conn, Statement stmt, ResultSet rs)
    {
@@ -165,13 +166,18 @@ abstract public class AbstractResultSetIterator
    public void close()
          throws SQLException
    {
+      if (this.closed)
+      {
+         return;
+      }
       this.resultSet.close();
       this.stmt.close();
       this.conn.close();
       if (log.isDebugEnabled())
       {
-         log.debug("I am free:" + this.hashCode());
+         log.debug("I am closed [" + this.hashCode() + "].");
       }
+      this.closed = true;
    }
 
    public ResultIterator copy()
@@ -210,7 +216,7 @@ abstract public class AbstractResultSetIterator
 
    public void run()
    {
-      while (true)
+      while (!this.closed)
       {
          try
          {

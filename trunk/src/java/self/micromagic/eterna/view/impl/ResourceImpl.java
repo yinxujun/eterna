@@ -35,7 +35,7 @@ public class ResourceImpl extends AbstractGenerator
          return;
       }
       this.estimateResSize = this.text.length() + 32;
-      List resCelllist = BaseManager.parseResourceText(this.trimText(this.text));
+      List resCelllist = ViewTool.parseResourceText(this.trimText(this.text));
       List rList = new LinkedList();
       this.parseResCell(resCelllist, rList);
       this.resArray = rList.toArray();

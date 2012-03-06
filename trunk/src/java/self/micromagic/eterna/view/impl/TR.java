@@ -71,7 +71,7 @@ public class TR extends ComponentImpl
          else
          {
             String parentScript = this.baseComponent.getBeforeInit();
-            this.beforeInit = BaseManager.addParentScript(this.beforeInit, parentScript);
+            this.beforeInit = ViewTool.addParentScript(this.beforeInit, parentScript);
          }
          if (this.initScript == null)
          {
@@ -80,14 +80,14 @@ public class TR extends ComponentImpl
          else
          {
             String parentScript = this.baseComponent.getInitScript();
-            this.initScript = BaseManager.addParentScript(this.initScript, parentScript);
+            this.initScript = ViewTool.addParentScript(this.initScript, parentScript);
          }
       }
       else
       {
          this.baseComponent = null;
-         this.beforeInit = BaseManager.addParentScript(this.beforeInit, null);
-         this.initScript = BaseManager.addParentScript(this.initScript, null);
+         this.beforeInit = ViewTool.addParentScript(this.beforeInit, null);
+         this.initScript = ViewTool.addParentScript(this.initScript, null);
       }
 
       if (this.tableType == TABLE_TAYE_LIST && this.beforeInit == null)

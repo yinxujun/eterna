@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_4.dtd">
+<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_5.dtd">
 
 <!--
 一些公用方法及组件
@@ -1239,14 +1239,7 @@
             {
                if (typeof objs == "string" && objs == "reloadView")
                {
-                  for (var key in eternaData)
-                  {
-                     eternaData[key] = null;
-                  }
-                  for (var key in tmpData)
-                  {
-                     eternaData[key] = tmpData[key];
-                  }
+                  _eterna.changeEternaData(tmpData);
                   eg_temp = {};
                   _eterna.reInit();
                }
@@ -1286,7 +1279,7 @@
             recall: 重载完成后调用的回调函数
          -->
          <function name="reload" param="formObj, modelName, objs, datas, async, recall"><![CDATA[
-            var url = {$ef:getHeadURL}(modelName, EG_DATA_TYPE_ONLYRECORD);
+            var url = {$ef:getHeadURL}(modelName, EG_DATA_TYPE_DATA);
             if (typeof objs == "string" && objs == "reloadView")
             {
                url = {$ef:getHeadURL}(modelName, EG_DATA_TYPE_ALL);

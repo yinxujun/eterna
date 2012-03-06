@@ -157,8 +157,8 @@ public class TableFormImpl extends AbstractTable
          if (!settedTypical && tmp instanceof CellGenerator)
          {
             CellGenerator c = (CellGenerator) tmp;
-            c.setBeforeInit(BaseManager.addParentScript(tmp.getBeforeInit(), null));
-            c.setInitScript(BaseManager.addParentScript(tmp.getInitScript(), null));
+            c.setBeforeInit(ViewTool.addParentScript(tmp.getBeforeInit(), null));
+            c.setInitScript(ViewTool.addParentScript(tmp.getInitScript(), null));
          }
 
          if (tmp.getCaption() == null && tmp instanceof CellGenerator)
@@ -288,7 +288,7 @@ public class TableFormImpl extends AbstractTable
    public void addCell(Cell cell)
          throws ConfigurationException
    {
-      if (BaseManager.TYPICAL_NAME.equals(cell.getName()))
+      if (ViewTool.TYPICAL_NAME.equals(cell.getName()))
       {
          this.typicalCell = cell;
       }

@@ -66,7 +66,7 @@ public class ModifiableViewResImpl
       Function oldFn = (Function) this.functionMap.get(fName);
       if (oldFn != null && oldFn != fn)
       {
-         BaseManager.log.error("Duplicate function name:[" + fName + "] when add it.");
+         ViewTool.log.error("Duplicate function name:[" + fName + "] when add it.");
       }
       if (oldFn == null)
       {
@@ -89,7 +89,7 @@ public class ModifiableViewResImpl
          }
          this.functionMap = new HashMap(2);
       }
-      BaseManager.putAllFunction(this.functionMap, fnMap);
+      ViewTool.putAllFunction(this.functionMap, fnMap);
    }
 
    public void addTypicalComponentNames(String name)

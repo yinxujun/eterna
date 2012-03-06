@@ -147,8 +147,8 @@ public class TableListImpl extends AbstractTable
          if (!settedTypical && tmp instanceof ColumnGenerator)
          {
             ColumnGenerator col = (ColumnGenerator) tmp;
-            col.setBeforeInit(BaseManager.addParentScript(tmp.getBeforeInit(), null));
-            col.setInitScript(BaseManager.addParentScript(tmp.getInitScript(), null));
+            col.setBeforeInit(ViewTool.addParentScript(tmp.getBeforeInit(), null));
+            col.setInitScript(ViewTool.addParentScript(tmp.getInitScript(), null));
          }
 
          if (tmp.getCaption() == null && tmp instanceof ColumnGenerator)
@@ -240,7 +240,7 @@ public class TableListImpl extends AbstractTable
    public void addColumn(Column column)
          throws ConfigurationException
    {
-      if (BaseManager.TYPICAL_NAME.equals(column.getName()))
+      if (ViewTool.TYPICAL_NAME.equals(column.getName()))
       {
          this.typicalColumn = column;
       }
@@ -302,7 +302,7 @@ public class TableListImpl extends AbstractTable
    public static class ColumnImpl extends Sub
          implements Column, ColumnGenerator
    {
-      private static final String DEFAULT_BINIT = "/*DBI*/ checkResult=false;checkResult=eternaData.records[eg_temp.dataName].names[eg_temp.srcName]!=null;";
+      private static final String DEFAULT_BINIT = "/*DBI*/ checkResult=false;checkResult=$E.D[eg_temp.dataName].names[eg_temp.srcName]!=null;";
       private int width = -1;
       private boolean defaultBeforeInit = false;
 
