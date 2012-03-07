@@ -128,9 +128,6 @@ var EG_TEMP_NAMES = [
    "rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
    "name", "caption", "valueObj", "param", "tempData"
 ];
-var EG_ED_TRANS_NAMES = {
-   G:"global", D:"records", V:"view", T:"typical", F:"eFns", R:"res"
-};
 
 var eg_temp = {};
 
@@ -140,8 +137,9 @@ var eg_defaultWidth = 80;
 
 function Eterna($E, eterna_debug, rootWebObj)
 {
-   this.eternaData = eternaData;
-   this.$E = {};
+   $E = eterna_checkEternaData($E);
+   this.$E = $E;
+   this.eternaData = this.$E;
    var eternaData = this.$E;
 
    this.eterna_debug = eterna_debug;
@@ -237,6 +235,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             return;
          }
+         newData = eterna_checkEternaData(newData);
          for (var key in this.$E)
          {
             this.$E[key] = null;
@@ -244,10 +243,6 @@ function Eterna($E, eterna_debug, rootWebObj)
          for (var key in newData)
          {
             this.$E[key] = newData[key];
-            if (EG_ED_TRANS_NAMES[key] != null)
-            {
-               this.$E[EG_ED_TRANS_NAMES[key]] = newData[key];
-            }
          }
       }
 
@@ -2349,8 +2344,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 
    }
 
-   this.changeEternaData($E);
-
 
    if (this.eterna_debug >= ED_FN_CALLED)
    {
@@ -2658,6 +2651,41 @@ function Eterna($E, eterna_debug, rootWebObj)
 
    }
 
+}
+
+// 检查框架的数据是否合法, 不完整的将会补充完整, 并且在数据结构上与老版本兼容
+var EG_ED_COMPATIBLE_NAMES = {
+   G:"global", D:"records", V:"view", T:"typical", F:"eFns", R:"res"
+};
+function eterna_checkEternaData($E)
+{
+   if ($E == null)
+   {
+      $E = {G:{},D:{},V:[]};
+   }
+   else
+   {
+      if ($E.G == null)
+      {
+         $E.G = {};
+      }
+      if ($E.D == null)
+      {
+         $E.D = {};
+      }
+      if ($E.V == null)
+      {
+         $E.V = [];
+      }
+   }
+   for (var key in $E)
+   {
+      if (EG_ED_COMPATIBLE_NAMES[key] != null && $E[EG_ED_COMPATIBLE_NAMES[key]] == null)
+      {
+         $E[EG_ED_COMPATIBLE_NAMES[key]] = $E[key];
+      }
+   }
+   return $E;
 }
 
 // 添加一个需要等待初始化的对象
