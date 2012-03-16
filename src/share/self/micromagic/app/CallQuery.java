@@ -86,7 +86,8 @@ public class CallQuery extends QueryAdapterImpl
          }
          call.execute();
 
-         CustomResultIterator critr = new CustomResultIterator(rm, this.getPermission0());
+         self.micromagic.util.CustomResultIterator critr
+               = new self.micromagic.util.CustomResultIterator(rm, this.getPermission0());
          if (readerList.size() > 0)
          {
             Object[] values = new Object[readerList.size()];
@@ -100,9 +101,9 @@ public class CallQuery extends QueryAdapterImpl
                   values[i] = reader.readCall(call, index);
                }
             }
-            critr.createRow(values, true);
+            critr.createRow(values);
          }
-         critr.addedOver();
+         critr.finishCreateRow();
          result = critr;
          return critr;
       }

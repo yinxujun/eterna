@@ -22,18 +22,43 @@ public class ParamBindImpl extends AbstractGenerator
       implements ParamBind, ParamBindGenerator
 {
    protected ParamSetManager.Name[] names = null;
-   protected String paramSrc;
-
-   protected boolean mapBind = false;
-   protected int mapIndex = -1;
-   protected boolean popStack = false;
-   protected int peekIndex = -1;
-   protected int cacheIndex = -1;
+   protected DataHandler srcHandler = new DataHandler("src", false, true);
 
    protected boolean loop = false;
    protected boolean subSQL = false;
 
-   public void initialize(ModelAdapter model, Execute execute) {}
+   public void initialize(ModelAdapter model, Execute execute)
+         throws ConfigurationException
+   {
+      if (this.loop && this.names == null)
+      {
+         log.info("Because not give the attribute names, so set loop = false.");
+         this.loop = false;
+      }
+      if (this.subSQL)
+      {
+         if (this.names == null || this.names.length == 0)
+         {
+            log.warn("Because not give the sub index at attribute names, so set names = 1.");
+            this.names = new ParamSetManager.Name[]{new ParamSetManager.Name("1", "1")};
+         }
+         else
+         {
+            for (int i = 0; i < this.names.length; i++)
+            {
+               try
+               {
+                  Integer.parseInt(this.names[i].sqlName);
+               }
+               catch (Exception ex)
+               {
+                  throw new ConfigurationException("When set sub SQL, names must be number. but the "
+                        + (i + 1) + " name is [" + this.names[i].sqlName +  "].");
+               }
+            }
+         }
+      }
+   }
 
    public boolean isLoop()
    {
@@ -58,95 +83,7 @@ public class ParamBindImpl extends AbstractGenerator
    public void setSrc(String theSrc)
          throws ConfigurationException
    {
-      this.paramSrc = theSrc;
-
-      for (int i = 0; i < AppData.MAP_NAMES.length; i++)
-      {
-         if (AppData.MAP_NAMES[i].equals(theSrc))
-         {
-            this.mapIndex = i;
-            this.mapBind = true;
-            return;
-         }
-      }
-      for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
-      {
-         if (AppData.MAP_SHORT_NAMES[i].equals(theSrc))
-         {
-            this.mapIndex = i;
-            this.mapBind = true;
-            return;
-         }
-      }
-      if (theSrc != null)
-      {
-         if (theSrc.startsWith("stack"))
-         {
-            this.mapIndex = -1;
-            this.mapBind = false;
-            this.popStack = true;
-            if (theSrc.length() > 5)
-            {
-               if (theSrc.charAt(5) == ':')
-               {
-                  String tmp = theSrc.substring(6);
-                  if ("pop".equals(tmp))
-                  {
-                     return;
-                  }
-                  if (tmp.startsWith("peek"))
-                  {
-                     this.popStack = false;
-                     this.peekIndex = 0;
-                     if (tmp.length() > 4)
-                     {
-                        if (tmp.charAt(4) == '-')
-                        {
-                           try
-                           {
-                              this.peekIndex = Integer.parseInt(tmp.substring(5));
-                              return;
-                           }
-                           catch (NumberFormatException ex) {}
-                        }
-                     }
-                     else
-                     {
-                        return;
-                     }
-                  }
-               }
-            }
-            else
-            {
-               return;
-            }
-         }
-         else if (theSrc.startsWith("cache"))
-         {
-            this.mapIndex = -1;
-            this.mapBind = false;
-            this.cacheIndex = 0;
-            if (theSrc.length() > 5)
-            {
-               if (theSrc.charAt(5) == ':')
-               {
-                  String tmp = theSrc.substring(6);
-                  try
-                  {
-                     this.cacheIndex = Integer.parseInt(tmp);
-                     return;
-                  }
-                  catch (NumberFormatException ex) {}
-               }
-            }
-            else
-            {
-               return;
-            }
-         }
-      }
-      throw new ConfigurationException("Error bind src:" + theSrc + ".");
+      this.srcHandler.setConfig(theSrc);
    }
 
    public void setNames(String names)
@@ -180,25 +117,7 @@ public class ParamBindImpl extends AbstractGenerator
       Object tempValue = null;
       if (loopIndex == 0)
       {
-         if (this.mapBind)
-         {
-            tempValue = data.maps[this.mapIndex];
-         }
-         else if (this.cacheIndex != -1)
-         {
-            tempValue = data.caches[this.cacheIndex];
-         }
-         else
-         {
-            if (this.popStack)
-            {
-               tempValue = data.pop();
-            }
-            else
-            {
-               tempValue = data.peek(this.peekIndex);
-            }
-         }
+         tempValue = this.srcHandler.getData(data, false);
       }
 
       if (this.subSQL)
@@ -234,7 +153,7 @@ public class ParamBindImpl extends AbstractGenerator
       {
          if (loopIndex == 0 && tempValue == null)
          {
-            log.warn("Not found the src:" + this.paramSrc + ".");
+            log.warn("Not found the src:" + this.srcHandler.getConfig() + ".");
          }
          if (this.names != null)
          {
@@ -375,42 +294,12 @@ public class ParamBindImpl extends AbstractGenerator
    }
 
    public Object create()
-         throws ConfigurationException
    {
       return this.createParamBind();
    }
 
    public ParamBind createParamBind()
-         throws ConfigurationException
    {
-      if (this.loop && this.names == null)
-      {
-         log.info("Because not give the attribute names, so set loop = false.");
-         this.loop = false;
-      }
-      if (this.subSQL)
-      {
-         if (this.names == null || this.names.length == 0)
-         {
-            log.warn("Because not give the sub index at attribute names, so set names = 1.");
-            this.names = new ParamSetManager.Name[]{new ParamSetManager.Name("1", "1")};
-         }
-         else
-         {
-            for (int i = 0; i < this.names.length; i++)
-            {
-               try
-               {
-                  Integer.parseInt(this.names[i].sqlName);
-               }
-               catch (Exception ex)
-               {
-                  throw new ConfigurationException("When set sub SQL, names must be number. but the "
-                        + (i + 1) + " name is [" + this.names[i].sqlName +  "].");
-               }
-            }
-         }
-      }
       return this;
    }
 

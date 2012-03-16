@@ -25,7 +25,7 @@ public class Formater
     */
    public static String getCurrentDatetimeString()
    {
-      return Formater.datetimeFormat.format(new Date());
+      return datetimeFormat.format(new Date());
    }
 
    /**
@@ -33,7 +33,7 @@ public class Formater
     */
    public static String formatCurrency(double number)
    {
-      return Formater.currencyFormat.format(number);
+      return currencyFormat.format(number);
    }
 
    /**
@@ -41,7 +41,7 @@ public class Formater
     */
    public static String formatCurrency2(double number)
    {
-      return Formater.currency2Format.format(number);
+      return currency2Format.format(number);
    }
 
    /**
@@ -49,7 +49,7 @@ public class Formater
     */
    public static String formatDatetime(Object datetime)
    {
-      return Formater.datetimeFormat.format(datetime);
+      return datetimeFormat.format(datetime);
    }
 
    /**
@@ -57,7 +57,7 @@ public class Formater
     */
    public static String formatDate(Object datetime)
    {
-      return Formater.dateFormat.format(datetime);
+      return dateFormat.format(datetime);
    }
 
    /**
@@ -65,7 +65,7 @@ public class Formater
     */
    public static String formatTime(Object time)
    {
-      return Formater.timeFormat.format(time);
+      return timeFormat.format(time);
    }
 
    /**
@@ -74,7 +74,7 @@ public class Formater
    public static Date parseDatetime(String str)
          throws ParseException
    {
-      return Formater.datetimeFormat.parse(str);
+      return datetimeFormat.parse(str);
    }
 
    /**
@@ -83,7 +83,7 @@ public class Formater
    public static Date parseDate(String str)
          throws ParseException
    {
-      return Formater.dateFormat.parse(str);
+      return dateFormat.parse(str);
    }
 
    /**
@@ -92,7 +92,7 @@ public class Formater
    public static Date parseTime(String str)
          throws ParseException
    {
-      return Formater.timeFormat.parse(str);
+      return timeFormat.parse(str);
    }
 
    /**
@@ -102,7 +102,7 @@ public class Formater
    public static Date parserDatetime(String str)
          throws ParseException
    {
-      return Formater.datetimeFormat.parse(str);
+      return datetimeFormat.parse(str);
    }
 
    /**
@@ -112,7 +112,7 @@ public class Formater
    public static Date parserDate(String str)
          throws ParseException
    {
-      return Formater.dateFormat.parse(str);
+      return dateFormat.parse(str);
    }
 
    /**
@@ -122,7 +122,7 @@ public class Formater
    public static Date parserTime(String str)
          throws ParseException
    {
-      return Formater.timeFormat.parse(str);
+      return timeFormat.parse(str);
    }
 
 }

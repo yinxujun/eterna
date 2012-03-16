@@ -946,22 +946,12 @@ public class Utility
       {
          this.theClass = theClass;
          this.theMethod = theMethod;
-         try
-         {
-            this.theMethod.setAccessible(true);
-         }
-         catch (SecurityException ex) {}
       }
 
       public PropertyManager(Class theClass, Field theField)
       {
          this.theClass = theClass;
          this.theField = theField;
-         try
-         {
-            this.theField.setAccessible(true);
-         }
-         catch (SecurityException ex) {}
       }
 
       public void changeProperty(String value)
@@ -969,11 +959,30 @@ public class Utility
       {
          if (this.theMethod == null)
          {
-            this.theField.set(this.theClass, value);
+            if (!this.theField.isAccessible())
+            {
+               this.theField.setAccessible(true);
+               this.theField.set(this.theClass, value);
+               this.theField.setAccessible(false);
+            }
+            else
+            {
+               this.theField.set(this.theClass, value);
+            }
          }
          else
          {
-            this.theMethod.invoke(this.theClass, new Object[]{value});
+
+            if (!this.theMethod.isAccessible())
+            {
+               this.theMethod.setAccessible(true);
+               this.theMethod.invoke(this.theClass, new Object[]{value});
+               this.theMethod.setAccessible(false);
+            }
+            else
+            {
+               this.theMethod.invoke(this.theClass, new Object[]{value});
+            }
          }
       }
 

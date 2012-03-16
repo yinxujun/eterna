@@ -93,8 +93,16 @@ public class ObjectCreateRule extends MyRule
          {
             Constructor constructor = theClass.getDeclaredConstructor(
                   defaultConstructorParamClass);
-            constructor.setAccessible(true);
-            instance = constructor.newInstance(defaultConstructorParam);
+            if (!constructor.isAccessible())
+            {
+               constructor.setAccessible(true);
+               instance = constructor.newInstance(defaultConstructorParam);
+               constructor.setAccessible(false);
+            }
+            else
+            {
+               instance = theClass.newInstance();
+            }
          }
          catch (Exception ex)
          {
@@ -129,8 +137,16 @@ public class ObjectCreateRule extends MyRule
          {
             Constructor constructor = theClass.getDeclaredConstructor(
                   defaultConstructorParamClass);
-            constructor.setAccessible(true);
-            instance = constructor.newInstance(defaultConstructorParam);
+            if (!constructor.isAccessible())
+            {
+               constructor.setAccessible(true);
+               instance = constructor.newInstance(defaultConstructorParam);
+               constructor.setAccessible(false);
+            }
+            else
+            {
+               instance = theClass.newInstance();
+            }
          }
          catch (Exception ex)
          {

@@ -351,7 +351,7 @@ public class BCryptCoder
    };
 
    // Table for Base64 decoding.
-   private static final int[] index_64 = {
+   private static final byte[] index_64 = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,

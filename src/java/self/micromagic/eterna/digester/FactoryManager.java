@@ -467,9 +467,18 @@ public class FactoryManager
                      baseClass, baseObj, initConfig, parentConfig);
                if (constructor != null)
                {
-                  constructor.setAccessible(true);
-                  Object[] params = (Object[]) ref.getObject();
-                  instance = (Instance) constructor.newInstance(params);
+                  if (!constructor.isAccessible())
+                  {
+                     constructor.setAccessible(true);
+                     Object[] params = (Object[]) ref.getObject();
+                     instance = (Instance) constructor.newInstance(params);
+                     constructor.setAccessible(false);
+                  }
+                  else
+                  {
+                     Object[] params = (Object[]) ref.getObject();
+                     instance = (Instance) constructor.newInstance(params);
+                  }
                }
             }
             catch (Throwable ex)
@@ -494,8 +503,17 @@ public class FactoryManager
             try
             {
                Method method = baseClass.getDeclaredMethod( "autoReloadTime", new Class[0]);
-               method.setAccessible(true);
-               Long autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+               Long autoReloadTime;
+               if (!method.isAccessible())
+               {
+                  method.setAccessible(true);
+                  autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+                  method.setAccessible(false);
+               }
+               else
+               {
+                  autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+               }
                instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
                      autoReloadTime.longValue());
             }
@@ -885,7 +903,6 @@ public class FactoryManager
             {
                this.initException = ex;
                StringBuffer temp = new StringBuffer();
-
                if (ConfigurationException.config != null)
                {
                   temp.append("Config:").append(ConfigurationException.config).append("; ");
@@ -982,7 +999,11 @@ public class FactoryManager
          {
             Method method = theClass.getDeclaredMethod(
                   "afterEternaInitialize", new Class[]{FactoryManager.Instance.class});
-            method.setAccessible(true);
+            boolean aFlag = method.isAccessible();
+            if (!aFlag)
+            {
+               method.setAccessible(true);
+            }
             Object[] params = new Object[]{this};
             if (Modifier.isStatic(method.getModifiers()))
             {
@@ -998,6 +1019,10 @@ public class FactoryManager
                      method.invoke(baseObj, params);
                   }
                }
+            }
+            if (!aFlag)
+            {
+               method.setAccessible(false);
             }
          }
          catch (NoSuchMethodException ex)

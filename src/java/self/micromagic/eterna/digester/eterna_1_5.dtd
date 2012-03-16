@@ -743,7 +743,7 @@ class:className
      positions         可执行此业务的位置, 默认为"servlet"和"portletRender".
 
 -->
-<!ELEMENT model  ((execute | update-execute | query-execute | trans-execute | search-execute | model-execute | check-execute)*, attribute*)>
+<!ELEMENT model  (attribute*, (execute | update-execute | query-execute | trans-execute | search-execute | model-execute | check-execute)*)>
 <!ATTLIST model  id               ID              #IMPLIED>
 <!ATTLIST model  name             CDATA           #REQUIRED>
 <!ATTLIST model  generator        %ClassName;     #IMPLIED>
@@ -947,7 +947,7 @@ class:className
                        默认为"false". 只有在未设置exportName的情况下该属性才有效.
 
 -->
-<!ELEMENT model-execute  EMPTY>
+<!ELEMENT model-execute  (attribute*)>
 <!ATTLIST model-execute  id               ID              #IMPLIED>
 <!ATTLIST model-execute  modelName        CDATA           #IMPLIED>
 <!ATTLIST model-execute  generator        %ClassName;     #IMPLIED>
@@ -978,7 +978,7 @@ class:className
      falseTransactionType  检测为"false"时执行model的事务类型, 默认为"requared".
 
 -->
-<!ELEMENT check-execute  EMPTY>
+<!ELEMENT check-execute  (attribute*)>
 <!ATTLIST check-execute  id                   ID              #IMPLIED>
 <!ATTLIST check-execute  checkPattern         CDATA           #REQUIRED>
 <!ATTLIST check-execute  generator            %ClassName;     #IMPLIED>

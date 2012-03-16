@@ -171,6 +171,8 @@ public class ModelRuleSet extends RuleSetBase
       };
       digester.addRule("eterna-config/factory/objs/model/model-execute",
             new PropertySetRule(setters, false));
+      digester.addRule("eterna-config/factory/objs/model/model-execute/attribute",
+            new AttributeSetRule());
 
       //…Ë÷√check-execute
       setter = new GeneratorPropertySetter("generator", "addExecute",
@@ -189,6 +191,8 @@ public class ModelRuleSet extends RuleSetBase
       };
       digester.addRule("eterna-config/factory/objs/model/check-execute",
             new PropertySetRule(setters, false));
+      digester.addRule("eterna-config/factory/objs/model/check-execute/attribute",
+            new AttributeSetRule());
 
 
       //--------------------------------------------------------------------------------

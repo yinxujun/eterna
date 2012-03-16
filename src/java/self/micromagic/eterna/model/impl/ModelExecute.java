@@ -1,27 +1,27 @@
 
 package self.micromagic.eterna.model.impl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.io.IOException;
 
-import self.micromagic.eterna.model.Execute;
-import self.micromagic.eterna.model.ModelExport;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.ModelExecuteGenerator;
-import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.Execute;
+import self.micromagic.eterna.model.ModelAdapter;
+import self.micromagic.eterna.model.ModelExecuteGenerator;
+import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.ObjectRef;
 
 public class ModelExecute extends AbstractExecute
       implements Execute, ModelExecuteGenerator
 {
-   private String exportName = null;
-   private boolean noJump = false;
-   private ModelExport export = null;
-   private int exeModelIndex = -1;
-   private int transactionType = -1;
+   protected String exportName = null;
+   protected boolean noJump = false;
+   protected ModelExport export = null;
+   protected int exeModelIndex = -1;
+   protected int transactionType = -1;
 
    public void initialize(ModelAdapter model)
          throws ConfigurationException
@@ -37,7 +37,7 @@ public class ModelExecute extends AbstractExecute
          this.export = model.getFactory().getModelExport(this.exportName);
          if (this.export == null)
          {
-            log.warn("The Model Export [" + this.exportName + "] not found.");
+            log.warn("The ModelExport [" + this.exportName + "] not found.");
          }
       }
       if (this.getName() != null)
@@ -47,7 +47,7 @@ public class ModelExecute extends AbstractExecute
 
       if (this.exeModelIndex == -1 && this.export == null)
       {
-         throw new ConfigurationException("Must give a ModelAdapter or ModelExport.");
+         log.warn("A model-execute dosen't give modelName or exportName.");
       }
    }
 
@@ -55,6 +55,12 @@ public class ModelExecute extends AbstractExecute
          throws ConfigurationException
    {
       return "model";
+   }
+
+   public String getName()
+         throws ConfigurationException
+   {
+      return super.getName() == null ? "#export" : super.getName();
    }
 
    public void setNoJump(boolean noJump)

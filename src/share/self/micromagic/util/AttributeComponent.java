@@ -1,18 +1,17 @@
 
 package self.micromagic.util;
 
-import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.Writer;
 import java.util.Map;
 
-import self.micromagic.eterna.view.impl.ComponentImpl;
+import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.view.Component;
 import self.micromagic.eterna.view.ComponentGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
-import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.view.impl.ComponentImpl;
 
 /**
  * 通过factory中attribute的值来生成这个component. <p>
@@ -45,17 +44,7 @@ public final class AttributeComponent extends ComponentImpl
       tmp = (String) this.getAttribute("bindRes");
       if (tmp != null)
       {
-         this.bindRes = new HashMap();
-         String[] tmps = StringTool.separateString(Utility.resolveDynamicPropnames(tmp), ",", true);
-         for (int i = 0; i < tmps.length; i++)
-         {
-            int index = tmps[i].indexOf(':');
-            if (index != -1)
-            {
-               this.bindRes.put(tmps[i].substring(0, index).trim(),
-                     tmps[i].substring(index + 1).trim());
-            }
-         }
+         this.bindRes = StringTool.string2Map(tmp, ",", ':');
       }
 
       tmp = (String) this.getAttribute(FACTORY_ATTRIBUTE_NAME);
