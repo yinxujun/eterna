@@ -38,19 +38,11 @@ import org.dom4j.Element;
 public class TransExecute extends AbstractExecute
       implements Execute, TransExecuteGenerator
 {
-   protected String fromName;
-   protected boolean popStack = false;
-   protected int peekIndex = -1;
-   protected int fromMapIndex = -1;
-   protected int fromCacheIndex = -1;
-   protected String fromValue = null;
-   protected boolean fromMap = false;
+   protected DataHandler fromHandler = new DataHandler("from", true, true);
    protected boolean removeFrom = false;
    protected boolean mustExist = true;
 
-   protected String toName;
-   protected int toMapIndex = -1;
-   protected int toCacheIndex = -1;
+   protected DataHandler toHandler = null;
 
    protected TransOperator opt;
    protected boolean pushResult = false;
@@ -73,7 +65,8 @@ public class TransExecute extends AbstractExecute
    public String getName()
          throws ConfigurationException
    {
-      return this.toName == null ? this.pushResult ? "#stack" : "#none" : this.toName;
+      return this.toHandler == null ? this.pushResult ? "#stack" : "#none"
+            : this.toHandler.getConfig();
    }
 
    public boolean isPushResult()
@@ -89,99 +82,7 @@ public class TransExecute extends AbstractExecute
    public void setFrom(String theFrom)
          throws ConfigurationException
    {
-      int index = theFrom.indexOf(':');
-      String fromParam = null;
-      if (index != -1)
-      {
-         fromParam = theFrom.substring(index + 1);
-         theFrom = theFrom.substring(0, index);
-      }
-
-      for (int i = 0; i < AppData.MAP_NAMES.length; i++)
-      {
-         if (AppData.MAP_NAMES[i].equals(theFrom))
-         {
-            this.fromMapIndex = i;
-            this.fromMap = true;
-            break;
-         }
-      }
-      if (!this.fromMap)
-      {
-         for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
-         {
-            if (AppData.MAP_SHORT_NAMES[i].equals(theFrom))
-            {
-               this.fromMapIndex = i;
-               this.fromMap = true;
-               break;
-            }
-         }
-      }
-      if (this.fromMap)
-      {
-         if (fromParam != null)
-         {
-            this.fromName = fromParam;
-            return;
-         }
-      }
-      else if ("stack".equals(theFrom))
-      {
-         this.popStack = true;
-         if ("pop".equals(fromParam) || fromParam == null)
-         {
-            return;
-         }
-         if (fromParam != null && fromParam.startsWith("peek"))
-         {
-            this.popStack = false;
-            this.peekIndex = 0;
-            if (fromParam.length() > 4)
-            {
-               if (fromParam.charAt(4) == '-')
-               {
-                  try
-                  {
-                     this.peekIndex = Integer.parseInt(fromParam.substring(5));
-                     return;
-                  }
-                  catch (NumberFormatException ex) {}
-               }
-            }
-            else
-            {
-               return;
-            }
-         }
-      }
-      else if ("cache".equals(theFrom))
-      {
-         this.fromCacheIndex = 0;
-         if (fromParam != null)
-         {
-            try
-            {
-               this.fromCacheIndex = Integer.parseInt(fromParam);
-               return;
-            }
-            catch (NumberFormatException ex) {}
-         }
-         else
-         {
-            return;
-         }
-      }
-      else if ("value".equals(theFrom))
-      {
-         if (fromParam != null)
-         {
-            this.fromValue = fromParam;
-            return;
-         }
-      }
-
-      throw new ConfigurationException("Error from:" + theFrom + ".");
+      this.fromHandler.setConfig(theFrom);
    }
 
    public void setRemoveFrom(boolean remove)
@@ -296,117 +197,22 @@ public class TransExecute extends AbstractExecute
    public void setTo(String theTo)
          throws ConfigurationException
    {
-      int index = theTo.indexOf(':');
-      String toParam = null;
-      if (index != -1)
+      if (this.toHandler == null)
       {
-         toParam = theTo.substring(index + 1);
-         theTo = theTo.substring(0, index);
+         this.toHandler = new DataHandler("to", true, false);
       }
-
-      for (int i = 0; i < AppData.MAP_NAMES.length; i++)
-      {
-         if (AppData.MAP_NAMES[i].equals(theTo))
-         {
-            this.toMapIndex = i;
-            break;
-         }
-      }
-      if (this.toMapIndex == -1)
-      {
-         for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
-         {
-            if (AppData.MAP_SHORT_NAMES[i].equals(theTo))
-            {
-               this.toMapIndex = i;
-               break;
-            }
-         }
-      }
-      if (this.toMapIndex != -1)
-      {
-         if (toParam != null)
-         {
-            this.toName = toParam;
-            return;
-         }
-      }
-      else if ("cache".equals(theTo))
-      {
-         this.toCacheIndex = 0;
-         if (toParam != null)
-         {
-            try
-            {
-               this.toCacheIndex = Integer.parseInt(toParam);
-               return;
-            }
-            catch (NumberFormatException ex) {}
-         }
-         else
-         {
-            return;
-         }
-      }
-
-      throw new ConfigurationException("Error to:" + theTo + ".");
+      this.toHandler.setConfig(theTo);
    }
 
    public ModelExport execute(AppData data, Connection conn)
          throws ConfigurationException, SQLException, IOException
    {
-      Object value = null;
-      if (this.fromValue != null)
-      {
-         value = this.fromValue;
-      }
-      else if (this.fromMap)
-      {
-         Map tmpMap = data.maps[this.fromMapIndex];
-         value = tmpMap.get(this.fromName);
-         if (this.removeFrom)
-         {
-            tmpMap.remove(this.fromName);
-         }
-      }
-      else if (this.fromCacheIndex != -1)
-      {
-         value = data.caches[this.fromCacheIndex];
-         if (this.removeFrom)
-         {
-            data.caches[this.fromCacheIndex] = null;
-         }
-      }
-      else
-      {
-         if (this.popStack)
-         {
-            value = data.pop();
-         }
-         else if (this.peekIndex != -1)
-         {
-            value = data.peek(this.peekIndex);
-         }
-      }
+      Object value = this.fromHandler.getData(data, this.removeFrom);
       if (value == null)
       {
          if (this.mustExist)
          {
-            String msg;
-            if (this.fromMap)
-            {
-               msg = "There is no value in map [" + AppData.MAP_NAMES[this.fromMapIndex] + "] name ["
-                     + this.fromName + "].";
-            }
-            else if (this.fromCacheIndex != -1)
-            {
-               msg = "There is no value in cache.";
-            }
-            else
-            {
-               msg = "There is no value in stack.";
-            }
-            throw new ConfigurationException(msg);
+            throw new ConfigurationException("There is no value in [" + this.fromHandler.getConfig() + "].");
          }
       }
       Element nowNode = null;
@@ -422,35 +228,16 @@ public class TransExecute extends AbstractExecute
          {
             vNode.addAttribute("removeFrom", "true");
          }
-         if (this.fromValue != null)
-         {
-            vNode.addAttribute("fromValue", this.fromValue);
-         }
-         else if (this.fromMap)
-         {
-            vNode.addAttribute("fromMap", AppData.MAP_NAMES[this.fromMapIndex] + ":" + this.fromName);
-         }
-         else if (this.fromCacheIndex != -1)
-         {
-            vNode.addAttribute("fromCache", String.valueOf(this.fromCacheIndex));
-         }
-         else
-         {
-            vNode.addAttribute("fromStack", this.peekIndex != -1 ? "pop" : "peek:" + this.peekIndex);
-         }
+         vNode.addAttribute("config", this.fromHandler.getConfig());
          AppDataLogExecute.printObject(vNode, value);
          vToNode = nowNode.addElement("value-to");
          if (this.isPushResult())
          {
             vToNode.addAttribute("pushResult", "true");
          }
-         if (this.toMapIndex != -1)
+         if (this.toHandler != null)
          {
-            vToNode.addAttribute("toMap", AppData.MAP_NAMES[this.toMapIndex] + ":" + this.toName);
-         }
-         else if (this.toCacheIndex != -1)
-         {
-            vToNode.addAttribute("toCache", String.valueOf(this.toCacheIndex));
+            vNode.addAttribute("config", this.toHandler.getConfig());
          }
       }
       if (this.opt != null && value != null)
@@ -463,21 +250,9 @@ public class TransExecute extends AbstractExecute
          }
       }
 
-      if (this.toMapIndex != -1)
+      if (this.toHandler != null)
       {
-         Map tmpMap = data.maps[this.toMapIndex];
-         if (value == null)
-         {
-            tmpMap.remove(this.toName);
-         }
-         else
-         {
-            tmpMap.put(this.toName, value);
-         }
-      }
-      else if (this.toCacheIndex != -1)
-      {
-         data.caches[this.toCacheIndex] = value;
+         this.toHandler.setData(data, value);
       }
       if (this.isPushResult())
       {

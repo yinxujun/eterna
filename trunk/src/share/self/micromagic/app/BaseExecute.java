@@ -1,21 +1,18 @@
 
 package self.micromagic.app;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
-import self.micromagic.eterna.model.impl.AbstractExecute;
+import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.Execute;
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ModelExport;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.share.Generator;
+import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.view.Resource;
+import self.micromagic.eterna.share.Generator;
 import self.micromagic.util.ObjectRef;
 
 /**
@@ -105,6 +102,26 @@ public class BaseExecute extends AbstractExecute
          throws ConfigurationException, SQLException, IOException, InnerExport
    {
       return null;
+   }
+
+   /**
+    * 通过指定export的名称来执行跳转.
+    *
+    * @param exportName    执行跳转的export的名称
+    */
+   protected ModelExport doExport(String exportName)
+         throws ConfigurationException, SQLException, IOException, InnerExport
+   {
+      ModelExport export = this.factory.getModelExport(exportName);
+      if (export == null)
+      {
+            log.warn("The ModelExport [" + exportName + "] not found.");
+      }
+      else
+      {
+         throw new InnerExport(export);
+      }
+      return export;
    }
 
    /**

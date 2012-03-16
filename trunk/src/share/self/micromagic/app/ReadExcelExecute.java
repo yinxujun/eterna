@@ -32,7 +32,6 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
-import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.util.Utility;
 
@@ -183,8 +182,9 @@ public class ReadExcelExecute extends AbstractExecute
             book = Workbook.getWorkbook(in, ws);
          }
          Sheet sheet = book.getSheet(this.sheetIndex);
-         CustomResultIterator eri = new CustomResultIterator(this.readerManager, null);
-         CustomResultIterator errorList = null;
+         self.micromagic.util.CustomResultIterator eri
+               = new self.micromagic.util.CustomResultIterator(this.readerManager, null);
+         self.micromagic.util.CustomResultIterator errorList = null;
          int errorCount = 0;
          Map errorMap = null;
          for (int i = this.titleRowCount; i < sheet.getRows(); i++)
@@ -252,7 +252,7 @@ public class ReadExcelExecute extends AbstractExecute
                         values[j] = cell.getContents();
                         if (errorList == null)
                         {
-                           errorList = new CustomResultIterator(this.readerManager, null);
+                           errorList = new self.micromagic.util.CustomResultIterator(this.readerManager, null);
                            errorMap = new HashMap();
                         }
                         hasError = true;
@@ -274,19 +274,19 @@ public class ReadExcelExecute extends AbstractExecute
             }
             if (!allEmpty || !this.skipEmptyRow)
             {
-               ResultRow rr = eri.createRow(values);;
+               eri.createRow(values);;
                if (hasError)
                {
-                  errorList.addRow(rr);
+                  errorList.createRow(values);
                   errorCount++;
                }
             }
          }
-         eri.addedOver();
+         eri.finishCreateRow();
          data.push(eri);
          if (errorList != null)
          {
-            errorList.addedOver();
+            errorList.finishCreateRow();
             data.dataMap.put(this.errorRows_name, errorList);
             data.dataMap.put(this.errorRowFlags_name, errorMap);
          }

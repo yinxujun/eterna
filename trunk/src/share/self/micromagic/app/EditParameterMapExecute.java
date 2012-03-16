@@ -4,7 +4,6 @@ package self.micromagic.app;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 import self.micromagic.eterna.digester.ConfigurationException;
@@ -35,17 +34,7 @@ public class EditParameterMapExecute extends AbstractExecute
       tmp = (String) this.getAttribute("initValues");
       if (tmp != null)
       {
-         this.initValues = new HashMap();
-         String[] tmps = StringTool.separateString(tmp, ",;", true);
-         for (int i = 0; i < tmps.length; i++)
-         {
-            int index = tmps[i].indexOf('=');
-            if (index != -1)
-            {
-               this.initValues.put(tmps[i].substring(0, index).trim(),
-                     tmps[i].substring(index + 1).trim());
-            }
-         }
+         this.initValues = StringTool.string2Map(tmp, ",;", '=');
       }
    }
 

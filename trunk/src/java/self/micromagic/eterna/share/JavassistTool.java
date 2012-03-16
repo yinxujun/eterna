@@ -121,7 +121,6 @@ class JavassistTool
 
       ClassLoader cl = beanClass.getClassLoader();
       if (cl == null) cl = Tool.class.getClassLoader();
-      pool.appendClassPath(new ClassClassPath(beanClass));
       cc.addMethod(CtNewMethod.make(function.toString(), cc));
       Class c = cc.toClass(cl);
 

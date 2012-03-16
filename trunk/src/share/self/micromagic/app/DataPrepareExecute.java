@@ -1,28 +1,27 @@
 
 package self.micromagic.app;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.io.IOException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import self.micromagic.eterna.share.Generator;
-import self.micromagic.eterna.model.Execute;
-import self.micromagic.eterna.model.ModelExport;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.ModelAdapter;
-import self.micromagic.eterna.model.AppDataLogExecute;
-import self.micromagic.eterna.model.impl.AbstractExecute;
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.util.StringTool;
-import self.micromagic.util.Utility;
 import org.dom4j.Element;
+import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.AppDataLogExecute;
+import self.micromagic.eterna.model.Execute;
+import self.micromagic.eterna.model.ModelAdapter;
+import self.micromagic.eterna.model.ModelExport;
+import self.micromagic.eterna.model.impl.AbstractExecute;
+import self.micromagic.eterna.share.Generator;
+import self.micromagic.util.StringTool;
 
 public class DataPrepareExecute extends AbstractExecute
       implements Execute, Generator
 {
-   protected Map prepares = new HashMap();
+   protected Map prepares;
    protected boolean needPrepare = true;
    protected boolean pushPrepare = false;
 
@@ -49,16 +48,11 @@ public class DataPrepareExecute extends AbstractExecute
       tmp = (String) this.getAttribute("prepares");
       if (tmp != null)
       {
-         String[] tmps = StringTool.separateString(Utility.resolveDynamicPropnames(tmp), ";", true);
-         for (int i = 0; i < tmps.length; i++)
-         {
-            int index = tmps[i].indexOf('=');
-            if (index != -1)
-            {
-               this.prepares.put(tmps[i].substring(0, index).trim(),
-                     tmps[i].substring(index + 1).trim());
-            }
-         }
+         this.prepares = StringTool.string2Map(tmp, ";", '=');
+      }
+      else
+      {
+         this.prepares = new HashMap();
       }
    }
 

@@ -4,6 +4,8 @@ package self.micromagic.util;
 import java.io.UnsupportedEncodingException;
 import java.io.PrintStream;
 import java.util.StringTokenizer;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * <code>StringTool</code>类是实现一些常用的字符串处理. <p>
@@ -203,9 +205,10 @@ public class StringTool
     * 根据指定的分隔符<code>delimiter</code>分割一个字符串
     * <code>str</code>. <p>
     *
+    * @param str         要进行分割的字符串
+    * @param delimiter   分隔符集合
     * @param trim        是否要trim分割出来的每个字符串
-    *
-    * @see     java.lang.StringBuffer#append(boolean)
+    * @return  分割后的字符串所组成的数组
     */
    public static String[] separateString(String str, String delimiter, boolean trim)
    {
@@ -312,6 +315,66 @@ public class StringTool
       return buf.toString();
    }
 
+   /**
+    * 将字符串按照一定的格式转换成Map. <p>
+    *
+    * @param str              要转换成Map的字符串
+    * @param itemDelimiter    Map元素的分隔符集合
+    * @param kvDelimiter      key和value的分隔符
+    * @return          转换后的Map对象
+    */
+   public static Map string2Map(String str, String itemDelimiter, char kvDelimiter)
+   {
+      return string2Map(str, itemDelimiter, kvDelimiter, true, true, null, null);
+   }
+
+   /**
+    * 将字符串按照一定的格式转换成Map. <p>
+    *
+    * @param str              要转换成Map的字符串
+    * @param itemDelimiter    Map元素的分隔符集合
+    * @param kvDelimiter      key和value的分隔符
+    * @param trimItem         是否要对每个元素进行trim
+    * @param needResolve      是否要处理文本中"${...}"的动态属性
+    * @param resolveRes       处理动态属性是绑定的资源
+    * @param result           将转换的结果放入此Map中
+    * @return          转换后的Map对象
+    */
+   public static Map string2Map(String str, String itemDelimiter, char kvDelimiter,
+         boolean trimItem, boolean needResolve, Map resolveRes, Map result)
+   {
+      if (str == null)
+      {
+         return null;
+      }
+      if (result == null)
+      {
+         result = new HashMap();
+      }
+      if (needResolve)
+      {
+         str = Utility.resolveDynamicPropnames(str, resolveRes);
+      }
+      String[] arr = StringTool.separateString(str, itemDelimiter, trimItem);
+      for (int i = 0; i < arr.length; i++)
+      {
+         int index = arr[i].indexOf(kvDelimiter);
+         if (index != -1)
+         {
+            String k = arr[i].substring(0, index);
+            String v = arr[i].substring(index + 1);
+            result.put(trimItem ? k.trim() : k, trimItem ? v.trim() : v);
+         }
+         else
+         {
+            result.put(trimItem ? arr[i].trim() : arr[i], null);
+         }
+      }
+      return result;
+   }
+
+
+
    public static void printStringHaxcode(PrintStream out, String str, boolean endline)
    {
       if (str == null)
@@ -327,11 +390,6 @@ public class StringTool
       {
          out.println();
       }
-   }
-
-   public static void main(String[] args)
-   {
-      System.out.println(replaceAll("d'123'123d'456'5d'", "d'", ""));
    }
 
 }
