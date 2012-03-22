@@ -9,6 +9,7 @@ import javax.portlet.PortletSession;
 
 import self.micromagic.util.container.ValueContainer;
 import self.micromagic.util.container.ValueContainerMap;
+import self.micromagic.util.container.UnmodifiableIterator;
 
 public class PortletValueMap
 {
@@ -22,6 +23,10 @@ public class PortletValueMap
       return ValueContainerMap.create(vContainer);
    }
 
+   /**
+    * @deprecated
+    * @see #createSessionAttributeMap(PortletRequest, int)
+    */
    public static Map createSessionAttributeMap(PortletSession session)
    {
       if (session == null)
@@ -29,6 +34,16 @@ public class PortletValueMap
          return null;
       }
       ValueContainer vContainer = new SessionAttributeContainer(session);
+      return ValueContainerMap.create(vContainer);
+   }
+
+   public static Map createSessionAttributeMap(PortletRequest request, int scope)
+   {
+      if (request == null)
+      {
+         return null;
+      }
+      ValueContainer vContainer = new SessionAttributeContainer(request, scope);
       return ValueContainerMap.create(vContainer);
    }
 
@@ -85,6 +100,7 @@ public class PortletValueMap
    private static class SessionAttributeContainer
          implements ValueContainer
    {
+      private PortletRequest request;
       private PortletSession session;
       private int scope = PortletSession.APPLICATION_SCOPE;
 
@@ -99,8 +115,18 @@ public class PortletValueMap
          this.scope = scope;
       }
 
+      public SessionAttributeContainer(PortletRequest request, int scope)
+      {
+         this.request = request;
+         this.scope = scope;
+      }
+
       public boolean equals(Object o)
       {
+         if (!this.checkSession(false))
+         {
+            return o == null;
+         }
          if (o instanceof SessionAttributeContainer)
          {
             SessionAttributeContainer other = (SessionAttributeContainer) o;
@@ -111,30 +137,61 @@ public class PortletValueMap
 
       public int hashCode()
       {
+         if (!this.checkSession(false))
+         {
+            return 0;
+         }
          return this.session.hashCode();
       }
 
       public Object getValue(Object key)
       {
+         if (!this.checkSession(false))
+         {
+            return null;
+         }
          return this.session.getAttribute(
                key == null ? null : key.toString(), this.scope);
       }
 
       public void setValue(Object key, Object value)
       {
+         this.checkSession(true);
          this.session.setAttribute(
                key == null ? null : key.toString(), value, this.scope);
       }
 
       public void removeValue(Object key)
       {
+         if (!this.checkSession(false))
+         {
+            return;
+         }
          this.session.removeAttribute(
                key == null ? null : key.toString(), this.scope);
       }
 
       public Enumeration getKeys()
       {
+         if (!this.checkSession(false))
+         {
+            return UnmodifiableIterator.EMPTY_ENUMERATION;
+         }
          return this.session.getAttributeNames(this.scope);
+      }
+
+      private boolean checkSession(boolean create)
+      {
+         if (this.session != null)
+         {
+            return true;
+         }
+         if (this.request == null)
+         {
+            return false;
+         }
+         this.session = this.request.getPortletSession(create);
+         return this.session != null;
       }
 
    }

@@ -107,16 +107,24 @@ public class Jdk14Factory extends LogFactory
    }
 
    private static synchronized void addException(String msg, Throwable ex, boolean isCause, String level,
-         String className, String methodName, Element logNode)
+         String className, String methodName, String fileName, int lineNumber, Element logNode)
    {
       if (!isCause)
       {
          logNode.addAttribute("level", level);
          logNode.addAttribute("class", className);
          logNode.addAttribute("method", methodName);
+         if (fileName != null)
+         {
+            logNode.addAttribute("fileName", fileName);
+         }
+         if (lineNumber != -1)
+         {
+            logNode.addAttribute("lineNumber", String.valueOf(lineNumber));
+         }
          logNode.addAttribute("message", msg);
       }
-      logNode.addAttribute("time", Formater.formatDatetime(new java.util.Date(System.currentTimeMillis())));
+      logNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
       logNode.addAttribute("exClass", ex.getClass().getName());
       logNode.addAttribute("exMessage", ex.getMessage());
       Element stacks = logNode.addElement("stacks");
@@ -129,7 +137,7 @@ public class Jdk14Factory extends LogFactory
    }
 
    private static synchronized void addException(String msg, Throwable ex, boolean isCause, String level,
-         String className, String methodName)
+         String className, String methodName, String fileName, int lineNumber)
    {
       checkNodeInit();
       Element expNode;
@@ -141,7 +149,7 @@ public class Jdk14Factory extends LogFactory
       {
          expNode = logNodes.addElement("exception");
       }
-      addException(msg, ex, isCause, level, className, methodName, expNode);
+      addException(msg, ex, isCause, level, className, methodName, fileName, lineNumber, expNode);
 
       if (AppData.getAppLogType() == 1)
       {
@@ -156,24 +164,33 @@ public class Jdk14Factory extends LogFactory
             {
                expNode = nowNode.addElement("exception");
             }
-            addException(msg, ex, isCause, level, className, methodName, expNode);
+            addException(msg, ex, isCause, level, className, methodName, fileName, lineNumber, expNode);
          }
       }
 
       if (ex.getCause() != null)
       {
-         addException(null, ex.getCause(), true, null, null, null);
+         addException(null, ex.getCause(), true, null, null, null, null, -1);
       }
    }
 
-   private static synchronized void addMessage(String msg, String level, String className, String methodName)
+   private static synchronized void addMessage(String msg, String level, String className, String methodName,
+         String fileName, int lineNumber)
    {
       checkNodeInit();
       Element expNode = logNodes.addElement("message");
       expNode.addAttribute("level", level);
-      expNode.addAttribute("time", Formater.formatDatetime(new java.util.Date(System.currentTimeMillis())));
+      expNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
       expNode.addAttribute("class", className);
       expNode.addAttribute("method", methodName);
+      if (fileName != null)
+      {
+         expNode.addAttribute("fileName", fileName);
+      }
+      if (lineNumber != -1)
+      {
+         expNode.addAttribute("lineNumber", String.valueOf(lineNumber));
+      }
       expNode.addAttribute("message", msg);
       if (AppData.getAppLogType() == 1)
       {
@@ -182,9 +199,17 @@ public class Jdk14Factory extends LogFactory
          {
             expNode = nowNode.addElement("message");
             expNode.addAttribute("level", level);
-            expNode.addAttribute("time", Formater.formatDatetime(new java.util.Date(System.currentTimeMillis())));
+            expNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
             expNode.addAttribute("class", className);
             expNode.addAttribute("method", methodName);
+            if (fileName != null)
+            {
+               expNode.addAttribute("fileName", fileName);
+            }
+            if (lineNumber != -1)
+            {
+               expNode.addAttribute("lineNumber", String.valueOf(lineNumber));
+            }
             expNode.addAttribute("message", msg);
          }
       }
@@ -342,7 +367,7 @@ public class Jdk14Factory extends LogFactory
       }
       catch (Throwable ex)
       {
-         System.err.println(Formater.getCurrentDatetimeString()
+         System.err.println(FormatTool.getCurrentDatetimeString()
                + ": Error when create file log handler.");
          ex.printStackTrace(System.err);
       }
@@ -420,7 +445,7 @@ public class Jdk14Factory extends LogFactory
       }
       catch (Throwable ex)
       {
-         System.err.println(Formater.getCurrentDatetimeString()
+         System.err.println(FormatTool.getCurrentDatetimeString()
                + ": Error when create log.");
          ex.printStackTrace(System.err);
       }
@@ -518,32 +543,32 @@ public class Jdk14Factory extends LogFactory
 
       public boolean isDebugEnabled()
       {
-        return (this.getLogger().isLoggable(Level.FINE));
+        return this.getLogger().isLoggable(Level.FINE);
       }
 
       public boolean isErrorEnabled()
       {
-        return (this.getLogger().isLoggable(Level.SEVERE));
+        return this.getLogger().isLoggable(Level.SEVERE);
       }
 
       public boolean isFatalEnabled()
       {
-        return (this.getLogger().isLoggable(Level.SEVERE));
+        return this.getLogger().isLoggable(Level.SEVERE);
       }
 
       public boolean isInfoEnabled()
       {
-        return (this.getLogger().isLoggable(Level.INFO));
+        return this.getLogger().isLoggable(Level.INFO);
       }
 
       public boolean isTraceEnabled()
       {
-        return (this.getLogger().isLoggable(Level.FINEST));
+        return this.getLogger().isLoggable(Level.FINEST);
       }
 
       public boolean isWarnEnabled()
       {
-        return (this.getLogger().isLoggable(Level.WARNING));
+        return this.getLogger().isLoggable(Level.WARNING);
       }
 
       public void debug(Object message, Throwable exception)
@@ -608,26 +633,46 @@ public class Jdk14Factory extends LogFactory
 
       protected void log(Level level, String msg, Throwable ex)
       {
-         Logger logger = getLogger();
+         Logger logger = this.getLogger();
          if (logger.isLoggable(level))
          {
-            // Hack (?) to get the stack trace.
+            // 获取 在哪个方法中记录日志
             Throwable dummyException = new Throwable();
             StackTraceElement locations[] = dummyException.getStackTrace();
-            // Caller will be the third element
             String cname = "unknown";
             String method = "unknown";
+            String fileName = null;
+            int lineNumber = -1;
+            int local = -1;
             if (locations != null && locations.length > 2)
             {
-               StackTraceElement caller = locations[2];
+               String myName = this.getClass().getName();
+               for (int i = 0; i < locations.length; i++)
+               {
+                  if (myName.equals(locations[i].getClassName()))
+                  {
+                     if (locations.length > i + 2)
+                     {
+                        local = i + 2;
+                     }
+                     break;
+                  }
+               }
+            }
+            if (local != -1)
+            {
+               StackTraceElement caller = locations[local];
                cname = caller.getClassName();
                method = caller.getMethodName();
+               fileName = caller.getFileName();
+               lineNumber = caller.getLineNumber();
             }
+
             if (ex == null)
             {
                if (EXCEPTION_LOG_TYPE == 1)
                {
-                  addMessage(msg, level.getName(), cname, method);
+                  addMessage(msg, level.getName(), cname, method, fileName, lineNumber);
                }
                logger.logp(level, cname, method, msg);
             }
@@ -635,7 +680,7 @@ public class Jdk14Factory extends LogFactory
             {
                if (EXCEPTION_LOG_TYPE == 1)
                {
-                  addException(msg, ex, false, level.getName(), cname, method);
+                  addException(msg, ex, false, level.getName(), cname, method, fileName, lineNumber);
                }
                logger.logp(level, cname, method, msg, ex);
             }
@@ -659,7 +704,7 @@ public class Jdk14Factory extends LogFactory
             }
             catch (InterruptedException ex)
             {
-               System.err.println(Formater.getCurrentDatetimeString()
+               System.err.println(FormatTool.getCurrentDatetimeString()
                      + ": Error when flush log console.");
             }
          }

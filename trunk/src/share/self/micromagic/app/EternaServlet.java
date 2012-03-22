@@ -102,7 +102,7 @@ public class EternaServlet extends HttpServlet
          HttpServletRequest request = data.getHttpServletRequest();
          if (request != null)
          {
-            data.maps[AppData.SESSION_ATTRIBUTE_MAP] = ValueContainerMap.createSessionAttributeMap(request.getSession());
+            data.maps[AppData.SESSION_ATTRIBUTE_MAP] = ValueContainerMap.createSessionAttributeMap(request);
 
             String queryStr = request.getQueryString();
             if (queryStr != null)

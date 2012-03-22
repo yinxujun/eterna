@@ -3,25 +3,22 @@ package self.micromagic.app;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.net.URLEncoder;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.GenericPortlet;
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import javax.portlet.PortletConfig;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.ModelCaller;
+import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.view.ViewAdapter;
 
 public class EternaPortlet extends GenericPortlet
@@ -93,7 +90,8 @@ public class EternaPortlet extends GenericPortlet
       {
          data.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
          data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = PortletValueMap.createRequestAttributeMap(request);
-         data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(request.getPortletSession());
+         data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(
+               request, PortletSession.APPLICATION_SCOPE);
          data.export = this.getFactoryManager().getEternaFactory().getModelCaller().callModel(data);
          String nextModel = (String) request.getAttribute(NEXT_MODEL_TAG);
          if (nextModel != null)
@@ -141,7 +139,8 @@ public class EternaPortlet extends GenericPortlet
             {
                data.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
                data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = PortletValueMap.createRequestAttributeMap(request);
-               data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(request.getPortletSession());
+               data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(
+                     request, PortletSession.APPLICATION_SCOPE);
                ModelExport export = this.getFactoryManager().getEternaFactory().getModelCaller().callModel(data);
                if (export != null)
                {
