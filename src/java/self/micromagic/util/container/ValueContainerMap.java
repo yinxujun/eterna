@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 注: 使用时需注意, 如果没有通过ValueContainerMap而是直接对
@@ -46,6 +47,10 @@ public class ValueContainerMap extends AbstractMap
       return new ValueContainerMap(vContainer);
    }
 
+   /**
+    * @deprecated
+    * @see #createSessionAttributeMap(HttpServletRequest)
+    */
    public static Map createSessionAttributeMap(HttpSession session)
    {
       if (session == null)
@@ -53,6 +58,16 @@ public class ValueContainerMap extends AbstractMap
          return null;
       }
       ValueContainer vContainer = new SessionAttributeContainer(session);
+      return new ValueContainerMap(vContainer);
+   }
+
+   public static Map createSessionAttributeMap(HttpServletRequest request)
+   {
+      if (request == null)
+      {
+         return null;
+      }
+      ValueContainer vContainer = new SessionAttributeContainer(request);
       return new ValueContainerMap(vContainer);
    }
 
@@ -159,6 +174,7 @@ public class ValueContainerMap extends AbstractMap
    private static class SessionAttributeContainer
          implements ValueContainer
    {
+      private HttpServletRequest request;
       private HttpSession session;
 
       public SessionAttributeContainer(HttpSession session)
@@ -166,8 +182,17 @@ public class ValueContainerMap extends AbstractMap
          this.session = session;
       }
 
+      public SessionAttributeContainer(HttpServletRequest request)
+      {
+         this.request = request;
+      }
+
       public boolean equals(Object o)
       {
+         if (!this.checkSession(false))
+         {
+            return o == null;
+         }
          if (o instanceof SessionAttributeContainer)
          {
             SessionAttributeContainer other = (SessionAttributeContainer) o;
@@ -178,30 +203,61 @@ public class ValueContainerMap extends AbstractMap
 
       public int hashCode()
       {
+         if (!this.checkSession(false))
+         {
+            return 0;
+         }
          return this.session.hashCode();
       }
 
       public Object getValue(Object key)
       {
+         if (!this.checkSession(false))
+         {
+            return null;
+         }
          return this.session.getAttribute(
                key == null ? null : key.toString());
       }
 
       public void setValue(Object key, Object value)
       {
+         this.checkSession(true);
          this.session.setAttribute(
                key == null ? null : key.toString(), value);
       }
 
       public void removeValue(Object key)
       {
+         if (!this.checkSession(false))
+         {
+            return;
+         }
          this.session.removeAttribute(
                key == null ? null : key.toString());
       }
 
       public Enumeration getKeys()
       {
+         if (!this.checkSession(false))
+         {
+            return UnmodifiableIterator.EMPTY_ENUMERATION;
+         }
          return this.session.getAttributeNames();
+      }
+
+      private boolean checkSession(boolean create)
+      {
+         if (this.session != null)
+         {
+            return true;
+         }
+         if (this.request == null)
+         {
+            return false;
+         }
+         this.session = this.request.getSession(create);
+         return this.session != null;
       }
 
    }

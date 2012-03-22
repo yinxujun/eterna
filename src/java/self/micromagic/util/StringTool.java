@@ -365,9 +365,9 @@ public class StringTool
             String v = arr[i].substring(index + 1);
             result.put(trimItem ? k.trim() : k, trimItem ? v.trim() : v);
          }
-         else
+         else if (arr[i].length() > 0)
          {
-            result.put(trimItem ? arr[i].trim() : arr[i], null);
+            result.put(trimItem ? arr[i].trim() : arr[i], "");
          }
       }
       return result;

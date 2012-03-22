@@ -2,13 +2,16 @@
 package self.micromagic.util.container;
 
 import java.util.Iterator;
+import java.util.Enumeration;
 
 import org.apache.commons.collections.iterators.EmptyIterator;
+import org.apache.commons.collections.iterators.IteratorEnumeration;
 
 public class UnmodifiableIterator
       implements Iterator
 {
    public final static Iterator EMPTY_ITERATOR = EmptyIterator.INSTANCE;
+   public final static Enumeration EMPTY_ENUMERATION = new IteratorEnumeration(EmptyIterator.INSTANCE);
 
    private Iterator itr;
 
