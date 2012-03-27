@@ -4,7 +4,7 @@
 ==1.5.0==
 request-parameter、request-attribute、session-attribute可以使用缩写：RP、RA、SA。<br>
 修复了self.micromagic.eterna.model.impl.ModelCallerImpl中，transactionType为new时的一个错误。<br>
-修复了当transactionType设为hold后，业务为成功接管数据库链接时，造成链接无法释放的问题。<br>
+修复了当transactionType设为hold后，业务未成功接管数据库链接时，造成链接无法释放的问题。<br>
 增加了data-printer节点。<br>
 在view节点中增加了dataPrinterName属性和defaultDataType属性。<br>
 将类self.micromagic.app.CustomResultIterator移至了self.micromagic.util包下。<br>
