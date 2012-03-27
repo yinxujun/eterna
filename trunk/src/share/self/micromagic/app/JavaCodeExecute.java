@@ -26,7 +26,7 @@ import self.micromagic.util.Utility;
  *
  * 需设置的属性
  * code        执行的java代码                                                          2选1
- * attrCode    重factory的属性中获取执行的java代码                                     2选1
+ * attrCode    从factory的属性中获取执行的java代码                                     2选1
  *
  * imports     需要引入的包, 如：self.micromagic.app, 只需给出包路径, 以","分隔        可选
  * extends     继承的类                                                                可选

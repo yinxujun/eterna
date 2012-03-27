@@ -156,9 +156,12 @@ public class PortletValueMap
 
       public void setValue(Object key, Object value)
       {
-         this.checkSession(true);
-         this.session.setAttribute(
-               key == null ? null : key.toString(), value, this.scope);
+         this.checkSession(value != null);
+         if (this.session != null)
+         {
+            this.session.setAttribute(
+                  key == null ? null : key.toString(), value, this.scope);
+         }
       }
 
       public void removeValue(Object key)

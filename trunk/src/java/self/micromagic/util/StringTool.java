@@ -9,15 +9,6 @@ import java.util.HashMap;
 
 /**
  * <code>StringTool</code>类是实现一些常用的字符串处理. <p>
- * <p><blockquote><pre>
- *       {@link #decodeFrom8859_1(String)}
- *       {@link #decodeFrom8859_1(String[])}
- *       这两个方法是将ISO8859-1格式的字符串转换为Unicode编码格式。
- *
- *       {@link #encodeTo8859_1(String)}
- *       {@link #encodeTo8859_1(String[])}
- *       这两个方法是将Unicode格式的字符串转换为ISO8859-1编码格式。
- * </pre></blockquote>
  *
  * @author  micromagic
  * @version 1.0, 2002-10-18
@@ -62,112 +53,6 @@ public class StringTool
    public static String intern(String str)
    {
       return intern(str, false);
-   }
-
-   /**
-    * 将ISO8859-1格式的字符串<code>str</code>转换为Unicode编码格式
-    * 的字符串. <p>
-    * 由于Java的字符串是Unicode编码格式，对于其它格式的字符串需要对
-    * 其进行格式转换，否则就会在存储或显示的时候产生乱码。
-    *
-    * @param   str    要进行编码格式转换的字符串
-    * @return  转换成Unicode编码格式的字符串
-    */
-   public static String decodeFrom8859_1(String str)
-   {
-      if (str == null)
-      {
-         return null;
-      }
-
-      try
-      {
-         String decodeStr;
-         //进行编码格式的转换
-         byte[] temp = str.getBytes("8859_1");
-         decodeStr = new String(temp);
-         return decodeStr;
-      }
-      catch (UnsupportedEncodingException uee)
-      {
-         //不可能抛出这个异常，应为我们使用的是正确的编码们称
-         throw new InternalError();
-      }
-   }
-
-   /**
-    * 将一组ISO8859-1格式的字符串<code>str</code>转换为Unicode编码格式
-    * 的字符串. <p>
-    * 由于Java的字符串是Unicode编码格式，对于其它格式的字符串需要对
-    * 其进行格式转换，否则就会在存储或显示的时候产生乱码。
-    *
-    * @param   astr    要进行编码格式转换的字符串数组
-    * @return  转换成Unicode编码格式的字符串数组
-    */
-   public static String[] decodeFrom8859_1(String[] astr)
-   {
-      String[] decodeValues = new String[astr.length];
-
-      for (int i = 0; i < decodeValues.length; i++)
-      {
-         decodeValues[i] = decodeFrom8859_1(astr[i]);
-      }
-
-      return decodeValues;
-   }
-
-   /**
-    * 将Unicode格式的字符串<code>str</code>转换为ISO8859-1编码格式
-    * 的字符串. <p>
-    * 由于Java的字符串是Unicode编码格式，如果输出设备需要ISO8859-1
-    * 编码格式的话，则需对其进行格式转换，否则就会在显示中文的时候
-    * 产生乱码。
-    *
-    * @param   str    要进行编码格式转换的字符串
-    * @return  转换成ISO8859-1编码格式的字符串
-    */
-   public static String encodeTo8859_1(String str)
-   {
-      if (str == null)
-      {
-         return null;
-      }
-
-      try
-      {
-         String encodeStr;
-         //进行编码格式的转换
-         byte[] temp = str.getBytes();
-         encodeStr = new String(temp, "8859_1");
-         return encodeStr;
-      }
-      catch (UnsupportedEncodingException uee)
-      {
-         //不可能抛出这个异常，应为我们使用的是正确的编码们称
-         throw new InternalError();
-      }
-   }
-
-   /**
-    * 将一组Unicode格式的字符串<code>str</code>转换为ISO8859-1编码格式
-    * 的字符串. <p>
-    * 由于Java的字符串是Unicode编码格式，如果输出设备需要ISO8859-1
-    * 编码格式的话，则需对其进行格式转换，否则就会在显示中文的时候
-    * 产生乱码。
-    *
-    * @param   astr    要进行编码格式转换的字符串数组
-    * @return  转换成ISO8859-1编码格式的字符串数组
-    */
-   public static String[] encodeTo8859_1(String[] astr)
-   {
-      String[] encodeValues = new String[astr.length];
-
-      for (int i = 0; i < encodeValues.length; i++)
-      {
-         encodeValues[i] = encodeTo8859_1(astr[i]);
-      }
-
-      return encodeValues;
    }
 
    /**
@@ -373,8 +258,6 @@ public class StringTool
       return result;
    }
 
-
-
    public static void printStringHaxcode(PrintStream out, String str, boolean endline)
    {
       if (str == null)
@@ -390,6 +273,113 @@ public class StringTool
       {
          out.println();
       }
+   }
+
+
+   /**
+    * 将ISO8859-1格式的字符串<code>str</code>转换为Unicode编码格式
+    * 的字符串. <p>
+    * 由于Java的字符串是Unicode编码格式，对于其它格式的字符串需要对
+    * 其进行格式转换，否则就会在存储或显示的时候产生乱码。
+    *
+    * @param   str    要进行编码格式转换的字符串
+    * @return  转换成Unicode编码格式的字符串
+    */
+   public static String decodeFrom8859_1(String str)
+   {
+      if (str == null)
+      {
+         return null;
+      }
+
+      try
+      {
+         String decodeStr;
+         //进行编码格式的转换
+         byte[] temp = str.getBytes("8859_1");
+         decodeStr = new String(temp);
+         return decodeStr;
+      }
+      catch (UnsupportedEncodingException uee)
+      {
+         //不可能抛出这个异常，应为我们使用的是正确的编码们称
+         throw new InternalError();
+      }
+   }
+
+   /**
+    * 将一组ISO8859-1格式的字符串<code>str</code>转换为Unicode编码格式
+    * 的字符串. <p>
+    * 由于Java的字符串是Unicode编码格式，对于其它格式的字符串需要对
+    * 其进行格式转换，否则就会在存储或显示的时候产生乱码。
+    *
+    * @param   astr    要进行编码格式转换的字符串数组
+    * @return  转换成Unicode编码格式的字符串数组
+    */
+   public static String[] decodeFrom8859_1(String[] astr)
+   {
+      String[] decodeValues = new String[astr.length];
+
+      for (int i = 0; i < decodeValues.length; i++)
+      {
+         decodeValues[i] = decodeFrom8859_1(astr[i]);
+      }
+
+      return decodeValues;
+   }
+
+   /**
+    * 将Unicode格式的字符串<code>str</code>转换为ISO8859-1编码格式
+    * 的字符串. <p>
+    * 由于Java的字符串是Unicode编码格式，如果输出设备需要ISO8859-1
+    * 编码格式的话，则需对其进行格式转换，否则就会在显示中文的时候
+    * 产生乱码。
+    *
+    * @param   str    要进行编码格式转换的字符串
+    * @return  转换成ISO8859-1编码格式的字符串
+    */
+   public static String encodeTo8859_1(String str)
+   {
+      if (str == null)
+      {
+         return null;
+      }
+
+      try
+      {
+         String encodeStr;
+         //进行编码格式的转换
+         byte[] temp = str.getBytes();
+         encodeStr = new String(temp, "8859_1");
+         return encodeStr;
+      }
+      catch (UnsupportedEncodingException uee)
+      {
+         //不可能抛出这个异常，应为我们使用的是正确的编码们称
+         throw new InternalError();
+      }
+   }
+
+   /**
+    * 将一组Unicode格式的字符串<code>str</code>转换为ISO8859-1编码格式
+    * 的字符串. <p>
+    * 由于Java的字符串是Unicode编码格式，如果输出设备需要ISO8859-1
+    * 编码格式的话，则需对其进行格式转换，否则就会在显示中文的时候
+    * 产生乱码。
+    *
+    * @param   astr    要进行编码格式转换的字符串数组
+    * @return  转换成ISO8859-1编码格式的字符串数组
+    */
+   public static String[] encodeTo8859_1(String[] astr)
+   {
+      String[] encodeValues = new String[astr.length];
+
+      for (int i = 0; i < encodeValues.length; i++)
+      {
+         encodeValues[i] = encodeTo8859_1(astr[i]);
+      }
+
+      return encodeValues;
    }
 
 }
