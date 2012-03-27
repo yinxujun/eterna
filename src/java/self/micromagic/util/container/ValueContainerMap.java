@@ -222,9 +222,12 @@ public class ValueContainerMap extends AbstractMap
 
       public void setValue(Object key, Object value)
       {
-         this.checkSession(true);
-         this.session.setAttribute(
-               key == null ? null : key.toString(), value);
+         this.checkSession(value != null);
+         if (this.session != null)
+         {
+            this.session.setAttribute(
+                  key == null ? null : key.toString(), value);
+         }
       }
 
       public void removeValue(Object key)

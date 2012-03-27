@@ -33,6 +33,7 @@ public class NoParamQueryExecute extends AbstractExecute
    protected Map cacheMap = new HashMap();
 
    protected String queryNameTag = "queryName";
+   protected String queryName = null;
    protected String dataSourceName;
    protected EternaFactory factory;
 
@@ -50,6 +51,11 @@ public class NoParamQueryExecute extends AbstractExecute
       {
          this.queryNameTag = tmp;
       }
+      tmp = (String) this.getAttribute("queryName");
+      if (tmp != null)
+      {
+         this.queryName = tmp;
+      }
    }
 
    public String getExecuteType() throws ConfigurationException
@@ -60,7 +66,8 @@ public class NoParamQueryExecute extends AbstractExecute
    public ModelExport execute(AppData data, Connection conn)
          throws ConfigurationException, SQLException, IOException
    {
-      String name = data.getRequestParameter(this.queryNameTag);
+      String name = this.queryName != null ? this.queryName
+            : data.getRequestParameter(this.queryNameTag);
       QueryAdapter query = factory.createQueryAdapter(name);
       String tmp = (String) query.getAttribute(CACHE_TIME_TAG);
       if (tmp != null)
