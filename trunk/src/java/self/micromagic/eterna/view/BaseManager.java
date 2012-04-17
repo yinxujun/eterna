@@ -48,7 +48,7 @@ public class BaseManager
       definedNameSet.add(ResultReader.INPUT_TYPE_FLG);
    }
 
-   public static int createEternaId()
+   public synchronized static int createEternaId()
    {
       return 0xffffff & eternaId++;
    }

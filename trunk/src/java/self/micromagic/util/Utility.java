@@ -160,6 +160,11 @@ public class Utility
       }
    }
 
+   /**
+    * 重新载入配置
+    *
+    * @param msg   载入配置时的出错信息
+    */
    public static void reload(StringRef msg)
    {
       try
@@ -383,15 +388,18 @@ public class Utility
    private static void dealChangeProperty(String key, String defaultValue, PropertyManager pm)
    {
       String temp = getProperty(key);
+      boolean setted = false;
       if (temp == null && defaultValue != null)
       {
          temp = defaultValue;
          setProperty(key, defaultValue);
+         setted = true;
       }
       try
       {
-         if (temp != null)
+         if (temp != null && !setted)
          {
+            // 如果存在要设置的值, 且未设置过值, 则要将值设置到被监控的属性中
             pm.changeProperty(temp);
          }
       }

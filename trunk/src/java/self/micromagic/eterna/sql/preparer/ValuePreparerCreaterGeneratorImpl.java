@@ -26,8 +26,41 @@ import self.micromagic.util.StringTool;
 public class ValuePreparerCreaterGeneratorImpl extends AbstractGenerator
       implements ValuePreparerCreaterGenerator
 {
+   protected boolean initialized = false;
+
+   private ValuePreparerCreater[] creaters
+         = new ValuePreparerCreater[TypeManager.TYPES_COUNT];
+
+   {
+      this.creaters[TypeManager.TYPE_IGNORE] = new IgnorePreparerCreater();
+      this.creaters[TypeManager.TYPE_STRING] = new StringPreparerCreater();
+      this.creaters[TypeManager.TYPE_BIGSTRING] = new StringPreparerCreater();
+      this.creaters[TypeManager.TYPE_BOOLEAN] = new BooleanPreparerCreater();
+
+      this.creaters[TypeManager.TYPE_BYTE] = new IntegerPreparerCreater();
+      this.creaters[TypeManager.TYPE_SHORT] = new IntegerPreparerCreater();
+      this.creaters[TypeManager.TYPE_INTEGER] = new IntegerPreparerCreater();
+      this.creaters[TypeManager.TYPE_LONG] = new LongPreparerCreater();
+      this.creaters[TypeManager.TYPE_FLOAT] = new DoublePreparerCreater();
+      this.creaters[TypeManager.TYPE_DOUBLE] = new DoublePreparerCreater();
+
+      this.creaters[TypeManager.TYPE_DATE] = new DatePreparerCreater();
+      this.creaters[TypeManager.TYPE_TIME] = new TimePreparerCreater();
+      this.creaters[TypeManager.TYPE_TIMPSTAMP] = new TimestampPreparerCreater();
+      this.creaters[TypeManager.TYPE_OBJECT] = new ObjectPreparerCreater();
+
+      this.creaters[TypeManager.TYPE_BYTES] = new BytesPreparerCreater();
+      this.creaters[TypeManager.TYPE_STREAM] = new StreamPreparerCreater();
+      this.creaters[TypeManager.TYPE_READER] = new ReaderPreparerCreater();
+   }
+
    public void initialize(EternaFactory factory)
    {
+      if (this.initialized)
+      {
+         return;
+      }
+      this.initialized = true;
       String tmp;
 
       tmp = (String) this.getAttribute("dateFormat");
@@ -83,32 +116,6 @@ public class ValuePreparerCreaterGeneratorImpl extends AbstractGenerator
    public ValuePreparerCreater createValuePreparerCreater(int pureType)
    {
       return this.creaters[pureType];
-   }
-
-   private ValuePreparerCreater[] creaters
-         = new ValuePreparerCreater[TypeManager.TYPES_COUNT];
-
-   {
-      this.creaters[TypeManager.TYPE_IGNORE] = new IgnorePreparerCreater();
-      this.creaters[TypeManager.TYPE_STRING] = new StringPreparerCreater();
-      this.creaters[TypeManager.TYPE_BIGSTRING] = new StringPreparerCreater();
-      this.creaters[TypeManager.TYPE_BOOLEAN] = new BooleanPreparerCreater();
-
-      this.creaters[TypeManager.TYPE_BYTE] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_SHORT] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_INTEGER] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_LONG] = new LongPreparerCreater();
-      this.creaters[TypeManager.TYPE_FLOAT] = new DoublePreparerCreater();
-      this.creaters[TypeManager.TYPE_DOUBLE] = new DoublePreparerCreater();
-
-      this.creaters[TypeManager.TYPE_DATE] = new DatePreparerCreater();
-      this.creaters[TypeManager.TYPE_TIME] = new TimePreparerCreater();
-      this.creaters[TypeManager.TYPE_TIMPSTAMP] = new TimestampPreparerCreater();
-      this.creaters[TypeManager.TYPE_OBJECT] = new ObjectPreparerCreater();
-
-      this.creaters[TypeManager.TYPE_BYTES] = new BytesPreparerCreater();
-      this.creaters[TypeManager.TYPE_STREAM] = new StreamPreparerCreater();
-      this.creaters[TypeManager.TYPE_READER] = new ReaderPreparerCreater();
    }
 
    public class BooleanPreparerCreater extends ValuePreparerCreater
