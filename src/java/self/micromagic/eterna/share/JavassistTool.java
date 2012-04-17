@@ -38,11 +38,23 @@ class JavassistTool
          String[] imports)
          throws NotFoundException, CannotCompileException, InstantiationException, IllegalAccessException
    {
-      ClassPool pool = ClassPool.getDefault();
+      ClassPool pool = new ClassPool();
+      pool.appendSystemPath();
       pool.appendClassPath(new ClassClassPath(beanClass));
-      pool.appendClassPath(new ClassClassPath(interfaceClass));
-      pool.appendClassPath(new ClassClassPath(JavassistTool.class));
-      String namePrefix = "eterna.bp_" + (BEAN_PROCESSER_ID++) + ".";
+      if (beanClass.getClassLoader() != interfaceClass.getClassLoader())
+      {
+         pool.appendClassPath(new ClassClassPath(interfaceClass));
+      }
+      if (beanClass.getClassLoader() != JavassistTool.class.getClassLoader()
+            || interfaceClass.getClassLoader() != JavassistTool.class.getClassLoader())
+      {
+         pool.appendClassPath(new ClassClassPath(JavassistTool.class));
+      }
+      String namePrefix;
+      synchronized (JavassistTool.class)
+      {
+         namePrefix = "eterna.bp_" + (BEAN_PROCESSER_ID++) + ".";
+      }
       CtClass cc = pool.makeClass(namePrefix + beanClass.getName());
       cc.addInterface(pool.get(interfaceClass.getName()));
       if (imports != null)

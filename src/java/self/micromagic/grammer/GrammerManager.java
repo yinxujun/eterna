@@ -84,7 +84,10 @@ public class GrammerManager
       }
       else if (attrName == null)
       {
-         attrName = "grammer_" + Integer.toString(id++, 32);
+         synchronized (GrammerManager.class)
+         {
+            attrName = "grammer_" + Integer.toString(id++, 32);
+         }
       }
       AbstractElement ae = null;
       if (NODE_ELEMENT.equals(name))

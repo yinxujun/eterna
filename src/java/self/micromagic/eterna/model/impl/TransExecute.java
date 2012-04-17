@@ -237,7 +237,7 @@ public class TransExecute extends AbstractExecute
          }
          if (this.toHandler != null)
          {
-            vNode.addAttribute("config", this.toHandler.getConfig());
+            vToNode.addAttribute("config", this.toHandler.getConfig());
          }
       }
       if (this.opt != null && value != null)

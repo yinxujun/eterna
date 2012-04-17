@@ -11,6 +11,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 
+import self.micromagic.eterna.model.AppData;
+
 /**
  * 注: 使用时需注意, 如果没有通过ValueContainerMap而是直接对
  * Attribute设置或删除值的话, 那再访问ValueContainerMap的
@@ -24,7 +26,7 @@ public class ValueContainerMap extends AbstractMap
 
    private ValueContainerMap(ValueContainer vContainer)
    {
-      this.vContainer = vContainer; 
+      this.vContainer = vContainer;
       this.vEntrySet = new ValueContainerMapEntrySet(this.vContainer);
    }
 
@@ -216,28 +218,23 @@ public class ValueContainerMap extends AbstractMap
          {
             return null;
          }
-         return this.session.getAttribute(
-               key == null ? null : key.toString());
+         return this.session.getAttribute(key == null ? null : key.toString());
       }
 
       public void setValue(Object key, Object value)
       {
-         this.checkSession(value != null);
-         if (this.session != null)
+         if (this.checkSession(value != null))
          {
-            this.session.setAttribute(
-                  key == null ? null : key.toString(), value);
+            this.session.setAttribute(key == null ? null : key.toString(), value);
          }
       }
 
       public void removeValue(Object key)
       {
-         if (!this.checkSession(false))
+         if (this.checkSession(false))
          {
-            return;
+            this.session.removeAttribute(key == null ? null : key.toString());
          }
-         this.session.removeAttribute(
-               key == null ? null : key.toString());
       }
 
       public Enumeration getKeys()
@@ -259,7 +256,18 @@ public class ValueContainerMap extends AbstractMap
          {
             return false;
          }
-         this.session = this.request.getSession(create);
+         try
+         {
+            this.session = this.request.getSession(create);
+         }
+         catch (Exception ex)
+         {
+            // 创建session时可能会出错, 比如已经提交了应答之后
+            if (AppData.getAppLogType() != 0)
+            {
+               AppData.log.warn("Error in create session.", ex);
+            }
+         }
          return this.session != null;
       }
 

@@ -22,7 +22,7 @@ public class ParserData
    private List errorStack = new ArrayList();
    private List indexResetStack = new ArrayList();
 
-   private IndexStore globeStore = new IndexStore(0);
+   private IndexStore globalStore = new IndexStore(0);
 
    private String maxBuf = null;
    private Checker maxChecker = null;
@@ -129,7 +129,7 @@ public class ParserData
       if (this.indexResetStack.size() > 0)
       {
          IndexStore is = (IndexStore) this.indexResetStack.remove(this.indexResetStack.size() - 1);
-         IndexStore pIs = this.globeStore;
+         IndexStore pIs = this.globalStore;
          if (this.indexResetStack.size() > 0)
          {
             pIs = (IndexStore) this.indexResetStack.get(this.indexResetStack.size() - 1);
@@ -149,7 +149,7 @@ public class ParserData
       {
          is = (IndexStore) this.indexResetStack.remove(this.indexResetStack.size() - 1);
       }
-      IndexStore pIs = this.globeStore;
+      IndexStore pIs = this.globalStore;
       if (this.indexResetStack.size() > 0)
       {
          pIs = (IndexStore) this.indexResetStack.get(this.indexResetStack.size() - 1);
@@ -216,7 +216,7 @@ public class ParserData
 
    public List getGrammerCellLst()
    {
-      return this.globeStore.getGrammerCellList();
+      return this.globalStore.getGrammerCellList();
    }
 
    public String getMaxErrorBuffer()
@@ -240,7 +240,7 @@ public class ParserData
 
    public String toString()
    {
-      List list = this.globeStore.getGrammerCellList();
+      List list = this.globalStore.getGrammerCellList();
       if (list == null)
       {
          return "";

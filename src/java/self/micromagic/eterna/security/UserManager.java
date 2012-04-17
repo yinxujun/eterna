@@ -19,6 +19,11 @@ public interface UserManager
    void initUserManager(EternaFactory factory) throws ConfigurationException;
 
    /**
+    * 获得构造此UserManager的工厂.
+    */
+   EternaFactory getFactory() throws ConfigurationException;
+
+   /**
     * 是否存在权限的编号. <p>
     * 是否可将权限名称转换成数字编号.
     */

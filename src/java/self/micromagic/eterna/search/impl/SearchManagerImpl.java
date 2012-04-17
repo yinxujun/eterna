@@ -29,14 +29,14 @@ public class SearchManagerImpl extends AbstractGenerator
 {
    static final String SEARCHMANAGER_DEALED_PREFIX = "ETERNA_SEARCHMANAGER_DEALED:";
 
-   private SearchManager.Attributes attributes = SearchManager.DEFAULT_PROPERTIES;
+   private transient SearchManager.Attributes attributes = SearchManager.DEFAULT_PROPERTIES;
 
-   private String preparedCondition = "";
-   private PreparerManager generatedPM = null;
-   private Map conditionMap = null;
+   private transient String preparedCondition = "";
+   private transient PreparerManager generatedPM = null;
+   private transient Map conditionMap = null;
    private List conditionList = null;
-   private SearchAdapter resetConditionSearch = null;
-   private Map specialMap = null;
+   private transient SearchAdapter resetConditionSearch = null;
+   private transient Map specialMap = null;
 
    private int conditionVersion = 1;
    private int pageNum = 0;

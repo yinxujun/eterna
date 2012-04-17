@@ -45,7 +45,6 @@ import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.eterna.view.Resource;
 import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.impl.StringCoderImpl;
-import self.micromagic.util.Utility;
 
 public class EternaFactoryImpl extends AbstractFactory
       implements EternaFactory
@@ -126,17 +125,6 @@ public class EternaFactoryImpl extends AbstractFactory
       }
    }
 
-   public Object getAttribute(String name)
-         throws ConfigurationException
-   {
-      Object tmp = super.getAttribute(name);
-      if (tmp == null && this.shareEternaFactory != null)
-      {
-         tmp = this.shareEternaFactory.getAttribute(name);
-      }
-      return tmp;
-   }
-
    public String[] getAttributeNames()
          throws ConfigurationException
    {
@@ -152,16 +140,31 @@ public class EternaFactoryImpl extends AbstractFactory
       return tmpP == null || tmpP.length == 0 ? tmpThis : tmpP;
    }
 
+   public Object getAttribute(String name)
+         throws ConfigurationException
+   {
+      Object tmp = super.getAttribute(name);
+      if (tmp == null && this.shareEternaFactory != null)
+      {
+         tmp = this.shareEternaFactory.getAttribute(name);
+      }
+      return tmp;
+   }
+
    public Object setAttribute(String name, Object value)
          throws ConfigurationException
    {
-      if (super.hasAttribute(name))
+      if (!this.initialized)
       {
-         if (!FactoryManager.isSuperInit())
+         // 未初始化完成时, 需要检查全局属性是否被重复设置了
+         if (super.hasAttribute(name))
          {
-            log.warn("Duplicate globe attribute [" + name + "].");
+            if (!FactoryManager.isSuperInit())
+            {
+               log.warn("Duplicate global attribute [" + name + "].");
+            }
+            return null;
          }
-         return null;
       }
       return super.setAttribute(name, value);
    }
@@ -294,11 +297,11 @@ public class EternaFactoryImpl extends AbstractFactory
          // 初始化, search
          if (this.sameShare != null)
          {
-            this.sgManager.initialize(this.sameShare.sgManager);
+            this.searchAdapterManager.initialize(this.sameShare.searchAdapterManager);
          }
          else
          {
-            this.sgManager.initialize(null);
+            this.searchAdapterManager.initialize(null);
          }
 
          // 初始化, model-caller
@@ -354,7 +357,7 @@ public class EternaFactoryImpl extends AbstractFactory
       super.destroy();
       this.queryManager.destroy();
       this.updateManager.destroy();
-      this.sgManager.destroy();
+      this.searchAdapterManager.destroy();
       this.modelManager.destroy();
       this.viewManager.destroy();
    }
@@ -442,6 +445,7 @@ public class EternaFactoryImpl extends AbstractFactory
    }
 
    public void addFormat(String name, ResultFormat format)
+         throws ConfigurationException
    {
       if (this.formatMap.containsKey(name))
       {
@@ -452,6 +456,10 @@ public class EternaFactoryImpl extends AbstractFactory
       }
       else if (format != null)
       {
+         if (this.initialized)
+         {
+            format.initialize(this);
+         }
          this.formatMap.put(name, format);
       }
    }
@@ -678,6 +686,10 @@ public class EternaFactoryImpl extends AbstractFactory
       }
       else
       {
+         if (this.initialized)
+         {
+            generator.initialize(this);
+         }
          this.valuePreparerMap.put(generator.getName(), generator);
       }
    }
@@ -712,7 +724,7 @@ public class EternaFactoryImpl extends AbstractFactory
    private Map conditionBuilderListMap = new HashMap();
    private Map conditionBuilderNameListMap = new HashMap();
 
-   private FactoryGeneratorManager sgManager
+   private FactoryGeneratorManager searchAdapterManager
          = new FactoryGeneratorManager("SearchAdapter", this);
 
    private SearchManagerGenerator searchManagerGenerator;
@@ -818,13 +830,13 @@ public class EternaFactoryImpl extends AbstractFactory
    {
       if (this.sameShare != null || this.shareEternaFactory == null)
       {
-         return (SearchAdapter) this.sgManager.create(name);
+         return (SearchAdapter) this.searchAdapterManager.create(name);
       }
       else
       {
          try
          {
-            return (SearchAdapter) this.sgManager.create(name);
+            return (SearchAdapter) this.searchAdapterManager.create(name);
          }
          catch (ConfigurationException ex)
          {
@@ -838,13 +850,13 @@ public class EternaFactoryImpl extends AbstractFactory
    {
       if (this.sameShare != null || this.shareEternaFactory == null)
       {
-         return (SearchAdapter) this.sgManager.create(id);
+         return (SearchAdapter) this.searchAdapterManager.create(id);
       }
       else
       {
          if (id < Factory.MAX_ADAPTER_COUNT)
          {
-            return (SearchAdapter) this.sgManager.create(id);
+            return (SearchAdapter) this.searchAdapterManager.create(id);
          }
          else
          {
@@ -858,13 +870,13 @@ public class EternaFactoryImpl extends AbstractFactory
    {
       if (this.sameShare != null || this.shareEternaFactory == null)
       {
-         return this.sgManager.getIdByName(name);
+         return this.searchAdapterManager.getIdByName(name);
       }
       else
       {
          try
          {
-            return this.sgManager.getIdByName(name);
+            return this.searchAdapterManager.getIdByName(name);
          }
          catch (ConfigurationException ex)
          {
@@ -876,13 +888,13 @@ public class EternaFactoryImpl extends AbstractFactory
    public void registerSearchAdapter(SearchAdapterGenerator generator)
          throws ConfigurationException
    {
-      this.sgManager.register(generator);
+      this.searchAdapterManager.register(generator);
    }
 
    public void deregisterSearchAdapter(String name)
          throws ConfigurationException
    {
-      this.sgManager.deregister(name);
+      this.searchAdapterManager.deregister(name);
    }
 
    public void registerSearchManager(SearchManagerGenerator generator)
@@ -1331,6 +1343,10 @@ public class EternaFactoryImpl extends AbstractFactory
       }
       else if (resource != null)
       {
+         if (this.initialized)
+         {
+            resource.initialize(this);
+         }
          this.resourceMap.put(name, resource);
       }
    }

@@ -99,11 +99,15 @@ public class ParamSetManager
          Exception ex)
          throws ConfigurationException
    {
-      StringBuffer str = new StringBuffer(64);
-      str.append("SQL:[").append(sql.getName()).append("] ");
-      str.append("param:[").append(param.getName()).append("] ");
-      str.append("value:[").append(value).append("] preparer error.");
-      AppData.log.warn(str, ex);
+      if (!"".equals(value))
+      {
+         // 如果因为是空字符串而产生的类型转换错误，则不记录警告日志.
+         StringBuffer str = new StringBuffer(64);
+         str.append("SQL:[").append(sql.getName()).append("] ");
+         str.append("param:[").append(param.getName()).append("] ");
+         str.append("value:[").append(value).append("] preparer error.");
+         AppData.log.warn(str, ex);
+      }
       if (sql.isDynamicParameter(param.getIndex()))
       {
          sql.setIgnore(param.getIndex());

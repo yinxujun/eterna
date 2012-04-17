@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,14 +21,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Collection;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
+import org.apache.commons.collections.ReferenceMap;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
+import org.xml.sax.SAXException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaFactoryImpl;
 import self.micromagic.eterna.share.EternaInitialize;
@@ -130,10 +136,15 @@ public class FactoryManager
          = "self.micromagic.eterna.digester.checkGrammer";
    private static boolean checkGrammer = true;
 
+   /**
+    * 全局工厂实例的id.
+    */
+   public static final String GLOBAL_INSTANCE_ID = "instance.global";
+
    private static Document logDocument = null;
    private static Element logs = null;
    private static Map classInstanceMap = new HashMap();
-   private static GlobeImpl globeInstance;
+   private static GlobalImpl globalInstance;
    private static Instance current;
    private static Factory currentFactory;
 
@@ -144,8 +155,8 @@ public class FactoryManager
 
    static
    {
-      globeInstance = new GlobeImpl();
-      current = globeInstance;
+      globalInstance = new GlobalImpl();
+      current = globalInstance;
       try
       {
          reInitEterna();
@@ -262,9 +273,18 @@ public class FactoryManager
    /**
     * 获得全局的工厂管理器的实例.
     */
-   public static FactoryManager.Instance getGlobeFactoryManager()
+   public static Instance getGlobalFactoryManager()
    {
-      return globeInstance;
+      return globalInstance;
+   }
+
+   /**
+    * @deprecated
+    * @see #getGlobalFactoryManager
+    */
+   public static Instance getGlobeFactoryManager()
+   {
+      return globalInstance;
    }
 
    /**
@@ -317,7 +337,7 @@ public class FactoryManager
       List tmpSet = new ArrayList();
       if (config != null)
       {
-         StringTokenizer token = new StringTokenizer(FactoryManager.resolveLocate(config), ";");
+         StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
          while (token.hasMoreTokens())
          {
             temp = token.nextToken().trim();
@@ -338,68 +358,122 @@ public class FactoryManager
    }
 
    /**
-    * 根据一个类获取工厂管理器的实例.
+    * 将一个工厂序列化保存.
+    *
+    * @param f         要序列化保存的工厂
+    * @param oOut      序列化输出流
+    */
+   public static void writeFactory(Factory f, ObjectOutputStream oOut)
+         throws IOException, ConfigurationException
+   {
+	   oOut.writeUTF(f.getFactoryManager().getId());
+      oOut.writeUTF(f.getName());
+      oOut.writeUTF(f.getClass().getName());
+   }
+
+   /**
+    * 通过反序列化获得一个工厂.
+    *
+    * @param oIn      反序列化输入流
+    * @return   反序列化后的工厂
+    */
+   public static Factory readFactory(ObjectInputStream oIn)
+         throws IOException, ConfigurationException
+   {
+      String id = oIn.readUTF();
+      String fName = oIn.readUTF();
+      String cName = oIn.readUTF();
+	   Instance instance = getFactoryManager(id);
+      return instance.getFactory(fName, cName);
+   }
+
+   /**
+    * 根据id获取工厂管理器的实例.
+    *
+    * @param id    工厂管理器的id
+    * @return  工厂管理器的实例
+    * @throws ConfigurationException    如果没有对应id的实例, 则抛出此异常
+    */
+   public static Instance getFactoryManager(String id)
+         throws ConfigurationException
+   {
+      if (GLOBAL_INSTANCE_ID.equals(id))
+      {
+         return globalInstance;
+      }
+      Instance instance = (Instance) classInstanceMap.get(id);
+      if (instance == null)
+      {
+         throw new ConfigurationException("Not fount the instance [" + id + "] ["
+               + globalInstance.parseInstanceId(id) + "]");
+      }
+      return instance;
+   }
+
+   /**
+    * 根据一个类创建工厂管理器的实例.
     * 会将[类名.xml]作为配置来读取.
     *
     * @param baseClass    初始化的基础类
     */
-   public static FactoryManager.Instance createClassFactoryManager(Class baseClass)
+   public static Instance createClassFactoryManager(Class baseClass)
    {
       return createClassFactoryManager(baseClass, null);
    }
 
    /**
-    * 根据一个类及配置获取工厂管理器的实例.
+    * 根据一个类及配置创建工厂管理器的实例.
     *
     * @param baseClass    初始化的基础类
     * @param initConfig   初始化的配置
     */
-   public static FactoryManager.Instance createClassFactoryManager(Class baseClass, String initConfig)
+   public static Instance createClassFactoryManager(Class baseClass, String initConfig)
    {
-      String conf = getConfig(initConfig, null);
-      Object instance = conf != null ? classInstanceMap.get(baseClass.getName() + "=" + conf)
-            : classInstanceMap.get(baseClass.getName());
-      if (instance != null && instance instanceof ClassImpl)
+      if (!Instance.class.isAssignableFrom(baseClass))
       {
-         ClassImpl ci = (ClassImpl) instance;
-         // 如果基于的类相同则不重新加载（当使用了不同的ClassLoader时，基于的类就会不同）
-         if (ci.baseClass == baseClass)
+         String id = globalInstance.createInstanceId(getConfig(initConfig, null), baseClass.getName());
+         Object instance = classInstanceMap.get(id);
+         if (instance != null && instance instanceof ClassImpl)
          {
-            return ci;
+            ClassImpl ci = (ClassImpl) instance;
+            // 如果基于的类相同则不重新加载（当使用了不同的ClassLoader时，基于的类就会不同）
+            if (ci.baseClass == baseClass)
+            {
+               return ci;
+            }
          }
       }
       return createClassFactoryManager(baseClass, null, initConfig, null, false);
    }
 
    /**
-    * 根据一个类及配置获取工厂管理器的实例.
+    * 根据一个类及配置创建工厂管理器的实例.
     *
     * @param baseClass    初始化的基础类
     * @param initConfig   初始化的配置
     * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
-         String initConfig, boolean registry)
+   public static Instance createClassFactoryManager(Class baseClass, String initConfig, boolean registry)
    {
       return createClassFactoryManager(baseClass, null, initConfig, null, registry);
    }
 
    /**
-    * 根据一个类及配置获取工厂管理器的实例.
+    * 根据一个类及配置创建工厂管理器的实例.
     *
     * @param baseClass    初始化的基础类
     * @param baseObj      基础类的一个实例
     * @param initConfig   初始化的配置
     * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
+   public static Instance createClassFactoryManager(Class baseClass,
          Object baseObj, String initConfig, boolean registry)
    {
       return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
    }
 
    /**
-    * 根据一个类及配置获取工厂管理器的实例.
+    * 根据一个类及配置创建工厂管理器的实例.
     *
     * @param baseClass        初始化的基础类
     * @param baseObj          基础类的一个实例
@@ -407,7 +481,7 @@ public class FactoryManager
     * @param parentConfig     初始化的父配置
     * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static FactoryManager.Instance createClassFactoryManager(Class baseClass,
+   public static Instance createClassFactoryManager(Class baseClass,
          Object baseObj, String initConfig, String[] parentConfig, boolean registry)
    {
       Class instanceClass = null;
@@ -419,42 +493,18 @@ public class FactoryManager
    }
 
    /**
-    * 根据一个类及配置获取工厂管理器的实例.
+    * 根据一个类及配置创建工厂管理器的实例.
     *
     * @param baseClass        初始化的基础类
     * @param baseObj          基础类的一个实例
     * @param initConfig       初始化的配置
     * @param parentConfig     初始化的父配置
     * @param instanceClass    工厂管理器的实现类
-    * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+    * @param regist           是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static synchronized FactoryManager.Instance createClassFactoryManager(Class baseClass,
-         Object baseObj, String initConfig, String[] parentConfig, Class instanceClass, boolean registry)
+   public static synchronized Instance createClassFactoryManager(Class baseClass,
+         Object baseObj, String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
    {
-      String conf = getConfig(initConfig, parentConfig);
-      String tempName = conf != null ? baseClass.getName() + "=" + conf : baseClass.getName();
-      if (!registry)
-      {
-         Object instance = classInstanceMap.get(tempName);
-         if (instance != null)
-         {
-            if (instance instanceof ClassImpl)
-            {
-               ClassImpl ci = (ClassImpl) instance;
-               // 如果基于的类相同则不重新加载（当使用了不同的ClassLoader时，基于的类就会不同）
-               if (ci.baseClass == baseClass)
-               {
-                  // 如果baseObj不同，此方法会将其加入列表中
-                  ci.addBaseObj(baseObj);
-                  return ci;
-               }
-            }
-            else
-            {
-               return (FactoryManager.Instance) instance;
-            }
-         }
-      }
       Instance instance = null;
       if (instanceClass != null)
       {
@@ -527,10 +577,34 @@ public class FactoryManager
             instance = new ClassImpl(baseClass, baseObj, initConfig, parentConfig);
          }
       }
+      String id = instance.getId();
+      if (!regist)
+      {
+         Instance tmp = (Instance) classInstanceMap.get(id);
+         if (tmp != null)
+         {
+            if (tmp instanceof ClassImpl)
+            {
+               ClassImpl ci = (ClassImpl) tmp;
+               // 如果基于的类相同则不重新加载（当使用了不同的ClassLoader时, 基于的类就会不同）
+               if (ci.baseClass == baseClass)
+               {
+                  // 如果baseObj是一个监听者, 此方法会将其加入列表中
+                  ci.addInitializedListener(baseObj);
+                  return ci;
+               }
+            }
+            else
+            {
+               tmp.addInitializedListener(baseObj);
+               return tmp;
+            }
+         }
+      }
       current = instance;
       instance.reInit(null);
-      current = globeInstance;
-      Instance old = (Instance) classInstanceMap.put(tempName, instance);
+      current = globalInstance;
+      Instance old = (Instance) classInstanceMap.put(id, instance);
       if (old != null)
       {
          old.destroy();
@@ -612,16 +686,16 @@ public class FactoryManager
     */
    public static synchronized void reInitEterna(StringRef msg)
    {
-      current = globeInstance;
-      globeInstance.reInit(msg);
+      current = globalInstance;
+      globalInstance.reInit(msg);
       Iterator itr = classInstanceMap.values().iterator();
       while (itr.hasNext())
       {
-         FactoryManager.Instance instance = (FactoryManager.Instance) itr.next();
+         Instance instance = (Instance) itr.next();
          current = instance;
          instance.reInit(msg);
       }
-      current = globeInstance;
+      current = globalInstance;
    }
 
    /**
@@ -654,7 +728,7 @@ public class FactoryManager
    public static EternaFactory getEternaFactory()
          throws ConfigurationException
    {
-      return globeInstance.getEternaFactory();
+      return globalInstance.getEternaFactory();
    }
 
    /**
@@ -754,11 +828,20 @@ public class FactoryManager
    {
       public final Instance shareInstance;
       public final Object baseObj;
+      public final String name;
 
       public ContainObject(Instance shareInstance, Object baseObj)
       {
          this.shareInstance = shareInstance;
          this.baseObj = baseObj;
+         this.name = "";
+      }
+
+      public ContainObject(Instance shareInstance, Object baseObj, String name)
+      {
+         this.shareInstance = shareInstance;
+         this.baseObj = baseObj;
+         this.name = name;
       }
 
    }
@@ -783,6 +866,17 @@ public class FactoryManager
        * @param msg  存放初始化的返回信息
        */
       void reInit(StringRef msg);
+
+      /**
+       * 添加一个初始化监听者. <p>
+       * 此对象必须实现<code>self.micromagic.eterna.share.EternaInitialize</code>接口,
+       * 还必须定义afterEternaInitialize(FactoryManager.Instance)方法, 在初始化完毕后
+       * 会调用此方法.
+       *
+       * @param obj    初始化监听者
+       * @see self.micromagic.eterna.share.EternaInitialize
+       */
+      void addInitializedListener(Object obj);
 
       /**
        * 获得一个工厂实例.
@@ -822,6 +916,12 @@ public class FactoryManager
    public static abstract class AbstractInstance
          implements Instance
    {
+      private static final Base64 ID_CODER = new Base64(
+            "0123456789abcedfghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ$_.".toCharArray());
+      private static final String CODER_PREFIX = "#ID:";
+
+      protected String prefixName = "";
+      protected Map listenerMap = null;
       protected Map instanceMaps = new HashMap();
       protected boolean initialized = false;
       protected Throwable initException = null;
@@ -832,15 +932,83 @@ public class FactoryManager
       /**
        * 设置与此实例共享的实例.
        */
-      public void setShareInstance(FactoryManager.Instance shareInstance)
+      public void setShareInstance(Instance shareInstance)
       {
          if (shareInstance == null)
          {
-            this.shareInstance = globeInstance;
+            this.shareInstance = globalInstance;
          }
          else
          {
             this.shareInstance = shareInstance;
+         }
+      }
+
+      /**
+       * 解析Instance的id.
+       */
+      protected String parseInstanceId(String id)
+      {
+         if (id != null && id.startsWith(CODER_PREFIX))
+         {
+            try
+            {
+
+               byte[] buf = ID_CODER.base64ToByteArray(id.substring(CODER_PREFIX.length()));
+               ByteArrayInputStream byteIn = new ByteArrayInputStream(buf);
+               InflaterInputStream in = new InflaterInputStream(byteIn);
+               ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
+               Utility.copyStream(in, byteOut);
+               in.close();
+               byte[] result = byteOut.toByteArray();
+               return new String(result, "UTF-8");
+            }
+            catch (IOException ex)
+            {
+               // 这里不会出现IO异常因为全是内存操作
+               throw new Error();
+            }
+         }
+         return id;
+      }
+
+      /**
+       * 构建一个Instance的id.
+       */
+      protected String createInstanceId(String configString, String baseName)
+      {
+         try
+         {
+            String tmp;
+            if (configString == null)
+            {
+               tmp = baseName;
+            }
+            else
+            {
+               tmp = baseName + "+" + configString;
+            }
+            if (this.prefixName.length() > 0)
+            {
+               tmp = this.prefixName + "+" + tmp;
+            }
+            if (tmp.length() < 50)
+            {
+               // 不足50个字符的, 不进行压缩
+               return tmp;
+            }
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
+            DeflaterOutputStream out = new DeflaterOutputStream(byteOut);
+            byte[] buf = tmp.getBytes("UTF-8");
+            out.write(buf);
+            out.close();
+            byte[] result = byteOut.toByteArray();
+            return CODER_PREFIX + ID_CODER.byteArrayToBase64(result);
+         }
+         catch (IOException ex)
+         {
+            // 这里不会出现IO异常因为全是内存操作
+            throw new Error();
          }
       }
 
@@ -954,15 +1122,108 @@ public class FactoryManager
       protected abstract void initializeXML(StringRef msg) throws Throwable;
 
       /**
-       * 初始化完成后, 处理剩余内容.
+       * 根据配置生成xml流并进行初始化.
+       *
+       * @param config       配置信息
+       * @param baseClass    初始化使用的基本类
+       * @param digester     初始化的解析器
+       *
+       * @throws IOException               生成xml流时出现的异常
+       * @throws ConfigurationException    初始化时出现的异常
+       * @throws SAXException              解析xml时出现的异常
        */
-      protected void initializeElse()
-            throws ConfigurationException
+      protected void dealXML(String config, Class baseClass, Digester digester)
+            throws IOException, ConfigurationException, SAXException
       {
+         StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
+         while (token.hasMoreTokens())
+         {
+            String temp = token.nextToken().trim();
+            if (temp.length() == 0)
+            {
+               continue;
+            }
+            ConfigurationException.config = temp;
+            ConfigurationException.objName = null;
+            InputStream is = this.getConfigStream(temp, baseClass);
+            if (is != null)
+            {
+               log.debug("The XML locate is \"" + temp + "\".");
+               digester.parse(is);
+               is.close();
+            }
+            else if (!temp.startsWith("note:"))
+            {
+               log.info("The XML locate \"" + temp + "\" not avilable.");
+            }
+         }
       }
 
       /**
        * 初始化完成后, 处理剩余内容.
+       * 如通知监听者.
+       */
+      protected void initializeElse()
+            throws ConfigurationException
+      {
+         if (this.listenerMap != null)
+         {
+            this.callAfterEternaInitialize(this.listenerMap.keySet());
+         }
+      }
+
+      /**
+       * 添加一个初始化监听者.
+       */
+      public void addInitializedListener(Object obj)
+      {
+         if (obj == null)
+         {
+            return;
+         }
+         Class theClass;
+         if (obj instanceof Class)
+         {
+            theClass = (Class) obj;
+         }
+         else
+         {
+            theClass = obj.getClass();
+         }
+         if (!EternaInitialize.class.isAssignableFrom(theClass))
+         {
+            return;
+         }
+         try
+         {
+            Method method = theClass.getDeclaredMethod("afterEternaInitialize", new Class[]{Instance.class});
+            if (this.listenerMap == null)
+            {
+               synchronized (this)
+               {
+                  if (this.listenerMap == null)
+                  {
+                     this.listenerMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD, 2, 0.75f);
+                  }
+               }
+            }
+            if (Modifier.isStatic(method.getModifiers()))
+            {
+               this.listenerMap.put(theClass, Boolean.TRUE);
+            }
+            else
+            {
+               this.listenerMap.put(obj, Boolean.TRUE);
+            }
+         }
+         catch (Exception ex)
+         {
+            log.warn("The class [" + theClass + "] isn't InitializedListener.", ex);
+         }
+      }
+
+      /**
+       * 初始化完成后, 通知所有的监听者.
        */
       protected void callAfterEternaInitialize(Object obj)
             throws ConfigurationException
@@ -977,6 +1238,15 @@ public class FactoryManager
          {
             theClass = (Class) obj;
             objs = null;
+         }
+         else if (obj instanceof Collection)
+         {
+            Iterator itr = ((Collection) obj).iterator();
+            while (itr.hasNext())
+            {
+               this.callAfterEternaInitialize(itr.next());
+            }
+            return;
          }
          else
          {
@@ -997,8 +1267,7 @@ public class FactoryManager
          }
          try
          {
-            Method method = theClass.getDeclaredMethod(
-                  "afterEternaInitialize", new Class[]{FactoryManager.Instance.class});
+            Method method = theClass.getDeclaredMethod("afterEternaInitialize", new Class[]{Instance.class});
             boolean aFlag = method.isAccessible();
             if (!aFlag)
             {
@@ -1201,12 +1470,12 @@ public class FactoryManager
    /**
     * 全局FactoryManager的实例的实现类.
     */
-   private static class GlobeImpl extends AbstractInstance
+   private static class GlobalImpl extends AbstractInstance
          implements Instance
    {
       public String getId()
       {
-         return "eterna.FactoryManager.Instance.globe";
+         return GLOBAL_INSTANCE_ID;
       }
 
       public String getInitConfig()
@@ -1238,7 +1507,7 @@ public class FactoryManager
             String temp = Utility.getProperty(INIT_SUBFILES_PROPERTY);
             if (temp != null)
             {
-               this.dealXML(temp, digester);
+               this.dealXML(temp, null, digester);
                FactoryManager.superInitLevel = 1;
             }
 
@@ -1249,7 +1518,7 @@ public class FactoryManager
             }
             else
             {
-               this.dealXML(filenames, digester);
+               this.dealXML(filenames, null, digester);
                FactoryManager.superInitLevel += 1;
             }
 
@@ -1257,39 +1526,12 @@ public class FactoryManager
             if (temp == null || "true".equalsIgnoreCase(temp))
             {
                temp = DEFAULT_CONFIG_FILE;
-               this.dealXML(temp, digester);
+               this.dealXML(temp, null, digester);
             }
          }
          finally
          {
             FactoryManager.superInitLevel = 0;
-         }
-      }
-
-      protected void dealXML(String config, Digester digester)
-            throws Exception
-      {
-         StringTokenizer token = new StringTokenizer(FactoryManager.resolveLocate(config), ";");
-         while (token.hasMoreTokens())
-         {
-            String temp = token.nextToken().trim();
-            if (temp.length() == 0)
-            {
-               continue;
-            }
-            ConfigurationException.config = temp;
-            ConfigurationException.objName = null;
-            InputStream is = FactoryManager.getConfigStream(temp, null);
-            if (is != null)
-            {
-               log.debug("The XML locate is \"" + temp + "\".");
-               digester.parse(is);
-               is.close();
-            }
-            else
-            {
-               log.info("The XML locate \"" + temp + "\" not avilable.");
-            }
          }
       }
 
@@ -1333,8 +1575,9 @@ public class FactoryManager
             {
                continue;
             }
-            this.callAfterEternaInitialize(initClasses[i]);
+            this.addInitializedListener(initClasses[i]);
          }
+         super.initializeElse();
       }
 
    }
@@ -1350,24 +1593,23 @@ public class FactoryManager
       protected String[] parentConfig;
 
       protected Class baseClass;
-      protected Object[] baseObjs;
 
       public ClassImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig)
       {
          this.baseClass = baseClass;
-         this.baseObjs = (Object[]) Array.newInstance(baseClass, 1);
          this.initConfig = initConfig;
          this.parentConfig = parentConfig;
          if (baseObj instanceof ContainObject)
          {
             ContainObject co = (ContainObject) baseObj;
             this.setShareInstance(co.shareInstance);
-            this.baseObjs[0] = co.baseObj;
+            this.addInitializedListener(co.baseObj);
+            this.prefixName = co.name;
          }
          else
          {
-            this.baseObjs[0] = baseObj;
-            this.shareInstance = FactoryManager.globeInstance;
+            this.shareInstance = FactoryManager.globalInstance;
+            this.addInitializedListener(baseObj);
          }
       }
 
@@ -1375,29 +1617,9 @@ public class FactoryManager
       {
          if (this.instanceId == null)
          {
-            try
-            {
-               String tmp = getConfig(this.initConfig, this.parentConfig);
-               if (tmp == null)
-               {
-                  tmp = this.baseClass.getName();
-               }
-               else
-               {
-                  tmp = this.baseClass.getName() + "=" + tmp;
-               }
-               ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
-               DeflaterOutputStream out = new DeflaterOutputStream(byteOut);
-               byte[] buf = tmp.getBytes("UTF-8");
-               out.write(buf);
-               out.close();
-               byte[] result = byteOut.toByteArray();
-               this.instanceId = new Base64().byteArrayToBase64(result);
-            }
-            catch (IOException ex)
-            {
-               // 这里不会出现IO异常因为全是内存操作
-            }
+            String conf = getConfig(this.initConfig, this.parentConfig);
+            String baseName = this.baseClass.getName();
+            this.instanceId = this.createInstanceId(conf, baseName);
          }
          return this.instanceId;
       }
@@ -1412,38 +1634,6 @@ public class FactoryManager
          return tmp;
       }
 
-      public void addBaseObj(Object obj)
-      {
-         if (obj == null)
-         {
-            return;
-         }
-         int nullIndex = -1;
-         for (int i = 0; i < this.baseObjs.length; i++)
-         {
-            if (obj == this.baseObjs[i])
-            {
-               // 此obj已在列表中，所以不需要再添加
-               return;
-            }
-            if (this.baseObjs[i] == null)
-            {
-               nullIndex = i;
-            }
-         }
-         if (nullIndex != -1)
-         {
-            this.baseObjs[nullIndex] = obj;
-         }
-         else
-         {
-            Object[] temp = this.baseObjs;
-            this.baseObjs = (Object[]) Array.newInstance(this.baseClass, temp.length + 1);
-            this.baseObjs[temp.length] = obj;
-            System.arraycopy(temp, 0, this.baseObjs, 0, temp.length);
-         }
-      }
-
       protected void initializeXML(StringRef msg)
             throws Throwable
       {
@@ -1454,7 +1644,7 @@ public class FactoryManager
             Digester digester = this.createDigester();
             String filenames = this.initConfig == null ?
                   "cp:" + this.baseClass.getName().replace('.', '/') + ".xml" : this.initConfig;
-            this.dealXML(filenames, digester);
+            this.dealXML(filenames, this.baseClass, digester);
 
             if (this.parentConfig != null)
             {
@@ -1467,7 +1657,7 @@ public class FactoryManager
                      FactoryManager.superInitLevel = i + 1;
                      try
                      {
-                        this.dealXML(this.parentConfig[i], digester);
+                        this.dealXML(this.parentConfig[i], this.baseClass, digester);
                      }
                      finally
                      {
@@ -1481,39 +1671,6 @@ public class FactoryManager
          {
             Thread.currentThread().setContextClassLoader(oldCL);
          }
-      }
-
-      protected void dealXML(String config, Digester digester)
-            throws Exception
-      {
-         StringTokenizer token = new StringTokenizer(FactoryManager.resolveLocate(config), ";");
-         while (token.hasMoreTokens())
-         {
-            String temp = token.nextToken().trim();
-            if (temp.length() == 0)
-            {
-               continue;
-            }
-            ConfigurationException.config = temp;
-            ConfigurationException.objName = null;
-            InputStream is = FactoryManager.getConfigStream(temp, this.baseClass);
-            if (is != null)
-            {
-               log.debug("The XML locate is \"" + temp + "\".");
-               digester.parse(is);
-               is.close();
-            }
-            else
-            {
-               log.info("The XML locate \"" + temp + "\" not avilable.");
-            }
-         }
-      }
-
-      protected void initializeElse()
-            throws ConfigurationException
-      {
-         this.callAfterEternaInitialize(this.baseObjs);
       }
 
    }
@@ -1589,7 +1746,7 @@ public class FactoryManager
          }
          else
          {
-            StringTokenizer token = new StringTokenizer(FactoryManager.resolveLocate(config), ";");
+            StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
             while (token.hasMoreTokens())
             {
                String tStr = token.nextToken().trim();
