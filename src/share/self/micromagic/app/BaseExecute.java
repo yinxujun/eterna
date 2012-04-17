@@ -14,6 +14,7 @@ import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.util.ObjectRef;
+import org.apache.commons.logging.Log;
 
 /**
  * 基础执行器. <p>
@@ -38,6 +39,11 @@ public class BaseExecute extends AbstractExecute
     * 默认值在初始化时设置, 为当前的类名.
     */
    protected String executeType;
+
+   /**
+    * 日志记录.
+    */
+   protected final static Log log = WebApp.log;
 
    /**
     * 实现了<code>self.micromagic.eterna.model.Execute</code>接口的初始化方法.

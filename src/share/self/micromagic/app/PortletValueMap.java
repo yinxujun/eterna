@@ -10,6 +10,7 @@ import javax.portlet.PortletSession;
 import self.micromagic.util.container.ValueContainer;
 import self.micromagic.util.container.ValueContainerMap;
 import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.eterna.model.AppData;
 
 public class PortletValueMap
 {
@@ -150,28 +151,23 @@ public class PortletValueMap
          {
             return null;
          }
-         return this.session.getAttribute(
-               key == null ? null : key.toString(), this.scope);
+         return this.session.getAttribute(key == null ? null : key.toString(), this.scope);
       }
 
       public void setValue(Object key, Object value)
       {
-         this.checkSession(value != null);
-         if (this.session != null)
+         if (this.checkSession(value != null))
          {
-            this.session.setAttribute(
-                  key == null ? null : key.toString(), value, this.scope);
+            this.session.setAttribute(key == null ? null : key.toString(), value, this.scope);
          }
       }
 
       public void removeValue(Object key)
       {
-         if (!this.checkSession(false))
+         if (this.checkSession(false))
          {
-            return;
+            this.session.removeAttribute(key == null ? null : key.toString(), this.scope);
          }
-         this.session.removeAttribute(
-               key == null ? null : key.toString(), this.scope);
       }
 
       public Enumeration getKeys()
@@ -193,7 +189,18 @@ public class PortletValueMap
          {
             return false;
          }
-         this.session = this.request.getPortletSession(create);
+         try
+         {
+            this.session = this.request.getPortletSession(create);
+         }
+         catch (Exception ex)
+         {
+            // 创建session时可能会出错, 比如已经提交了应答之后
+            if (AppData.getAppLogType() != 0)
+            {
+               AppData.log.warn("Error in create portlet session.", ex);
+            }
+         }
          return this.session != null;
       }
 

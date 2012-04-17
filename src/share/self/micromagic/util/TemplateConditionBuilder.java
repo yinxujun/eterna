@@ -129,7 +129,7 @@ public class TemplateConditionBuilder extends AbstractGenerator
       return this.caption;
    }
 
-   public ConditionBuilder.Condition buildeCondition(String colName, String value, ConditionProperty cp)
+   public Condition buildeCondition(String colName, String value, ConditionProperty cp)
          throws ConfigurationException
    {
       if (this.template.length() == 0)

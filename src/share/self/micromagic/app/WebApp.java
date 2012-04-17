@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.EternaInitialize;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
@@ -47,6 +48,7 @@ public interface WebApp
          "self.micromagic.method_name", "method");
 
    public static class QueryTool
+         implements EternaInitialize
    {
       private EternaFactory factory;
 
@@ -54,12 +56,20 @@ public interface WebApp
       {
          try
          {
-            this.factory = FactoryManager.getEternaFactory();
+            FactoryManager.Instance instance = FactoryManager.getGlobalFactoryManager();
+            instance.addInitializedListener(this);
+            this.afterEternaInitialize(instance);
          }
          catch (ConfigurationException ex)
          {
             log.error("Error when create sql factory.", ex);
          }
+      }
+
+      private void afterEternaInitialize(FactoryManager.Instance instance)
+            throws ConfigurationException
+      {
+         this.factory = instance.getEternaFactory();
       }
 
       public QueryTool(EternaFactory factory)
