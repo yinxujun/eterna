@@ -72,7 +72,7 @@ public class MultiConditionBuilder extends AbstractGenerator
       return this.caption;
    }
 
-   public ConditionBuilder.Condition buildeCondition(String colName, String value, ConditionProperty cp)
+   public Condition buildeCondition(String colName, String value, ConditionProperty cp)
          throws ConfigurationException
    {
       String temp = value.length() == 0 || this.paramCount == 0 ? "%" : "%" + value + "%";
@@ -81,7 +81,7 @@ public class MultiConditionBuilder extends AbstractGenerator
       {
          preparers[i] = cp.createValuePreparer(temp);
       }
-      return new ConditionBuilder.Condition(this.template, preparers);
+      return new Condition(this.template, preparers);
    }
 
 }
