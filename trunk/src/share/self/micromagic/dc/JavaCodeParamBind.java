@@ -19,9 +19,10 @@ import self.micromagic.util.StringTool;
  * 动态编译java代码来构造一个ParamBind.
  *
  * 需设置的属性
- * src        格式为 attrName[:throwCompileError]
+ * src        格式为 attrName[:throwCompileError][:extends]
  *            attrName               从factory的属性中获取处理参数绑定的java代码
  *            throwCompileError      是否需要将编译的错误抛出, 抛出错误会打断初始化的执行, 默认为false
+ *            extends                继承的类
  */
 public class JavaCodeParamBind extends AbstractGenerator
       implements ParamBindGenerator, ParamBind
@@ -39,13 +40,17 @@ public class JavaCodeParamBind extends AbstractGenerator
       {
          return;
       }
-      String attrCode = this.src;
+      String[] tmpArr = StringTool.separateString(this.src, ":", true);
+      String attrCode = tmpArr[0];
+      String extendsStr = null;
       boolean throwCompileError = false;
-      int index = this.src.indexOf(':');
-      if (index != -1)
+      if (tmpArr.length >= 2)
       {
-         attrCode = this.src.substring(0, index);
-         throwCompileError = "true".equalsIgnoreCase(this.src.substring(index + 1));
+         throwCompileError = "true".equalsIgnoreCase(tmpArr[1]);
+      }
+      if (tmpArr.length >= 3)
+      {
+         extendsStr = tmpArr[2];
       }
       String code = (String) factory.getAttribute(attrCode);
       if (code == null)
@@ -54,7 +59,7 @@ public class JavaCodeParamBind extends AbstractGenerator
       }
       try
       {
-         Class codeClass = this.createCodeClass(code);
+         Class codeClass = this.createCodeClass(code, extendsStr);
          this.paramBindCode = (ParamBindCode) codeClass.newInstance();
          this.paramBindCode.setGenerator(this, model.getFactory());
       }
@@ -70,7 +75,9 @@ public class JavaCodeParamBind extends AbstractGenerator
          }
          else
          {
-            log.error("Error in compile java code in param bind [" + this.getName() + "].", ex);
+            String pos = "model:[" + model.getName() + "], execute:[" + execute.getName()
+                  + "] type:[" + execute.getExecuteType() + "], src:[" + this.src + "]";
+            CodeClassTool.logCodeError(code, pos, ex);
          }
       }
    }
@@ -142,10 +149,9 @@ public class JavaCodeParamBind extends AbstractGenerator
       return this;
    }
 
-   private Class createCodeClass(String code)
+   private Class createCodeClass(String code, String extendsStr)
          throws Exception
    {
-      String extendsStr = (String) this.getAttribute("extends");
       Class extendsClass = ParamBindCodeImpl.class;
       if (extendsStr != null)
       {

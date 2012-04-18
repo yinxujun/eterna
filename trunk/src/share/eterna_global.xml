@@ -47,7 +47,7 @@
          <format name="datetime.format" type="Date" pattern="yyyy-MM-dd HH:mm:ss"/>
 
          <builder name="util.IN" operator="IN" caption="存在"
-               generator="self.micromagic.util.InConditionBuilderGenerator">
+               generator="self.micromagic.util.InConditionBuilder">
             <attribute name="seperate" value=",，;；"/>
          </builder>
          <builder name="util.Save" operator="none" caption="保存"

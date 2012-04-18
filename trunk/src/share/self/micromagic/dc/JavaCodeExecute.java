@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import self.micromagic.app.BaseExecute;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ModelExport;
-import self.micromagic.dc.CodeClassTool;
+import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.StringTool;
-import self.micromagic.app.BaseExecute;
 
 /**
  * 动态编译java代码来构造一个执行器.
@@ -36,15 +35,9 @@ public class JavaCodeExecute extends BaseExecute
       String code = CodeClassTool.getCode(this, this.factory, "code", "attrCode", "codeParam");
       try
       {
-         String extendsStr = (String) this.getAttribute("extends");
-         Class extendsClass = BaseExecute.class;
-         if (extendsStr != null)
-         {
-            extendsClass = Class.forName(extendsStr);
-         }
-         Class codeClass = this.createCodeClass(extendsClass, code);
+         Class codeClass = this.createCodeClass(code);
          this.executeCode = (ExecuteCode) codeClass.newInstance();
-         this.executeCode.initialize(this.getModelAdapter());
+         this.executeCode.setGenerator(this, this.factory);
       }
       catch (Exception ex)
       {
@@ -58,15 +51,22 @@ public class JavaCodeExecute extends BaseExecute
          }
          else
          {
-            log.error("Error in compile java code in model ["
-                  + this.getModelAdapter().getName() + "].", ex);
+            String pos = "model:[" + this.getModelAdapter().getName() + "], execute:["
+                  + this.getName() + "]";
+            CodeClassTool.logCodeError(code, pos, ex);
          }
       }
    }
 
-   private Class createCodeClass(Class baseClass, String code)
+   private Class createCodeClass(String code)
          throws Exception
    {
+      String extendsStr = (String) this.getAttribute("extends");
+      Class extendsClass = ExecuteCodeImpl.class;
+      if (extendsStr != null)
+      {
+         extendsClass = Class.forName(extendsStr);
+      }
       String methodHead = "public Object invoke(AppData data, Connection conn)\n      throws Exception";
       String[] iArr = null;
       String imports = (String) this.getAttribute("imports");
@@ -74,7 +74,7 @@ public class JavaCodeExecute extends BaseExecute
       {
          iArr = StringTool.separateString(imports, ",", true);
       }
-      return CodeClassTool.createJavaCodeClass(baseClass, ExecuteCode.class, methodHead, code, iArr);
+      return CodeClassTool.createJavaCodeClass(extendsClass, ExecuteCode.class, methodHead, code, iArr);
    }
 
    protected ModelExport dealProcess(AppData data, Connection conn)
@@ -117,9 +117,22 @@ public class JavaCodeExecute extends BaseExecute
 
    public interface ExecuteCode
    {
-      public void initialize(ModelAdapter model) throws ConfigurationException;
+      public void setGenerator(JavaCodeExecute generator, EternaFactory factory);
 
       public Object invoke(AppData data, Connection conn) throws Exception;
+
+   }
+
+   public static abstract class ExecuteCodeImpl extends BaseExecute
+         implements ExecuteCode
+   {
+      protected JavaCodeExecute generator;
+
+      public void setGenerator(JavaCodeExecute generator, EternaFactory factory)
+      {
+         this.factory = factory;
+         this.generator = generator;
+      }
 
    }
 
