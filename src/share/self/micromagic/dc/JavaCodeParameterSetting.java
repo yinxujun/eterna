@@ -6,7 +6,6 @@ import java.sql.Connection;
 import self.micromagic.eterna.search.ParameterSetting;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.share.Generator;
@@ -57,8 +56,8 @@ public class JavaCodeParameterSetting
          }
          else
          {
-            FactoryManager.log.error("Error in compile java code in parameter setting ["
-                  + this.getName() + "].", ex);
+            String pos = "search:[" + search.getName() + "], ParameterSetting";
+            CodeClassTool.logCodeError(code, pos, ex);
          }
       }
    }

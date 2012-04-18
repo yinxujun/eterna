@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.collections.ReferenceMap;
 import javassist.ClassPool;
@@ -15,8 +16,10 @@ import javassist.ClassClassPath;
 import javassist.CtClass;
 import javassist.CtNewMethod;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.Factory;
+import self.micromagic.eterna.share.ThreadCache;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
@@ -25,6 +28,11 @@ import self.micromagic.util.Utility;
  */
 public class CodeClassTool
 {
+   /**
+    * 在线程缓存中存储的错误信息列表的名称, 类型为List.
+    */
+   public static final String CODE_ERRORS_FLAG = "codeErrors";
+
    /**
     * 生成的代码的编号序列.
     */
@@ -186,6 +194,24 @@ public class CodeClassTool
          code = Utility.resolveDynamicPropnames(code);
       }
       return code;
+   }
+
+   /**
+    * 记录动态生成类时的出错信息.
+    *
+    * @param code         需要动态编译的代码
+    * @param position     代码所在的位置信息
+    * @param error        出错的异常信息
+    */
+   public static void logCodeError(String code, String position, Exception error)
+   {
+      String msg = "Error in compile java code at " + position + ".";
+      FactoryManager.log.error(msg, error);
+      Object obj = ThreadCache.getInstance().getProperty(CODE_ERRORS_FLAG);
+      if (obj instanceof List)
+      {
+         ((List) obj).add(new CodeErrorInfo(code, position, error));
+      }
    }
 
    private static class CodeKey

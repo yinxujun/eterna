@@ -55,8 +55,8 @@ public class JavaCodeConditionBuilder extends AbstractGenerator
          }
          else
          {
-            log.error("Error in compile java code in condition builder ["
-                  + this.getName() + "].", ex);
+            String pos = "builder:[" + this.getName() + "]";
+            CodeClassTool.logCodeError(code, pos, ex);
          }
       }
    }

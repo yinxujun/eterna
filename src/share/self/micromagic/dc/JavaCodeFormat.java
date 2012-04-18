@@ -56,7 +56,8 @@ public class JavaCodeFormat extends AbstractGenerator
          }
          else
          {
-            log.error("Error in compile java code in format [" + this.getName() + "].", ex);
+            String pos = "format:[" + this.getName() + "]";
+            CodeClassTool.logCodeError(code, pos, ex);
          }
       }
    }
