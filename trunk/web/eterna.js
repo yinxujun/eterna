@@ -1,7 +1,7 @@
 
-/** version: 1.5.0 */
+/** version: 1.5.1 */
 
-var ___ETERNA_VERSION = "1.5.0";
+var ___ETERNA_VERSION = "1.5.1";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 var ED_GET_VALUE = 0x1;
 var ED_EXECUTE_SCRIPT = 0x2;
@@ -377,6 +377,81 @@ function Eterna($E, eterna_debug, rootWebObj)
                }
             }
             return opts.async ? successFn : successFn.data;
+         }
+         catch (ex)
+         {
+            this.printException(ex);
+            throw ex;
+         }
+      }
+
+      Eterna.prototype.loadEterna = function(url, param, divObj, debug)
+      {
+         if (param == null)
+         {
+            param = {};
+         }
+         try
+         {
+            param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
+            var str = this.getRemoteText(url, param);
+            var endPos = str.length;
+            for (var i = str.length - 1; i >= 0; i--)
+            {
+               if (str.charCodeAt(i) <= 0x20)
+               {
+                  endPos--;
+               }
+               else
+               {
+                  break;
+               }
+            }
+            var eterna_debug = debug;
+            var $E = {};
+            var eternaData = $E;
+            var _eterna = new Eterna($E, debug, divObj);
+            _eterna.cache.useAJAX = true;
+            _eterna.changeEternaData(eval("(" + str.substring(0, endPos) + ")"));
+            eg_temp = {};
+            _eterna.reInit();
+         }
+         catch (ex)
+         {
+            this.printException(ex);
+            throw ex;
+         }
+      }
+
+      Eterna.prototype.getRemoteText = function(url, param)
+      {
+         var httpRequest = null;
+         try
+         {
+            var opts = {dataType:"text",url:url,async:false,cache:false};
+            if (param == null)
+            {
+               opts.type = "GET";
+            }
+            else
+            {
+               opts.type = "POST";
+               if (typeof param.jquery == "string")
+               {
+                  opts.data = param.serialize();
+               }
+               else
+               {
+                  opts.data = jQuery.param(param);
+               }
+            }
+            httpRequest = jQuery.ajax(opts);
+            if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && httpRequest != null)
+            {
+               this.showMessage(httpRequest.responseText + "\n---------------------------------\n"
+                     + "url:" + url);
+            }
+            return httpRequest.responseText;
          }
          catch (ex)
          {
@@ -962,6 +1037,11 @@ function Eterna($E, eterna_debug, rootWebObj)
             eterna_com_stack.push("name:" + configData.name + ",type:" + configData.type);
          }
 
+         var nullParent = parent == null;
+         if (parent == null)
+         {
+            parent = new WebObjList();
+         }
          var temp = this.egTemp();
 
          if (configData.beforeInit != null)
@@ -985,7 +1065,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          var webObj = null;
          if (configData.creater != null && jQuery.isFunction(configData.creater))
          {
-            webObj = configData.creater(configData, parent);
+            webObj = configData.creater(configData, parent.webObjList ? null : parent);
          }
          else if (type == "tableForm")
          {
@@ -1094,7 +1174,10 @@ function Eterna($E, eterna_debug, rootWebObj)
                {
                   this.dealEvents(configData, webObj, parent, myTemp);
                }
-               webObj.data("parentWebObj", parent);
+               if (!parent.webObjList)
+               {
+                  webObj.data("parentWebObj", parent);
+               }
                webObj.data("configData", configData);
                webObj.data("egTemp", myTemp);
             }
@@ -1118,6 +1201,11 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
          if (returnNULL)
          {
+            // 如果没有给出parent, 则返回生成的数组
+            if (nullParent)
+            {
+               return parent.data;
+            }
             return null;
          }
          return webObj;
@@ -1131,7 +1219,7 @@ function Eterna($E, eterna_debug, rootWebObj)
             var objParam = false;
             var tmpParamData = {webObj:webObj,objConfig:configData,eventConfig:theEvent}
 
-            if (parent != null)
+            if (parent != null && !parent.webObjList)
             {
                tmpParamData.parentWebObj = parent;
             }
@@ -3100,4 +3188,34 @@ function ef_formatNumber(num, pattern)
       negative = "";
    }
    return firstStr + negative + result + lastStr;
+}
+
+/**
+ * 用于存放创建控件时产生临时列表
+ */
+function WebObjList()
+{
+   this.data = [];
+
+   if (typeof WebObjList._initialized == 'undefined')
+   {
+      WebObjList._initialized = true;
+      WebObjList.prototype.webObjList = true;
+
+      WebObjList.prototype.append = function(obj)
+      {
+         this.data.push(obj);
+      }
+
+      WebObjList.prototype.get = function(index)
+      {
+         return this.data[index];
+      }
+
+      WebObjList.prototype.size = function()
+      {
+         return this.data.length;
+      }
+   }
+
 }
