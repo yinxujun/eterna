@@ -1,49 +1,50 @@
 
 package self.micromagic.eterna.digester;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Writer;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Collection;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.collections.ReferenceMap;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
-import org.apache.commons.collections.ReferenceMap;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.SAXException;
+import self.micromagic.coder.Base64;
+import self.micromagic.eterna.share.AttributeManager;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaFactoryImpl;
 import self.micromagic.eterna.share.EternaInitialize;
 import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.ThreadCache;
 import self.micromagic.eterna.share.Tool;
+import self.micromagic.util.FormatTool;
+import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.Utility;
-import self.micromagic.util.ObjectRef;
-import self.micromagic.util.FormatTool;
-import self.micromagic.coder.Base64;
 
 /**
  * 配置说明:
@@ -271,6 +272,15 @@ public class FactoryManager
    }
 
    /**
+    * 获得当前正在初始化的工厂管理器的实例.
+    * 如果不在初始化时，则返回全局的工厂管理器的实例.
+    */
+   public static Instance getCurrentInstance()
+   {
+      return current;
+   }
+
+   /**
     * 获得全局的工厂管理器的实例.
     */
    public static Instance getGlobalFactoryManager()
@@ -466,8 +476,8 @@ public class FactoryManager
     * @param initConfig   初始化的配置
     * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static Instance createClassFactoryManager(Class baseClass,
-         Object baseObj, String initConfig, boolean registry)
+   public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
+         String initConfig, boolean registry)
    {
       return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
    }
@@ -481,15 +491,16 @@ public class FactoryManager
     * @param parentConfig     初始化的父配置
     * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static Instance createClassFactoryManager(Class baseClass,
-         Object baseObj, String initConfig, String[] parentConfig, boolean registry)
+   public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
+         String initConfig, String[] parentConfig, boolean registry)
    {
       Class instanceClass = null;
       if (Instance.class.isAssignableFrom(baseClass))
       {
          instanceClass = baseClass;
       }
-      return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig, instanceClass, registry);
+      return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig,
+            instanceClass, registry);
    }
 
    /**
@@ -502,8 +513,8 @@ public class FactoryManager
     * @param instanceClass    工厂管理器的实现类
     * @param regist           是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
     */
-   public static synchronized Instance createClassFactoryManager(Class baseClass,
-         Object baseObj, String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
+   public static synchronized Instance createClassFactoryManager(Class baseClass, Object baseObj,
+         String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
    {
       Instance instance = null;
       if (instanceClass != null)
@@ -745,7 +756,14 @@ public class FactoryManager
     */
    public static void setInitCache(Map cache)
    {
-      ThreadCache.getInstance().setProperty(ETERNA_INIT_CACHE, cache);
+      if (cache == null)
+      {
+         ThreadCache.getInstance().removeProperty(ETERNA_INIT_CACHE);
+      }
+      else
+      {
+         ThreadCache.getInstance().setProperty(ETERNA_INIT_CACHE, cache);
+      }
    }
 
    /**
@@ -868,6 +886,30 @@ public class FactoryManager
       void reInit(StringRef msg);
 
       /**
+       * 设置自定义的属性. <p>
+       * 这些属性会在(重新)初始化时, 根据initCache中的值进行更新.
+       *
+       * @param name   属性的名称
+       * @param attr   属性值
+       */
+      void setAttribute(String name, Object attr);
+
+      /**
+       * 移除自定义的属性.
+       *
+       * @param name   属性的名称
+       */
+      void removeAttribute(String name);
+
+      /**
+       * 获取自定义的属性.
+       *
+       * @param name   属性的名称
+       * @return   属性值
+       */
+      Object getAttribute(String name);
+
+      /**
        * 添加一个初始化监听者. <p>
        * 此对象必须实现<code>self.micromagic.eterna.share.EternaInitialize</code>接口,
        * 还必须定义afterEternaInitialize(FactoryManager.Instance)方法, 在初始化完毕后
@@ -928,11 +970,12 @@ public class FactoryManager
       protected boolean initFactorys = false;
       protected Factory defaultFactory = null;
       protected Instance shareInstance = null;
+      protected AttributeManager attrs = new AttributeManager();
 
       /**
        * 设置与此实例共享的实例.
        */
-      public void setShareInstance(Instance shareInstance)
+      protected void setShareInstance(Instance shareInstance)
       {
          if (shareInstance == null)
          {
@@ -942,6 +985,45 @@ public class FactoryManager
          {
             this.shareInstance = shareInstance;
          }
+      }
+
+      /**
+       * 设置自定义的属性. <p>
+       * 这些属性会在(重新)初始化时, 根据initCache中的值进行更新.
+       *
+       * @param name   属性的名称
+       * @param attr   属性值
+       * @see FactoryManager#getInitCache
+       */
+      public void setAttribute(String name, Object attr)
+      {
+         this.attrs.setAttribute(name, attr);
+      }
+
+      /**
+       * 移除自定义的属性.
+       *
+       * @param name   属性的名称
+       */
+      public void removeAttribute(String name)
+      {
+         this.attrs.removeAttribute(name);
+      }
+
+      /**
+       * 获取自定义的属性.
+       *
+       * @param name   属性的名称
+       * @return   属性值
+       */
+      public Object getAttribute(String name)
+      {
+         Object attr = this.attrs.getAttribute(name);
+         if (attr == null && this.shareInstance != null)
+         {
+            attr = this.shareInstance.getAttribute(name);
+         }
+         return attr;
       }
 
       /**
@@ -1045,6 +1127,25 @@ public class FactoryManager
       {
          synchronized (FactoryManager.class)
          {
+            // 根据initCache中的值初始化工厂管理器实例中的属性
+            Map attrs = FactoryManager.getInitCache();
+            if (attrs != null)
+            {
+               Iterator itr = attrs.entrySet().iterator();
+               while (itr.hasNext())
+               {
+                  Map.Entry entry = (Map.Entry) itr.next();
+                  if (entry.getValue() == null)
+                  {
+                     this.removeAttribute((String) entry.getKey());
+                  }
+                  else
+                  {
+                     this.setAttribute((String) entry.getKey(), entry.getValue());
+                  }
+               }
+            }
+            // 初始化重复对象检查规则中的对象缓存
             SameCheckRule.initDealedObjMap();
             Instance oldInstance = FactoryManager.current;
             Factory oldCF = FactoryManager.currentFactory;
@@ -1216,9 +1317,13 @@ public class FactoryManager
                this.listenerMap.put(obj, Boolean.TRUE);
             }
          }
+         catch (NoSuchMethodException ex)
+         {
+            log.warn("The class [" + theClass + "] isn't InitializedListener.");
+         }
          catch (Exception ex)
          {
-            log.warn("The class [" + theClass + "] isn't InitializedListener.", ex);
+            log.error("The class [" + theClass + "] isn't InitializedListener.", ex);
          }
       }
 
@@ -1304,7 +1409,7 @@ public class FactoryManager
             {
                throw (ConfigurationException) ex;
             }
-            log.info("At initializeElse, when invoke init:" + theClass + ".", ex);
+            log.error("At initializeElse, when invoke init:" + theClass + ".", ex);
          }
       }
 
@@ -1608,7 +1713,7 @@ public class FactoryManager
          }
          else
          {
-            this.shareInstance = FactoryManager.globalInstance;
+            this.setShareInstance(null);
             this.addInitializedListener(baseObj);
          }
       }
@@ -1687,8 +1792,6 @@ public class FactoryManager
       private long autoReloadTime;
       private ConfigMonitor[] monitors = null;
       private boolean atInitialize = false;
-
-      private Map initCache = null;
 
       public AutoReloadImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig,
             long autoReloadTime)
@@ -1789,22 +1892,9 @@ public class FactoryManager
 
       public void reInit(StringRef msg)
       {
-         Map oldCache = getInitCache();
-         if (this.initCache == null)
-         {
-            this.initCache = oldCache;
-         }
-         else
-         {
-            setInitCache(this.initCache);
-         }
          this.atInitialize = true;
          super.reInit(msg);
          this.atInitialize = false;
-         if (oldCache != null)
-         {
-            setInitCache(oldCache);
-         }
       }
 
       protected void initializeElse()

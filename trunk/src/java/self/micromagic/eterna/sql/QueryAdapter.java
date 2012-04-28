@@ -11,6 +11,11 @@ import self.micromagic.util.BooleanRef;
 public interface QueryAdapter extends SQLAdapter
 {
    /**
+    * 可设置的其它ResultReaderManager的名称列表, 以逗号分割.
+    */
+   public static final String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
+
+   /**
     * 自动计算总记录数, 通过循环ResultSet的next方法来计算.
     */
    public static final int TOTAL_COUNT_AUTO = -1;
@@ -45,7 +50,7 @@ public interface QueryAdapter extends SQLAdapter
 
    /**
     * 设置该查询的ResultReaderManager, 所设置的ResultReaderManager的名称必须
-    * 与原来的名称相同.
+    * 与原来的名称相同, 或者在<code>otherReaderManagerSet</code>列表中.
     */
    void setReaderManager(ResultReaderManager readerManager) throws ConfigurationException;
 

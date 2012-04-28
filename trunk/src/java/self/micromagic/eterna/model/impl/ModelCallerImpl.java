@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.model.ModelAdapter;
@@ -22,6 +21,7 @@ import self.micromagic.eterna.model.ModelCaller;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.share.DataSourceManager;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
 
@@ -49,28 +49,25 @@ public class ModelCallerImpl
          this.defaultDataSourceName = dsm.getDefaultDataSourceName();
          return;
       }
-      Map cache = FactoryManager.getInitCache();
-      if (cache != null)
+      this.dataSourceMap = (Map) factory.getFactoryManager().getAttribute(DATA_SOURCE_MAP);
+      if (this.dataSourceMap != null && this.dataSourceMap.size() > 0)
       {
-         this.dataSourceMap = (Map) cache.get(DATA_SOURCE_MAP);
-         if (this.dataSourceMap != null && this.dataSourceMap.size() > 0)
+         this.defaultDataSourceName = (String) factory.getFactoryManager()
+               .getAttribute(DEFAULT_DATA_SOURCE_NAME);
+         if (defaultDataSourceName == null)
          {
-            this.defaultDataSourceName = (String) cache.get(DEFAULT_DATA_SOURCE_NAME);
-            if (defaultDataSourceName == null)
-            {
-               Map.Entry entry = (Map.Entry) this.dataSourceMap.entrySet().iterator().next();
-               this.defaultDataSource = (DataSource) entry.getValue();
-               this.defaultDataSourceName = (String) entry.getKey();
-            }
-            else
-            {
-               this.defaultDataSource = (DataSource) this.dataSourceMap.get(this.defaultDataSourceName);
-            }
+            Map.Entry entry = (Map.Entry) this.dataSourceMap.entrySet().iterator().next();
+            this.defaultDataSource = (DataSource) entry.getValue();
+            this.defaultDataSourceName = (String) entry.getKey();
          }
          else
          {
-            this.dataSourceMap = null;
+            this.defaultDataSource = (DataSource) this.dataSourceMap.get(this.defaultDataSourceName);
          }
+      }
+      else
+      {
+         this.dataSourceMap = null;
       }
    }
 
@@ -433,6 +430,11 @@ public class ModelCallerImpl
          throws ConfigurationException, IOException
    {
       StringBuffer buf = new StringBuffer(512);
+      String dataType = data.getRequestParameter(ViewAdapter.DATA_TYPE);
+      if (dataType != null)
+      {
+         data.dataMap.put(ViewAdapter.DATA_TYPE, dataType);
+      }
       Iterator params = data.dataMap.entrySet().iterator();
       while (params.hasNext())
       {

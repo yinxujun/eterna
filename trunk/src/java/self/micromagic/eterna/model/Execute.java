@@ -11,6 +11,8 @@ public interface Execute
 {
    void initialize(ModelAdapter model) throws ConfigurationException;
 
+   String getName() throws ConfigurationException;
+
    ModelAdapter getModelAdapter() throws ConfigurationException;
 
    String getExecuteType() throws ConfigurationException;

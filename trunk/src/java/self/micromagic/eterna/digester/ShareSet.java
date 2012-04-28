@@ -93,6 +93,7 @@ public class ShareSet extends RuleSetBase
       digester.addRule("eterna-config/factory/objs/model", new SameCheckRule("model", "name"));
       digester.addRule("eterna-config/factory/objs/export", new SameCheckRule("export", "name"));
       digester.addRule("eterna-config/factory/objs/view", new SameCheckRule("view", "name"));
+      digester.addRule("eterna-config/factory/objs/data-printer", new SameCheckRule("data-printer", "name"));
       digester.addRule("eterna-config/factory/objs/typical-component", new SameCheckRule("typical-component", "name"));
       digester.addRule("eterna-config/factory/objs/typical-replacement", new SameCheckRule("typical-replacement", "name"));
       digester.addRule("eterna-config/factory/objs/function", new SameCheckRule("function", "name"));

@@ -2,7 +2,6 @@
 package self.micromagic.eterna.digester;
 
 import java.lang.reflect.Constructor;
-import java.util.Map;
 
 import org.xml.sax.Attributes;
 import self.micromagic.util.Utility;
@@ -81,8 +80,7 @@ public class ObjectCreateRule extends MyRule
          Class theClass;
          if (className.startsWith("c|"))
          {
-            Map cache = FactoryManager.getInitCache();
-            theClass = (Class) cache.get(className);
+            theClass = (Class) FactoryManager.getCurrentInstance().getAttribute(className);
          }
          else
          {

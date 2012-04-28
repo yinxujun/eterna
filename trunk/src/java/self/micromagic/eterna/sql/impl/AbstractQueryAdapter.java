@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
@@ -34,6 +36,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 {
    private String readerOrder = null;
    private List tempResultReaders = new ArrayList();
+   private Set otherReaderManagerSet = null;
    private Map tempNameToIndexMap = new HashMap();
    private ResultReaderManager readerManager = null;
    private boolean readerManagerSetted = false;
@@ -67,6 +70,19 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       this.readerManager = this.createTempReaderManager();
       this.tempResultReaders = null;
       this.tempNameToIndexMap = null;
+      String tmp = (String) this.getAttribute(OTHER_READER_MANAGER_SET_FLAG);
+      if (tmp != null)
+      {
+         String[] tmpArr = StringTool.separateString(tmp, ",", true);
+         if (tmpArr.length > 0)
+         {
+            this.otherReaderManagerSet = new HashSet();
+            for (int i = 0; i < tmpArr.length; i++)
+            {
+               this.otherReaderManagerSet.add(tmpArr[i]);
+            }
+         }
+      }
    }
 
    private ResultReaderManager createTempReaderManager()
@@ -119,9 +135,22 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          String name2 = this.readerManager.getName();
          if (!name1.equals(name2))
          {
-            throw new ConfigurationException(
-                  "The readerManager name not same, [" + name2 + "], [" + name1
-                  + "] in query[" + this.getName() + "].");
+            if (this.otherReaderManagerSet != null)
+            {
+               if (!this.otherReaderManagerSet.contains(name1))
+               {
+                  throw new ConfigurationException(
+                        "The setted readerManager name [" + name1 + "],  not same [" + name2
+                        + "] in query[" + this.getName() + "], or in " + OTHER_READER_MANAGER_SET_FLAG
+                        + " " + this.otherReaderManagerSet + ".");
+               }
+            }
+            else
+            {
+               throw new ConfigurationException(
+                     "The setted readerManager name [" + name1 + "],  not same [" + name2
+                     + "] in query[" + this.getName() + "].");
+            }
          }
          this.readerManager = readerManager;
          this.readerManagerSetted = true;

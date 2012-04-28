@@ -616,7 +616,7 @@
                }
             ]]></init-script>
             <events>
-               <event name="save">{$ef:setData_value}(eg_temp.valueObj, webObj.val());</event>
+               <event name="save">{$ef:setData_value}(eg_temp.valueObj, {$ef:getWebObjValue}(webObj));</event>
                <event name="focus">
                   if (webObj.data("hasHint"))
                   {
@@ -689,7 +689,7 @@
                }
             ]]></init-script>
             <events>
-               <event name="save">{$ef:setData_value}(eg_temp.valueObj, webObj.val());</event>
+               <event name="save">{$ef:setData_value}(eg_temp.valueObj, {$ef:getWebObjValue}(webObj));</event>
             </events>
          </typical-component>
 
@@ -723,7 +723,7 @@
                      WdatePicker(tmp);
                   }
                </event>
-               <event name="save">{$ef:setData_value}(eg_temp.valueObj, webObj.val());</event>
+               <event name="save">{$ef:setData_value}(eg_temp.valueObj, {$ef:getWebObjValue}(webObj));</event>
             </events>
          </typical-replacement>
 
@@ -783,7 +783,7 @@
                      webObj.css("color", "gray");
                   }
                ]]></event>
-               <event name="save">{$ef:setData_value}(eg_temp.valueObj, webObj.val());</event>
+               <event name="save">{$ef:setData_value}(eg_temp.valueObj, {$ef:getWebObjValue}(webObj));</event>
                <event name="focus">
                   if (webObj.data("hasHint"))
                   {
@@ -1212,6 +1212,15 @@
                   webObj.attr("action", {$ef:getHeadURL}({$dataV:eg_temp.dataName + '_modelName'}));
                   webObj.attr("id", webObj.attr("name"));
                ]]></init-script>
+               <events>
+                  <event name="submit"><![CDATA[
+                     if (_eterna.cache.useAJAX)
+                     {
+                        {$ef:reload}(webObj, {$dataV:eg_temp.dataName+'_modelName'}, "reloadView");
+                        return false;
+                     }
+                  ]]></event>
+               </events>
                <component name="otherParam" type="none"/>
                <component name="pageNum" type="input-hidden">
                   <component-param>objName:"[script]:{$dataV:EG_SMA}.pageNumTag"</component-param>
@@ -1307,6 +1316,22 @@
             }
          ]]></function>
 
+         <!--
+            通过ajax获取数据并更新整个区域
+            url: 获取数据的地址
+            param: 传递的参数
+         -->
+         <function name="ajaxVisit" param="url, param"><![CDATA[
+            if (param == null)
+            {
+               param = {};
+            }
+            param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
+            var tmpData = _eterna.getRemoteJSON(url, param);
+            _eterna.changeEternaData(tmpData);
+            eg_temp = {};
+            _eterna.reInit();
+         ]]></function>
 
          <!--
          一些公用控件
@@ -1347,11 +1372,11 @@
                            {
                               returnURL += "&" + jQuery.param(eg_temp.param.returnParams);
                            }
-                           location.href = returnURL;
+                           {$ef:doVisit}(returnURL);
                         }
                         else if (eg_temp.param.returnURL != null)
                         {
-                           location.href = eg_temp.param.returnURL;
+                           {$ef:doVisit}(eg_temp.param.returnURL);
                         }
                         else
                         {
@@ -1383,7 +1408,7 @@
                {$dataV:eg_temp.dataName} = links;
             </before-init>
             <component name="loop" type="loop">
-               <component name="a" type="a" comParam="css:{'margin-right':'8px'}">
+               <replacement name="a" baseComponentName="a" comParam="css:{'margin-right':'8px'}">
                   <init-script><![CDATA[
                      var linkConfig = {$dataV:eg_temp.dataName}[eg_temp.index];
                      webObj.text(linkConfig.name);
@@ -1399,15 +1424,18 @@
                      }
                   ]]></init-script>
                   <events>
-                     <event name="click">
+                     <event name="preClick">
                         if (webObj.data("confirmMsg") != null)
                         {
-                           return confirm(webObj.data("confirmMsg"));
+                           webObj.data("doClick", confirm(webObj.data("confirmMsg")));
                         }
-                        return true;
+                        else
+                        {
+                           webObj.data("doClick", true);
+                        }
                      </event>
                   </events>
-               </component>
+               </replacement>
             </component>
          </typical-component>
          <typical-replacement name="common_list_operator" baseComponentName="list_operator">
@@ -1472,6 +1500,10 @@
                   webObj.attr("action", {$ef:getHeadURL}(eg_temp.tempData.modelName));
                }
                eterna_select_default_value = eg_temp.tempData.oldSelectDefault;
+               if (eg_temp.tempData.useAJAX == null)
+               {
+                  eg_temp.tempData.useAJAX = _eterna.cache.useAJAX;
+               }
             </init-script>
             <events>
                <event name="submit">
@@ -1486,8 +1518,16 @@
                      {
                         if (theResult)
                         {
-                           {$ef:reload}(webObj, eg_temp.tempData.modelName,
-                                 eg_temp.tempData.reloadObjs, eg_temp.tempData.reloadDatas);
+                           if (eg_temp.tempData.reloadObjs == null
+                                 || eg_temp.tempData.reloadDatas == null)
+                           {
+                              {$ef:reload}(webObj, eg_temp.tempData.modelName, "reloadView");
+                           }
+                           else
+                           {
+                              {$ef:reload}(webObj, eg_temp.tempData.modelName,
+                                    eg_temp.tempData.reloadObjs, eg_temp.tempData.reloadDatas);
+                           }
                         }
                         return false;
                      }
@@ -1527,6 +1567,49 @@
          <resource name="please_select">-请选择-</resource>
          <resource name="form_submit_error">表单提交过程中发生错误！</resource>
 
+         <!-- 超链接控件的模板 -->
+         <typical-component name="a" type="a">
+            <events>
+               <event name="click"><![CDATA[
+                  webObj.data("clickParam", null);
+                  webObj.data("doClick", 1);
+                  webObj.trigger("preClick");
+                  if (webObj.data("doClick"))
+                  {
+                     var url = webObj.attr("href");
+                     if (url == null || url == "")
+                     {
+                        return false;
+                     }
+                     if (_eterna.cache.useAJAX)
+                     {
+                        var param = webObj.data("clickParam");
+                        {$ef:ajaxVisit}(url, param);
+                        return false;
+                     }
+                     else
+                     {
+                        return true;
+                     }
+                  }
+               ]]></event>
+            </events>
+         </typical-component>
+
+         <!--
+            执行一次页面访问, 会根据_eterna.cache.useAJAX的设置, 进行页面跳转或ajax方式访问
+            url: 访问的地址
+         -->
+         <function name="doVisit" param="url"><![CDATA[
+            if (_eterna.cache.useAJAX)
+            {
+               {$ef:ajaxVisit}(url);
+            }
+            else
+            {
+               location.href = url;
+            }
+         ]]></function>
 
          <!--
          带检查的控件
