@@ -12,6 +12,7 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.QueryAdapter;
+import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.util.Utils;
 
@@ -32,6 +33,7 @@ public abstract class AbstractExportExecute extends AbstractExecute
 
    protected boolean holdConnection = true;
    protected int queryCacheIndex = 5;
+   protected ResultReaderManager otherReaderManager = null;
    protected String fileName = "export";
    protected String encodeName = "UTF-8";
    protected String fileNameEncode = "UTF-8";
@@ -71,6 +73,15 @@ public abstract class AbstractExportExecute extends AbstractExecute
       {
          this.queryCacheIndex = Utils.parseInt(temp, 5);
       }
+      temp = (String) this.getAttribute("otherReaderManager");
+      if (temp != null)
+      {
+         this.otherReaderManager = model.getFactory().getReaderManager(temp);
+         if (this.otherReaderManager == null)
+         {
+            log.error("Not found reader manager [" + temp + "].");
+         }
+      }
       this.holdConnection = model.getTransactionType() ==  ModelAdapter.T_HOLD;
    }
 
@@ -94,6 +105,10 @@ public abstract class AbstractExportExecute extends AbstractExecute
       if (obj instanceof QueryAdapter)
       {
          QueryAdapter query = (QueryAdapter) obj;
+         if (this.otherReaderManager != null)
+         {
+            query.setReaderManager(this.otherReaderManager);
+         }
          return this.holdConnection ? query.executeQueryHoldConnection(conn) : query.executeQuery(conn);
       }
       if (obj instanceof ResultIterator)

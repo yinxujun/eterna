@@ -32,7 +32,13 @@ public class AttributeManager
    {
       if (this.attributes == null)
       {
-         this.attributes = new HashMap();
+         synchronized (this)
+         {
+            if (this.attributes == null)
+            {
+               this.attributes = new HashMap();
+            }
+         }
       }
       return this.attributes.put(name, value);
    }
