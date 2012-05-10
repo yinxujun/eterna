@@ -169,4 +169,18 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    </parameters>
 </update>
 }}}
-通过`reader:`前缀表示将使用一个`reader-manager`来作为参数列表，不过这样似乎还有个问题，前面说过*参数的绑定是根据SQL语句中“`?`”出现的顺序一一绑定的*
+通过`reader:`前缀表示将使用一个`reader-manager`来作为参数列表，不过这样似乎还有个问题，前面说过*参数的绑定是根据SQL语句中“`?`”出现的顺序一一绑定的*，这个`reader-manager`中的顺序是id, strValue, intValue, dateValue，和SQL语句的顺序不一致。这没关系，可以做如下修改
+{{{    
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set strValue = ?, intValue = ?, dateValue = ?
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter-ref groupName="reader:t_table.readers" ignoreList="$ignoreSame"/>
+      <parameter name="id" type="int"/>
+   </parameters>
+</update>
+}}}
+在`parameter-ref`节点中增加一个属性“ignoreList="$ignoreSame"”，表示忽略已出现的同名参数，在这里已经定义了`id`这个参数了，那么`t_table.readers`中出现在第一个的'id'参数就就会被忽略，参数列表中的顺序就和SQL语句中的一致了。<br>
+   
