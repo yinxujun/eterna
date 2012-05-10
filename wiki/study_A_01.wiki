@@ -85,13 +85,30 @@ Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
 }}}
 接下来我们在配置中写一个更新
 {{{
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set strValue = ?, intValue = ?, dateValue = ?
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter name="strValue" type="String"/>
+      <parameter name="intValue" type="int"/>
+      <parameter name="myName" type="Date"/>
+      <parameter name="id" type="int"/>
+   </parameters>
+</update>
+}}}
+通过上面的配置，我们可以看到参数的绑定是根据SQL语句中“`?`”出现的顺序一一绑定的，参数配置里name属性只是个别名，在设置参数的时候使用。<br>
+这行这个更新的代码如下：
+{{{
 // modify.t_table 为配置中定义的update的名称
 UpdateAdapter update = factory.createUpdateAdapter("modify.t_table");
 // 设置需要修改的数据
 update.setInt("id", 2);
 update.setString("strValue", "modify02");  
 update.setInt("intValue", 2000);  
-update.setDate("dateValue", new java.sql.Date(System.currentTimeMillis()));
+// 因为配置中定义的这个参数名为myName
+update.setDate("myName", new java.sql.Date(System.currentTimeMillis()));
 // 执行更新
 int modifiedCount = update.executeUpdate(conn);
 System.out.println("更新记录数:" + modifiedCount); 
