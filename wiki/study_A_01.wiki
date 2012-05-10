@@ -70,14 +70,14 @@ else
    System.out.println("未找到记录！");
 }
 --------------------------------------------
-import的类如下
+需要import的类如下
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
 }}}
-以上代码中ResultIterator和ResultRow在数据库链接关闭后仍然是可以使用的。<br>
+以上代码中`ResultIterator`和`ResultRow`在数据库链接关闭后仍然是可以使用的。<br>
 关于获取数据库链接，如果你是按[http://code.google.com/p/eterna/wiki/initDB 数据库初始化]的说明进行的配置，可通过如下代码获得数据库链接
 {{{
 Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
