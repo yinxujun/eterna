@@ -49,3 +49,36 @@ FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this
    </readers>
 </query>
 }}}
+查询的配置定义好了，接着我们可以编写执行的代码
+{{{
+Connection conn = ...; // 这里的...为获取数据库链接的代码
+EternaFactory factory = instance.getEternaFactory();
+// get.t_table 为配置中定义的query的名称
+QueryAdapter query = factory.createQueryAdapter("get.t_table");
+// 设置查询的条件id
+query.setInt("id", 1);
+ResultIterator ritr = query.executeQuery(conn);
+if (ritr.hasMoreRow())
+{
+   ResultRow row = ritr.nextRow();
+   System.out.println("strValue:" + row.getString("strValue"));
+   System.out.println("intValue:" + row.getInt("intValue"));
+   System.out.println("dateValue:" + row.getDate("dateValue"));
+}
+else
+{
+   System.out.println("未找到记录！");
+}
+--------------------------------------------
+import的类如下
+import self.micromagic.eterna.digester.FactoryManager;
+import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.sql.QueryAdapter;
+import self.micromagic.eterna.sql.ResultIterator;
+import self.micromagic.eterna.sql.ResultRow;
+}}}
+以上代码中ResultIterator和ResultRow在数据库链接关闭后仍然是可以使用的。<br>
+关于获取数据库链接，如果你是按[http://code.google.com/p/eterna/wiki/initDB 数据库初始化]的说明进行的配置，可通过如下代码获得数据库链接
+{{{
+Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
+}}}
