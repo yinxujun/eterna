@@ -31,7 +31,7 @@ FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this
 ||1||test01||100||2012-01-01||
 ||2||test02||200||2012-02-02||
 
-先针对这张表写一个简单的查询
+先针对这张表在配置中写一个简单的查询
 {{{
 <query name="get.t_table">
    <prepared-sql>
@@ -57,6 +57,7 @@ EternaFactory factory = instance.getEternaFactory();
 QueryAdapter query = factory.createQueryAdapter("get.t_table");
 // 设置查询的条件id
 query.setInt("id", 1);
+// 执行查询
 ResultIterator ritr = query.executeQuery(conn);
 if (ritr.hasMoreRow())
 {
@@ -81,4 +82,20 @@ import self.micromagic.eterna.sql.ResultRow;
 关于获取数据库链接，如果你是按[http://code.google.com/p/eterna/wiki/initDB 数据库初始化]的说明进行的配置，可通过如下代码获得数据库链接
 {{{
 Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
+}}}
+接下来我们在配置中写一个更新
+{{{
+// modify.t_table 为配置中定义的update的名称
+UpdateAdapter update = factory.createUpdateAdapter("modify.t_table");
+// 设置需要修改的数据
+update.setInt("id", 2);
+update.setString("strValue", "modify02");  
+update.setInt("intValue", 2000);  
+update.setDate("dateValue", new java.sql.Date(System.currentTimeMillis()));
+// 执行更新
+int modifiedCount = update.executeUpdate(conn);
+System.out.println("更新记录数:" + modifiedCount); 
+--------------------------------------------
+还需要import的类如下
+import self.micromagic.eterna.sql.UpdateAdapter;
 }}}
