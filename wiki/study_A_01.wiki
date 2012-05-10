@@ -99,7 +99,7 @@ Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
 </update>
 }}}
 通过上面的配置，我们可以看到参数的绑定是根据SQL语句中“`?`”出现的顺序一一绑定的，参数配置里name属性只是个别名，在设置参数的时候使用。<br>
-这行这个更新的代码如下：
+执行这个更新的代码如下：
 {{{
 // modify.t_table 为配置中定义的update的名称
 UpdateAdapter update = factory.createUpdateAdapter("modify.t_table");
@@ -116,3 +116,57 @@ System.out.println("更新记录数:" + modifiedCount);
 还需要import的类如下
 import self.micromagic.eterna.sql.UpdateAdapter;
 }}}
+<br>
+=可以写得简单些吗=
+当然能够进行裁剪，我们可以先对查询进行调整，可以把查询需要读取的内容单独定义出来，这样如果需要在多个地方使用就不用重复写了。
+{{{
+<reader-manager name="t_table.readers">
+   <reader name="id" type="int"/>
+   <reader name="strValue" type="String"/>
+   <reader name="intValue" type="int"/>
+   <reader name="dateValue" type="Date"/>
+</reader-manager>         
+<query name="get.t_table">
+   <prepared-sql>
+      select * from T_TABLE
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter name="id" type="int"/>
+   </parameters>
+   <readers baseReaderManager="t_table.readers"/>
+</query>
+}}}
+这里定义了一个`reader-manager`“`t_table.readers`”，在`query`中通过`baseReaderManager`属性来指定使用已定义好的`reader-manager`。<br>
+同样，也可以把更新中使用的参数列表单独定义出来
+{{{
+<parameter-group name="t_table.param">   
+   <parameter name="strValue" type="String"/>
+   <parameter name="intValue" type="int"/>
+   <parameter name="dateValue" type="Date"/>
+   <parameter name="id" type="int"/>
+</parameter-group>         
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set strValue = ?, intValue = ?, dateValue = ?
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter-ref groupName="t_table.param"/>
+   </parameters>
+</update>
+}}}
+这里定义了一个`parameter-group`“`t_table.param`”，在`update`中通过`parameter-ref`节点的属性`groupName`来指定使用已定义好的`parameter-group`。<br>
+这样似乎没简化多少，`parameter-group`和`reader-manager`里的内容似乎有些重复，所以这两个内容可以合成一个，就像这样
+{{{    
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set strValue = ?, intValue = ?, dateValue = ?
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter-ref groupName="reader:t_table.readers"/>
+   </parameters>
+</update>
+}}}
+通过`reader:`前缀表示将使用一个`reader-manager`来作为参数列表，不过这样似乎还有个问题，前面说过*参数的绑定是根据SQL语句中“`?`”出现的顺序一一绑定的*
