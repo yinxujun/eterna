@@ -1,0 +1,51 @@
+#summary 教程A01
+#labels Phase-Implementation
+
+=第一段代码=
+第一步新建java文件和xml配置文件，结构如下：
+{{{
+---
+ |-Test.java
+ |-Text.xml
+}}}
+xml配置文件和java文件在相同位置，文件名相同即可。<br>
+这样就可通过如下代码获取工厂对象的实例。
+{{{
+FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this.getClass());
+}}}
+接下来就可以编写配置文件了，配置文件的结构如下：
+{{{
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_5.dtd">
+<!-- 上面这段配置指定了dtd文件，如果你的编辑器支持dtd文件的提示的话，那编写起来会方便很多 -->
+<eterna-config>
+   <factory>
+      <objs>
+         <!-- 在objs节点中定义需要的对象 -->
+      </objs>
+   </factory>
+</eterna-config>
+}}}
+数据库中有个表 T_TABLE，数据如下：
+||*id*||*strValue*||*intValue*||*dateValue*||
+||1||test01||100||2012-01-01||
+||2||test02||200||2012-02-02||
+先针对这张表写一个简单的查询
+{{{
+<query name="get.t_table">
+   <prepared-sql>
+      select * from T_TABLE
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter name="id" type="int"/>
+   </parameters>
+   <readers>
+      <reader name="id" type="int"/>
+      <reader name="strValue" type="String"/>
+      <reader name="intValue" type="int"/>
+      <reader name="dateValue" type="Date"/>
+   </readers>
+</query>
+}}}
+
