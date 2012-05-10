@@ -196,8 +196,8 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    </parameters>
 </update>
 }}}
-这段配置中，将列赋值的部分变成了一个表达式`#auto[update,1,-2]`，表示根据参数列表中的第一个参数至倒数第二个参数并根据`update`的格式来生成语句，其生成的语句就是`strValue = ?, intValue = ?, dateValue = ?`。<br>
-这样改写的配置就是如下效果
+这段配置中，将列赋值的部分变成了一个表达式`#auto[update,1,-2]`，表示根据参数列表中的第一个参数至倒数第二个参数并根据`update`的格式来生成语句，其生成的语句就是“`strValue = ?, intValue = ?, dateValue = ?`”。<br>
+这样简化后的配置就是如下效果
 {{{
 <reader-manager name="t_table.readers">
    <reader name="id" type="int"/>
@@ -228,3 +228,19 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    </parameters>
 </update>
 }}}
+配置简化好了，如果参数比较多的话，一个个设置也是比较费工作的，所以代码中设置参数的部分也可以简化
+{{{
+// modify.t_table 为配置中定义的update的名称
+UpdateAdapter update = factory.createUpdateAdapter("modify.t_table");
+ParamSetManager psm = new ParamSetManager(update);
+// request为javax.servlet.http.HttpServletRequest对象
+// 此段代码会根据参数列表到request中寻找同名的参数自动进行设置      
+psm.setParams(request.getParameterMap());   
+// 执行更新
+int modifiedCount = update.executeUpdate(conn);
+System.out.println("更新记录数:" + modifiedCount);
+--------------------------------------------
+还需要import的类如下
+import self.micromagic.eterna.model.ParamSetManager;
+}}}
+这里通过`ParamSetManager`进行参数的自动设置，这样就无需一行一行的写设置参数的代码了。
