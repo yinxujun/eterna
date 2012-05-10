@@ -30,6 +30,7 @@ FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this
 ||*id*||*strValue*||*intValue*||*dateValue*||
 ||1||test01||100||2012-01-01||
 ||2||test02||200||2012-02-02||
+
 先针对这张表写一个简单的查询
 {{{
 <query name="get.t_table">
@@ -48,4 +49,3 @@ FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this
    </readers>
 </query>
 }}}
-
