@@ -1,4 +1,4 @@
-#summary 教程A01
+#summary 01配置和代码编写
 #labels Phase-Implementation
 
 =第一段代码=
