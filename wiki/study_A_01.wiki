@@ -125,7 +125,7 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    <reader name="strValue" type="String"/>
    <reader name="intValue" type="int"/>
    <reader name="dateValue" type="Date"/>
-</reader-manager>         
+</reader-manager>
 <query name="get.t_table">
    <prepared-sql>
       select * from T_TABLE
@@ -145,7 +145,7 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    <parameter name="intValue" type="int"/>
    <parameter name="dateValue" type="Date"/>
    <parameter name="id" type="int"/>
-</parameter-group>         
+</parameter-group>
 <update name="modify.t_table">
    <prepared-sql>
       update T_TABLE set strValue = ?, intValue = ?, dateValue = ?
@@ -182,5 +182,49 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    </parameters>
 </update>
 }}}
-在`parameter-ref`节点中增加一个属性“ignoreList="$ignoreSame"”，表示忽略已出现的同名参数，在这里已经定义了`id`这个参数了，那么`t_table.readers`中出现在第一个的'id'参数就就会被忽略，参数列表中的顺序就和SQL语句中的一致了。<br>
-   
+在`parameter-ref`节点中增加一个属性“ignoreList="$ignoreSame"”，表示忽略已出现的同名参数，在这里已经定义了`id`这个参数了，那么`t_table.readers`中出现在第一个的'id'参数就会被忽略，参数列表中的顺序就和SQL语句中的一致了。<br>
+对于这个更新语句，如果列比较多的话，即要写参数列表，又要写SQL语句，这个量也不小。其实语句是可以部分生成的，看下面的修改
+{{{    
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set #auto[update,1,-2]
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter-ref groupName="reader:t_table.readers" ignoreList="$ignoreSame"/>
+      <parameter name="id" type="int"/>
+   </parameters>
+</update>
+}}}
+这段配置中，将列赋值的部分变成了一个表达式`#auto[update,1,-2]`，表示根据参数列表中的第一个参数至倒数第二个参数并根据`update`的格式来生成语句，其生成的语句就是`strValue = ?, intValue = ?, dateValue = ?`。<br>
+这样改写的配置就是如下效果
+{{{
+<reader-manager name="t_table.readers">
+   <reader name="id" type="int"/>
+   <reader name="strValue" type="String"/>
+   <reader name="intValue" type="int"/>
+   <reader name="dateValue" type="Date"/>
+</reader-manager>
+
+<query name="get.t_table">
+   <prepared-sql>
+      select * from T_TABLE
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter name="id" type="int"/>
+   </parameters>
+   <readers baseReaderManager="t_table.readers"/>
+</query>
+
+<update name="modify.t_table">
+   <prepared-sql>
+      update T_TABLE set #auto[update,1,-2]
+      where id = ?
+   </prepared-sql>
+   <parameters>
+      <parameter-ref groupName="reader:t_table.readers" ignoreList="$ignoreSame"/>
+      <parameter name="id" type="int"/>
+   </parameters>
+</update>
+}}}
