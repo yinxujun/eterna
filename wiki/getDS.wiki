@@ -27,7 +27,7 @@ self.micromagic.util.Utility.getDataSource();
    </data-source>
 </data-source-manager>
 }}}
-上面代码中，定义了两个数据源，`data-source-manager`的`defaultName`属性用于指定默认使用的数据源，`data-source`节点内配置数据源的名称对应的jndi，格式为`数据源名称1=JNDI1;[数据源名称2=JNDI2;...]`，系统中就可通过“数据源名称”获得对应的数据源。
+上面代码中，定义了两个数据源，`data-source-manager`的`defaultName`属性用于指定默认使用的数据源，`data-source`节点内配置数据源的名称对应的jndi，格式为`数据源名称1=JNDI1;[数据源名称2=JNDI2;...]`，系统中就可通过“数据源名称”获得对应的数据源。<br>
 获取的代码如下：
 {{{
 FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this.getClass());
@@ -35,4 +35,19 @@ FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this
 instance.getEternaFactory().getDataSourceManager().getDefaultDataSource();
 // 根据数据源名称获得对应的数据源
 instance.getEternaFactory().getDataSourceManager().getDataSource("otherDS");
+}}}
+对于一些特定的应用服务器，需要通过`data-source`节点的`java.naming.factory.initial`属性来指定jndi工厂
+{{{
+// WebSphere
+<data-source-manager defaultName="testDS">
+   <data-source java.naming.factory.initial="com.ibm.websphere.naming.WsnInitialContextFactory">
+      ...
+   </data-source>
+</data-source-manager>
+// weblogic
+<data-source-manager defaultName="testDS">
+   <data-source java.naming.factory.initial="weblogic.jndi.WLInitialContextFactory">
+      ...
+   </data-source>
+</data-source-manager>
 }}}
