@@ -51,3 +51,19 @@ instance.getEternaFactory().getDataSourceManager().getDataSource("otherDS");
    </data-source>
 </data-source-manager>
 }}}
+如果不是通过jndi方式获取的数据源，那还可以用下面一种方式。
+<br>
+=3. 通过初始化变量配置=
+初始化前，将相关的数据源对象设置好
+{{{
+Map initMap = new HashMap();
+Map dsMap = new HashMap();
+// ds1和ds2为通过其他方式获得的数据源
+dsMap.put("testDS", ds1);
+dsMap.put("otherDS", ds2);
+initMap.put(ModelCaller.DATA_SOURCE_MAP, dsMap);
+initMap.put(ModelCaller.DEFAULT_DATA_SOURCE_NAME, "testDS");
+FactoryManager.setInitCache(initMap);
+}}}
+此段代码要在eterna初始化之前执行，然后就可以像第二种方法一样获得相应的数据源了。<br>
+不过有一点需要注意，如果已经按第二种方法配置了数据源，那这样的配置就没有效果了。
