@@ -1,0 +1,38 @@
+#summary 如何获得数据源
+#labels Phase-Implementation
+
+=1. 配置文件=
+在`micromagic_config.properties`文件中配置数据库的链接，配置方式如下：
+{{{
+dataSource.autoCommit=[是否自动提交]
+dataSource.description=[数据源的说明]
+dataSource.driverClass=[数据库的驱动类]
+dataSource.maxCount=[最大连接数]
+dataSource.url=[数据库连接字符串]
+dataSource.user=[数据库用户名]
+dataSource.password=[数据库密码]
+}}}
+通过这样的配置，可通过如下方式获取数据源：
+{{{
+self.micromagic.util.Utility.getDataSource();
+}}}
+<br>
+=2. 通过`data-source-manager`配置=
+此对象定义在eterna-config/factory节点下，可定义通过jndi方式获取的数据源
+{{{
+<data-source-manager defaultName="testDS">
+   <data-source>
+      testDS=jdbc/ds01;
+      otherDS=jdbc/ds02;
+   </data-source>
+</data-source-manager>
+}}}
+上面代码中，定义了两个数据源，`data-source-manager`的`defaultName`属性用于指定默认使用的数据源，`data-source`节点内配置数据源的名称对应的jndi，格式为`数据源名称1=JNDI1;[数据源名称2=JNDI2;...]`，系统中就可通过“数据源名称”获得对应的数据源。
+获取的代码如下：
+{{{
+FactoryManager.Instance instance = FactoryManager.createClassFactoryManager(this.getClass());
+// 获得默认的数据源
+instance.getEternaFactory().getDataSourceManager().getDefaultDataSource();
+// 根据数据源名称获得对应的数据源
+instance.getEternaFactory().getDataSourceManager().getDataSource("otherDS");
+}}}
