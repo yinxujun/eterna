@@ -83,6 +83,7 @@ import self.micromagic.eterna.sql.ResultRow;
 {{{
 Connection conn = self.micromagic.util.Utility.getDataSource().getConnection();
 }}}
+如果这样的获取数据库链接的方法不能满足要求，还可根据[http://code.google.com/p/eterna/wiki/getDS 如何获得数据源]中的说明来获取数据库的链接。<br>
 接下来我们在配置中写一个更新
 {{{
 <update name="modify.t_table">
