@@ -7,5 +7,31 @@
 #?：表示这个"?"是一个字符，不会被认为是参数<br>
 下面会分别介绍一些其他的用法。<br>
 <br>
-=#sub 动态子语句=
-动态子句就是一段SQL语句片段，它可以和主语句构成一个完整的SQL。
+=sub 动态子语句=
+动态子句就是一段SQL语句片段，它可以和主语句构成一个完整的SQL。<br>
+完整的动态子句写法如下：
+{{{
+#sub[...$...]
+}}}
+以"#sub"开始，后面"[]"内的部分为子句的模板，"$"为动态子句出现的位置。如果模板部分需要出现"[]$"这些字符，可以用"#["，"#]"，"#$"代替。<br>
+模板的作用是这样的，当插入的内容为空时，则动态子语句就变为空字符串，当插入的内容不为空时，则将插入的内容套入模板后再插入。<br>
+例子如下：
+{{{
+预备SQL语句如下
+SELECT * FROM TEST_TABLE
+#sub[WHERE $]
+
+当执行了
+query.setSubSQL(1, "");
+后，此段语句就变为
+SELECT * FROM TEST_TABLE
+
+当执行了
+query.setSubSQL(1, "status = 0");
+后，此段语句就变为
+SELECT * FROM TEST_TABLE
+WHERE status = 0
+}}}
+
+=例子中的说明=
+例子中出现的query及factory分别为self.micromagic.eterna.sql.QueryAdapter的实例和self.micromagic.eterna.share.EternaFactory的实例。
