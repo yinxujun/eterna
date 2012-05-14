@@ -32,6 +32,19 @@ query.setSubSQL(1, "status = 0");
 SELECT * FROM TEST_TABLE
 WHERE status = 0
 }}}
-
+有了子句模板之后，代码中就不必关心这部分SQL片段插入后需要在之前或之后添加什么了。<br>
+setSubSQL方法的说明：<br>
+第一个参数为要设置的子句的索引值（即第几个子句），从1开始。<br>
+第二个参数为要设置的子句片段。<br>
+第三个参数为一个参数管理者，可以用于绑定子句中出现的参数。<br>
+下面的例子为一个带参数的子句。
+{{{
+PreparerManager pm = new PreparerManager(2);
+// 绑定第一个整型参数
+ValuePreparer preparer = factory.getDefaultValuePreparerCreaterGenerator().createIntPreparer(1, 0);
+// 绑定第二个字符串型参数
+ValuePreparer preparer = factory.getDefaultValuePreparerCreaterGenerator().createStringPreparer(2, "用户名");
+query.setSubSQL(1, "status = ? and userId = ?", pm);
+}}}
 =例子中的说明=
-例子中出现的query及factory分别为self.micromagic.eterna.sql.QueryAdapter的实例和self.micromagic.eterna.share.EternaFactory的实例。
+例子中出现的query及factory分别为`self.micromagic.eterna.sql.QueryAdapter`的实例和`self.micromagic.eterna.share.EternaFactory`的实例。
