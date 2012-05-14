@@ -12,8 +12,10 @@
 完整的动态子句写法如下：
 {{{
 #sub[...$...]
+或
+#sub
 }}}
-以"#sub"开始，后面"[]"内的部分为子句的模板，"$"为动态子句出现的位置。如果模板部分需要出现"[]$"这些字符，可以用"#["，"#]"，"#$"代替。<br>
+以"#sub"开始，后面"[]"内的部分为子句的模板（如果没有模板则可去掉"[]"部分），"$"为动态子句出现的位置。如果模板部分需要出现"[]$"这些字符，可以用"#["，"#]"，"#$"代替。<br>
 模板的作用是这样的，当插入的内容为空时，则动态子语句就变为空字符串，当插入的内容不为空时，则将插入的内容套入模板后再插入。<br>
 例子如下：
 {{{
@@ -46,5 +48,15 @@ ValuePreparer preparer = factory.getDefaultValuePreparerCreaterGenerator().creat
 ValuePreparer preparer = factory.getDefaultValuePreparerCreaterGenerator().createStringPreparer(2, "用户名");
 query.setSubSQL(1, "status = ? and userId = ?", pm);
 }}}
-=例子中的说明=
-例子中出现的query及factory分别为`self.micromagic.eterna.sql.QueryAdapter`的实例和`self.micromagic.eterna.share.EternaFactory`的实例。
+<br>
+=param 动态参数=
+动态参数就是一段可以出现也可以不出现的，用于参数设置的语句片段。<br>
+完整的动态参写法如下：
+{{{
+#param(name)[...?...]
+}}}
+以"#param"开始，后面"(name)"内的"name"表示动态参数模板段分组的名称，同一名称的模板，要么在设置参数时同时出现，要么没有设置参数时都不出现。再后面"[]"内的部分为动态参数的模板部分。
+=例子中的变量说明=
+query为`self.micromagic.eterna.sql.QueryAdapter`的实例<br>
+update为`self.micromagic.eterna.sql.UpdateAdapter`的实例<br>
+factory为`self.micromagic.eterna.share.EternaFactory`的实例
