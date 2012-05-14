@@ -55,7 +55,28 @@ query.setSubSQL(1, "status = ? and userId = ?", pm);
 {{{
 #param(name)[...?...]
 }}}
-以"#param"开始，后面"(name)"内的"name"表示动态参数模板段分组的名称，同一名称的模板，要么在设置参数时同时出现，要么没有设置参数时都不出现。再后面"[]"内的部分为动态参数的模板部分。
+以"#param"开始，后面"(name)"内的"name"表示动态参数模板段分组的名称，同一名称的模板，要么在设置参数时同时出现，要么没有设置参数时都不出现。再后面"[]"内的部分为动态参数的模板部分，"?"为绑定的参数的位置。*一个动态参数的所有模板段中只能出现一个"?"*，如果模板部分需要出现"[]?"这些字符，可以用"#["，"#]"，"#?"代替。<br>
+例子如下：
+{{{
+预备SQL语句如下
+update TEST_TABLE set status = ? #param(id)[, userId = ?]
+
+当执行了
+set.setString(2, "用户名");
+后，此段语句就变为
+update TEST_TABLE set status = ? , userId = ?
+
+当执行了
+set.setIgnore(2);
+后，此段语句就变为
+update TEST_TABLE set status = ? 
+}}}
+关于模板段分组的名称的作用，看下下面这句插入语句
+{{{
+INSERT INTO TEST_TABLE (id #param(v)[, value] #param(s)[, status])
+VALUES (? #param(v)[, ?] #param(s)[, ?])
+}}}
+这句语句中有两个动态参数，每个动态参数的模板分为了两段。
 =例子中的变量说明=
 query为`self.micromagic.eterna.sql.QueryAdapter`的实例<br>
 update为`self.micromagic.eterna.sql.UpdateAdapter`的实例<br>
