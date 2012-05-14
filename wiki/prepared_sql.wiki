@@ -92,38 +92,56 @@ type模板的说明如下：
 {{{
 如果parameters的配置有name、sex，age这3个参数
 
-query，各语句where语句部分的模板，例子如下：
+query
+各语句where语句部分的模板，例子如下：
 动态语句生成的配置为：#auto[query,1,3]
 生成的结果为：name = ? and sex = ? and age = ?
 
-queryD，各语句where部分的动态参数模板，例子如下：
+queryD
+各语句where部分的动态参数模板，例子如下：
 动态语句生成的配置为：#auto[queryD,1,2]
 生成的结果为：#param(dAuto_1)[ and name = ?]#param(dAuto_2)[ and sex = ?]
 
-update，update语句set部分的模板，例子如下：
+update
+update语句set部分的模板，例子如下：
 动态语句生成的配置为：#auto[update,1,3]
 生成的结果为：name = ?, sex = ?, age = ?
 
-updateD，update语句set部分的动态参数模板，例子如下：
+updateD
+update语句set部分的动态参数模板，例子如下：
 动态语句生成的配置为：#auto[updateD,1,2]
 生成的结果为：#param(dAuto_1)[, name = ?]#param(dAuto_2)[, sex = ?]
 
-insertN，insert语句列名部分的模板，例子如下：
+insertN
+insert语句列名部分的模板，例子如下：
 动态语句生成的配置为：#auto[insertN,1,3]
 生成的结果为：name, sex, age
 
-insertND，insert语句列名部分的动态参数模板，例子如下：
+insertND
+insert语句列名部分的动态参数模板，例子如下：
 动态语句生成的配置为：#auto[insertND,1,2]
 生成的结果为：#param(dAuto_1)[, name]#param(dAuto_2)[, sex]
 
-insertV，insert语句值部分的模板，例子如下：
+insertV
+insert语句值部分的模板，例子如下：
 #auto[insertV,1,3]
 生成的结果为：?, ?, ?
 
-insertVD，insert语句值部分的动态参数模板，例子如下：
+insertVD
+insert语句值部分的动态参数模板，例子如下：
 #auto[insertVD,1,2]
 生成的结果为：#param(dAuto_1)[, ?]#param(dAuto_2)[, ?]
 }}}
+<br>
+=const 常量=
+在语句中引用一个设置的常量。<br>
+完整的常量写法如下：
+{{{
+#const(name)
+}}}
+以"#const"开始，后面"()"中的"name"为所引用的常量的名称。<br>
+常量的用处在于简化语句，增加语句的可读性。尤其在语句中有较长的一段子查询的时候，将其定义成常量，在主语句中引用进来，这样主语句就不会显得很臃肿。<br>
+常量的另一个用处就是兼容不同的数据库，如对"null"的判断，在oracle下为"nvl"，在mysql下为"ifnull"。这里我们就可以定义一个常量"null"，在语句中使用"#const(null)"，在项目中将常量"null"的值设为对应数据库的具体实现。<br>
 <br>
 =例子中的变量说明=
 query为`self.micromagic.eterna.sql.QueryAdapter`的实例<br>
