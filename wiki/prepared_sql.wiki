@@ -51,7 +51,7 @@ query.setSubSQL(1, "status = ? and userId = ?", pm);
 <br>
 =param 动态参数=
 动态参数就是一段可以出现也可以不出现的，用于参数设置的语句片段。<br>
-完整的动态参写法如下：
+完整的动态参数写法如下：
 {{{
 #param(name)[...?...]
 }}}
@@ -76,7 +76,55 @@ update TEST_TABLE set status = ?
 INSERT INTO TEST_TABLE (id #param(v)[, value] #param(s)[, status])
 VALUES (? #param(v)[, ?] #param(s)[, ?])
 }}}
-这句语句中有两个动态参数，每个动态参数的模板分为了两段。
+这句语句中有两个动态参数，每个动态参数的模板分为了两段。<br>
+<br>
+=auto 动态语句生成=
+动态语句生成是根据参数列表"parameters"来生成语句片段。<br>
+完整的动态语句生成写法如下：
+{{{
+#auto[type,num1,num2]
+}}}
+以"#auto"开始，"type"为生成语句的模板，"num1"为重第几个参数开始动态生成语句片段，"num2"为生成到第几个参数。<br>
+"num1"和"num2"为正数时表示从第一个开始，如1表示第一个、2表示第二个...<br>
+"num1"和"num2"为负数时表示从最后一个开始，如-1表示最后一个、-2表示倒数第二个...<br>
+"num2"的最终结果值必需大于"num1"，如参数列表的总数为5，num1设为-2，num2设为3，这样是非法的，因为-2的最终结果值为4，大于3。<br>
+type模板的说明如下：
+{{{
+如果parameters的配置有name、sex，age这3个参数
+
+query，各语句where语句部分的模板，例子如下：
+动态语句生成的配置为：#auto[query,1,3]
+生成的结果为：name = ? and sex = ? and age = ?
+
+queryD，各语句where部分的动态参数模板，例子如下：
+动态语句生成的配置为：#auto[queryD,1,2]
+生成的结果为：#param(dAuto_1)[ and name = ?]#param(dAuto_2)[ and sex = ?]
+
+update，update语句set部分的模板，例子如下：
+动态语句生成的配置为：#auto[update,1,3]
+生成的结果为：name = ?, sex = ?, age = ?
+
+updateD，update语句set部分的动态参数模板，例子如下：
+动态语句生成的配置为：#auto[updateD,1,2]
+生成的结果为：#param(dAuto_1)[, name = ?]#param(dAuto_2)[, sex = ?]
+
+insertN，insert语句列名部分的模板，例子如下：
+动态语句生成的配置为：#auto[insertN,1,3]
+生成的结果为：name, sex, age
+
+insertND，insert语句列名部分的动态参数模板，例子如下：
+动态语句生成的配置为：#auto[insertND,1,2]
+生成的结果为：#param(dAuto_1)[, name]#param(dAuto_2)[, sex]
+
+insertV，insert语句值部分的模板，例子如下：
+#auto[insertV,1,3]
+生成的结果为：?, ?, ?
+
+insertVD，insert语句值部分的动态参数模板，例子如下：
+#auto[insertVD,1,2]
+生成的结果为：#param(dAuto_1)[, ?]#param(dAuto_2)[, ?]
+}}}
+<br>
 =例子中的变量说明=
 query为`self.micromagic.eterna.sql.QueryAdapter`的实例<br>
 update为`self.micromagic.eterna.sql.UpdateAdapter`的实例<br>
