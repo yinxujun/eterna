@@ -1,5 +1,5 @@
 #summary 01配置和代码编写
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 =编写第一段代码=
 第一步配置编译环境<br>
