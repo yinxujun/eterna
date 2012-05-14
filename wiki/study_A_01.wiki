@@ -2,7 +2,12 @@
 #labels Phase-Implementation
 
 =第一段代码=
-第一步新建java文件和xml配置文件，结构如下：
+第一步配置编译环境<br>
+下载[http://code.google.com/p/eterna/downloads/detail?name=etetna-libs.zip etetna-libs.zip]，将里面的jar文件添加到lib中。<br>
+下载eterna-X.X.X.zip，将里面的eterna-X.X.X.jar添加的lib中。<br>
+这样编译环境就设置完了。<br>
+<br>
+第二步新建java文件和xml配置文件，结构如下：
 {{{
 ---
  |-Test.java
