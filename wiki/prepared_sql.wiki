@@ -1,4 +1,5 @@
 #summary 预备SQL语句的特殊语法
+#labels Phase-Implementation
 
 =概述=
 框架中的预备SQL语句主要出现在query和update中的prepared-sql节点的内部文本中，和JDBC中的PreparedStatement一样，"?"表示需要设置参数。而"#"则是框架中添加的特殊标识，用于处理特殊的语法。<br>
