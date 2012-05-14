@@ -202,7 +202,7 @@ import self.micromagic.eterna.sql.UpdateAdapter;
    </parameters>
 </update>
 }}}
-这段配置中，将列赋值的部分变成了一个表达式`#auto[update,1,-2]`，表示根据参数列表中的第一个参数至倒数第二个参数并根据`update`的格式来生成语句，其生成的语句就是“`strValue = ?, intValue = ?, dateValue = ?`”。<br>
+这段配置中，将列赋值的部分变成了一个表达式`#auto[update,1,-2]`，表示根据参数列表中的第一个参数至倒数第二个参数并根据`update`的格式来生成语句，其生成的语句就是“`strValue = ?, intValue = ?, dateValue = ?`”。关于动态语句生成的语法可详见[http://code.google.com/p/eterna/wiki/prepared_sql?ts=1337004188&updated=prepared_sql#auto_动态语句生成 预备SQL语句的特殊语法]。<br>
 这样简化后的配置就是如下效果
 {{{
 <reader-manager name="t_table.readers">
