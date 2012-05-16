@@ -2,10 +2,49 @@
 #labels Phase-Implementation
 
 =定义一个搜索 search=
-
-Add your content here.
+search的功能是自动设置查询条件及处理分页，下面就是定义一个search的例子
+{{{
+<search name="search.t_table" queryName="query.t_table" conditionIndex="1" pageSize="10">
+   <condition-propertys>
+      <condition-property name="strValue" colType="String"/>
+      <condition-property name="intValue" colType="int"/>
+      <condition-property name="dateValue" colType="Date"/>
+   </condition-propertys>
+</search>
+}}}
+上面的例子中`queryName`属性指定使用哪个`query`来执行查询，`conditionIndex`属性指定查询中设置条件的子句的索引值（默认值为：1），`pageSize`属性指定每页显示的记录数（默认值为：10）。<br>
+`condition-propertys`子节点中用于定义搜索的条件，里面的每个`condition-property`节点代表一个条件。<br>
+下面来看下对应的`query`需要怎么定义
+{{{
+<query name="query.t_table">
+   <prepared-sql>
+      select * from T_TABLE
+      #sub[where $]
+   </prepared-sql>
+   <readers>
+      <reader name="id" type="int"/>
+      <reader name="strValue" type="String"/>
+      <reader name="intValue" type="int"/>
+      <reader name="dateValue" type="Date"/>
+   </readers>
+</query>
+}}}
+这个`query`中定义了一个子句，用于给search设置查询的条件。<br>
+<br>
+搜索定义完了，下面来执行它
+{{{
+// search.t_table 为配置中定义的search的名称
+SearchAdapter search = factory.createSearchAdapter("search.t_table");
+// request为javax.servlet.http.HttpServletRequest对象
+SearchAdapter.Result result = search.doSearch(WebApp.appTool.getAppData(request), conn);
+System.out.println("查询结果:" + result.queryResult); // 这是个ResultIterator
+System.out.println("当前页数:" + result.pageNum);  // 第一页为:0, 第二页为:1, ...
+--------------------------------------------
+还需要import的类如下
+import self.micromagic.eterna.search.SearchAdapter;  
+import self.micromagic.app.WebApp;   
+}}}
 
 
 <br><br><br>
-
 [http://code.google.com/p/eterna/wiki/study_A_01 上一篇_配置和代码编写]
