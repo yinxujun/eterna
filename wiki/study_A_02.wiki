@@ -1,0 +1,11 @@
+#summary 02搜索
+#labels Phase-Implementation
+
+=定义一个搜索 search=
+
+Add your content here.
+
+
+<br><br><br>
+
+[http://code.google.com/p/eterna/wiki/study_A_01 上一篇_配置和代码编写]
