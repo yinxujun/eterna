@@ -38,13 +38,20 @@ SearchAdapter search = factory.createSearchAdapter("search.t_table");
 // request为javax.servlet.http.HttpServletRequest对象
 SearchAdapter.Result result = search.doSearch(WebApp.appTool.getAppData(request), conn);
 System.out.println("查询结果:" + result.queryResult); // 这是个ResultIterator
-System.out.println("当前页数:" + result.pageNum);  // 第一页为:0, 第二页为:1, ...
+System.out.println("当前页数:" + result.pageNum);  // 第一页为"0", 第二页为"1", ...
 --------------------------------------------
 还需要import的类如下
 import self.micromagic.eterna.search.SearchAdapter;  
 import self.micromagic.app.WebApp;   
 }}}
-
+<br>
+=传入的参数对搜索的控制=
+pageNum：用于控制显示第几页，第一页为"0"、第二页为"1"、...，如果没有传入此参数，则保持原来的页数
+pageSize：重新设置每页显示的记录数，如果没有传入此参数，则维持原来的值
+queryType：会根据不同的值来对搜索的条件进行处理
+           set：从参数中获取条件并进行设置
+           clear：清空已设置的参数
+           不传值：维持原来的搜索条件不变
 
 <br><br><br>
 [http://code.google.com/p/eterna/wiki/study_A_01 上一篇_配置和代码编写]
