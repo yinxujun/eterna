@@ -249,4 +249,6 @@ System.out.println("更新记录数:" + modifiedCount);
 还需要import的类如下
 import self.micromagic.eterna.model.ParamSetManager;
 }}}
-这里通过`ParamSetManager`进行参数的自动设置，这样就无需一行一行的写设置参数的代码了。
+这里通过`ParamSetManager`进行参数的自动设置，这样就无需一行一行的写设置参数的代码了。<br>
+<br><br><br>
+[http://code.google.com/p/eterna/wiki/study_A_02 下一篇_搜索]
