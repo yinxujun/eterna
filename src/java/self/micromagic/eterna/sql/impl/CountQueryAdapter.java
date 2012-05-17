@@ -59,6 +59,11 @@ class CountQueryAdapter
       return this.name;
    }
 
+   public String getType()
+   {
+      return SQL_TYPE_COUNT;
+   }
+
    public ResultIterator executeQuery(Connection conn)
          throws ConfigurationException, SQLException
    {

@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.io.IOException;
 
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.DataSourceManager;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.ObjectRef;
 
@@ -13,8 +14,18 @@ public interface ModelCaller
 {
    public final static String DEFAULT_MODEL_TAG = "self.micromagic.default.model";
    public final static String DEFAULT_MODEL_NAME = "index";
-   public final static String DATA_SOURCE_MAP = "dataSourceMap";
-   public final static String DEFAULT_DATA_SOURCE_NAME = "defaultDataSourceName";
+
+   /**
+    * @deprecated
+    * @see DataSourceManager#DATA_SOURCE_MAP
+    */
+   public final static String DATA_SOURCE_MAP = DataSourceManager.DATA_SOURCE_MAP;
+
+   /**
+    * @deprecated
+    * @see DataSourceManager#DEFAULT_DATA_SOURCE_NAME
+    */
+   public final static String DEFAULT_DATA_SOURCE_NAME = DataSourceManager.DEFAULT_DATA_SOURCE_NAME;
 
    void initModelCaller(EternaFactory factory) throws ConfigurationException;
 

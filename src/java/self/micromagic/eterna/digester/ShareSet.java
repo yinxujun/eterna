@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Iterator;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -98,6 +99,33 @@ public class ShareSet extends RuleSetBase
       digester.addRule("eterna-config/factory/objs/typical-replacement", new SameCheckRule("typical-replacement", "name"));
       digester.addRule("eterna-config/factory/objs/function", new SameCheckRule("function", "name"));
       digester.addRule("eterna-config/factory/objs/resource", new SameCheckRule("resource", "name"));
+   }
+
+   public static DataSourceManager getDataSourceFromCache(FactoryManager.Instance instance)
+         throws ConfigurationException
+   {
+      Map dsMap = (Map) instance.getAttribute(DataSourceManager.DATA_SOURCE_MAP);
+      if (dsMap != null && dsMap.size() > 0)
+      {
+         DataSourceManagerImpl dsmi = new DataSourceManagerImpl();
+         String defaultDataSourceName = (String) instance.getAttribute(
+               DataSourceManager.DEFAULT_DATA_SOURCE_NAME);
+         if (defaultDataSourceName == null)
+         {
+            Map.Entry entry = (Map.Entry) dsMap.entrySet().iterator().next();
+            defaultDataSourceName = (String) entry.getKey();
+         }
+         dsmi.setDefaultDataSourceName(defaultDataSourceName);
+         Iterator itr = dsMap.entrySet().iterator();
+         while (itr.hasNext())
+         {
+            Map.Entry entry = (Map.Entry) itr.next();
+            String dsName = (String) entry.getKey();
+            dsmi.addDataSource(dsName, (DataSource) entry.getValue());
+         }
+         return dsmi;
+      }
+      return null;
    }
 
 
@@ -289,6 +317,11 @@ public class ShareSet extends RuleSetBase
             throw new ConfigurationException("Can't set default data source name after Initialization.");
          }
          this.defaultDataSourceName = name;
+      }
+
+      void addDataSource(String name, DataSource ds)
+      {
+         this.dataSourceMap.put(name, ds);
       }
 
       public void addDataSource(Context context, String dataSourceConfig)

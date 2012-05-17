@@ -49,26 +49,7 @@ public class ModelCallerImpl
          this.defaultDataSourceName = dsm.getDefaultDataSourceName();
          return;
       }
-      this.dataSourceMap = (Map) factory.getFactoryManager().getAttribute(DATA_SOURCE_MAP);
-      if (this.dataSourceMap != null && this.dataSourceMap.size() > 0)
-      {
-         this.defaultDataSourceName = (String) factory.getFactoryManager()
-               .getAttribute(DEFAULT_DATA_SOURCE_NAME);
-         if (defaultDataSourceName == null)
-         {
-            Map.Entry entry = (Map.Entry) this.dataSourceMap.entrySet().iterator().next();
-            this.defaultDataSource = (DataSource) entry.getValue();
-            this.defaultDataSourceName = (String) entry.getKey();
-         }
-         else
-         {
-            this.defaultDataSource = (DataSource) this.dataSourceMap.get(this.defaultDataSourceName);
-         }
-      }
-      else
-      {
-         this.dataSourceMap = null;
-      }
+      this.dataSourceMap = null;
    }
 
    public Connection getConnection(ModelAdapter model)
@@ -411,7 +392,7 @@ public class ModelCallerImpl
             case ModelAdapter.T_HOLD:
                if (!"1".equals(data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED)))
                {
-                  // 如果数据库链接保存标志不为"1", 表示业务没有接管数据库链接, 这里需要将其释放
+                  // 如果数据库链接保持标志不为"1", 表示业务没有接管数据库链接, 这里需要将其释放
                   this.closeConnection(myConn);
                }
                // 恢复原来的链接保持标志
@@ -433,12 +414,17 @@ public class ModelCallerImpl
       String dataType = data.getRequestParameter(ViewAdapter.DATA_TYPE);
       if (dataType != null)
       {
-         data.dataMap.put(ViewAdapter.DATA_TYPE, dataType);
+         buf.append(ViewAdapter.DATA_TYPE).append("=").append(URLEncoder.encode(dataType, charset));
       }
       Iterator params = data.dataMap.entrySet().iterator();
       while (params.hasNext())
       {
          Map.Entry entry = (Map.Entry) params.next();
+         if (SearchExecute.SEARCH_MANAGER_ATTRIBUTES.equals(entry.getKey()))
+         {
+            // search相关的控制标识不用加入重定向的url参数
+            continue;
+         }
          if (entry.getValue() != null)
          {
             if (buf.length() > 0)

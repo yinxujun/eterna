@@ -11,6 +11,15 @@ import self.micromagic.eterna.digester.ConfigurationException;
 public interface DataSourceManager
 {
    /**
+    * 在初始化缓存(即工厂管理器的实例)中放置数据源映射表的名称.
+    */
+   public final static String DATA_SOURCE_MAP = "dataSourceMap";
+   /**
+    * 在初始化缓存(即工厂管理器的实例)中放置默认使用的数据源的名称.
+    */
+   public final static String DEFAULT_DATA_SOURCE_NAME = "defaultDataSourceName";
+
+   /**
     * 初始化这个DataSourceManager.
     */
    void initialize(EternaFactory factory) throws ConfigurationException;

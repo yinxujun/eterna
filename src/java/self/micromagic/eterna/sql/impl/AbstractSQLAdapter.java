@@ -4,11 +4,11 @@ package self.micromagic.eterna.sql.impl;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
@@ -22,6 +22,7 @@ import self.micromagic.eterna.sql.SQLParameterGroup;
 import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
+import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
 import self.micromagic.util.container.UnmodifiableIterator;
 
 public abstract class AbstractSQLAdapter extends AbstractGenerator
@@ -34,6 +35,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 
    private Map parameterNameMap = new HashMap();
    private SQLParameter[] parameterArray;
+   protected ValuePreparerCreaterGenerator vpcg;
 
    protected boolean initialized = false;
 
@@ -54,6 +56,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 
          this.initialized = true;
 
+         this.vpcg = factory.getDefaultValuePreparerCreaterGenerator();
          this.paramGroup.initialize(factory);
          Iterator itr = this.paramGroup.getParameterGeneratorIterator();
          List paramList = new ArrayList();
@@ -72,7 +75,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
          this.sqlManager = new SQLManager();
          String tmpSQL = this.sqlManager.frontParse(this.preparedSQL, paramArray);
          this.sqlManager.parse(tmpSQL);
-         this.preparerManager = new PreparerManager(paramArray);
+         this.preparerManager = new PreparerManager(this, paramArray);
 
          if (this.sqlManager != null)
          {
@@ -110,7 +113,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
          AbstractSQLAdapter other = (AbstractSQLAdapter) super.clone();
          if (this.preparedSQL != null)
          {
-            other.preparerManager = new PreparerManager(this.parameterArray);
+            other.preparerManager = new PreparerManager(other, this.parameterArray);
             other.sqlManager = this.sqlManager.copy(true);
          }
          return other;

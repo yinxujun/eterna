@@ -1,111 +1,155 @@
 
 package self.micromagic.eterna.sql.preparer;
 
-import java.sql.Types;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
+import java.io.InputStream;
+import java.io.Reader;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
+import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
-import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.sql.converter.BooleanConverter;
-import self.micromagic.eterna.sql.converter.DateConverter;
-import self.micromagic.eterna.sql.converter.DoubleConverter;
-import self.micromagic.eterna.sql.converter.IntegerConverter;
-import self.micromagic.eterna.sql.converter.LongConverter;
-import self.micromagic.eterna.sql.converter.StringConverter;
-import self.micromagic.eterna.sql.converter.TimeConverter;
-import self.micromagic.eterna.sql.converter.TimestampConverter;
-import self.micromagic.eterna.sql.converter.BytesConverter;
-import self.micromagic.eterna.sql.converter.StreamConverter;
-import self.micromagic.eterna.sql.converter.ReaderConverter;
-import self.micromagic.util.StringTool;
+import self.micromagic.eterna.share.TypeManager;
 
 public class ValuePreparerCreaterGeneratorImpl extends AbstractGenerator
       implements ValuePreparerCreaterGenerator
 {
-   protected boolean initialized = false;
-
    private ValuePreparerCreater[] creaters
          = new ValuePreparerCreater[TypeManager.TYPES_COUNT];
+   private NullPreparer.Creater nullPreparer = new NullPreparer.Creater(this);
+   private BooleanPreparer.Creater booleanPreparer = new BooleanPreparer.Creater(this);
+   private BytePreparer.Creater bytePreparer = new BytePreparer.Creater(this);
+   private BytesPreparer.Creater bytesPreparer = new BytesPreparer.Creater(this);
+   private ShortPreparer.Creater shortPreparer = new ShortPreparer.Creater(this);
+   private IntegerPreparer.Creater intPreparer = new IntegerPreparer.Creater(this);
+   private LongPreparer.Creater longPreparer = new LongPreparer.Creater(this);
+   private FloatPreparer.Creater floatPreparer = new FloatPreparer.Creater(this);
+   private DoublePreparer.Creater doublePreparer = new DoublePreparer.Creater(this);
+   private StringPreparer.Creater stringPreparer = new StringPreparer.Creater(this);
+   private StreamPreparer.Creater streamPreparer = new StreamPreparer.Creater(this);
+   private ReaderPreparer.Creater readerPreparer = new ReaderPreparer.Creater(this);
+   private DatePreparer.Creater datePreparer = new DatePreparer.Creater(this);
+   private TimePreparer.Creater timePreparer = new TimePreparer.Creater(this);
+   private TimestampPreparer.Creater timpstampPreparer = new TimestampPreparer.Creater(this);
+   private ObjectPreparer.Creater objectPreparer = new ObjectPreparer.Creater(this);
 
    {
-      this.creaters[TypeManager.TYPE_IGNORE] = new IgnorePreparerCreater();
-      this.creaters[TypeManager.TYPE_STRING] = new StringPreparerCreater();
-      this.creaters[TypeManager.TYPE_BIGSTRING] = new StringPreparerCreater();
-      this.creaters[TypeManager.TYPE_BOOLEAN] = new BooleanPreparerCreater();
+      this.creaters[TypeManager.TYPE_IGNORE] = this.nullPreparer;
+      this.creaters[TypeManager.TYPE_STRING] = this.stringPreparer;
+      this.creaters[TypeManager.TYPE_BIGSTRING] = this.stringPreparer;
+      this.creaters[TypeManager.TYPE_BOOLEAN] = this.booleanPreparer;
 
-      this.creaters[TypeManager.TYPE_BYTE] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_SHORT] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_INTEGER] = new IntegerPreparerCreater();
-      this.creaters[TypeManager.TYPE_LONG] = new LongPreparerCreater();
-      this.creaters[TypeManager.TYPE_FLOAT] = new DoublePreparerCreater();
-      this.creaters[TypeManager.TYPE_DOUBLE] = new DoublePreparerCreater();
+      this.creaters[TypeManager.TYPE_BYTE] = this.bytePreparer;
+      this.creaters[TypeManager.TYPE_SHORT] = this.shortPreparer;
+      this.creaters[TypeManager.TYPE_INTEGER] = this.intPreparer;
+      this.creaters[TypeManager.TYPE_LONG] = this.longPreparer;
+      this.creaters[TypeManager.TYPE_FLOAT] = this.floatPreparer;
+      this.creaters[TypeManager.TYPE_DOUBLE] = this.doublePreparer;
 
-      this.creaters[TypeManager.TYPE_DATE] = new DatePreparerCreater();
-      this.creaters[TypeManager.TYPE_TIME] = new TimePreparerCreater();
-      this.creaters[TypeManager.TYPE_TIMPSTAMP] = new TimestampPreparerCreater();
-      this.creaters[TypeManager.TYPE_OBJECT] = new ObjectPreparerCreater();
+      this.creaters[TypeManager.TYPE_DATE] = this.datePreparer;
+      this.creaters[TypeManager.TYPE_TIME] = this.timePreparer;
+      this.creaters[TypeManager.TYPE_TIMPSTAMP] = this.timpstampPreparer;
+      this.creaters[TypeManager.TYPE_OBJECT] = this.objectPreparer;
 
-      this.creaters[TypeManager.TYPE_BYTES] = new BytesPreparerCreater();
-      this.creaters[TypeManager.TYPE_STREAM] = new StreamPreparerCreater();
-      this.creaters[TypeManager.TYPE_READER] = new ReaderPreparerCreater();
+      this.creaters[TypeManager.TYPE_BYTES] = this.bytesPreparer;
+      this.creaters[TypeManager.TYPE_STREAM] = this.streamPreparer;
+      this.creaters[TypeManager.TYPE_READER] = this.readerPreparer;
    }
 
+   protected boolean initialized = false;
+   protected EternaFactory factory;
+   protected boolean emptyStringToNull = true;
+
    public void initialize(EternaFactory factory)
+         throws ConfigurationException
    {
       if (this.initialized)
       {
          return;
       }
       this.initialized = true;
+      this.factory = factory;
       String tmp;
 
       tmp = (String) this.getAttribute("dateFormat");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_DATE] = new DatePreparerCreater(tmp);
+         this.datePreparer.setFormat(tmp);
       }
       tmp = (String) this.getAttribute("timeFormat");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_TIME] = new TimePreparerCreater(tmp);
+         this.timePreparer.setFormat(tmp);
       }
       tmp = (String) this.getAttribute("datetimeFormat");
+      if (tmp == null)
+      {
+         tmp = (String) this.getAttribute("timpstampFormat");
+      }
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_TIMPSTAMP] = new TimestampPreparerCreater(tmp);
+         this.timpstampPreparer.setFormat(tmp);
       }
 
       tmp = (String) this.getAttribute("stringFormat");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_STRING] = new StringPreparerCreater(tmp);
+         this.stringPreparer.setFormat(tmp);
       }
       tmp = (String) this.getAttribute("booleanFormat");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_STRING] = new BooleanPreparerCreater(tmp);
+         this.booleanPreparer.setFormat(tmp);
       }
 
       tmp = (String) this.getAttribute("numberFormat");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_BYTE] = new IntegerPreparerCreater(tmp);
-         this.creaters[TypeManager.TYPE_SHORT] = new IntegerPreparerCreater(tmp);
-         this.creaters[TypeManager.TYPE_INTEGER] = new IntegerPreparerCreater(tmp);
-         this.creaters[TypeManager.TYPE_LONG] = new LongPreparerCreater(tmp);
-         this.creaters[TypeManager.TYPE_FLOAT] = new DoublePreparerCreater(tmp);
-         this.creaters[TypeManager.TYPE_DOUBLE] = new DoublePreparerCreater(tmp);
+         this.bytePreparer.setFormat(tmp);
+         this.shortPreparer.setFormat(tmp);
+         this.intPreparer.setFormat(tmp);
+         this.longPreparer.setFormat(tmp);
+         this.floatPreparer.setFormat(tmp);
+         this.doublePreparer.setFormat(tmp);
+      }
+
+      tmp = (String) this.getAttribute(ValuePreparerCreater.EMPTY_STRING_TO_NULL);
+      if (tmp == null)
+      {
+         tmp = (String) factory.getAttribute(ValuePreparerCreater.EMPTY_STRING_TO_NULL);
+      }
+      if (tmp != null)
+      {
+         this.emptyStringToNull = "true".equals(tmp);
       }
 
       tmp = (String) this.getAttribute("charset");
       if (tmp != null)
       {
-         this.creaters[TypeManager.TYPE_BYTES] = new BytesPreparerCreater(tmp);
+         this.bytesPreparer.setCharset(tmp);
+         this.streamPreparer.setCharset(tmp);
       }
+   }
+
+   public void setName(String name)
+         throws ConfigurationException
+   {
+      if (this.initialized)
+      {
+         throw new ConfigurationException("Initialized ValuePreparerCreaterGenerator can't change name.");
+      }
+      super.setName(name);
+   }
+
+   public EternaFactory getFactory()
+   {
+      return this.factory;
+   }
+
+   public boolean isEmptyStringToNull()
+   {
+      return this.emptyStringToNull;
    }
 
    public Object create()
@@ -118,390 +162,132 @@ public class ValuePreparerCreaterGeneratorImpl extends AbstractGenerator
       return this.creaters[pureType];
    }
 
-   public class BooleanPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createNullPreparer(int index, int type)
+         throws ConfigurationException
    {
-      BooleanConverter convert = new BooleanConverter();
-      String[] trueValues = null;
-
-      public BooleanPreparerCreater()
-      {
-      }
-
-      public BooleanPreparerCreater(String formatStr)
-      {
-         this.trueValues = StringTool.separateString(formatStr, ";", true);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.BOOLEAN);
-         }
-         return new BooleanPreparer(0, this.convert.convertToBoolean(value, this.trueValues));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.BOOLEAN);
-         }
-         return new BooleanPreparer(0, this.convert.convertToBoolean(value, this.trueValues));
-      }
-
+      ValuePreparer preparer = this.nullPreparer.createPreparer(type);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class StringPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createBooleanPreparer(int index, boolean v)
+         throws ConfigurationException
    {
-      StringConverter convert = new StringConverter();
-      String beginStr = "";
-      String endStr = "";
-      int appendLength = 0;
-
-      public StringPreparerCreater()
-      {
-      }
-
-      public StringPreparerCreater(String formatStr)
-      {
-         int index = formatStr.indexOf('$');
-         if (index != -1)
-         {
-            this.beginStr = formatStr.substring(0, index);
-            this.endStr = formatStr.substring(index + 1);
-         }
-         else
-         {
-            this.endStr = formatStr;
-         }
-         this.appendLength = this.beginStr.length() + this.endStr.length();
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         return this.createPreparer(this.convert.convertToString(value));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (this.appendLength == 0)
-         {
-            return new StringPreparer(0, value);
-         }
-         if (value == null) value = "";
-         StringBuffer buf = new StringBuffer(value.length() + this.appendLength);
-         buf.append(this.beginStr).append(value).append(this.endStr);
-         return new StringPreparer(0, buf.toString());
-      }
-
+      ValuePreparer preparer = this.booleanPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class IntegerPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createBytePreparer(int index, byte v)
+         throws ConfigurationException
    {
-      IntegerConverter convert = new IntegerConverter();
-      NumberFormat format = null;
-
-      public IntegerPreparerCreater()
-      {
-      }
-
-      public IntegerPreparerCreater(String formatStr)
-      {
-         this.format = new DecimalFormat(formatStr);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.INTEGER);
-         }
-         return new IntegerPreparer(0, this.convert.convertToInt(value, this.format));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.INTEGER);
-         }
-         return new IntegerPreparer(0, this.convert.convertToInt(value, this.format));
-      }
-
+      ValuePreparer preparer = this.bytePreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class LongPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createBytesPreparer(int index, byte[] v)
+         throws ConfigurationException
    {
-      LongConverter convert = new LongConverter();
-      NumberFormat format = null;
-
-      public LongPreparerCreater()
-      {
-      }
-
-      public LongPreparerCreater(String formatStr)
-      {
-         this.format = new DecimalFormat(formatStr);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.BIGINT);
-         }
-         return new LongPreparer(0, this.convert.convertToLong(value, this.format));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.BIGINT);
-         }
-         return new LongPreparer(0, this.convert.convertToLong(value, this.format));
-      }
-
+      ValuePreparer preparer = this.bytesPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class DoublePreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createShortPreparer(int index, short v)
+         throws ConfigurationException
    {
-      DoubleConverter convert = new DoubleConverter();
-      NumberFormat format = null;
-
-      public DoublePreparerCreater()
-      {
-      }
-
-      public DoublePreparerCreater(String formatStr)
-      {
-         this.format = new DecimalFormat(formatStr);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.DOUBLE);
-         }
-         return new DoublePreparer(0, this.convert.convertToDouble(value, this.format));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (value == null)
-         {
-            return new NullPreparer(0, Types.DOUBLE);
-         }
-         return new DoublePreparer(0, this.convert.convertToDouble(value, this.format));
-      }
-
+      ValuePreparer preparer = this.shortPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class DatePreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createIntPreparer(int index, int v)
+         throws ConfigurationException
    {
-      DateConverter convert = new DateConverter();
-      DateFormat format = null;
-
-      public DatePreparerCreater()
-      {
-      }
-
-      public DatePreparerCreater(String formatStr)
-      {
-         this.format = new SimpleDateFormat(formatStr);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new DatePreparer(0, this.convert.convertToDate(value, this.format));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new DatePreparer(0, this.convert.convertToDate(value, this.format));
-      }
-
+      ValuePreparer preparer = this.intPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class TimePreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createLongPreparer(int index, long v)
+         throws ConfigurationException
    {
-      TimeConverter convert = new TimeConverter();
-      DateFormat format = null;
-
-      public TimePreparerCreater()
-      {
-      }
-
-      public TimePreparerCreater(String formatStr)
-      {
-         this.format = new SimpleDateFormat(formatStr);
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new TimePreparer(0, this.convert.convertToTime(value, this.format));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new TimePreparer(0, this.convert.convertToTime(value, this.format));
-      }
-
+      ValuePreparer preparer = this.longPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class TimestampPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createFloatPreparer(int index, float v)
+         throws ConfigurationException
    {
-      TimestampConverter convert = new TimestampConverter();
-      DateFormat[] formats = null;
-
-      public TimestampPreparerCreater()
-      {
-      }
-
-      public TimestampPreparerCreater(String formatStr)
-      {
-         String[] strs = StringTool.separateString(formatStr, ";", true);
-         this.formats = new DateFormat[strs.length];
-         for (int i = 0; i < strs.length; i++)
-         {
-            this.formats[i] = new SimpleDateFormat(strs[i]);
-         }
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         if (this.formats == null)
-         {
-            return new TimestampPreparer(0, this.convert.convertToTimestamp(value));
-         }
-         for (int i = 0; i < this.formats.length; i++)
-         {
-            try
-            {
-               return new TimestampPreparer(0, this.convert.convertToTimestamp(value, this.formats[i]));
-            }
-            catch (Throwable ex) {}
-         }
-         throw new ClassCastException("Can't cast [" + value + "](" + value.getClass() + ") to Timestamp.");
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         if (this.formats == null)
-         {
-            return new TimestampPreparer(0, this.convert.convertToTimestamp(value));
-         }
-         for (int i = 0; i < this.formats.length; i++)
-         {
-            try
-            {
-               return new TimestampPreparer(0, this.convert.convertToTimestamp(value, this.formats[i]));
-            }
-            catch (Throwable ex) {}
-         }
-         throw new ClassCastException("Can't cast [" + value + "](" + value.getClass() + ") to Timestamp.");
-      }
-
+      ValuePreparer preparer = this.floatPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class IgnorePreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createDoublePreparer(int index, double v)
+         throws ConfigurationException
    {
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new NullPreparer(0, java.sql.Types.VARCHAR);
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new NullPreparer(0, java.sql.Types.VARCHAR);
-      }
-
+      ValuePreparer preparer = this.doublePreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class ObjectPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createStringPreparer(int index, String v)
+         throws ConfigurationException
    {
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new ObjectPreparer(0, value);
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new ObjectPreparer(0, value);
-      }
-
+      ValuePreparer preparer = this.stringPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class BytesPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createStreamPreparer(int index, InputStream v, int length)
+         throws ConfigurationException
    {
-      BytesConverter convert = new BytesConverter();
-      String charset = null;
-
-      public BytesPreparerCreater()
-      {
-         this.charset = "UTF-8";
-      }
-
-      public BytesPreparerCreater(String charset)
-      {
-         this.charset = charset;
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new BytesPreparer(0, this.convert.convertToBytes(value, this.charset));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new BytesPreparer(0, this.convert.convertToBytes(value, this.charset));
-      }
-
+      ValuePreparer preparer = this.streamPreparer.createPreparer(v, length);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class StreamPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createReaderPreparer(int index, Reader v, int length)
+         throws ConfigurationException
    {
-      StreamConverter convert = new StreamConverter();
-      String charset = null;
-
-      public StreamPreparerCreater()
-      {
-         this.charset = "UTF-8";
-      }
-
-      public StreamPreparerCreater(String charset)
-      {
-         this.charset = charset;
-      }
-
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new StreamPreparer(0, this.convert.convertToStream(value, this.charset));
-      }
-
-      public ValuePreparer createPreparer(String value)
-      {
-         return new StreamPreparer(0, this.convert.convertToStream(value, this.charset));
-      }
-
+      ValuePreparer preparer = this.readerPreparer.createPreparer(v, length);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
-   public class ReaderPreparerCreater extends ValuePreparerCreater
+   public ValuePreparer createDatePreparer(int index, Date v)
+         throws ConfigurationException
    {
-      ReaderConverter convert = new ReaderConverter();
+      ValuePreparer preparer = this.datePreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
+   }
 
-      public ValuePreparer createPreparer(Object value)
-      {
-         return new ReaderPreparer(0, this.convert.convertToReader(value));
-      }
+   public ValuePreparer createTimePreparer(int index, Time v)
+         throws ConfigurationException
+   {
+      ValuePreparer preparer = this.timePreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
+   }
 
-      public ValuePreparer createPreparer(String value)
-      {
-         return new ReaderPreparer(0, this.convert.convertToReader(value));
-      }
+   public ValuePreparer createTimestampPreparer(int index, Timestamp v)
+         throws ConfigurationException
+   {
+      ValuePreparer preparer = this.timpstampPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
+   }
 
+   public ValuePreparer createObjectPreparer(int index, Object v)
+         throws ConfigurationException
+   {
+      ValuePreparer preparer = this.objectPreparer.createPreparer(v);
+      preparer.setRelativeIndex(index);
+      return preparer;
    }
 
 }

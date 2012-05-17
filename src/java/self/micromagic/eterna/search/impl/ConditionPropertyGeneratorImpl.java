@@ -236,11 +236,13 @@ public class ConditionPropertyGeneratorImpl extends AbstractGenerator
       }
 
       public ValuePreparer createValuePreparer(String value)
+            throws ConfigurationException
       {
          return this.vpCreater.createPreparer(value);
       }
 
       public ValuePreparer createValuePreparer(Object value)
+            throws ConfigurationException
       {
          return this.vpCreater.createPreparer(value);
       }

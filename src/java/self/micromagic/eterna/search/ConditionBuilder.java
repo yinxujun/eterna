@@ -48,14 +48,13 @@ public interface ConditionBuilder
 
       public Condition(String sqlPart)
       {
-         this.sqlPart = sqlPart;
-         this.preparers = EMPTY_PREPARERS;
+         this(sqlPart, null);
       }
 
       public Condition(String sqlPart, ValuePreparer[] preparers)
       {
          this.sqlPart = sqlPart;
-         this.preparers = preparers;
+         this.preparers = preparers == null ? EMPTY_PREPARERS : preparers;
       }
 
       public String toString()

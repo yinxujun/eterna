@@ -5,13 +5,13 @@ import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 
-public class NullPreparer extends AbstractValuePreparer
+class NullPreparer extends AbstractValuePreparer
 {
    private int type;
 
-   public NullPreparer(int index, int type)
+   public NullPreparer(ValuePreparerCreater vpc, int type)
    {
-      this.setRelativeIndex(index);
+      super(vpc);
       this.type = type;
    }
 
@@ -19,6 +19,30 @@ public class NullPreparer extends AbstractValuePreparer
          throws SQLException
    {
       stmtWrap.setNull(this.getName(), index, this.type);
+   }
+
+   static class Creater extends AbstractCreater
+   {
+      public Creater(ValuePreparerCreaterGenerator vpcg)
+      {
+         super(vpcg);
+      }
+
+      public ValuePreparer createPreparer(Object value)
+      {
+         return new NullPreparer(this, java.sql.Types.JAVA_OBJECT);
+      }
+
+      public ValuePreparer createPreparer(String value)
+      {
+         return new NullPreparer(this, java.sql.Types.VARCHAR);
+      }
+
+      public ValuePreparer createPreparer(int type)
+      {
+         return new NullPreparer(this, type);
+      }
+
    }
 
 }

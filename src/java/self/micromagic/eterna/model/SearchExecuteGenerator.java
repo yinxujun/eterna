@@ -5,6 +5,9 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface SearchExecuteGenerator
 {
+   /**
+    * search相关的控制标识存入数据集的名称.
+    */
    public static final String SEARCH_MANAGER_ATTRIBUTES = "searchManager_attributes";
 
    /**

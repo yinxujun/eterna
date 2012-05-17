@@ -6,23 +6,24 @@ import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
+import self.micromagic.eterna.sql.converter.ReaderConverter;
 import self.micromagic.util.Utility;
 
-public class ReaderPreparer extends AbstractValuePreparer
+class ReaderPreparer extends AbstractValuePreparer
 {
    private Reader value;
    private int length;
 
-   public ReaderPreparer(int index, Reader value, int length)
+   public ReaderPreparer(ValuePreparerCreater vpc, Reader value, int length)
    {
-      this.setRelativeIndex(index);
+      super(vpc);
       this.length = length;
       this.value = value;
    }
 
-   public ReaderPreparer(int index, Reader value)
+   public ReaderPreparer(ValuePreparerCreater vpc, Reader value)
    {
-      this.setRelativeIndex(index);
+      super(vpc);
       this.length = -1;
       this.value = value;
    }
@@ -38,6 +39,37 @@ public class ReaderPreparer extends AbstractValuePreparer
       {
          stmtWrap.setCharacterStream(this.getName(), index, this.value, this.length);
       }
+   }
+
+   static class Creater extends AbstractCreater
+   {
+      ReaderConverter convert = new ReaderConverter();
+
+      public Creater(ValuePreparerCreaterGenerator vpcg)
+      {
+         super(vpcg);
+      }
+
+      public ValuePreparer createPreparer(Object value)
+      {
+         return new ReaderPreparer(this, this.convert.convertToReader(value));
+      }
+
+      public ValuePreparer createPreparer(String value)
+      {
+         return new ReaderPreparer(this, this.convert.convertToReader(value));
+      }
+
+      public ValuePreparer createPreparer(Reader value)
+      {
+         return new ReaderPreparer(this, value);
+      }
+
+      public ValuePreparer createPreparer(Reader value, int length)
+      {
+         return new ReaderPreparer(this, value, length);
+      }
+
    }
 
 }

@@ -21,13 +21,31 @@ import org.dom4j.Element;
 public class SearchExecute extends AbstractExecute
       implements Execute, SearchExecuteGenerator
 {
+   private static final DataHandler DEFAULT_QUERY_RESULT = new DataHandler("queryResult", true, false);
+   private static final DataHandler DEFAULT_SEARCH_MANAGER = new DataHandler("searchManager", true, false);
+   private static final DataHandler DEFAULT_SEARCH_COUNT = new DataHandler("searchCount", true, false);
+
+   static
+   {
+      try
+      {
+         DEFAULT_QUERY_RESULT.setConfig("data:queryResult");
+         DEFAULT_SEARCH_MANAGER.setConfig("data:searchManager");
+         DEFAULT_SEARCH_COUNT.setConfig("data:searchCount");
+      }
+      catch (ConfigurationException ex)
+      {
+         log.error("Error in init SearchExecute DataHandler.", ex);
+      }
+   }
+
    private String searchNameTag = "searchName";
    private String searchName = null;
 
    private int searchCacheIdnex = -1;
-   private String queryResultName = "queryResult";
-   private String searchManagerName = "searchManager";
-   private String searchCountName = "searchCount";
+   private DataHandler queryResult = DEFAULT_QUERY_RESULT;
+   private DataHandler searchManager = DEFAULT_SEARCH_MANAGER;
+   private DataHandler searchCount = DEFAULT_SEARCH_COUNT;
 
    private boolean saveCondition = true;
    private boolean forceSetParam = false;
@@ -73,19 +91,52 @@ public class SearchExecute extends AbstractExecute
       this.searchCacheIdnex = cacheIndex;
    }
 
-   public void setQueryResultName(String name)
+   public void setQueryResultName(String config)
+         throws ConfigurationException
    {
-      this.queryResultName = name;
+      if (config == null || config.length() == 0)
+      {
+         this.queryResult = null;
+      }
+      if (config.indexOf(':') == -1)
+      {
+         // 如果配置格式中没有":", 说明是用旧的配置格式, 前面补上"data:"
+         config = "data:" + config;
+      }
+      this.queryResult = new DataHandler("queryResult", true, false);
+      this.queryResult.setConfig(config);
    }
 
-   public void setSearchManagerName(String name)
+   public void setSearchManagerName(String config)
+         throws ConfigurationException
    {
-      this.searchManagerName = name;
+      if (config == null || config.length() == 0)
+      {
+         this.searchManager = null;
+      }
+      if (config.indexOf(':') == -1)
+      {
+         // 如果配置格式中没有":", 说明是用旧的配置格式, 前面补上"data:"
+         config = "data:" + config;
+      }
+      this.searchManager = new DataHandler("searchManager", true, false);
+      this.searchManager.setConfig(config);
    }
 
-   public void setSearchCountName(String name)
+   public void setSearchCountName(String config)
+         throws ConfigurationException
    {
-      this.searchCountName = name;
+      if (config == null || config.length() == 0)
+      {
+         this.searchCount = null;
+      }
+      if (config.indexOf(':') == -1)
+      {
+         // 如果配置格式中没有":", 说明是用旧的配置格式, 前面补上"data:"
+         config = "data:" + config;
+      }
+      this.searchCount = new DataHandler("searchCount", true, false);
+      this.searchCount.setConfig(config);
    }
 
    public void setSaveCondition(boolean saveCondition)
@@ -176,7 +227,10 @@ public class SearchExecute extends AbstractExecute
                raMap.put(SearchAdapter.READ_ALL_ROW, "1");
                raMap.put(SearchAdapter.HOLD_CONNECTION, "1");
                SearchAdapter.Result sr = search.doSearch(data, conn);
-               data.dataMap.put(this.queryResultName, sr);
+               if (this.queryResult != null)
+               {
+                  this.queryResult.setData(data, sr);
+               }
             }
          }
          else
@@ -190,7 +244,10 @@ public class SearchExecute extends AbstractExecute
             {
                raMap.put(SearchManager.SAVE_CONDITION, "1");
                SearchManager sm = search.getSearchManager(data);
-               data.dataMap.put(this.searchManagerName, sm);
+               if (this.searchManager != null)
+               {
+                  this.searchManager.setData(data, sm);
+               }
             }
             else
             {
@@ -199,10 +256,13 @@ public class SearchExecute extends AbstractExecute
             if (this.doExecute)
             {
                SearchAdapter.Result sr = search.doSearch(data, conn);
-               data.dataMap.put(this.queryResultName, sr);
-               if (sr.searchCount != null)
+               if (this.queryResult != null)
                {
-                  data.dataMap.put(this.searchCountName, sr.searchCount);
+                  this.queryResult.setData(data, sr);
+               }
+               if (sr.searchCount != null && this.searchCount != null)
+               {
+                  this.searchCount.setData(data, sr.searchCount);
                }
             }
             if (this.start != -1)

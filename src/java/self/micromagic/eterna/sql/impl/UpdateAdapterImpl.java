@@ -17,6 +17,11 @@ import org.dom4j.Element;
 public class UpdateAdapterImpl extends SQLAdapterImpl
       implements UpdateAdapter, UpdateAdapterGenerator
 {
+   public String getType()
+   {
+      return SQL_TYPE_UPDATE;
+   }
+
    public UpdateAdapter createUpdateAdapter()
          throws ConfigurationException
    {

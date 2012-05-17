@@ -2,15 +2,14 @@
 package self.micromagic.eterna.sql;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Iterator;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
-import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 
 /**
  * 用于处理预备SQL语句.
@@ -26,10 +25,21 @@ public interface SQLAdapter
    public static final int SQL_LOG_TYPE_PRINT = 0x1;
    public static final int SQL_LOG_TYPE_SPECIAL = 0x4;
 
+   public static final String SQL_TYPE_UPDATE = "update";
+   public static final String SQL_TYPE_QUERY = "query";
+   public static final String SQL_TYPE_COUNT = "count";
+   public static final String SQL_TYPE_SQL = "SQL";
+
    /**
     * 获取本SQL适配器的名称.
     */
    String getName() throws ConfigurationException;
+
+   /**
+    * 获取本SQL适配器的类型.
+    * 如: query, update.
+    */
+   String getType() throws ConfigurationException;
 
    /**
     * 获取本SQL适配器某个设置的属性.
