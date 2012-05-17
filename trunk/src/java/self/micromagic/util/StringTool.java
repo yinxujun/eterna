@@ -252,7 +252,18 @@ public class StringTool
          }
          else if (arr[i].length() > 0)
          {
-            result.put(trimItem ? arr[i].trim() : arr[i], "");
+            if (trimItem)
+            {
+               String trimStr = arr[i].trim();
+               if (trimStr.length() > 0)
+               {
+                  result.put(trimStr, "");
+               }
+            }
+            else
+            {
+               result.put(arr[i], "");
+            }
          }
       }
       return result;

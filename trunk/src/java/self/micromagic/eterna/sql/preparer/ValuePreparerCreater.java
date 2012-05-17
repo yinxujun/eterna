@@ -1,18 +1,52 @@
 
 package self.micromagic.eterna.sql.preparer;
 
+import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.digester.ConfigurationException;
+
 /**
- * 值准备器的创建者.
+ * 值准备器创建者.
  */
-public abstract class ValuePreparerCreater
+public interface ValuePreparerCreater
 {
+   /**
+    * 设置默认使用的ValuePreparerCreater.
+    * 这是一个factory的arrtibute, 它的值是所定义的vpc的名称.
+    * 如果没有指定, factory会自动生成一个默认的.
+    */
+   public static final String DEFAULT_VPC_ATTRIBUTE = "default.vpc.name";
+
+   /**
+    * 在vpc或factory的属性中设置, 是否要将空字符串变为null, 默认值为true.
+    * 如果vpc中设置了值, 则忽略factory中的设置.
+    */
+   public static final String EMPTY_STRING_TO_NULL = "sql.emptyStringToNull";
+
+   /**
+    * 获取生成值准备器创建者的工厂.
+    */
+   EternaFactory getFactory() throws ConfigurationException;
+
+   /**
+    * 获得一个配置的属性.
+    *
+    * @param name    属性的名称
+    * @return        属性的值
+    */
+   Object getAttribute(String name) throws ConfigurationException;
+
+   /**
+    * 是否要将空字符串变为null.
+    */
+   boolean isEmptyStringToNull();
+
    /**
     * 根据一个Object类型的值创建一个值准备器.
     *
     * @param value    值
     * @return      值准备器
     */
-   public abstract ValuePreparer createPreparer(Object value);
+   ValuePreparer createPreparer(Object value) throws ConfigurationException;
 
    /**
     * 根据一个String类型的值创建一个值准备器.
@@ -20,6 +54,6 @@ public abstract class ValuePreparerCreater
     * @param value    值
     * @return      值准备器
     */
-   public abstract ValuePreparer createPreparer(String value);
+   ValuePreparer createPreparer(String value) throws ConfigurationException;
 
 }

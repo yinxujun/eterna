@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.digester.ObjectLogRule;
+import self.micromagic.eterna.digester.ShareSet;
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ModelAdapterGenerator;
 import self.micromagic.eterna.model.ModelCaller;
@@ -38,12 +39,12 @@ import self.micromagic.eterna.sql.preparer.ValuePreparerCreater;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
 import self.micromagic.eterna.view.Component;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.Function;
+import self.micromagic.eterna.view.Resource;
 import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
-import self.micromagic.eterna.view.Resource;
-import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.impl.StringCoderImpl;
 
 public class EternaFactoryImpl extends AbstractFactory
@@ -198,6 +199,15 @@ public class EternaFactoryImpl extends AbstractFactory
             ObjectLogRule.setObjName("dataSourceManager");
             this.dataSourceManager.initialize(this);
          }
+         else
+         {
+            this.dataSourceManager = ShareSet.getDataSourceFromCache(this.getFactoryManager());
+            if (this.dataSourceManager != null)
+            {
+               ObjectLogRule.setObjName("dataSourceManager");
+               this.dataSourceManager.initialize(this);
+            }
+         }
 
          // 初始化, userManager
          if (this.userManager != null)
@@ -213,7 +223,32 @@ public class EternaFactoryImpl extends AbstractFactory
             this.specialLog.initSpecialLog(this);
          }
 
-         this.registerValuePreparerGenerator(new ValuePreparerCreaterGeneratorImpl());
+         String dName = (String) super.getAttribute(ValuePreparerCreater.DEFAULT_VPC_ATTRIBUTE);
+         if (dName != null)
+         {
+            // 如果指定了默认的vpc, 则获取这个vpc
+            this.defaultVPCG = (ValuePreparerCreaterGenerator) this.valuePreparerMap.get(dName);
+            if (this.defaultVPCG == null && this.sameShare != null)
+            {
+               this.defaultVPCG
+                     = (ValuePreparerCreaterGenerator) this.sameShare.valuePreparerMap.get(dName);
+            }
+            if (this.defaultVPCG == null)
+            {
+               log.error("The default vpc [" + dName + "] not found, use sys default.");
+            }
+         }
+         else if (this.shareEternaFactory != null)
+         {
+            // 如果有共享的factory, 则获取共享factory的默认vpcg
+            this.defaultVPCG = this.shareEternaFactory.getDefaultValuePreparerCreaterGenerator();
+         }
+         if (this.defaultVPCG == null)
+         {
+            // 如果前面没有获取到默认的vpcg, 则生成一个默认的
+            this.defaultVPCG = new ValuePreparerCreaterGeneratorImpl();
+            this.registerValuePreparerGenerator(this.defaultVPCG);
+         }
 
 
          // 初始化, Resource
@@ -229,9 +264,9 @@ public class EternaFactoryImpl extends AbstractFactory
          itr = this.valuePreparerMap.values().iterator();
          while (itr.hasNext())
          {
-            ValuePreparerCreaterGenerator vpc = (ValuePreparerCreaterGenerator) itr.next();
-            ObjectLogRule.setObjName("vpc", String.valueOf(vpc.getName()));
-            vpc.initialize(this);
+            ValuePreparerCreaterGenerator vpcg = (ValuePreparerCreaterGenerator) itr.next();
+            ObjectLogRule.setObjName("vpc", String.valueOf(vpcg.getName()));
+            vpcg.initialize(this);
          }
 
          // 初始化, ResultFormat
@@ -372,6 +407,7 @@ public class EternaFactoryImpl extends AbstractFactory
    private Map paramGroupMap = new HashMap();
    private Map valuePreparerMap = new HashMap();
 
+   private ValuePreparerCreaterGenerator defaultVPCG;
    private FactoryGeneratorManager queryManager
          = new FactoryGeneratorManager("QueryAdapter", this);
    private FactoryGeneratorManager updateManager
@@ -694,18 +730,24 @@ public class EternaFactoryImpl extends AbstractFactory
       }
    }
 
+   public ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator()
+   {
+      return this.defaultVPCG;
+   }
+
    public ValuePreparerCreater createValuePreparerCreater(int type)
          throws ConfigurationException
    {
-      return this.createValuePreparerCreater(null, type);
+      int pureType = TypeManager.getPureType(type);
+      return this.defaultVPCG.createValuePreparerCreater(pureType);
    }
 
    public ValuePreparerCreater createValuePreparerCreater(String name, int type)
          throws ConfigurationException
    {
       int pureType = TypeManager.getPureType(type);
-      ValuePreparerCreaterGenerator vpg = (ValuePreparerCreaterGenerator) this.valuePreparerMap.get(name);
-      if (vpg == null)
+      ValuePreparerCreaterGenerator vpcg = (ValuePreparerCreaterGenerator) this.valuePreparerMap.get(name);
+      if (vpcg == null)
       {
          if (this.shareEternaFactory != null)
          {
@@ -714,7 +756,7 @@ public class EternaFactoryImpl extends AbstractFactory
          throw new ConfigurationException(
                "Not found [ValuePreparerCreaterGenerator] name:" + name + ".");
       }
-      return vpg.createValuePreparerCreater(pureType);
+      return vpcg.createValuePreparerCreater(pureType);
    }
 
 

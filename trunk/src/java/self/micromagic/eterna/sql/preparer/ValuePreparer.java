@@ -4,12 +4,18 @@ package self.micromagic.eterna.sql.preparer;
 import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
+import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * 参数准备者.
+ * 值准备器.
  */
 public interface ValuePreparer
 {
+   /**
+    * 获得这个值准备器的创建者.
+    */
+   ValuePreparerCreater getCreater() throws ConfigurationException;
+
    /**
     * 将参数设置到PreparedStatementWrap中.
     *

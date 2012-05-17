@@ -4,26 +4,27 @@ package self.micromagic.eterna.sql.preparer;
 import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
+import self.micromagic.util.Utility;
 
-public class ObjectPreparer extends AbstractValuePreparer
+class ObjectPreparer extends AbstractValuePreparer
 {
    protected Object value;
    protected Integer targetSqlType;
    protected Integer scale;
 
-   public ObjectPreparer(int index, Object value)
+   public ObjectPreparer(ValuePreparerCreater vpc, Object value)
    {
-      this(index, value, null, null);
+      this(vpc, value, null, null);
    }
 
-   public ObjectPreparer(int index, Object value, Integer targetSqlType)
+   public ObjectPreparer(ValuePreparerCreater vpc, Object value, Integer targetSqlType)
    {
-      this(index, value, targetSqlType, null);
+      this(vpc, value, targetSqlType, null);
    }
 
-   public ObjectPreparer(int index, Object value, Integer targetSqlType, Integer scale)
+   public ObjectPreparer(ValuePreparerCreater vpc, Object value, Integer targetSqlType, Integer scale)
    {
-      this.setRelativeIndex(index);
+      super(vpc);
       this.value = value;
       this.targetSqlType = targetSqlType;
       this.scale = scale;
@@ -45,6 +46,36 @@ public class ObjectPreparer extends AbstractValuePreparer
          stmtWrap.setObject(this.getName(), index, this.value,
                this.targetSqlType.intValue(), this.scale.intValue());
       }
+   }
+
+   static class Creater extends AbstractCreater
+   {
+      public Creater(ValuePreparerCreaterGenerator vpcg)
+      {
+         super(vpcg);
+      }
+
+      public ValuePreparer createPreparer(Object value)
+      {
+         return new ObjectPreparer(this, value);
+      }
+
+      public ValuePreparer createPreparer(String value)
+      {
+         return new ObjectPreparer(this, value);
+      }
+
+      public ValuePreparer createPreparer(Object value, int targetSqlType)
+      {
+         return new ObjectPreparer(this, value, Utility.createInteger(targetSqlType));
+      }
+
+      public ValuePreparer createPreparer(Object value, int targetSqlType, int scale)
+      {
+         return new ObjectPreparer(this, value, Utility.createInteger(targetSqlType),
+               Utility.createInteger(scale));
+      }
+
    }
 
 }

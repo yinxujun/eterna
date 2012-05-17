@@ -226,8 +226,13 @@ public interface EternaFactory extends Factory
    /**
     * 注册一个<code>ValuePreparerCreaterGenerator</code>.
     */
-   public void registerValuePreparerGenerator(ValuePreparerCreaterGenerator generator)
+   void registerValuePreparerGenerator(ValuePreparerCreaterGenerator generator)
          throws ConfigurationException;
+
+   /**
+    * 获得一个默认的<code>ValuePreparerCreaterGenerator</code>.
+    */
+   ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator();
 
    /**
     * 生成一个<code>VPGenerator</code>的实例.
@@ -236,7 +241,7 @@ public interface EternaFactory extends Factory
     * @param name       ValuePreparerCreater的名称.
     * @param type       value的类型.
     */
-   public ValuePreparerCreater createValuePreparerCreater(String name, int type)
+   ValuePreparerCreater createValuePreparerCreater(String name, int type)
          throws ConfigurationException;
 
    /**
@@ -244,7 +249,7 @@ public interface EternaFactory extends Factory
     *
     * @param type       value的类型.
     */
-   public ValuePreparerCreater createValuePreparerCreater(int type)
+   ValuePreparerCreater createValuePreparerCreater(int type)
          throws ConfigurationException;
 
 

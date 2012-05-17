@@ -109,6 +109,7 @@ public class SQLParameterGeneratorImpl extends AbstractGenerator
       }
 
       public ValuePreparer createValuePreparer(String value)
+            throws ConfigurationException
       {
          ValuePreparer vp = this.vpCreater.createPreparer(value);
          vp.setRelativeIndex(this.index);
@@ -116,6 +117,7 @@ public class SQLParameterGeneratorImpl extends AbstractGenerator
       }
 
       public ValuePreparer createValuePreparer(Object value)
+            throws ConfigurationException
       {
          ValuePreparer vp = this.vpCreater.createPreparer(value);
          vp.setRelativeIndex(this.index);

@@ -363,11 +363,19 @@ public abstract class ResultReaders
       private Object readFromReader(Reader reader)
             throws SQLException
       {
-         StringBuffer result = new StringBuffer(512);
-         char[] buf = new char[512];
+         StringBuffer result;
+         char[] buf = new char[1024];
          try
          {
             int count = reader.read(buf);
+            if (count < 1024)
+            {
+               result = new StringBuffer(count > 0 ? count : 2);
+            }
+            else
+            {
+               result = new StringBuffer(3072);
+            }
             while (count > 0)
             {
                result.append(buf, 0, count);

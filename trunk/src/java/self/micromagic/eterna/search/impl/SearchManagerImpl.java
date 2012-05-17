@@ -108,7 +108,8 @@ public class SearchManagerImpl extends AbstractGenerator
       catch (Exception ex) {}
       try
       {
-         this.pageSize = Integer.parseInt(data.getRequestParameter(this.attributes.pageSizeTag));
+         int tmpI = Integer.parseInt(data.getRequestParameter(this.attributes.pageSizeTag));
+         this.pageSize = tmpI < 0 ? -1 : tmpI > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : tmpI;
       }
       catch (Exception ex) {}
       try

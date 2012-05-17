@@ -7,13 +7,13 @@ import java.util.Arrays;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.SQLParameter;
+import self.micromagic.eterna.sql.SQLAdapter;
 
 public class PreparerManager
 {
-   public static final ValuePreparer IGNORE_PREPARER = new AbstractValuePreparer(){
-      public void setValueToStatement(int index, PreparedStatementWrap stmtWrap) {}
-   };
+   public static final ValuePreparer IGNORE_PREPARER = new IgnorePreparer();
 
+   private SQLAdapter sqlAdapter;
    private ValuePreparer[] preparers;
    private SQLParameter[] parameterArray = null;
    private PreparerManagerList[] insertedPM = null;
@@ -29,10 +29,11 @@ public class PreparerManager
    /**
     * 通过指定SQLParameter数组来构造一个PreparerManager
     */
-   public PreparerManager(SQLParameter[] parameterArray)
+   public PreparerManager(SQLAdapter sqlAdapter, SQLParameter[] parameterArray)
    {
       this(parameterArray.length);
       this.parameterArray = parameterArray;
+      this.sqlAdapter = sqlAdapter;
    }
 
    /**
@@ -305,7 +306,16 @@ public class PreparerManager
          if (this.preparers[i] == null)
          {
             StringBuffer buf = new StringBuffer(52);
-            buf.append("The parameter");
+            if (this.sqlAdapter != null)
+            {
+               buf.append("In").append(this.sqlAdapter.getType()).append(" [")
+                     .append(this.sqlAdapter.getName()).append("]");
+               buf.append(", the parameter");
+            }
+            else
+            {
+               buf.append("The parameter");
+            }
             if (this.parameterArray != null)
             {
                buf.append(" [").append(this.parameterArray[i].getName()).append("]");
@@ -356,6 +366,40 @@ public class PreparerManager
          this.subPartIndex = subPartIndex;
          this.preparerManager = preparerManager;
          this.next = null;
+      }
+
+   }
+
+   private static class IgnorePreparer
+         implements ValuePreparer
+   {
+      public ValuePreparerCreater getCreater()
+            throws ConfigurationException
+      {
+         return null;
+      }
+
+      public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
+            throws SQLException
+      {
+      }
+
+      public void setName(String name)
+      {
+      }
+
+      public String getName()
+      {
+         return null;
+      }
+
+      public void setRelativeIndex(int index)
+      {
+      }
+
+      public int getRelativeIndex()
+      {
+         return 0;
       }
 
    }

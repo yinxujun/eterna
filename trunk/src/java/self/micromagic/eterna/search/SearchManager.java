@@ -45,6 +45,11 @@ public interface SearchManager
     */
    public final static String DATA_DEFAULT_VALUE_PREFIX = "$data.";
 
+   /**
+    * 分页时单页可显示的最大记录数.
+    */
+   public final static int MAX_PAGE_SIZE = 256;
+
    public static final Attributes DEFAULT_PROPERTIES = new Attributes(
          null, null, null, null, null, null);
 

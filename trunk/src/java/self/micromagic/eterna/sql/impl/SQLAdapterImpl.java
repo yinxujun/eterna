@@ -20,22 +20,6 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SpecialLog;
-import self.micromagic.eterna.sql.preparer.BooleanPreparer;
-import self.micromagic.eterna.sql.preparer.BytePreparer;
-import self.micromagic.eterna.sql.preparer.BytesPreparer;
-import self.micromagic.eterna.sql.preparer.DatePreparer;
-import self.micromagic.eterna.sql.preparer.DoublePreparer;
-import self.micromagic.eterna.sql.preparer.FloatPreparer;
-import self.micromagic.eterna.sql.preparer.IntegerPreparer;
-import self.micromagic.eterna.sql.preparer.LongPreparer;
-import self.micromagic.eterna.sql.preparer.NullPreparer;
-import self.micromagic.eterna.sql.preparer.ObjectPreparer;
-import self.micromagic.eterna.sql.preparer.ReaderPreparer;
-import self.micromagic.eterna.sql.preparer.ShortPreparer;
-import self.micromagic.eterna.sql.preparer.StreamPreparer;
-import self.micromagic.eterna.sql.preparer.StringPreparer;
-import self.micromagic.eterna.sql.preparer.TimePreparer;
-import self.micromagic.eterna.sql.preparer.TimestampPreparer;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.Utility;
 
@@ -54,6 +38,11 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
       {
          log.warn("Error in init sql log type.", ex);
       }
+   }
+
+   public String getType()
+   {
+      return SQL_TYPE_SQL;
    }
 
    public int getLogType()
@@ -210,189 +199,190 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
 
    public void setNull(int parameterIndex, int sqlType) throws ConfigurationException
    {
-      this.setValuePreparer(new NullPreparer(parameterIndex, sqlType));
+      this.setValuePreparer(this.vpcg.createNullPreparer(parameterIndex, sqlType));
    }
 
    public void setNull(String parameterName, int sqlType) throws ConfigurationException
    {
       this.setValuePreparer(
-            new NullPreparer(this.getIndexByParameterName(parameterName), sqlType));
+            this.vpcg.createNullPreparer(this.getIndexByParameterName(parameterName), sqlType));
    }
 
    public void setBoolean(int parameterIndex, boolean x) throws ConfigurationException
    {
-      this.setValuePreparer(new BooleanPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createBooleanPreparer(parameterIndex, x));
    }
 
    public void setBoolean(String parameterName, boolean x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new BooleanPreparer(this.getIndexByParameterName(parameterName), x));
+           this.vpcg.createBooleanPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setByte(int parameterIndex, byte x) throws ConfigurationException
    {
-      this.setValuePreparer(new BytePreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createBytePreparer(parameterIndex, x));
    }
 
    public void setByte(String parameterName, byte x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new BytePreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createBytePreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setShort(int parameterIndex, short x) throws ConfigurationException
    {
-      this.setValuePreparer(new ShortPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createShortPreparer(parameterIndex, x));
    }
 
    public void setShort(String parameterName, short x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new ShortPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createShortPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setInt(int parameterIndex, int x) throws ConfigurationException
    {
-      this.setValuePreparer(new IntegerPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createIntPreparer(parameterIndex, x));
    }
 
    public void setInt(String parameterName, int x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new IntegerPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createIntPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setLong(int parameterIndex, long x) throws ConfigurationException
    {
-      this.setValuePreparer(new LongPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createLongPreparer(parameterIndex, x));
    }
 
    public void setLong(String parameterName, long x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new LongPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createLongPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setFloat(int parameterIndex, float x) throws ConfigurationException
    {
-      this.setValuePreparer(new FloatPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createFloatPreparer(parameterIndex, x));
    }
 
    public void setFloat(String parameterName, float x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new FloatPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createFloatPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setDouble(int parameterIndex, double x) throws ConfigurationException
    {
-      this.setValuePreparer(new DoublePreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createDoublePreparer(parameterIndex, x));
    }
 
    public void setDouble(String parameterName, double x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new DoublePreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createDoublePreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setString(int parameterIndex, String x) throws ConfigurationException
    {
-      this.setValuePreparer(new StringPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createStringPreparer(parameterIndex, x));
    }
 
    public void setString(String parameterName, String x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new StringPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createStringPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setBytes(int parameterIndex, byte[] x) throws ConfigurationException
    {
-      this.setValuePreparer(new BytesPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createBytesPreparer(parameterIndex, x));
    }
 
    public void setBytes(String parameterName, byte[] x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new BytesPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createBytesPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setDate(int parameterIndex, Date x) throws ConfigurationException
    {
-      this.setValuePreparer(new DatePreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createDatePreparer(parameterIndex, x));
    }
 
    public void setDate(String parameterName, Date x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new DatePreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createDatePreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setTime(int parameterIndex, Time x) throws ConfigurationException
    {
-      this.setValuePreparer(new TimePreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createTimePreparer(parameterIndex, x));
    }
 
    public void setTime(String parameterName, Time x) throws ConfigurationException
    {
       this.setValuePreparer(
-            new TimePreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createTimePreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setTimestamp(int parameterIndex, Timestamp x)
          throws ConfigurationException
    {
-      this.setValuePreparer(new TimestampPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createTimestampPreparer(parameterIndex, x));
    }
 
    public void setTimestamp(String parameterName, Timestamp x)
          throws ConfigurationException
    {
       this.setValuePreparer(
-            new TimestampPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createTimestampPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setObject(int parameterIndex, Object x)
          throws ConfigurationException
    {
-      this.setValuePreparer(new ObjectPreparer(parameterIndex, x));
+      this.setValuePreparer(this.vpcg.createObjectPreparer(parameterIndex, x));
    }
 
    public void setObject(String parameterName, Object x)
          throws ConfigurationException
    {
       this.setValuePreparer(
-            new ObjectPreparer(this.getIndexByParameterName(parameterName), x));
+            this.vpcg.createObjectPreparer(this.getIndexByParameterName(parameterName), x));
    }
 
    public void setBinaryStream(int parameterIndex, InputStream x, int length)
          throws ConfigurationException
    {
-      this.setValuePreparer(new StreamPreparer(parameterIndex, x, length));
+      this.setValuePreparer(this.vpcg.createStreamPreparer(parameterIndex, x, length));
    }
 
    public void setBinaryStream(String parameterName, InputStream x, int length)
          throws ConfigurationException
    {
       this.setValuePreparer(
-            new StreamPreparer(this.getIndexByParameterName(parameterName), x, length));
+            this.vpcg.createStreamPreparer(this.getIndexByParameterName(parameterName), x, length));
    }
 
    public void setCharacterStream(int parameterIndex, Reader reader, int length)
          throws ConfigurationException
    {
-      this.setValuePreparer(new ReaderPreparer(parameterIndex, reader, length));
+      this.setValuePreparer(this.vpcg.createReaderPreparer(parameterIndex, reader, length));
    }
 
    public void setCharacterStream(String parameterName, Reader reader, int length)
          throws ConfigurationException
    {
       this.setValuePreparer(
-            new ReaderPreparer(this.getIndexByParameterName(parameterName), reader, length));
+            this.vpcg.createReaderPreparer(this.getIndexByParameterName(parameterName), reader, length));
    }
 
-   /*public void setObject(int parameterIndex, Object x, int targetSqlType)
+   /*
+   public void setObject(int parameterIndex, Object x, int targetSqlType)
          throws ConfigurationException
    {
       this.setValuePreparer(new ObjectPreparer(parameterIndex, x, new Integer(targetSqlType)));
@@ -420,7 +410,8 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
       this.setValuePreparer(
             new ObjectPreparer(this.getIndexByParameterName(parameterName),
                   x, new Integer(targetSqlType), new Integer(scale)));
-   }*/
+   }
+   */
 
    private static class ReadPreparedValue
          implements PreparedStatementWrap

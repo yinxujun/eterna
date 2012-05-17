@@ -13,7 +13,6 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SQLParameter;
-import self.micromagic.eterna.sql.preparer.NullPreparer;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 
 public class ParamSetManager
@@ -114,8 +113,8 @@ public class ParamSetManager
       }
       else
       {
-         sql.setValuePreparer(new NullPreparer(param.getIndex(),
-               TypeManager.getSQLType(param.getType())));
+         sql.setValuePreparer(sql.getFactory().getDefaultValuePreparerCreaterGenerator()
+               .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
       }
    }
 
@@ -147,7 +146,7 @@ public class ParamSetManager
    {
       // 因为parameter的index从1开始，所以要减1
       SQLParameter param = this.params[index - 1];
-      sql.setIgnore(param.getIndex());
+      this.sql.setIgnore(param.getIndex());
       this.paramsSetted[index - 1] = true;
       this.paramsValues[index - 1] = null;
    }
@@ -178,14 +177,14 @@ public class ParamSetManager
          throws ConfigurationException
    {
       SQLParameter param = this.sql.getParameter(name);
-      if (sql.isDynamicParameter(param.getIndex()))
+      if (this.sql.isDynamicParameter(param.getIndex()))
       {
-         sql.setIgnore(param.getIndex());
+         this.sql.setIgnore(param.getIndex());
       }
       else
       {
-         sql.setValuePreparer(new NullPreparer(param.getIndex(),
-               TypeManager.getSQLType(param.getType())));
+         this.sql.setValuePreparer(this.sql.getFactory().getDefaultValuePreparerCreaterGenerator()
+               .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
       }
       // 因为parameter的index从1开始，所以要减1
       this.paramsSetted[param.getIndex() - 1] = true;
@@ -212,14 +211,14 @@ public class ParamSetManager
          if (!this.paramsSetted[i])
          {
             SQLParameter param = this.params[i];
-            if (sql.isDynamicParameter(param.getIndex()))
+            if (this.sql.isDynamicParameter(param.getIndex()))
             {
-               sql.setIgnore(param.getIndex());
+               this.sql.setIgnore(param.getIndex());
             }
             else
             {
-               sql.setValuePreparer(new NullPreparer(param.getIndex(),
-                     TypeManager.getSQLType(param.getType())));
+               this.sql.setValuePreparer(this.sql.getFactory().getDefaultValuePreparerCreaterGenerator()
+                     .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
             }
             this.paramsSetted[i] = settedFlag;
             if (settedFlag)
@@ -496,14 +495,14 @@ public class ParamSetManager
    private void dealNull(SQLParameter param)
          throws ConfigurationException
    {
-      if (sql.isDynamicParameter(param.getIndex()))
+      if (this.sql.isDynamicParameter(param.getIndex()))
       {
-         sql.setIgnore(param.getIndex());
+         this.sql.setIgnore(param.getIndex());
       }
       else
       {
-         sql.setValuePreparer(new NullPreparer(param.getIndex(),
-               TypeManager.getSQLType(param.getType())));
+         this.sql.setValuePreparer(this.sql.getFactory().getDefaultValuePreparerCreaterGenerator()
+               .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
       }
       this.paramsSetted[param.getIndex() - 1] = true;
       this.paramsValues[param.getIndex() - 1] = null;

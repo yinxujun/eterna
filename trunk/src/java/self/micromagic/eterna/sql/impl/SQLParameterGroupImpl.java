@@ -89,8 +89,11 @@ public class SQLParameterGroupImpl
                                  "Duplicate [SQLParameter] name:" + spg.getName() + ".");
                         }
                      }
-                     this.paramGeneratorList.add(spg);
-                     this.tmpParamSet.add(spg.getName());
+                     else
+                     {
+                        this.paramGeneratorList.add(spg);
+                        this.tmpParamSet.add(spg.getName());
+                     }
                   }
                }
             }

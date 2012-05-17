@@ -85,11 +85,16 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       }
    }
 
+   public String getType()
+   {
+      return SQL_TYPE_QUERY;
+   }
+
    private ResultReaderManager createTempReaderManager()
          throws ConfigurationException
    {
       ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
-      temp.setName("[ReaderManager]+" + this.getName());
+      temp.setName("[query]+" + this.getName());
       temp.setParentName(this.readerManagerName);
       temp.setReaderOrder(this.readerOrder);
       Iterator itr = this.tempResultReaders.iterator();

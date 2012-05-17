@@ -25,6 +25,8 @@ import java.util.StringTokenizer;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.collections.ReferenceMap;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
@@ -123,6 +125,11 @@ public class FactoryManager
     * 初始化时使用的线程缓存.
     */
    public static final String ETERNA_INIT_CACHE = "eterna.init.cache";
+
+   /**
+    * 在初始化的线程缓存中放置ServletContext的属性名.
+    */
+   public static final String SERVLET_CONTEXT = "eterna.servletContext";
 
    /**
     * 默认需要加载的工厂EternaFactory.
@@ -775,48 +782,6 @@ public class FactoryManager
    }
 
    /**
-    * 根据地址及基础类获取配置的数据流.
-    *
-    * @param locate       配置的地址
-    * @param baseClass    初始化的基础类
-    */
-   private static InputStream getConfigStream(String locate, Class baseClass)
-         throws IOException
-   {
-      if (locate.startsWith("cp:"))
-      {
-         URL url;
-         if (baseClass == null)
-         {
-            url = Utility.getContextClassLoader().getResource(locate.substring(3));
-         }
-         else
-         {
-            url = baseClass.getClassLoader().getResource(locate.substring(3));
-         }
-         if (url != null)
-         {
-            return url.openStream();
-         }
-         return null;
-      }
-      else if (locate.startsWith("http:"))
-      {
-         URL url = new URL(locate);
-         return url.openStream();
-      }
-      else if (locate.startsWith("note:"))
-      {
-         return null;
-      }
-      else
-      {
-         File file = new File(locate);
-         return file.isFile() ? new FileInputStream(file) : null;
-      }
-   }
-
-   /**
     * 获取xml的解析器.
     */
    private static Digester createDigester()
@@ -1111,12 +1076,58 @@ public class FactoryManager
       }
 
       /**
-       * 获得配置的输入流.
+       * 根据地址及基础类获取配置的数据流.
+       *
+       * @param locate       配置的地址
+       * @param baseClass    初始化的基础类
        */
       protected InputStream getConfigStream(String locate, Class baseClass)
             throws IOException, ConfigurationException
       {
-         return FactoryManager.getConfigStream(locate, baseClass);
+         if (locate.startsWith("cp:"))
+         {
+            URL url;
+            if (baseClass == null)
+            {
+               url = Utility.getContextClassLoader().getResource(locate.substring(3));
+            }
+            else
+            {
+               url = baseClass.getClassLoader().getResource(locate.substring(3));
+            }
+            if (url != null)
+            {
+               return url.openStream();
+            }
+            return null;
+         }
+         else if (locate.startsWith("web:"))
+         {
+            ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
+            if (sc != null)
+            {
+               URL url = sc.getResource(locate.substring(4));
+               if (url != null)
+               {
+                  return url.openStream();
+               }
+            }
+            return null;
+         }
+         else if (locate.startsWith("http:"))
+         {
+            URL url = new URL(locate);
+            return url.openStream();
+         }
+         else if (locate.startsWith("note:"))
+         {
+            return null;
+         }
+         else
+         {
+            File file = new File(locate);
+            return file.isFile() ? new FileInputStream(file) : null;
+         }
       }
 
       /**
