@@ -3,24 +3,23 @@ package self.micromagic.dc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.DeflaterOutputStream;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.DeflaterOutputStream;
 
-import org.apache.commons.collections.ReferenceMap;
-import javassist.ClassPool;
 import javassist.ClassClassPath;
+import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtNewMethod;
+import org.apache.commons.collections.ReferenceMap;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
-import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.Factory;
+import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.ThreadCache;
-import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
@@ -161,11 +160,9 @@ public class CodeClassTool
     * @param factory        构造器所在Factory的实例
     * @param codeFlag       构造器中存放代码的属性名称
     * @param attrCondeFlag  构造器中存放引用的代码的属性名称
-    * @param codeParamFlag  构造器中存放生成代码的参数的属性名称
     * @return 代码字符串
     */
-   public static String getCode(Generator g, Factory factory, String codeFlag, String attrCondeFlag,
-         String codeParamFlag)
+   public static String getCode(Generator g, Factory factory, String codeFlag, String attrCondeFlag)
          throws ConfigurationException
    {
       String code = (String) g.getAttribute(codeFlag);
@@ -183,10 +180,23 @@ public class CodeClassTool
             throw new ConfigurationException("Not found the [" + attrCode + "] in factory attribute.");
          }
       }
-      String codeParam = (String) g.getAttribute(codeParamFlag);
-      if (codeParam != null)
+      Map paramMap = new HashMap();
+      String[] names = g.getAttributeNames();
+      for (int i = 0; i < names.length; i++)
       {
-         Map paramMap = StringTool.string2Map(codeParam, ";", '=');
+         String name = names[i];
+         if (codeFlag.equals(name) || attrCondeFlag.equals(name))
+         {
+            continue;
+         }
+         paramMap.put(name, g.getAttribute(name));
+      }
+      if (paramMap.size() == 0)
+      {
+         paramMap = null;
+      }
+      if (paramMap != null)
+      {
          code = Utility.resolveDynamicPropnames(code, paramMap);
       }
       else

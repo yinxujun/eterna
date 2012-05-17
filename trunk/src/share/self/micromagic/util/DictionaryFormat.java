@@ -24,6 +24,7 @@ public class DictionaryFormat extends AbstractGenerator
    protected Map transMap = null;
 
    protected String pattern;
+   protected String type;
    protected String[] words;
    protected String wordSplit;
    protected String elseValue = null;
@@ -89,9 +90,21 @@ public class DictionaryFormat extends AbstractGenerator
       {
          this.pattern = "";
       }
+      if ("String".equals(this.type))
+      {
+         this.codeTrans = true;
+      }
+      else if ("Number".equals(this.type) || "int".equals(this.type))
+      {
+         this.codeTrans = false;
+      }
+      else
+      {
+         throw new ConfigurationException("The type must be [String] or [Number] or [int], but it's ["
+               + this.type + "].");
+      }
       this.needPermission = (String) this.getAttribute("format_permission");
       String elseValue = (String) this.getAttribute("else_value");
-      this.codeTrans = "true".equalsIgnoreCase((String) this.getAttribute("codeTrans"));
       String filter = (String) this.getAttribute("html_filter");
       if (filter != null)
       {
@@ -157,6 +170,7 @@ public class DictionaryFormat extends AbstractGenerator
 
    public void setType(String type)
    {
+      this.type = type;
    }
 
    public void setPattern(String pattern)
