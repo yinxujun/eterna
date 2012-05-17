@@ -1291,6 +1291,7 @@
             var url = {$ef:getHeadURL}(modelName, EG_DATA_TYPE_DATA);
             if (typeof objs == "string" && objs == "reloadView")
             {
+               _eterna.closeAllWindow();
                url = {$ef:getHeadURL}(modelName, EG_DATA_TYPE_ALL);
             }
             // 执行指定的model操作，获取JSON对象
@@ -1327,6 +1328,7 @@
                param = {};
             }
             param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
+            _eterna.closeAllWindow();
             var tmpData = _eterna.getRemoteJSON(url, param);
             _eterna.changeEternaData(tmpData);
             eg_temp = {};

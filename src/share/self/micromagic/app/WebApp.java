@@ -3,13 +3,19 @@ package self.micromagic.app;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
+import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaInitialize;
+import self.micromagic.eterna.share.ThreadCache;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
@@ -18,7 +24,9 @@ import self.micromagic.eterna.sql.SQLParameterGenerator;
 import self.micromagic.eterna.sql.impl.QueryAdapterImpl;
 import self.micromagic.eterna.sql.impl.ResultReaderGeneratorImpl;
 import self.micromagic.eterna.sql.impl.SQLParameterGeneratorImpl;
+import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
+import self.micromagic.util.container.ValueContainerMap;
 
 public interface WebApp
 {
@@ -29,6 +37,7 @@ public interface WebApp
    public final static String APPDATA_TAG = "self.micromagic.appData";
 
    public final static QueryTool queryTool = new QueryTool();
+   public final static AppTool appTool = new AppTool();
 
    public final static String SERVER_ROOT_TAG = "self.micromagic.server.contextRoot";
 
@@ -46,6 +55,110 @@ public interface WebApp
          "self.micromagic.app_perform", "do");
    public final static String METHOD_NAME = Utility.getProperty(
          "self.micromagic.method_name", "method");
+
+   public static class AppTool
+   {
+      /**
+       * 使用一个Map对象中的数据作为请求的参数来构造一个AppData.
+       *
+       * @param param   存放请求的参数的Map对象
+       */
+      public AppData getAppData(Map param)
+      {
+         return this.getAppData(param, 0, null);
+      }
+
+      /**
+       * 使用一个Map对象中的数据作为请求的参数来构造一个AppData.
+       *
+       * @param param            存放请求的参数的Map对象
+       * @param appendPosition   添加额外的当前位置信息
+       * @param oldAppData       一个出参, 如果传入将会把原来的AppData备份到里面
+       *                         如果参数对象相同或原来没有AppData, 则不会备份
+       */
+      public AppData getAppData(Map param, int appendPosition, ObjectRef oldAppData)
+      {
+         AppData tmpData = AppData.getCurrentData();
+         if (oldAppData != null)
+         {
+            if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null
+                  && tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
+            {
+               oldAppData.setObject(tmpData);
+               tmpData = new AppData();
+               ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
+            }
+         }
+         if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
+         {
+            tmpData.clearData();
+            tmpData.position = appendPosition;
+            tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = param == null ? new HashMap() : param;
+            tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP] = new HashMap();
+            tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP] = new HashMap();
+         }
+         return tmpData;
+      }
+
+      /**
+       * 使用一个HttpServletRequest对象来构造一个AppData.
+       *
+       * @param request   发起请求的HttpServletRequest对象
+       */
+      public AppData getAppData(HttpServletRequest request)
+      {
+         return this.getAppData(request, 0, null);
+      }
+
+      /**
+       * 使用一个HttpServletRequest对象来构造一个AppData.
+       *
+       * @param request          发起请求的HttpServletRequest对象
+       * @param appendPosition   添加额外的当前位置信息
+       * @param oldAppData       一个出参, 如果传入将会把原来的AppData备份到里面
+       *                         如果ServletRequest对象对象相同或原来没有AppData, 则不会备份
+       */
+      public AppData getAppData(HttpServletRequest request, int appendPosition, ObjectRef oldAppData)
+      {
+         AppData tmpData = AppData.getCurrentData();
+         if (oldAppData != null)
+         {
+            if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null && tmpData.request != request)
+            {
+               oldAppData.setObject(tmpData);
+               tmpData = new AppData();
+               ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
+            }
+         }
+         if (tmpData.request != request)
+         {
+            tmpData.clearData();
+            tmpData.position = appendPosition;
+            tmpData.contextRoot = request.getContextPath();
+            tmpData.request = request;
+            tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
+            tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP]
+                  = ValueContainerMap.createRequestAttributeMap(request);
+            tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP]
+                  = ValueContainerMap.createSessionAttributeMap(request);
+         }
+         return tmpData;
+      }
+
+      /**
+       * 将传入的AppData恢复到线程的缓存中.
+       *
+       * @param data  要恢复的AppData对象
+       */
+      public void resumeAppData(AppData data)
+      {
+         if (data != null)
+         {
+            ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, data);
+         }
+      }
+
+   }
 
    public static class QueryTool
          implements EternaInitialize
