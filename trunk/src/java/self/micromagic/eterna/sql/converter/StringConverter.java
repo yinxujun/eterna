@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import self.micromagic.util.MemoryChars;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringTool;
 import self.micromagic.eterna.share.TypeManager;
 
 public class StringConverter extends ObjectConverter
@@ -23,6 +25,14 @@ public class StringConverter extends ObjectConverter
 
    public Object convert(Object value)
    {
+      if (value instanceof String[])
+      {
+         return StringTool.linkStringArr((String[]) value, ",");
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convert(((ObjectRef) value).getObject());
+      }
       if (value != null && value instanceof MemoryChars)
       {
          MemoryChars mc = ((MemoryChars) value);

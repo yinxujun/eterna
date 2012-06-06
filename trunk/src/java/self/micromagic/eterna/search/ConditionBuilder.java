@@ -4,6 +4,8 @@ package self.micromagic.eterna.search;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * SQL语句条件的生成器. <p>
@@ -62,7 +64,7 @@ public interface ConditionBuilder
          if (this.toStrBuf == null)
          {
             int count = this.sqlPart.length() + 39;
-            StringBuffer buf = new StringBuffer(count);
+            StringAppender buf = StringTool.createStringAppender(count);
             buf.append("Condition[sqlPart:(").append(this.sqlPart);
             buf.append("),preparerCount:").append(this.preparers.length).append("]");
             this.toStrBuf = buf.toString();

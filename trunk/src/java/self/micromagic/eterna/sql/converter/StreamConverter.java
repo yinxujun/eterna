@@ -10,6 +10,8 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryStream;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringTool;
 import org.apache.commons.fileupload.FileItem;
 
 public class StreamConverter extends ObjectConverter
@@ -73,6 +75,15 @@ public class StreamConverter extends ObjectConverter
       if (value instanceof String)
       {
          return this.convertToStream((String) value, charset);
+      }
+      if (value instanceof String[])
+      {
+         String str = StringTool.linkStringArr((String[]) value, ",");
+         return this.convertToStream(str, charset);
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convertToStream(((ObjectRef) value).getObject(), charset);
       }
       throw new ClassCastException(getCastErrorMessage(value, "Stream"));
    }

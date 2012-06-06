@@ -154,32 +154,10 @@
          ]]></function>
 
          <!-- 触发某个节点下所有控件的[eventName]事件 -->
-         <function name="swapAttributeComponentSubs" param="theObj, configData"><![CDATA[
+         <function name="swapAttributeComponentSubs" param="theObj, configData, swapFlag"><![CDATA[
             if (configData.subs != null)
             {
-               for (var i = 0; i < configData.subs.length; i++)
-               {
-                  var name = configData.subs[i].name;
-                  var pObj = jQuery("[swapId='" + ef_toScriptString(name) + "']", theObj);
-                  if (pObj.size() == 1)
-                  {
-                     var tmpCom = _eterna.createComponent(configData.subs[i], pObj);
-                     if (tmpCom != null)
-                     {
-                        pObj.after(tmpCom);
-                     }
-                     else
-                     {
-                        var subs = pObj.children();
-                        var maxCount = subs.size();
-                        for (var j = maxCount - 1; j >= 0; j--)
-                        {
-                           pObj.after(subs.eq(j));
-                        }
-                     }
-                     pObj.remove();
-                  }
-               }
+               _eterna.swapComponent(theObj, configData.subs, swapFlag);
             }
          ]]></function>
 
@@ -441,39 +419,12 @@
 
          <!-- 读取结果集中的值 -->
          <function name="getData_value" param="dataName, srcName, index">
-            if (typeof dataName == "string")
+            var valueObj = _eterna.getValue_fromRecords(dataName, srcName, index);
+            if (valueObj.exists)
             {
-               var valueObj = _eterna.getValue_fromRecords(dataName, srcName, index);
-               if (valueObj.exists)
-               {
-                  return valueObj.value;
-               }
-               return null;
+               return valueObj.value;
             }
-            else if (typeof dataName == "object")
-            {
-               var valueObj = {html:0,value:"",exists:-1,valueData:dataName,srcName:srcName};
-               if (index == null)
-               {
-                  var tmpStr = "[script]:valueObj.exists=1;valueObj.value=valueObj.valueData[valueObj.srcName];";
-                  valueObj = _eterna.getValue(tmpStr, valueObj);
-               }
-               else
-               {
-                  valueObj.index = index;
-                  var tmpStr = "[script]:var mytmpData=valueObj.valueData;valueObj.value=mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
-                  valueObj = _eterna.getValue(tmpStr, valueObj);
-               }
-               if (valueObj.exists)
-               {
-                  return valueObj.value;
-               }
-               return null;
-            }
-            else
-            {
-               return null;
-            }
+            return null;
          </function>
 
          <!-- 更新结果集中的值 -->
@@ -1280,7 +1231,7 @@
 
          <!--
             重载控件的函数
-            formObj: 要提交数据的表单对象
+            formObj: 要提交数据的表单对象或JSON对象
             modelName: 处理数据的model的名称
             objs:   需要重载的对象, 一个数组, 每个元素可以是对象的名称也可以是对象
             datas:  需要更新的数据集的名称, 一个数组
@@ -1312,7 +1263,16 @@
             }
             else
             {
-               var tmpData = formObj == null ? _eterna.getRemoteJSON(url) : _eterna.getRemoteJSON(url, formObj);
+               var tmpData;
+               if (recall == null)
+               {
+                  tmpData = formObj == null ? _eterna.getRemoteJSON(url)
+                        : _eterna.getRemoteJSON(url, formObj);
+               }
+               else
+               {
+                  tmpData = _eterna.getRemoteJSON(url, formObj, false, null, recall);
+               }
                {$ef:afterReload}(tmpData, objs, datas);
             }
          ]]></function>
@@ -1571,6 +1531,35 @@
 
          <!-- 超链接控件的模板 -->
          <typical-component name="a" type="a">
+            <events>
+               <event name="click"><![CDATA[
+                  webObj.data("clickParam", null);
+                  webObj.data("doClick", 1);
+                  webObj.trigger("preClick");
+                  if (webObj.data("doClick"))
+                  {
+                     var url = webObj.attr("href");
+                     if (url == null || url == "")
+                     {
+                        return false;
+                     }
+                     if (_eterna.cache.useAJAX)
+                     {
+                        var param = webObj.data("clickParam");
+                        {$ef:ajaxVisit}(url, param);
+                        return false;
+                     }
+                     else
+                     {
+                        return true;
+                     }
+                  }
+               ]]></event>
+            </events>
+         </typical-component>
+
+         <!-- 继承模板的超链接控件的模板 -->
+         <typical-component name="inheritA" type="inherit">
             <events>
                <event name="click"><![CDATA[
                   webObj.data("clickParam", null);

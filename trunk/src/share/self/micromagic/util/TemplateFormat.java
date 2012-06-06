@@ -52,7 +52,7 @@ public class TemplateFormat extends AbstractGenerator
       String temp = obj == null ? "" :
             this.htmlFilter ? Utils.dealString2HTML(obj.toString(), true) : obj.toString();
       int count = this.pattern.length() + (this.patterns.length - 1) * temp.length();
-      StringBuffer buf = new StringBuffer(count);
+      StringAppender buf = StringTool.createStringAppender(count);
       for (int i = 0; i < this.patterns.length; i++)
       {
          if (i > 0)

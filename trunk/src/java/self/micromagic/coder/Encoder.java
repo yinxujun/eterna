@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public abstract class Encoder
 {
@@ -40,7 +42,7 @@ public abstract class Encoder
       }
       byte[] result = this.encode(buf);
       int count = result.length;
-      StringBuffer sbuf = new StringBuffer(count * 2);
+      StringAppender sbuf = StringTool.createStringAppender(count * 2);
       for (int i = 0; i < count; i++)
       {
          byte byte0 = result[i];

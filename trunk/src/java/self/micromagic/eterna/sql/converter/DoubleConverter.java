@@ -7,10 +7,18 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class DoubleConverter extends ObjectConverter
 {
-   private Double DEFAULT_VALUE = new Double(0.0);
+   private static Double DEFAULT_VALUE = new Double(0.0);
+
+   private NumberFormat numberFormat;
+
+   public void setNumberFormat(NumberFormat numberFormat)
+   {
+      this.numberFormat = numberFormat;
+   }
 
    public int getConvertType(StringRef typeName)
    {
@@ -36,7 +44,7 @@ public class DoubleConverter extends ObjectConverter
 
    public double convertToDouble(Object value)
    {
-      return this.convertToDouble(value, null);
+      return this.convertToDouble(value, this.numberFormat);
    }
 
    public double convertToDouble(Object value, NumberFormat format)
@@ -51,11 +59,17 @@ public class DoubleConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         try
-         {
-            return this.convertToDouble((String) value, format);
-         }
-         catch (NumberFormatException ex) {}
+         return this.convertToDouble((String) value, format);
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Double)
+      {
+         return ((Double) tmpObj).doubleValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToDouble(str, format);
       }
       if (value instanceof ObjectRef)
       {
@@ -68,13 +82,17 @@ public class DoubleConverter extends ObjectConverter
          {
             return this.convertToDouble(ref.toString(), format);
          }
+         else
+         {
+            return this.convertToDouble(ref.getObject(), format);
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "double"));
    }
 
    public double convertToDouble(String value)
    {
-      return this.convertToDouble(value, null);
+      return this.convertToDouble(value, this.numberFormat);
    }
 
    public double convertToDouble(String value, NumberFormat format)
@@ -82,6 +100,11 @@ public class DoubleConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Double)
+      {
+         return ((Double) tmpObj).doubleValue();
       }
       try
       {

@@ -104,6 +104,13 @@ public interface SearchAdapter
     */
    boolean isNeedWrap() throws ConfigurationException;
 
+   /**
+    * 获得绑定的参数设置器<code>ParameterSetting</code>.
+    *
+    * @return  如果未绑定则返回null, 如果已绑定则返回参数设置器
+    */
+   ParameterSetting getParameterSetting() throws ConfigurationException;
+
    String getParentConditionPropretyName() throws ConfigurationException;
 
    String getConditionPropertyOrder() throws ConfigurationException;

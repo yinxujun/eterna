@@ -9,6 +9,8 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryChars;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringTool;
 
 public class ReaderConverter extends ObjectConverter
 {
@@ -55,6 +57,15 @@ public class ReaderConverter extends ObjectConverter
       if (value instanceof String)
       {
          return new StringReader((String) value);
+      }
+      if (value instanceof String[])
+      {
+         String str = StringTool.linkStringArr((String[]) value, ",");
+         return new StringReader(str);
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convertToReader(((ObjectRef) value).getObject());
       }
       throw new ClassCastException(getCastErrorMessage(value, "Reader"));
    }

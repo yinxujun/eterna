@@ -5,10 +5,11 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class FloatConverter extends ObjectConverter
 {
-   private Float DEFAULT_VALUE = new Float(0.0F);
+   private static Float DEFAULT_VALUE = new Float(0.0F);
 
    public int getConvertType(StringRef typeName)
    {
@@ -44,11 +45,17 @@ public class FloatConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         try
-         {
-            return Float.parseFloat((String) value);
-         }
-         catch (NumberFormatException ex) {}
+         return this.convertToFloat((String) value);
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Float)
+      {
+         return ((Float) tmpObj).floatValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToFloat(str);
       }
       if (value instanceof ObjectRef)
       {
@@ -65,6 +72,10 @@ public class FloatConverter extends ObjectConverter
             }
             catch (NumberFormatException ex) {}
          }
+         else
+         {
+            return this.convertToFloat(ref.getObject());
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "float"));
    }
@@ -74,6 +85,11 @@ public class FloatConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Float)
+      {
+         return ((Float) tmpObj).floatValue();
       }
       try
       {

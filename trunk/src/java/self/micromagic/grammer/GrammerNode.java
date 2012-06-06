@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import self.micromagic.util.Utils;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * 一个语法节点.
@@ -81,7 +83,7 @@ public class GrammerNode extends AbstractElement
 
    public String toString()
    {
-      StringBuffer buf = new StringBuffer();
+      StringAppender buf = StringTool.createStringAppender();
       buf.append("Node:").append(this.getName()).append(":")
             .append(this.otherCharType).append(",").append(this.endType)
             .append(":").append(GrammerManager.getGrammerElementTypeName(this.getType()));

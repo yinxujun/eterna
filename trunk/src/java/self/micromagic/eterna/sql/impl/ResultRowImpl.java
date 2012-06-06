@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.sql.SQLException;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
@@ -250,16 +251,27 @@ public class ResultRowImpl implements ResultRow
       return this.getTimestamp(index);
    }
 
-   public Object getObject(int columnIndex)
+   public Object getObject(int readerIndex)
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return this.values[columnIndex - 1];
+      this.lastReadWasNull = this.values[readerIndex - 1] == null;
+      return this.values[readerIndex - 1];
    }
 
-   public Object getObject(String columnName)
+   public Object getObject(String readerName)
          throws ConfigurationException
    {
-      int index = this.readerManager.getIndexByName(columnName);
+      int index = this.readerManager.getIndexByName(readerName);
+      return this.getObject(index);
+   }
+
+   public Object getObject(String readerName, boolean notThrow)
+         throws SQLException, ConfigurationException
+   {
+      int index = this.readerManager.getIndexByName(readerName, notThrow);
+      if (index == -1)
+      {
+         return null;
+      }
       return this.getObject(index);
    }
 

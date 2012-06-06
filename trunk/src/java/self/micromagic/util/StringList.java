@@ -3,6 +3,7 @@ package self.micromagic.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 class StringList
 {
@@ -21,9 +22,13 @@ class StringList
 
    public synchronized String toString()
    {
-      StringBuffer temp = new StringBuffer();
-
-      return null;
+      StringAppender temp = StringTool.createStringAppender(this.strList.size() * 16);
+      Iterator itr = this.strList.iterator();
+      while (itr.hasNext())
+      {
+         temp.append((String) itr.next());
+      }
+      return temp.toString();
    }
 
 }

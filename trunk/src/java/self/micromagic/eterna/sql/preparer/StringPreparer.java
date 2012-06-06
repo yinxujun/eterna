@@ -5,6 +5,8 @@ import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.converter.StringConverter;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 class StringPreparer extends AbstractValuePreparer
 {
@@ -85,7 +87,7 @@ class StringPreparer extends AbstractValuePreparer
          {
             value = this.caseType > 0 ? value.toUpperCase() : value.toLowerCase();
          }
-         StringBuffer buf = new StringBuffer(value.length() + this.appendLength);
+         StringAppender buf = StringTool.createStringAppender(value.length() + this.appendLength);
          buf.append(this.beginStr).append(value).append(this.endStr);
          return new StringPreparer(this, buf.toString());
       }

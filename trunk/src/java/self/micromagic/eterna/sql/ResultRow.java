@@ -545,70 +545,37 @@ public interface ResultRow
    //=====================================================================
 
    /**
-    * <p>Gets the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * an <code>Object</code> in the Java programming language.
     * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
     * 取出指定列的值.
     *
-    * <p>This method will return the value of the given column as a
-    * Java object.  The type of the Java object will be the default
-    * Java object type corresponding to the column's SQL type,
-    * following the mapping for built-in types specified in the JDBC
-    * specification. If the value is an SQL <code>NULL</code>,
-    * the driver returns a Java <code>null</code>.
-    *
-    * <p>This method may also be used to read database-specific
-    * abstract data types.
-    *
-    * In the JDBC 2.0 API, the behavior of method
-    * <code>getObject</code> is extended to materialize
-    * data of SQL user-defined types.  When a column contains
-    * a structured or distinct value, the behavior of this method is as
-    * if it were a call to: <code>getObject(columnIndex,
-    * this.getStatement().getConnection().getTypeMap())</code>.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>第一个参数是1, 第二个是2, ...
-    * @return a <code>java.lang.Object</code> holding the column value
-    *         持有该列值的<code>java.lang.Object</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>假如访问数据库时出错
+    * @param readerIndex 该列对应reader的索引值, 第一个是1, 第二个是2, ...
+    * @return  持有该列值的<code>java.lang.Object</code>
+    * @exception SQLException  假如访问数据库时出错
     */
-   Object getObject(int columnIndex) throws SQLException, ConfigurationException;
+   Object getObject(int readerIndex) throws SQLException, ConfigurationException;
 
    /**
-    * <p>Gets the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * an <code>Object</code> in the Java programming language.
     * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
     * 取出指定列的值.
     *
-    * <p>This method will return the value of the given column as a
-    * Java object.  The type of the Java object will be the default
-    * Java object type corresponding to the column's SQL type,
-    * following the mapping for built-in types specified in the JDBC
-    * specification. If the value is an SQL <code>NULL</code>,
-    * the driver returns a Java <code>null</code>.
-    * <P>
-    * This method may also be used to read database-specific
-    * abstract data types.
-    * <P>
-    * In the JDBC 2.0 API, the behavior of the method
-    * <code>getObject</code> is extended to materialize
-    * data of SQL user-defined types.  When a column contains
-    * a structured or distinct value, the behavior of this method is as
-    * if it were a call to: <code>getObject(columnIndex,
-    * this.getStatement().getConnection().getTypeMap())</code>.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>这个列的SQL名称
-    * @return a <code>java.lang.Object</code> holding the column value
-    *         持有该列值的<code>java.lang.Object</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>假如访问数据库时出错
+    * @param readerName  这个列对应reader的名称
+    * @return  持有该列值的<code>java.lang.Object</code>
+    * @exception SQLException   假如访问数据库时出错
     */
-   Object getObject(String columnName) throws SQLException, ConfigurationException;
+   Object getObject(String readerName) throws SQLException, ConfigurationException;
+
+   /**
+    * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
+    * 取出指定列的值.
+    *
+    * @param readerName  这个列对应reader的名称
+    * @param notThrow    设为<code>true<code>时, 当对应名称的reader不存在时
+    *                    不会抛出异常, 而只是返回null
+    * @return  持有该列值的<code>java.lang.Object</code>,
+    *          或null(当对应名称的reader不存在时)
+    * @exception SQLException   假如访问数据库时出错
+    */
+   Object getObject(String readerName, boolean notThrow) throws SQLException, ConfigurationException;
 
    //----------------------------------------------------------------
 

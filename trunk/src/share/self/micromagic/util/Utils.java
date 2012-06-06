@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -93,7 +94,7 @@ public class Utils
       int prePage = (result.pageNum - 1) > pageCount ? (pageCount - 1) : result.pageNum - 1;
       if (result.pageNum > 0)
       {
-         StringBuffer temp = new StringBuffer(256);
+         StringAppender temp = StringTool.createStringAppender(256);
          temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
                .append("=").append(prePage).append("\">上一页</a>");
          prePageHref = temp.toString();
@@ -104,7 +105,7 @@ public class Utils
       }
       if (result.queryResult.isHasMoreRecord())
       {
-         StringBuffer temp = new StringBuffer(256);
+         StringAppender temp = StringTool.createStringAppender(256);
          temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
                .append("=").append(result.pageNum + 1).append("\">下一页</a>");
          nextPageFref = temp.toString();
@@ -431,7 +432,7 @@ public class Utils
       {
          return "";
       }
-      StringBuffer temp = null;
+      StringAppender temp = null;
       int modifyCount = 0;
       for (int i = 0; i < str.length(); i++)
       {
@@ -479,7 +480,7 @@ public class Utils
          }
          if (modifyCount == 1)
          {
-            temp = new StringBuffer(str.length() + 16);
+            temp = StringTool.createStringAppender(str.length() + 16);
             temp.append(str.substring(0, i));
             //这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
             modifyCount++;
@@ -602,7 +603,7 @@ public class Utils
       {
          return "";
       }
-      StringBuffer temp = null;
+      StringAppender temp = null;
       int modifyCount = 0;
       boolean preSpace = true;
       for (int i = 0; i < str.length(); i++)
@@ -661,7 +662,7 @@ public class Utils
          }
          if (modifyCount == 1)
          {
-            temp = new StringBuffer(str.length() + 16);
+            temp = StringTool.createStringAppender(str.length() + 16);
             temp.append(str.substring(0, i));
             //这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
             modifyCount++;
@@ -698,7 +699,7 @@ public class Utils
       {
          return "";
       }
-      StringBuffer temp = null;
+      StringAppender temp = null;
       int modifyCount = 0;
       for (int i = 0; i < str.length(); i++)
       {
@@ -737,7 +738,7 @@ public class Utils
                {
                   bytes = (((char) c) + "").getBytes(charsetName);
                }
-               StringBuffer tAS = new StringBuffer(bytes.length * 3);
+               StringAppender tAS = StringTool.createStringAppender(bytes.length * 3);
                for (int index = 0; index < bytes.length; index++)
                {
                   tAS.append("%");
@@ -787,7 +788,7 @@ public class Utils
          }
          if (modifyCount == 1)
          {
-            temp = new StringBuffer(str.length() + 16);
+            temp = StringTool.createStringAppender(str.length() + 16);
             temp.append(str.substring(0, i));
             //这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
             modifyCount++;
@@ -845,7 +846,7 @@ public class Utils
          year += offYear;
          month -= 12 * offYear;
       }
-      StringBuffer date = new StringBuffer(10);
+      StringAppender date = StringTool.createStringAppender(10);
       return date.append(year).append("-").append(month + 1).append("-")
             .append(monthDay).toString();
    }
@@ -952,6 +953,35 @@ public class Utils
     */
    public static List separateString(String str, char separate)
    {
+      if (str == null)
+      {
+         return null;
+      }
+      int count = str.length();
+      if (count == 0)
+      {
+         return Collections.EMPTY_LIST;
+      }
+
+      List list = new ArrayList();
+      int i = 0;
+      int begin = 0;
+      while (i < count)
+      {
+         if (str.charAt(i) == separate)
+         {
+            list.add(str.substring(begin, i));
+            begin = ++i;
+         }
+         else
+         {
+            i++;
+         }
+      }
+      list.add(str.substring(begin, i));
+      return list;
+      /*
+      原来旧的实现
       String strSep = separate + "";
       StringTokenizer token = new StringTokenizer(str, strSep, true);
       ArrayList list = new ArrayList();
@@ -971,6 +1001,7 @@ public class Utils
       }
       list.add(nowValue);
       return list;
+      */
    }
 
    /**
@@ -983,8 +1014,8 @@ public class Utils
       {
          return null;
       }
-      StringBuffer buf = new StringBuffer(linkChar.length() * arr.length
-            + arr.length * 8);
+      StringAppender buf = StringTool.createStringAppender(
+            linkChar.length() * arr.length + arr.length * 8);
       for (int i = 0; i < arr.length; i++)
       {
          buf.append(arr[i]);

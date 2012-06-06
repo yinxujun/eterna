@@ -92,7 +92,7 @@ public interface WebApp
          if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
          {
             tmpData.clearData();
-            tmpData.position = appendPosition;
+            tmpData.position |= appendPosition;
             tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = param == null ? new HashMap() : param;
             tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP] = new HashMap();
             tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP] = new HashMap();
@@ -133,7 +133,7 @@ public interface WebApp
          if (tmpData.request != request)
          {
             tmpData.clearData();
-            tmpData.position = appendPosition;
+            tmpData.position |= appendPosition;
             tmpData.contextRoot = request.getContextPath();
             tmpData.request = request;
             tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();

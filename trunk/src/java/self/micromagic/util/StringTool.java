@@ -3,9 +3,10 @@ package self.micromagic.util;
 
 import java.io.UnsupportedEncodingException;
 import java.io.PrintStream;
-import java.util.StringTokenizer;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * <code>StringTool</code>类是实现一些常用的字符串处理. <p>
@@ -15,6 +16,13 @@ import java.util.HashMap;
  */
 public class StringTool
 {
+   /**
+    * 是否需要使用QuickStringAppend.
+    * 如果需要则可在配置文件中设置:
+    * eterna.use.quickStringAppend=true
+    */
+   public static final String USE_QUICK_STRING_APPEND = "eterna.use.quickStringAppend";
+
    public static final int MAX_INTERN_SIZE = 1024 * 8;
 
    /**
@@ -56,6 +64,19 @@ public class StringTool
    }
 
    /**
+    * 判断字符串是否为空. <p>
+    * 空串<code>""</code>和空对象<code>null</code>都返回<code>true</code>, 其他
+    * 情况则返回<code>false</code>.
+    *
+    * @param str    被判断的字符串
+    * @return       是否为空
+    */
+   public static boolean isEmpty(String str)
+   {
+      return str == null || str.length() == 0;
+   }
+
+   /**
     * 根据指定的分隔符<code>delimiter</code>分割一个字符串
     * <code>str</code>. <p>
     * 如果给出的字符串<code>str</code>为<code>null</code>、空串
@@ -92,9 +113,78 @@ public class StringTool
     *
     * @param str         要进行分割的字符串
     * @param delimiter   分隔符集合
-    * @param trim        是否要trim分割出来的每个字符串
+    * @param trim        是否要对分割出来的每个字符串进行去除空格处理
     * @return  分割后的字符串所组成的数组
     */
+   public static String[] separateString(String str, String delimiter, boolean trim)
+   {
+      if (str == null)
+      {
+         return null;
+      }
+      int count = str.length();
+      if (count == 0)
+      {
+         return new String[0];
+      }
+      if (isEmpty(delimiter))
+      {
+         delimiter = " \t\n\r\f";
+      }
+
+      List list = new ArrayList();
+      int i = 0;
+      int begin = 0;
+      boolean notMatch = false;
+      if (delimiter.length() == 1)
+      {
+         // 仅有一个字符时用字符比较来判断
+         char c = delimiter.charAt(0);
+         while (i < count)
+         {
+            if (str.charAt(i) == c)
+            {
+               if (notMatch)
+               {
+                  list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+                  notMatch = false;
+               }
+               begin = ++i;
+               continue;
+            }
+            notMatch = true;
+            i++;
+         }
+      }
+      else
+      {
+         // 有多个字符时用字符串的包含字符来判断
+         while (i < count)
+         {
+            if (delimiter.indexOf(str.charAt(i)) >= 0)
+            {
+               if (notMatch)
+               {
+                  list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+                  notMatch = false;
+               }
+               begin = ++i;
+               continue;
+            }
+            notMatch = true;
+            i++;
+         }
+      }
+      if (notMatch)
+      {
+         list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+      }
+
+      return (String[]) list.toArray(new String[list.size()]);
+   }
+
+   /*
+   原来旧的实现
    public static String[] separateString(String str, String delimiter, boolean trim)
    {
       if (str == null)
@@ -123,6 +213,7 @@ public class StringTool
       }
       return bolck;
    }
+   */
 
    /**
     * 将<code>src</code>字符串中的所有<code>oldStr</code>替换为
@@ -135,37 +226,33 @@ public class StringTool
     */
    public static String replaceAll(String src, String oldStr, String newStr)
    {
-      if (src == null)
-      {
-         return null;
-      }
-
-      if (oldStr == null || oldStr.length() == 0)
+      if (isEmpty(src) || isEmpty(oldStr))
       {
          return src;
       }
+
       if (newStr == null)
       {
          newStr = "";
       }
-
-      int index = src.indexOf(oldStr);
-      if (index == -1)
+      int begin = 0;
+      int end = src.indexOf(oldStr);
+      if (end == -1)
       {
          return src;
       }
 
-      StringBuffer result = new StringBuffer(src.length()
-            + (newStr.length() - oldStr.length()) * 4 + 16);
+      int oldStrLength = oldStr.length();
+      int plusSize = newStr.length() - oldStrLength;
+      plusSize = plusSize <= 0 ? 0 : plusSize * 8 + 16;
+      StringAppender result = createStringAppender(src.length() + plusSize);
       do
       {
-         result.append(src.substring(0, index));
-         result.append(newStr);
-         src = src.substring(index + oldStr.length());
-         index = src.indexOf(oldStr);
-      }
-      while (index != -1);
-      result.append(src);
+         result.append(src.substring(begin, end)).append(newStr);
+         begin = end + oldStrLength;
+         end = src.indexOf(oldStr, begin);
+      } while (end != -1);
+      result.append(src.substring(begin));
 
       return result.toString();
    }
@@ -188,7 +275,7 @@ public class StringTool
          return arr[0];
       }
       link = link == null ? "" : link;
-      StringBuffer buf = new StringBuffer(arr.length * (link.length() + 16));
+      StringAppender buf = StringTool.createStringAppender(arr.length * (link.length() + 16));
       for (int i = 0; i < arr.length; i++)
       {
          if (i > 0)
@@ -268,6 +355,288 @@ public class StringTool
       }
       return result;
    }
+
+   /**
+    * 创建一个字符串连接器.
+    *
+    * @return    字符串连接器
+    */
+   public static StringAppender createStringAppender()
+   {
+      return createStringAppender(null, 16, false);
+   }
+
+   /**
+    * 创建一个字符串连接器.
+    *
+    * @param size         初始字符缓存的容量
+    * @return    字符串连接器
+    */
+   public static StringAppender createStringAppender(int size)
+   {
+      return createStringAppender(null, size, false);
+   }
+
+   /**
+    * 创建一个字符串连接器.
+    *
+    * @param str              需要初始化进去的字符串
+    * @param plusSize         还需要扩展的容量
+    * @param needSynchronize  是否需要保证线程安全
+    * @return    字符串连接器
+    */
+   public static StringAppender createStringAppender(String str, int plusSize, boolean needSynchronize)
+   {
+      int initSize = isEmpty(str) ? plusSize : str.length() + plusSize;
+      StringAppender sa;
+      if (needSynchronize)
+      {
+         sa = stringBufferCreater.create(initSize);
+      }
+      else
+      {
+         if (stringAppendCreater == null)
+         {
+            if ("true".equalsIgnoreCase(Utility.getProperty(USE_QUICK_STRING_APPEND)))
+            {
+               stringAppendCreater = new QuickStringAppender();
+            }
+            else
+            {
+               ClassLoader cl = StringTool.class.getClassLoader();
+               if (cl.getResource("java/lang/StringBuilder.class") != null)
+               {
+                  stringAppendCreater = createStringBuilderCreater();
+               }
+               else
+               {
+                  stringAppendCreater = stringBufferCreater;
+               }
+            }
+         }
+         sa = stringAppendCreater.create(initSize);
+      }
+      if (!isEmpty(str))
+      {
+         sa.append(str);
+      }
+      return sa;
+   }
+
+   private static StringAppenderCreater stringBufferCreater = new StrBuffer();
+   private static StringAppenderCreater stringAppendCreater = null;
+
+   private static StringAppenderCreater createStringBuilderCreater()
+   {
+      try
+      {
+         Class c = Class.forName("self.micromagic.util.StringTool$StringBuilderCreater");
+         return (StringAppenderCreater) c.newInstance();
+      }
+      catch (Throwable ex)
+      {
+         return stringBufferCreater;
+      }
+   }
+   /*
+      通过javassist来动态构造实现类
+      try
+      {
+         javassist.ClassPool pool = new javassist.ClassPool();
+         pool.appendSystemPath();
+         pool.appendClassPath(new javassist.ClassClassPath(this.getClass()));
+         pool.importPackage("self.micromagic.util");
+         String thisName = "StringTool$StringBuilderAppendCreaterFactory$StringBuilder";
+         javassist.CtClass cc = pool.makeClass(this.getClass().getName() + "$StringBuilder");
+         cc.addInterface(pool.get(StringAppender.class.getName()));
+         cc.addInterface(pool.get(StringAppenderCreater.class.getName()));
+         cc.addField(javassist.CtField.make("private java.lang.StringBuilder buf;", cc));
+         String funBody;
+
+         funBody = "public " + thisName + "() {}";
+         cc.addConstructor(javassist.CtNewConstructor.make(funBody, cc));
+         funBody = "private " + thisName + "(int initSize)"
+               + "{this.buf = new java.lang.StringBuilder(initSize);}";
+         cc.addConstructor(javassist.CtNewConstructor.make(funBody, cc));
+
+         funBody = "public StringAppender create(int initSize)"
+               + "{return new " + thisName + "(initSize);}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(Object obj)"
+               + "{this.buf.append(obj);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(String str)"
+               + "{this.buf.append(str);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(String str, int startIndex, int length)"
+               + "{this.buf.append(str.substring(startIndex, length));return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(char[] chars)"
+               + "{this.buf.append(chars);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(char[] chars, int startIndex, int length)"
+               + "{this.buf.append(chars, startIndex, length);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(boolean value)"
+               + "{this.buf.append(value);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(char ch)"
+               + "{this.buf.append(ch);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(int value)"
+               + "{this.buf.append(value);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(long value)"
+               + "{this.buf.append(value);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(float value)"
+               + "{this.buf.append(value);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public StringAppender append(double value)"
+               + "{this.buf.append(value);return this;}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public String toString() {return this.buf.toString();}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public int length() {return this.buf.length();}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public char charAt(int index) {return this.buf.charAt(index);}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+         funBody = "public CharSequence subSequence(int start, int end)"
+               + "{return this.buf.subSequence(start, end);}";
+         cc.addMethod(javassist.CtNewMethod.make(funBody, cc));
+
+         Class c = cc.toClass(this.getClass().getClassLoader());
+         return (StringAppenderCreater) c.newInstance();
+      }
+      catch (Throwable ex)
+      {
+         return null;
+      }
+   */
+
+   interface StringAppenderCreater
+   {
+      StringAppender create(int initSize);
+   }
+
+   private static class StrBuffer
+         implements StringAppender, StringAppenderCreater
+   {
+      private StringBuffer buf;
+
+      StrBuffer()
+      {
+      }
+
+      private StrBuffer(int initSize)
+      {
+         this.buf = new StringBuffer(initSize);
+      }
+
+      public StringAppender create(int initSize)
+      {
+         return new StrBuffer(initSize);
+      }
+
+      public StringAppender append(Object obj)
+      {
+         this.buf.append(obj);
+         return this;
+      }
+
+      public StringAppender append(String str)
+      {
+         this.buf.append(str);
+         return this;
+      }
+
+      public StringAppender append(String str, int startIndex, int length)
+      {
+         this.buf.append(str.substring(startIndex, length));
+         return this;
+      }
+
+      public StringAppender append(char[] chars)
+      {
+         this.buf.append(chars);
+         return this;
+      }
+
+      public StringAppender append(char[] chars, int startIndex, int length)
+      {
+         this.buf.append(chars, startIndex, length);
+         return this;
+      }
+
+      public StringAppender append(boolean value)
+      {
+         this.buf.append(value);
+         return this;
+      }
+
+      public StringAppender append(char ch)
+      {
+         this.buf.append(ch);
+         return this;
+      }
+
+      public StringAppender append(int value)
+      {
+         this.buf.append(value);
+         return this;
+      }
+
+      public StringAppender append(long value)
+      {
+         this.buf.append(value);
+         return this;
+      }
+
+      public StringAppender append(float value)
+      {
+         this.buf.append(value);
+         return this;
+      }
+
+      public StringAppender append(double value)
+      {
+         this.buf.append(value);
+         return this;
+      }
+
+      public StringAppender appendln()
+      {
+         this.buf.append(Utility.LINE_SEPARATOR);
+         return this;
+      }
+
+      public String substring(int beginIndex, int endIndex)
+      {
+         return this.buf.substring(beginIndex, endIndex);
+      }
+
+      public String toString()
+      {
+         return this.buf.toString();
+      }
+
+      public int length()
+      {
+         return this.buf.length();
+      }
+
+      public char charAt(int index)
+      {
+         return this.buf.charAt(index);
+      }
+
+      public CharSequence subSequence(int start, int end)
+      {
+         return this.buf.subSequence(start, end);
+      }
+
+   }
+
 
    public static void printStringHaxcode(PrintStream out, String str, boolean endline)
    {

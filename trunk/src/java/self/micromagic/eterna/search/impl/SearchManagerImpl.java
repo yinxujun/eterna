@@ -23,6 +23,8 @@ import self.micromagic.eterna.search.SearchManagerGenerator;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class SearchManagerImpl extends AbstractGenerator
       implements SearchManagerGenerator, SearchManager
@@ -175,7 +177,7 @@ public class SearchManagerImpl extends AbstractGenerator
    private void setConditionValues(Document doc, SearchAdapter search, boolean saveCondition)
          throws ConfigurationException
    {
-      StringBuffer buf = new StringBuffer(512);
+      StringAppender buf = StringTool.createStringAppender(512);
 
       List preparerList = new LinkedList();
       List groups = doc.getRootElement().element("groups").elements("group");
@@ -286,7 +288,7 @@ public class SearchManagerImpl extends AbstractGenerator
    private void setConditionValues(AppData data, SearchAdapter search, boolean saveCondition, boolean dealDefault)
          throws ConfigurationException
    {
-      StringBuffer buf = new StringBuffer(512);
+      StringAppender buf = StringTool.createStringAppender(512);
 
       List preparerList = new LinkedList();
       int index = 0;
@@ -500,7 +502,7 @@ public class SearchManagerImpl extends AbstractGenerator
       {
          return new Object[]{"", null};
       }
-      StringBuffer buf = new StringBuffer(512);
+      StringAppender buf = StringTool.createStringAppender(512);
       List preparerList = new LinkedList();
       Iterator gitr = consMap.values().iterator();
       String value;

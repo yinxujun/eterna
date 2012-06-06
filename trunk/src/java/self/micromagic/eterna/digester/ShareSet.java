@@ -321,6 +321,10 @@ public class ShareSet extends RuleSetBase
 
       void addDataSource(String name, DataSource ds)
       {
+         if (this.dataSourceMap == null)
+         {
+            this.dataSourceMap = new HashMap();
+         }
          this.dataSourceMap.put(name, ds);
       }
 

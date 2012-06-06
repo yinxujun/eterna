@@ -14,6 +14,8 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.container.UnmodifiableIterator;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 import self.micromagic.grammer.ParserData;
 
 public class ResourceImpl extends AbstractGenerator
@@ -108,7 +110,7 @@ public class ResourceImpl extends AbstractGenerator
             return params[index] == null ? "" : String.valueOf(params[index]);
          }
       }
-      StringBuffer buf = new StringBuffer(this.estimateResSize);
+      StringAppender buf = StringTool.createStringAppender(this.estimateResSize);
       for (int i = 0; i < this.resArray.length; i++)
       {
          Object res = this.resArray[i];

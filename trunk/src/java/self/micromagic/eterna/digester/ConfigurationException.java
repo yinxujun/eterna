@@ -3,6 +3,8 @@ package self.micromagic.eterna.digester;
 
 import self.micromagic.eterna.share.EternaException;
 import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * 当适配器<code>Adapter</code>相关的配置文件不正确，或不正确的
@@ -53,6 +55,17 @@ public class ConfigurationException extends EternaException
       super(origin);
    }
 
+   /**
+    * 通过参数<code>message</code>和一个抛出的对象来构造一个<code>ConfigurationException</code>.
+    *
+    * @param message   出错信息
+    * @param origin    异常或错误
+    */
+   public ConfigurationException(String message, Throwable origin)
+   {
+      super(message, origin);
+   }
+
    public String getMessage()
    {
       String msg = super.getMessage();
@@ -63,7 +76,7 @@ public class ConfigurationException extends EternaException
       }
       if ("1".equals(ThreadCache.getInstance().getProperty(IN_INITIALIZE)))
       {
-         StringBuffer temp = new StringBuffer(msg.length());
+         StringAppender temp = StringTool.createStringAppender(msg.length());
          if (config != null)
          {
             temp.append("Config:").append(config).append("; ");

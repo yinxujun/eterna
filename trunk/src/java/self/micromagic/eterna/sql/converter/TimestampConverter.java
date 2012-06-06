@@ -8,9 +8,18 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class TimestampConverter extends ObjectConverter
 {
+   private DateFormat dateFormat;
+
+   public void setDateFormat(DateFormat dateFormat)
+   {
+      this.dateFormat = dateFormat;
+   }
+
    public int getConvertType(StringRef typeName)
    {
       if (typeName != null)
@@ -35,7 +44,7 @@ public class TimestampConverter extends ObjectConverter
 
    public java.sql.Timestamp convertToTimestamp(Object value)
    {
-      return this.convertToTimestamp(value, null);
+      return this.convertToTimestamp(value, this.dateFormat);
    }
 
    public java.sql.Timestamp convertToTimestamp(Object value, DateFormat format)
@@ -60,12 +69,21 @@ public class TimestampConverter extends ObjectConverter
       {
          return this.convertToTimestamp((String) value, format);
       }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToTimestamp(str, format);
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convertToTimestamp(((ObjectRef) value).getObject(), format);
+      }
       throw new ClassCastException(getCastErrorMessage(value, "Timestamp"));
    }
 
    public java.sql.Timestamp convertToTimestamp(String value)
    {
-      return this.convertToTimestamp(value, null);
+      return this.convertToTimestamp(value, this.dateFormat);
    }
 
    public java.sql.Timestamp convertToTimestamp(String value, DateFormat format)

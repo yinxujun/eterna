@@ -4,7 +4,6 @@ package self.micromagic.eterna.model;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -112,19 +111,19 @@ public class AppDataLogExecute extends AbstractExecute
                   String mh = "public void print(AppDataLogExecute$Printer p,"
                         + " Element parent, Object value) throws Exception";
                   String ut = "Element nowNode = parent.addElement(\"${type}\");"
-                        + "nowNode.addAttribute(\"name\", \"${l_name}\");"
+                        + "nowNode.addAttribute(\"name\", \"${name}\");"
                         + "p.printObject(nowNode, ${value});";
                   String pt = "Element nowNode = parent.addElement(\"${type}\");"
-                        + "nowNode.addAttribute(\"name\", \"${l_name}\");"
+                        + "nowNode.addAttribute(\"name\", \"${name}\");"
                         + "nowNode.addAttribute(\"type\", \"${primitive}\");"
                         + "nowNode.addAttribute(\"value\", ${value});";
                   String[] imports = new String[]{
-                     AppDataLogExecute.class.getPackage().getName(),
-                     Element.class.getPackage().getName(),
-                     beanClass.getPackage().getName()
+                     Tool.getPackageString(AppDataLogExecute.class),
+                     Tool.getPackageString(Element.class),
+                     Tool.getPackageString(beanClass)
                   };
-                  bp = (BeanPrinter) Tool.createBeanProcesser(
-                        beanClass, BeanPrinter.class, mh, "value", ut, pt, "", imports);
+                  bp = (BeanPrinter) Tool.createBeanProcesser(beanClass, BeanPrinter.class, mh,
+                        "value", ut, pt, "", imports, Tool.BEAN_PROCESSER_TYPE_R);
                   if (bp == null)
                   {
                      bp = new BeanPrinterImpl(beanClass);
@@ -150,12 +149,12 @@ public class AppDataLogExecute extends AbstractExecute
          implements BeanPrinter
    {
       private Field[] fields;
-      private Method[] methods;
+      private Tool.BeanMethodInfo[] methods;
 
       public BeanPrinterImpl(Class c)
       {
          this.fields = Tool.getBeanFields(c);
-         this.methods = Tool.getBeanMethods(c);
+         this.methods = Tool.getBeanReadMethods(c);
       }
 
       public void print(Printer p, Element parent, Object value)
@@ -170,10 +169,10 @@ public class AppDataLogExecute extends AbstractExecute
          }
          for (int i = 0; i < this.methods.length; i++)
          {
-            Method m = this.methods[i];
+            Tool.BeanMethodInfo m = this.methods[i];
             Element mNode = parent.addElement("method");
-            mNode.addAttribute("name", m.getName());
-            p.printObject(mNode, m.invoke(value, new Object[0]));
+            mNode.addAttribute("name", m.name);
+            p.printObject(mNode, m.method.invoke(value, new Object[0]));
          }
       }
 

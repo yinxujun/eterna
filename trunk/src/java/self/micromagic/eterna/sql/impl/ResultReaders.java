@@ -41,6 +41,7 @@ import self.micromagic.util.MemoryChars;
 import self.micromagic.util.MemoryStream;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
 
 public abstract class ResultReaders
 {
@@ -363,18 +364,18 @@ public abstract class ResultReaders
       private Object readFromReader(Reader reader)
             throws SQLException
       {
-         StringBuffer result;
+         StringAppender result;
          char[] buf = new char[1024];
          try
          {
             int count = reader.read(buf);
             if (count < 1024)
             {
-               result = new StringBuffer(count > 0 ? count : 2);
+               result = StringTool.createStringAppender(count > 0 ? count : 2);
             }
             else
             {
-               result = new StringBuffer(3072);
+               result = StringTool.createStringAppender(3072);
             }
             while (count > 0)
             {

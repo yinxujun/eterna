@@ -680,7 +680,7 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
          parameter.addAttribute("length", length + "");
          if (reader != null)
          {
-            /*StringBuffer result = new StringBuffer(length < 512 ? length : 512);
+            /*StringAppender result = StringTool.createStringAppender(length < 512 ? length : 512);
             char[] buf = new char[256];
             int size = length;
             try

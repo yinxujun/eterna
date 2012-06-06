@@ -410,7 +410,7 @@ public class Jdk14Factory extends LogFactory
          try
          {
             Level level = Level.parse(levelName);
-            StringBuffer temp = new StringBuffer(128);
+            StringAppender temp = StringTool.createStringAppender(128);
             temp.append("Jdk14 log  name:").append(logName).append(", Level:").append(level);
             if (logFile != null)
             {

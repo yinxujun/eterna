@@ -104,6 +104,16 @@ public interface ResultReaderManager
 
    /**
     * 通过reader的名称获取该reader对象所在的索引值.
+    *
+    * @param name      reader的名称
+    * @param notThrow  设为<code>true<code>时, 当对应名称的reader不存在时
+    *                  不会抛出异常, 而只是返回-1
+    * @return  reader所在的索引值, 或-1(当对应名称的reader不存在时)
+    */
+   int getIndexByName(String name, boolean notThrow) throws ConfigurationException;
+
+   /**
+    * 通过reader的名称获取该reader对象所在的索引值.
     */
    int getIndexByName(String name) throws ConfigurationException;
 

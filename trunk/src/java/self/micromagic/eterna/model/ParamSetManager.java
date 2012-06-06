@@ -14,6 +14,8 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ParamSetManager
 {
@@ -101,7 +103,7 @@ public class ParamSetManager
       if (!"".equals(value))
       {
          // 如果因为是空字符串而产生的类型转换错误，则不记录警告日志.
-         StringBuffer str = new StringBuffer(64);
+         StringAppender str = StringTool.createStringAppender(64);
          str.append("SQL:[").append(sql.getName()).append("] ");
          str.append("param:[").append(param.getName()).append("] ");
          str.append("value:[").append(value).append("] preparer error.");

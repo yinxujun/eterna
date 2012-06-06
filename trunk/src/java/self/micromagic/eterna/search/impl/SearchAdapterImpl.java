@@ -291,6 +291,11 @@ public class SearchAdapterImpl extends AbstractGenerator
       this.columnSetting = setting;
    }
 
+   public ParameterSetting getParameterSetting()
+   {
+      return this.parameterSetting;
+   }
+
    public void setParameterSetting(ParameterSetting setting)
    {
       this.parameterSetting = setting;
@@ -664,6 +669,11 @@ public class SearchAdapterImpl extends AbstractGenerator
                   query.setSubSQL(other.getConditionIndex(), om.getConditionPart(other.isNeedWrap()),
                         om.getPreparerManager());
                }
+            }
+            ParameterSetting ps = other.getParameterSetting();
+            if (ps != null)
+            {
+               ps.setParameter(query, other, isFirst.value, data, conn);
             }
          }
       }
