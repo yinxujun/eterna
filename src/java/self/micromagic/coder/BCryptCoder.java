@@ -4,6 +4,8 @@ package self.micromagic.coder;
 import java.io.UnsupportedEncodingException;
 
 import self.micromagic.util.IntegerRef;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * Copyright (c) 2006 Damien Miller <djm@mindrot.org>
@@ -386,7 +388,7 @@ public class BCryptCoder
          throw new IllegalArgumentException("Error length argument.");
       }
 
-      StringBuffer rs = new StringBuffer(length * 2);
+      StringAppender rs = StringTool.createStringAppender(length * 2);
 
       for (int offset = 0, c1, c2; offset < length;)
       {
@@ -736,7 +738,7 @@ public class BCryptCoder
 
          byte[] hashed = bcrypt.cryptRaw(passwordBytes, saltBytes, rounds);
 
-         StringBuffer rs = new StringBuffer();
+         StringAppender rs = StringTool.createStringAppender();
 
          rs.append("$2");
          if (minor >= 'a')
@@ -775,7 +777,7 @@ public class BCryptCoder
 
       new java.util.Random().nextBytes(randomBytes);
 
-      StringBuffer rs = new StringBuffer((randomBytes.length * 2) + 8);
+      StringAppender rs = StringTool.createStringAppender((randomBytes.length * 2) + 8);
 
       rs.append("$2a$");
       if (logRounds < 10)

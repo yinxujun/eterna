@@ -7,6 +7,8 @@ import java.io.Writer;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.view.StringCoder;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class StringCoderImpl
       implements StringCoder
@@ -62,7 +64,7 @@ public class StringCoderImpl
       {
          return "";
       }
-      StringBuffer temp = null;
+      StringAppender temp = null;
       int modifyCount = 0;
       for (int i = 0; i < str.length(); i++)
       {
@@ -93,7 +95,7 @@ public class StringCoderImpl
          }
          if (modifyCount == 1)
          {
-            temp = new StringBuffer(str.length() + 16);
+            temp = StringTool.createStringAppender(str.length() + 16);
             temp.append(str.substring(0, i));
             //这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
             modifyCount++;
@@ -152,7 +154,7 @@ public class StringCoderImpl
       {
          return "";
       }
-      StringBuffer temp = null;
+      StringAppender temp = null;
       int modifyCount = 0;
       for (int i = 0; i < str.length(); i++)
       {
@@ -213,7 +215,7 @@ public class StringCoderImpl
          }
          if (modifyCount == 1)
          {
-            temp = new StringBuffer(str.length() + 16);
+            temp = StringTool.createStringAppender(str.length() + 16);
             temp.append(str.substring(0, i));
             //这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
             modifyCount++;

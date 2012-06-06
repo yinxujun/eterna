@@ -5,10 +5,11 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class ByteConverter extends ObjectConverter
 {
-   private Byte DEFAULT_VALUE = new Byte((byte) 0);
+   private static Byte DEFAULT_VALUE = new Byte((byte) 0);
 
    public int getConvertType(StringRef typeName)
    {
@@ -44,11 +45,17 @@ public class ByteConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         try
-         {
-            return Byte.parseByte((String) value);
-         }
-         catch (NumberFormatException ex) {}
+         return this.convertToByte((String) value);
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Byte)
+      {
+         return ((Byte) tmpObj).byteValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToByte(str);
       }
       if (value instanceof ObjectRef)
       {
@@ -65,6 +72,10 @@ public class ByteConverter extends ObjectConverter
             }
             catch (NumberFormatException ex) {}
          }
+         else
+         {
+            return this.convertToByte(ref.getObject());
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "byte"));
    }
@@ -74,6 +85,11 @@ public class ByteConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Byte)
+      {
+         return ((Byte) tmpObj).byteValue();
       }
       try
       {

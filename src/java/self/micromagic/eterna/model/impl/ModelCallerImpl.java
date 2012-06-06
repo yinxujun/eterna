@@ -24,6 +24,8 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ModelCallerImpl
       implements ModelCaller
@@ -196,7 +198,7 @@ public class ModelCallerImpl
       {
          if (AppData.log.isInfoEnabled())
          {
-            StringBuffer buf = new StringBuffer(128);
+            StringAppender buf = StringTool.createStringAppender(128);
             buf.append("Not found the model:").append(data.modelName).append(".");
             AppData.log.warn(buf, ex);
          }
@@ -410,7 +412,7 @@ public class ModelCallerImpl
    public String prepareParam(AppData data, String charset)
          throws ConfigurationException, IOException
    {
-      StringBuffer buf = new StringBuffer(512);
+      StringAppender buf = StringTool.createStringAppender(512);
       String dataType = data.getRequestParameter(ViewAdapter.DATA_TYPE);
       if (dataType != null)
       {

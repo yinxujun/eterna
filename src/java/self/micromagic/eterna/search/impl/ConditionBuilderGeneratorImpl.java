@@ -13,6 +13,8 @@ import self.micromagic.eterna.search.ConditionProperty;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       implements ConditionBuilderGenerator
@@ -134,7 +136,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
             else
             {
                int count = colName.length() + this.operator.length() + 1;
-               StringBuffer temp = new StringBuffer(count);
+               StringAppender temp = StringTool.createStringAppender(count);
                temp.append(colName).append(" ").append(this.operator);
                return new Condition(temp.toString());
             }
@@ -166,7 +168,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
                }
                int count = colName.length() + tempOp1.length() + tempOp2.length() + 8;
                count = count * 2;
-               StringBuffer temp = new StringBuffer(count);
+               StringAppender temp = StringTool.createStringAppender(count);
                temp.append("(").append(colName).append(tempOp1).append(linkOp);
                temp.append(colName).append(tempOp2).append(")");
                return new Condition(temp.toString());
@@ -180,7 +182,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
          }
 
          int count = colName.length() + this.operator.length() + 3;
-         StringBuffer sqlPart = new StringBuffer(count);
+         StringAppender sqlPart = StringTool.createStringAppender(count);
          sqlPart.append(colName).append(" ").append(this.operator).append(" ?");
          ValuePreparer[] preparers = new ValuePreparer[1];
          if (TypeManager.isTypeString(cp.getColumnType()))
@@ -192,7 +194,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
             }
             else
             {
-               StringBuffer temp = new StringBuffer(value.length() + 2);
+               StringAppender temp = StringTool.createStringAppender(value.length() + 2);
                if ((this.optType & 0x2) != 0)
                {
                   temp.append('%');

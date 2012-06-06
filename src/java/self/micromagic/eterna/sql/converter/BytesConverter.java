@@ -9,6 +9,8 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.MemoryStream;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringTool;
 
 public class BytesConverter extends ObjectConverter
 {
@@ -73,6 +75,15 @@ public class BytesConverter extends ObjectConverter
       if (value instanceof String)
       {
          return this.convertToBytes((String) value, charset);
+      }
+      if (value instanceof String[])
+      {
+         String str = StringTool.linkStringArr((String[]) value, ",");
+         return this.convertToBytes(str, charset);
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convertToBytes(((ObjectRef) value).getObject(), charset);
       }
       throw new ClassCastException(getCastErrorMessage(value, "Bytes"));
    }

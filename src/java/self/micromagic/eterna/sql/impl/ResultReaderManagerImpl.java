@@ -18,6 +18,8 @@ import self.micromagic.eterna.sql.NullResultReader;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ResultReaderManagerImpl
       implements ResultReaderManager
@@ -304,7 +306,7 @@ public class ResultReaderManagerImpl
       }
    }
 
-   public int getIndexByName(String name)
+   public int getIndexByName(String name, boolean notThrow)
          throws ConfigurationException
    {
       this.getReaderList0();
@@ -312,18 +314,31 @@ public class ResultReaderManagerImpl
             this.colNameSensitive ? name : name.toUpperCase());
       if (i == null)
       {
-         throw new ConfigurationException(
-               "Invalid ResultReader name:" + name + " at ResultReaderManager "
-               + this.getName() + ".");
+         if (notThrow)
+         {
+            return -1;
+         }
+         else
+         {
+            throw new ConfigurationException(
+                  "Invalid ResultReader name:" + name + " at ResultReaderManager "
+                  + this.getName() + ".");
+         }
       }
       return i.intValue();
+   }
+
+   public int getIndexByName(String name)
+         throws ConfigurationException
+   {
+      return this.getIndexByName(name, false);
    }
 
    public String getOrderByString()
    {
       if (this.orderStr == null)
       {
-         StringBuffer temp = new StringBuffer(this.orderList.size() * 16);
+         StringAppender temp = StringTool.createStringAppender(this.orderList.size() * 16);
          Iterator itr = this.orderList.iterator();
          if (itr.hasNext())
          {

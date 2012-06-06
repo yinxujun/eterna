@@ -8,6 +8,8 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.eterna.sql.SQLAdapter;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class PreparerManager
 {
@@ -161,7 +163,7 @@ public class PreparerManager
       }
       if (index < 0 || index > this.preparers.length)
       {
-         StringBuffer buf = new StringBuffer(18);
+         StringAppender buf = StringTool.createStringAppender(18);
          buf.append("[index:").append(index).append(" size:")
                .append(this.preparers.length + 1).append("]");
          throw new IndexOutOfBoundsException(buf.toString());
@@ -305,7 +307,7 @@ public class PreparerManager
          }
          if (this.preparers[i] == null)
          {
-            StringBuffer buf = new StringBuffer(52);
+            StringAppender buf = StringTool.createStringAppender(52);
             if (this.sqlAdapter != null)
             {
                buf.append("In").append(this.sqlAdapter.getType()).append(" [")

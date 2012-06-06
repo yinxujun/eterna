@@ -26,8 +26,9 @@ public class TypeManager
    public final static int TYPE_BIGSTRING = 14;
    public final static int TYPE_STREAM = 15;
    public final static int TYPE_READER = 16;
+   public final static int TYPE_DECIMAL = 17;
 
-   public final static int TYPES_COUNT = 17;
+   public final static int TYPES_COUNT = 18;
 
    private static Map paramMap = new HashMap();
 
@@ -48,7 +49,8 @@ public class TypeManager
       Types.OTHER,          //TYPE_OBJECT
       Types.LONGVARCHAR,    //TYPE_BIGSTRING
       Types.LONGVARBINARY,  //TYPE_STREAM
-      Types.LONGVARCHAR     //TYPE_READER
+      Types.LONGVARCHAR,    //TYPE_READER
+      Types.DECIMAL         //TYPE_DECIMAL
    };
 
    private static String[] paramNames = {
@@ -68,7 +70,8 @@ public class TypeManager
       "Object",
       "BigString",
       "Stream",
-      "Reader"
+      "Reader",
+      "Decimal"
    };
 
    static
@@ -91,6 +94,7 @@ public class TypeManager
       paramMap.put("BigString", Utility.INTEGER_14);
       paramMap.put("Stream", Utility.INTEGER_15);
       paramMap.put("Reader", new Integer(16));
+      paramMap.put("Decimal", new Integer(17));
    }
 
    public static int getTypeId(String name)
@@ -172,7 +176,8 @@ public class TypeManager
          return false;
       }
       return realId == TYPE_INTEGER || realId == TYPE_DOUBLE || realId == TYPE_LONG
-            || realId == TYPE_SHORT || realId == TYPE_BYTE || realId == TYPE_FLOAT;
+            || realId == TYPE_SHORT || realId == TYPE_BYTE || realId == TYPE_FLOAT
+            || realId == TYPE_DECIMAL;
    }
 
    public static boolean isTypeDate(int id)

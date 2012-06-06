@@ -74,7 +74,7 @@ public class InConditionParamBind extends AbstractGenerator
       }
       else
       {
-         StringBuffer subStr = new StringBuffer(values.length * 3);
+         StringAppender subStr = StringTool.createStringAppender(values.length * 3);
          PreparerManager pm = new PreparerManager(values.length);
          for (int i = 0; i < values.length; i++)
          {

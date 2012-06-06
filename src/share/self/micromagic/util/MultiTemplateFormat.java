@@ -54,7 +54,7 @@ public class MultiTemplateFormat extends TemplateFormat
       }
       values[index++] = this.htmlFilter ? Utils.dealString2HTML(temp, true) : temp;
 
-      StringBuffer buf = new StringBuffer(count);
+      StringAppender buf = StringTool.createStringAppender(count);
       for (int i = 0; i < this.patterns.length; i++)
       {
          if (i > 0)

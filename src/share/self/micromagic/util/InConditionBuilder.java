@@ -71,7 +71,8 @@ public class InConditionBuilder extends AbstractGenerator
          }
          if (values.length > 0)
          {
-            StringBuffer sqlPart = new StringBuffer(values.length * 3 + colName.length() + 6);
+            StringAppender sqlPart = StringTool.createStringAppender(
+                  values.length * 3 + colName.length() + 6);
             ValuePreparer[] preparers = new ValuePreparer[values.length];
             sqlPart.append(colName).append(" IN (");
             for (int i = 0; i < values.length; i++)

@@ -10,13 +10,15 @@ import java.util.List;
 import java.util.Iterator;
 
 import self.micromagic.util.Utils;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ParserData
 {
    private boolean endSrc = false;
    private int currentIndex = -1;
    private Reader src;
-   private StringBuffer buf;
+   private StringAppender buf;
 
    private List checkerStack = new ArrayList();
    private List errorStack = new ArrayList();
@@ -34,7 +36,7 @@ public class ParserData
       try
       {
          int count = src.read(tmpBuf);
-         this.buf = new StringBuffer(0);
+         this.buf = StringTool.createStringAppender();
          this.buf.append(tmpBuf, 0, count);
          if (count < tmpBuf.length)
          {
@@ -49,7 +51,7 @@ public class ParserData
 
    public ParserData(String src)
    {
-      this.buf = new StringBuffer(src);
+      this.buf = StringTool.createStringAppender(src, 16, false);
       this.src = new StringReader(src);
       this.endSrc = true;
    }
@@ -245,12 +247,12 @@ public class ParserData
       {
          return "";
       }
-      StringBuffer buf = new StringBuffer();
+      StringAppender buf = StringTool.createStringAppender();
       this.appendGrammerCell(list, buf);
       return buf.toString();
    }
 
-   private void appendGrammerCell(List gclist, StringBuffer buf)
+   private void appendGrammerCell(List gclist, StringAppender buf)
    {
       buf.append("[");
       Iterator itr = gclist.iterator();

@@ -21,6 +21,8 @@ import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.ThreadCache;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * 动态类的生成工具.
@@ -35,7 +37,7 @@ public class CodeClassTool
    /**
     * 生成的代码的编号序列.
     */
-   private static int CODE_ID = 1;
+   private static volatile int CODE_ID = 1;
 
    /**
     * 生成的代码的缓存. <p>
@@ -102,8 +104,8 @@ public class CodeClassTool
       {
          pool.appendClassPath(new ClassClassPath(CodeClassTool.class));
       }
-      String namePrefix = "eterna.code_" + (CODE_ID++) + ".";
-      CtClass cc = pool.makeClass(namePrefix + baseClass.getName());
+      String nameSuffix = "$$EJC_" + baseClass.hashCode() + "_" + (CODE_ID++);
+      CtClass cc = pool.makeClass(baseClass.getName() + nameSuffix);
       if (interfaceClass != null)
       {
          cc.addInterface(pool.get(interfaceClass.getName()));
@@ -124,7 +126,7 @@ public class CodeClassTool
          }
       }
       ClassLoader cl = baseClass.getClassLoader();
-      StringBuffer tmpCode = new StringBuffer(bodyCode.length() + 32);
+      StringAppender tmpCode = StringTool.createStringAppender(bodyCode.length() + 32);
       tmpCode.append(methodHead).append("\n{\n");
       tmpCode.append(bodyCode);
       tmpCode.append("\n}");
@@ -215,7 +217,7 @@ public class CodeClassTool
     */
    public static void logCodeError(String code, String position, Exception error)
    {
-      String msg = "Error in compile java code at " + position + ".";
+      String msg = "Error in compile java code at " + position + ". the code is:\n" + code;
       FactoryManager.log.error(msg, error);
       Object obj = ThreadCache.getInstance().getProperty(CODE_ERRORS_FLAG);
       if (obj instanceof List)

@@ -13,6 +13,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.StringAppender;
 
 public class SQLManager
 {
@@ -51,9 +52,14 @@ public class SQLManager
    public void initialize(EternaFactory factory)
          throws ConfigurationException
    {
+      int subIndex = 1;
       for (int i = 0; i < this.partSQLs.length; i++)
       {
          this.partSQLs[i].initialize(factory);
+         if (this.partSQLs[i] instanceof SubPart)
+         {
+            ((SubPart) this.partSQLs[i]).setSubIndex(subIndex++);
+         }
       }
       for (int i = 0; i < this.parameterManagers.length; i++)
       {
@@ -71,7 +77,7 @@ public class SQLManager
          {
             size += this.partSQLs[i].getLength();
          }
-         StringBuffer temp = new StringBuffer(size);
+         StringAppender temp = StringTool.createStringAppender(size);
          for (int i = 0; i < this.partSQLs.length; i++)
          {
             temp.append(this.partSQLs[i].getSQL());
@@ -98,7 +104,7 @@ public class SQLManager
          {
             size += this.partSQLs[i].getLength();
          }
-         StringBuffer temp = new StringBuffer(size);
+         StringAppender temp = StringTool.createStringAppender(size);
          for (int i = 0; i < this.partSQLs.length; i++)
          {
             temp.append(this.partSQLs[i].getSQL());
@@ -138,7 +144,7 @@ public class SQLManager
    public String frontParse(String sql, SQLParameter[] paramArray)
          throws ConfigurationException
    {
-      StringBuffer buf = new StringBuffer(sql.length() + 16);
+      StringAppender buf = StringTool.createStringAppender(sql.length() + 16);
       String dealedSql = sql;
       int index = dealedSql.indexOf(EXTEND_FLAG + AUTO_NAME);
       while (index != -1)
@@ -214,8 +220,8 @@ public class SQLManager
                {
                   throw (ConfigurationException) ex;
                }
-               throw new ConfigurationException("Error #auto parameters [" + tStr + "], "
-                     + ex.getMessage() + ".");
+               throw new ConfigurationException("Error #auto parameters [" + tStr
+                     + "], parameter count:" + paramArray.length + ".", ex);
             }
             dealedSql = dealedSql.substring(endI + 1);
          }
@@ -230,7 +236,7 @@ public class SQLManager
       return new String(buf.toString());
    }
 
-   private void dealAuto(String plus, String separator, String template, StringBuffer buf,
+   private void dealAuto(String plus, String separator, String template, StringAppender buf,
          SQLParameter[] paramArray, int begin, int end, boolean needName, boolean dynamicAuto)
          throws ConfigurationException
    {
@@ -768,6 +774,7 @@ public class SQLManager
       private PartSQL[] parts = null;
       private String template;
       private int aheadParamCount;
+      private int subIndex = 0;
 
       private String insertString = null;
       private String backupString = null;
@@ -785,6 +792,7 @@ public class SQLManager
       public PartSQL copy(boolean clear, SQLManager manager)
       {
          SubPart other = new SubPart(this.template, this.aheadParamCount);
+         other.subIndex = this.subIndex;
          other.insertString = clear ? null : this.insertString;
          other.backupString = clear ? null : this.backupString;
          if (this.parts != null)
@@ -886,7 +894,8 @@ public class SQLManager
       {
          if (this.insertString == null)
          {
-            throw new ConfigurationException("Sub SQL unsetted, subsql:[" + this.template + "].");
+            throw new ConfigurationException("Sub SQL unsetted, index:[" + this.subIndex
+                  + "], subsql:[" + this.template + "].");
          }
 
          if (this.insertString.length() == 0)
@@ -894,12 +903,22 @@ public class SQLManager
             return "";
          }
 
-         StringBuffer temp = new StringBuffer(this.getLength());
+         StringAppender temp = StringTool.createStringAppender(this.getLength());
          for (int i = 0; i < this.parts.length; i++)
          {
             temp.append(this.parts[i].getSQL());
          }
          return temp.toString();
+      }
+
+      public int getSubIndex()
+      {
+         return this.subIndex;
+      }
+
+      public void setSubIndex(int subIndex)
+      {
+         this.subIndex = subIndex;
       }
 
       public void backup()
@@ -958,7 +977,7 @@ public class SQLManager
                      "The parameter flag '?' can't int the sub SQL tamplet:"
                      + this.value + ".");
             }
-            StringBuffer buf = new StringBuffer(this.value.length() + 16);
+            StringAppender buf = StringTool.createStringAppender(this.value.length() + 16);
             Iterator itr = partList.iterator();
             for (int i = 0; i < partList.size(); i++)
             {

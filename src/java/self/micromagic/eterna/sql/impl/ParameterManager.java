@@ -8,6 +8,7 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.StringAppender;
 
 public class ParameterManager
 {
@@ -105,7 +106,7 @@ public class ParameterManager
          SQLManager.parse(template, true, partList, paramList, subSQLList, subList);
 
          // 根据解析的结果修改template
-         StringBuffer temp = new StringBuffer();
+         StringAppender temp = StringTool.createStringAppender();
          Iterator itr = partList.iterator();
          while (itr.hasNext())
          {

@@ -69,7 +69,11 @@ public class DataPrinterImpl extends AbstractGenerator
    {
       try
       {
-         if (value instanceof String)
+         if (value == null)
+         {
+            out.write("null");
+         }
+         else if (value instanceof String)
          {
             out.write("\"");
             out.write(this.stringCoder.toJsonString((String) value));
@@ -175,10 +179,6 @@ public class DataPrinterImpl extends AbstractGenerator
                }
                this.printIterator(out, arr.iterator());
             }
-         }
-         else if (value == null)
-         {
-            out.write("null");
          }
          else if (Tool.isBean(value.getClass()))
          {
@@ -433,19 +433,19 @@ public class DataPrinterImpl extends AbstractGenerator
                {
                   String mh = "public void print(DataPrinter p, Writer out, Object bean)"
                         + " throws IOException, ConfigurationException";
-                  String ut = "out.write(\"${l_name}:\");"
+                  String ut = "out.write(\"\\\"${name}\\\":\");"
                         + "p.print(out, ${value});";
-                  String pt = "out.write(\"${l_name}:\");"
+                  String pt = "out.write(\"\\\"${name}\\\":\");"
                         + "p.print(out, ${o_value});";
                   String lt = "out.write(\",\");";
                   String[] imports = new String[]{
-                     DataPrinter.class.getPackage().getName(),
-                     Writer.class.getPackage().getName(),
-                     ConfigurationException.class.getPackage().getName(),
-                     beanClass.getPackage().getName()
+                     Tool.getPackageString(DataPrinter.class),
+                     Tool.getPackageString(Writer.class),
+                     Tool.getPackageString(ConfigurationException.class),
+                     Tool.getPackageString(beanClass)
                   };
-                  bp = (BeanPrinter) Tool.createBeanProcesser(
-                        beanClass, BeanPrinter.class, mh, "bean", ut, pt, lt, imports);
+                  bp = (BeanPrinter) Tool.createBeanProcesser(beanClass, BeanPrinter.class, mh,
+                        "bean", ut, pt, lt, imports, Tool.BEAN_PROCESSER_TYPE_R);
                   if (bp == null)
                   {
                      bp = new BeanPrinterImpl(beanClass);
@@ -466,12 +466,12 @@ public class DataPrinterImpl extends AbstractGenerator
          implements BeanPrinter
    {
       private Field[] fields;
-      private Method[] methods;
+      private Tool.BeanMethodInfo[] methods;
 
       public BeanPrinterImpl(Class c)
       {
          this.fields = Tool.getBeanFields(c);
-         this.methods = Tool.getBeanMethods(c);
+         this.methods = Tool.getBeanReadMethods(c);
       }
 
       public void print(DataPrinter p, Writer out, Object bean)
@@ -488,8 +488,9 @@ public class DataPrinterImpl extends AbstractGenerator
                }
                first = false;
                Field f = this.fields[i];
+               out.write("\"");
                out.write(f.getName());
-               out.write(":");
+               out.write("\":");
                p.print(out, f.get(bean));
             }
             for (int i = 0; i < this.methods.length; i++)
@@ -499,9 +500,10 @@ public class DataPrinterImpl extends AbstractGenerator
                   out.write(",");
                }
                first = false;
-               Method m = this.methods[i];
-               out.write(Tool.getBeanAttrName(m.getName()));
-               out.write(":");
+               Method m = this.methods[i].method;
+               out.write("\"");
+               out.write(this.methods[i].name);
+               out.write("\":");
                p.print(out, m.invoke(bean, new Object[0]));
             }
          }
@@ -520,4 +522,5 @@ public class DataPrinterImpl extends AbstractGenerator
       }
 
    }
+
 }

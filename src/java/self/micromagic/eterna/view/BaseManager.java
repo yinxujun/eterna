@@ -15,6 +15,7 @@ import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.view.impl.ViewTool;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.StringAppender;
 
 public class BaseManager
 {
@@ -256,7 +257,7 @@ public class BaseManager
             String[] names = reader.getAttributeNames();
             if (names != null && names.length > 0)
             {
-               StringBuffer buf = new StringBuffer();
+               StringAppender buf = StringTool.createStringAppender();
                for (int i = 0; i < names.length; i++)
                {
                   String name = names[i];
@@ -348,7 +349,7 @@ public class BaseManager
             String[] names = property.getAttributeNames();
             if (names != null && names.length > 0)
             {
-               StringBuffer buf = new StringBuffer();
+               StringAppender buf = StringTool.createStringAppender();
                for (int i = 0; i < names.length; i++)
                {
                   String name = names[i];

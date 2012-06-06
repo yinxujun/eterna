@@ -780,7 +780,7 @@ public class Utility
       }
 
       String tempStr = text;
-      StringBuffer result = new StringBuffer(text.length() + 32);
+      StringAppender result = StringTool.createStringAppender(text.length() + 32);
       while (startIndex != -1)
       {
          result.append(tempStr.substring(0, startIndex));
@@ -1028,7 +1028,7 @@ public class Utility
 
       public String toString()
       {
-         StringBuffer temp = new StringBuffer(128);
+         StringAppender temp = StringTool.createStringAppender(128);
          temp.append("PropertyManager[class:").append(this.theClass);
          if (this.theField != null)
          {

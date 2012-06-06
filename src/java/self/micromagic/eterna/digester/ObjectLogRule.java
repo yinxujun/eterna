@@ -2,6 +2,8 @@
 package self.micromagic.eterna.digester;
 
 import org.xml.sax.Attributes;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * 进行初始化情况记录的初始化规则.
@@ -31,7 +33,7 @@ public class ObjectLogRule extends MyRule
       {
          theName = "null";
       }
-      StringBuffer temp = new StringBuffer(
+      StringAppender temp = StringTool.createStringAppender(
             this.objType.length() + theName.length() + 2);
       temp.append(this.objType).append("[").append(theName).append("]");
       ConfigurationException.objName = temp.toString();
@@ -62,7 +64,8 @@ public class ObjectLogRule extends MyRule
       {
          setObjName(type);
       }
-      StringBuffer temp = new StringBuffer(type.length() + name.length() + 2);
+      StringAppender temp = StringTool.createStringAppender(
+            type.length() + name.length() + 2);
       temp.append(type).append("[").append(name).append("]");
       ConfigurationException.objName = temp.toString();
    }

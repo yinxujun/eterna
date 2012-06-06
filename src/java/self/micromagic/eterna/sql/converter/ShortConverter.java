@@ -5,10 +5,11 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class ShortConverter extends ObjectConverter
 {
-   private Short DEFAULT_VALUE = new Short((short) 0);
+   private static Short DEFAULT_VALUE = new Short((short) 0);
 
    public int getConvertType(StringRef typeName)
    {
@@ -44,11 +45,17 @@ public class ShortConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         try
-         {
-            return Short.parseShort((String) value);
-         }
-         catch (NumberFormatException ex) {}
+         return this.convertToShort((String) value);
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Short)
+      {
+         return ((Short) tmpObj).shortValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToShort(str);
       }
       if (value instanceof ObjectRef)
       {
@@ -65,6 +72,10 @@ public class ShortConverter extends ObjectConverter
             }
             catch (NumberFormatException ex) {}
          }
+         else
+         {
+            return this.convertToShort(ref.getObject());
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "short"));
    }
@@ -74,6 +85,11 @@ public class ShortConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Short)
+      {
+         return ((Short) tmpObj).shortValue();
       }
       try
       {

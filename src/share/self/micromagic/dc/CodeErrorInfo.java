@@ -1,6 +1,9 @@
 
 package self.micromagic.dc;
 
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
+
 /**
  * 动态生成类时的出错信息.
  */
@@ -34,7 +37,7 @@ public class CodeErrorInfo
    {
       if (this.message == null)
       {
-         StringBuffer buf = new StringBuffer(256);
+         StringAppender buf = StringTool.createStringAppender(256);
          buf.append("CodeErrorInfo:[\n   position:").append(this.position).append("\n")
                .append("   error:").append(this.error.getMessage()).append("\n")
                .append("   code:\n").append(this.code).append("\n")

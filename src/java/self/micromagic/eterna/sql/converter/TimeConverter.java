@@ -8,9 +8,18 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class TimeConverter extends ObjectConverter
 {
+   private DateFormat dateFormat;
+
+   public void setDateFormat(DateFormat dateFormat)
+   {
+      this.dateFormat = dateFormat;
+   }
+
    public int getConvertType(StringRef typeName)
    {
       if (typeName != null)
@@ -35,7 +44,7 @@ public class TimeConverter extends ObjectConverter
 
    public java.sql.Time convertToTime(Object value)
    {
-      return this.convertToTime(value, null);
+      return this.convertToTime(value, this.dateFormat);
    }
 
    public java.sql.Time convertToTime(Object value, DateFormat format)
@@ -60,12 +69,21 @@ public class TimeConverter extends ObjectConverter
       {
          return this.convertToTime((String) value, format);
       }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToTime(str, format);
+      }
+      if (value instanceof ObjectRef)
+      {
+         return this.convertToTime(((ObjectRef) value).getObject(), format);
+      }
       throw new ClassCastException(getCastErrorMessage(value, "Time"));
    }
 
    public java.sql.Time convertToTime(String value)
    {
-      return this.convertToTime(value, null);
+      return this.convertToTime(value, this.dateFormat);
    }
 
    public java.sql.Time convertToTime(String value, DateFormat format)

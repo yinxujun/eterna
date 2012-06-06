@@ -1,6 +1,9 @@
 
 package self.micromagic.coder;
 
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
+
 /**
  * Static methods for translating Coder$Base64 encoded strings to byte arrays
  * and vice-versa.
@@ -347,7 +350,8 @@ public class Base64 extends AbstractCoder
       int numFullGroups = aLen / 3;
       int numBytesLeft = aLen - 3 * numFullGroups;
       int resultLen = 4 * ((aLen + 2) / 3);
-      StringBuffer result = new StringBuffer(resultLen);
+
+      StringAppender result = StringTool.createStringAppender(resultLen);
       char[] intToAlpha = this.intToBase64;
 
       int byte0;

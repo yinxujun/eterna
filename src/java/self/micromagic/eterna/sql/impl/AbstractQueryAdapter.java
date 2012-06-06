@@ -159,6 +159,11 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          }
          this.readerManager = readerManager;
          this.readerManagerSetted = true;
+         /* @todo lock
+            这里需要考虑下是否需要锁上, 因为查询完后如果再调用setReaderList(String[])方法就会
+            有问题
+            如果锁上的话, 前面的getReaderManager方法就要一直复制一个新的readerManager
+         */
       }
       if (this.orderIndex != -1)
       {

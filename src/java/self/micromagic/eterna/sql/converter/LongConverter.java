@@ -7,10 +7,18 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class LongConverter extends ObjectConverter
 {
-   private Long DEFAULT_VALUE = new Long(0L);
+   private static Long DEFAULT_VALUE = new Long(0L);
+
+   private NumberFormat numberFormat;
+
+   public void setNumberFormat(NumberFormat numberFormat)
+   {
+      this.numberFormat = numberFormat;
+   }
 
    public int getConvertType(StringRef typeName)
    {
@@ -36,7 +44,7 @@ public class LongConverter extends ObjectConverter
 
    public long convertToLong(Object value)
    {
-      return this.convertToLong(value, null);
+      return this.convertToLong(value, this.numberFormat);
    }
 
    public long convertToLong(Object value, NumberFormat format)
@@ -53,6 +61,16 @@ public class LongConverter extends ObjectConverter
       {
          return this.convertToLong((String) value, format);
       }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Long)
+      {
+         return ((Long) tmpObj).longValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToLong(str, format);
+      }
       if (value instanceof ObjectRef)
       {
          ObjectRef ref = (ObjectRef) value;
@@ -64,13 +82,17 @@ public class LongConverter extends ObjectConverter
          {
             return this.convertToLong(ref.toString(), format);
          }
+         else
+         {
+            return this.convertToLong(ref.getObject(), format);
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "long"));
    }
 
    public long convertToLong(String value)
    {
-      return this.convertToLong(value, null);
+      return this.convertToLong(value, this.numberFormat);
    }
 
    public long convertToLong(String value, NumberFormat format)
@@ -78,6 +100,11 @@ public class LongConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Long)
+      {
+         return ((Long) tmpObj).longValue();
       }
       try
       {

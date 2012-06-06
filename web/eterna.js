@@ -1,6 +1,15 @@
 
 /** version: 1.5.1 */
 
+/*
+(function(window) {
+
+// @todo change to this
+window.Eterna = Eterna;
+
+})(window);
+*/
+
 var ___ETERNA_VERSION = "1.5.1";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 var ED_GET_VALUE = 0x1;
@@ -12,6 +21,11 @@ var ED_HIGHER = 0x80;
 var ED_FN_CALLED = 0x30;
 var ED_FNC_STACK = 0x40;
 var ED_COM_CREATED = 0x20;
+
+if (typeof jQuery == 'undefined' && typeof $ == "object" && typeof $.jquery == "string")
+{
+   window.jQuery = $;
+}
 
 // EE = ETERNA_EVENT
 var EE_SUB_WINDOW_CLOSE = "lock_close";
@@ -119,17 +133,30 @@ var EG_DATA_TYPE_REST = "REST";
 var EG_DATA_TYPE_ALL = "all";
 var EG_DATA_TYPE_WEB = "web";
 
-var eg_cache = {
-   willInitObjs:[],openedObjs:[],loadedScripts:{}
-};
+var EG_SWAP_FLAG = "swapId";
+var EG_SCATTER_INIT_FLAG = "initId";
+var EG_INHERIT_FLAG = "inherit";
 
-var EG_TEMP_NAMES = [
-   "dataName", "srcName", "index", "columnCount", "rowNum",
-   "rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
-   "name", "caption", "valueObj", "param", "tempData"
-];
+if (typeof $egCacheInitialized == 'undefined')
+{
+   window.$egCacheInitialized = 1;
 
-var eg_temp = {};
+   var eg_cache = {
+      willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{}
+   };
+
+   var EG_TEMP_NAMES = [
+      "dataName", "srcName", "index", "columnCount", "rowNum",
+      "rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
+      "name", "caption", "valueObj", "param", "tempData"
+   ];
+
+   var eg_temp = {};
+
+   window.eg_cache = eg_cache;
+   window.EG_TEMP_NAMES = EG_TEMP_NAMES;
+   window.eg_temp = eg_temp;
+}
 
 var eg_caculateWidth_fix;
 var eg_defaultWidth = 80;
@@ -146,7 +173,7 @@ function Eterna($E, eterna_debug, rootWebObj)
    this.rootWebObj = rootWebObj;
    this.cache = {};
    this.nowWindow = null;
-   this.rootWebObjOld_HTML = this.rootWebObj.html();
+   this.rootWebObjOld_HTML = this.rootWebObj == null ? "" : this.rootWebObj.html();
 
    if (typeof Eterna._initialized == 'undefined')
    {
@@ -283,6 +310,12 @@ function Eterna($E, eterna_debug, rootWebObj)
       Eterna.prototype.getRemoteJSON = function(url, formObj, async, successFunction, completeFunction)
       {
          var httpRequest = null;
+         var _egTemp = null;
+         if (async)
+         {
+            // 如果是异步处理, 需要保存环境变量, 并在执行回调函数前恢复
+            _egTemp = this.egTemp();
+         }
          var successFn = function (data, textStatus)
          {
             try
@@ -292,19 +325,7 @@ function Eterna($E, eterna_debug, rootWebObj)
                var $E = successFn._eterna.$E;
                var eternaData = $E;
                successFn.status = textStatus;
-               var endPos = data.length;
-               for (var i = data.length - 1; i >= 0; i--)
-               {
-                  if (data.charCodeAt(i) <= 0x20)
-                  {
-                     endPos--;
-                  }
-                  else
-                  {
-                     break;
-                  }
-               }
-               successFn.data = eval("(" + data.substring(0, endPos) + ")");
+               successFn.data = eval("(" + ef_trimRight(data) + ")");
             }
             catch (pEx)
             {
@@ -318,7 +339,17 @@ function Eterna($E, eterna_debug, rootWebObj)
             }
             if (successFn.customerFn != null)
             {
+               var oldTemp;
+               if (successFn.egTemp != null)
+               {
+                  oldTemp = successFn._eterna.egTemp();
+                  successFn._eterna.egTemp(successFn.egTemp);
+               }
                successFn.customerFn(successFn.data, successFn.status);
+               if (successFn.egTemp != null)
+               {
+                  successFn._eterna.egTemp(oldTemp);
+               }
             }
          };
          successFn.eterna_debug = this.eterna_debug;
@@ -326,6 +357,10 @@ function Eterna($E, eterna_debug, rootWebObj)
          if (successFunction != null)
          {
             successFn.customerFn = successFunction;
+            if (_egTemp != null)
+            {
+               successFn.egTemp = _egTemp;
+            }
          }
          try
          {
@@ -357,10 +392,25 @@ function Eterna($E, eterna_debug, rootWebObj)
                {
                   var ts = completeFn.successInfo.status != null ?
                         completeFn.successInfo.status : textStatus;
-                  completeFn.customerFn(request, ts);
+                  var oldTemp;
+                  if (completeFn.egTemp != null)
+                  {
+                     oldTemp = completeFn._eterna.egTemp();
+                     completeFn._eterna.egTemp(completeFn.egTemp);
+                  }
+                  completeFn.customerFn(request, ts, completeFn._eterna);
+                  if (completeFn.egTemp != null)
+                  {
+                     completeFn._eterna.egTemp(oldTemp);
+                  }
                };
                completeFn.successInfo = successFn;
+               completeFn._eterna = this;
                completeFn.customerFn = completeFunction;
+               if (_egTemp != null)
+               {
+                  completeFn.egTemp = _egTemp;
+               }
                opts.complete = completeFn;
             }
             httpRequest = jQuery.ajax(opts);
@@ -385,7 +435,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
       }
 
-      Eterna.prototype.loadEterna = function(url, param, divObj, debug)
+      Eterna.prototype.loadEterna = function(url, param, divObj, debug, recall)
       {
          if (param == null)
          {
@@ -394,27 +444,41 @@ function Eterna($E, eterna_debug, rootWebObj)
          try
          {
             param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
-            var str = this.getRemoteText(url, param);
-            var endPos = str.length;
-            for (var i = str.length - 1; i >= 0; i--)
+            if (recall == null)
             {
-               if (str.charCodeAt(i) <= 0x20)
-               {
-                  endPos--;
-               }
-               else
-               {
-                  break;
-               }
+               var str = ef_trimRight(this.getRemoteText(url, param));
+               var eterna_debug = debug;
+               var $E = {};
+               var eternaData = $E;
+               var _eterna = new Eterna($E, debug, divObj);
+               _eterna.cache.useAJAX = true;
+               _eterna.changeEternaData(eval("(" + str + ")"));
+               eg_temp = {};
+               _eterna.reInit();
+               return _eterna;
             }
-            var eterna_debug = debug;
-            var $E = {};
-            var eternaData = $E;
-            var _eterna = new Eterna($E, debug, divObj);
-            _eterna.cache.useAJAX = true;
-            _eterna.changeEternaData(eval("(" + str.substring(0, endPos) + ")"));
-            eg_temp = {};
-            _eterna.reInit();
+            else
+            {
+               var _eterna = new Eterna({}, debug, divObj);
+               _eterna.cache.useAJAX = true;
+               var completeFn = function (result, oldEterna, request, textStatus)
+               {
+                  var _eterna = completeFn._eterna;
+                  var eterna_debug = completeFn.eterna_debug;
+                  var $E = completeFn._eterna.$E;
+                  var eternaData = $E;
+                  var str = ef_trimRight(result);
+                  _eterna.changeEternaData(eval("(" + str + ")"));
+                  eg_temp = {};
+                  _eterna.reInit();
+                  completeFn.recall(completeFn._eterna, result, request, textStatus);
+               };
+               completeFn.eterna_debug = debug;
+               completeFn._eterna = _eterna;
+               completeFn.recall = recall;
+               this.getRemoteText(url, param, completeFn)
+               return _eterna;
+            }
          }
          catch (ex)
          {
@@ -423,7 +487,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
       }
 
-      Eterna.prototype.getRemoteText = function(url, param)
+      Eterna.prototype.getRemoteText = function(url, param, completeFunction)
       {
          var httpRequest = null;
          try
@@ -445,13 +509,44 @@ function Eterna($E, eterna_debug, rootWebObj)
                   opts.data = jQuery.param(param);
                }
             }
-            httpRequest = jQuery.ajax(opts);
-            if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && httpRequest != null)
+            var completeFn;
+            if (completeFunction != null)
             {
-               this.showMessage(httpRequest.responseText + "\n---------------------------------\n"
-                     + "url:" + url);
+               completeFn = function (request, textStatus)
+               {
+                  var result = completeFn.httpRequest.responseText;
+                  if ((completeFn.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && completeFn.httpRequest != null)
+                  {
+                     completeFn._eterna.showMessage(result + "\n---------------------------------\n"
+                           + "status:" + textStatus + ",url:" + url);
+                  }
+                  var oldTemp = completeFn._eterna.egTemp();
+                  completeFn._eterna.egTemp(completeFn.egTemp);
+                  completeFn.customerFn(result, completeFn._eterna, request, textStatus);
+                  completeFn._eterna.egTemp(oldTemp);
+               };
+               completeFn.eterna_debug = this.eterna_debug;
+               completeFn._eterna = this;
+               completeFn.customerFn = completeFunction;
+               // 是异步处理, 需要保存环境变量, 并在执行回调函数前恢复
+               completeFn.egTemp = this.egTemp();
+               opts.complete = completeFn;
+               opts.async = true;
             }
-            return httpRequest.responseText;
+            httpRequest = jQuery.ajax(opts);
+            if (completeFunction != null)
+            {
+               completeFn.httpRequest = httpRequest;
+            }
+            else
+            {
+               if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && httpRequest != null)
+               {
+                  this.showMessage(httpRequest.responseText + "\n---------------------------------\n"
+                        + "url:" + url);
+               }
+            }
+            return completeFunction != null ? completeFunction : httpRequest.responseText;
          }
          catch (ex)
          {
@@ -471,35 +566,13 @@ function Eterna($E, eterna_debug, rootWebObj)
             }
             if (needCreate)
             {
-               for (var i = 0; i < this.$E.V.length; i++)
-               {
-                  var name = this.$E.V[i].name;
-                  var pObj = jQuery("span[initId='" + ef_toScriptString(name) + "']", this.rootWebObj);
-                  if (pObj.size() == 1)
-                  {
-                     var tmpCom = this.createComponent(this.$E.V[i], pObj);
-                     if (tmpCom != null)
-                     {
-                        pObj.after(tmpCom);
-                     }
-                     else
-                     {
-                        var subs = pObj.children();
-                        var maxCount = subs.size();
-                        for (var j = maxCount - 1; j >= 0; j--)
-                        {
-                           pObj.after(subs.eq(j));
-                        }
-                     }
-                     pObj.remove();
-                  }
-               }
+               this.swapComponent(this.rootWebObj, this.$E.V, EG_SCATTER_INIT_FLAG);
                if (this.$E.init != null)
                {
                   this.executeScript(this.rootWebObj, this.$E, this.$E.init);
                }
             }
-            eterna_doInitObjs();
+            eterna_doInitObjs(this.rootWebObj);
          }
          catch (ex)
          {
@@ -556,7 +629,7 @@ function Eterna($E, eterna_debug, rootWebObj)
                   this.executeScript(this.rootWebObj, this.$E, this.$E.init);
                }
             }
-            eterna_doInitObjs();
+            eterna_doInitObjs(this.rootWebObj);
          }
          catch (ex)
          {
@@ -646,7 +719,7 @@ function Eterna($E, eterna_debug, rootWebObj)
                webObj.after(tmpCom);
             }
             webObj.remove();
-            eterna_doInitObjs();
+            eterna_doInitObjs(tmpCom != null ? tmpCom : parentWebObj);
          }
          catch (ex)
          {
@@ -709,6 +782,35 @@ function Eterna($E, eterna_debug, rootWebObj)
             this.printException(ex);
             return false;
          }
+      }
+
+      Eterna.prototype.closeAllWindow = function()
+      {
+         for (var i = 0; i < eg_cache.openedObjs.length; i++)
+         {
+            if (eg_cache.openedObjs[i].openedEterna == this)
+            {
+               if (!eg_cache.openedObjs[i].winObj.closed)
+               {
+                  eg_cache.openedObjs[i].winObj.close();
+               }
+            }
+         }
+      }
+
+      Eterna.prototype.hasOpened = function()
+      {
+         for (var i = 0; i < eg_cache.openedObjs.length; i++)
+         {
+            if (eg_cache.openedObjs[i].openedEterna == this)
+            {
+               if (!eg_cache.openedObjs[i].winObj.closed)
+               {
+                  return true;
+               }
+            }
+         }
+         return false;
       }
 
       Eterna.prototype.openWindow = function(url, name, param, lock, closeEvent)
@@ -807,6 +909,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          var str = "* exception info:\n";
          if (typeof ex == "object")
          {
+            str += "   " + ex + "\n";
             for(var key in ex)
             {
                str += "   " + key + ":" + ex[key] + "\n";
@@ -910,19 +1013,72 @@ function Eterna($E, eterna_debug, rootWebObj)
       }
 
 
+      Eterna.prototype.swapComponent = function(baseObj, subs, swapFlag)
+      {
+         if (swapFlag == null)
+         {
+            swapFlag = EG_SWAP_FLAG;
+         }
+         for (var i = 0; i < subs.length; i++)
+         {
+            var name = subs[i].name;
+            var pObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(name) + "']", baseObj);
+            if (pObj.size() == 1)
+            {
+               pObj.data(EG_SWAP_FLAG, name);
+               var tmpCom = this.createComponent(subs[i], pObj);
+               if (pObj.data(EG_INHERIT_FLAG) == null)
+               {
+                  if (tmpCom != null)
+                  {
+                     pObj.after(tmpCom);
+                  }
+                  else
+                  {
+                     var tmpSubs = pObj.children();
+                     var maxCount = tmpSubs.size();
+                     for (var j = maxCount - 1; j >= 0; j--)
+                     {
+                        pObj.after(tmpSubs.eq(j));
+                     }
+                  }
+                  pObj.remove();
+               }
+            }
+         }
+      }
+
       Eterna.prototype.getValue_fromRecords = function(dataName, srcName, index)
       {
-         if (index == null)
+         if (typeof dataName == "object")
          {
-            var tmpStr = "[script]:valueObj.value=$E.D[valueObj.dataName][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;valueObj.valueData=$E.D[valueObj.dataName];";
-            var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName};
-            return this.getValue(tmpStr, valueObj);
+            if (index == null)
+            {
+               var tmpStr = "[script]:valueObj.value=valueObj.valueData[valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
+               var valueObj = {html:0,value:"",exists:-1,valueData:dataName,srcName:srcName};
+               return this.getValue(tmpStr, valueObj);
+            }
+            else
+            {
+               var tmpStr = "[script]:var mytmpData=valueObj.valueData;valueObj.value=(typeof mytmpData.rowCount=='number')?mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1]:mytmpData[valueObj.index][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
+               var valueObj = {html:0,value:"",exists:-1,valueData:dataName,srcName:srcName,index:index};
+               return this.getValue(tmpStr, valueObj);
+            }
          }
          else
          {
-            var tmpStr = "[script]:var mytmpData=$E.D[valueObj.dataName];valueObj.valueData=mytmpData;valueObj.value=mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
-            var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName,index:index};
-            return this.getValue(tmpStr, valueObj);
+            if (index == null)
+            {
+               var tmpStr = "[script]:valueObj.value=$E.D[valueObj.dataName][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;valueObj.valueData=$E.D[valueObj.dataName];";
+               var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName};
+               return this.getValue(tmpStr, valueObj);
+            }
+            else
+            {
+               var tmpStr = "[script]:var mytmpData=$E.D[valueObj.dataName];valueObj.valueData=mytmpData;valueObj.value=(typeof mytmpData.rowCount=='number')?mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1]:mytmpData[valueObj.index][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
+               var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName,index:index};
+               return this.getValue(tmpStr, valueObj);
+            }
          }
       }
 
@@ -1060,6 +1216,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          var myTemp = this.egTemp();
 
          var returnNULL = false;
+         var nullObj = null;
          var doLoop = false;
          var type = configData.type;
          var webObj = null;
@@ -1090,6 +1247,41 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             var tmpObj = this.createComponent(this.$E.T[configData.typicalComponent], parent);
             webObj = tmpObj;
+         }
+         else if (type == EG_INHERIT_FLAG)
+         {
+            returnNULL = true;
+            if (parent != null && typeof parent.jquery == "string" &&
+                  parent.data(EG_SWAP_FLAG) == configData.name)
+            {
+               if (configData.objValue != null)
+               {
+                  var tmpObj = this.getValue(configData.objValue);
+                  if (tmpObj.exists)
+                  {
+                     parent.val(tmpObj.value);
+                  }
+               }
+               if (configData.text != null)
+               {
+                  var tmpObj = this.getValue(configData.text);
+                  if (tmpObj.exists)
+                  {
+                     parent.text(tmpObj.value);
+                  }
+               }
+               parent.data(EG_INHERIT_FLAG, 1);
+               webObj = parent;
+               // 这里需要返回null, 但在初始化的时候需要有对象
+               nullObj = webObj;
+            }
+            else
+            {
+               if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
+               {
+                  this.printException("The inheritObj (the param parent) not setted or not valid!");
+               }
+            }
          }
          else
          {
@@ -1165,7 +1357,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 
             if (configData.init != null)
             {
-               this.executeScript(returnNULL ? null : webObj, configData, configData.init);
+               this.executeScript(returnNULL ? nullObj : webObj, configData, configData.init);
             }
 
             if (!returnNULL)
@@ -1190,6 +1382,13 @@ function Eterna($E, eterna_debug, rootWebObj)
                   {
                      parent.append(tmpObj.value);
                   }
+               }
+            }
+            else if (nullObj != null)
+            {
+               if (configData.events != null)
+               {
+                  this.dealEvents(configData, nullObj, parent, myTemp);
                }
             }
          }
@@ -2435,6 +2634,18 @@ function Eterna($E, eterna_debug, rootWebObj)
 
    if (this.eterna_debug >= ED_FN_CALLED)
    {
+      this.swapComponent = function(baseObj, subs, swapFlag)
+      {
+         this.pushFunctionStack(new Array("swapComponent", Eterna.prototype.swapComponent,
+               "baseObj", baseObj, "subs", subs, "swapFlag", swapFlag));
+         var result = Eterna.prototype.swapComponent.call(this, baseObj, subs, swapFlag);
+         this.popFunctionStack();
+         if (typeof result != 'undefined')
+         {
+            return result;
+         }
+      }
+
       this.getValue_fromRecords = function(dataName, srcName, index)
       {
          this.pushFunctionStack(new Array("getValue_fromRecords", Eterna.prototype.getValue_fromRecords,
@@ -2801,22 +3012,116 @@ function eterna_addWillInitObj(obj, priority)
    }
    if (tmpI < eg_cache.willInitObjs.length - 1)
    {
-      for (var i = eg_cache.willInitObjs.length - 1; i > tmpI; i--)
-      {
-         eg_cache.willInitObjs[i] = eg_cache.willInitObjs[i - 1];
-      }
-      eg_cache.willInitObjs[tmpI] = {obj:obj,p:tmp};
+      eterna_moveArrayValue(eg_cache.willInitObjs,
+            eg_cache.willInitObjs.length - 1, tmpI);
    }
 }
 
+// 注册一个静态的初始化方法, 如果priority为-1, 则删除已注册的
+function eterna_registerStaticInitFn(fn, priority)
+{
+   var delIndex = -1;
+   for (var i = 0; i < eg_cache.staticInitFns.length; i++)
+   {
+      if (eg_cache.staticInitFns[i] != null && fn == eg_cache.staticInitFns[i].fn)
+      {
+         eg_cache.staticInitFns[i] = null;
+         delIndex = i;
+         break;
+      }
+   }
+   if (delIndex != -1)
+   {
+      eterna_moveArrayValue(eg_cache.staticInitFns,
+            delIndex, eg_cache.staticInitFns.length - 1);
+   }
+   var lastIndex = eg_cache.staticInitFns.length > 0 ? eg_cache.staticInitFns.length - 1 : -1;
+   if (priority == null)
+   {
+      if (lastIndex >= 0 && eg_cache.staticInitFns[lastIndex] == null)
+      {
+         eg_cache.staticInitFns[lastIndex] = {fn:fn,p:100};
+      }
+      else
+      {
+         eg_cache.staticInitFns.push({fn:fn,p:100});
+      }
+      return;
+   }
+   var tmp = parseInt(priority);
+   if (tmp == -1)
+   {
+      return;
+   }
+   if (isNaN(tmp) || tmp < 0 || tmp >= 100)
+   {
+      throw new Error("Error priority:[" + priority + "], must in [0, 99].");
+   }
+   if (lastIndex >= 0 && eg_cache.staticInitFns[lastIndex] == null)
+   {
+      eg_cache.staticInitFns[lastIndex] = {fn:fn,p:tmp};
+   }
+   else
+   {
+      eg_cache.staticInitFns.push({fn:fn,p:tmp});
+   }
+   var tmpI = eg_cache.staticInitFns.length - 1;
+   for (var i = 0; i < eg_cache.staticInitFns.length; i++)
+   {
+      if (eg_cache.staticInitFns[i] != null && tmp < eg_cache.staticInitFns[i].p)
+      {
+         tmpI = i;
+         break;
+      }
+   }
+   if (tmpI < eg_cache.staticInitFns.length - 1)
+   {
+      eterna_moveArrayValue(eg_cache.staticInitFns,
+            eg_cache.staticInitFns.length - 1, tmpI);
+   }
+}
+
+function eterna_moveArrayValue(arr, fromIndex, toIndex)
+{
+   var tmp = arr[fromIndex];
+   if (fromIndex > toIndex)
+   {
+      for (var i = fromIndex; i > toIndex; i--)
+      {
+         arr[i] = arr[i - 1];
+      }
+   }
+   else
+   {
+      for (var i = fromIndex; i < toIndex; i++)
+      {
+         arr[i] = arr[i + 1];
+      }
+   }
+   arr[toIndex] = tmp;
+}
+
 // 触发所有等待初始化的对象的willInit事件
-function eterna_doInitObjs()
+// 然后执行所有的静态初始化方法
+function eterna_doInitObjs(theObj)
 {
    var objs = eg_cache.willInitObjs;
    eg_cache.willInitObjs = [];
    for (var i = 0; i < objs.length; i++)
    {
       objs[i].obj.trigger("willInit");
+   }
+   var fns = eg_cache.staticInitFns;
+   for (var i = 0; i < fns.length; i++)
+   {
+      try
+      {
+         if (fns[i] != null)
+         {
+            fns[i].fn(theObj);
+         }
+      }
+      catch (ex) {}
    }
 }
 
@@ -2844,7 +3149,21 @@ function eterna_closeAllWindow()
       }
    }
 }
-jQuery(window).unload(eterna_closeAllWindow);
+if (typeof jQuery == 'undefined')
+{
+   if (window.addEventListener)
+   {
+      window.addEventListener("unload", eterna_closeAllWindow, false);
+   }
+   else if (window.attachEvent)
+   {
+      window.attachEvent("onunload", eterna_closeAllWindow);
+   }
+}
+else
+{
+   jQuery(window).unload(eterna_closeAllWindow);
+}
 
 /**
  * 获取文本资源的值
@@ -2876,6 +3195,37 @@ function eterna_getResourceValue(resArray, params)
       }
    }
    return str;
+}
+
+/**
+ * 判断字符串是否为空.
+ * null   :   true
+ * ""     :   true
+ * " "    :   false
+ */
+function ef_isEmpty(str)
+{
+   return str == null || str == "";
+}
+
+/**
+ * 去除字符串右边的空白字符
+ */
+function ef_trimRight(str)
+{
+   var endPos = str.length;
+   for (var i = str.length - 1; i >= 0; i--)
+   {
+      if (str.charCodeAt(i) <= 0x20)
+      {
+         endPos--;
+      }
+      else
+      {
+         break;
+      }
+   }
+   return str.substring(0, endPos);
 }
 
 /**
@@ -2952,34 +3302,30 @@ function ef_loadScript(flag, scriptPath, recall)
    {
       return;
    }
-   (function() {
-      var scriptObj = document.createElement('script');
-      scriptObj.type = 'text/javascript';
-      scriptObj.async = true;
-      scriptObj.src = scriptPath;
-      scriptObj.scriptFlag = flag;
-      var s = document.getElementsByTagName('script')[0];
-      s.parentNode.insertBefore(scriptObj, s);
-      if (scriptObj.readyState) //IE
+   eg_cache.loadedScripts[flag] = 1;
+   var scriptObj = document.createElement('script');
+   scriptObj.type = 'text/javascript';
+   scriptObj.async = true;
+   scriptObj.src = scriptPath;
+   var s = document.getElementsByTagName('script')[0];
+   s.parentNode.insertBefore(scriptObj, s);
+   if (scriptObj.readyState) //IE
+   {
+      scriptObj.onreadystatechange = function()
       {
-         scriptObj.onreadystatechange = function()
+         if (scriptObj.readyState == "complete" || scriptObj.readyState == "loaded")
          {
-            if (scriptObj.readyState == "complete" || scriptObj.readyState == "loaded")
-            {
-                eg_cache.loadedScripts[scriptObj.scriptFlag] = 1;
-                if (recall != null) recall();
-            }
-        };
-      }
-      else //Others
+            if (recall != null) recall();
+         }
+     };
+   }
+   else //Others
+   {
+      scriptObj.onload = function()
       {
-         scriptObj.onload = function()
-         {
-             eg_cache.loadedScripts[scriptObj.scriptFlag] = 1;
-             if (recall != null) recall();
-         };
-      }
-   })();
+         if (recall != null) recall();
+      };
+   }
 };
 
 /**

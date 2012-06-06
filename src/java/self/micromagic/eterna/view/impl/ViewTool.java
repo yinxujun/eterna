@@ -24,6 +24,7 @@ import self.micromagic.grammer.GrammerElement;
 import self.micromagic.grammer.GrammerManager;
 import self.micromagic.grammer.ParserData;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.StringAppender;
 
 /**
  * 视图模块中需要用到的一些公共方法.
@@ -79,7 +80,7 @@ public class ViewTool
       {
          return script;
       }
-      StringBuffer buf = new StringBuffer(script.length() + 64);
+      StringAppender buf = StringTool.createStringAppender(script.length() + 64);
       while (index != -1)
       {
          buf.append(script.substring(0, index));
@@ -269,7 +270,7 @@ public class ViewTool
             throw new ConfigurationException("Grammer error:" + script
                   + "\n[maxBuf:" + pd.getMaxErrorBuffer() + "].");
          }
-         StringBuffer buf = new StringBuffer(script.length());
+         StringAppender buf = StringTool.createStringAppender(script.length());
          parseGrammerCell(viewRes, pd.getGrammerCellLst(), buf, factory);
          if (log.isDebugEnabled())
          {
@@ -288,7 +289,7 @@ public class ViewTool
    }
 
    private static void parseGrammerCell(ViewAdapterGenerator.ModifiableViewRes viewRes, List gclist,
-         StringBuffer buf, EternaFactory factory)
+         StringAppender buf, EternaFactory factory)
          throws ConfigurationException
    {
       if (gclist == null)

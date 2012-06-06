@@ -19,6 +19,8 @@ import self.micromagic.eterna.model.ModelCaller;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 import self.micromagic.util.container.ValueContainerMap;
 
 public class EternaServlet extends HttpServlet
@@ -204,7 +206,7 @@ public class EternaServlet extends HttpServlet
       {
          if (export.getModelName() != null)
          {
-            StringBuffer url = new StringBuffer(512);
+            StringAppender url = StringTool.createStringAppender(512);
             url.append(request.getScheme()).append("://").append(request.getHeader("host"));
             url.append(request.getContextPath()).append(request.getServletPath());
             url.append("?").append(this.getFactoryManager().getEternaFactory().getModelNameTag());
@@ -217,7 +219,7 @@ public class EternaServlet extends HttpServlet
          else if (export.getPath() != null)
          {
             String path = export.getPath();
-            StringBuffer url = new StringBuffer(512);
+            StringAppender url = StringTool.createStringAppender(512);
             if (path.startsWith("/"))
             {
                url.append(request.getScheme()).append("://").append(request.getHeader("host"))

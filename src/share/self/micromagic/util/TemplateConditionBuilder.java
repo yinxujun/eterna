@@ -151,7 +151,7 @@ public class TemplateConditionBuilder extends AbstractGenerator
       colNames[index++] = temp;
 
       int count = this.template.length() + (this.patterns.length - 1) * colName.length();
-      StringBuffer sqlPart = new StringBuffer(count);
+      StringAppender sqlPart = StringTool.createStringAppender(count);
       for (int i = 0; i < this.patterns.length; i++)
       {
          if (i > 0)

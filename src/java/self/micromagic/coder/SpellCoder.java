@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /*
 * SunriseSpell - A Chinese pinyin library
@@ -89,7 +91,7 @@ public class SpellCoder
       byte[] bytes = str.getBytes("GBK");
 
       int i = 0;
-      StringBuffer result = new StringBuffer();
+      StringAppender result = StringTool.createStringAppender();
       String tmp = "";
 
       while (i < bytes.length)

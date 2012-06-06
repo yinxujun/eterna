@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ValueContainerMapEntrySet extends AbstractSet
       implements Set
@@ -262,7 +264,7 @@ public class ValueContainerMapEntrySet extends AbstractSet
       {
          if (this.toStringValue == null)
          {
-            StringBuffer buf = new StringBuffer(32);
+            StringAppender buf = StringTool.createStringAppender(32);
             buf.append("Entry[key:").append(this.key)
                   .append(",value:").append(this.value).append(']');
             this.toStringValue = buf.toString();

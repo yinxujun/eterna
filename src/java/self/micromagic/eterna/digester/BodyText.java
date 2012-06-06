@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
+
 /**
  * xml配置中的body文本对象
  */
@@ -83,7 +86,7 @@ public class BodyText
    {
       if (this.cacheStr == null)
       {
-         StringBuffer sb = new StringBuffer(this.count);
+         StringAppender sb = StringTool.createStringAppender(this.count);
          int size = this.elements.size();
          Iterator itr = this.elements.iterator();
          for (int i = 0; i < size; i++)
@@ -112,7 +115,7 @@ public class BodyText
          {
             tempCount += ((CharElement) itr.next()).trimSpacelength();
          }
-         StringBuffer sb = new StringBuffer(tempCount);
+         StringAppender sb = StringTool.createStringAppender(tempCount);
          itr = this.elements.iterator();
          for (int i = 0; i < size; i++)
          {
@@ -230,7 +233,7 @@ public class BodyText
          return true;
       }
 
-      public void appendTo(StringBuffer sb)
+      public void appendTo(StringAppender sb)
       {
          if (this.ch != null)
          {
@@ -244,7 +247,7 @@ public class BodyText
          sb.append(this.endNewLine ? BodyText.NEW_LINE : ' ');
       }
 
-      public void trimSpaceAppendTo(StringBuffer sb, boolean noLine)
+      public void trimSpaceAppendTo(StringAppender sb, boolean noLine)
       {
          if (this.ch == null)
          {

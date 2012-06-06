@@ -1,0 +1,168 @@
+
+package self.micromagic.util.ext;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.io.PrintWriter;
+
+import javax.sql.DataSource;
+
+import self.micromagic.util.ext.SimpleConnection;
+
+/**
+ * 一个简易的数据源实现, 不使用数据库连接缓冲池, 关闭后直接释放.
+ */
+public class SimpleDataSource
+      implements DataSource
+{
+   protected PrintWriter logWriter;
+   protected int loginTimeout;
+
+   protected String description;
+   protected String url;
+   protected String driverClass;
+   protected String user = null;
+   protected String password = null;
+   protected boolean autoCommit = true;
+   protected boolean autoCommitSetted = false;
+
+   /**
+    * 获取数据库连接.
+    */
+   public Connection getConnection()
+         throws SQLException
+   {
+      return this.getConnection(this.user, this.password);
+   }
+
+   /**
+    * 根据指定的用户名及密码获取数据库连接.
+    */
+   public Connection getConnection(String username, String password)
+         throws SQLException
+   {
+      try
+      {
+         if (this.url == null)
+         {
+            throw new SQLException("The connetion url hasn't setted!");
+         }
+         if (this.driverClass == null)
+         {
+            throw new SQLException("The connetion driverClass hasn't setted!");
+         }
+         Class.forName(this.driverClass);
+         Connection conn;
+         if (username == null && password == null)
+         {
+            conn = new SimpleConnection(this.autoCommitSetted, DriverManager.getConnection(this.url));
+         }
+         else
+         {
+            conn = new SimpleConnection(this.autoCommitSetted,
+                  DriverManager.getConnection(this.url, username, password));
+         }
+         conn.setAutoCommit(this.autoCommit);
+         return conn;
+      }
+      catch (ClassNotFoundException ex)
+      {
+         throw new SQLException(ex.getMessage());
+      }
+   }
+
+   /**
+    * 设置获取的数据库连接默认是否需要自动提交.
+    */
+   public void setAutoCommit(boolean autoCommit)
+   {
+      this.autoCommitSetted = true;
+      this.autoCommit = autoCommit;
+   }
+
+   /**
+    * 设置连接数据库使用的驱动类.
+    */
+   public void setDriverClass(String driverClass)
+   {
+      this.driverClass = driverClass;
+   }
+
+   /**
+    * 设置连接数据库使用的连接字符串.
+    */
+   public void setUrl(String url)
+   {
+      this.url = url;
+      if (this.description == null)
+      {
+         this.description = url;
+      }
+   }
+
+   /**
+    * 设置连接数据库使用的用户名.
+    */
+   public void setUser(String user)
+   {
+      this.user = user;
+   }
+
+   /**
+    * 设置连接数据库使用的密码.
+    */
+   public void setPassword(String password)
+   {
+      this.password = password;
+   }
+
+   /**
+    * 获取此数据源的说明.
+    */
+   public String getDescription()
+   {
+      return this.description;
+   }
+
+   /**
+    * 设置对此数据源的说明.
+    */
+   public void setDescription(String description)
+   {
+      this.description = description;
+   }
+
+   /**
+    * 获取autoCommit属性是否被设置过, <code>true</code>表示设置过.
+    */
+   public boolean isAutoCommitSetted()
+   {
+      return autoCommitSetted;
+   }
+
+   public PrintWriter getLogWriter()
+         throws SQLException
+   {
+      return this.logWriter;
+   }
+
+   public void setLogWriter(PrintWriter out)
+         throws SQLException
+   {
+      this.logWriter = out;
+   }
+
+   public void setLoginTimeout(int seconds)
+         throws SQLException
+   {
+      this.loginTimeout = seconds;
+   }
+
+   public int getLoginTimeout()
+         throws SQLException
+   {
+      return this.loginTimeout;
+   }
+
+}

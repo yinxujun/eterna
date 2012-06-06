@@ -1,9 +1,14 @@
 
 package self.micromagic.eterna.sql.converter;
 
+import java.beans.PropertyEditor;
+
 import self.micromagic.util.StringRef;
 
-public interface ValueConverter
+/**
+ * 值转换器.
+ */
+public interface ValueConverter extends Cloneable
 {
    /**
     * 在无法转换时是否需要抛出异常.
@@ -15,6 +20,16 @@ public interface ValueConverter
     * 设置是否要抛出异常, 当无法转换成目标类型时.
     */
    void setNeedThrow(boolean need);
+
+   /**
+    * 获得<code>PropertyEditor</code>对象, 值转换器会使用它来进行转换.
+    */
+   PropertyEditor getPropertyEditor();
+
+   /**
+    * 设置<code>PropertyEditor</code>对象, 值转换器会使用它来进行转换.
+    */
+   void setPropertyEditor(PropertyEditor propertyEditor);
 
    /**
     * 获得要转换的目标类型代码.
@@ -44,5 +59,7 @@ public interface ValueConverter
     * @param changeNullToEmpty   是否要将null转换为空字符串
     */
    String convertToString(Object value, boolean changeNullToEmpty);
+
+   Object clone();
 
 }

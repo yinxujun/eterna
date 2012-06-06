@@ -30,6 +30,8 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.util.BooleanRef;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 import org.dom4j.Element;
 
 class CountQueryAdapter
@@ -152,7 +154,8 @@ class CountQueryAdapter
       this.oldSQL = tmpSQL;
       String part1 = "select count(*) as theCount from (";
       String part2 = ") tmpTable";
-      StringBuffer buf = new StringBuffer(part1.length() + part2.length() + tmpSQL.length());
+      StringAppender buf = StringTool.createStringAppender(
+            part1.length() + part2.length() + tmpSQL.length());
       buf.append(part1).append(tmpSQL).append(part2);
       this.cacheSQL = buf.toString();
       return this.cacheSQL;

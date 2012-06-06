@@ -47,6 +47,8 @@ import self.micromagic.util.FormatTool;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -333,7 +335,7 @@ public class FactoryManager
       {
          return null;
       }
-      StringBuffer buf = new StringBuffer();
+      StringAppender buf = StringTool.createStringAppender();
       Iterator itr = result.iterator();
       while (itr.hasNext())
       {
@@ -365,7 +367,7 @@ public class FactoryManager
             tmpSet.add(temp);
          }
       }
-      StringBuffer buf = new StringBuffer();
+      StringAppender buf = StringTool.createStringAppender();
       Iterator itr = tmpSet.iterator();
       while (itr.hasNext())
       {
@@ -1182,7 +1184,7 @@ public class FactoryManager
             catch (Throwable ex)
             {
                this.initException = ex;
-               StringBuffer temp = new StringBuffer();
+               StringAppender temp = StringTool.createStringAppender();
                if (ConfigurationException.config != null)
                {
                   temp.append("Config:").append(ConfigurationException.config).append("; ");
@@ -1201,7 +1203,7 @@ public class FactoryManager
                {
                   if (msg.getString() != null)
                   {
-                     StringBuffer tmpBuf = new StringBuffer();
+                     StringAppender tmpBuf = StringTool.createStringAppender();
                      tmpBuf.append(msg.getString());
                      tmpBuf.append(Utility.LINE_SEPARATOR);
                      tmpBuf.append(temp.toString());
@@ -2028,7 +2030,7 @@ public class FactoryManager
             }
             catch (Throwable ex)
             {
-               StringBuffer buf = new StringBuffer(128);
+               StringAppender buf = StringTool.createStringAppender(128);
                buf.append("Error in check configFile:[").append(this.configFile)
                      .append("], configURL:[").append(this.configURL).append("].");
                log.error(buf, ex);

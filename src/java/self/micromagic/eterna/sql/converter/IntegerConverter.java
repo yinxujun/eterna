@@ -8,10 +8,18 @@ import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class IntegerConverter extends ObjectConverter
 {
-   private Integer DEFAULT_VALUE = Utility.INTEGER_0;
+   private static Integer DEFAULT_VALUE = Utility.INTEGER_0;
+
+   private NumberFormat numberFormat;
+
+   public void setNumberFormat(NumberFormat numberFormat)
+   {
+      this.numberFormat = numberFormat;
+   }
 
    public int getConvertType(StringRef typeName)
    {
@@ -37,7 +45,7 @@ public class IntegerConverter extends ObjectConverter
 
    public int convertToInt(Object value)
    {
-      return this.convertToInt(value, null);
+      return this.convertToInt(value, this.numberFormat);
    }
 
    public int convertToInt(Object value, NumberFormat format)
@@ -54,6 +62,16 @@ public class IntegerConverter extends ObjectConverter
       {
          return this.convertToInt((String) value, format);
       }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Integer)
+      {
+         return ((Integer) tmpObj).intValue();
+      }
+      if (value instanceof String[])
+      {
+         String str = RequestParameterMap.getFirstParam(value);
+         return this.convertToInt(str, format);
+      }
       if (value instanceof ObjectRef)
       {
          ObjectRef ref = (ObjectRef) value;
@@ -65,13 +83,17 @@ public class IntegerConverter extends ObjectConverter
          {
             return this.convertToInt(ref.toString(), format);
          }
+         else
+         {
+            return this.convertToInt(ref.getObject(), format);
+         }
       }
       throw new ClassCastException(getCastErrorMessage(value, "int"));
    }
 
    public int convertToInt(String value)
    {
-      return this.convertToInt(value, null);
+      return this.convertToInt(value, this.numberFormat);
    }
 
    public int convertToInt(String value, NumberFormat format)
@@ -79,6 +101,11 @@ public class IntegerConverter extends ObjectConverter
       if (value == null)
       {
          return 0;
+      }
+      Object tmpObj = this.changeByPropertyEditor(value);
+      if (tmpObj instanceof Integer)
+      {
+         return ((Integer) tmpObj).intValue();
       }
       try
       {

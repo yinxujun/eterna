@@ -72,8 +72,9 @@ import java.util.LinkedList;
 import java.util.Properties;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 
 /**
@@ -753,8 +754,8 @@ public class GenericDataSource implements DataSource {
      */
     public String toString() {
 
-        StringBuffer sb = new StringBuffer("GenericDataSource[");
-        sb.append("activeCount=");
+        StringAppender sb = StringTool.createStringAppender();
+        sb.append("GenericDataSource[").append("activeCount=");
         sb.append(activeCount);
         sb.append(", autoCommit=");
         sb.append(autoCommit);
