@@ -102,6 +102,14 @@ public interface DataPrinter
    void print(Writer out, Object value) throws IOException, ConfigurationException;
 
    /**
+    * 输出一个Object对象数组.
+    *
+    * @param out          输出流
+    * @param values       要输出的Object对象数组
+    */
+   void print(Writer out, Object[] values) throws IOException, ConfigurationException;
+
+   /**
     * 输出一个Map对象.
     *
     * @param out          输出流

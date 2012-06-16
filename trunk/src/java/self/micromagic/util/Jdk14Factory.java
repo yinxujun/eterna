@@ -63,19 +63,6 @@ public class Jdk14Factory extends LogFactory
    private static Document logDocument = null;
    private static Element logNodes = null;
 
-   protected static void setExceptionLogType(String type)
-   {
-      try
-      {
-         EXCEPTION_LOG_TYPE = Integer.parseInt(type);
-      }
-      catch (Exception ex)
-      {
-         System.err.println("Error in set exception log type.");
-         ex.printStackTrace();
-      }
-   }
-
    private static void checkNodeInit()
    {
       if (logDocument == null)
@@ -236,7 +223,7 @@ public class Jdk14Factory extends LogFactory
    {
       try
       {
-         Utility.addMethodPropertyManager(EXCEPTION_LOG_PROPERTY, Jdk14Factory.class, "setExceptionLogType");
+         Utility.addFieldPropertyManager(EXCEPTION_LOG_PROPERTY, Jdk14Factory.class, "EXCEPTION_LOG_TYPE");
       }
       catch (Throwable ex)
       {
@@ -670,7 +657,7 @@ public class Jdk14Factory extends LogFactory
 
             if (ex == null)
             {
-               if (EXCEPTION_LOG_TYPE == 1)
+               if (EXCEPTION_LOG_TYPE > 0)
                {
                   addMessage(msg, level.getName(), cname, method, fileName, lineNumber);
                }
@@ -678,7 +665,7 @@ public class Jdk14Factory extends LogFactory
             }
             else
             {
-               if (EXCEPTION_LOG_TYPE == 1)
+               if (EXCEPTION_LOG_TYPE > 0)
                {
                   addException(msg, ex, false, level.getName(), cname, method, fileName, lineNumber);
                }

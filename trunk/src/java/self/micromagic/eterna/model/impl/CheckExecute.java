@@ -30,21 +30,12 @@ public class CheckExecute extends AbstractExecute
    {
       try
       {
-         Utility.addMethodPropertyManager(MAX_LOOP_COUNT_PROPERTY, CheckExecute.class, "setMaxLoopCount");
+         Utility.addFieldPropertyManager(MAX_LOOP_COUNT_PROPERTY, CheckExecute.class, "MAX_LOOP_COUNT");
       }
       catch (Throwable ex)
       {
          log.warn("Error in init CheckExecute max loop count.", ex);
       }
-   }
-
-   protected static void setMaxLoopCount(String count)
-   {
-      try
-      {
-         MAX_LOOP_COUNT = Integer.parseInt(count);
-      }
-      catch (Exception ex) {}
    }
 
    private String trueExportName = null;

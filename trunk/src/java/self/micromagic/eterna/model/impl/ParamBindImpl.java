@@ -100,7 +100,16 @@ public class ParamBindImpl extends AbstractGenerator
          int index = tmp.indexOf(':');
          if (index == -1)
          {
-            this.names[i] = new ParamSetManager.Name(tmp, tmp);
+            if (tmp.endsWith("[]"))
+            {
+               // 如果名称是以[]结尾, 则说明是以数组方式获取值
+               // sqlName只取"[]"前面的部分
+               this.names[i] = new ParamSetManager.Name(tmp, tmp.substring(0, tmp.length() - 2));
+            }
+            else
+            {
+               this.names[i] = new ParamSetManager.Name(tmp, tmp);
+            }
          }
          else
          {

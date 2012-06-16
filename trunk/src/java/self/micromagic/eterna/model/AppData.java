@@ -28,7 +28,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
-import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.FormatTool;
@@ -109,7 +109,8 @@ public class AppData
       {
          // 这里通过AppDataLogExecute类来监听
          // 因为在AppData中可能会有类不存在造成获取Method时发生错误
-         Utility.addMethodPropertyManager(APP_LOG_PROPERTY, AppDataLogExecute.class, "setAppLogType");
+         Utility.addMethodPropertyManager(APP_LOG_PROPERTY, AppDataLogExecute.class,
+               "setAppLogType");
       }
       catch (Exception ex)
       {

@@ -4,25 +4,21 @@ package self.micromagic.dc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtNewMethod;
-import org.apache.commons.collections.ReferenceMap;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.Generator;
-import self.micromagic.eterna.share.ThreadCache;
-import self.micromagic.util.Utility;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * 动态类的生成工具.
@@ -35,6 +31,16 @@ public class CodeClassTool
    public static final String CODE_ERRORS_FLAG = "codeErrors";
 
    /**
+    * 设置动态代码生成时, 对代码编译的类型.
+    */
+   public static final String COMPILE_TYPE_PROPERTY = "eterna.dc.compile.type";
+
+   /**
+    * 动态代码生成时, 对代码编译的类型.
+    */
+   private static String DC_COMPILE_TYPE = null;
+
+   /**
     * 生成的代码的编号序列.
     */
    private static volatile int CODE_ID = 1;
@@ -43,7 +49,16 @@ public class CodeClassTool
     * 生成的代码的缓存. <p>
     * 以baseClass为主键进行缓存, 值为一个map, 为继承这个类的代码集.
     */
-   private static Map codeCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
+   private static Map codeCache = new WeakHashMap();
+
+   static
+   {
+      try
+      {
+         Utility.addFieldPropertyManager(COMPILE_TYPE_PROPERTY, CodeClassTool.class, "DC_COMPILE_TYPE");
+      }
+      catch (Throwable ex) {}
+   }
 
    /**
     * 根据动态代码生成一个类.
@@ -77,61 +92,45 @@ public class CodeClassTool
          return codeClass;
       }
 
-      ClassPool pool = new ClassPool();
-      pool.appendSystemPath();
-      HashSet clSet = new HashSet();
+      ClassGenerator cg = new ClassGenerator();
       Iterator itr = pathClassCache.entrySet().iterator();
       while (itr.hasNext())
       {
          Map.Entry entry = (Map.Entry) itr.next();
-         if (!clSet.contains(entry.getValue()))
-         {
-            pool.appendClassPath(new ClassClassPath((Class) entry.getKey()));
-            clSet.add(entry.getValue());
-         }
+         cg.addClassPath((Class) entry.getKey());
       }
-      if (!clSet.contains(baseClass.getClassLoader()))
-      {
-         pool.appendClassPath(new ClassClassPath(baseClass));
-         clSet.add(baseClass.getClassLoader());
-      }
-      if (interfaceClass != null && !clSet.contains(interfaceClass.getClassLoader()))
-      {
-         pool.appendClassPath(new ClassClassPath(interfaceClass));
-         clSet.add(interfaceClass.getClassLoader());
-      }
-      if (!clSet.contains(CodeClassTool.class.getClassLoader()))
-      {
-         pool.appendClassPath(new ClassClassPath(CodeClassTool.class));
-      }
-      String nameSuffix = "$$EJC_" + baseClass.hashCode() + "_" + (CODE_ID++);
-      CtClass cc = pool.makeClass(baseClass.getName() + nameSuffix);
-      if (interfaceClass != null)
-      {
-         cc.addInterface(pool.get(interfaceClass.getName()));
-      }
-      cc.setSuperclass(pool.get(baseClass.getName()));
-      pool.importPackage("self.micromagic.util");
-      pool.importPackage("self.micromagic.eterna.sql");
-      pool.importPackage("self.micromagic.eterna.model");
-      pool.importPackage("self.micromagic.eterna.search");
-      pool.importPackage("self.micromagic.eterna.security");
-      pool.importPackage("java.util");
-      pool.importPackage("java.sql");
+      cg.addClassPath(baseClass);
+      cg.addClassPath(interfaceClass);
+      cg.addClassPath(CodeClassTool.class);
+      String nameSuffix = "$$EDC_" + (CODE_ID++);
+      cg.setClassName("eterna." + baseClass.getName() + nameSuffix);
+      cg.addInterface(interfaceClass);
+      cg.setSuperClass(baseClass);
+      cg.importPackage("self.micromagic.util");
+      cg.importPackage("self.micromagic.eterna.sql");
+      cg.importPackage("self.micromagic.eterna.model");
+      cg.importPackage("self.micromagic.eterna.search");
+      cg.importPackage("self.micromagic.eterna.security");
+      cg.importPackage("java.util");
+      cg.importPackage("java.sql");
       if (imports != null)
       {
          for (int i = 0; i < imports.length; i++)
          {
-            pool.importPackage(imports[i]);
+            cg.importPackage(imports[i]);
          }
       }
-      ClassLoader cl = baseClass.getClassLoader();
+      cg.setClassLoader(baseClass.getClassLoader());
       StringAppender tmpCode = StringTool.createStringAppender(bodyCode.length() + 32);
-      tmpCode.append(methodHead).append("\n{\n");
+      tmpCode.append(methodHead).appendln().append("{").appendln();
       tmpCode.append(bodyCode);
-      tmpCode.append("\n}");
-      cc.addMethod(CtNewMethod.make(tmpCode.toString(), cc));
-      codeClass = cc.toClass(cl);
+      tmpCode.appendln().append("}");
+      cg.addMethod(tmpCode.toString());
+      if (DC_COMPILE_TYPE != null)
+      {
+         cg.setCompileType(DC_COMPILE_TYPE);
+      }
+      codeClass = cg.createClass();
       cache.put(key, codeClass);
       return codeClass;
    }
@@ -139,7 +138,7 @@ public class CodeClassTool
    /**
     * 路径类的缓存, 主键为路径类, 值为此路径类的ClassLoader.
     */
-   private static Map pathClassCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
+   private static Map pathClassCache = new WeakHashMap();
 
    /**
     * 注册一个用于读取类信息的路径类. <p>
@@ -151,7 +150,7 @@ public class CodeClassTool
    {
       if (pathClass != null)
       {
-         pathClassCache.put(pathClass, pathClass.getClassLoader());
+         pathClassCache.put(pathClass, Boolean.TRUE);
       }
    }
 

@@ -12,7 +12,6 @@ import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.app.WebApp;
 import org.apache.commons.collections.ReferenceMap;
 
 public class DictionaryFormat extends AbstractGenerator

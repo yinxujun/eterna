@@ -560,7 +560,10 @@ public class SearchManagerImpl extends AbstractGenerator
                   index++;
                }
             }
-            buf.append(")");
+            if (buf.length() > 0)
+            {
+               buf.append(")");
+            }
          }
       }
       if (buf.length() > 0)
@@ -669,12 +672,14 @@ public class SearchManagerImpl extends AbstractGenerator
       conditions.add(condition);
    }
 
-   public Object create() throws ConfigurationException
+   public Object create()
+         throws ConfigurationException
    {
       return this.createSearchManager();
    }
 
-   public SearchManager createSearchManager() throws ConfigurationException
+   public SearchManager createSearchManager()
+         throws ConfigurationException
    {
       return new SearchManagerImpl();
    }

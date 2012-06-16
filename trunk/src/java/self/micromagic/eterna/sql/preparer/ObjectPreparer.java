@@ -4,7 +4,6 @@ package self.micromagic.eterna.sql.preparer;
 import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.util.Utility;
 
 class ObjectPreparer extends AbstractValuePreparer
 {
@@ -67,13 +66,13 @@ class ObjectPreparer extends AbstractValuePreparer
 
       public ValuePreparer createPreparer(Object value, int targetSqlType)
       {
-         return new ObjectPreparer(this, value, Utility.createInteger(targetSqlType));
+         return new ObjectPreparer(this, value, new Integer(targetSqlType));
       }
 
       public ValuePreparer createPreparer(Object value, int targetSqlType, int scale)
       {
-         return new ObjectPreparer(this, value, Utility.createInteger(targetSqlType),
-               Utility.createInteger(scale));
+         return new ObjectPreparer(this, value, new Integer(targetSqlType),
+               new Integer(scale));
       }
 
    }

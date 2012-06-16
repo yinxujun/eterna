@@ -2,7 +2,7 @@
 package self.micromagic.eterna.digester;
 
 import self.micromagic.eterna.share.EternaException;
-import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 

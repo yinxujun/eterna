@@ -306,8 +306,13 @@ public class ResultRowImpl implements ResultRow
    public int findColumn(String columnName)
          throws ConfigurationException
    {
-      int index = this.readerManager.getIndexByName(columnName);
-      return index;
+      return this.readerManager.getIndexByName(columnName);
+   }
+
+   public int findColumn(String columnName, boolean notThrow)
+         throws ConfigurationException
+   {
+      return this.readerManager.getIndexByName(columnName, notThrow);
    }
 
 }

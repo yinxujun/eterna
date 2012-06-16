@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,9 +14,11 @@ import org.apache.commons.logging.Log;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.ModelExport;
+import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaInitialize;
-import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
@@ -158,6 +161,67 @@ public interface WebApp
          }
       }
 
+      /**
+       * 执行一个model.
+       *
+       * @param data         执行model时需要用到的数据对象
+       * @param conn         当前存在的一个默认数据源的数据库链接, 如果当前不存在相应
+       *                     的数据库链接, 则可以给<code>null</code>
+       * @param factory      要执行的model所在的工厂
+       * @param modelName    要执行的model的名称
+       * @return    model执行完后, 需要转向的export, 如果执行的model未设置相应的export
+       *            则返回<code>null</code>
+       */
+      public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
+            String modelName)
+            throws ConfigurationException, SQLException, IOException
+      {
+         return this.callModel(data, conn, factory, modelName, false);
+      }
+
+      /**
+       * 执行一个model.
+       *
+       * @param data         执行model时需要用到的数据对象
+       * @param conn         当前存在的一个默认数据源的数据库链接, 如果当前不存在相应
+       *                     的数据库链接, 则可以给<code>null</code>
+       * @param factory      要执行的model所在的工厂
+       * @param modelName    要执行的model的名称
+       * @param noJump       出现错误时是否不用跳出(即: 抛出异常), 设为<code>true</code>
+       *                     时, 任何情况都不会跳出
+       * @return    model执行完后, 需要转向的export, 如果执行的model未设置相应的export
+       *            则返回<code>null</code>
+       */
+      public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
+            String modelName, boolean noJump)
+            throws ConfigurationException, SQLException, IOException
+      {
+         ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
+         if (preConn == null)
+         {
+            preConn = new ObjectRef(conn);
+            data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN, preConn);
+         }
+         ModelAdapter tmpModel = factory.createModelAdapter(modelName);
+         int tType = tmpModel.getTransactionType();
+         if (noJump)
+         {
+            try
+            {
+               return factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+            }
+            catch (Throwable ex)
+            {
+               Utility.createLog("pay").error("Error in call model", ex);
+               return tmpModel.getErrorExport();
+            }
+         }
+         else
+         {
+            return factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+         }
+      }
+
    }
 
    public static class QueryTool
@@ -167,15 +231,28 @@ public interface WebApp
 
       public QueryTool()
       {
+         FactoryManager.Instance instance = FactoryManager.getGlobalFactoryManager();
+         instance.addInitializedListener(this);
+      }
+
+      public QueryTool(EternaFactory factory)
+      {
          try
          {
-            FactoryManager.Instance instance = FactoryManager.getGlobalFactoryManager();
+            FactoryManager.Instance instance;
+            if (factory == null)
+            {
+               instance = FactoryManager.getGlobalFactoryManager();
+            }
+            else
+            {
+               instance = factory.getFactoryManager();
+            }
             instance.addInitializedListener(this);
-            this.afterEternaInitialize(instance);
          }
          catch (ConfigurationException ex)
          {
-            log.error("Error when create sql factory.", ex);
+            log.error("Error when create QueryTool.", ex);
          }
       }
 
@@ -183,11 +260,6 @@ public interface WebApp
             throws ConfigurationException
       {
          this.factory = instance.getEternaFactory();
-      }
-
-      public QueryTool(EternaFactory factory)
-      {
-         this.factory = factory;
       }
 
       public QueryAdapter getQueryAdapter(String name, String sql, String[] paramTypes,

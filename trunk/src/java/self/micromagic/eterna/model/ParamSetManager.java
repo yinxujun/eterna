@@ -365,7 +365,7 @@ public class ParamSetManager
             int colIndex = -1;
             try
             {
-               colIndex = values.findColumn(param.getName());
+               colIndex = values.findColumn(param.getName(), true);
             }
             catch (SQLException ex) {}
             catch (ConfigurationException ex) {}
@@ -404,7 +404,7 @@ public class ParamSetManager
             int colIndex = -1;
             try
             {
-               colIndex = row.findColumn(names[i].srcName);
+               colIndex = row.findColumn(names[i].srcName, true);
             }
             catch (SQLException ex) {}
             catch (ConfigurationException ex) {}
@@ -437,7 +437,7 @@ public class ParamSetManager
          int colIndex = -1;
          try
          {
-            colIndex = values.findColumn(names[i].srcName);
+            colIndex = values.findColumn(names[i].srcName, true);
          }
          catch (SQLException ex) {}
          catch (ConfigurationException ex) {}
@@ -539,8 +539,16 @@ public class ParamSetManager
 
       public Name(String srcName, String sqlName)
       {
-         this.srcName = srcName;
-         this.sqlName = sqlName;
+         this.srcName = StringTool.intern(srcName);
+         if (srcName == sqlName)
+         {
+            // 如果两个值相同, 第二个值就不做处理了
+            this.sqlName = this.srcName;
+         }
+         else
+         {
+            this.sqlName = StringTool.intern(sqlName);
+         }
       }
 
    }

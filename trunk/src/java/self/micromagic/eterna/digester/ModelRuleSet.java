@@ -219,7 +219,7 @@ public class ModelRuleSet extends RuleSetBase
 
       setters = new PropertySetter[] {
          new StringPropertySetter("src", "setSrc", true),
-         new StringPropertySetter("names", "setNames", false),
+         new StringPropertySetter("names", "setNames", false, false),
          new BooleanPropertySetter("loop", "setLoop", false),
          new BooleanPropertySetter("subSQL", "setSubSQL", false)
       };

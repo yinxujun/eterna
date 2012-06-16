@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -16,13 +17,121 @@ import java.util.Iterator;
  */
 public class ResManager
 {
-   private final char SPECIAL_FLAG = '#';
-   private final int INDENT_SIZE = 3;
-   private final char[] INDENT_BUF = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+   private static final char SPECIAL_FLAG = '#';
+   private static final int INDENT_SIZE = 3;
+   private static final char[] INDENT_BUF = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 
    private String charset = "UTF-8";
    private boolean skipEmptyLine = true;
    private Map resCache = new HashMap();
+
+   /**
+    * 对代码进行缩进处理.
+    */
+   public static String indentCode(String code, int indent)
+   {
+      if (StringTool.isEmpty(code))
+      {
+         return "";
+      }
+      BufferedReader r = new BufferedReader(new StringReader(code));
+      try
+      {
+         StringAppender buf = StringTool.createStringAppender(code.length() + 128);
+         String line = r.readLine();
+         int preIndent = indent, nowIndent = indent;
+         int preBeginSpace = -1;
+         boolean afterFirst = false;
+         while (line != null)
+         {
+            if (afterFirst)
+            {
+               buf.appendln();
+            }
+            afterFirst = true;
+            int[] arr = doIndentLine(nowIndent, line, buf, preIndent, preBeginSpace);
+            preIndent = nowIndent;
+            nowIndent = arr[0];
+            if (arr[1] >= 0)
+            {
+               preBeginSpace = arr[1];
+            }
+            if (nowIndent < indent)
+            {
+               nowIndent = indent;
+            }
+            line = r.readLine();
+        }
+         return buf.toString();
+      }
+      catch (IOException ex)
+      {
+         throw new RuntimeException(ex);
+      }
+   }
+
+   /**
+    * 处理1行的缩进.
+    * 返回两个数, 需要变更的缩进数 及 当前行的空格数
+    */
+   private static int[] doIndentLine(int indent, String line, StringAppender buf,
+         int preIndent, int preBeginSpace)
+   {
+      int index = -1;
+      int count = line.length();
+      for (int i = 0; i < count; i++)
+      {
+         if (line.charAt(i) > ' ')
+         {
+            index = i;
+            break;
+         }
+      }
+      // 没有找到非空格的其实字符, 作为空行处理
+      if (index == -1)
+      {
+         return new int[]{indent, -1};
+      }
+      int beginSpace = index;
+      if (line.charAt(index) == '}' && indent > 0)
+      {
+         indent--;
+      }
+      if (preBeginSpace == -1 || preIndent != indent)
+      {
+         dealIndent(indent, buf);
+         buf.append(line.substring(index));
+      }
+      else
+      {
+         int tmpI = (index - preBeginSpace) / INDENT_SIZE;
+         tmpI = tmpI < 0 ? 0 : tmpI > 2 ? 2 : tmpI;
+         dealIndent(indent + tmpI, buf);
+         buf.append(line.substring(index));
+      }
+      if (getLastValidChar(line) == '{')
+      {
+         indent++;
+      }
+      return new int[]{indent, beginSpace};
+   }
+
+   /**
+    * 获得最后一个非空格字符, 如果都是空格则返回0
+    */
+   private static char getLastValidChar(String line)
+   {
+      char c;
+      for (int i = line.length() - 1; i >= 0; i--)
+      {
+         c = line.charAt(i);
+         if (c > ' ')
+         {
+            return c;
+         }
+      }
+      return (char) 0;
+   }
 
    public synchronized void load(InputStream inStream)
          throws IOException
@@ -127,10 +236,10 @@ public class ResManager
             buf.appendln();
          }
          String s = paramBind == null ?
-               resArr[i] : Utility.resolveDynamicPropnames(resArr[i], paramBind);
+               resArr[i] : Utility.resolveDynamicPropnames(resArr[i], paramBind, true);
          if (s.length() > 0)
          {
-            this.dealIndent(indentCount, buf);
+            dealIndent(indentCount, buf);
             buf.append(s);
          }
       }
@@ -140,7 +249,7 @@ public class ResManager
    /**
     * 处理每行起始部分的缩进
     */
-   private void dealIndent(int indentCount, StringAppender buf)
+   private static void dealIndent(int indentCount, StringAppender buf)
    {
       if (indentCount <= 0)
       {

@@ -3,6 +3,9 @@ package self.micromagic.util;
 
 import java.io.UnsupportedEncodingException;
 import java.io.PrintStream;
+import java.io.Writer;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -357,6 +360,21 @@ public class StringTool
    }
 
    /**
+    * 向<code>StringAppender</code>中输出异常的堆栈信息.
+    *
+    * @param ex    要输出的异常信息
+    * @param sa    信息输出的<code>StringAppender</code>
+    */
+   public static void appendStackTrace(Throwable ex, StringAppender sa)
+   {
+      StringAppenderWriter sw = new StringAppenderWriter(sa);
+      PrintWriter pw = new PrintWriter(sw, true);
+      ex.printStackTrace(pw);
+      pw.flush();
+      pw.close();
+   }
+
+   /**
     * 创建一个字符串连接器.
     *
     * @return    字符串连接器
@@ -517,6 +535,7 @@ public class StringTool
    interface StringAppenderCreater
    {
       StringAppender create(int initSize);
+
    }
 
    private static class StrBuffer
@@ -633,6 +652,60 @@ public class StringTool
       public CharSequence subSequence(int start, int end)
       {
          return this.buf.subSequence(start, end);
+      }
+
+   }
+
+   public static class StringAppenderWriter extends Writer
+   {
+      private StringAppender out;
+
+      public StringAppenderWriter()
+      {
+         this(16);
+      }
+
+      public StringAppenderWriter(int size)
+      {
+         this.out = createStringAppender(size);
+      }
+
+      public StringAppenderWriter(StringAppender out)
+      {
+         this.out = out;
+      }
+
+      public void write(int c)
+      {
+         this.out.append((char) c);
+      }
+
+      public void write(String str, int off, int len)
+      {
+         this.out.append(str, off, len);
+      }
+
+      public void write(char[] cbuf, int off, int len)
+      {
+         this.out.append(cbuf, off, len);
+      }
+
+      public StringAppender getStringAppender()
+      {
+         return this.out;
+      }
+
+      public String toString()
+      {
+         return this.out.toString();
+      }
+
+      public void flush()
+      {
+      }
+
+      public void close()
+      {
       }
 
    }

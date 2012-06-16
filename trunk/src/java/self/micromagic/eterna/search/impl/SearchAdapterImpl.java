@@ -35,7 +35,7 @@ import self.micromagic.eterna.security.UserManager;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.OrderManager;
-import self.micromagic.eterna.share.SessionCache;
+import self.micromagic.util.container.SessionCache;
 import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
