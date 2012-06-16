@@ -7,13 +7,14 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 
-import org.apache.commons.collections.ReferenceMap;
+import self.micromagic.cg.BeanMethodInfo;
+import self.micromagic.cg.BeanTool;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
@@ -31,6 +32,15 @@ public class DataPrinterImpl extends AbstractGenerator
       implements DataPrinter, DataPrinterGenerator
 {
    protected StringCoder stringCoder;
+
+   public DataPrinterImpl()
+   {
+   }
+
+   public DataPrinterImpl(StringCoder stringCoder)
+   {
+      this.stringCoder = stringCoder;
+   }
 
    public void initialize(EternaFactory factory)
          throws ConfigurationException
@@ -165,19 +175,32 @@ public class DataPrinterImpl extends AbstractGenerator
          }
          else if (value.getClass().isArray())
          {
-            try
+            if (value.getClass().getComponentType().isPrimitive())
             {
-               this.printCollection(out, Arrays.asList((Object[]) value));
-            }
-            catch (ClassCastException cce)
-            {
+               // 如果是基本类型, 需要以反射的方式获取每个元素
                int length = Array.getLength(value);
-               ArrayList arr = new ArrayList(length);
+               out.write("[");
                for (int i = 0; i < length; i++)
                {
-                  arr.add(Array.get(value, i));
+                  if (i > 0)
+                  {
+                     out.write(",");
+                  }
+                  Object tmpObj = Array.get(value, i);
+                  if (tmpObj != null)
+                  {
+                     this.print(out, tmpObj);
+                  }
+                  else
+                  {
+                     out.write("null");
+                  }
                }
-               this.printIterator(out, arr.iterator());
+               out.write("]");
+            }
+            else
+            {
+               this.print(out, (Object[]) value);
             }
          }
          else if (Tool.isBean(value.getClass()))
@@ -198,6 +221,36 @@ public class DataPrinterImpl extends AbstractGenerator
       {
          log.error("SQL error in printObject.", ex);
          throw new ConfigurationException(ex);
+      }
+   }
+
+   public void print(Writer out, Object[] values)
+         throws IOException, ConfigurationException
+   {
+      if (values == null)
+      {
+         out.write("null");
+      }
+      else
+      {
+         out.write("[");
+         for (int i = 0; i < values.length; i++)
+         {
+            if (i > 0)
+            {
+               out.write(",");
+            }
+            Object value = values[i];
+            if (value != null)
+            {
+               this.print(out, value);
+            }
+            else
+            {
+               out.write("null");
+            }
+         }
+         out.write("]");
       }
    }
 
@@ -416,7 +469,7 @@ public class DataPrinterImpl extends AbstractGenerator
    /**
     * 存放BeanPrinter的缓存
     */
-   private static Map beanPrinterMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
+   private static Map beanPrinterMap = new WeakHashMap();
 
    public BeanPrinter getBeanPrinter(Class beanClass)
    {
@@ -439,13 +492,13 @@ public class DataPrinterImpl extends AbstractGenerator
                         + "p.print(out, ${o_value});";
                   String lt = "out.write(\",\");";
                   String[] imports = new String[]{
-                     Tool.getPackageString(DataPrinter.class),
-                     Tool.getPackageString(Writer.class),
-                     Tool.getPackageString(ConfigurationException.class),
-                     Tool.getPackageString(beanClass)
+                     ClassGenerator.getPackageString(DataPrinter.class),
+                     ClassGenerator.getPackageString(Writer.class),
+                     ClassGenerator.getPackageString(ConfigurationException.class),
+                     ClassGenerator.getPackageString(beanClass)
                   };
-                  bp = (BeanPrinter) Tool.createBeanProcesser(beanClass, BeanPrinter.class, mh,
-                        "bean", ut, pt, lt, imports, Tool.BEAN_PROCESSER_TYPE_R);
+                  bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
+                        "bean", ut, pt, lt, imports);
                   if (bp == null)
                   {
                      bp = new BeanPrinterImpl(beanClass);
@@ -466,12 +519,12 @@ public class DataPrinterImpl extends AbstractGenerator
          implements BeanPrinter
    {
       private Field[] fields;
-      private Tool.BeanMethodInfo[] methods;
+      private BeanMethodInfo[] methods;
 
       public BeanPrinterImpl(Class c)
       {
-         this.fields = Tool.getBeanFields(c);
-         this.methods = Tool.getBeanReadMethods(c);
+         this.fields = BeanTool.getBeanFields(c);
+         this.methods = BeanTool.getBeanReadMethods(c);
       }
 
       public void print(DataPrinter p, Writer out, Object bean)

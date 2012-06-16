@@ -96,4 +96,11 @@ public interface ModelAdapter
    ModelExport doModel(AppData data, Connection conn)
          throws ConfigurationException, SQLException, IOException;
 
+   /**
+    * 获得一个执行者.
+    *
+    * @param index   执行者所在的索引值, 从1开始, 如: 第一个 1 第二个 2
+    */
+   Execute getExecute(int index) throws ConfigurationException;
+
 }

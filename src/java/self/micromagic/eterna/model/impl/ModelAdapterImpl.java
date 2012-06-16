@@ -17,7 +17,9 @@ import self.micromagic.eterna.model.ModelAdapterGenerator;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.util.ObjectRef;
+import org.dom4j.Element;
 
 public class ModelAdapterImpl extends AbstractGenerator
       implements ModelAdapter, ModelAdapterGenerator
@@ -203,6 +205,16 @@ public class ModelAdapterImpl extends AbstractGenerator
       }
    }
 
+   public Execute getExecute(int index)
+         throws ConfigurationException
+   {
+      if (index < 1 || index > this.executes.size())
+      {
+         throw new ConfigurationException("Error execute index:" + index + ".");
+      }
+      return (Execute) this.executes.get(index - 1);
+   }
+
    protected ModelExport doModelExt(AppData data, Connection conn, boolean needLogApp, ObjectRef errorRef)
          throws ConfigurationException, SQLException, IOException
    {
@@ -219,7 +231,9 @@ public class ModelAdapterImpl extends AbstractGenerator
             executeType = execute.getExecuteType();
             if (needLogApp)
             {
-               data.beginNode("execute", execute.getExecuteType(), "index:" + (index + 1));
+               Element el = data.beginNode("execute", execute.getExecuteType(),
+                     "index:" + (index + 1) + ", name:" + execute.getName());
+               el.addAttribute("class", ClassGenerator.getClassName(execute.getClass()));
             }
             ModelExport export = execute.execute(data, conn);
             if (needLogApp)

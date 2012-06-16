@@ -328,3 +328,35 @@ return ${beanName}.${fieldName};
 ## otherTypeMethodGet
 return ${beanName}.${methodName}();
 
+# 对数组类型通过属性进行获取
+## arrayTypeFieldGet
+if (${indexs} == null || ${indexs}.length == 0)
+{
+   return ${beanName}.${fieldName};
+}
+else
+{
+   return this.processerArr[${indexs}.length - 1].getBeanValue(${cellDescriptor}, ${indexs},
+         ${beanName}.${fieldName}, ${prefixName}, ${beanMap});
+}
+
+# 对数组类型通过方法进行获取
+## arrayTypeMethodGet
+if (${indexs} == null || ${indexs}.length == 0)
+{
+   return ${beanName}.${methodName}();
+}
+else
+{
+   return this.processerArr[${indexs}.length - 1].getBeanValue(${cellDescriptor}, ${indexs},
+         ${beanName}.${methodName}(), ${prefixName}, ${beanMap});
+}
+
+# 对基本类型的数组进行获取
+## arrayTypePrimitiveGet
+return new ${wrapName}(${arrayName}${arrayVisitList});
+
+# 对其他类型的数组进行获取
+## arrayTypeOtherGet
+return ${arrayName}${arrayVisitList};
+

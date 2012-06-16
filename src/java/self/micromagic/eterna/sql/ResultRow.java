@@ -580,20 +580,26 @@ public interface ResultRow
    //----------------------------------------------------------------
 
    /**
-    * Maps the given <code>ResultSet</code> column name to its
-    * <code>ResultSet</code> column index.
-    * 在<code>ResultRow</code>中将列名映射未列的索引值.
+    * 在<code>ResultRow</code>中将列名映射为列的索引值.
     *
-    * @param columnName the name of the column
-    *                   <p>该列的名称
-    * @return the column index of the given column name
-    *         所给列名的索引值
-    * @exception SQLException if the <code>ResultSet</code> object
-    * does not contain <code>columnName</code> or a database access error occurs
-    *                         假如<code>ResultRow</code>对象中不存在改列名或
-    * 访问数据库时发生错误
+    * @param columnName  该列的名称
+    * @return    所给列名的索引值
+    * @exception SQLException  假如<code>ResultRow</code>对象中不存在该列名或
+    *                          访问数据库时发生错误
     */
    int findColumn(String columnName) throws SQLException, ConfigurationException;
+
+   /**
+    * 在<code>ResultRow</code>中将列名映射为列的索引值.
+    *
+    * @param columnName  该列的名称
+    * @param notThrow    设为<code>true<code>时, 当对应名称的reader不存在时
+    *                    不会抛出异常, 而只是返回-1
+    * @return    所给列名的索引值, 或-1(当不存在该列名时)
+    * @exception SQLException  假如<code>ResultRow</code>对象中不存在该列名或
+    *                          访问数据库时发生错误
+    */
+   int findColumn(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
 
 
    //--------------------------JDBC 2.0-----------------------------------

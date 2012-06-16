@@ -6,13 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.sql.UpdateAdapter;
-import self.micromagic.eterna.sql.UpdateAdapterGenerator;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
-import self.micromagic.util.Utility;
-import org.dom4j.Element;
+import self.micromagic.eterna.sql.UpdateAdapter;
+import self.micromagic.eterna.sql.UpdateAdapterGenerator;
 
 public class UpdateAdapterImpl extends SQLAdapterImpl
       implements UpdateAdapter, UpdateAdapterGenerator
@@ -131,7 +130,7 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
                Element nowNode = AppData.getCurrentData().getCurrentNode();
                if (nowNode != null)
                {
-                  AppDataLogExecute.printObject(nowNode.addElement("result"), Utility.createInteger(result));
+                  AppDataLogExecute.printObject(nowNode.addElement("result"), new Integer(result));
                }
             }
          }

@@ -75,7 +75,7 @@ public class IntegerRef extends ObjectRef
       Object obj = super.getObject();
       if (obj == null || ((Integer) obj).intValue() != this.value)
       {
-         obj = Utility.createInteger(this.value);
+         obj = new Integer(this.value);
          super.setObject(obj);
       }
       return obj;

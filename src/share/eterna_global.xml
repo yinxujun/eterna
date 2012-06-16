@@ -1935,7 +1935,14 @@
                   theObj.focus();
                }
                {$data:___checkResult}.pass = false;
-               {$data:___checkResult}.msg.push(eg_temp.caption + " " + thisMsg);
+               if (eg_temp.caption != null)
+               {
+                  {$data:___checkResult}.msg.push(eg_temp.caption + " " + thisMsg);
+               }
+               else
+               {
+                  {$data:___checkResult}.msg.push(thisMsg);
+               }
             }
          ]]></function>
 
@@ -2333,6 +2340,70 @@
             }
          ]]></function>
 
+
+         <!--
+         列表单元格纵向合并需要的方法.
+         -->
+
+         <!-- 初始化列合并需要的信息 -->
+         <function name="cm_initColumnMergeInfo">
+            var data = _eterna.egTempData(true);
+            data.columnMergeInfo = {};
+         </function>
+
+         <!-- 判断上一个单元格与本单元格的值是否一致，一致则不生成此单元格 -->
+         <function name="cm_checkSameValue" param="objConfig"><![CDATA[
+            if (eg_temp.rowType == "row")
+            {
+               var cInfo = eg_temp.tempData.columnMergeInfo[objConfig.name];
+               if (cInfo == null)
+               {
+                  cInfo = {tdObj:null,newValue:true};
+                  eg_temp.tempData.columnMergeInfo[objConfig.name] = cInfo;
+               }
+               var newValue = true;
+               if (cInfo.tdObj != null)
+               {
+                  // 如果父单元的值更新了，那本单元也要生成新的单元
+                  // 注：父单元必须在本单元之前，否则效果会和预期的不一致
+                  var pmName = _eterna.egTempParam().parentMerge;
+                  if (pmName == null || !eg_temp.tempData.columnMergeInfo[pmName].newValue)
+                  {
+                     var tdValue = {$ef:getData_value}(eg_temp.dataName, eg_temp.srcName, eg_temp.index);
+                     var tdValueOld = {$ef:getData_value}(eg_temp.dataName, eg_temp.srcName, eg_temp.index - 1);
+                     if (tdValue == tdValueOld)
+                     {
+                        {$ef:cm_dealMergeTd}(cInfo.tdObj);
+                        newValue = false;
+                     }
+                  }
+               }
+               eg_temp.tempData.columnMergeInfo[objConfig.name].newValue = newValue;
+               return newValue;
+            }
+            return true;
+         ]]></function>
+
+         <!-- 存放当前单元格 -->
+         <function name="cm_storeCurrentTdObj" param="objConfig, theObj">
+            if (eg_temp.rowType == "row")
+            {
+               eg_temp.tempData.columnMergeInfo[objConfig.name].tdObj = theObj;
+            }
+         </function>
+
+         <!-- 处理单元格的合并 -->
+         <function name="cm_dealMergeTd" param="tdObj">
+            var spanCount = tdObj.attr("rowSpan");
+            if (spanCount == null || spanCount == "")
+            {
+               tdObj.attr("rowSpan", "2");
+            }
+            else
+            {
+               tdObj.attr("rowSpan", (parseInt(spanCount) + 1) + "");
+            }
+         </function>
 
       </objs>
 

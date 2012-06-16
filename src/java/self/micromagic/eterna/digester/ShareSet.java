@@ -179,12 +179,9 @@ public class ShareSet extends RuleSetBase
       {
          java.util.Hashtable ht = new java.util.Hashtable();
          boolean needEnv = false;
-         if (attributes.getLength() > 0)
+         for (int i = 0; i < attributes.getLength(); i++)
          {
-            for (int i = 0; i < attributes.getLength(); i++)
-            {
-               ht.put(attributes.getQName(i), attributes.getValue(i));
-            }
+            ht.put(attributes.getQName(i), attributes.getValue(i));
          }
          if (!ht.contains(Context.INITIAL_CONTEXT_FACTORY))
          {
@@ -197,12 +194,21 @@ public class ShareSet extends RuleSetBase
          String fName = (String) ht.get(Context.INITIAL_CONTEXT_FACTORY);
          if (fName != null)
          {
-            Object obj = ObjectCreateRule.createObject(fName, false);
-            if (obj == null)
+            if (fName.length() == 0)
             {
-               log.error("Not found Context.INITIAL_CONTEXT_FACTORY:[" + fName + "].");
+               // 如果INITIAL_CONTEXT_FACTORY的名字为空字符串, 则移除
                ht.remove(Context.INITIAL_CONTEXT_FACTORY);
                needEnv = true;
+            }
+            else
+            {
+               Object obj = ObjectCreateRule.createObject(fName, false);
+               if (obj == null)
+               {
+                  log.error("Not found Context.INITIAL_CONTEXT_FACTORY:[" + fName + "].");
+                  ht.remove(Context.INITIAL_CONTEXT_FACTORY);
+                  needEnv = true;
+               }
             }
          }
          if (ht.size() > 0)

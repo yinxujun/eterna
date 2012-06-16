@@ -13,6 +13,7 @@ import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.Generator;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.util.ObjectRef;
 import org.apache.commons.logging.Log;
 
@@ -60,7 +61,7 @@ public class BaseExecute extends AbstractExecute
       }
       super.initialize(model);
       this.factory = model.getFactory();
-      this.executeType = "class:" + this.getClass().getName();
+      this.executeType = "class:" + ClassGenerator.getClassName(this.getClass());
       this.plusInit();
    }
 

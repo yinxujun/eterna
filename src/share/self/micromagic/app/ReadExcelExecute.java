@@ -197,7 +197,7 @@ public class ReadExcelExecute extends AbstractExecute
             {
                if (this.needRowIndex && j == 0)
                {
-                  values[0] = Utility.createInteger(i + 1);
+                  values[0] = new Integer(i + 1);
                }
                else if (row.length > this.readers[j].getColumnIndex() - 1)
                {

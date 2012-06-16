@@ -22,12 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.collections.ReferenceMap;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.dom4j.Document;
@@ -41,14 +41,14 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaFactoryImpl;
 import self.micromagic.eterna.share.EternaInitialize;
 import self.micromagic.eterna.share.Factory;
-import self.micromagic.eterna.share.ThreadCache;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.ObjectRef;
-import self.micromagic.util.StringRef;
-import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * 配置说明:
@@ -169,8 +169,9 @@ public class FactoryManager
       current = globalInstance;
       try
       {
+         Utility.addMethodPropertyManager(CHECK_GRAMMER_PROPERTY, FactoryManager.class,
+               "setCheckGrammer");
          reInitEterna();
-         Utility.addMethodPropertyManager(CHECK_GRAMMER_PROPERTY, FactoryManager.class, "setCheckGrammer");
       }
       catch (Throwable ex)
       {
@@ -573,19 +574,22 @@ public class FactoryManager
             try
             {
                Method method = baseClass.getDeclaredMethod( "autoReloadTime", new Class[0]);
-               Long autoReloadTime;
-               if (!method.isAccessible())
+               if (Modifier.isStatic(method.getModifiers()))
                {
-                  method.setAccessible(true);
-                  autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
-                  method.setAccessible(false);
+                  Long autoReloadTime;
+                  if (!method.isAccessible())
+                  {
+                     method.setAccessible(true);
+                     autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+                     method.setAccessible(false);
+                  }
+                  else
+                  {
+                     autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+                  }
+                  instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
+                        autoReloadTime.longValue());
                }
-               else
-               {
-                  autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
-               }
-               instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
-                     autoReloadTime.longValue());
             }
             catch (Throwable ex)
             {
@@ -1310,24 +1314,35 @@ public class FactoryManager
          }
          try
          {
-            Method method = theClass.getDeclaredMethod("afterEternaInitialize", new Class[]{Instance.class});
+            Method method = theClass.getDeclaredMethod("afterEternaInitialize",
+                  new Class[]{Instance.class});
             if (this.listenerMap == null)
             {
                synchronized (this)
                {
                   if (this.listenerMap == null)
                   {
-                     this.listenerMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD, 2, 0.75f);
+                     this.listenerMap = new WeakHashMap(2, 0.75f);
                   }
                }
             }
+            Object srcObj;
             if (Modifier.isStatic(method.getModifiers()))
             {
+               srcObj = theClass;
                this.listenerMap.put(theClass, Boolean.TRUE);
             }
             else
             {
-               this.listenerMap.put(obj, Boolean.TRUE);
+               srcObj = obj;
+            }
+            if (this.listenerMap.put(srcObj, Boolean.TRUE) != Boolean.TRUE)
+            {
+               if (this.initialized)
+               {
+                  // 如果是新的监听者且本工厂实例已经初始化完成, 则触发通知
+                  this.callAfterEternaInitialize(srcObj);
+               }
             }
          }
          catch (NoSuchMethodException ex)
@@ -1336,7 +1351,7 @@ public class FactoryManager
          }
          catch (Exception ex)
          {
-            log.error("The class [" + theClass + "] isn't InitializedListener.", ex);
+            log.error("Add InitializedListener error, class [" + theClass + "].", ex);
          }
       }
 
@@ -1727,7 +1742,14 @@ public class FactoryManager
          else
          {
             this.setShareInstance(null);
-            this.addInitializedListener(baseObj);
+            if (baseObj == null)
+            {
+               this.addInitializedListener(baseClass);
+            }
+            else
+            {
+               this.addInitializedListener(baseObj);
+            }
          }
       }
 

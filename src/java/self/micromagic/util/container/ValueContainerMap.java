@@ -5,6 +5,9 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Enumeration;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.sql.SQLException;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletContext;
@@ -12,6 +15,10 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
 
 import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultMetaData;
+import self.micromagic.eterna.digester.ConfigurationException;
+import org.apache.commons.collections.iterators.IteratorEnumeration;
 
 /**
  * 注: 使用时需注意, 如果没有通过ValueContainerMap而是直接对
@@ -24,13 +31,19 @@ public class ValueContainerMap extends AbstractMap
    private ValueContainerMapEntrySet vEntrySet;
    private ValueContainer vContainer;
 
+   /**
+    * 在执行put和remove时, 是否要读取原始值.
+    * <code>true</code>为需要读取原始值.
+    */
+   private boolean loadOldValue = false;
+
    private ValueContainerMap(ValueContainer vContainer)
    {
       this.vContainer = vContainer;
-      this.vEntrySet = new ValueContainerMapEntrySet(this.vContainer);
+      this.vEntrySet = new ValueContainerMapEntrySet(this, this.vContainer);
    }
 
-   public static Map create(ValueContainer vContainer)
+   public static ValueContainerMap create(ValueContainer vContainer)
    {
       if (vContainer == null)
       {
@@ -39,7 +52,18 @@ public class ValueContainerMap extends AbstractMap
       return new ValueContainerMap(vContainer);
    }
 
-   public static Map createRequestAttributeMap(ServletRequest request)
+   public static ValueContainerMap createResultRowMap(ResultRow row)
+   {
+      if (row == null)
+      {
+         return null;
+      }
+      ValueContainer vContainer = new ResultRowContainer(row);
+      return new ValueContainerMap(vContainer);
+   }
+
+
+   public static ValueContainerMap createRequestAttributeMap(ServletRequest request)
    {
       if (request == null)
       {
@@ -53,7 +77,7 @@ public class ValueContainerMap extends AbstractMap
     * @deprecated
     * @see #createSessionAttributeMap(HttpServletRequest)
     */
-   public static Map createSessionAttributeMap(HttpSession session)
+   public static ValueContainerMap createSessionAttributeMap(HttpSession session)
    {
       if (session == null)
       {
@@ -63,7 +87,7 @@ public class ValueContainerMap extends AbstractMap
       return new ValueContainerMap(vContainer);
    }
 
-   public static Map createSessionAttributeMap(HttpServletRequest request)
+   public static ValueContainerMap createSessionAttributeMap(HttpServletRequest request)
    {
       if (request == null)
       {
@@ -73,7 +97,7 @@ public class ValueContainerMap extends AbstractMap
       return new ValueContainerMap(vContainer);
    }
 
-   public static Map createApplicationAttributeMap(ServletContext context)
+   public static ValueContainerMap createApplicationAttributeMap(ServletContext context)
    {
       if (context == null)
       {
@@ -83,24 +107,25 @@ public class ValueContainerMap extends AbstractMap
       return new ValueContainerMap(vContainer);
    }
 
-   public boolean equals(Object o)
+   /**
+    * 在执行put和remove时, 是否要读取原始值.
+    */
+   public boolean isLoadOldValue()
    {
-      if (o instanceof ValueContainerMap)
-      {
-         ValueContainerMap other = (ValueContainerMap) o;
-         return this.vContainer.equals(other.vContainer);
-      }
-      return super.equals(o);
+      return loadOldValue;
    }
 
-   public int hashCode()
+   /**
+    * 设置在执行put和remove时, 是否要读取原始值.
+    */
+   public void setLoadOldValue(boolean loadOldValue)
    {
-      return this.vContainer.hashCode();
+      this.loadOldValue = loadOldValue;
    }
 
    public boolean containsKey(Object key)
    {
-      return this.get(key) != null;
+      return this.vEntrySet.containsKey(key);
    }
 
    public Object get(Object key)
@@ -121,6 +146,83 @@ public class ValueContainerMap extends AbstractMap
    public Set entrySet()
    {
       return this.vEntrySet;
+   }
+
+
+   private static class ResultRowContainer
+         implements ValueContainer
+   {
+      private ResultRow row;
+
+      public ResultRowContainer(ResultRow row)
+      {
+         this.row = row;
+      }
+
+      public boolean equals(Object o)
+      {
+         if (o instanceof ResultRowContainer)
+         {
+            ResultRowContainer other = (ResultRowContainer) o;
+            return this.row.equals(other.row);
+         }
+         return false;
+      }
+
+      public int hashCode()
+      {
+         return this.row.hashCode();
+      }
+
+      public Object getValue(Object key)
+      {
+         try
+         {
+            return this.row.getObject(key == null ? null : key.toString(), true);
+         }
+         catch (SQLException ex)
+         {
+            return null;
+         }
+         catch (ConfigurationException ex)
+         {
+            return null;
+         }
+      }
+
+      public void setValue(Object key, Object value)
+      {
+	      throw new UnsupportedOperationException();
+      }
+
+      public void removeValue(Object key)
+      {
+	      throw new UnsupportedOperationException();
+      }
+
+      public Enumeration getKeys()
+      {
+         try
+         {
+            ResultMetaData rmd = this.row.getResultIterator().getMetaData();
+            int count = rmd.getColumnCount();
+            List names = new ArrayList(rmd.getColumnCount());
+            for (int i = 0; i < count; i++)
+            {
+               names.add(rmd.getColumnReader(i + 1));
+            }
+            return new IteratorEnumeration(names.iterator());
+         }
+         catch (SQLException ex)
+         {
+            return null;
+         }
+         catch (ConfigurationException ex)
+         {
+            return null;
+         }
+      }
+
    }
 
    private static class RequestAttributeContainer
@@ -150,20 +252,17 @@ public class ValueContainerMap extends AbstractMap
 
       public Object getValue(Object key)
       {
-         return this.request.getAttribute(
-               key == null ? null : key.toString());
+         return this.request.getAttribute(key == null ? null : key.toString());
       }
 
       public void setValue(Object key, Object value)
       {
-         this.request.setAttribute(
-               key == null ? null : key.toString(), value);
+         this.request.setAttribute(key == null ? null : key.toString(), value);
       }
 
       public void removeValue(Object key)
       {
-         this.request.removeAttribute(
-               key == null ? null : key.toString());
+         this.request.removeAttribute(key == null ? null : key.toString());
       }
 
       public Enumeration getKeys()
@@ -273,7 +372,6 @@ public class ValueContainerMap extends AbstractMap
 
    }
 
-
    private static class ApplicationAttributeContainer
          implements ValueContainer
    {
@@ -301,20 +399,17 @@ public class ValueContainerMap extends AbstractMap
 
       public Object getValue(Object key)
       {
-         return this.context.getAttribute(
-               key == null ? null : key.toString());
+         return this.context.getAttribute(key == null ? null : key.toString());
       }
 
       public void setValue(Object key, Object value)
       {
-         this.context.setAttribute(
-               key == null ? null : key.toString(), value);
+         this.context.setAttribute(key == null ? null : key.toString(), value);
       }
 
       public void removeValue(Object key)
       {
-         this.context.removeAttribute(
-               key == null ? null : key.toString());
+         this.context.removeAttribute(key == null ? null : key.toString());
       }
 
       public Enumeration getKeys()

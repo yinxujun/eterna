@@ -15,16 +15,23 @@ import self.micromagic.util.StringTool;
 public class ValueContainerMapEntrySet extends AbstractSet
       implements Set
 {
+   private ValueContainerMap vcm;
    private ValueContainer vContainer;
    private Map entryMap = null;
 
-   public ValueContainerMapEntrySet(ValueContainer vContainer)
+   public ValueContainerMapEntrySet(ValueContainerMap vcm, ValueContainer vContainer)
    {
       if (vContainer == null)
       {
          throw new NullPointerException();
       }
+      this.vcm = vcm;
       this.vContainer = vContainer;
+   }
+
+   public boolean isEntryInitialized()
+   {
+      return this.entryMap != null;
    }
 
    private synchronized void initEntryMap()
@@ -42,9 +49,27 @@ public class ValueContainerMapEntrySet extends AbstractSet
       }
    }
 
-   protected boolean isEntryMapInitialized()
+   /**
+    * 判断entry列表是否被初始化了.
+    */
+   public boolean isEntryMapInitialized()
    {
       return this.entryMap != null;
+   }
+
+   /**
+    * 判断entry列表是否被初始化了.
+    */
+   public boolean containsKey(Object key)
+   {
+      if (this.entryMap == null)
+      {
+         return this.vcm.get(key) != null;
+      }
+      else
+      {
+         return this.entryMap.containsKey(key);
+      }
    }
 
    public int size()
@@ -135,7 +160,11 @@ public class ValueContainerMapEntrySet extends AbstractSet
 
    public synchronized Object addValue(Object key, Object value)
    {
-      Object oldValue = this.vContainer.getValue(key);
+      Object oldValue = null;
+      if (this.vcm.isLoadOldValue())
+      {
+         oldValue = this.vContainer.getValue(key);
+      }
       if (this.isEntryMapInitialized())
       {
          MapEntry entry = new MapEntry(key, value);
@@ -150,7 +179,11 @@ public class ValueContainerMapEntrySet extends AbstractSet
 
    public synchronized Object removeValue(Object key)
    {
-      Object oldValue = this.vContainer.getValue(key);
+      Object oldValue = null;
+      if (this.vcm.isLoadOldValue())
+      {
+         oldValue = this.vContainer.getValue(key);
+      }
       if (this.isEntryMapInitialized())
       {
          Map.Entry entry = new MapEntry(key);
@@ -241,11 +274,9 @@ public class ValueContainerMapEntrySet extends AbstractSet
 
       public int hashCode()
       {
-         if (this.key == null)
-         {
-            return 0;
-         }
-         return this.key.hashCode();
+         Object key = this.getKey();
+         Object value = this.getValue();
+         return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
       }
 
       public boolean equals(Object obj)

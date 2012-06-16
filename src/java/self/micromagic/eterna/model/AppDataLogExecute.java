@@ -13,17 +13,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
-import org.apache.commons.collections.ReferenceMap;
 import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.share.Generator;
-import self.micromagic.eterna.share.SessionCache;
+import self.micromagic.util.container.SessionCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.eterna.share.TypeManager;
+import self.micromagic.cg.BeanMethodInfo;
+import self.micromagic.cg.BeanTool;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultRow;
@@ -94,7 +97,7 @@ public class AppDataLogExecute extends AbstractExecute
    /**
     * BeanPrinter生成
     */
-   private static Map beanPrinterMap = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.HARD);
+   private static Map beanPrinterMap = new WeakHashMap();
    private static BeanPrinter getBeanPrinter(Class beanClass)
    {
       BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
@@ -108,22 +111,22 @@ public class AppDataLogExecute extends AbstractExecute
             {
                try
                {
-                  String mh = "public void print(AppDataLogExecute$Printer p,"
-                        + " Element parent, Object value) throws Exception";
-                  String ut = "Element nowNode = parent.addElement(\"${type}\");"
-                        + "nowNode.addAttribute(\"name\", \"${name}\");"
-                        + "p.printObject(nowNode, ${value});";
-                  String pt = "Element nowNode = parent.addElement(\"${type}\");"
-                        + "nowNode.addAttribute(\"name\", \"${name}\");"
-                        + "nowNode.addAttribute(\"type\", \"${primitive}\");"
-                        + "nowNode.addAttribute(\"value\", ${value});";
+                  String mh = "public void print(" + ClassGenerator.getClassName(Printer.class)
+                        + " p," + " Element parent, Object value) throws Exception";
+                  String ut = "p.printObject(parent.addElement(\"${type}\")"
+                        + ".addAttribute(\"name\", \"${name}\")"
+                        + ", ${value});";
+                  String pt = "parent.addElement(\"${type}\")"
+                        + ".addAttribute(\"name\", \"${name}\")"
+                        + ".addAttribute(\"type\", \"${primitive}\")"
+                        + ".addAttribute(\"value\", ${value});";
                   String[] imports = new String[]{
-                     Tool.getPackageString(AppDataLogExecute.class),
-                     Tool.getPackageString(Element.class),
-                     Tool.getPackageString(beanClass)
+                     ClassGenerator.getPackageString(AppDataLogExecute.class),
+                     ClassGenerator.getPackageString(Element.class),
+                     ClassGenerator.getPackageString(beanClass)
                   };
-                  bp = (BeanPrinter) Tool.createBeanProcesser(beanClass, BeanPrinter.class, mh,
-                        "value", ut, pt, "", imports, Tool.BEAN_PROCESSER_TYPE_R);
+                  bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
+                        "value", ut, pt, "", imports);
                   if (bp == null)
                   {
                      bp = new BeanPrinterImpl(beanClass);
@@ -140,7 +143,7 @@ public class AppDataLogExecute extends AbstractExecute
       return bp;
    }
 
-   public static interface BeanPrinter
+   public interface BeanPrinter
    {
       public void print(Printer p, Element parent, Object value) throws Exception;
    }
@@ -149,12 +152,12 @@ public class AppDataLogExecute extends AbstractExecute
          implements BeanPrinter
    {
       private Field[] fields;
-      private Tool.BeanMethodInfo[] methods;
+      private BeanMethodInfo[] methods;
 
       public BeanPrinterImpl(Class c)
       {
-         this.fields = Tool.getBeanFields(c);
-         this.methods = Tool.getBeanReadMethods(c);
+         this.fields = BeanTool.getBeanFields(c);
+         this.methods = BeanTool.getBeanReadMethods(c);
       }
 
       public void print(Printer p, Element parent, Object value)
@@ -169,7 +172,7 @@ public class AppDataLogExecute extends AbstractExecute
          }
          for (int i = 0; i < this.methods.length; i++)
          {
-            Tool.BeanMethodInfo m = this.methods[i];
+            BeanMethodInfo m = this.methods[i];
             Element mNode = parent.addElement("method");
             mNode.addAttribute("name", m.name);
             p.printObject(mNode, m.method.invoke(value, new Object[0]));
@@ -400,12 +403,9 @@ public class AppDataLogExecute extends AbstractExecute
             parent.addAttribute("type", "Array");
             if (this.checkAndPush(parent, value))
             {
-               try
+               if (value.getClass().getComponentType().isPrimitive())
                {
-                  this.printCollection(parent, Arrays.asList((Object[]) value));
-               }
-               catch (ClassCastException cce)
-               {
+                  // 如果是基本类型, 需要以反射的方式获取每个元素
                   int length = Array.getLength(value);
                   ArrayList arr = new ArrayList(length);
                   for (int i = 0; i < length; i++)
@@ -413,6 +413,10 @@ public class AppDataLogExecute extends AbstractExecute
                      arr.add(Array.get(value, i));
                   }
                   this.printCollection(parent, arr);
+               }
+               else
+               {
+                  this.printCollection(parent, Arrays.asList((Object[]) value));
                }
                this.pop();
             }

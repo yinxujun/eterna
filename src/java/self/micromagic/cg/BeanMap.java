@@ -1,6 +1,7 @@
 
-package self.micromagic.eterna.share;
+package self.micromagic.cg;
 
+import java.beans.PropertyEditor;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -9,12 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.beans.PropertyEditor;
-import java.lang.ref.WeakReference;
 
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.converter.ValueConverter;
-import self.micromagic.util.ObjectRef;
+import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 
 /**
@@ -28,13 +27,13 @@ public class BeanMap extends AbstractMap
    private Object beanObj;
    private Class beanType;
    private String namePrefix;
-   private BeanTool.BeanDescriptor beanDescriptor;
-   private BeanTool.ConverterManager converterManager;
+   private BeanDescriptor beanDescriptor;
+   private ConverterManager converterManager;
    private boolean converterManagerCopied = false;
    private List entryList = null;
 
-   BeanMap(Object beanObj, String namePrefix, BeanTool.BeanDescriptor beanDescriptor,
-         BeanTool.ConverterManager converterManager)
+   BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor,
+         ConverterManager converterManager)
    {
       this.beanObj = beanObj;
       this.beanType = beanObj.getClass();
@@ -43,8 +42,8 @@ public class BeanMap extends AbstractMap
       this.converterManager = converterManager;
    }
 
-   BeanMap(Class beanType, String namePrefix, BeanTool.BeanDescriptor beanDescriptor,
-         BeanTool.ConverterManager converterManager)
+   BeanMap(Class beanType, String namePrefix, BeanDescriptor beanDescriptor,
+         ConverterManager converterManager)
    {
       this.beanType = beanType;
       this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
@@ -59,7 +58,7 @@ public class BeanMap extends AbstractMap
    {
       if (!this.converterManagerCopied)
       {
-         this.converterManager = (BeanTool.ConverterManager) this.converterManager.clone();
+         this.converterManager = (ConverterManager) this.converterManager.clone();
          this.converterManagerCopied = true;
       }
       this.converterManager.registerConverter(type, converter);
@@ -72,7 +71,7 @@ public class BeanMap extends AbstractMap
    {
       if (!this.converterManagerCopied)
       {
-         this.converterManager = (BeanTool.ConverterManager) this.converterManager.clone();
+         this.converterManager = (ConverterManager) this.converterManager.clone();
          this.converterManagerCopied = true;
       }
       this.converterManager.registerPropertyEditor(type, pe);
@@ -95,8 +94,8 @@ public class BeanMap extends AbstractMap
    {
       try
       {
-         this.beanObj = this.beanDescriptor.initCell.readProcesser.getBeanValue(
-               null, this.getPrefix(), this);
+         this.beanObj = this.beanDescriptor.getInitCell().readProcesser.getBeanValue(
+               null, null, null, this.getPrefix(), this);
       }
       catch (Exception ex) {}
       return this.beanObj;
@@ -129,22 +128,22 @@ public class BeanMap extends AbstractMap
    /**
     * 通过一个Map设置bean中所有对应的属性值.
     */
-   public int setValues(Map t)
+   public int setValues(Map map)
    {
       if (this.getBean() == null)
       {
          this.createBean();
       }
       int settedCount = 0;
-      Iterator eItr = this.beanDescriptor.cells.entrySet().iterator();
+      Iterator cdItr = this.beanDescriptor.getCellIterator();
       Object bean = this.getBean();
       String prefix = this.getPrefix();
       Object value;
-      while (eItr.hasNext())
+      while (cdItr.hasNext())
       {
-         Map.Entry bpEntry = (Map.Entry) eItr.next();
-         value = t.get(prefix.length() == 0 ? bpEntry.getKey() : prefix + bpEntry.getKey());
-         CellDescriptor cd = (CellDescriptor) bpEntry.getValue();
+         CellDescriptor cd = (CellDescriptor) cdItr.next();
+         String pName = cd.getName();
+         value = map.get(prefix.length() == 0 ? pName : prefix + pName);
          if (cd.writeProcesser != null)
          {
             if (cd.isBeanType() || value != null)
@@ -154,15 +153,16 @@ public class BeanMap extends AbstractMap
                   Object oldValue = null;
                   if (cd.readProcesser != null && cd.isReadOldValue())
                   {
-                     oldValue = cd.readProcesser.getBeanValue(beanObj, prefix, this);
+                     oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
                   }
-                  settedCount += cd.writeProcesser.setBeanValue(bean, value, prefix, this, t, oldValue);
+                  settedCount += cd.writeProcesser.setBeanValue(
+                        cd, null, bean, value, prefix, this, map, oldValue);
                }
                catch (Exception ex)
                {
-                  if (Tool.BP_CREATE_LOG_TYPE > 0)
+                  if (ClassGenerator.COMPILE_LOG_TYPE > 0)
                   {
-                     Tool.log.info("Write bean value error.", ex);
+                     ClassGenerator.log.info("Write bean value error.", ex);
                   }
                }
             }
@@ -174,25 +174,25 @@ public class BeanMap extends AbstractMap
    /**
     * 通过一个ResultRow设置bean中所有对应的属性值.
     */
-   public int setValues(ResultRow t)
+   public int setValues(ResultRow row)
    {
       if (this.getBean() == null)
       {
          this.createBean();
       }
       int settedCount = 0;
-      Iterator eItr = this.beanDescriptor.cells.entrySet().iterator();
+      Iterator cdItr = this.beanDescriptor.getCellIterator();
       Object bean = this.getBean();
       String prefix = this.getPrefix();
       Object value;
-      while (eItr.hasNext())
+      while (cdItr.hasNext())
       {
-         Map.Entry bpEntry = (Map.Entry) eItr.next();
-         String name = prefix.length() == 0 ? (String) bpEntry.getKey() : prefix + bpEntry.getKey();
+         CellDescriptor cd = (CellDescriptor) cdItr.next();
+         String pName = cd.getName();
+         String name = prefix.length() == 0 ? pName : prefix + pName;
          try
          {
-            value = t.getObject(name, false);
-            CellDescriptor cd = (CellDescriptor) bpEntry.getValue();
+            value = row.getObject(name, true);
             if (cd.writeProcesser != null)
             {
                if (cd.isBeanType() || value != null)
@@ -200,17 +200,18 @@ public class BeanMap extends AbstractMap
                   Object oldValue = null;
                   if (cd.readProcesser != null && cd.isReadOldValue())
                   {
-                     oldValue = cd.readProcesser.getBeanValue(beanObj, prefix, this);
+                     oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
                   }
-                  settedCount += cd.writeProcesser.setBeanValue(bean, value, prefix, this, t, oldValue);
+                  settedCount += cd.writeProcesser.setBeanValue(
+                        cd, null, bean, value, prefix, this, row, oldValue);
                }
             }
          }
          catch (Exception ex)
          {
-            if (Tool.BP_CREATE_LOG_TYPE > 0)
+            if (ClassGenerator.COMPILE_LOG_TYPE > 0)
             {
-               Tool.log.info("Write bean value error.", ex);
+               ClassGenerator.log.info("Write bean value error.", ex);
             }
          }
       }
@@ -218,66 +219,175 @@ public class BeanMap extends AbstractMap
    }
 
    /**
-    * 根据键值获取属性单元的描述类.
+    * 根据键值获取属性单元的访问信息.
+    *
+    * @param key          用于获取属性单元访问信息的键值
     */
-   private CellDescriptor getCell(String key, ObjectRef beanMapRef, boolean needCreate)
+   public CellAccessInfo getCellAccessInfo(String key)
+   {
+      return this.getCellAccessInfo(key, false);
+   }
+
+   /**
+    * 根据键值获取属性单元的访问信息.
+    *
+    * @param key          用于获取属性单元访问信息的键值
+    * @param needCreate   如果对应的bean不存在时是否要自动创建
+    */
+   public CellAccessInfo getCellAccessInfo(String key, boolean needCreate)
    {
       int index = key.indexOf('.');
       if (index != -1)
       {
-         String tmpName = key.substring(0, index);
-         CellDescriptor cd = (CellDescriptor) this.beanDescriptor.cells.get(tmpName);
-         if (cd != null && cd.isBeanType())
+         String tmpName;
+         StringRef refName = new StringRef();
+         int[] indexs = this.parseArrayName(key.substring(0, index), refName);
+         tmpName = refName.getString();
+         CellDescriptor cd =  this.beanDescriptor.getCell(tmpName);
+         if (cd != null)
          {
-            BeanMap sub = null;
-            Object thisObj = this.getBean();
-            if (thisObj == null && needCreate)
+            if (cd.isBeanType())
             {
-               thisObj = this.createBean();
-            }
-            String prefix = this.getPrefix();
-            if (thisObj != null && cd.readProcesser != null)
-            {
-               try
+               if (indexs != null)
                {
-                  Object tmpObj = cd.readProcesser.getBeanValue(thisObj, prefix, this);
-                  if (tmpObj != null)
-                  {
-                     sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
-                  }
+                  // bean类型的无法以数组方式获取
+                  return null;
                }
-               catch (Exception ex) {}
-            }
-            if (sub == null)
-            {
-               sub = BeanTool.getBeanMap(cd.getCellType(), prefix + tmpName + ".");
-               if (needCreate && cd.writeProcesser != null)
+               BeanMap sub = null;
+               Object thisObj = this.getBean();
+               if (thisObj == null && needCreate)
+               {
+                  thisObj = this.createBean();
+               }
+               String prefix = this.getPrefix();
+               if (thisObj != null && cd.readProcesser != null)
                {
                   try
                   {
-                     cd.writeProcesser.setBeanValue(thisObj, sub.createBean(), prefix, this, null, null);
-                  }
-                  catch (Exception ex)
-                  {
-                     if (Tool.BP_CREATE_LOG_TYPE > 0)
+                     Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
+                     if (tmpObj != null)
                      {
-                        Tool.log.info("Write bean value error.", ex);
+                        sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+                     }
+                  }
+                  catch (Exception ex) {}
+               }
+               if (sub == null)
+               {
+                  sub = BeanTool.getBeanMap(cd.getCellType(), prefix + tmpName + ".");
+                  if (needCreate && cd.writeProcesser != null)
+                  {
+                     try
+                     {
+                        cd.writeProcesser.setBeanValue(cd, null, thisObj, sub.createBean(),
+                              prefix, this, null, null);
+                     }
+                     catch (Exception ex)
+                     {
+                        if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+                        {
+                           ClassGenerator.log.info("Write bean value error.", ex);
+                        }
                      }
                   }
                }
+               if (sub != null)
+               {
+                  return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+               }
             }
-            if (sub != null)
+            else if (cd.isArrayType())
             {
-               return sub.getCell(key.substring(index + 1), beanMapRef, needCreate);
+               if (!cd.isArrayBeanType() || indexs == null)
+               {
+                  // 数组的元素类型不是bean或没有数组索引, 无法访问子属性
+                  return null;
+               }
+               Object thisObj = this.getBean();
+               if (thisObj == null)
+               {
+                  // 当前对象不存在, 无法访问数组子属性
+                  return null;
+               }
+               String prefix = this.getPrefix();
+               if (cd.readProcesser != null)
+               {
+                  try
+                  {
+                     Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
+                     if (tmpObj == null || tmpObj.getClass().isArray())
+                     {
+                        // 如果没获得到对象, 或对象还是一个数组, 无法访问子属性
+                        return null;
+                     }
+                     BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+                     return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+                  }
+                  catch (Exception ex) {}
+               }
             }
          }
          return null;
       }
-      if (beanMapRef != null)
+      StringRef refName = new StringRef();
+      int[] indexs = this.parseArrayName(key, refName);
+      CellDescriptor cd = this.beanDescriptor.getCell(refName.toString());
+      return new CellAccessInfo(this, cd, indexs);
+   }
+
+   /**
+    * 解析名称中的数组信息. <p>
+    * 如:
+    * 定义的名称   出参          返回值
+    * tmpName      tmpName       null
+    * tArr[1]      tArr          [1]
+    * arrs[2][3]   arrs          [2, 3]
+    *
+    * @param name      定义的名称
+    * @param pureName  出参, 不包含数组信息的名称定义
+    * @return   数组访问的索引值列表
+    */
+   public static int[] parseArrayName(String name, StringRef pureName)
+   {
+      if (name.charAt(name.length() - 1) == ']')
       {
-         beanMapRef.setObject(this);
+         int index = name.indexOf('[');
+         if (index == -1 || index == 0)
+         {
+            throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
+         }
+         pureName.setString(name.substring(0, index));
+         int endIndex = name.indexOf(']', index + 1);
+         if (endIndex == name.length() - 1)
+         {
+            return new int[]{Integer.parseInt(name.substring(index + 1, endIndex))};
+         }
+         else
+         {
+            List indexList = new LinkedList();
+            indexList.add(new Integer(name.substring(index + 1, endIndex)));
+            while (endIndex < name.length() - 1)
+            {
+               index = name.indexOf('[', endIndex + 1);
+               if (index == -1)
+               {
+                  throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
+               }
+               endIndex = name.indexOf(']', index + 1);
+               indexList.add(new Integer(name.substring(index + 1, endIndex)));
+            }
+            int tmpI = 0;
+            int[] indexs = new int[indexList.size()];
+            Iterator itr = indexList.iterator();
+            while (itr.hasNext())
+            {
+               indexs[tmpI++] = ((Integer) itr.next()).intValue();
+            }
+            return indexs;
+         }
       }
-      return (CellDescriptor) this.beanDescriptor.cells.get(key);
+      pureName.setString(name);
+      return null;
    }
 
    /**
@@ -300,11 +410,11 @@ public class BeanMap extends AbstractMap
          types[beanTypeStack.length] = this.getBeanType();
       }
       List result = new LinkedList();
-      Iterator itr = this.beanDescriptor.cells.entrySet().iterator();
-      while (itr.hasNext())
+      Iterator cdItr = this.beanDescriptor.getCellIterator();
+      while (cdItr.hasNext())
       {
-         Map.Entry entry = (Map.Entry) itr.next();
-         CellDescriptor cd = (CellDescriptor) entry.getValue();
+         CellDescriptor cd = (CellDescriptor) cdItr.next();
+         String pName = cd.getName();
          BeanMap sub = null;
          if (cd.isBeanType())
          {
@@ -314,17 +424,17 @@ public class BeanMap extends AbstractMap
             {
                try
                {
-                  Object tmpObj = cd.readProcesser.getBeanValue(thisObj, prefix, this);
+                  Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
                   if (tmpObj != null)
                   {
-                     sub = BeanTool.getBeanMap(tmpObj, prefix + entry.getKey() + ".");
+                     sub = BeanTool.getBeanMap(tmpObj, prefix + pName + ".");
                   }
                }
                catch (Exception ex) {}
             }
             if (sub == null)
             {
-               sub = BeanTool.getBeanMap(cd.getCellType(), prefix + entry.getKey() + ".");
+               sub = BeanTool.getBeanMap(cd.getCellType(), prefix + pName + ".");
             }
          }
          if (sub != null)
@@ -336,7 +446,7 @@ public class BeanMap extends AbstractMap
          }
          else
          {
-            result.add(new BeanMapEntry(this, entry.getKey(), cd));
+            result.add(new BeanMapEntry(this, pName, cd));
          }
       }
       this.entryList = result;
@@ -373,7 +483,7 @@ public class BeanMap extends AbstractMap
       {
          return false;
       }
-      return this.getCell(String.valueOf(key), null, false) != null;
+      return this.getCellAccessInfo(String.valueOf(key), false) != null;
    }
 
    public Object get(Object key)
@@ -382,13 +492,12 @@ public class BeanMap extends AbstractMap
       {
          return null;
       }
-      ObjectRef ref = new ObjectRef();
-      CellDescriptor cd = this.getCell(String.valueOf(key), ref, false);
-      if (cd == null)
+      CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), false);
+      if (cai == null)
       {
          return null;
       }
-      return BeanMapEntry.getBeanValue(cd, (BeanMap) ref.getObject());
+      return cai.getValue();
    }
 
    public Object put(Object key, Object value)
@@ -397,13 +506,12 @@ public class BeanMap extends AbstractMap
       {
          return null;
       }
-      ObjectRef ref = new ObjectRef();
-      CellDescriptor cd = this.getCell(String.valueOf(key), ref, true);
-      if (cd == null)
+      CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), true);
+      if (cai == null)
       {
          return null;
       }
-      return BeanMapEntry.setBeanValue(cd, (BeanMap) ref.getObject(), value);
+      return cai.setValue(value);
    }
 
    public Object remove(Object key)
@@ -431,16 +539,6 @@ public class BeanMap extends AbstractMap
       return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_ENTRY);
    }
 
-   public int hashCode()
-   {
-      Object myObj = this.getBean();
-      if (myObj == null)
-      {
-         return 0;
-      }
-      return myObj.hashCode();
-   }
-
    private final static int BEANMAP_SET_TYPE_ENTRY = 1;
    private final static int BEANMAP_SET_TYPE_VALUE = 2;
    private final static int BEANMAP_SET_TYPE_KEY = 3;
@@ -448,13 +546,11 @@ public class BeanMap extends AbstractMap
    private static class BeanMapEntrySet extends AbstractSet
          implements Set
    {
-      private BeanMap beanMap;
       private int beanMapSetType;
       private List entryList;
 
       public BeanMapEntrySet(BeanMap beanMap, int beanMapSetType)
       {
-         this.beanMap = beanMap;
          this.beanMapSetType = beanMapSetType;
          this.entryList = beanMap.getEntryList(null);
       }
@@ -492,11 +588,6 @@ public class BeanMap extends AbstractMap
       public boolean removeAll(Collection c)
       {
          return false;
-      }
-
-      public int hashCode()
-      {
-         return this.beanMap.hashCode();
       }
 
    }
@@ -548,71 +639,13 @@ public class BeanMap extends AbstractMap
    {
       private BeanMap beanMap;
       private Object key;
-      private CellDescriptor cellDescriptor;
+      private CellAccessInfo cellAccessInfo;
 
       public BeanMapEntry(BeanMap beanMap, Object key, CellDescriptor cellDescriptor)
       {
          this.beanMap = beanMap;
          this.key = key;
-         this.cellDescriptor = cellDescriptor;
-      }
-
-      static Object getBeanValue(CellDescriptor cd, BeanMap beanMap)
-      {
-         if (cd.readProcesser != null)
-         {
-            try
-            {
-               Object beanObj = beanMap.getBean();
-               String prefix = beanMap.getPrefix();
-               if (beanObj != null)
-               {
-                  return cd.readProcesser.getBeanValue(beanObj, prefix, beanMap);
-               }
-            }
-            catch (Exception ex)
-            {
-               if (Tool.BP_CREATE_LOG_TYPE > 0)
-               {
-                  Tool.log.info("Read bean value error.", ex);
-               }
-            }
-         }
-         return null;
-      }
-
-      static Object setBeanValue(CellDescriptor cd, BeanMap beanMap, Object value)
-      {
-         if (cd.writeProcesser != null)
-         {
-            try
-            {
-               Object oldValue = null;
-               Object beanObj = beanMap.getBean();
-               String prefix = beanMap.getPrefix();
-               if (beanObj != null)
-               {
-                  if (cd.readProcesser != null)
-                  {
-                     oldValue = cd.readProcesser.getBeanValue(beanObj, prefix, beanMap);
-                  }
-               }
-               else
-               {
-                  beanObj = beanMap.createBean();
-               }
-               cd.writeProcesser.setBeanValue(beanObj, value, prefix, beanMap, null, oldValue);
-               return oldValue;
-            }
-            catch (Exception ex)
-            {
-               if (Tool.BP_CREATE_LOG_TYPE > 0)
-               {
-                  Tool.log.info("Write bean value error.", ex);
-               }
-            }
-         }
-         return null;
+         this.cellAccessInfo = new CellAccessInfo(beanMap, cellDescriptor, null);
       }
 
       public Object getKey()
@@ -623,12 +656,12 @@ public class BeanMap extends AbstractMap
 
       public Object getValue()
       {
-         return getBeanValue(this.cellDescriptor, this.beanMap);
+         return this.cellAccessInfo.getValue();
       }
 
       public Object setValue(Object value)
       {
-         return setBeanValue(this.cellDescriptor, this.beanMap, value);
+         return this.cellAccessInfo.setValue(value);
       }
 
       public int hashCode()
@@ -659,128 +692,6 @@ public class BeanMap extends AbstractMap
       public String toString()
       {
          return this.getKey() + "=" + this.getValue();
-      }
-
-   }
-
-   /**
-    * bean属性单元的描述类.
-    */
-   public static class CellDescriptor
-   {
-      private String name;
-      private boolean readOldValue;
-      private BeanTool.BeanPropertyReader readProcesser;
-      private BeanTool.BeanPropertyWriter writeProcesser;
-      private boolean beanType;
-
-      /**
-       * 这里使用<code>WeakReference</code>来引用单元的类型, 这样就不会影响其正常的释放.
-       */
-      private WeakReference cellType;
-
-      /**
-       * 获取属性的名称.
-       */
-      public String getName()
-      {
-         return name;
-      }
-
-      /**
-       * 设置属性的名称.
-       */
-      void setName(String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * 获取写属性时是否要读取原来的值.
-       */
-      public boolean isReadOldValue()
-      {
-         return readOldValue;
-      }
-
-      /**
-       * 设置写属性时是否要读取原来的值.
-       */
-      public void setReadOldValue(boolean readOldValue)
-      {
-         this.readOldValue = readOldValue;
-      }
-
-      /**
-       * 获取属性单元的类型.
-       */
-      public Class getCellType()
-      {
-         if (this.cellType == null)
-         {
-            return null;
-         }
-         return (Class) this.cellType.get();
-      }
-
-      /**
-       * 设置属性单元的类型.
-       */
-      public void setCellType(Class cellType)
-      {
-         this.cellType = new WeakReference(cellType);
-      }
-
-      /**
-       * 获取属性单元的类型是否是一个bean.
-       */
-      public boolean isBeanType()
-      {
-         return this.beanType;
-      }
-
-      /**
-       * 设置属性单元的类型是否是一个bean.
-       */
-      public void setBeanType(boolean beanType)
-      {
-         if (beanType)
-         {
-            this.setReadOldValue(true);
-         }
-         this.beanType = beanType;
-      }
-
-      /**
-       * 获取对bean属性的读处理者.
-       */
-      public BeanTool.BeanPropertyReader getReadProcesser()
-      {
-         return this.readProcesser;
-      }
-
-      /**
-       * 设置对bean属性的读处理者.
-       */
-      public void setReadProcesser(BeanTool.BeanPropertyReader readProcesser)
-      {
-         this.readProcesser = readProcesser;
-      }
-
-      /**
-       * 获取对bean属性的写处理者.
-       */
-      public BeanTool.BeanPropertyWriter getWriteProcesser()
-      {
-         return this.writeProcesser;
-      }
-
-      /**
-       * 设置对bean属性的写处理者.
-       */
-      public void setWriteProcesser(BeanTool.BeanPropertyWriter writeProcesser)
-      {
-         this.writeProcesser = writeProcesser;
       }
 
    }
