@@ -352,6 +352,54 @@ else
          ${beanName}.${methodName}(), ${prefixName}, ${beanMap});
 }
 
+
+# 对集合容器类型通过属性进行获取
+## collectionTypeFieldGet
+if (${indexs} == null || ${indexs}.length == 0)
+{
+   return ${beanName}.${fieldName};
+}
+else
+{
+   Collection c = ${beanName}.${fieldName};
+   ${getCollectionIndexCode}
+   return null;
+}
+
+# 对集合容器类型通过方法进行获取
+## collectionTypeMethodGet
+if (${indexs} == null || ${indexs}.length == 0)
+{
+   return ${beanName}.${methodName}();
+}
+else
+{
+   Collection c = ${beanName}.${methodName}();
+   ${getCollectionIndexCode}
+   return null;
+}
+
+# 对集合容器类型中的值进行获取(集合容器的变量名为 c)
+## collectionTypeIndexGet
+if (c == null)
+{
+   return null;
+}
+if (c instanceof List)
+{
+   return ((List) c).get(${indexs}[0]);
+}
+else
+{
+   Iterator itr = c.iterator();
+   int tmpI = 0;
+   for (; itr.hasNext() && tmpI < ${indexs}[0]; tmpI++, itr.next());
+   if (tmpI == ${indexs}[0] && itr.hasNext())
+   {
+      return itr.next();
+   }
+}
+
 # 对基本类型的数组进行获取
 ## arrayTypePrimitiveGet
 return new ${wrapName}(${arrayName}${arrayVisitList});

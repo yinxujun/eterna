@@ -21,8 +21,9 @@ class DefaultBeanChecker
          return CHECK_RESULT_NO;
       }
       String beanClassName = beanClass.getName();
-      // java 和 javax 包下的类不是bean
-      if (beanClassName.startsWith("java.") || beanClassName.startsWith("javax."))
+      // java, javax 及 org 包下的类不是bean
+      if (beanClassName.startsWith("java.") || beanClassName.startsWith("javax.")
+            || beanClassName.startsWith("org."))
       {
          return CHECK_RESULT_NO;
       }

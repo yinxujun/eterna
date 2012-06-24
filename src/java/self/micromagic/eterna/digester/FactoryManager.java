@@ -49,6 +49,7 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -153,7 +154,7 @@ public class FactoryManager
 
    private static Document logDocument = null;
    private static Element logs = null;
-   private static Map classInstanceMap = new HashMap();
+   private static Map instanceMap = new HashMap();
    private static GlobalImpl globalInstance;
    private static Instance current;
    private static Factory currentFactory;
@@ -388,7 +389,7 @@ public class FactoryManager
    {
 	   oOut.writeUTF(f.getFactoryManager().getId());
       oOut.writeUTF(f.getName());
-      oOut.writeUTF(f.getClass().getName());
+      oOut.writeUTF(ClassGenerator.getClassName(f.getClass()));
    }
 
    /**
@@ -421,7 +422,7 @@ public class FactoryManager
       {
          return globalInstance;
       }
-      Instance instance = (Instance) classInstanceMap.get(id);
+      Instance instance = (Instance) instanceMap.get(id);
       if (instance == null)
       {
          throw new ConfigurationException("Not fount the instance [" + id + "] ["
@@ -451,8 +452,9 @@ public class FactoryManager
    {
       if (!Instance.class.isAssignableFrom(baseClass))
       {
-         String id = globalInstance.createInstanceId(getConfig(initConfig, null), baseClass.getName());
-         Object instance = classInstanceMap.get(id);
+         String id = globalInstance.createInstanceId(getConfig(initConfig, null),
+               ClassGenerator.getClassName(baseClass));
+         Object instance = instanceMap.get(id);
          if (instance != null && instance instanceof ClassImpl)
          {
             ClassImpl ci = (ClassImpl) instance;
@@ -604,7 +606,7 @@ public class FactoryManager
       String id = instance.getId();
       if (!regist)
       {
-         Instance tmp = (Instance) classInstanceMap.get(id);
+         Instance tmp = (Instance) instanceMap.get(id);
          if (tmp != null)
          {
             if (tmp instanceof ClassImpl)
@@ -628,7 +630,7 @@ public class FactoryManager
       current = instance;
       instance.reInit(null);
       current = globalInstance;
-      Instance old = (Instance) classInstanceMap.put(id, instance);
+      Instance old = (Instance) instanceMap.put(id, instance);
       if (old != null)
       {
          old.destroy();
@@ -712,7 +714,7 @@ public class FactoryManager
    {
       current = globalInstance;
       globalInstance.reInit(msg);
-      Iterator itr = classInstanceMap.values().iterator();
+      Iterator itr = instanceMap.values().iterator();
       while (itr.hasNext())
       {
          Instance instance = (Instance) itr.next();
@@ -935,7 +937,7 @@ public class FactoryManager
 
       protected String prefixName = "";
       protected Map listenerMap = null;
-      protected Map instanceMaps = new HashMap();
+      protected Map factoryMaps = new HashMap();
       protected boolean initialized = false;
       protected Throwable initException = null;
       protected boolean initFactorys = false;
@@ -1171,7 +1173,7 @@ public class FactoryManager
             FactoryManager.current = this;
             this.initialized = false;
             this.initException = null;
-            this.instanceMaps.clear();
+            this.factoryMaps.clear();
             this.defaultFactory = null;
 
             try
@@ -1201,7 +1203,8 @@ public class FactoryManager
                {
                   temp.append("Object:").append(ConfigurationException.objName).append("; ");
                }
-               temp.append("Message:").append("When " + this.getClass().getName() + " initialize.");
+               temp.append("Message:").append("When " + ClassGenerator.getClassName(this.getClass())
+                     + " initialize.");
                log.error(temp.toString(), ex);
                if (msg != null)
                {
@@ -1463,7 +1466,7 @@ public class FactoryManager
             try
             {
                String fName = factory.getName();
-               String cName = factory.getClass().getName();
+               String cName = ClassGenerator.getClassName(factory.getClass());
                shareFactory = this.shareInstance.getFactory(fName, cName);
             }
             catch (Exception ex) {}
@@ -1480,7 +1483,7 @@ public class FactoryManager
       protected Map getFactoryMap(String name, boolean mustExists)
             throws ConfigurationException
       {
-         Map map = (Map) this.instanceMaps.get(name);
+         Map map = (Map) this.factoryMaps.get(name);
          if (map == null && mustExists)
          {
             throw new ConfigurationException("Not found the factory name:" + name + ".");
@@ -1497,7 +1500,7 @@ public class FactoryManager
          this.initFactorys = true;
          try
          {
-            Iterator itr1 = this.instanceMaps.values().iterator();
+            Iterator itr1 = this.factoryMaps.values().iterator();
             while (itr1.hasNext())
             {
                Map temp = (Map) itr1.next();
@@ -1559,13 +1562,13 @@ public class FactoryManager
          {
             FactoryManager.currentFactory = factory;
          }
-         Map map = (Map) this.instanceMaps.get(name);
+         Map map = (Map) this.factoryMaps.get(name);
          if (map == null)
          {
             map = new HashMap();
-            this.instanceMaps.put(name, map);
+            this.factoryMaps.put(name, map);
          }
-         map.put(factory.getClass().getName(), factory);
+         map.put(ClassGenerator.getClassName(factory.getClass()), factory);
       }
 
       /**
@@ -1576,7 +1579,8 @@ public class FactoryManager
       {
          if (this.defaultFactory == null)
          {
-            this.defaultFactory = this.getFactory(ETERNA_FACTORY, EternaFactoryImpl.class.getName());
+            this.defaultFactory = this.getFactory(ETERNA_FACTORY,
+                  ClassGenerator.getClassName(EternaFactoryImpl.class));
          }
          return (EternaFactory) this.defaultFactory;
       }
@@ -1586,7 +1590,7 @@ public class FactoryManager
        */
       public void destroy()
       {
-         Iterator itr1 = this.instanceMaps.values().iterator();
+         Iterator itr1 = this.factoryMaps.values().iterator();
          while (itr1.hasNext())
          {
             Map temp = (Map) itr1.next();
@@ -1758,7 +1762,7 @@ public class FactoryManager
          if (this.instanceId == null)
          {
             String conf = getConfig(this.initConfig, this.parentConfig);
-            String baseName = this.baseClass.getName();
+            String baseName = ClassGenerator.getClassName(this.baseClass);
             this.instanceId = this.createInstanceId(conf, baseName);
          }
          return this.instanceId;

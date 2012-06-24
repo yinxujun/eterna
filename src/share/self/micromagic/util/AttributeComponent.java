@@ -128,16 +128,18 @@ public final class AttributeComponent extends ComponentImpl
 
       if (autoSet)
       {
-         String myScript;
+         StringAppender buf = StringTool.createStringAppender();
+         buf.appendln().append("webObj.html(objConfig.bodyString);").appendln();
          if (this.swapFlag == null)
          {
-            myScript = "webObj.html(objConfig.bodyString);\n{$ef:swapAttributeComponentSubs}(webObj, objConfig);\n";
+            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();
          }
          else
          {
-            myScript = "webObj.html(objConfig.bodyString);\n"
-                  + "{$ef:swapAttributeComponentSubs}(webObj, objConfig, '" + this.swapFlag + "');\n";
+            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig, \"").append(this.swapFlag)
+                  .append("\");").appendln();
          }
+         String myScript = buf.toString();
          if (this.initScript != null)
          {
             this.initScript = this.initScript + myScript;

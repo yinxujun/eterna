@@ -1,9 +1,6 @@
 
 package self.micromagic.eterna.share;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @deprecated
  * @see self.micromagic.util.container.ThreadCache
@@ -15,6 +12,14 @@ public class ThreadCache
    private ThreadCache()
    {
       this.cache = self.micromagic.util.container.ThreadCache.getInstance();
+   }
+
+   /**
+    * 获得一个ThreadCache的实例.
+    */
+   public static ThreadCache getInstance()
+   {
+      return new ThreadCache();
    }
 
    public void setProperty(String name, Object property)

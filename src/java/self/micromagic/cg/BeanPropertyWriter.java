@@ -15,7 +15,7 @@ public interface BeanPropertyWriter
     * @param value         要设置的值
     * @param prefix        当前的名称前缀
     * @param beanMap       当前的BeanMap对象
-    * @param originObj     设置的值所在的原始对象, 可能是一个Map也可能是一个ResultRow,
+    * @param originObj     设置的值所在的原始对象, 可能是一个Map, 也可能是一个ResultRow,
     *                      也可能是null(当原始对象不存在时)
     * @param oldValue      该属性的原始值
     * @return              成功设置了值的属性的个数

@@ -10,11 +10,11 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
 import self.micromagic.cg.ClassGenerator;
+import self.micromagic.cg.ClassKeyCache;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
@@ -202,6 +202,10 @@ public class DataPrinterImpl extends AbstractGenerator
             {
                this.print(out, (Object[]) value);
             }
+         }
+         else if (value instanceof BeanPrinter)
+         {
+            ((BeanPrinter) value).print(this, out, value);
          }
          else if (Tool.isBean(value.getClass()))
          {
@@ -469,48 +473,50 @@ public class DataPrinterImpl extends AbstractGenerator
    /**
     * 存放BeanPrinter的缓存
     */
-   private static Map beanPrinterMap = new WeakHashMap();
+   private static ClassKeyCache beanPrinterCache = ClassKeyCache.getInstance();
 
    public BeanPrinter getBeanPrinter(Class beanClass)
    {
-      BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+      BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
       if (bp == null)
       {
-         synchronized (beanPrinterMap)
+         bp = getBeanPrinter0(beanClass);
+      }
+      return bp;
+   }
+
+   private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
+   {
+      BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
+      if (bp == null)
+      {
+         try
          {
-            // 再获取一次, 如果其他线程已处理了, 这里就不用做了
-            bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+            String mh = "public void print(DataPrinter p, Writer out, Object bean)"
+                  + " throws IOException, ConfigurationException";
+            String ut = "out.write(\"\\\"${name}\\\":\");"
+                  + "p.print(out, ${value});";
+            String pt = "out.write(\"\\\"${name}\\\":\");"
+                  + "p.print(out, ${o_value});";
+            String lt = "out.write(\",\");";
+            String[] imports = new String[]{
+               ClassGenerator.getPackageString(DataPrinter.class),
+               ClassGenerator.getPackageString(Writer.class),
+               ClassGenerator.getPackageString(ConfigurationException.class),
+               ClassGenerator.getPackageString(beanClass)
+            };
+            bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
+                  "bean", ut, pt, lt, imports);
             if (bp == null)
             {
-               try
-               {
-                  String mh = "public void print(DataPrinter p, Writer out, Object bean)"
-                        + " throws IOException, ConfigurationException";
-                  String ut = "out.write(\"\\\"${name}\\\":\");"
-                        + "p.print(out, ${value});";
-                  String pt = "out.write(\"\\\"${name}\\\":\");"
-                        + "p.print(out, ${o_value});";
-                  String lt = "out.write(\",\");";
-                  String[] imports = new String[]{
-                     ClassGenerator.getPackageString(DataPrinter.class),
-                     ClassGenerator.getPackageString(Writer.class),
-                     ClassGenerator.getPackageString(ConfigurationException.class),
-                     ClassGenerator.getPackageString(beanClass)
-                  };
-                  bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
-                        "bean", ut, pt, lt, imports);
-                  if (bp == null)
-                  {
-                     bp = new BeanPrinterImpl(beanClass);
-                  }
-               }
-               catch (Throwable ex)
-               {
-                  bp = new BeanPrinterImpl(beanClass);
-               }
-               beanPrinterMap.put(beanClass, bp);
+               bp = new BeanPrinterImpl(beanClass);
             }
          }
+         catch (Throwable ex)
+         {
+            bp = new BeanPrinterImpl(beanClass);
+         }
+         beanPrinterCache.setProperty(beanClass, bp);
       }
       return bp;
    }

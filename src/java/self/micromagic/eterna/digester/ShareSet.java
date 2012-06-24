@@ -2,26 +2,27 @@
 package self.micromagic.eterna.digester;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.Iterator;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.naming.Context;
 import javax.sql.DataSource;
 
-import self.micromagic.eterna.share.EternaFactoryImpl;
-import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.share.DataSourceManager;
-import self.micromagic.eterna.security.UserManager;
-import self.micromagic.util.Utility;
 import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;
-import org.apache.commons.beanutils.MethodUtils;
 import org.xml.sax.Attributes;
+import self.micromagic.eterna.security.UserManager;
+import self.micromagic.eterna.share.DataSourceManager;
+import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.EternaFactoryImpl;
+import self.micromagic.eterna.share.Tool;
+import self.micromagic.util.Utility;
 
 /**
  * 公共的初始化规则集.
@@ -37,12 +38,13 @@ public class ShareSet extends RuleSetBase
       this.addSameCheckRule(digester);
 
       PropertySetter setter;
+      Rule rule;
 
       //--------------------------------------------------------------------------------
       // 设置工厂的读取规则，默认的实现类为EternaFactoryImpl
-      digester.addRule("eterna-config/factory",
-            new FactoryRegisterRule(EternaFactoryImpl.class.getName(),
-                  "type", EternaFactory.class, FactoryManager.ETERNA_FACTORY));
+      rule = new FactoryRegisterRule(EternaFactoryImpl.class.getName(), "type",
+            EternaFactory.class, FactoryManager.ETERNA_FACTORY);
+      digester.addRule("eterna-config/factory", rule);
       digester.addRule("eterna-config/factory/attributes/attribute",
             new AttributeSetRule());
 
@@ -251,7 +253,7 @@ public class ShareSet extends RuleSetBase
          Object[] values = new Object[]{this.context, this.dataSourceConfig};
          try
          {
-            MethodUtils.invokeExactMethod(obj, this.methodName, values, this.types);
+            Tool.invokeExactMethod(obj, this.methodName, values, this.types);
          }
          catch (Exception ex)
          {

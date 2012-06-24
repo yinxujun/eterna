@@ -9,7 +9,11 @@ import java.util.Map;
  */
 public class ThreadCache
 {
-   private static ThreadLocal threadMap = new CacheThreadLocal();
+   /**
+    * 存放<code>ThreadCache</code>实例的<code>ThreadLocal</code>的实现.
+    */
+   private static ThreadLocal cache = new ThreadLocalCache();
+
    private static int globalVersion = 0;
 
    private Map propertys;
@@ -22,15 +26,15 @@ public class ThreadCache
    }
 
    /**
-    * 获得一个ThreadCache的实例.
+    * 获得一个<code>ThreadCache</code>的实例.
     */
    public static ThreadCache getInstance()
    {
-      ThreadCache threadCache = (ThreadCache) threadMap.get();
+      ThreadCache threadCache = (ThreadCache) cache.get();
       if (threadCache == null)
       {
          threadCache = new ThreadCache();
-         threadMap.set(threadCache);
+         cache.set(threadCache);
       }
       return threadCache;
    }
@@ -89,6 +93,15 @@ public class ThreadCache
    }
 
    /**
+    * 获得缓存的对象数.
+    */
+   public int size()
+   {
+      this.checkVersion();
+      return this.propertys.size();
+   }
+
+   /**
     * 清空当前线程缓存中的属性值.
     */
    public void clearPropertys()
@@ -107,7 +120,7 @@ public class ThreadCache
       globalVersion++;
    }
 
-   private static class CacheThreadLocal extends ThreadLocal
+   private static class ThreadLocalCache extends ThreadLocal
    {
       protected Object initialValue()
       {

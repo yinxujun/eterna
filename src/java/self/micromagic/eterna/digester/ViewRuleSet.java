@@ -7,25 +7,25 @@ import org.apache.commons.digester.RuleSetBase;
 import org.xml.sax.Attributes;
 import self.micromagic.eterna.view.Component;
 import self.micromagic.eterna.view.ComponentGenerator;
+import self.micromagic.eterna.view.DataPrinter;
+import self.micromagic.eterna.view.Function;
+import self.micromagic.eterna.view.Resource;
 import self.micromagic.eterna.view.StringCoder;
-import self.micromagic.eterna.view.impl.StringCoderImpl;
 import self.micromagic.eterna.view.TableForm;
 import self.micromagic.eterna.view.TableFormGenerator;
 import self.micromagic.eterna.view.TableList;
 import self.micromagic.eterna.view.TableListGenerator;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
-import self.micromagic.eterna.view.Function;
-import self.micromagic.eterna.view.Resource;
-import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.impl.ComponentImpl;
+import self.micromagic.eterna.view.impl.DataPrinterImpl;
+import self.micromagic.eterna.view.impl.FunctionImpl;
 import self.micromagic.eterna.view.impl.ReplacementImpl;
+import self.micromagic.eterna.view.impl.ResourceImpl;
+import self.micromagic.eterna.view.impl.StringCoderImpl;
+import self.micromagic.eterna.view.impl.TR;
 import self.micromagic.eterna.view.impl.TableFormImpl;
 import self.micromagic.eterna.view.impl.TableListImpl;
 import self.micromagic.eterna.view.impl.ViewAdapterImpl;
-import self.micromagic.eterna.view.impl.FunctionImpl;
-import self.micromagic.eterna.view.impl.TR;
-import self.micromagic.eterna.view.impl.ResourceImpl;
-import self.micromagic.eterna.view.impl.DataPrinterImpl;
 
 /**
  * view模块初始化的规则集.
@@ -40,15 +40,16 @@ public class ViewRuleSet extends RuleSetBase
    {
       PropertySetter setter;
       PropertySetter[] setters;
+      Rule rule;
 
       // 所有的beforeInit, initScript, *param都不要进行intern, 因为在方法
       // BaseManager.dealScriptPart中会做处理
 
       //--------------------------------------------------------------------------------
       // 构造ViewAdapter
-      digester.addRule("eterna-config/factory/objs/view",
-            new ObjectCreateRule(ViewAdapterImpl.class.getName(),
-                  "generator", ViewAdapterGenerator.class));
+      rule = new ObjectCreateRule(ViewAdapterImpl.class.getName(), "generator",
+            ViewAdapterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/view", rule);
 
       setter = new StackPropertySetter("registerViewAdapter", ViewAdapterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/view", new PropertySetRule(setter));
@@ -77,9 +78,9 @@ public class ViewRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 构造StringCoder
-      digester.addRule("eterna-config/factory/string-coder",
-            new ObjectCreateRule(StringCoderImpl.class.getName(),
-                  "className", StringCoder.class));
+      rule = new ObjectCreateRule(StringCoderImpl.class.getName(), "className",
+            StringCoder.class);
+      digester.addRule("eterna-config/factory/string-coder", rule);
       setter = new StackPropertySetter("setStringCoder", StringCoder.class, 1);
       digester.addRule("eterna-config/factory/string-coder", new PropertySetRule(setter));
       digester.addRule("eterna-config/factory/string-coder",
@@ -143,7 +144,8 @@ public class ViewRuleSet extends RuleSetBase
          new StringPropertySetter("comParam", "setComponentParam", false, false),
          new StringPropertySetter("attributes", "setAttributes", false)
       };
-      digester.addRule("eterna-config/factory/objs/typical-component", new PropertySetRule(setters, false));
+      digester.addRule("eterna-config/factory/objs/typical-component",
+            new PropertySetRule(setters, false));
 
 
       //--------------------------------------------------------------------------------
@@ -164,7 +166,8 @@ public class ViewRuleSet extends RuleSetBase
          new StringPropertySetter("comParam", "setComponentParam", false, false),
          new StringPropertySetter("attributes", "setAttributes", false)
       };
-      digester.addRule("eterna-config/factory/objs/typical-replacement", new PropertySetRule(setters, false));
+      digester.addRule("eterna-config/factory/objs/typical-replacement",
+            new PropertySetRule(setters, false));
 
 
       //--------------------------------------------------------------------------------
@@ -190,8 +193,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/replacement", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addComponent", ReplacementImpl.class.getName(),
-                  Component.class, new Class[]{ComponentGenerator.class, ViewAdapterGenerator.class});
+            Class[] types = {ComponentGenerator.class, ViewAdapterGenerator.class};
+            PropertySetter setter = new CheckParentSetter("generator", "addComponent",
+                  ReplacementImpl.class.getName(), Component.class, types);
             return new PropertySetRule(setter);
          }
       });
@@ -217,8 +221,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/component", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addComponent", ComponentImpl.class.getName(),
-                  Component.class, new Class[]{ComponentGenerator.class, ViewAdapterGenerator.class});
+            Class[] types = {ComponentGenerator.class, ViewAdapterGenerator.class};
+            PropertySetter setter = new CheckParentSetter("generator", "addComponent",
+                  ComponentImpl.class.getName(), Component.class, types);
             return new PropertySetRule(setter);
          }
       });
@@ -266,8 +271,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/events/event", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addEvent", ComponentImpl.EventImpl.class.getName(),
-                  Component.Event.class, new Class[]{ComponentGenerator.class});
+            PropertySetter setter = new CheckParentSetter("generator", "addEvent",
+                  ComponentImpl.EventImpl.class.getName(), Component.Event.class,
+                  new Class[]{ComponentGenerator.class});
             return new PropertySetRule(setter);
          }
       });
@@ -295,8 +301,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-form", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addComponent", TableFormImpl.class.getName(),
-                  Component.class, new Class[]{ComponentGenerator.class, ViewAdapterGenerator.class});
+            Class[] types = {ComponentGenerator.class, ViewAdapterGenerator.class};
+            PropertySetter setter = new CheckParentSetter("generator", "addComponent",
+                  TableFormImpl.class.getName(), Component.class, types);
             return new PropertySetRule(setter);
          }
       });
@@ -326,8 +333,8 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-form/tr", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "setTR", TR.class.getName(),
-                  Component.class, new Class[]{TableFormGenerator.class});
+            PropertySetter setter = new CheckParentSetter("generator", "setTR",
+                  TR.class.getName(), Component.class, new Class[]{TableFormGenerator.class});
             return new PropertySetRule(setter);
          }
       });
@@ -363,8 +370,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-form/cells/cell", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addCell", TableFormImpl.CellImpl.class.getName(),
-                  TableForm.Cell.class, new Class[]{TableFormGenerator.class});
+            PropertySetter setter = new CheckParentSetter("generator", "addCell",
+                  TableFormImpl.CellImpl.class.getName(), TableForm.Cell.class,
+                  new Class[]{TableFormGenerator.class});
             return new PropertySetRule(setter);
          }
       });
@@ -417,8 +425,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-list", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addComponent", TableListImpl.class.getName(),
-                  Component.class, new Class[]{ComponentGenerator.class, ViewAdapterGenerator.class});
+            Class[] types = {ComponentGenerator.class, ViewAdapterGenerator.class};
+            PropertySetter setter = new CheckParentSetter("generator", "addComponent",
+                  TableListImpl.class.getName(), Component.class, types);
             return new PropertySetRule(setter);
          }
       });
@@ -447,8 +456,8 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-list/tr", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "setTR", TR.class.getName(),
-                  Component.class, new Class[]{TableListGenerator.class});
+            PropertySetter setter = new CheckParentSetter("generator", "setTR",
+                  TR.class.getName(), Component.class, new Class[]{TableListGenerator.class});
             return new PropertySetRule(setter);
          }
       });
@@ -484,8 +493,9 @@ public class ViewRuleSet extends RuleSetBase
       digester.addRule("*/table-list/columns/column", new StackRule(){
          public Rule createRule() throws Exception
          {
-            PropertySetter setter = new CheckParentSetter("generator", "addColumn", TableListImpl.ColumnImpl.class.getName(),
-                  TableList.Column.class, new Class[]{TableListGenerator.class});
+            PropertySetter setter = new CheckParentSetter("generator", "addColumn",
+                  TableListImpl.ColumnImpl.class.getName(), TableList.Column.class,
+                  new Class[]{TableListGenerator.class});
             return new PropertySetRule(setter);
          }
       });

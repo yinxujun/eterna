@@ -18,6 +18,9 @@ public class SessionCache
       this.cache = self.micromagic.util.container.SessionCache.getInstance();
    }
 
+   /**
+    * 获得一个SessionCache的实例.
+    */
    public static SessionCache getInstance()
    {
       return new SessionCache();

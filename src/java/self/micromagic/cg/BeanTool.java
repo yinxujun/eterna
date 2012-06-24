@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.Collection;
 
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.converter.*;
@@ -193,11 +194,16 @@ public class BeanTool
    }
 
    private static Map beanDescriptorCache = new WeakHashMap();
+
    /**
-    * 获得对bean属性的描述信息.
+    * 获得对bean类的描述信息.
     */
    public static BeanDescriptor getBeanDescriptor(Class beanClass)
    {
+      if (beanClass == null)
+      {
+         return null;
+      }
       BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
       if (bd == null)
       {
@@ -208,6 +214,8 @@ public class BeanTool
             if (bd == null)
             {
                Map psInfo = new HashMap();
+               Map tmp;
+               Iterator tmpItr;
                try
                {
                   String fnName = "public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, "
@@ -219,7 +227,7 @@ public class BeanTool
                         .toString();
                   String endCode =  StringTool.createStringAppender()
                         .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
-                  String[] imports = new String[]{
+                  String[] imports = {
                      ClassGenerator.getPackageString(Map.class),
                      ClassGenerator.getPackageString(BeanTool.class),
                      ClassGenerator.getPackageString(ResultRow.class),
@@ -227,9 +235,9 @@ public class BeanTool
                   };
                   BeanPropertyWriteProcesser wp = new BeanPropertyWriteProcesser(
                         "value", "beanMap", "originObj", "oldValue");
-                  Map tmp = createPropertyProcessers(beanClass, BeanPropertyWriter.class,
+                  tmp = createPropertyProcessers(beanClass, BeanPropertyWriter.class,
                         mh, "bean", beginCode, endCode, wp, imports, BEAN_PROCESSER_TYPE_W);
-                  Iterator tmpItr = tmp.entrySet().iterator();
+                  tmpItr = tmp.entrySet().iterator();
                   while (tmpItr.hasNext())
                   {
                      Map.Entry entry = (Map.Entry) tmpItr.next();
@@ -246,6 +254,10 @@ public class BeanTool
                      if (pi.type.isArray())
                      {
                         bmc.setArrayType(true);
+                     }
+                     else if (Collection.class.isAssignableFrom(pi.type))
+                     {
+                        bmc.setReadOldValue(true);
                      }
                      else if (checkBean(pi.type))
                      {
@@ -275,9 +287,9 @@ public class BeanTool
                      ProcesserInfo pi = (ProcesserInfo) entry.getValue();
                      if (bmc.getCellType() != null && bmc.getCellType() != pi.type)
                      {
-                        ClassGenerator.log.error("Error cell [" + beanClass.getName() + "#" + entry.getKey()
-                              + "] type in create MapToBean, write:[" + bmc.getCellType()
-                              + "], read:[" + pi.type + "]");
+                        CG.log.error("Error cell [" + ClassGenerator.getClassName(beanClass)
+                              + "#" + entry.getKey() + "] type in create MapToBean, write:["
+                              + bmc.getCellType() + "], read:[" + pi.type + "]");
                         continue;
                      }
                      bmc.setReadProcesser((BeanPropertyReader) pi.processer);
@@ -287,6 +299,10 @@ public class BeanTool
                         if (pi.type.isArray())
                         {
                            bmc.setArrayType(true);
+                        }
+                        else if (Collection.class.isAssignableFrom(pi.type))
+                        {
+                           bmc.setReadOldValue(true);
                         }
                         else if (checkBean(pi.type))
                         {
@@ -313,7 +329,7 @@ public class BeanTool
                }
                catch (Throwable ex)
                {
-                  ClassGenerator.log.error("Error in create MapToBean.", ex);
+                  CG.log.error("Error in create MapToBean.", ex);
                }
             }
             if (bd != null)
@@ -357,7 +373,7 @@ public class BeanTool
                         .toString();
                   String endCode =  StringTool.createStringAppender()
                         .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
-                  String[] imports = new String[]{
+                  String[] imports = {
                      ClassGenerator.getPackageString(Map.class),
                      ClassGenerator.getPackageString(BeanTool.class),
                      ClassGenerator.getPackageString(beanClass)
@@ -368,7 +384,7 @@ public class BeanTool
                }
                catch (Throwable ex)
                {
-                  ClassGenerator.log.error("Error in create MapToBean.", ex);
+                  CG.log.error("Error in create MapToBean.", ex);
                }
             }
             if (obj != null)
@@ -421,7 +437,7 @@ public class BeanTool
       }
       catch (IntrospectionException ex)
       {
-         ClassGenerator.log.error("Error in getBeanReadMethods.", ex);
+         CG.log.error("Error in getBeanReadMethods.", ex);
          return new BeanMethodInfo[0];
       }
    }
@@ -448,7 +464,7 @@ public class BeanTool
       }
       catch (IntrospectionException ex)
       {
-         ClassGenerator.log.error("Error in getBeanWriteMethods.", ex);
+         CG.log.error("Error in getBeanWriteMethods.", ex);
          return new BeanMethodInfo[0];
       }
    }
@@ -562,9 +578,9 @@ public class BeanTool
       }
       catch (Throwable ex)
       {
-         if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
          {
-            ClassGenerator.log.error("Error in createBeanPrinter.", ex);
+            CG.log.error("Error in create bean processer.", ex);
          }
          return null;
       }
@@ -643,9 +659,9 @@ public class BeanTool
       }
       catch (Throwable ex)
       {
-         if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
          {
-            ClassGenerator.log.error("Error in createBeanPrinter.", ex);
+            CG.log.error("Error in create bean processer.", ex);
          }
          return null;
       }
@@ -743,9 +759,9 @@ public class BeanTool
       }
       catch (Throwable ex)
       {
-         if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
          {
-            ClassGenerator.log.error("Error in createBeanPrinter.", ex);
+            CG.log.error("Error in create bean processer.", ex);
          }
          return null;
       }
@@ -779,9 +795,9 @@ public class BeanTool
       }
       catch (Throwable ex)
       {
-         if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
          {
-            ClassGenerator.log.error("Error in createBeanPrinter.", ex);
+            CG.log.error("Error in create bean processer.", ex);
          }
          return null;
       }
@@ -1022,7 +1038,7 @@ public class BeanTool
       }
       catch (Exception ex)
       {
-         ClassGenerator.log.error("Error in get code res.", ex);
+         CG.log.error("Error in get code res.", ex);
       }
 
       registerConverter(Boolean.class, booleanConverter);

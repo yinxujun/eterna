@@ -427,6 +427,54 @@
             return null;
          </function>
 
+         <!-- 读取多行结果集中的一行, 并以单行结果集的形式返回 -->
+         <function name="getData_row" param="dataName, index"><![CDATA[
+            var tmpData;
+            if (typeof dataName == "object")
+            {
+               tmpData = dataName;
+            }
+            else
+            {
+               tmpData = {$dataV:dataName};
+            }
+            if (tmpData == null)
+            {
+               return null;
+            }
+            if (typeof tmpData.rowCount == "number")
+            {
+               if (index < tmpData.rowCount)
+               {
+                  var r = {};
+                  for (var key in tmpData.names)
+                  {
+                     r[key] = tmpData.rows[index][tmpData.names[key] - 1];
+                  }
+                  return r;
+               }
+               else
+               {
+                  return null;
+               }
+            }
+            else if (typeof tmpData.length == "number")
+            {
+               if (index < tmpData.length)
+               {
+                  return tmpData[index];
+               }
+               else
+               {
+                  return null;
+               }
+            }
+            else
+            {
+               return null;
+            }
+         ]]></function>
+
          <!-- 更新结果集中的值 -->
          <function name="setData_value" param="dataName, srcName, index, value"><![CDATA[
             if (dataName == null)
@@ -434,6 +482,7 @@
                return null;
             }
 
+            var valueData = null;
             if (typeof dataName == "object")
             {
                var valueObj = dataName;
@@ -449,18 +498,27 @@
                }
                srcName = valueObj.srcName;
                index = valueObj.index;
+               valueData = valueObj.valueData;
             }
 
             var oldValue = null;
-            if (dataName && srcName)
+            if ((dataName != null || valueData != null) && srcName != null)
             {
-               var tmpData = {$dataV:dataName};
-               if (tmpData)
+               var tmpData = valueData != null ? valueData : {$dataV:dataName};
+               if (tmpData != null)
                {
                   if (index != null)
                   {
-                     oldValue = tmpData.rows[index][tmpData.names[srcName] - 1];
-                     tmpData.rows[index][tmpData.names[srcName] - 1] = value;
+                     if (typeof tmpData.rowCount == "number")
+                     {
+                        oldValue = tmpData.rows[index][tmpData.names[srcName] - 1];
+                        tmpData.rows[index][tmpData.names[srcName] - 1] = value;
+                     }
+                     else
+                     {
+                        oldValue = tmpData[index][srcName];
+                        tmpData[index][srcName] = value;
+                     }
                   }
                   else
                   {

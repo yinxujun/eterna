@@ -127,6 +127,7 @@ public class BeanMap extends AbstractMap
 
    /**
     * 通过一个Map设置bean中所有对应的属性值.
+    * 此方法是以bean的结构为基础, 从map中获取对应的值并进行设置.
     */
    public int setValues(Map map)
    {
@@ -160,9 +161,9 @@ public class BeanMap extends AbstractMap
                }
                catch (Exception ex)
                {
-                  if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+                  if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
                   {
-                     ClassGenerator.log.info("Write bean value error.", ex);
+                     CG.log.info("Write bean value error.", ex);
                   }
                }
             }
@@ -173,6 +174,7 @@ public class BeanMap extends AbstractMap
 
    /**
     * 通过一个ResultRow设置bean中所有对应的属性值.
+    * 此方法是以bean的结构为基础, 从ResultRow中获取对应的值并进行设置.
     */
    public int setValues(ResultRow row)
    {
@@ -209,9 +211,9 @@ public class BeanMap extends AbstractMap
          }
          catch (Exception ex)
          {
-            if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+            if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
             {
-               ClassGenerator.log.info("Write bean value error.", ex);
+               CG.log.info("Write bean value error.", ex);
             }
          }
       }
@@ -284,9 +286,9 @@ public class BeanMap extends AbstractMap
                      }
                      catch (Exception ex)
                      {
-                        if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+                        if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
                         {
-                           ClassGenerator.log.info("Write bean value error.", ex);
+                           CG.log.info("Write bean value error.", ex);
                         }
                      }
                   }
@@ -326,12 +328,46 @@ public class BeanMap extends AbstractMap
                   catch (Exception ex) {}
                }
             }
+            else if (Collection.class.isAssignableFrom(cd.getCellType()))
+            {
+               if (indexs == null && indexs.length != 1)
+               {
+                  // 集合容器类型且元素索引个数不为1, 无法访问子属性
+                  return null;
+               }
+               Object thisObj = this.getBean();
+               if (thisObj == null)
+               {
+                  // 当前对象不存在, 无法访问数组子属性
+                  return null;
+               }
+               String prefix = this.getPrefix();
+               if (cd.readProcesser != null)
+               {
+                  try
+                  {
+                     Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
+                     if (tmpObj == null || !BeanTool.checkBean(tmpObj.getClass()))
+                     {
+                        // 如果没获得到对象, 或对象不是一个bean
+                        return null;
+                     }
+                     BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+                     return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+                  }
+                  catch (Exception ex) {}
+               }
+            }
          }
          return null;
       }
       StringRef refName = new StringRef();
       int[] indexs = this.parseArrayName(key, refName);
       CellDescriptor cd = this.beanDescriptor.getCell(refName.toString());
+      if (cd == null)
+      {
+         return null;
+      }
       return new CellAccessInfo(this, cd, indexs);
    }
 

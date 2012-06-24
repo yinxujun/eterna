@@ -1,8 +1,9 @@
 
 package self.micromagic.eterna.digester;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.xml.sax.Attributes;
+import self.micromagic.cg.ClassGenerator;
+import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.StringTool;
 
 /**
@@ -120,13 +121,13 @@ public class AttributeSetRule extends MyRule
       try
       {
          String theValue = StringTool.intern(this.value, true);
-         MethodUtils.invokeExactMethod(this.object, this.method,
+         Tool.invokeExactMethod(this.object, this.method,
                new Object[]{this.name, theValue}, new Class[]{String.class, this.valueType});
       }
       catch (Exception ex)
       {
          FactoryManager.log.error("Method invoke error. method:" + this.method + "  param:(Stirng, "
-               +  this.valueType.getName() + ")  obj:" + this.object.getClass()
+               +  ClassGenerator.getClassName(this.valueType) + ")  obj:" + this.object.getClass()
                + "  value:(" + this.name + ", " + this.value + ")");
          throw ex;
       }

@@ -302,7 +302,7 @@ public class TableListImpl extends AbstractTable
    public static class ColumnImpl extends Sub
          implements Column, ColumnGenerator
    {
-      private static final String DEFAULT_BINIT = "/*DBI*/ checkResult=false;checkResult=$E.D[eg_temp.dataName].names[eg_temp.srcName]!=null;";
+      private static final String DEFAULT_BINIT = "/*DBI*/ if(typeof $E.D[eg_temp.dataName].rowCount==\"number\"){checkResult=false;checkResult=$E.D[eg_temp.dataName].names[eg_temp.srcName]!=null;}";
       private int width = -1;
       private boolean defaultBeforeInit = false;
 

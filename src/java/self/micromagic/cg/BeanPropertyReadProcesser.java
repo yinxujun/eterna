@@ -4,6 +4,7 @@ package self.micromagic.cg;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
@@ -33,7 +34,7 @@ class BeanPropertyReadProcesser
    {
       this.paramCache.put("fieldName", f.getName());
       String[] resNames = new String[] {
-         "primitiveFieldGet", "otherTypeFieldGet", "arrayTypeFieldGet"
+         "primitiveFieldGet", "otherTypeFieldGet", "arrayTypeFieldGet", "collectionTypeFieldGet"
       };
       return this.getProcesserCode(type, f.getName(), wrapName, resNames, cg);
    }
@@ -43,7 +44,7 @@ class BeanPropertyReadProcesser
    {
       this.paramCache.put("methodName", m.method.getName());
       String[] resNames = new String[] {
-         "primitiveMethodGet", "otherTypeMethodGet", "arrayTypeMethodGet"
+         "primitiveMethodGet", "otherTypeMethodGet", "arrayTypeMethodGet", "collectionTypeMethodGet"
       };
       return this.getProcesserCode(type, m.name, wrapName, resNames, cg);
    }
@@ -60,6 +61,13 @@ class BeanPropertyReadProcesser
       else if (type.isArray())
       {
          this.appendArrayProcesserCode(pName, type, sa, resNames, cg);
+      }
+      else if (Collection.class.isAssignableFrom(type))
+      {
+         StringAppender tmpBuf = StringTool.createStringAppender(64);
+         BeanTool.codeRes.printRes("collectionTypeIndexGet", this.paramCache, 0, tmpBuf);
+         this.paramCache.put("getCollectionIndexCode", tmpBuf.toString());
+         BeanTool.codeRes.printRes(resNames[3], this.paramCache, 1, sa).appendln();
       }
       else
       {
@@ -81,7 +89,7 @@ class BeanPropertyReadProcesser
       String tmpResName = "arrayTypeOtherGet";
       if (eType.isPrimitive())
       {
-         tmpWrapName = BeanTool.getPrimitiveWrapClassName(eType.getName());
+         tmpWrapName = BeanTool.getPrimitiveWrapClassName(ClassGenerator.getClassName(eType));
          this.paramCache.put("wrapName", tmpWrapName);
       }
       String[] imports = new String[]{
@@ -108,7 +116,7 @@ class BeanPropertyReadProcesser
             .append("[] ").append(BeanTool.PROCESSER_ARRAY_NAME).append(";");
       cg.addField(arrDef.toString());
       StringAppender arrInit = StringTool.createStringAppender();
-      arrInit.append("public ${").append(ClassGenerator.THIS_NAME).append("}()").appendln()
+      arrInit.append("public ${").append(CG.THIS_NAME).append("}()").appendln()
             .append("{").appendln().append("this.").append(BeanTool.PROCESSER_ARRAY_NAME)
             .append(" = new ").append(ClassGenerator.getClassName(BeanPropertyReader.class))
             .append("[").append(level.value).append("];").appendln();

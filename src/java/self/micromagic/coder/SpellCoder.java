@@ -9,6 +9,7 @@ import java.util.List;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.cg.ClassGenerator;
 
 /*
 * SunriseSpell - A Chinese pinyin library

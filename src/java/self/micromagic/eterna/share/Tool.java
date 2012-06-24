@@ -4,10 +4,11 @@ package self.micromagic.eterna.share;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.cg.BeanTool;
-import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
@@ -127,17 +128,6 @@ public class Tool
       return BeanTool.checkBean(c);
    }
 
-   static int COMPILE_LOG_TYPE = 1;
-   static
-   {
-      try
-      {
-         Utility.addFieldPropertyManager(ClassGenerator.COMPILE_LOG_PROPERTY, Tool.class,
-               "COMPILE_LOG_TYPE", "1");
-      }
-      catch (Throwable ex) {}
-   }
-
    /**
     * 生成一个bean的属性输出类.
     *
@@ -157,6 +147,33 @@ public class Tool
    {
       return BeanTool.createBeanProcesser("Printer", beanClass, interfaceClass, methodHead, beanParamName,
             unitTemplate, primitiveTemplate, linkTemplate, imports, BeanTool.BEAN_PROCESSER_TYPE_R);
+   }
+
+   /**
+    * 调用一个对象的方法.
+    *
+    * @param object          被调用方法的对象, 如果此对象是个<code>Class</code>, 则
+    *                        给出的方法名必须是此类的静态方法
+    * @param methodName      方法的名称
+    * @param args            调用的参数
+    * @param parameterTypes  调用的参数类型
+    * @return  被调用的方法的返回结果
+    */
+   public static Object invokeExactMethod(Object object, String methodName, Object[] args,
+         Class[] parameterTypes)
+         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+   {
+      Class c;
+      if (object instanceof Class)
+      {
+         c = (Class) object;
+      }
+      else
+      {
+         c = object.getClass();
+      }
+      Method method = c.getMethod(methodName, parameterTypes);
+      return method.invoke(object, args);
    }
 
 }

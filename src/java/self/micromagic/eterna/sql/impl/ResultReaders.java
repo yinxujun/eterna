@@ -42,6 +42,7 @@ import self.micromagic.util.MemoryStream;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
+import self.micromagic.cg.ClassGenerator;
 
 public abstract class ResultReaders
 {
@@ -885,8 +886,8 @@ public abstract class ResultReaders
       }
       if (!ResultReader.class.isAssignableFrom(type))
       {
-         throw new ConfigurationException(type.getName()
-               + " is not instance of " + ObjectReader.class.getName());
+         throw new ConfigurationException(ClassGenerator.getClassName(type)
+               + " is not instance of " + ClassGenerator.getClassName(ObjectReader.class));
       }
       try
       {
@@ -897,7 +898,7 @@ public abstract class ResultReaders
       {
          SQLManager.log.warn("createReader:" + name, ex);
          throw new ConfigurationException("Can't create [ResultReader] class:"
-               + type.getName() + ".");
+               + ClassGenerator.getClassName(type) + ".");
       }
    }
 

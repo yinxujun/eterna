@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 
 import org.xml.sax.Attributes;
 import self.micromagic.util.Utility;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * 生成一个类的实例的初始化规则.
@@ -174,8 +175,9 @@ public class ObjectCreateRule extends MyRule
    {
       if (classType != null && !classType.isInstance(instance))
       {
-         throw new InvalidAttributesException("The class '" + instance.getClass().getName()
-               + "' is not instance of " + classType.getName());
+         throw new InvalidAttributesException("The class '"
+               + ClassGenerator.getClassName(instance.getClass())
+               + "' is not instance of " + ClassGenerator.getClassName(classType));
       }
    }
 
@@ -194,7 +196,7 @@ public class ObjectCreateRule extends MyRule
          throws Exception
    {
       Object top = this.digester.pop();
-      this.digester.getLogger().debug("Pop " + top.getClass().getName());
+      this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
    }
 
 }

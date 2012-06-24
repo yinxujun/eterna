@@ -3,6 +3,7 @@ package self.micromagic.eterna.digester;
 
 import org.apache.commons.digester.Digester;
 import org.xml.sax.Attributes;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * 设置对象属性的初始化规则.
@@ -113,7 +114,7 @@ public class PropertySetRule extends MyRule
       if (this.pushStack)
       {
          Object top = this.digester.pop();
-         this.digester.getLogger().debug("Pop " + top.getClass().getName());
+         this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
       }
       for (int i = 0; i < setters.length; i++)
       {
