@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.IntegerRef;
@@ -21,47 +20,9 @@ import self.micromagic.util.StringAppender;
 public class ClassGenerator
 {
    /**
-    * 类的名称变量名. 在代码内部, 需要构造类本身或写构造函数时, 需要用到的类名. <p>
-    * 如：
-    * 构造函数   public ${thisName}()
-    * 定义本类   ${thisName} value = new ${thisName}();
-    */
-   public static final String THIS_NAME = "thisName";
-
-   /**
-    * 用于记录日志.
-    */
-   public static final Log log = Utility.createLog("cg");
-
-   /**
-    * 设置对代码编译的类型.
-    */
-   public static final String COMPILE_TYPE_PROPERTY = "eterna.compile.type";
-
-   /**
-    * 设置是否要输出代码动态编译相关的日志信息.
-    * 可设置的值如下:
-    * 1. 只记录出错信息
-    * 2. 记录生成的代码信息
-    */
-   public static final String COMPILE_LOG_PROPERTY = "eterna.compile.log";
-
-   /**
     * 已注册的类生成工具的缓存.
     */
    private static final Map cgCache = new HashMap();
-
-   static int COMPILE_LOG_TYPE = 1;
-   static
-   {
-      try
-      {
-         Utility.addFieldPropertyManager(COMPILE_LOG_PROPERTY, ClassGenerator.class, "COMPILE_LOG_TYPE", "1");
-      }
-      catch (Throwable ex) {}
-      registerCG("ant", new AntCG());
-      registerCG("javassist", new JavassistCG());
-   }
 
    /**
     * 注册一个类生成工具.
@@ -180,7 +141,7 @@ public class ClassGenerator
    }
 
    /**
-    * 添加一个读取类的路径.
+    * 添加一个读取其他类的路径工具.
     */
    public void addClassPath(Class pathClass)
    {
@@ -191,7 +152,7 @@ public class ClassGenerator
    }
 
    /**
-    * 获得需要读取类的路径列表.
+    * 获得需要读取其他类的路径工具列表.
     */
    public Class[] getClassPaths()
    {
@@ -224,7 +185,7 @@ public class ClassGenerator
          String[] arr = new String[this.fields.size()];
          this.fields.toArray(arr);
          Map map = new HashMap(2);
-         map.put(THIS_NAME, getConstructorName(this.getClassName()));
+         map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
          for (int i = 0; i < arr.length; i++)
          {
             arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
@@ -236,7 +197,7 @@ public class ClassGenerator
    /**
     * 添加一个构造方法代码.
     * 代码中构造函数的名称可以用"${thisName}"代替.
-    * @see #THIS_NAME
+    * @see CG#THIS_NAME
     */
    public void addConstructor(String constructor)
    {
@@ -258,7 +219,7 @@ public class ClassGenerator
       String[] arr = new String[this.constructors.size()];
       this.constructors.toArray(arr);
       Map map = new HashMap(2);
-      map.put(THIS_NAME, getConstructorName(this.getClassName()));
+      map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
       for (int i = 0; i < arr.length; i++)
       {
          arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
@@ -291,7 +252,7 @@ public class ClassGenerator
          String[] arr = new String[this.methods.size()];
          this.methods.toArray(arr);
          Map map = new HashMap(2);
-         map.put(THIS_NAME, getConstructorName(this.getClassName()));
+         map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
          for (int i = 0; i < arr.length; i++)
          {
             arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
@@ -307,7 +268,7 @@ public class ClassGenerator
    {
       if (this.compileType == null)
       {
-         return Utility.getProperty(COMPILE_TYPE_PROPERTY, "javassist");
+         return Utility.getProperty(CG.COMPILE_TYPE_PROPERTY, "javassist");
       }
       return this.compileType;
    }
@@ -346,9 +307,9 @@ public class ClassGenerator
    }
 
    /**
-    * bean处理类的id
+    * 用于生成类的流水号, 防止类名重复.
     */
-   private static volatile int BEAN_PROCESSER_ID = 1;
+   private static volatile int CLASS_GENERATOR_ID = 1;
 
    /**
     * 创建一个类生成工具.
@@ -388,11 +349,11 @@ public class ClassGenerator
       {
          if (StringTool.isEmpty(suffix))
          {
-            tmpSuffix = "$$EBP_" + (BEAN_PROCESSER_ID++);
+            tmpSuffix = "$$ECG_" + (CLASS_GENERATOR_ID++);
          }
          else
          {
-            tmpSuffix = "$" + suffix + "$$EBP_" + (BEAN_PROCESSER_ID++);
+            tmpSuffix = "$" + suffix + "$$ECG_" + (CLASS_GENERATOR_ID++);
          }
       }
       cg.setClassName("eterna." + baseClass.getName() + tmpSuffix);
@@ -503,22 +464,63 @@ public class ClassGenerator
       return nameAccessor.getName(c);
    }
 
+   static int COMPILE_LOG_TYPE = 1;
+
    /**
     * 初始化一个类名的访问者.
     */
    private static NameAccessor nameAccessor;
+
    static
    {
       try
       {
          Class c = Class.forName("self.micromagic.cg.ClassGenerator$ClassCanonicalNameAccessor");
          nameAccessor = (NameAccessor) c.newInstance();
-         nameAccessor.getName(Map.Entry.class);
       }
       catch (Throwable ex)
       {
+         if (!(ex instanceof UnsupportedClassVersionError))
+         {
+            if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+            {
+               CG.log.error("init name accessor error.", ex);
+            }
+         }
          // 如果出现异常, 这可能是jdk版本小于1.5, 使用getName方法来获取类名
          nameAccessor = new ClassNameAccessor();
+      }
+      try
+      {
+         Utility.addFieldPropertyManager(CG.COMPILE_LOG_PROPERTY, ClassGenerator.class, "COMPILE_LOG_TYPE");
+         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
+         {
+            CG.log.info("map entry name:" + nameAccessor.getName(Map.Entry.class)
+                  + ", accessor class:" + nameAccessor.getClass());
+         }
+      }
+      catch (Throwable ex) {}
+      try
+      {
+         registerCG("ant", new AntCG());
+      }
+      catch (Throwable ex)
+      {
+         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+         {
+            CG.log.error("AntCG init error.", ex);
+         }
+      }
+      try
+      {
+         registerCG("javassist", new JavassistCG());
+      }
+      catch (Throwable ex)
+      {
+         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+         {
+            CG.log.error("JavassistCG init error.", ex);
+         }
       }
    }
 

@@ -103,42 +103,43 @@ public class AppDataLogExecute extends AbstractExecute
       BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
       if (bp == null)
       {
-         synchronized (beanPrinterMap)
+         bp = getBeanPrinter0(beanClass);
+      }
+      return bp;
+   }
+   private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
+   {
+      BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+      if (bp == null)
+      {
+         try
          {
-            // 再获取一次, 如果其他线程已处理了, 这里就不用做了
-            bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+            String mh = "public void print(" + ClassGenerator.getClassName(Printer.class)
+                  + " p," + " Element parent, Object value) throws Exception";
+            String ut = "p.printObject(parent.addElement(\"${type}\")"
+                  + ".addAttribute(\"name\", \"${name}\")"
+                  + ", ${value});";
+            String pt = "parent.addElement(\"${type}\")"
+                  + ".addAttribute(\"name\", \"${name}\")"
+                  + ".addAttribute(\"type\", \"${primitive}\")"
+                  + ".addAttribute(\"value\", ${value});";
+            String[] imports = new String[]{
+               ClassGenerator.getPackageString(AppDataLogExecute.class),
+               ClassGenerator.getPackageString(Element.class),
+               ClassGenerator.getPackageString(beanClass)
+            };
+            bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
+                  "value", ut, pt, "", imports);
             if (bp == null)
             {
-               try
-               {
-                  String mh = "public void print(" + ClassGenerator.getClassName(Printer.class)
-                        + " p," + " Element parent, Object value) throws Exception";
-                  String ut = "p.printObject(parent.addElement(\"${type}\")"
-                        + ".addAttribute(\"name\", \"${name}\")"
-                        + ", ${value});";
-                  String pt = "parent.addElement(\"${type}\")"
-                        + ".addAttribute(\"name\", \"${name}\")"
-                        + ".addAttribute(\"type\", \"${primitive}\")"
-                        + ".addAttribute(\"value\", ${value});";
-                  String[] imports = new String[]{
-                     ClassGenerator.getPackageString(AppDataLogExecute.class),
-                     ClassGenerator.getPackageString(Element.class),
-                     ClassGenerator.getPackageString(beanClass)
-                  };
-                  bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
-                        "value", ut, pt, "", imports);
-                  if (bp == null)
-                  {
-                     bp = new BeanPrinterImpl(beanClass);
-                  }
-               }
-               catch (Throwable ex)
-               {
-                  bp = new BeanPrinterImpl(beanClass);
-               }
+               bp = new BeanPrinterImpl(beanClass);
             }
-            beanPrinterMap.put(beanClass, bp);
          }
+         catch (Throwable ex)
+         {
+            bp = new BeanPrinterImpl(beanClass);
+         }
+         beanPrinterMap.put(beanClass, bp);
       }
       return bp;
    }
@@ -146,6 +147,7 @@ public class AppDataLogExecute extends AbstractExecute
    public interface BeanPrinter
    {
       public void print(Printer p, Element parent, Object value) throws Exception;
+
    }
 
    private static class BeanPrinterImpl
@@ -385,6 +387,11 @@ public class AppDataLogExecute extends AbstractExecute
             parent.addAttribute("type", "Number");
             parent.addAttribute("value", String.valueOf(value));
          }
+         else if (value instanceof Boolean)
+         {
+            parent.addAttribute("type", "Boolean");
+            parent.addAttribute("value", String.valueOf(value));
+         }
          else if (value instanceof Map)
          {
             parent.addAttribute("type", "Map");
@@ -421,22 +428,23 @@ public class AppDataLogExecute extends AbstractExecute
                this.pop();
             }
          }
+         else if (value instanceof BeanPrinter)
+         {
+            ((BeanPrinter) value).print(this, parent, value);
+         }
+         else if (Tool.isBean(value.getClass()))
+         {
+            parent.addAttribute("type", "bean:" + ClassGenerator.getClassName(value.getClass()));
+            if (this.checkAndPush(parent, value))
+            {
+               this.printBean(parent, value);
+               this.pop();
+            }
+         }
          else
          {
-            if (Tool.isBean(value.getClass()))
-            {
-               parent.addAttribute("type", "bean:" + value.getClass().getName());
-               if (this.checkAndPush(parent, value))
-               {
-                  this.printBean(parent, value);
-                  this.pop();
-               }
-            }
-            else
-            {
-               parent.addAttribute("type", "class:" + value.getClass().getName());
-               parent.addAttribute("value", value.toString());
-            }
+            parent.addAttribute("type", "class:" + ClassGenerator.getClassName(value.getClass()));
+            parent.addAttribute("value", value.toString());
          }
       }
 

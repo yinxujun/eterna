@@ -111,6 +111,9 @@
 
          <data-printer name="dataPrinter" generator="self.micromagic.eterna.view.impl.DataPrinterImpl"/>
 
+         <!-- 给标签库使用的默认空界面 -->
+         <view name="empty.view"/>
+
       </objs>
    </factory>
 

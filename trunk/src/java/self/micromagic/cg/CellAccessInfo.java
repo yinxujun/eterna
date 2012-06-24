@@ -51,9 +51,9 @@ public class CellAccessInfo
          }
          catch (Exception ex)
          {
-            if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+            if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
             {
-               ClassGenerator.log.info("Read bean value error.", ex);
+               CG.log.info("Read bean value error.", ex);
             }
          }
       }
@@ -95,9 +95,9 @@ public class CellAccessInfo
          }
          catch (Exception ex)
          {
-            if (ClassGenerator.COMPILE_LOG_TYPE > 0)
+            if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
             {
-               ClassGenerator.log.info("Write bean value error.", ex);
+               CG.log.info("Write bean value error.", ex);
             }
          }
       }

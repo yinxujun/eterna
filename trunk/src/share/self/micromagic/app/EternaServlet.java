@@ -22,6 +22,7 @@ import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.container.ValueContainerMap;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class EternaServlet extends HttpServlet
       implements WebApp
@@ -83,66 +84,62 @@ public class EternaServlet extends HttpServlet
       return serverRoot;
    }
 
-   protected void service(HttpServletRequest req, HttpServletResponse resp)
+   protected void service(HttpServletRequest request, HttpServletResponse response)
          throws ServletException, IOException
    {
-      if (!charset.equals(req.getCharacterEncoding()))
+      if (!this.charset.equals(request.getCharacterEncoding()))
       {
-         req.setCharacterEncoding(charset);
+         request.setCharacterEncoding(this.charset);
       }
-      resp.setContentType("text/html;charset=" + charset);
+      response.setContentType("text/html;charset=" + this.charset);
       AppData data = AppData.getCurrentData();
-      data.contextRoot = req.getContextPath();
-      data.request = req;
-      data.response = resp;
+      data.request = request;
+      data.response = response;
+      data.contextRoot = request.getContextPath();
       data.servletConfig = this.getServletConfig();
       data.position = AppData.POSITION_SERVLET;
       try
       {
-         data.maps[AppData.REQUEST_PARAMETER_MAP] = req.getParameterMap();
-         data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = ValueContainerMap.createRequestAttributeMap(req);
-         HttpServletRequest request = data.getHttpServletRequest();
-         if (request != null)
-         {
-            data.maps[AppData.SESSION_ATTRIBUTE_MAP] = ValueContainerMap.createSessionAttributeMap(request);
+         data.maps[AppData.REQUEST_PARAMETER_MAP] = RequestParameterMap.create(request);
+         data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = ValueContainerMap.createRequestAttributeMap(request);
+         data.maps[AppData.SESSION_ATTRIBUTE_MAP] = ValueContainerMap.createSessionAttributeMap(request);
 
-            String queryStr = request.getQueryString();
-            if (queryStr != null)
+         String queryStr = request.getQueryString();
+         if (queryStr != null)
+         {
+            String modelNameTag = this.getFactoryManager().getEternaFactory().getModelNameTag();
+            int index;
+            int plusCount = 2;
+            if (queryStr.length() > 0 && queryStr.charAt(0) != '?')
             {
-               String modelNameTag = this.getFactoryManager().getEternaFactory().getModelNameTag();
-               int index;
-               int plusCount = 2;
-               if (queryStr.length() > 0 && queryStr.charAt(0) != '?')
+               if (queryStr.startsWith(modelNameTag + "="))
                {
-                  if (queryStr.startsWith(modelNameTag + "="))
-                  {
-                     index = 0;
-                     plusCount = 1;
-                  }
-                  else
-                  {
-                     index = -1;
-                  }
+                  index = 0;
+                  plusCount = 1;
                }
                else
                {
-                  index = queryStr.indexOf("?" + modelNameTag + "=");
+                  index = -1;
                }
-               if (index == -1)
+            }
+            else
+            {
+               index = queryStr.indexOf("?" + modelNameTag + "=");
+            }
+            if (index == -1)
+            {
+               index = queryStr.indexOf("&" + modelNameTag + "=");
+            }
+            if (index != -1)
+            {
+               int endIndex = queryStr.indexOf('&', index + 1);
+               if (endIndex != -1)
                {
-                  index = queryStr.indexOf("&" + modelNameTag + "=");
+                  data.modelName = queryStr.substring(index + modelNameTag.length() + plusCount, endIndex);
                }
-               if (index != -1)
+               else
                {
-                  int endIndex = queryStr.indexOf('&', index + 1);
-                  if (endIndex != -1)
-                  {
-                     data.modelName = queryStr.substring(index + modelNameTag.length() + plusCount, endIndex);
-                  }
-                  else
-                  {
-                     data.modelName = queryStr.substring(index + modelNameTag.length() + plusCount);
-                  }
+                  data.modelName = queryStr.substring(index + modelNameTag.length() + plusCount);
                }
             }
          }
@@ -180,7 +177,7 @@ public class EternaServlet extends HttpServlet
          {
             if (data.export != null)
             {
-               this.doExport(data, req, resp);
+               this.doExport(data, request, response);
             }
          }
          catch (Throwable ex)

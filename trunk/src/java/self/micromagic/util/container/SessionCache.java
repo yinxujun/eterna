@@ -10,11 +10,14 @@ import java.io.IOException;
 import javax.servlet.http.HttpSession;
 
 /**
- * 管理session中的属性.
+ * 管理session中的属性. <p>
+ * 其主要作用就是将存入的对象包装成<code>Property</code>, 当需要序列化时,
+ * 会检查被包装的对象是否可序列化, 如果是无法被序列化的对象, 则不会对其进
+ * 行序列化, 在反序列化时将其作为null.
  */
 public class SessionCache
 {
-   private static SessionCache sessionCache = new SessionCache();
+   private static SessionCache cache = new SessionCache();
    private static int globalVersion = 0;
 
    private SessionCache()
@@ -26,7 +29,7 @@ public class SessionCache
     */
    public static SessionCache getInstance()
    {
-      return sessionCache;
+      return cache;
    }
 
    /**

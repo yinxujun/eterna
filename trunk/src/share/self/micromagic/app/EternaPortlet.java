@@ -20,6 +20,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.ModelCaller;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.view.ViewAdapter;
+import self.micromagic.util.container.RequestParameterMap;
 
 public class EternaPortlet extends GenericPortlet
       implements WebApp
@@ -88,7 +89,7 @@ public class EternaPortlet extends GenericPortlet
       }
       try
       {
-         data.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
+         data.maps[AppData.REQUEST_PARAMETER_MAP] = RequestParameterMap.create(request.getParameterMap());
          data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = PortletValueMap.createRequestAttributeMap(request);
          data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(
                request, PortletSession.APPLICATION_SCOPE);
@@ -137,7 +138,7 @@ public class EternaPortlet extends GenericPortlet
             }
             try
             {
-               data.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
+               data.maps[AppData.REQUEST_PARAMETER_MAP] = RequestParameterMap.create(request.getParameterMap());
                data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = PortletValueMap.createRequestAttributeMap(request);
                data.maps[AppData.SESSION_ATTRIBUTE_MAP] = PortletValueMap.createSessionAttributeMap(
                      request, PortletSession.APPLICATION_SCOPE);

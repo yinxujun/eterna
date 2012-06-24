@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;
 import org.xml.sax.Attributes;
 import self.micromagic.eterna.share.AbstractGenerator;
@@ -39,6 +40,7 @@ public class SQLRuleSet extends RuleSetBase
    {
       PropertySetter setter;
       PropertySetter[] setters;
+      Rule rule;
 
 
       //--------------------------------------------------------------------------------
@@ -49,9 +51,9 @@ public class SQLRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 设置数据准备生成器(ValuePreparerCreate)的读取规则
-      digester.addRule("eterna-config/factory/objs/vpc",
-            new ObjectCreateRule(ValuePreparerCreaterGeneratorImpl.class.getName(),
-                  "className", ValuePreparerCreaterGenerator.class));
+      rule = new ObjectCreateRule(ValuePreparerCreaterGeneratorImpl.class.getName(),
+            "className", ValuePreparerCreaterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/vpc", rule);
 
       setter = new StackPropertySetter("registerValuePreparerGenerator", ValuePreparerCreaterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/vpc", new PropertySetRule(setter));
@@ -148,9 +150,9 @@ public class SQLRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 设置查询适配器构造者(QueryAdapterGenerator)的读取规则
-      digester.addRule("eterna-config/factory/objs/query",
-            new ObjectCreateRule(QueryAdapterImpl.class.getName(),
-                  "generator", QueryAdapterGenerator.class));
+      rule = new ObjectCreateRule(QueryAdapterImpl.class.getName(), "generator",
+            QueryAdapterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/query", rule);
 
       setter = new StackPropertySetter("registerQueryAdapter", QueryAdapterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/query", new PropertySetRule(setter));
@@ -194,9 +196,9 @@ public class SQLRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 设置更新适配器构造者(UpdateAdapterGenerator)的读取规则
-      digester.addRule("eterna-config/factory/objs/update",
-            new ObjectCreateRule(UpdateAdapterImpl.class.getName(),
-                  "generator", UpdateAdapterGenerator.class));
+      rule = new ObjectCreateRule(UpdateAdapterImpl.class.getName(), "generator",
+            UpdateAdapterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/update", rule);
 
       setter = new StackPropertySetter("registerUpdateAdapter", UpdateAdapterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/update", new PropertySetRule(setter));
@@ -230,10 +232,11 @@ public class SQLRuleSet extends RuleSetBase
 
       PropertySetter setter;
       PropertySetter[] setters;
+      Rule rule;
 
-      digester.addRule(path + "/parameter",
-            new ObjectCreateRule(SQLParameterGeneratorImpl.class.getName(),
-                  "generator", SQLParameterGenerator.class));
+      rule = new ObjectCreateRule(SQLParameterGeneratorImpl.class.getName(), "generator",
+            SQLParameterGenerator.class);
+      digester.addRule(path + "/parameter", rule);
 
       setter = new StackPropertySetter("addParameter", SQLParameterGenerator.class, 1);
       digester.addRule(path + "/parameter", new PropertySetRule(setter));

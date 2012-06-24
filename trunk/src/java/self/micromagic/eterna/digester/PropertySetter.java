@@ -3,13 +3,13 @@ package self.micromagic.eterna.digester;
 
 import java.util.Arrays;
 
-import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import self.micromagic.eterna.share.Generator;
-import self.micromagic.util.Utility;
+import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * 各类属性的设置, 通过PropertySetRule来调用.
@@ -233,7 +233,7 @@ abstract class SinglePropertySetter extends PropertySetter
       Object obj = this.digester.peek(this.objectIndex);
       try
       {
-         MethodUtils.invokeExactMethod(obj, this.methodName, this.value, this.type);
+         Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
       }
       catch (Exception ex)
       {
@@ -310,7 +310,7 @@ class ObjectPropertySetter extends SinglePropertySetter
       this.setMyValue();
       try
       {
-         MethodUtils.invokeExactMethod(obj, this.methodName, this.value, this.type);
+         Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
       }
       catch (Exception ex)
       {
@@ -645,7 +645,7 @@ class EmptyPropertySetter extends PropertySetter
          throws Exception
    {
       Object obj = this.digester.peek(this.objectIndex);
-      MethodUtils.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
+      Tool.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
    }
 
 }

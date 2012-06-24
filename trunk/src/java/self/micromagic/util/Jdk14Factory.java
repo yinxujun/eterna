@@ -23,6 +23,7 @@ import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.XMLWriter;
 import self.micromagic.eterna.model.AppData;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -112,7 +113,7 @@ public class Jdk14Factory extends LogFactory
          logNode.addAttribute("message", msg);
       }
       logNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
-      logNode.addAttribute("exClass", ex.getClass().getName());
+      logNode.addAttribute("exClass", ClassGenerator.getClassName(ex.getClass()));
       logNode.addAttribute("exMessage", ex.getMessage());
       Element stacks = logNode.addElement("stacks");
       StackTraceElement[] trace = ex.getStackTrace();
@@ -486,7 +487,7 @@ public class Jdk14Factory extends LogFactory
    public Log getInstance(Class clazz)
          throws LogConfigurationException
    {
-      return this.getInstance(clazz.getName());
+      return this.getInstance(ClassGenerator.getClassName(clazz));
    }
 
    public Log getInstance(String name)

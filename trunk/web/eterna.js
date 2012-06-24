@@ -121,8 +121,8 @@ var eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, up
 };
 var eterna_select_default_value = [["","-不限-"]];
 
-var eterna_com_stack = new Array();
-var eterna_fn_stack = new Array();
+var eterna_com_stack = [];
+var eterna_fn_stack = [];
 
 // eg = eterna_globe
 var EG_SMA = "searchManager_attributes";
@@ -136,13 +136,15 @@ var EG_DATA_TYPE_WEB = "web";
 var EG_SWAP_FLAG = "swapId";
 var EG_SCATTER_INIT_FLAG = "initId";
 var EG_INHERIT_FLAG = "inherit";
+var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
+var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
 if (typeof $egCacheInitialized == 'undefined')
 {
    window.$egCacheInitialized = 1;
 
    var eg_cache = {
-      willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{}
+      willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},templateRootCache:[]
    };
 
    var EG_TEMP_NAMES = [
@@ -719,7 +721,8 @@ function Eterna($E, eterna_debug, rootWebObj)
                webObj.after(tmpCom);
             }
             webObj.remove();
-            eterna_doInitObjs(tmpCom != null ? tmpCom : parentWebObj);
+            // 这里如果tmpCom为null, 那说明没有生成, 因为reload只能针对实体对象
+            eterna_doInitObjs(tmpCom);
          }
          catch (ex)
          {
@@ -1013,73 +1016,240 @@ function Eterna($E, eterna_debug, rootWebObj)
       }
 
 
+      /**
+       * 在框架外(或非初始化时)创建一个控件.
+       * tName     typical-component的名称
+       * parent    性创建的控件所在的父节点, 可以是节点id 也可以是节点对象,
+       *           如果未给出此参数, 则直接放到body中
+       * 例子:
+       * var newObj = _eterna.newComponent("templateId", "parentId");
+       */
+      Eterna.prototype.newComponent = function(tName, parent)
+      {
+         var pObj = null;
+         if (typeof parent == "object")
+         {
+            if (typeof parent.jquery == "string")
+            {
+               pObj = parent;
+            }
+            else
+            {
+               pObj = jQuery(parent);
+            }
+         }
+         else if (typeof parent == "string")
+         {
+            pObj = jQuery("#" + parent);
+         }
+         else
+         {
+            pObj = jQuery("body");
+         }
+         var objConfig = null;
+         if (typeof tName == "string")
+         {
+            objConfig = this.$E.T[tName];
+         }
+         else if (typeof tName == "object" && typeof tName.name == "string")
+         {
+            objConfig = tName;
+         }
+         if (objConfig == null)
+         {
+            return null;
+         }
+         var tmpParent = new WebObjList(pObj);
+         var result = this.createComponent(objConfig, tmpParent);
+         for (var i = 0; i < result.size(); i++)
+         {
+            var tmpObj = result.get(i);
+            pObj.append(tmpObj);
+            eterna_doInitObjs(tmpObj);
+         }
+         if (result.size() == 1)
+         {
+            return result.get(0);
+         }
+         return result;
+      }
+
+      /**
+       * 在框架外调用一个方法.
+       * fnName    要调用的方法的名称
+       * ...       调用方法需要的参数
+       * 例子:
+       * _eterna.callFunction("getData_value", "userInfo", "id", 0);
+       */
+      Eterna.prototype.callFunction = function(fnName)
+      {
+         var fn = this.$E.F[fnName];
+         if (fn != null)
+         {
+            var params = [];
+            if (arguments.length > 1)
+            {
+               for (var i = 1; i < arguments.length; i++)
+               {
+                  params.push(arguments[i]);
+               }
+            }
+            var result = fn.apply(this, params);
+            if (typeof result != "undefined")
+            {
+               return result;
+            }
+         }
+      }
+
+      /**
+       * 在框架外获得一个方法对象.
+       * fnName    要获得的方法的名称
+       * 例子:
+       * var fn = _eterna.getFunction("getData_value");
+       * fn("userInfo", "id", 0);
+       */
+      Eterna.prototype.getFunction = function(fnName)
+      {
+         return this.$E.F[fnName];
+      }
+
+      /**
+       * 在框架外获取或设置数据集中的值.
+       * dataName  获取或设置的值的名称
+       * value     要设置的值
+       * 例子:
+       * var value = _eterna.data("data1");
+       * _eterna.data("data2", value);
+       */
+      Eterna.prototype.data = function(dataName, value)
+      {
+         var oldV = this.$E.D[dataName];
+         if (typeof value != "undefined")
+         {
+            this.$E.D[dataName] = value;
+         }
+         return oldV;
+      }
+
       Eterna.prototype.swapComponent = function(baseObj, subs, swapFlag)
       {
          if (swapFlag == null)
          {
             swapFlag = EG_SWAP_FLAG;
          }
-         for (var i = 0; i < subs.length; i++)
+         eg_cache.templateRootCache.push({rootObj:baseObj,swapFlag:swapFlag});
+         try
          {
-            var name = subs[i].name;
-            var pObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(name) + "']", baseObj);
-            if (pObj.size() == 1)
+            for (var i = 0; i < subs.length; i++)
             {
-               pObj.data(EG_SWAP_FLAG, name);
-               var tmpCom = this.createComponent(subs[i], pObj);
-               if (pObj.data(EG_INHERIT_FLAG) == null)
+               var name = subs[i].name;
+               var pObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(name) + "']", baseObj);
+               if (pObj.size() == 1)
                {
-                  if (tmpCom != null)
+                  pObj.data(EG_SWAP_FLAG, name);
+                  var tmpCom = this.createComponent(subs[i], pObj);
+                  if (pObj.data(EG_INHERIT_FLAG) == null)
                   {
-                     pObj.after(tmpCom);
-                  }
-                  else
-                  {
-                     var tmpSubs = pObj.children();
-                     var maxCount = tmpSubs.size();
-                     for (var j = maxCount - 1; j >= 0; j--)
+                     if (tmpCom != null)
                      {
-                        pObj.after(tmpSubs.eq(j));
+                        pObj.after(tmpCom);
                      }
+                     else
+                     {
+                        var tmpSubs = pObj.children();
+                        var maxCount = tmpSubs.size();
+                        for (var j = maxCount - 1; j >= 0; j--)
+                        {
+                           pObj.after(tmpSubs.eq(j));
+                        }
+                     }
+                     pObj.remove();
                   }
-                  pObj.remove();
                }
             }
+            eg_cache.templateRootCache.pop();
+         }
+         catch (ex)
+         {
+            eg_cache.templateRootCache.pop();
+            throw ex;
          }
       }
 
       Eterna.prototype.getValue_fromRecords = function(dataName, srcName, index)
       {
+         var valueObj = {html:0,exists:0};
          if (typeof dataName == "object")
          {
-            if (index == null)
-            {
-               var tmpStr = "[script]:valueObj.value=valueObj.valueData[valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
-               var valueObj = {html:0,value:"",exists:-1,valueData:dataName,srcName:srcName};
-               return this.getValue(tmpStr, valueObj);
-            }
-            else
-            {
-               var tmpStr = "[script]:var mytmpData=valueObj.valueData;valueObj.value=(typeof mytmpData.rowCount=='number')?mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1]:mytmpData[valueObj.index][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
-               var valueObj = {html:0,value:"",exists:-1,valueData:dataName,srcName:srcName,index:index};
-               return this.getValue(tmpStr, valueObj);
-            }
+            valueObj.valueData = dataName;
+            valueObj.srcName = srcName;
          }
          else
          {
+            valueObj.valueData = this.$E.D[dataName];
+            valueObj.dataName = dataName;
+            valueObj.srcName = srcName;
+         }
+         if (typeof valueObj.valueData == "object")
+         {
             if (index == null)
             {
-               var tmpStr = "[script]:valueObj.value=$E.D[valueObj.dataName][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;valueObj.valueData=$E.D[valueObj.dataName];";
-               var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName};
-               return this.getValue(tmpStr, valueObj);
+               if (typeof valueObj.valueData.rowCount == "number"
+                     || typeof valueObj.valueData.length == "number")
+               {
+                  if ((this.eterna_debug & ED_FN_CALLED) != 0)
+                  {
+                     var msg = "The data";
+                     if (typeof valueObj.dataName == "string")
+                     {
+                        msg += ":[" + valueObj.dataName + "]"
+                     }
+                     msg += " must be a ResultRow."
+                     this.printException(msg);
+                  }
+               }
+               valueObj.value = valueObj.valueData[srcName];
+               valueObj.exists = (typeof valueObj.value == "undefined") ? 0 : 1;
             }
             else
             {
-               var tmpStr = "[script]:var mytmpData=$E.D[valueObj.dataName];valueObj.valueData=mytmpData;valueObj.value=(typeof mytmpData.rowCount=='number')?mytmpData.rows[valueObj.index][mytmpData.names[valueObj.srcName]-1]:mytmpData[valueObj.index][valueObj.srcName];valueObj.exists=(typeof valueObj.value=='undefined')?0:1;";
-               var valueObj = {html:0,value:"",exists:-1,dataName:dataName,srcName:srcName,index:index};
-               return this.getValue(tmpStr, valueObj);
+               valueObj.index = index;
+               try
+               {
+                  if (typeof valueObj.valueData.rowCount == "number")
+                  {
+                     valueObj.value = valueObj.valueData.rows[index][valueObj.valueData.names[srcName] - 1];
+                  }
+                  else if (typeof valueObj.valueData.length == "number")
+                  {
+                     valueObj.value = valueObj.valueData[index][srcName];
+                  }
+                  else
+                  {
+                     if ((this.eterna_debug & ED_FN_CALLED) != 0)
+                     {
+                        var msg = "The data";
+                        if (typeof valueObj.dataName == "string")
+                        {
+                           msg += ":[" + valueObj.dataName + "]"
+                        }
+                        msg += " must be a ResultIterator."
+                        this.printException(msg);
+                     }
+                  }
+               }
+               catch (ex)
+               {
+                  if ((this.eterna_debug & ED_GET_VALUE) != 0)
+                  {
+                     this.printException(ex);
+                  }
+               }
+               valueObj.exists = (typeof valueObj.value == "undefined") ? 0 : 1;
             }
          }
+         return valueObj
       }
 
       Eterna.prototype.getValue = function(str, valueObj)
@@ -1222,7 +1392,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          var webObj = null;
          if (configData.creater != null && jQuery.isFunction(configData.creater))
          {
-            webObj = configData.creater(configData, parent.webObjList ? null : parent);
+            webObj = configData.creater(configData, parent.webObjList ? parent.realParent : parent);
          }
          else if (type == "tableForm")
          {
@@ -1250,16 +1420,52 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
          else if (type == EG_INHERIT_FLAG)
          {
-            returnNULL = true;
+            var baseObj = null;
             if (parent != null && typeof parent.jquery == "string" &&
                   parent.data(EG_SWAP_FLAG) == configData.name)
+            {
+               returnNULL = true;
+               baseObj = parent;
+               // 这里需要返回null, 但在初始化的时候需要有对象
+               nullObj = baseObj;
+            }
+            else if (configData.baseObj != null)
+            {
+               baseObj = configData.baseObj.clone(true);
+            }
+            else if (eg_cache.templateRootCache.length > 0)
+            {
+               var lastIndex = eg_cache.templateRootCache.length - 1;
+               var rootObj = eg_cache.templateRootCache[lastIndex].rootObj;
+               var swapFlag = eg_cache.templateRootCache[lastIndex].swapFlag;
+               if (swapFlag == null)
+               {
+                  swapFlag = EG_SWAP_FLAG;
+               }
+               var searchName = configData.name;
+               if (configData[EG_SWAP_FLAG] != null)
+               {
+                  searchName = configData[EG_SWAP_FLAG];
+               }
+               var tObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(searchName) + "']", rootObj);
+               if (tObj.size() == 1)
+               {
+                  configData.baseObj = tObj.clone(true);
+                  baseObj = configData.baseObj.clone(true);
+                  if (tObj.attr(EG_KEEP_OBJ_WHEN_USE) != "1")
+                  {
+                     tObj.remove();
+                  }
+               }
+            }
+            if (baseObj != null)
             {
                if (configData.objValue != null)
                {
                   var tmpObj = this.getValue(configData.objValue);
                   if (tmpObj.exists)
                   {
-                     parent.val(tmpObj.value);
+                     baseObj.val(tmpObj.value);
                   }
                }
                if (configData.text != null)
@@ -1267,13 +1473,11 @@ function Eterna($E, eterna_debug, rootWebObj)
                   var tmpObj = this.getValue(configData.text);
                   if (tmpObj.exists)
                   {
-                     parent.text(tmpObj.value);
+                     baseObj.text(tmpObj.value);
                   }
                }
-               parent.data(EG_INHERIT_FLAG, 1);
-               webObj = parent;
-               // 这里需要返回null, 但在初始化的时候需要有对象
-               nullObj = webObj;
+               baseObj.data(EG_INHERIT_FLAG, 1);
+               webObj = baseObj;
             }
             else
             {
@@ -1307,6 +1511,15 @@ function Eterna($E, eterna_debug, rootWebObj)
 
          if (webObj != null)
          {
+            if (configData[EG_TEMPLATE_OBJ_FLAG])
+            {
+               var tmpTemplateData = {rootObj:webObj};
+               if (configData.swapFlag != null)
+               {
+                  tmpTemplateData.swapFlag = configData.swapFlag;
+               }
+               eg_cache.templateRootCache.push(tmpTemplateData);
+            }
             if (configData.subs != null && !configData.noSub)
             {
                if (doLoop)
@@ -1318,34 +1531,45 @@ function Eterna($E, eterna_debug, rootWebObj)
                         this.dealSubComponent(configData, webObj);
                      }
                   }
-                  else if (eg_temp.dataName != null && this.$E.D[eg_temp.dataName] != null)
+                  else if (eg_temp.dataName != null)
                   {
-                     var theCount = null;
-                     var theData = this.$E.D[eg_temp.dataName];
-                     if (typeof this.$E.D[eg_temp.dataName] == "object")
+                     var tmpData = (typeof eg_temp.dataName == "string") ?
+                           this.$E.D[eg_temp.dataName] : eg_temp.dataName;
+                     var useData = (typeof eg_temp.dataName == "string"); // 标识是否数据集里的数据
+                     if (tmpData != null)
                      {
-                        theCount = this.$E.D[eg_temp.dataName].rowCount;
-                        if (theCount == null)
+                        var theCount = null;
+                        var theData = tmpData;
+                        if (typeof tmpData == "object")
                         {
-                           theCount = this.$E.D[eg_temp.dataName].length;
+                           if (typeof tmpData.rowCount == "number")
+                           {
+                              theCount = tmpData.rowCount;
+                           }
+                           else if (typeof tmpData.length == "number")
+                           {
+                              theCount = tmpData.length;
+                           }
                         }
-                     }
-                     else if (typeof this.$E.D[eg_temp.dataName] == "number")
-                     {
-                        theCount = this.$E.D[eg_temp.dataName];
-                     }
-                     if (theCount != null)
-                     {
-                        var temp_index = eg_temp.index;
-                        for (var index = 0; index < theCount; index++)
+                        else if (typeof tmpData == "number")
                         {
-                           eg_temp.index = index;
-                           this.dealSubComponent(configData, webObj);
-
-                           // 将数据重新赋值, 这样即使循环体里改变了, 这里能改回来
-                           this.$E.D[eg_temp.dataName] = theData;
+                           theCount = tmpData;
                         }
-                        eg_temp.index = temp_index;
+                        if (theCount != null)
+                        {
+                           var temp_index = eg_temp.index;
+                           for (var index = 0; index < theCount; index++)
+                           {
+                              eg_temp.index = index;
+                              this.dealSubComponent(configData, webObj);
+                              if (useData)
+                              {
+                                 // 将数据重新赋值, 这样即使循环体里改变了, 这里能改回来
+                                 this.$E.D[eg_temp.dataName] = theData;
+                              }
+                           }
+                           eg_temp.index = temp_index;
+                        }
                      }
                   }
                }
@@ -1366,7 +1590,14 @@ function Eterna($E, eterna_debug, rootWebObj)
                {
                   this.dealEvents(configData, webObj, parent, myTemp);
                }
-               if (!parent.webObjList)
+               if (parent.webObjList)
+               {
+                  if (parent.realParent != null)
+                  {
+                     webObj.data("parentWebObj", parent.realParent);
+                  }
+               }
+               else
                {
                   webObj.data("parentWebObj", parent);
                }
@@ -1400,10 +1631,10 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
          if (returnNULL)
          {
-            // 如果没有给出parent, 则返回生成的数组
-            if (nullParent)
+            // 如果没有给出parent, 或parent是webObj列表, 则返回webObj列表
+            if (nullParent || parent.webObjList)
             {
-               return parent.data;
+               return parent;
             }
             return null;
          }
@@ -1418,9 +1649,19 @@ function Eterna($E, eterna_debug, rootWebObj)
             var objParam = false;
             var tmpParamData = {webObj:webObj,objConfig:configData,eventConfig:theEvent}
 
-            if (parent != null && !parent.webObjList)
+            if (parent != null)
             {
-               tmpParamData.parentWebObj = parent;
+               if (parent.webObjList)
+               {
+                  if (parent.realParent != null)
+                  {
+                     tmpParamData.parentWebObj = parent.realParent;
+                  }
+               }
+               else
+               {
+                  tmpParamData.parentWebObj = parent;
+               }
             }
             tmpParamData.egTemp = myTemp;
 
@@ -2116,7 +2357,8 @@ function Eterna($E, eterna_debug, rootWebObj)
 
          if (this.$E.D[configData.dataName] != null)
          {
-            var rowCount = this.$E.D[configData.dataName].rowCount;
+            var tmpData = this.$E.D[configData.dataName];
+            var rowCount = (typeof tmpData.rowCount == "number") ? tmpData.rowCount : tmpData.length;
             eg_temp.dataName = configData.dataName;
             var nowRowNum = 1;
             for (var index = 0; index < rowCount; index++)
@@ -3111,17 +3353,20 @@ function eterna_doInitObjs(theObj)
    {
       objs[i].obj.trigger("willInit");
    }
-   var fns = eg_cache.staticInitFns;
-   for (var i = 0; i < fns.length; i++)
+   if (theObj != null)
    {
-      try
+      var fns = eg_cache.staticInitFns;
+      for (var i = 0; i < fns.length; i++)
       {
-         if (fns[i] != null)
+         try
          {
-            fns[i].fn(theObj);
+            if (fns[i] != null)
+            {
+               fns[i].fn(theObj);
+            }
          }
+         catch (ex) {}
       }
-      catch (ex) {}
    }
 }
 
@@ -3539,9 +3784,10 @@ function ef_formatNumber(num, pattern)
 /**
  * 用于存放创建控件时产生临时列表
  */
-function WebObjList()
+function WebObjList(parent)
 {
    this.data = [];
+   this.realParent = parent;
 
    if (typeof WebObjList._initialized == 'undefined')
    {
@@ -3554,6 +3800,11 @@ function WebObjList()
       }
 
       WebObjList.prototype.get = function(index)
+      {
+         return this.data[index];
+      }
+
+      WebObjList.prototype.eq = function(index)
       {
          return this.data[index];
       }

@@ -75,6 +75,7 @@ import org.apache.commons.logging.Log;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.cg.ClassGenerator;
 
 
 /**
@@ -274,7 +275,7 @@ public class GenericDataSource implements DataSource {
     /**
      * Commons Logging instance.
      */
-    protected Log log = Utility.createLog(this.getClass().getName());
+    protected Log log = Utility.createLog(ClassGenerator.getClassName(this.getClass()));
 
 
     /**

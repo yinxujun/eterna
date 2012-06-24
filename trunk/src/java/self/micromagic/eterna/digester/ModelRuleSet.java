@@ -2,24 +2,25 @@
 package self.micromagic.eterna.digester;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;
 import org.xml.sax.Attributes;
-import self.micromagic.eterna.model.ModelAdapterGenerator;
-import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.Execute;
-import self.micromagic.eterna.model.ParamBind;
+import self.micromagic.eterna.model.ModelAdapterGenerator;
 import self.micromagic.eterna.model.ModelCaller;
-import self.micromagic.eterna.model.impl.UpdateExecute;
-import self.micromagic.eterna.model.impl.ParamBindImpl;
-import self.micromagic.eterna.model.impl.QueryExecute;
+import self.micromagic.eterna.model.ModelExport;
+import self.micromagic.eterna.model.ParamBind;
+import self.micromagic.eterna.model.impl.CheckExecute;
 import self.micromagic.eterna.model.impl.ModelAdapterImpl;
-import self.micromagic.eterna.model.impl.TransExecute;
-import self.micromagic.eterna.model.impl.SearchExecute;
 import self.micromagic.eterna.model.impl.ModelCallerImpl;
 import self.micromagic.eterna.model.impl.ModelExecute;
-import self.micromagic.eterna.model.impl.CheckExecute;
-import self.micromagic.util.Utility;
+import self.micromagic.eterna.model.impl.ParamBindImpl;
+import self.micromagic.eterna.model.impl.QueryExecute;
+import self.micromagic.eterna.model.impl.SearchExecute;
+import self.micromagic.eterna.model.impl.TransExecute;
+import self.micromagic.eterna.model.impl.UpdateExecute;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * model模块初始化的规则集.
@@ -34,13 +35,13 @@ public class ModelRuleSet extends RuleSetBase
    {
       PropertySetter setter;
       PropertySetter[] setters;
+      Rule rule;
 
 
       //--------------------------------------------------------------------------------
       // 构造ModelCaller
-      digester.addRule("eterna-config/factory/model-caller",
-            new ObjectCreateRule(ModelCallerImpl.class.getName(),
-                  "className", ModelCaller.class));
+      rule = new ObjectCreateRule(ModelCallerImpl.class.getName(), "className", ModelCaller.class);
+      digester.addRule("eterna-config/factory/model-caller", rule);
       setter = new StackPropertySetter("setModelCaller", ModelCaller.class, 1);
       digester.addRule("eterna-config/factory/model-caller", new PropertySetRule(setter));
       digester.addRule("eterna-config/factory/model-caller",
@@ -49,9 +50,9 @@ public class ModelRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 构造ModelAdapter
-      digester.addRule("eterna-config/factory/objs/model",
-            new ObjectCreateRule(ModelAdapterImpl.class.getName(),
-                  "generator", ModelAdapterGenerator.class));
+      rule = new ObjectCreateRule(ModelAdapterImpl.class.getName(), "generator",
+            ModelAdapterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/model", rule);
 
       setter = new StackPropertySetter("registerModelAdapter", ModelAdapterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/model", new PropertySetRule(setter));

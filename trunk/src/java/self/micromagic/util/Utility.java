@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
@@ -32,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import self.micromagic.eterna.sql.converter.BooleanConverter;
 import self.micromagic.eterna.sql.converter.IntegerConverter;
 import self.micromagic.eterna.sql.converter.ValueConverter;
+import self.micromagic.cg.ClassGenerator;
 
 public class Utility
 {
@@ -47,8 +47,7 @@ public class Utility
    /**
     * 配置在处理文本的动态属性时, 是否要显示处理失败的信息
     */
-   public static final String SHOW_RDP_FAIL_PROPERTY
-         = "self.micromagic.show.rdp.fail";
+   public static final String SHOW_RDP_FAIL_PROPERTY = "self.micromagic.show.rdp.fail";
 
    /**
     * 存放父配置文件名的属性
@@ -133,8 +132,7 @@ public class Utility
          addPropertyListener(defaultPL);
          nextLine = (String) java.security.AccessController.doPrivileged(
                new sun.security.action.GetPropertyAction("line.separator"));
-         Utility.addFieldPropertyManager(SHOW_RDP_FAIL_PROPERTY,
-               Utility.class, "SHOW_RDP_FAIL", "false");
+         Utility.addFieldPropertyManager(SHOW_RDP_FAIL_PROPERTY, Utility.class, "SHOW_RDP_FAIL");
       }
       catch (Throwable ex)
       {
@@ -1101,9 +1099,9 @@ public class Utility
       private WeakReference baseClass;
 
       /**
-       * 这里使用<code>SoftReference</code>来引用对应的成员, 这样不会影响类的正常释放.
+       * 这里使用<code>WeakReference</code>来引用对应的成员, 这样不会影响类的正常释放.
        */
-      private SoftReference optMember;
+      private WeakReference optMember;
 
       /**
        * 要操作的成员名称.
@@ -1130,7 +1128,7 @@ public class Utility
          this.key = key;
          this.fieldMember = fieldMember;
          this.baseClass = new BaseClassRef(this, baseClass, this.queue);
-         this.optMember = new SoftReference(optMember);
+         this.optMember = new WeakReference(optMember);
          this.optMemberName = optMember.getName();
          if (!Modifier.isStatic(optMember.getModifiers()))
          {
@@ -1160,8 +1158,9 @@ public class Utility
          }
          else if (String.class != theField.getType())
          {
-            throw new IllegalArgumentException("Error field type, class:[" + theClass.getName()
-                  + "], field:[" + theField.getName() + "], type:[" + theField.getType().getName() + "].");
+            throw new IllegalArgumentException("Error field type, class:["
+                  + ClassGenerator.getClassName(theClass) + "], field:[" + theField.getName()
+                  + "], type:[" + ClassGenerator.getClassName(theField.getType()) + "].");
          }
       }
 
@@ -1180,12 +1179,14 @@ public class Utility
          }
          if (this.fieldMember)
          {
-            return c.getDeclaredField(this.optMemberName);
+            m = c.getDeclaredField(this.optMemberName);
          }
          else
          {
-            return c.getDeclaredMethod(this.optMemberName, STR_PARAM);
+            m = c.getDeclaredMethod(this.optMemberName, STR_PARAM);
          }
+         this.optMember = new WeakReference(m);
+         return m;
       }
 
       public void changeProperty(String value)
@@ -1290,7 +1291,7 @@ public class Utility
          StringAppender temp = StringTool.createStringAppender(128);
          Class baseClass = (Class) this.baseClass.get();
          temp.append("PropertyManager[class:").append(
-               baseClass == null ? "<released>" : baseClass.getName());
+               baseClass == null ? "<released>" : ClassGenerator.getClassName(baseClass));
          Member member = (Member) this.optMember.get();
          if (this.fieldMember)
          {

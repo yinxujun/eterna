@@ -11,6 +11,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.StringTool;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * 动态编译java代码来构造一个执行器.
@@ -40,6 +41,7 @@ public class JavaCodeExecute extends BaseExecute
          Class codeClass = this.createCodeClass(code);
          this.executeCode = (ExecuteCode) codeClass.newInstance();
          this.executeCode.setGenerator(this, this.factory);
+         this.executeType = "javaCode:" + ClassGenerator.getClassName(this.executeCode.getClass());
       }
       catch (Exception ex)
       {

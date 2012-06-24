@@ -10,14 +10,37 @@ import java.util.Arrays;
 
 import javax.servlet.ServletRequest;
 
+import self.micromagic.util.Utility;
+
 public class RequestParameterMap
       implements Map
 {
+   /**
+    * 配置是否需要对request中的数据取值进行解析.
+    */
+   public static final String PARSE_PARAM_PROPERTY = "servlet.parse.request.param.map";
+
+   /**
+    * 是否需要对request中的数据取值进行解析. <p>
+    * 如果进行解析的话, 使用普通的名称(如: name)时, 只会取出字符串数组中的第一个;
+    * 使用特殊的名称(如: name[])时, 才会以数组的形式取出参数.
+    */
+   private static boolean PARSE_PARAM = false;
+
+   static
+   {
+      try
+      {
+         Utility.addFieldPropertyManager(PARSE_PARAM_PROPERTY, RequestParameterMap.class, "PARSE_PARAM");
+      }
+      catch (Throwable ex) {}
+   }
+
    private Map paramMap;
    private Map originParamMap;
    private boolean readOnly = true;
    private boolean selfMap = false;
-   private boolean parseValue = true;
+   private boolean parseValue = PARSE_PARAM;
 
    private RequestParameterMap(Map requestMap)
    {

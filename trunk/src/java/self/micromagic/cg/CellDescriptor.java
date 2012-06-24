@@ -10,11 +10,12 @@ public class CellDescriptor
 {
    private String name;
    private boolean readOldValue = false;
-   BeanPropertyReader readProcesser;
-   BeanPropertyWriter writeProcesser;
    private boolean beanType = false;
    private boolean arrayType = false;
    private boolean arrayBeanType = false;
+
+   BeanPropertyReader readProcesser;  // BeanPropertyReader
+   BeanPropertyWriter writeProcesser; // BeanPropertyWriter
 
    /**
     * 这里使用<code>WeakReference</code>来引用单元的类型, 这样就不会影响其正常的释放.

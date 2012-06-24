@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.digester.Digester;
+import org.apache.commons.digester.Rule;
 import org.apache.commons.digester.RuleSetBase;
 import self.micromagic.eterna.search.ColumnSetting;
 import self.micromagic.eterna.search.ConditionBuilder;
 import self.micromagic.eterna.search.ConditionProperty;
-import self.micromagic.eterna.search.SearchAdapterGenerator;
 import self.micromagic.eterna.search.ParameterSetting;
+import self.micromagic.eterna.search.SearchAdapterGenerator;
 import self.micromagic.eterna.search.SearchManagerGenerator;
 import self.micromagic.eterna.search.impl.ConditionBuilderGeneratorImpl;
 import self.micromagic.eterna.search.impl.ConditionPropertyGeneratorImpl;
@@ -31,6 +32,7 @@ public class SearchRuleSet extends RuleSetBase
    {
       PropertySetter setter;
       PropertySetter[] setters;
+      Rule rule;
 
 
       //--------------------------------------------------------------------------------
@@ -68,9 +70,9 @@ public class SearchRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 构造SearchManager
-      digester.addRule("eterna-config/factory/search-manager",
-            new ObjectCreateRule(SearchManagerImpl.class.getName(),
-                  "generator", SearchManagerGenerator.class));
+      rule = new ObjectCreateRule(SearchManagerImpl.class.getName(), "generator",
+            SearchManagerGenerator.class);
+      digester.addRule("eterna-config/factory/search-manager", rule);
       setter = new StackPropertySetter("registerSearchManager", SearchManagerGenerator.class, 1);
       digester.addRule("eterna-config/factory/search-manager",
             new PropertySetRule(setter));
@@ -82,9 +84,9 @@ public class SearchRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 构造SearchAdapter
-      digester.addRule("eterna-config/factory/objs/search",
-            new ObjectCreateRule(SearchAdapterImpl.class.getName(),
-                  "generator", SearchAdapterGenerator.class));
+      rule = new ObjectCreateRule(SearchAdapterImpl.class.getName(), "generator",
+            SearchAdapterGenerator.class);
+      digester.addRule("eterna-config/factory/objs/search", rule);
 
       setter = new StackPropertySetter("registerSearchAdapter", SearchAdapterGenerator.class, 1);
       digester.addRule("eterna-config/factory/objs/search", new PropertySetRule(setter));

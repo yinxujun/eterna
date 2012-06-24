@@ -3,6 +3,7 @@ package self.micromagic.eterna.digester;
 
 import org.xml.sax.Attributes;
 import self.micromagic.eterna.share.Factory;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * 注册一个工厂的初始化规则.
@@ -56,10 +57,10 @@ public class FactoryRegisterRule extends ObjectCreateRule
          register = true;
          instance = (Factory) ObjectCreateRule.createObject(realClassName);
       }
-      if (classType != null && !classType.isInstance(instance))
+      if (this.classType != null && !this.classType.isInstance(instance))
       {
-         throw new InvalidAttributesException(realClassName
-               + " is not instance of " + classType.getName());
+         throw new InvalidAttributesException(realClassName + " is not instance of "
+               + ClassGenerator.getClassName(this.classType));
       }
       this.digester.push(instance);
 
