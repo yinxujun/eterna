@@ -32,7 +32,6 @@ public class BaseManager
    public static final String ETERNA_INITIALIZED_FLAG = "eterna_initialized";
 
    private static Set definedNameSet = new HashSet();
-   private static int eternaId = 1;
 
    static
    {
@@ -49,9 +48,13 @@ public class BaseManager
       definedNameSet.add(ResultReader.INPUT_TYPE_FLG);
    }
 
-   public static synchronized int createEternaId()
+   /**
+    * @deprecated
+    * @see ViewTool#createEternaId
+    */
+   public static int createEternaId()
    {
-      return 0xffffff & eternaId++;
+      return ViewTool.createEternaId();
    }
 
    private StringCoder stringCoder;

@@ -356,7 +356,7 @@ public class ClassGenerator
             tmpSuffix = "$" + suffix + "$$ECG_" + (CLASS_GENERATOR_ID++);
          }
       }
-      cg.setClassName("eterna." + baseClass.getName() + tmpSuffix);
+      cg.setClassName("cg." + baseClass.getName() + tmpSuffix);
       cg.addInterface(interfaceClass);
       if (imports != null)
       {

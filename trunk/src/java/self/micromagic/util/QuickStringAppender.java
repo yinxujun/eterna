@@ -178,6 +178,11 @@ class QuickStringAppender
 
    public String toString()
    {
+      if (this.value.length - this.count > MAX_WASTE_COUNT)
+      {
+         // 如果浪费的空间过大, 则采用复制字符串的方式
+         return new String(this.value, 0, this.count);
+      }
       return this.createString(0, this.count, this.value);
    }
 
@@ -205,6 +210,12 @@ class QuickStringAppender
     * 当字符在200以上时, 使用反射调用不复制字符串的构造函数会比复制字符串更快.
     */
    private static final int REFLECT_CREATE_GAP = 200;
+
+   /**
+    * 最大浪费空间的字节数, 如果超过这个数, 则使用复制字符串的方式.
+    */
+   private static final int MAX_WASTE_COUNT = 512;
+
    private static Constructor strConstructor;
    static
    {

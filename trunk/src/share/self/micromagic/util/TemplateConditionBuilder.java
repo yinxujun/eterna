@@ -67,7 +67,7 @@ public class TemplateConditionBuilder extends AbstractGenerator
       if (this.template == null)
       {
          this.template = "";
-         this.patterns = new String[0];
+         this.patterns = StringTool.EMPTY_STRING_ARRAY;
       }
       String pCount = (String) this.getAttribute("param_count");
       if (pCount != null)
@@ -111,7 +111,7 @@ public class TemplateConditionBuilder extends AbstractGenerator
          }
       }
       temp.add(str);
-      this.patterns = (String[]) temp.toArray(new String[0]);
+      this.patterns = (String[]) temp.toArray(new String[temp.size()]);
       this.indexs = new int[tempNum.size()];
       this.maxIndex = 1;
       for (int i = 0; i < this.indexs.length; i++)

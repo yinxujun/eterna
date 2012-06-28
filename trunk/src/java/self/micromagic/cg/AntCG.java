@@ -44,7 +44,7 @@ public class AntCG
    /**
     * 配置文件中对ant相关属性进行配置的前缀.
     */
-   private static final String ANT_TOOL_CONFIG_PREFIX = "eterna.compile.ant.";
+   private static final String ANT_TOOL_CONFIG_PREFIX = "self.micromagic.compile.ant.";
 
    /**
     * 使用ant生成一个类.
@@ -60,7 +60,7 @@ public class AntCG
    {
       File destPath = new File(getDestPath());
       Project p = new Project();
-      p.setName("eterna.ant");
+      p.setName("cg.ant");
       CompileLogger cl = new CompileLogger();
       p.addBuildListener(cl);
       MyJavac javac = new MyJavac();

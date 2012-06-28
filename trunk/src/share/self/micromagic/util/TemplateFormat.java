@@ -75,7 +75,7 @@ public class TemplateFormat extends AbstractGenerator
       if (this.pattern == null)
       {
          this.pattern = "";
-         this.patterns = new String[0];
+         this.patterns = StringTool.EMPTY_STRING_ARRAY;
       }
       String valueTag = (String) this.getAttribute("insert_value_tag");
       valueTag = valueTag == null ? DEFAULT_INSERT_VALUE_TAG : valueTag;
@@ -97,7 +97,7 @@ public class TemplateFormat extends AbstractGenerator
          index = str.indexOf(valueTag);
       }
       temp.add(str);
-      this.patterns = (String[]) temp.toArray(new String[0]);
+      this.patterns = (String[]) temp.toArray(new String[temp.size()]);
    }
 
    public Object create()

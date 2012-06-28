@@ -13,6 +13,7 @@ import java.util.zip.DeflaterOutputStream;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.cg.ClassGenerator;
+import self.micromagic.cg.ClassKeyCache;
 import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.util.container.ThreadCache;
@@ -33,7 +34,7 @@ public class CodeClassTool
    /**
     * 设置动态代码生成时, 对代码编译的类型.
     */
-   public static final String COMPILE_TYPE_PROPERTY = "eterna.dc.compile.type";
+   public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.dc.compile.type";
 
    /**
     * 动态代码生成时, 对代码编译的类型.
@@ -49,7 +50,7 @@ public class CodeClassTool
     * 生成的代码的缓存. <p>
     * 以baseClass为主键进行缓存, 值为一个map, 为继承这个类的代码集.
     */
-   private static Map codeCache = new WeakHashMap();
+   private static ClassKeyCache codeCache = ClassKeyCache.getInstance();
 
    static
    {
@@ -79,11 +80,11 @@ public class CodeClassTool
          baseClass = CodeClassTool.class;
       }
       Map cache;
-      cache = (Map) codeCache.get(baseClass);
+      cache = (Map) codeCache.getProperty(baseClass);
       if (cache == null)
       {
          cache = new HashMap();
-         codeCache.put(baseClass, cache);
+         codeCache.setProperty(baseClass, cache);
       }
       CodeKey key = new CodeKey(methodHead, bodyCode);
       Class codeClass = (Class) cache.get(key);
@@ -103,7 +104,7 @@ public class CodeClassTool
       cg.addClassPath(interfaceClass);
       cg.addClassPath(CodeClassTool.class);
       String nameSuffix = "$$EDC_" + (CODE_ID++);
-      cg.setClassName("eterna." + baseClass.getName() + nameSuffix);
+      cg.setClassName("dc." + baseClass.getName() + nameSuffix);
       cg.addInterface(interfaceClass);
       cg.setSuperClass(baseClass);
       cg.importPackage("self.micromagic.util");

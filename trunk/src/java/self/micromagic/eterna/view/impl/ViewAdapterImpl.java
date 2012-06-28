@@ -244,32 +244,29 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write("\"");
       }
 
-      String eventBegin = "var tempBak=_eterna.egTemp();try{_eterna.egTemp(event.data.egTemp);var webObj=event.data.webObj;var objConfig=event.data.objConfig;";
-      String eventEnd = "}finally{_eterna.egTemp(tempBak);}";
+      String eventBegin = "var configData=objConfig;";
       if (this.getDebug() >= ETERNA_VIEW_DEBUG_BASE)
       {
-         out.write(",fn:function(event){");
+         out.write(",fn:function(event,webObj,objConfig){");
          out.write("try{");
-         out.write("return event.data.eventConfig._fn(event);");
-         out.write("}catch (ex){");
-         out.write("if (eterna_debug >= ED_FN_CALLED){");
-         out.write("eterna_fn_stack.push(new Array(event.data.eventConfig.type, event.data.eventConfig._fn,");
-         out.write(" \"event.data\", event.data));");
+         out.write("return event.data.eventConfig._fn.call(this,event,webObj,objConfig);");
+         out.write("}catch(ex){");
+         out.write("if(eterna_debug >= ED_FN_CALLED){");
+         out.write("eterna_fn_stack.push(new Array(event.data.eventConfig.type,event.data.eventConfig._fn,");
+         out.write("\"event.data\",event.data));");
          out.write("_eterna.printException(ex);");
          out.write("eterna_fn_stack.pop();throw ex;}}");
          out.write("}");
-         out.write(",_fn:function(event){");
+         out.write(",_fn:function(event,webObj,objConfig){");
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write(eventEnd);
          out.write("}");
       }
       else
       {
-         out.write(",fn:function(event){");
+         out.write(",fn:function(event,webObj,objConfig){");
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write(eventEnd);
          out.write("}");
       }
       out.write("}");
@@ -278,13 +275,23 @@ public class ViewAdapterImpl extends AbstractGenerator
    public void printFunction(Writer out, AppData data, String key, Function fn)
          throws IOException, ConfigurationException
    {
+      String param = fn.getParam();
+      if (StringTool.isEmpty(param))
+      {
+         param = "";
+      }
+      else
+      {
+         param.trim();
+      }
+
       if (this.getDebug() >= ETERNA_VIEW_DEBUG_BASE)
       {
-         out.write("\"_ef_");
+         out.write("\"$ef_");
          out.write(this.stringCoder.toJsonString(key));
          out.write("\":");
          out.write("function(");
-         out.write(fn.getParam());
+         out.write(param);
          out.write("){");
          out.write(fn.getBody());
          out.write("}");
@@ -293,24 +300,30 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write(this.stringCoder.toJsonString(key));
          out.write("\":");
          out.write("function(");
-         out.write(fn.getParam());
+         out.write(param);
          out.write("){try{");
-         out.write("return $E.F[\"_ef_");
+         out.write("return $E.F[\"$ef_");
          out.write(this.stringCoder.toJsonString(key));
-         out.write("\"](");
-         out.write(fn.getParam());
-         out.write(");}catch (ex){");
+         out.write("\"].call(this");
+         if (param.length() > 0)
+         {
+            out.write(",");
+            out.write(param);
+         }
+         out.write(");}catch(ex){");
          out.write("if (eterna_debug >= ED_FN_CALLED){");
          out.write("eterna_fn_stack.push(new Array(\"");
          out.write(this.stringCoder.toJsonString(key));
-         out.write("\", $E.F[\"_ef_");
+         out.write("\",$E.F[\"$ef_");
          out.write(this.stringCoder.toJsonString(key));
          out.write("\"]");
-         String[] params = StringTool.separateString(fn.getParam(), ",", true);
+         String[] params = StringTool.separateString(param, ",", true);
          for (int i = 0; i < params.length; i++)
          {
-            out.write(", ");
-            out.write("\"" + params[i] + "\", " + params[i]);
+            out.write(",\"");
+            out.write(params[i]);
+            out.write("\",");
+            out.write(params[i]);
          }
          out.write("));");
          out.write("_eterna.printException(ex);");
@@ -323,7 +336,7 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write(this.stringCoder.toJsonString(key));
          out.write("\":");
          out.write("function(");
-         out.write(fn.getParam());
+         out.write(param);
          out.write("){");
          out.write(fn.getBody());
          out.write("}");
@@ -337,13 +350,19 @@ public class ViewAdapterImpl extends AbstractGenerator
       out.write(this.stringCoder.toJsonString(name));
       out.write("\":");
       out.write("function(){");
-      out.write("var resArray = ");
+      out.write("var resArray=");
       this.dataPrinter.printIterator(out, resource.getParsedRessource());
-      out.write(";return eterna_getResourceValue(resArray, arguments);");
+      out.write(";return eterna_getResourceValue(resArray,arguments);");
       out.write("}");
    }
 
    public void printView(Writer out, AppData data)
+         throws IOException, ConfigurationException
+   {
+      this.printView(out, data, null);
+   }
+
+   public void printView(Writer out, AppData data, Map cache)
          throws IOException, ConfigurationException
    {
       String dataType = this.getDataType(data);
@@ -395,6 +414,12 @@ public class ViewAdapterImpl extends AbstractGenerator
 
       if (webData)
       {
+         if (cache != null)
+         {
+            out.write(",\ncache:");
+            this.dataPrinter.printMap(out, cache);
+         }
+
          data.addSpcialData(VIEW_CACHE, DYNAMIC_VIEW, null);
 
          if (this.mc == null || this.getDebug() >= ETERNA_VIEW_DEBUG_BASE)

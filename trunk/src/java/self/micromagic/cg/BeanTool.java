@@ -1,20 +1,16 @@
 
 package self.micromagic.cg;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,8 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.Collection;
 
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.converter.*;
@@ -42,7 +36,7 @@ public class BeanTool
    /**
     * 设置是否要使用默认的bean检查器.
     */
-   public static final String BP_USE_DBC_PROPERTY = "eterna.bp.use.defaultBeanChecker";
+   public static final String CG_USE_DBC_PROPERTY = "self.micromagic.cg.use.defaultBeanChecker";
 
    /**
     * 通过map来对bean对象设置属性.
@@ -121,12 +115,7 @@ public class BeanTool
       {
          prefix = "";
       }
-      ConverterManager cm = (ConverterManager) beanConverterManagerCache.get(beanClass);
-      if (cm == null)
-      {
-         cm = converterManager;
-      }
-      return new BeanMap(bean, prefix, bd, cm);
+      return new BeanMap(bean, prefix, bd);
    }
 
    /**
@@ -150,12 +139,7 @@ public class BeanTool
       {
          prefix = "";
       }
-      ConverterManager cm = (ConverterManager) beanConverterManagerCache.get(beanType);
-      if (cm == null)
-      {
-         cm = converterManager;
-      }
-      return new BeanMap(beanType, prefix, bd, cm);
+      return new BeanMap(beanType, prefix, bd);
    }
 
    /**
@@ -189,12 +173,12 @@ public class BeanTool
     */
    public static void removeBeanDescriptor(Class type)
    {
-      beanDescriptorCache.remove(type);
-      beanConverterManagerCache.remove(type);
+      beanDescriptorCache.removeProperty(type);
+      //beanDescriptorCache.remove(type);
    }
 
-   private static Map beanDescriptorCache = new WeakHashMap();
-
+   private static ClassKeyCache beanDescriptorCache = ClassKeyCache.getInstance();
+   //private static java.util.WeakHashMap beanDescriptorCache = new java.util.WeakHashMap();
    /**
     * 获得对bean类的描述信息.
     */
@@ -204,194 +188,199 @@ public class BeanTool
       {
          return null;
       }
-      BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
+      BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.getProperty(beanClass);
+      //BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
       if (bd == null)
       {
-         synchronized (beanDescriptorCache)
+         bd = getBeanDescriptor0(beanClass);
+      }
+      return bd;
+   }
+   private static synchronized BeanDescriptor getBeanDescriptor0(Class beanClass)
+   {
+      BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.getProperty(beanClass);
+      //BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
+      if (bd == null)
+      {
+         Map psInfo = new HashMap();
+         Map tmp;
+         Iterator tmpItr;
+         try
          {
-            // 再获取一次, 如果其他线程已处理了, 这里就不用做了
-            bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
-            if (bd == null)
+            String fnName = "public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, "
+                  + "Object value, String prefix, BeanMap beanMap, Object originObj, Object oldValue)";
+            String mh = StringTool.createStringAppender().append(fnName).appendln()
+                  .append("      throws Exception").toString();
+            String beginCode = StringTool.createStringAppender()
+                  .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
+                  .toString();
+            String endCode =  StringTool.createStringAppender()
+                  .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
+            String[] imports = {
+               ClassGenerator.getPackageString(Map.class),
+               ClassGenerator.getPackageString(BeanTool.class),
+               ClassGenerator.getPackageString(ResultRow.class),
+               ClassGenerator.getPackageString(beanClass)
+            };
+            BeanPropertyWriteProcesser wp = new BeanPropertyWriteProcesser(
+                  "value", "beanMap", "originObj", "oldValue");
+            tmp = createPropertyProcessers(beanClass, BeanPropertyWriter.class,
+                  mh, "bean", beginCode, endCode, wp, imports, BEAN_PROCESSER_TYPE_W);
+            tmpItr = tmp.entrySet().iterator();
+            while (tmpItr.hasNext())
             {
-               Map psInfo = new HashMap();
-               Map tmp;
-               Iterator tmpItr;
-               try
+               Map.Entry entry = (Map.Entry) tmpItr.next();
+               CellDescriptor bmc = (CellDescriptor) psInfo.get(entry.getKey());
+               if (bmc == null)
                {
-                  String fnName = "public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, "
-                        + "Object value, String prefix, BeanMap beanMap, Object originObj, Object oldValue)";
-                  String mh = StringTool.createStringAppender().append(fnName).appendln()
-                        .append("      throws Exception").toString();
-                  String beginCode = StringTool.createStringAppender()
-                        .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
-                        .toString();
-                  String endCode =  StringTool.createStringAppender()
-                        .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
-                  String[] imports = {
-                     ClassGenerator.getPackageString(Map.class),
-                     ClassGenerator.getPackageString(BeanTool.class),
-                     ClassGenerator.getPackageString(ResultRow.class),
-                     ClassGenerator.getPackageString(beanClass)
-                  };
-                  BeanPropertyWriteProcesser wp = new BeanPropertyWriteProcesser(
-                        "value", "beanMap", "originObj", "oldValue");
-                  tmp = createPropertyProcessers(beanClass, BeanPropertyWriter.class,
-                        mh, "bean", beginCode, endCode, wp, imports, BEAN_PROCESSER_TYPE_W);
-                  tmpItr = tmp.entrySet().iterator();
-                  while (tmpItr.hasNext())
-                  {
-                     Map.Entry entry = (Map.Entry) tmpItr.next();
-                     CellDescriptor bmc = (CellDescriptor) psInfo.get(entry.getKey());
-                     if (bmc == null)
-                     {
-                        bmc = new CellDescriptor();
-                        psInfo.put(entry.getKey(), bmc);
-                        bmc.setName((String) entry.getKey());
-                     }
-                     ProcesserInfo pi = (ProcesserInfo) entry.getValue();
-                     bmc.setWriteProcesser((BeanPropertyWriter) pi.processer);
-                     bmc.setCellType(pi.type);
-                     if (pi.type.isArray())
-                     {
-                        bmc.setArrayType(true);
-                     }
-                     else if (Collection.class.isAssignableFrom(pi.type))
-                     {
-                        bmc.setReadOldValue(true);
-                     }
-                     else if (checkBean(pi.type))
-                     {
-                        bmc.setBeanType(true);
-                     }
-                  }
-
-                  fnName = "public Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, "
-                        + "String prefix, BeanMap beanMap)";
-                  mh = StringTool.createStringAppender().append(fnName).appendln()
-                        .append("      throws Exception").toString();
-                  beginCode = endCode = "";
-                  BeanPropertyReadProcesser rp = new BeanPropertyReadProcesser(beanClass);
-                  tmp = createPropertyProcessers(beanClass, BeanPropertyReader.class,
-                        mh, "bean", beginCode, endCode, rp, imports, BEAN_PROCESSER_TYPE_R);
-                  tmpItr = tmp.entrySet().iterator();
-                  while (tmpItr.hasNext())
-                  {
-                     Map.Entry entry = (Map.Entry) tmpItr.next();
-                     CellDescriptor bmc = (CellDescriptor) psInfo.get(entry.getKey());
-                     if (bmc == null)
-                     {
-                        bmc = new CellDescriptor();
-                        psInfo.put(entry.getKey(), bmc);
-                        bmc.setName((String) entry.getKey());
-                     }
-                     ProcesserInfo pi = (ProcesserInfo) entry.getValue();
-                     if (bmc.getCellType() != null && bmc.getCellType() != pi.type)
-                     {
-                        CG.log.error("Error cell [" + ClassGenerator.getClassName(beanClass)
-                              + "#" + entry.getKey() + "] type in create MapToBean, write:["
-                              + bmc.getCellType() + "], read:[" + pi.type + "]");
-                        continue;
-                     }
-                     bmc.setReadProcesser((BeanPropertyReader) pi.processer);
-                     if (bmc.getCellType() == null)
-                     {
-                        bmc.setCellType(pi.type);
-                        if (pi.type.isArray())
-                        {
-                           bmc.setArrayType(true);
-                        }
-                        else if (Collection.class.isAssignableFrom(pi.type))
-                        {
-                           bmc.setReadOldValue(true);
-                        }
-                        else if (checkBean(pi.type))
-                        {
-                           bmc.setBeanType(true);
-                        }
-                     }
-                  }
-
-                  // 这里的fnName和前面的相同, 就不用重新赋值了
-                  beginCode = StringTool.createStringAppender().append(fnName).appendln()
-                        .append("      throws Exception").appendln().append("{").toString();
-                  endCode = "}";
-                  String bodyCode = "return new " + ClassGenerator.getClassName(beanClass) + "();";
-                  BeanPropertyReader tmpBPR;
-                  tmpBPR = (BeanPropertyReader) createPropertyProcesser("P_init",
-                        beanClass, BeanPropertyReader.class, beginCode, bodyCode, endCode, imports);
-                  CellDescriptor tmpBMC = new CellDescriptor();
-                  tmpBMC.setName("<init>");
-                  tmpBMC.setReadProcesser(tmpBPR);
-                  tmpBMC.setCellType(beanClass);
-                  tmpBMC.setBeanType(true);
-
-                  bd = new BeanDescriptor(beanClass, psInfo, tmpBMC);
+                  bmc = new CellDescriptor();
+                  psInfo.put(entry.getKey(), bmc);
+                  bmc.setName((String) entry.getKey());
                }
-               catch (Throwable ex)
+               ProcesserInfo pi = (ProcesserInfo) entry.getValue();
+               bmc.setWriteProcesser((BeanPropertyWriter) pi.processer);
+               bmc.setCellType(pi.type);
+               if (pi.type.isArray())
                {
-                  CG.log.error("Error in create MapToBean.", ex);
+                  bmc.setArrayType(true);
+               }
+               else if (Collection.class.isAssignableFrom(pi.type))
+               {
+                  bmc.setReadOldValue(true);
+               }
+               else if (checkBean(pi.type))
+               {
+                  bmc.setBeanType(true);
                }
             }
-            if (bd != null)
+
+            fnName = "public Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, "
+                  + "String prefix, BeanMap beanMap)";
+            mh = StringTool.createStringAppender().append(fnName).appendln()
+                  .append("      throws Exception").toString();
+            beginCode = endCode = "";
+            BeanPropertyReadProcesser rp = new BeanPropertyReadProcesser(beanClass);
+            tmp = createPropertyProcessers(beanClass, BeanPropertyReader.class,
+                  mh, "bean", beginCode, endCode, rp, imports, BEAN_PROCESSER_TYPE_R);
+            tmpItr = tmp.entrySet().iterator();
+            while (tmpItr.hasNext())
             {
-               beanDescriptorCache.put(beanClass, bd);
+               Map.Entry entry = (Map.Entry) tmpItr.next();
+               CellDescriptor bmc = (CellDescriptor) psInfo.get(entry.getKey());
+               if (bmc == null)
+               {
+                  bmc = new CellDescriptor();
+                  psInfo.put(entry.getKey(), bmc);
+                  bmc.setName((String) entry.getKey());
+               }
+               ProcesserInfo pi = (ProcesserInfo) entry.getValue();
+               if (bmc.getCellType() != null && bmc.getCellType() != pi.type)
+               {
+                  CG.log.error("Error cell [" + ClassGenerator.getClassName(beanClass)
+                        + "#" + entry.getKey() + "] type in create MapToBean, write:["
+                        + bmc.getCellType() + "], read:[" + pi.type + "]");
+                  continue;
+               }
+               bmc.setReadProcesser((BeanPropertyReader) pi.processer);
+               if (bmc.getCellType() == null)
+               {
+                  bmc.setCellType(pi.type);
+                  if (pi.type.isArray())
+                  {
+                     bmc.setArrayType(true);
+                  }
+                  else if (Collection.class.isAssignableFrom(pi.type))
+                  {
+                     bmc.setReadOldValue(true);
+                  }
+                  else if (checkBean(pi.type))
+                  {
+                     bmc.setBeanType(true);
+                  }
+               }
             }
-            else
-            {
-               throw new IllegalArgumentException("Can't create bean properties info for ["
-                     + beanClass + "].");
-            }
+
+            // 这里的fnName和前面的相同, 就不用重新赋值了
+            beginCode = StringTool.createStringAppender().append(fnName).appendln()
+                  .append("      throws Exception").appendln().append("{").toString();
+            endCode = "}";
+            String bodyCode = "return new " + ClassGenerator.getClassName(beanClass) + "();";
+            BeanPropertyReader tmpBPR;
+            tmpBPR = (BeanPropertyReader) createPropertyProcesser("P_init",
+                  beanClass, BeanPropertyReader.class, beginCode, bodyCode, endCode, imports);
+            CellDescriptor tmpBMC = new CellDescriptor();
+            tmpBMC.setName("<init>");
+            tmpBMC.setReadProcesser(tmpBPR);
+            tmpBMC.setCellType(beanClass);
+            tmpBMC.setBeanType(true);
+
+            bd = new BeanDescriptor(beanClass, psInfo, tmpBMC);
          }
+         catch (Throwable ex)
+         {
+            CG.log.error("Error in create MapToBean.", ex);
+         }
+      }
+      if (bd != null)
+      {
+         beanDescriptorCache.setProperty(beanClass, bd);
+         //beanDescriptorCache.put(beanClass, bd);
+      }
+      else
+      {
+         throw new IllegalArgumentException("Can't create bean properties info for ["
+               + beanClass + "].");
       }
       return bd;
    }
 
-   private static Map mapToBeanCache = new WeakHashMap();
+   private static ClassKeyCache mapToBeanCache = ClassKeyCache.getInstance();
    /**
     * 获得将map的值设置到bean属性中的处理类.
     */
    private static MapToBean getMapToBean(Class beanClass)
    {
-      Object obj = mapToBeanCache.get(beanClass);
+      Object obj = mapToBeanCache.getProperty(beanClass);
       if (obj == null)
       {
-         synchronized (mapToBeanCache)
+         obj = getMapToBean0(beanClass);
+      }
+      return (MapToBean) obj;
+   }
+   private static synchronized MapToBean getMapToBean0(Class beanClass)
+   {
+      Object obj = mapToBeanCache.getProperty(beanClass);
+      if (obj == null)
+      {
+         try
          {
-            // 再获取一次, 如果其他线程已处理了, 这里就不用做了
-            obj = mapToBeanCache.get(beanClass);
-            if (obj == null)
-            {
-               try
-               {
-                  String mh = StringTool.createStringAppender()
-                        .append("public int setBeanValues(Object bean, Map values, String prefix)").appendln()
-                        .append("      throws Exception").toString();
-                  String beginCode = StringTool.createStringAppender()
-                        .append("   Object ").append(TMP_OBJ_NAME).append(";").appendln()
-                        .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
-                        .append("   String ").append(TMP_STR_NAME).append(";").appendln()
-                        .toString();
-                  String endCode =  StringTool.createStringAppender()
-                        .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
-                  String[] imports = {
-                     ClassGenerator.getPackageString(Map.class),
-                     ClassGenerator.getPackageString(BeanTool.class),
-                     ClassGenerator.getPackageString(beanClass)
-                  };
-                  MapToBeanProcesser p = new MapToBeanProcesser("values");
-                  obj = createBeanProcesser(beanClass, MapToBean.class, mh,
-                        "bean", beginCode, endCode, p, imports, BEAN_PROCESSER_TYPE_W);
-               }
-               catch (Throwable ex)
-               {
-                  CG.log.error("Error in create MapToBean.", ex);
-               }
-            }
-            if (obj != null)
-            {
-               mapToBeanCache.put(beanClass, obj);
-            }
+            String mh = StringTool.createStringAppender()
+                  .append("public int setBeanValues(Object bean, Map values, String prefix)").appendln()
+                  .append("      throws Exception").toString();
+            String beginCode = StringTool.createStringAppender()
+                  .append("   Object ").append(TMP_OBJ_NAME).append(";").appendln()
+                  .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
+                  .append("   String ").append(TMP_STR_NAME).append(";").appendln()
+                  .toString();
+            String endCode =  StringTool.createStringAppender()
+                  .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
+            String[] imports = {
+               ClassGenerator.getPackageString(Map.class),
+               ClassGenerator.getPackageString(BeanTool.class),
+               ClassGenerator.getPackageString(beanClass)
+            };
+            MapToBeanProcesser p = new MapToBeanProcesser("values");
+            obj = createBeanProcesser(beanClass, MapToBean.class, mh,
+                  "bean", beginCode, endCode, p, imports, BEAN_PROCESSER_TYPE_W);
          }
+         catch (Throwable ex)
+         {
+            CG.log.error("Error in create MapToBean.", ex);
+         }
+      }
+      if (obj != null)
+      {
+         mapToBeanCache.setProperty(beanClass, obj);
       }
       return (MapToBean) obj;
    }
@@ -420,26 +409,17 @@ public class BeanTool
     */
    public static BeanMethodInfo[] getBeanReadMethods(Class c)
    {
-      try
+      List result = new ArrayList();
+      BeanMethodInfo[] infos = BeanMethodInfo.getBeanMethods(c);
+      for (int i = 0; i < infos.length; i++)
       {
-         BeanInfo info = Introspector.getBeanInfo(c, Object.class);
-         PropertyDescriptor[] pds = info.getPropertyDescriptors();
-         List result = new ArrayList();
-         for (int i = 0; i < pds.length; i++)
+         BeanMethodInfo info = infos[i];
+         if (info.doGet)
          {
-            Method m = pds[i].getReadMethod();
-            if (m != null)
-            {
-               result.add(new BeanMethodInfo(pds[i].getName(), m, pds[i].getPropertyType(), false, true));
-            }
+            result.add(info);
          }
-         return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
       }
-      catch (IntrospectionException ex)
-      {
-         CG.log.error("Error in getBeanReadMethods.", ex);
-         return new BeanMethodInfo[0];
-      }
+      return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
    }
 
    /**
@@ -447,26 +427,17 @@ public class BeanTool
     */
    public static BeanMethodInfo[] getBeanWriteMethods(Class c)
    {
-      try
+      List result = new ArrayList();
+      BeanMethodInfo[] infos = BeanMethodInfo.getBeanMethods(c);
+      for (int i = 0; i < infos.length; i++)
       {
-         BeanInfo info = Introspector.getBeanInfo(c, Object.class);
-         PropertyDescriptor[] pds = info.getPropertyDescriptors();
-         List result = new ArrayList();
-         for (int i = 0; i < pds.length; i++)
+         BeanMethodInfo info = infos[i];
+         if (!info.doGet)
          {
-            Method m = pds[i].getWriteMethod();
-            if (m != null)
-            {
-               result.add(new BeanMethodInfo(pds[i].getName(), m, pds[i].getPropertyType(), true, false));
-            }
+            result.add(info);
          }
-         return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
       }
-      catch (IntrospectionException ex)
-      {
-         CG.log.error("Error in getBeanWriteMethods.", ex);
-         return new BeanMethodInfo[0];
-      }
+      return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
    }
 
    /**
@@ -544,28 +515,34 @@ public class BeanTool
             BeanTool.getBeanWriteMethods(beanClass) : BeanTool.getBeanReadMethods(beanClass);
       for (int i = 0; i < methods.length; i++)
       {
-         if (!first)
-         {
-            function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap, true)).appendln();
-         }
-         first = false;
          BeanMethodInfo m = methods[i];
-         dataMap.put("name", m.name);
-         dataMap.put("type", "method");
-         if (m.type.isPrimitive())
+         if (m.method != null)
          {
-            String pType = ClassGenerator.getClassName(m.type);
-            dataMap.put("primitive", pType);
-            dataMap.put("value", "String.valueOf(" + BeanTool.BEAN_NAME + "." + m.method.getName() + "())");
-            dataMap.put("o_value", BeanTool.BEAN_NAME + "." + m.method.getName() + "()");
-            dataMap.put("wrapName", BeanTool.getPrimitiveWrapClassName(pType));
-            function.append(Utility.resolveDynamicPropnames(primitiveTemplate, dataMap, true))
-                  .appendln();
-         }
-         else
-         {
-            dataMap.put("value", BeanTool.BEAN_NAME + "." + m.method.getName() + "()");
-            function.append(Utility.resolveDynamicPropnames(unitTemplate, dataMap, true)).appendln();
+            if (!first)
+            {
+               function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap, true))
+                     .appendln();
+            }
+            first = false;
+            dataMap.put("name", m.name);
+            dataMap.put("type", "method");
+            if (m.type.isPrimitive())
+            {
+               String pType = ClassGenerator.getClassName(m.type);
+               dataMap.put("primitive", pType);
+               dataMap.put("value",
+                     "String.valueOf(" + BeanTool.BEAN_NAME + "." + m.method.getName() + "())");
+               dataMap.put("o_value", BeanTool.BEAN_NAME + "." + m.method.getName() + "()");
+               dataMap.put("wrapName", BeanTool.getPrimitiveWrapClassName(pType));
+               function.append(Utility.resolveDynamicPropnames(primitiveTemplate, dataMap, true))
+                     .appendln();
+            }
+            else
+            {
+               dataMap.put("value", BeanTool.BEAN_NAME + "." + m.method.getName() + "()");
+               function.append(Utility.resolveDynamicPropnames(unitTemplate, dataMap, true))
+                     .appendln();
+            }
          }
       }
       function.append("}");
@@ -647,7 +624,10 @@ public class BeanTool
          {
             code = unitProcesser.getMethodCode(m, m.type, null, processerType, cg);
          }
-         function.append(code).appendln();
+         if (!StringTool.isEmpty(code))
+         {
+            function.append(code).appendln();
+         }
       }
       function.append(endCode).appendln().append("}");
 
@@ -727,8 +707,11 @@ public class BeanTool
          ClassGenerator cg = ClassGenerator.createClassGenerator("P_" + m.name,
                beanClass, interfaceClass, imports);
          code = unitProcesser.getMethodCode(m, m.type, wrapName, processerType, cg);
-         Object p = createPropertyProcesser(cg, beanClass, beginCode0, code, endCode0);
-         result.put(m.name, new ProcesserInfo(m.name, m.type, p));
+         if (!StringTool.isEmpty(code))
+         {
+            Object p = createPropertyProcesser(cg, beanClass, beginCode0, code, endCode0);
+            result.put(m.name, new ProcesserInfo(m.name, m.type, p));
+         }
       }
 
       return result;
@@ -803,20 +786,17 @@ public class BeanTool
       }
    }
 
-   private static Map beanConverterManagerCache = new WeakHashMap();
-
    /**
     * 针对某个bean, 注册一个类型转换器.
     */
    public static synchronized void registerConverter(Class beanClass, Class type, ValueConverter converter)
    {
-      ConverterManager cm = (ConverterManager) beanConverterManagerCache.get(beanClass);
-      if (cm == null)
+      BeanDescriptor bd = getBeanDescriptor(beanClass);
+      if (bd.getConverterManager() == converterManager)
       {
-         cm = (ConverterManager) converterManager.clone();
-         beanConverterManagerCache.put(beanClass, cm);
+         bd.setConverterManager((ConverterManager) converterManager.clone());
       }
-      cm.registerConverter(type, converter);
+      bd.getConverterManager().registerConverter(type, converter);
    }
 
    /**
@@ -824,13 +804,12 @@ public class BeanTool
     */
    public static synchronized void registerPropertyEditor(Class beanClass, Class type, PropertyEditor pe)
    {
-      ConverterManager cm = (ConverterManager) beanConverterManagerCache.get(beanClass);
-      if (cm == null)
+      BeanDescriptor bd = getBeanDescriptor(beanClass);
+      if (bd.getConverterManager() == converterManager)
       {
-         cm = (ConverterManager) converterManager.clone();
-         beanConverterManagerCache.put(beanClass, cm);
+         bd.setConverterManager((ConverterManager) converterManager.clone());
       }
-      cm.registerPropertyEditor(type, pe);
+      bd.getConverterManager().registerPropertyEditor(type, pe);
    }
 
    static final ConverterManager converterManager = new ConverterManager();
@@ -861,7 +840,6 @@ public class BeanTool
       return converterManager.getConverter(index);
    }
 
-   static final String GET_FIRST_VALUE_RES = "getFirstValue";
    /**
     * 获取对基础类型设置的代码.
     */
@@ -931,7 +909,7 @@ public class BeanTool
       }
    }
 
-   private static boolean BP_USE_DEFAULT_BEAN_CHECKER = true;
+   private static boolean CG_USE_DEFAULT_BEAN_CHECKER = true;
    /**
     * 判断所给出的类名是否是bean.
     */
@@ -960,7 +938,7 @@ public class BeanTool
             }
          }
       }
-      if (BP_USE_DEFAULT_BEAN_CHECKER)
+      if (CG_USE_DEFAULT_BEAN_CHECKER)
       {
          if (defaultBeanChecker.check(type) == BeanChecker.CHECK_RESULT_YES)
          {
@@ -1033,8 +1011,8 @@ public class BeanTool
       try
       {
          codeRes.load(BeanTool.class.getResourceAsStream("BeanTool.res"));
-         Utility.addFieldPropertyManager(BP_USE_DBC_PROPERTY, BeanTool.class,
-               "BP_USE_DEFAULT_BEAN_CHECKER", "true");
+         Utility.addFieldPropertyManager(CG_USE_DBC_PROPERTY, BeanTool.class,
+               "CG_USE_DEFAULT_BEAN_CHECKER", "true");
       }
       catch (Exception ex)
       {
@@ -1085,6 +1063,11 @@ public class BeanTool
     * 存放bean对象的变量名.
     */
    public static final String BEAN_NAME = "beanObj";
+
+   /**
+    * 获取字符串数组第一个元素的代码资源名称
+    */
+   static final String GET_FIRST_VALUE_RES = "getFirstValue";
 
    /**
     * 存放读取的临时对象的变量名.

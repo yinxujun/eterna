@@ -129,14 +129,15 @@ public class EternaFactoryImpl extends AbstractFactory
    public String[] getAttributeNames()
          throws ConfigurationException
    {
-      String[] tmpP = this.shareEternaFactory != null ? this.shareEternaFactory.getAttributeNames() : null;
+      String[] tmpP = this.shareEternaFactory != null ?
+            this.shareEternaFactory.getAttributeNames() : null;
       String[] tmpThis = super.getAttributeNames();
       if (tmpP != null && tmpP.length > 0 && tmpThis != null && tmpThis.length > 0)
       {
          HashSet set = new HashSet(tmpP.length + tmpThis.length);
          set.addAll(Arrays.asList(tmpP));
          set.addAll(Arrays.asList(tmpThis));
-         return (String[]) set.toArray(new String[0]);
+         return (String[]) set.toArray(new String[set.size()]);
       }
       return tmpP == null || tmpP.length == 0 ? tmpThis : tmpP;
    }
@@ -1014,7 +1015,7 @@ public class EternaFactoryImpl extends AbstractFactory
    {
       if (this.modelNameTag == null)
       {
-         this.modelNameTag = (String) this.getAttribute(MODEL_NAME_TAG);
+         this.modelNameTag = (String) this.getAttribute(MODEL_NAME_TAG_FLAG);
          if (this.modelNameTag == null)
          {
             this.modelNameTag = "model";
@@ -1164,7 +1165,7 @@ public class EternaFactoryImpl extends AbstractFactory
    {
       if (this.viewGlobalSetting == null)
       {
-         this.viewGlobalSetting = (String) this.getAttribute(VIEW_GLOBAL_SETTING);
+         this.viewGlobalSetting = (String) this.getAttribute(VIEW_GLOBAL_SETTING_FLAG);
          if (this.viewGlobalSetting == null)
          {
             this.viewGlobalSetting = "";

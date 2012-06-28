@@ -69,12 +69,32 @@
          </description>
       </attribute>
       <attribute>
+         <name>suffixId</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+         <description>
+            区分多个同名控件时使用的后缀标识.
+            注: 如果设置了此标签, 他将会和parentElement共同构成查找的名称.
+         </description>
+      </attribute>
+      <attribute>
          <name>useAJAX</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
          <type>boolean</type>
          <description>
             是否将生成的界面中, 所有默认的页面跳转方式改为ajax请求.
+         </description>
+      </attribute>
+      <attribute>
+         <name>scatterFlag</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+         <description>
+            如果父节点元素是个模板, 则要加上此标记标明, 它的值就是查找模板元素的标签名.
+            如:
+            设为  id      那就是查找 id=? 的模板
+            设为  swapId  那就是查找 swapId=? 的模板
          </description>
       </attribute>
       <example><![CDATA[
@@ -84,7 +104,7 @@
             // 调用getData_value方法
             var value = tmp.callFunction("getData_value", "testData", "col1", 12);
             // 生成samle控件放到 id为"test"的节点中
-            var newObj = tmp.newComponent(tmp, "sample", "testDiv");
+            var newObj = tmp.newComponent("sample", "testDiv");
          </script>
       ]]></example>
    </tag>

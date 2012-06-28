@@ -1,15 +1,14 @@
 
 package self.micromagic.util;
 
-import java.io.UnsupportedEncodingException;
 import java.io.PrintStream;
-import java.io.Writer;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * <code>StringTool</code>类是实现一些常用的字符串处理. <p>
@@ -22,9 +21,11 @@ public class StringTool
    /**
     * 是否需要使用QuickStringAppend.
     * 如果需要则可在配置文件中设置:
-    * eterna.use.quickStringAppend=true
+    * self.micromagic.use.quickStringAppend=true
     */
-   public static final String USE_QUICK_STRING_APPEND = "eterna.use.quickStringAppend";
+   public static final String USE_QUICK_STRING_APPEND = "self.micromagic.use.quickStringAppend";
+
+   public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
    public static final int MAX_INTERN_SIZE = 1024 * 8;
 
@@ -128,7 +129,7 @@ public class StringTool
       int count = str.length();
       if (count == 0)
       {
-         return new String[0];
+         return EMPTY_STRING_ARRAY;
       }
       if (isEmpty(delimiter))
       {
@@ -199,7 +200,7 @@ public class StringTool
       int count = st.countTokens();
       if (count == 0)
       {
-         return new String[0];
+         return EMPTY_STRING_ARRAY;
       }
 
       String[] bolck = new String[count];

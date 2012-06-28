@@ -66,7 +66,7 @@ public class ClassKeyCache
       CacheCell ccm = this.getCacheCell(c);
       if (ccm != null)
       {
-         ccm.get(c);
+         return ccm.get(c);
       }
       return null;
    }

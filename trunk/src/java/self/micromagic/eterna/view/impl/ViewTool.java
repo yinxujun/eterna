@@ -51,6 +51,8 @@ public class ViewTool
 
    private static GrammerManager grammerManager;
 
+   private static volatile int eternaId = 1;
+
    static
    {
       try
@@ -63,6 +65,11 @@ public class ViewTool
       {
          log.error("Error in create grammerManager.", ex);
       }
+   }
+
+   public static synchronized int createEternaId()
+   {
+      return 0xffffff & eternaId++;
    }
 
    public static String addParentScript(String script, String parentScript)

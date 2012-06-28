@@ -18,7 +18,7 @@ public class RequestParameterMap
    /**
     * 配置是否需要对request中的数据取值进行解析.
     */
-   public static final String PARSE_PARAM_PROPERTY = "servlet.parse.request.param.map";
+   public static final String PARSE_PARAM_PROPERTY = "self.micromagic.parse.request.param";
 
    /**
     * 是否需要对request中的数据取值进行解析. <p>

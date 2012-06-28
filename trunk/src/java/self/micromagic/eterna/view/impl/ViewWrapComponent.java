@@ -8,11 +8,14 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.view.Component;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ViewWrapComponent extends ComponentImpl
       implements Component
 {
    protected ViewAdapter view;
+   protected boolean needScript = true;
 
    public ViewWrapComponent(ViewAdapter view)
    {
@@ -29,6 +32,50 @@ public class ViewWrapComponent extends ComponentImpl
       this.eternaFactory = factory;
       this.initialized = true;
       this.stringCoder = factory.getStringCoder();
+      String tmp;
+
+      tmp = (String) factory.getAttribute(VIEW_WRPA_NEED_SCRIPT_FLAG);
+      if (tmp != null)
+      {
+         this.needScript = "true".equalsIgnoreCase(tmp);
+      }
+      tmp = (String) factory.getAttribute(VIEW_WRPA_TYPE_FLAG);
+      if (tmp == null || SPECIAL_TYPE_NONE.equals(tmp))
+      {
+         this.type = SPECIAL_TYPE_NONE;
+      }
+      else if (NORMAL_TYPE_DIV.equalsIgnoreCase(tmp))
+      {
+         this.type = tmp;
+      }
+      else
+      {
+         log.error("Error view wrap type:[" + tmp + "].");
+         this.type = SPECIAL_TYPE_NONE;
+      }
+      if (!SPECIAL_TYPE_NONE.equals(this.type))
+      {
+         if (this.view.getWidth() != null && this.view.getHeight() != null)
+         {
+            StringAppender buf = StringTool.createStringAppender();
+            buf.append("css:{");
+            if (this.view.getWidth() != null)
+            {
+               buf.append("width:").append("\"").append(this.view.getWidth()).append("\"");
+            }
+            if (this.view.getHeight() != null)
+            {
+               if (this.view.getWidth() != null)
+               {
+                  buf.append(",");
+               }
+               buf.append("height:").append("\"").append(this.view.getHeight()).append("\"");
+            }
+            buf.append("}");
+            this.componentParam = new String(buf.toString());
+         }
+      }
+
       Iterator subComponentItr = this.getSubComponents();
       while (subComponentItr.hasNext())
       {
@@ -41,11 +88,6 @@ public class ViewWrapComponent extends ComponentImpl
          throws ConfigurationException
    {
       return this.view.getName();
-   }
-
-   public String getType()
-   {
-      return "none";
    }
 
    public Component getParent()
@@ -62,6 +104,18 @@ public class ViewWrapComponent extends ComponentImpl
    public Iterator getEvents()
    {
       return UnmodifiableIterator.EMPTY_ITERATOR;
+   }
+
+   public String getBeforeInit()
+         throws ConfigurationException
+   {
+      return this.needScript ? this.view.getBeforeInit() : null;
+   }
+
+   public String getInitScript()
+         throws ConfigurationException
+   {
+      return this.needScript ? this.view.getInitScript() : null;
    }
 
 }

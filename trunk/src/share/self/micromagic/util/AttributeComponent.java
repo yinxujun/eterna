@@ -32,12 +32,11 @@ public final class AttributeComponent extends ComponentImpl
 
    private String bodyHTML;
    private String swapFlag;
-   private Map bindRes;
    private String charset = "UTF-8";
 
    public AttributeComponent()
    {
-      this.type = "div";
+      this.type = NORMAL_TYPE_DIV;
    }
 
    public void initialize(EternaFactory factory, Component parent)
@@ -48,12 +47,54 @@ public final class AttributeComponent extends ComponentImpl
          return;
       }
       super.initialize(factory, parent);
-      String tmp;
 
+      if (NORMAL_TYPE_DIV.equals(this.type))
+      {
+         this.initbodyHTML();
+      }
+      boolean autoSet = true;
+      String autoSetStr = (String) this.getAttribute("autoSet");
+      if (autoSetStr != null)
+      {
+         autoSet = "true".equalsIgnoreCase(autoSetStr);
+      }
+      this.swapFlag = (String) this.getAttribute("swapFlag");
+
+      if (autoSet)
+      {
+         StringAppender buf = StringTool.createStringAppender();
+         buf.appendln().append("if (objConfig.bodyString != null)").appendln().append("{").appendln()
+               .append("webObj.html(objConfig.bodyString);").appendln().append("}").appendln();
+         if (this.swapFlag == null)
+         {
+            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();
+         }
+         else
+         {
+            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig, \"").append(this.swapFlag)
+                  .append("\");").appendln();
+         }
+         String myScript = buf.toString();
+         if (this.initScript != null)
+         {
+            this.initScript = this.initScript + myScript;
+         }
+         else
+         {
+            this.initScript = myScript;
+         }
+      }
+   }
+
+   private void initbodyHTML()
+         throws ConfigurationException
+   {
+      String tmp;
+      Map bindRes = null;
       tmp = (String) this.getAttribute("bindRes");
       if (tmp != null)
       {
-         this.bindRes = StringTool.string2Map(tmp, ",", ':');
+         bindRes = StringTool.string2Map(tmp, ",", ':');
       }
 
       tmp = (String) this.getAttribute(FACTORY_ATTRIBUTE_NAME);
@@ -117,46 +158,20 @@ public final class AttributeComponent extends ComponentImpl
             throw new ConfigurationException("Not found attribute [" + tmp + "] in factory.");
          }
       }
-      this.bodyHTML = Utility.resolveDynamicPropnames(this.bodyHTML, this.bindRes);
-      boolean autoSet = true;
-      String autoSetStr = (String) this.getAttribute("autoSet");
-      if (autoSetStr != null)
-      {
-         autoSet = "true".equalsIgnoreCase(autoSetStr);
-      }
-      this.swapFlag = (String) this.getAttribute("swapFlag");
-
-      if (autoSet)
-      {
-         StringAppender buf = StringTool.createStringAppender();
-         buf.appendln().append("webObj.html(objConfig.bodyString);").appendln();
-         if (this.swapFlag == null)
-         {
-            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();
-         }
-         else
-         {
-            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig, \"").append(this.swapFlag)
-                  .append("\");").appendln();
-         }
-         String myScript = buf.toString();
-         if (this.initScript != null)
-         {
-            this.initScript = this.initScript + myScript;
-         }
-         else
-         {
-            this.initScript = myScript;
-         }
-      }
+      this.bodyHTML = Utility.resolveDynamicPropnames(this.bodyHTML, bindRes);
    }
 
    public void setType(String type)
          throws ConfigurationException
    {
-      if (!"div".equals(type))
+      if (NORMAL_TYPE_DIV.equals(type) || SPECIAL_TYPE_INHERIT.equals(type))
       {
-         throw new ConfigurationException("Must set type as [div] in AttributeComponent.");
+         this.type = type;
+      }
+      else
+      {
+         throw new ConfigurationException("Must set type as [" + NORMAL_TYPE_DIV + "] or ["
+               + SPECIAL_TYPE_INHERIT + "] in AttributeComponent.");
       }
    }
 
@@ -164,10 +179,31 @@ public final class AttributeComponent extends ComponentImpl
          throws IOException, ConfigurationException
    {
       super.printSpecialBody(out, data, view);
-      out.write(",noSub:1,bodyString:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(this.bodyHTML));
-      out.write("\"");
+      out.write(",");
+      out.write(NO_SUB_FLAG);
+      out.write(":1");
+      if (!StringTool.isEmpty(this.bodyHTML))
+      {
+         out.write(",bodyString:");
+         out.write("\"");
+         out.write(this.stringCoder.toJsonString(this.bodyHTML));
+         out.write("\"");
+      }
+      if (SPECIAL_TYPE_INHERIT.equals(this.type))
+      {
+         out.write(",");
+         out.write(INHERIT_GLOBAL_SEARCH);
+         out.write(":{gSearch:1");
+         if (this.swapFlag != null)
+         {
+            out.write(",");
+            out.write(FLAG_TAG);
+            out.write(":\"");
+            out.write(this.stringCoder.toJsonString(this.swapFlag));
+            out.write("\"");
+         }
+         out.write("}");
+      }
    }
 
 }

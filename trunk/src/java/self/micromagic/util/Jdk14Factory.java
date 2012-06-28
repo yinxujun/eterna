@@ -471,7 +471,7 @@ public class Jdk14Factory extends LogFactory
    public String[] getAttributeNames()
    {
       Set keys = attributes.keySet();
-      return (String[]) keys.toArray(new String[0]);
+      return (String[]) keys.toArray(StringTool.EMPTY_STRING_ARRAY);
    }
 
    public void setAttribute(String name, Object value)

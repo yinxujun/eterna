@@ -35,13 +35,13 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.SAXException;
+import self.micromagic.cg.ClassGenerator;
 import self.micromagic.coder.Base64;
 import self.micromagic.eterna.share.AttributeManager;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.EternaFactoryImpl;
 import self.micromagic.eterna.share.EternaInitialize;
 import self.micromagic.eterna.share.Factory;
-import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.ObjectRef;
@@ -49,7 +49,7 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
-import self.micromagic.cg.ClassGenerator;
+import self.micromagic.util.container.ThreadCache;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -1907,6 +1907,27 @@ public class FactoryManager
                         result.add(temp);
                      }
                   }
+               }
+               else if (tStr.startsWith("web:"))
+               {
+                  ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
+                  if (sc != null)
+                  {
+                     try
+                     {
+                        URL url = sc.getResource(tStr.substring(4));
+                        if (url != null && "file".equals(url.getProtocol()))
+                        {
+                           temp = this.parseFileName(url.getFile(), url);
+                           if (temp != null)
+                           {
+                              result.add(temp);
+                           }
+                        }
+                     }
+                     catch (IOException ex) {}
+                  }
+                  return null;
                }
                else if (tStr.startsWith("http:"))
                {

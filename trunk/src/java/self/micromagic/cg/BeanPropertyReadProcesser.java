@@ -42,6 +42,10 @@ class BeanPropertyReadProcesser
    public String getMethodCode(BeanMethodInfo m, Class type, String wrapName, int processerType,
          ClassGenerator cg)
    {
+      if (m.method == null)
+      {
+         return null;
+      }
       this.paramCache.put("methodName", m.method.getName());
       String[] resNames = new String[] {
          "primitiveMethodGet", "otherTypeMethodGet", "arrayTypeMethodGet", "collectionTypeMethodGet"
