@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -554,16 +553,19 @@ public class DataPrinterImpl extends AbstractGenerator
             }
             for (int i = 0; i < this.methods.length; i++)
             {
-               if (!first)
+               BeanMethodInfo m = this.methods[i];
+               if (m.method != null)
                {
-                  out.write(",");
+                  if (!first)
+                  {
+                     out.write(",");
+                  }
+                  first = false;
+                  out.write("\"");
+                  out.write(m.name);
+                  out.write("\":");
+                  p.print(out, m.method.invoke(bean, new Object[0]));
                }
-               first = false;
-               Method m = this.methods[i].method;
-               out.write("\"");
-               out.write(this.methods[i].name);
-               out.write("\":");
-               p.print(out, m.invoke(bean, new Object[0]));
             }
          }
          catch (Exception ex)

@@ -427,6 +427,49 @@
             return null;
          </function>
 
+         <!-- 智能的读取结果集中的值 -->
+         <function name="findData_value" param="dataName, srcName, index"><![CDATA[
+            if (dataName === undefined && srcName === undefined && index === undefined)
+            {
+               dataName = eg_temp.dataName;
+               srcName = eg_temp.srcName;
+               index = eg_temp.index;
+            }
+            else if (srcName === undefined && index === undefined)
+            {
+               if (typeof dataName == "number")
+               {
+                  index = dataName;
+                  srcName = eg_temp.srcName;
+               }
+               else
+               {
+                  srcName = dataName;
+                  index = eg_temp.index;
+               }
+               dataName = eg_temp.dataName;
+            }
+            else if (index === undefined)
+            {
+               if (typeof srcName == "number" || srcName == null)
+               {
+                  index = srcName;
+                  srcName = dataName;
+                  dataName = eg_temp.dataName;
+               }
+               else
+               {
+                  index = eg_temp.index;
+               }
+            }
+            var valueObj = _eterna.getValue_fromRecords(dataName, srcName, index);
+            if (valueObj.exists)
+            {
+               return valueObj.value;
+            }
+            return null;
+         ]]></function>
+
          <!-- 读取多行结果集中的一行, 并以单行结果集的形式返回 -->
          <function name="getData_row" param="dataName, index"><![CDATA[
             var tmpData;
@@ -473,6 +516,28 @@
             {
                return null;
             }
+         ]]></function>
+
+         <!-- 智能的读取读取多行结果集中的一行 -->
+         <function name="findData_row" param="dataName, index"><![CDATA[
+            if (dataName === undefined && index === undefined)
+            {
+               dataName = eg_temp.dataName;
+               index = eg_temp.index;
+            }
+            else if (index === undefined)
+            {
+               if (typeof dataName == "number")
+               {
+                  index = dataName;
+                  dataName = eg_temp.dataName;
+               }
+               else
+               {
+                  index = eg_temp.index;
+               }
+            }
+            return {$ef:getData_row}(dataName, index);
          ]]></function>
 
          <!-- 更新结果集中的值 -->
@@ -1221,15 +1286,6 @@
                   webObj.attr("action", {$ef:getHeadURL}({$dataV:eg_temp.dataName + '_modelName'}));
                   webObj.attr("id", webObj.attr("name"));
                ]]></init-script>
-               <events>
-                  <event name="submit"><![CDATA[
-                     if (_eterna.cache.useAJAX)
-                     {
-                        {$ef:reload}(webObj, {$dataV:eg_temp.dataName+'_modelName'}, "reloadView");
-                        return false;
-                     }
-                  ]]></event>
-               </events>
                <component name="otherParam" type="none"/>
                <component name="pageNum" type="input-hidden">
                   <component-param>objName:"[script]:{$dataV:EG_SMA}.pageNumTag"</component-param>
@@ -1261,21 +1317,27 @@
                   eg_temp = {};
                   _eterna.reInit();
                }
-               else if (objs != null && datas != null)
+               else
                {
-                  for (var i = 0; i < datas.length; i++)
-                  {
-                     // 将JSON对象的数据传递给eternaData
-                     {$dataV:datas[i]} = tmpData.{$tmpDataV:datas[i]};
-                  }
                   if ({$dataV:EG_SMA} == null && tmpData.{$tmpDataV:EG_SMA} != null)
                   {
                      {$dataV:EG_SMA} = tmpData.{$tmpDataV:EG_SMA};
                   }
-                  for (var i = 0; i < objs.length; i++)
+                  if (datas != null)
                   {
-                     // 重载相应的控件
-                     _eterna.reloadWebObj(objs[i]);
+                     for (var i = 0; i < datas.length; i++)
+                     {
+                        // 将JSON对象的数据传递给eternaData
+                        {$dataV:datas[i]} = tmpData.{$tmpDataV:datas[i]};
+                     }
+                  }
+                  if (objs != null)
+                  {
+                     for (var i = 0; i < objs.length; i++)
+                     {
+                        // 重载相应的控件
+                        _eterna.reloadWebObj(objs[i]);
+                     }
                   }
                }
                if (tmpData.{$tmpData:msg} != null) alert(tmpData.{$tmpData:msg});
@@ -1333,6 +1395,7 @@
                }
                {$ef:afterReload}(tmpData, objs, datas);
             }
+            _eterna.cache.textData = null;
          ]]></function>
 
          <!--
@@ -1340,18 +1403,9 @@
             url: 获取数据的地址
             param: 传递的参数
          -->
-         <function name="ajaxVisit" param="url, param"><![CDATA[
-            if (param == null)
-            {
-               param = {};
-            }
-            param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
-            _eterna.closeAllWindow();
-            var tmpData = _eterna.getRemoteJSON(url, param);
-            _eterna.changeEternaData(tmpData);
-            eg_temp = {};
-            _eterna.reInit();
-         ]]></function>
+         <function name="ajaxVisit" param="url, param">
+            _eterna.ajaxVisit(url, param);
+         </function>
 
          <!--
          一些公用控件
@@ -1428,7 +1482,7 @@
                {$dataV:eg_temp.dataName} = links;
             </before-init>
             <component name="loop" type="loop">
-               <replacement name="a" baseComponentName="a" comParam="css:{'margin-right':'8px'}">
+               <component name="a" type="a" comParam="css:{'margin-right':'8px'}">
                   <init-script><![CDATA[
                      var linkConfig = {$dataV:eg_temp.dataName}[eg_temp.index];
                      webObj.text(linkConfig.name);
@@ -1444,7 +1498,7 @@
                      }
                   ]]></init-script>
                   <events>
-                     <event name="preClick">
+                     <event name="click">
                         if (webObj.data("confirmMsg") != null)
                         {
                            webObj.data("doClick", confirm(webObj.data("confirmMsg")));
@@ -1455,7 +1509,7 @@
                         }
                      </event>
                   </events>
-               </replacement>
+               </component>
             </component>
          </typical-component>
          <typical-replacement name="common_list_operator" baseComponentName="list_operator">
@@ -1534,27 +1588,7 @@
                      {
                         {$ef:triggerEvents}(webObj, "modify");
                      }
-                     if (eg_temp.tempData.useAJAX)
-                     {
-                        if (theResult)
-                        {
-                           if (eg_temp.tempData.reloadObjs == null
-                                 || eg_temp.tempData.reloadDatas == null)
-                           {
-                              {$ef:reload}(webObj, eg_temp.tempData.modelName, "reloadView");
-                           }
-                           else
-                           {
-                              {$ef:reload}(webObj, eg_temp.tempData.modelName,
-                                    eg_temp.tempData.reloadObjs, eg_temp.tempData.reloadDatas);
-                           }
-                        }
-                        return false;
-                     }
-                     else
-                     {
-                        return theResult;
-                     }
+                     return theResult;
                   }
                   catch (ex)
                   {
@@ -1587,7 +1621,7 @@
          <resource name="please_select">-请选择-</resource>
          <resource name="form_submit_error">表单提交过程中发生错误！</resource>
 
-         <!-- 超链接控件的模板 -->
+         <!-- 超链接控件的模板
          <typical-component name="a" type="a">
             <events>
                <event name="click"><![CDATA[
@@ -1615,8 +1649,9 @@
                ]]></event>
             </events>
          </typical-component>
+          -->
 
-         <!-- 继承模板的超链接控件的模板 -->
+         <!-- 继承模板的超链接控件的模板
          <typical-component name="inheritA" type="inherit">
             <events>
                <event name="click"><![CDATA[
@@ -1644,21 +1679,15 @@
                ]]></event>
             </events>
          </typical-component>
+         -->
 
          <!--
             执行一次页面访问, 会根据_eterna.cache.useAJAX的设置, 进行页面跳转或ajax方式访问
             url: 访问的地址
          -->
-         <function name="doVisit" param="url"><![CDATA[
-            if (_eterna.cache.useAJAX)
-            {
-               {$ef:ajaxVisit}(url);
-            }
-            else
-            {
-               location.href = url;
-            }
-         ]]></function>
+         <function name="doVisit" param="url">
+            _eterna.doVisit(url);
+         </function>
 
          <!--
          带检查的控件

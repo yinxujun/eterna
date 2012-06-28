@@ -20,7 +20,7 @@ public interface CG
    /**
     * 配置对代码编译的类型.
     */
-   public static final String COMPILE_TYPE_PROPERTY = "eterna.compile.type";
+   public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.compile.type";
 
    /**
     * 用ant作为编译类型时使用的名称.
@@ -39,7 +39,7 @@ public interface CG
     * 2. 记录编译过程中的一些信息
     * 3. 记录生成的代码信息
     */
-   public static final String COMPILE_LOG_PROPERTY = "eterna.compile.log";
+   public static final String COMPILE_LOG_PROPERTY = "self.micromagic.compile.log";
 
    /**
     * 1 (> 0). 只记录出错信息

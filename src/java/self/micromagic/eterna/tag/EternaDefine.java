@@ -31,6 +31,26 @@ public class EternaDefine extends TagSupport
     */
    public static final String EMPTY_VIEW_FLAG = "empty.view";
 
+   /**
+    * 在上下文环境中获得工厂实例的名称前缀.
+    */
+   public static final String CONTEXT_FMI_PREFIX = "$context.";
+
+   /**
+    * 在_eterna.cache中存放区分多个同名控件时使用的后缀的名称.
+    */
+   public static final String SUFFIX_ID_FLAG = "eSuffixId";
+
+   /**
+    * 在_eterna.cache中存放根控件的名称.
+    */
+   public static final String ROOT_OBJ_ID_FLAG = "eRootObjId";
+
+   /**
+    * 在_eterna.cache中存放模板根控件标记的名称.
+    */
+   public static final String SCATTER_FLAG = "scatterFlag";
+
    private String name;
    private String instanceName;
    private String modelName;
@@ -38,7 +58,9 @@ public class EternaDefine extends TagSupport
    private String viewName;
    private String data;
    private String parentElement;
+   private String suffixId;
    private boolean useAJAX;
+   private String scatterFlag;
 
    public int doStartTag()
          throws JspException
@@ -141,39 +163,35 @@ public class EternaDefine extends TagSupport
          }
          ViewAdapter view = f.createViewAdapter(tmpViewName);
          JspWriter out = this.pageContext.getOut();
-         out.println("<script language=\"javascript\">");
-         out.println("(function() {");
-         out.print("var $E = ");
-         view.printView(out, nowData);
-         out.println(";");
-         out.println("var eternaData = $E;");
-         out.println("var eterna_debug = " + view.getDebug() + ";");
-         out.println("var _eterna = new Eterna(eternaData, eterna_debug, null);");
-         if (this.useAJAX)
+         String dataType = view.getDataType(nowData);
+         if (!ViewAdapter.DATA_TYPE_WEB.equals(dataType))
          {
-            out.println("_eterna.cache.useAJAX = true;");
+            view.printView(out, nowData, this.getCacheMap(view));
          }
-         if (this.parentElement != null)
+         else
          {
-            out.println("jQuery(document).ready(function(){");
-            out.println("var pObj = jQuery(\"#" + this.parentElement + "\");");
-            String width = view.getWidth();
-            String height = view.getHeight();
-            if (width != null)
+            out.println("<script language=\"javascript\">");
+            out.println("(function() {");
+            out.print("var $E = ");
+            view.printView(out, nowData, this.getCacheMap(view));
+            out.println(";");
+            out.println("var eternaData = $E;");
+            out.println("var eterna_debug = " + view.getDebug() + ";");
+            out.println("var _eterna = new Eterna(eternaData, eterna_debug, null);");
+            if (this.useAJAX)
             {
-               out.println("pObj.css(\"width\", \"" + width + "\")");
+               out.println("_eterna.cache.useAJAX = true;");
             }
-            if (height != null)
+            if (this.parentElement != null)
             {
-               out.println("pObj.css(\"height\", \"" + height + "\")");
+               out.println("jQuery(document).ready(function(){");
+               out.println("_eterna.reInit();");
+               out.println("});");
             }
-            out.println("_eterna.rootWebObj = pObj;");
-            out.println("_eterna.reInit();");
-            out.println("});");
+            out.println("window." + this.name + " = _eterna;");
+            out.println("})();");
+            out.println("</script>");
          }
-         out.println("window." + this.name + " = _eterna;");
-         out.println("})();");
-         out.println("</script>");
       }
       catch (ConfigurationException ex)
       {
@@ -194,15 +212,64 @@ public class EternaDefine extends TagSupport
       return SKIP_BODY;
    }
 
+   private Map getCacheMap(ViewAdapter view)
+         throws ConfigurationException
+   {
+      Map cache = new HashMap();
+      if (this.suffixId != null)
+      {
+         cache.put(SUFFIX_ID_FLAG, this.suffixId);
+      }
+      if (this.parentElement != null)
+      {
+         cache.put(ROOT_OBJ_ID_FLAG, this.parentElement);
+      }
+      if (this.scatterFlag != null)
+      {
+         cache.put(SCATTER_FLAG, this.scatterFlag);
+      }
+      String width = view.getWidth();
+      String height = view.getHeight();
+      if (width != null)
+      {
+         cache.put(ROOT_OBJ_ID_FLAG + ".width", width);
+      }
+      if (height != null)
+      {
+         cache.put(ROOT_OBJ_ID_FLAG + ".height", height);
+      }
+      return cache.size() > 0 ? cache : null;
+   }
+
    private EternaFactory getEternaFactory()
          throws ConfigurationException
    {
       if (this.instanceName != null)
       {
-         FactoryManager.Instance instance = DefaultFinder.finder.findInstance(this.instanceName);
-         if (instance != null)
+         if (this.instanceName.startsWith(CONTEXT_FMI_PREFIX))
          {
-            return instance.getEternaFactory();
+            FactoryManager.Instance instance = (FactoryManager.Instance) this.pageContext.findAttribute(
+                  this.instanceName.substring(CONTEXT_FMI_PREFIX.length()));
+            if (instance != null)
+            {
+               return instance.getEternaFactory();
+            }
+            else
+            {
+               DefaultFinder.log.error("Not found factory [" + this.instanceName + "] in context.");
+            }
+         }
+         else
+         {
+            FactoryManager.Instance instance = DefaultFinder.finder.findInstance(this.instanceName);
+            if (instance != null)
+            {
+               return instance.getEternaFactory();
+            }
+            else
+            {
+               DefaultFinder.log.error("Not found factory [" + this.instanceName + "].");
+            }
          }
       }
       return FactoryManager.getEternaFactory();
@@ -217,7 +284,9 @@ public class EternaDefine extends TagSupport
       this.viewName = null;
       this.data = null;
       this.parentElement = null;
+      this.suffixId = null;
       this.useAJAX = false;
+      this.scatterFlag = null;
       super.release();
    }
 
@@ -291,14 +360,34 @@ public class EternaDefine extends TagSupport
       this.parentElement = parentElement;
    }
 
+   public String getSuffixId()
+   {
+      return this.suffixId;
+   }
+
+   public void setSuffixId(String suffixId)
+   {
+      this.suffixId = suffixId;
+   }
+
    public boolean isUseAJAX()
    {
-      return useAJAX;
+      return this.useAJAX;
    }
 
    public void setUseAJAX(boolean useAJAX)
    {
       this.useAJAX = useAJAX;
+   }
+
+   public String getScatterFlag()
+   {
+      return this.scatterFlag;
+   }
+
+   public void setScatterFlag(String scatterFlag)
+   {
+      this.scatterFlag = scatterFlag;
    }
 
 }

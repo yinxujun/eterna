@@ -104,6 +104,11 @@ public interface ViewAdapter
     */
    public static final String DATA_TYPE_WEB = "web";
 
+   /**
+    * 分隔json数据和后面的html数据的标签.
+    */
+   public static final String JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
+
    String getName() throws ConfigurationException;
 
    DataPrinter getDataPrinter() throws ConfigurationException;
@@ -138,7 +143,25 @@ public interface ViewAdapter
 
    ViewRes getViewRes() throws ConfigurationException;
 
+   /**
+    * 将界面及数据集信息写入到输出流中.
+    * 会根据<code>DATA_TYPE</code>类型来输出数据.
+    *
+    * @param out    信息写入的数据流
+    * @param data   数据集所在的<code>AppData</code>
+    */
    void printView(Writer out, AppData data) throws IOException, ConfigurationException;
+
+   /**
+    * 将界面及数据集信息写入到输出流中.
+    * 会根据<code>DATA_TYPE</code>类型来输出数据.
+    *
+    * @param out       信息写入的数据流
+    * @param data      数据集所在的<code>AppData</code>
+    * @param cache     需要初始化到_eterna.cache中的值
+    */
+   void printView(Writer out, AppData data, Map cache)
+         throws IOException, ConfigurationException;
 
    /**
     * 输出控件的事件定义.

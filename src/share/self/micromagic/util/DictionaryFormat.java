@@ -134,7 +134,7 @@ public class DictionaryFormat extends AbstractGenerator
             index = str.indexOf(this.wordSplit);
          }
          temp.add(this.htmlFilter ? Utils.dealString2HTML(str, true) : str);
-         this.words = (String[]) temp.toArray(new String[0]);
+         this.words = (String[]) temp.toArray(new String[temp.size()]);
          dictionaryCache.put(this.pattern, this.words);
       }
       if (this.codeTrans)

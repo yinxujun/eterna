@@ -32,23 +32,21 @@ public class BeanMap extends AbstractMap
    private boolean converterManagerCopied = false;
    private List entryList = null;
 
-   BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor,
-         ConverterManager converterManager)
+   BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor)
    {
       this.beanObj = beanObj;
       this.beanType = beanObj.getClass();
       this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
       this.beanDescriptor = beanDescriptor;
-      this.converterManager = converterManager;
+      this.converterManager = beanDescriptor.getConverterManager();
    }
 
-   BeanMap(Class beanType, String namePrefix, BeanDescriptor beanDescriptor,
-         ConverterManager converterManager)
+   BeanMap(Class beanType, String namePrefix, BeanDescriptor beanDescriptor)
    {
       this.beanType = beanType;
       this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
       this.beanDescriptor = beanDescriptor;
-      this.converterManager = converterManager;
+      this.converterManager = beanDescriptor.getConverterManager();
    }
 
    /**

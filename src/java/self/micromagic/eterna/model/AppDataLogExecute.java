@@ -13,23 +13,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import org.dom4j.Element;
+import self.micromagic.cg.BeanMethodInfo;
+import self.micromagic.cg.BeanTool;
+import self.micromagic.cg.ClassGenerator;
+import self.micromagic.cg.ClassKeyCache;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
-import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.share.Generator;
-import self.micromagic.util.container.SessionCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.eterna.share.TypeManager;
-import self.micromagic.cg.BeanMethodInfo;
-import self.micromagic.cg.BeanTool;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.util.container.SessionCache;
 
 public class AppDataLogExecute extends AbstractExecute
       implements Execute, Generator
@@ -97,10 +97,10 @@ public class AppDataLogExecute extends AbstractExecute
    /**
     * BeanPrinterÉú³É
     */
-   private static Map beanPrinterMap = new WeakHashMap();
+   private static ClassKeyCache beanPrinterMap = ClassKeyCache.getInstance();
    private static BeanPrinter getBeanPrinter(Class beanClass)
    {
-      BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+      BeanPrinter bp = (BeanPrinter) beanPrinterMap.getProperty(beanClass);
       if (bp == null)
       {
          bp = getBeanPrinter0(beanClass);
@@ -109,7 +109,7 @@ public class AppDataLogExecute extends AbstractExecute
    }
    private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
    {
-      BeanPrinter bp = (BeanPrinter) beanPrinterMap.get(beanClass);
+      BeanPrinter bp = (BeanPrinter) beanPrinterMap.getProperty(beanClass);
       if (bp == null)
       {
          try
@@ -139,7 +139,7 @@ public class AppDataLogExecute extends AbstractExecute
          {
             bp = new BeanPrinterImpl(beanClass);
          }
-         beanPrinterMap.put(beanClass, bp);
+         beanPrinterMap.setProperty(beanClass, bp);
       }
       return bp;
    }
@@ -175,9 +175,12 @@ public class AppDataLogExecute extends AbstractExecute
          for (int i = 0; i < this.methods.length; i++)
          {
             BeanMethodInfo m = this.methods[i];
-            Element mNode = parent.addElement("method");
-            mNode.addAttribute("name", m.name);
-            p.printObject(mNode, m.method.invoke(value, new Object[0]));
+            if (m.method != null)
+            {
+               Element mNode = parent.addElement("method");
+               mNode.addAttribute("name", m.name);
+               p.printObject(mNode, m.method.invoke(value, new Object[0]));
+            }
          }
       }
 

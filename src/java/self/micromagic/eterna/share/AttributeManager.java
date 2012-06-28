@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 
+import self.micromagic.util.StringTool;
+
 public class AttributeManager
 {
    protected Map attributes = null;
@@ -22,10 +24,10 @@ public class AttributeManager
    {
       if (this.attributes == null)
       {
-         return new String[0];
+         return StringTool.EMPTY_STRING_ARRAY;
       }
       Set keys = attributes.keySet();
-      return (String[]) keys.toArray(new String[0]);
+      return (String[]) keys.toArray(new String[keys.size()]);
    }
 
    public Object setAttribute(String name, Object value)

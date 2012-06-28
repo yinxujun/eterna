@@ -310,7 +310,10 @@ public interface EternaFactory extends Factory
 
    //----------------------------------  ModelFactory  --------------------------------------
 
-   public static final String MODEL_NAME_TAG = "model.name.tag";
+   /**
+    * 在factory中设置存放model名称的标签的属性名称.
+    */
+   public static final String MODEL_NAME_TAG_FLAG = "model.name.tag";
 
    String getModelNameTag() throws ConfigurationException;
 
@@ -335,7 +338,10 @@ public interface EternaFactory extends Factory
 
    //----------------------------------  ViewFactory  --------------------------------------
 
-   public static final String VIEW_GLOBAL_SETTING = "view.global.setting";
+   /**
+    * 在factory中设置视图全局配置的属性名称.
+    */
+   public static final String VIEW_GLOBAL_SETTING_FLAG = "view.global.setting";
 
    String getViewGlobalSetting() throws ConfigurationException;
 

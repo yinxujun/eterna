@@ -21,7 +21,7 @@ public class ParameterManager
    private boolean parameterSetted = false;
 
    private boolean checked = false;
-   private String[] templates = new String[0];
+   private String[] templates = StringTool.EMPTY_STRING_ARRAY;
 
    private int index;
 

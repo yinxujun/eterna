@@ -1,7 +1,7 @@
 
 package self.micromagic.cg;
 
-import java.lang.ref.WeakReference;
+
 
 /**
  * bean属性单元的描述类.
@@ -17,11 +17,8 @@ public class CellDescriptor
    BeanPropertyReader readProcesser;  // BeanPropertyReader
    BeanPropertyWriter writeProcesser; // BeanPropertyWriter
 
-   /**
-    * 这里使用<code>WeakReference</code>来引用单元的类型, 这样就不会影响其正常的释放.
-    */
-   private WeakReference cellType;
-   private WeakReference arrayElementType;
+   private Class cellType;
+   private Class arrayElementType;
 
    /**
     * 获取属性的名称.
@@ -60,11 +57,7 @@ public class CellDescriptor
     */
    public Class getCellType()
    {
-      if (this.cellType == null)
-      {
-         return null;
-      }
-      return (Class) this.cellType.get();
+      return this.cellType;
    }
 
    /**
@@ -72,7 +65,7 @@ public class CellDescriptor
     */
    public void setCellType(Class cellType)
    {
-      this.cellType = new WeakReference(cellType);
+      this.cellType = cellType;
    }
 
    /**
@@ -130,11 +123,7 @@ public class CellDescriptor
     */
    public Class getArrayElementType()
    {
-      if (this.arrayElementType == null)
-      {
-         return null;
-      }
-      return (Class) this.arrayElementType.get();
+      return this.arrayElementType;
    }
 
    /**
@@ -144,7 +133,7 @@ public class CellDescriptor
    {
       if (this.isArrayType())
       {
-         this.arrayElementType = new WeakReference(arrayElementType);
+         this.arrayElementType = arrayElementType;
       }
    }
 

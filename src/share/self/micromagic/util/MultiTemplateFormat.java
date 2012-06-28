@@ -77,7 +77,7 @@ public class MultiTemplateFormat extends TemplateFormat
       if (this.pattern == null)
       {
          this.pattern = "";
-         this.patterns = new String[0];
+         this.patterns = StringTool.EMPTY_STRING_ARRAY;
       }
       String valueTag = (String) this.getAttribute("insert_value_tag");
       valueTag = valueTag == null ? DEFAULT_INSERT_VALUE_TAG : valueTag;
@@ -119,7 +119,7 @@ public class MultiTemplateFormat extends TemplateFormat
          }
       }
       temp.add(str);
-      this.patterns = (String[]) temp.toArray(new String[0]);
+      this.patterns = (String[]) temp.toArray(new String[temp.size()]);
       this.indexs = new int[tempNum.size()];
       this.maxIndex = 1;
       for (int i = 0; i < this.indexs.length; i++)

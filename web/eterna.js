@@ -133,15 +133,30 @@ var EG_DATA_TYPE_REST = "REST";
 var EG_DATA_TYPE_ALL = "all";
 var EG_DATA_TYPE_WEB = "web";
 
+var EG_SCRIPT_STR_PREFIX_ARR = ["javascript:", "vbscript:"];
+var EG_JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
+var EG_HTML_DATA_DIV = "tempHTML_data_div_forEterna";
+var EG_NO_SUB = "noSub";
+var EG_STOP_AJAX = "stopAJAX";
+var EG_EVENT_WILL_INIT = "willInit";
+var EG_SUFFIX_ID_FLAG = "eSuffixId";
+var EG_ROOT_OBJ_ID_FLAG = "eRootObjId";
+var EG_FLAG_TAG = "eFlag";
+var EG_SCATTER_FLAG = "scatterFlag";
 var EG_SWAP_FLAG = "swapId";
+var EG_SWAP_INFO = "___swapInfo";
 var EG_SCATTER_INIT_FLAG = "initId";
 var EG_INHERIT_FLAG = "inherit";
+var EG_INHERIT_INFO = "___inheritInfo";
+var EG_INHERIT_BASE = "___baseObj";  //这个的存储结构需要修改
+var EG_INHERIT_GLOBAL_SEARCH = "inheritGlobalSearch";
+var EG_KEEP_BASE_OBJ = "keepBaseObj";
 var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
-if (typeof $egCacheInitialized == 'undefined')
+if (typeof $eternaInitialized == "undefined")
 {
-   window.$egCacheInitialized = 1;
+   window.$eternaInitialized = 1;
 
    var eg_cache = {
       willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},templateRootCache:[]
@@ -158,6 +173,27 @@ if (typeof $egCacheInitialized == 'undefined')
    window.eg_cache = eg_cache;
    window.EG_TEMP_NAMES = EG_TEMP_NAMES;
    window.eg_temp = eg_temp;
+
+   // 初始化parentEterna
+   if (typeof dialogArguments == 'object')
+   {
+      if (dialogArguments.parentEterna != null)
+      {
+         eg_cache.parentEterna = dialogArguments.parentEterna;
+         window.opener = dialogArguments.parentWindow;
+      }
+   }
+   if (opener != null && eg_cache.parentEterna == null)
+   {
+      try
+      {
+         if (opener.eterna_getParentEterna != null)
+         {
+            eg_cache.parentEterna = opener.eterna_getParentEterna(window);
+         }
+      }
+      catch (tmpEX) {}
+   }
 }
 
 var eg_caculateWidth_fix;
@@ -175,7 +211,8 @@ function Eterna($E, eterna_debug, rootWebObj)
    this.rootWebObj = rootWebObj;
    this.cache = {};
    this.nowWindow = null;
-   this.rootWebObjOld_HTML = this.rootWebObj == null ? "" : this.rootWebObj.html();
+   //this.rootWebObjOld_HTML = this.rootWebObj == null ? "" : this.rootWebObj.html();
+   eterna_initEternaCache(this, $E);
 
    if (typeof Eterna._initialized == 'undefined')
    {
@@ -264,6 +301,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             return;
          }
+         eterna_initEternaCache(this, newData);
          newData = eterna_checkEternaData(newData);
          for (var key in this.$E)
          {
@@ -326,13 +364,22 @@ function Eterna($E, eterna_debug, rootWebObj)
                var eterna_debug = successFn.eterna_debug;
                var $E = successFn._eterna.$E;
                var eternaData = $E;
+               successFn._eterna.cache.textData = data;
                successFn.status = textStatus;
-               successFn.data = eval("(" + ef_trimRight(data) + ")");
+               successFn.data = eval("(" + eterna_dealRemoteData(data) + ")");
+               if (typeof successFn.data != "object" || successFn.data == null)
+               {
+                  successFn.data = null;
+               }
             }
             catch (pEx)
             {
                successFn.status = "json_parse_error," + pEx;
-               successFn._eterna.printException(pEx);
+               successFn.data = null;
+               if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
+               {
+                  successFn._eterna.printException(pEx);
+               }
             }
             if ((successFn.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && successFn.httpRequest != null)
             {
@@ -439,24 +486,37 @@ function Eterna($E, eterna_debug, rootWebObj)
 
       Eterna.prototype.loadEterna = function(url, param, divObj, debug, recall)
       {
-         if (param == null)
-         {
-            param = {};
-         }
+         param = this.serializeFormData(param);
          try
          {
             param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
             if (recall == null)
             {
-               var str = ef_trimRight(this.getRemoteText(url, param));
+               var textData = this.getRemoteText(url, param);
+               var str = eterna_dealRemoteData(textData);
                var eterna_debug = debug;
                var $E = {};
                var eternaData = $E;
                var _eterna = new Eterna($E, debug, divObj);
                _eterna.cache.useAJAX = true;
-               _eterna.changeEternaData(eval("(" + str + ")"));
-               eg_temp = {};
-               _eterna.reInit();
+               try
+               {
+                  var tmpData = eval("(" + str + ")");
+                  if (typeof tmpData == "object" && tmpData != null)
+                  {
+                     _eterna.changeEternaData(tmpData);
+                     eg_temp = {};
+                     _eterna.reInit();
+                  }
+                  else
+                  {
+                     eterna_initTextData(_eterna, textData);
+                  }
+               }
+               catch (ex)
+               {
+                  eterna_initTextData(_eterna, textData);
+               }
                return _eterna;
             }
             else
@@ -469,10 +529,25 @@ function Eterna($E, eterna_debug, rootWebObj)
                   var eterna_debug = completeFn.eterna_debug;
                   var $E = completeFn._eterna.$E;
                   var eternaData = $E;
-                  var str = ef_trimRight(result);
-                  _eterna.changeEternaData(eval("(" + str + ")"));
-                  eg_temp = {};
-                  _eterna.reInit();
+                  var str = eterna_dealRemoteData(result);
+                  try
+                  {
+                     var tmpData = eval("(" + str + ")");
+                     if (typeof tmpData == "object" && tmpData != null)
+                     {
+                        _eterna.changeEternaData(tmpData);
+                        eg_temp = {};
+                        _eterna.reInit();
+                     }
+                     else
+                     {
+                        eterna_initTextData(_eterna, result);
+                     }
+                  }
+                  catch (ex)
+                  {
+                     eterna_initTextData(_eterna, result);
+                  }
                   completeFn.recall(completeFn._eterna, result, request, textStatus);
                };
                completeFn.eterna_debug = debug;
@@ -557,18 +632,131 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
       }
 
+      /**
+       * 将form中的数据转换成json对象.
+       */
+      Eterna.prototype.serializeFormData = function(formObj)
+      {
+         if (formObj == null)
+         {
+            return {};
+         }
+         if (typeof formObj == "object")
+         {
+            if (typeof formObj.jquery == "string")
+            {
+               var result = {};
+               var tmpArr = formObj.serializeArray();
+               for (var i = 0; i < tmpArr.length; i++)
+               {
+                  result[tmpArr[i].name] = tmpArr[i].value;
+               }
+               return result;
+            }
+            else
+            {
+               return formObj;
+            }
+         }
+         var str = formObj + "";
+         if (str.length > 0)
+         {
+            var result = {};
+            var tmpArr = str.split("&");
+            for (var i = 0; i < tmpArr.length; i++)
+            {
+               var tStr = tmpArr[i];
+               var index = tStr.indexOf("=");
+               if (index != -1)
+               {
+                  result[tStr.substring(0, index)] = tStr.substring(index + 1);
+               }
+               else
+               {
+                  result[tStr] = null;
+               }
+            }
+            return result;
+
+         }
+         else
+         {
+            return {};
+         }
+      }
+
+      /**
+       * 准备初始化需要的信息.
+       */
+      Eterna.prototype.initPrepare = function(scatter)
+      {
+         if (this.cache[EG_ROOT_OBJ_ID_FLAG] != null)
+         {
+            var rootObjId = this.cache[EG_ROOT_OBJ_ID_FLAG];
+            if (this.cache[EG_SUFFIX_ID_FLAG] != null)
+            {
+               rootObjId += this.cache[EG_SUFFIX_ID_FLAG];
+            }
+            if (this.rootWebObj == null || rootObjId != this.rootWebObj.attr("id"))
+            {
+               var tmpObj = jQuery("#" + rootObjId);
+               if (tmpObj.size() == 1)
+               {
+                  if (this.rootWebObj == null)
+                  {
+                     this.rootWebObj = tmpObj;
+                  }
+                  else
+                  {
+                     this.rootWebObj.after(tmpObj);
+                     this.rootWebObj.remove();
+                     this.rootWebObj = tmpObj;
+                  }
+                  if (this.cache[EG_ROOT_OBJ_ID_FLAG + ".width"] != null)
+                  {
+                     this.rootWebObj.css("width", this.cache[EG_ROOT_OBJ_ID_FLAG + ".width"]);
+                  }
+                  if (this.cache[EG_ROOT_OBJ_ID_FLAG + ".height"] != null)
+                  {
+                     this.rootWebObj.css("height", this.cache[EG_ROOT_OBJ_ID_FLAG + ".height"]);
+                  }
+               }
+            }
+         }
+         var result = this.rootWebObj != null;
+         if (result && scatter && this.rootWebObj.data(EG_SCATTER_FLAG))
+         {
+            if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
+            {
+               this.printException("The rootWebObj has did scatter!");
+            }
+            result = false;
+         }
+         if (result && !scatter)
+         {
+            this.rootWebObj.html("");
+         }
+         return result;
+      }
+
       Eterna.prototype.scatterInit = function()
       {
          try
          {
-            var needCreate = true;
-            if (this.$E.beforeInit != null)
+            var needCreate = this.initPrepare(true);
+            if (needCreate && this.$E.beforeInit != null)
             {
                needCreate = this.executeScript(this.rootWebObj, this.$E, this.$E.beforeInit);
             }
             if (needCreate)
             {
-               this.swapComponent(this.rootWebObj, this.$E.V, EG_SCATTER_INIT_FLAG);
+               this.rootWebObj.data(EG_SCATTER_FLAG, 1);
+               var initFlag = EG_SCATTER_INIT_FLAG;
+               if (this.cache[EG_SCATTER_FLAG] != null)
+               {
+                  initFlag = this.cache[EG_SCATTER_FLAG];
+               }
+               this.swapComponent(this.rootWebObj, this.$E.V, initFlag);
                if (this.$E.init != null)
                {
                   this.executeScript(this.rootWebObj, this.$E, this.$E.init);
@@ -589,30 +777,15 @@ function Eterna($E, eterna_debug, rootWebObj)
 
       Eterna.prototype.reInit = function()
       {
+         if (this.cache[EG_SCATTER_FLAG] != null)
+         {
+            this.scatterInit();
+            return;
+         }
          try
          {
-            if (typeof dialogArguments == 'object')
-            {
-               if (dialogArguments.parentEterna != null)
-               {
-                  eg_cache.parentEterna = dialogArguments.parentEterna;
-                  window.opener = dialogArguments.parentWindow;
-               }
-            }
-            if (opener != null && eg_cache.parentEterna == null)
-            {
-               try
-               {
-                  if (opener.eterna_getParentEterna != null) // 这里jQuery.isFunction在IE6下有问题
-                  {
-                     eg_cache.parentEterna = opener.eterna_getParentEterna(window);
-                  }
-               }
-               catch (tmpEX) {}
-            }
-            this.rootWebObj.html(this.rootWebObjOld_HTML);
-            var needCreate = true;
-            if (this.$E.beforeInit != null)
+            var needCreate = this.initPrepare(false);
+            if (needCreate && this.$E.beforeInit != null)
             {
                needCreate = this.executeScript(this.rootWebObj, this.$E, this.$E.beforeInit);
             }
@@ -712,15 +885,29 @@ function Eterna($E, eterna_debug, rootWebObj)
             {
                webObj = this.getWebObj(webObj);
             }
+            if (typeof webObj.jquery != "string" || webObj.size() != 1)
+            {
+               return null;
+            }
+            var configObj = webObj.data("configData");
+            if (configObj == null)
+            {
+               return null;
+            }
             var myTemp = webObj.data("egTemp");
             this.egTemp(myTemp);
             parentWebObj = webObj.data("parentWebObj");
-            tmpCom = this.createComponent(webObj.data("configData"), parentWebObj);
+            tmpCom = this.createComponent(configObj, parentWebObj);
             if (tmpCom != null)
             {
                webObj.after(tmpCom);
             }
-            webObj.remove();
+            var inheritInfo = webObj.data(EG_INHERIT_INFO);
+            if (inheritInfo == null || !inheritInfo[EG_KEEP_BASE_OBJ])
+            {
+               // 如果模板节点没有被设置继承信息或保持信息, 则要移除
+               webObj.remove();
+            }
             // 这里如果tmpCom为null, 那说明没有生成, 因为reload只能针对实体对象
             eterna_doInitObjs(tmpCom);
          }
@@ -731,7 +918,7 @@ function Eterna($E, eterna_debug, rootWebObj)
             throw ex;
          }
          this.egTemp(temp);
-         if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && parentWebObj != null)
+         if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0 && tmpCom != null)
          {
             this.showMessage("id:" + tmpCom.attr("id") + "\n" + tmpCom.html());
          }
@@ -791,11 +978,12 @@ function Eterna($E, eterna_debug, rootWebObj)
       {
          for (var i = 0; i < eg_cache.openedObjs.length; i++)
          {
-            if (eg_cache.openedObjs[i].openedEterna == this)
+            var tmpObj = eg_cache.openedObjs[i];
+            if (tmpObj.openedEterna == this)
             {
-               if (!eg_cache.openedObjs[i].winObj.closed)
+               if (tmpObj.winObj != null && !tmpObj.winObj.closed)
                {
-                  eg_cache.openedObjs[i].winObj.close();
+                  tmpObj.winObj.close();
                }
             }
          }
@@ -805,9 +993,10 @@ function Eterna($E, eterna_debug, rootWebObj)
       {
          for (var i = 0; i < eg_cache.openedObjs.length; i++)
          {
-            if (eg_cache.openedObjs[i].openedEterna == this)
+            var tmpObj = eg_cache.openedObjs[i];
+            if (tmpObj.openedEterna == this)
             {
-               if (!eg_cache.openedObjs[i].winObj.closed)
+               if (tmpObj.winObj != null && !tmpObj.winObj.closed)
                {
                   return true;
                }
@@ -823,12 +1012,13 @@ function Eterna($E, eterna_debug, rootWebObj)
          var needAdd = true;
          for (var i = 0; i < eg_cache.openedObjs.length; i++)
          {
-            if (eg_cache.openedObjs[i].winObj == theWindow)
+            var tmpObj = eg_cache.openedObjs[i];
+            if (tmpObj.winObj == theWindow)
             {
                needAdd = false;
                break;
             }
-            if (eg_cache.openedObjs[i].winObj.closed)
+            if (tmpObj.winObj == null || tmpObj.winObj.closed)
             {
                canInsertIndex = i;
             }
@@ -1026,6 +1216,19 @@ function Eterna($E, eterna_debug, rootWebObj)
        */
       Eterna.prototype.newComponent = function(tName, parent)
       {
+         var objConfig = null;
+         if (typeof tName == "string")
+         {
+            objConfig = this.$E.T[tName];
+         }
+         else if (typeof tName == "object" && typeof tName.type == "string")
+         {
+            objConfig = tName;
+         }
+         if (objConfig == null)
+         {
+            return null;
+         }
          var pObj = null;
          if (typeof parent == "object")
          {
@@ -1046,30 +1249,17 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             pObj = jQuery("body");
          }
-         var objConfig = null;
-         if (typeof tName == "string")
-         {
-            objConfig = this.$E.T[tName];
-         }
-         else if (typeof tName == "object" && typeof tName.name == "string")
-         {
-            objConfig = tName;
-         }
-         if (objConfig == null)
-         {
-            return null;
-         }
          var tmpParent = new WebObjList(pObj);
          var result = this.createComponent(objConfig, tmpParent);
          for (var i = 0; i < result.size(); i++)
          {
-            var tmpObj = result.get(i);
+            var tmpObj = result.eq(i);
             pObj.append(tmpObj);
             eterna_doInitObjs(tmpObj);
          }
          if (result.size() == 1)
          {
-            return result.get(0);
+            return result.eq(0);
          }
          return result;
       }
@@ -1132,13 +1322,94 @@ function Eterna($E, eterna_debug, rootWebObj)
          return oldV;
       }
 
+      /**
+       * 执行一次页面访问, 会根据_eterna.cache.useAJAX的设置,
+       * 进行页面跳转或ajax方式访问.
+       * url    访问的地址
+       */
+      Eterna.prototype.doVisit = function(url)
+      {
+         if (this.cache.useAJAX)
+         {
+            this.ajaxVisit(url);
+         }
+         else
+         {
+            location.href = url;
+         }
+      }
+
+      /**
+       * 通过ajax获取数据并更新整个区域.
+       * url    获取数据的地址
+       * param  传递的参数
+       */
+      Eterna.prototype.ajaxVisit = function(url, param)
+      {
+         param = this.serializeFormData(param);
+         param[EG_DATA_TYPE] = EG_DATA_TYPE_ALL;
+         this.closeAllWindow();
+         var tmpData = this.getRemoteJSON(url, param, false);
+         if (tmpData != null)
+         {
+            this.changeEternaData(tmpData);
+            eg_temp = {};
+            this.reInit();
+         }
+         else
+         {
+            var text = this.cache.textData;
+            eterna_initTextData(this, text);
+         }
+         this.cache.textData = null;
+      }
+
+      /**
+       * 通过ajax方式重载部分区域.
+       * url    重载的地址
+       * param  传递的参数
+       * objs   需要重载的控件列表
+       * datas  需要更新的数据集名称列表
+       */
+      Eterna.prototype.partReload = function(url, param, objs, datas)
+      {
+         param = this.serializeFormData(param);
+         param[EG_DATA_TYPE] = EG_DATA_TYPE_DATA;
+         var tmpData = this.getRemoteJSON(url, param, false);
+         this.cache.textData = null;
+         if (this.$E.D[EG_SMA] == null && tmpData.$E.D[EG_SMA] != null)
+         {
+            this.$E.D[EG_SMA] = tmpData.$E.D[EG_SMA];
+         }
+         var datas = tData.reloadDatas;
+         if (datas != null)
+         {
+            for (var i = 0; i < datas.length; i++)
+            {
+               this.$E.D[datas[i]] = tmpData.$E.D[datas[i]];
+            }
+         }
+         var objs = tData.reloadObjs;
+         if (objs != null)
+         {
+            for (var i = 0; i < objs.length; i++)
+            {
+               this.reloadWebObj(objs[i]);
+            }
+         }
+         if (tmpData.$E.D.msg != null) alert(tmpData.$E.D.msg);
+         this.$E.D.___pageChanged = 0;
+      }
+
       Eterna.prototype.swapComponent = function(baseObj, subs, swapFlag)
       {
          if (swapFlag == null)
          {
             swapFlag = EG_SWAP_FLAG;
          }
-         eg_cache.templateRootCache.push({rootObj:baseObj,swapFlag:swapFlag});
+         var cacheObj = {rootObj:baseObj};
+         cacheObj[EG_FLAG_TAG] = swapFlag;
+         eg_cache.templateRootCache.push(cacheObj);
          try
          {
             for (var i = 0; i < subs.length; i++)
@@ -1147,33 +1418,33 @@ function Eterna($E, eterna_debug, rootWebObj)
                var pObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(name) + "']", baseObj);
                if (pObj.size() == 1)
                {
-                  pObj.data(EG_SWAP_FLAG, name);
-                  var tmpCom = this.createComponent(subs[i], pObj);
-                  if (pObj.data(EG_INHERIT_FLAG) == null)
+                  var infoObj = {name:name};
+                  infoObj[EG_FLAG_TAG] = swapFlag;
+                  pObj.data(EG_SWAP_INFO, infoObj);
+                  var tmpParent = new WebObjList(baseObj, pObj);
+                  var rList = this.createComponent(subs[i], tmpParent);
+                  var inheritInfo = pObj.data(EG_INHERIT_INFO);
+                  if (inheritInfo == null || !inheritInfo[EG_KEEP_BASE_OBJ])
                   {
-                     if (tmpCom != null)
+                     // 如果模板节点没有被设置继承信息或保持信息, 则要替换掉
+                     for (var j = rList.size() - 1; j >= 0; j--)
                      {
-                        pObj.after(tmpCom);
-                     }
-                     else
-                     {
-                        var tmpSubs = pObj.children();
-                        var maxCount = tmpSubs.size();
-                        for (var j = maxCount - 1; j >= 0; j--)
-                        {
-                           pObj.after(tmpSubs.eq(j));
-                        }
+                        pObj.after(rList.eq(j));
                      }
                      pObj.remove();
                   }
                }
             }
-            eg_cache.templateRootCache.pop();
          }
-         catch (ex)
+         finally
          {
             eg_cache.templateRootCache.pop();
-            throw ex;
+            var specialObjs = this.queryWebObj("a, form", baseObj);
+            for (var i = 0; i < specialObjs.size(); i++)
+            {
+               var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
+               this.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+            }
          }
       }
 
@@ -1335,7 +1606,7 @@ function Eterna($E, eterna_debug, rootWebObj)
             var eternaData = $E;
             var eterna_debug = this.eterna_debug;
             var eventData = webObj; //重命名一个变量, 在event处理中使用, 不用和webObj混淆
-            var configData = objConfig; //使配置的名称可以data中的一致
+            var configData = objConfig; //使配置的名称可以与data中的一致
             eval(scriptStr);
          }
          catch (ex)
@@ -1351,7 +1622,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          return checkResult;
       }
 
-      Eterna.prototype.createComponent = function(configData, parent)
+      Eterna.prototype.createComponent = function(configData, parent, virtualParent)
       {
          if (configData == null || configData.type == null)
          {
@@ -1364,6 +1635,7 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
 
          var nullParent = parent == null;
+         var useVirtualParent = false;
          if (parent == null)
          {
             parent = new WebObjList();
@@ -1377,6 +1649,23 @@ function Eterna($E, eterna_debug, rootWebObj)
                if (this.eterna_debug >= ED_COM_CREATED)
                {
                   eterna_com_stack.pop();
+               }
+               if (configData.type == EG_INHERIT_FLAG)
+               {
+                  // 如果为继承的类型, 这要删除或隐藏控件
+                  var result = this.createInheritObj(configData, parent, virtualParent);
+                  if (result.webObj != null)
+                  {
+                     var tmpInfo = result.webObj.data(EG_INHERIT_INFO);
+                     if (tmpInfo[EG_KEEP_BASE_OBJ])
+                     {
+                        result.webObj.hide();
+                     }
+                     else
+                     {
+                        result.webObj.remove();
+                     }
+                  }
                }
                this.egTemp(temp);
                return null;
@@ -1406,12 +1695,14 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             webObj = parent;
             returnNULL = true;
+            useVirtualParent = true;
          }
          else if (type == "loop")
          {
             webObj = parent;
             returnNULL = true;
             doLoop = true;
+            useVirtualParent = true;
          }
          else if (type == "replacement")
          {
@@ -1420,72 +1711,10 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
          else if (type == EG_INHERIT_FLAG)
          {
-            var baseObj = null;
-            if (parent != null && typeof parent.jquery == "string" &&
-                  parent.data(EG_SWAP_FLAG) == configData.name)
-            {
-               returnNULL = true;
-               baseObj = parent;
-               // 这里需要返回null, 但在初始化的时候需要有对象
-               nullObj = baseObj;
-            }
-            else if (configData.baseObj != null)
-            {
-               baseObj = configData.baseObj.clone(true);
-            }
-            else if (eg_cache.templateRootCache.length > 0)
-            {
-               var lastIndex = eg_cache.templateRootCache.length - 1;
-               var rootObj = eg_cache.templateRootCache[lastIndex].rootObj;
-               var swapFlag = eg_cache.templateRootCache[lastIndex].swapFlag;
-               if (swapFlag == null)
-               {
-                  swapFlag = EG_SWAP_FLAG;
-               }
-               var searchName = configData.name;
-               if (configData[EG_SWAP_FLAG] != null)
-               {
-                  searchName = configData[EG_SWAP_FLAG];
-               }
-               var tObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(searchName) + "']", rootObj);
-               if (tObj.size() == 1)
-               {
-                  configData.baseObj = tObj.clone(true);
-                  baseObj = configData.baseObj.clone(true);
-                  if (tObj.attr(EG_KEEP_OBJ_WHEN_USE) != "1")
-                  {
-                     tObj.remove();
-                  }
-               }
-            }
-            if (baseObj != null)
-            {
-               if (configData.objValue != null)
-               {
-                  var tmpObj = this.getValue(configData.objValue);
-                  if (tmpObj.exists)
-                  {
-                     baseObj.val(tmpObj.value);
-                  }
-               }
-               if (configData.text != null)
-               {
-                  var tmpObj = this.getValue(configData.text);
-                  if (tmpObj.exists)
-                  {
-                     baseObj.text(tmpObj.value);
-                  }
-               }
-               baseObj.data(EG_INHERIT_FLAG, 1);
-               webObj = baseObj;
-            }
-            else
-            {
-               if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
-               {
-                  this.printException("The inheritObj (the param parent) not setted or not valid!");
-               }
-            }
+            var result = this.createInheritObj(configData, parent, virtualParent);
+            returnNULL = result.returnNULL;
+            nullObj = result.nullObj;
+            webObj = result.webObj;
          }
          else
          {
@@ -1513,69 +1742,33 @@ function Eterna($E, eterna_debug, rootWebObj)
          {
             if (configData[EG_TEMPLATE_OBJ_FLAG])
             {
+               var tObjConfig = configData[EG_TEMPLATE_OBJ_FLAG];
                var tmpTemplateData = {rootObj:webObj};
-               if (configData.swapFlag != null)
+               if (tObjConfig[EG_FLAG_TAG] != null)
                {
-                  tmpTemplateData.swapFlag = configData.swapFlag;
+                  tmpTemplateData[EG_FLAG_TAG] = tObjConfig[EG_FLAG_TAG];
                }
                eg_cache.templateRootCache.push(tmpTemplateData);
             }
-            if (configData.subs != null && !configData.noSub)
+            try
             {
-               if (doLoop)
+               if (configData.subs != null && !configData[EG_NO_SUB])
                {
-                  if (configData.loopCondition)
+                  if (doLoop)
                   {
-                     while (this.executeScript(null, configData, configData.loopCondition))
-                     {
-                        this.dealSubComponent(configData, webObj);
-                     }
+                     this.dealLoopComponent(configData, webObj, useVirtualParent);
                   }
-                  else if (eg_temp.dataName != null)
+                  else
                   {
-                     var tmpData = (typeof eg_temp.dataName == "string") ?
-                           this.$E.D[eg_temp.dataName] : eg_temp.dataName;
-                     var useData = (typeof eg_temp.dataName == "string"); // 标识是否数据集里的数据
-                     if (tmpData != null)
-                     {
-                        var theCount = null;
-                        var theData = tmpData;
-                        if (typeof tmpData == "object")
-                        {
-                           if (typeof tmpData.rowCount == "number")
-                           {
-                              theCount = tmpData.rowCount;
-                           }
-                           else if (typeof tmpData.length == "number")
-                           {
-                              theCount = tmpData.length;
-                           }
-                        }
-                        else if (typeof tmpData == "number")
-                        {
-                           theCount = tmpData;
-                        }
-                        if (theCount != null)
-                        {
-                           var temp_index = eg_temp.index;
-                           for (var index = 0; index < theCount; index++)
-                           {
-                              eg_temp.index = index;
-                              this.dealSubComponent(configData, webObj);
-                              if (useData)
-                              {
-                                 // 将数据重新赋值, 这样即使循环体里改变了, 这里能改回来
-                                 this.$E.D[eg_temp.dataName] = theData;
-                              }
-                           }
-                           eg_temp.index = temp_index;
-                        }
-                     }
+                     this.dealSubComponent(configData, webObj, useVirtualParent);
                   }
                }
-               else
+            }
+            finally
+            {
+               if (configData[EG_TEMPLATE_OBJ_FLAG])
                {
-                  this.dealSubComponent(configData, webObj);
+                  eg_cache.templateRootCache.pop();
                }
             }
 
@@ -1584,25 +1777,28 @@ function Eterna($E, eterna_debug, rootWebObj)
                this.executeScript(returnNULL ? nullObj : webObj, configData, configData.init);
             }
 
-            if (!returnNULL)
+            if (!returnNULL || nullObj != null)
             {
+               var theObj = returnNULL ? nullObj : webObj;
                if (configData.events != null)
                {
-                  this.dealEvents(configData, webObj, parent, myTemp);
+                  this.dealEvents(configData, theObj, parent, myTemp);
                }
+               this.changeSpecialObjEvent(configData, theObj);
                if (parent.webObjList)
                {
                   if (parent.realParent != null)
                   {
-                     webObj.data("parentWebObj", parent.realParent);
+                     theObj.data("parentWebObj", parent.realParent);
                   }
                }
                else
                {
-                  webObj.data("parentWebObj", parent);
+                  theObj.data("parentWebObj", parent);
                }
-               webObj.data("configData", configData);
-               webObj.data("egTemp", myTemp);
+               theObj.data("configData", configData);
+               theObj.data("objConfig", configData);
+               theObj.data("egTemp", myTemp);
             }
             else if (type == "none" && configData.subs == null)
             {
@@ -1613,13 +1809,6 @@ function Eterna($E, eterna_debug, rootWebObj)
                   {
                      parent.append(tmpObj.value);
                   }
-               }
-            }
-            else if (nullObj != null)
-            {
-               if (configData.events != null)
-               {
-                  this.dealEvents(configData, nullObj, parent, myTemp);
                }
             }
          }
@@ -1641,13 +1830,83 @@ function Eterna($E, eterna_debug, rootWebObj)
          return webObj;
       }
 
+      /**
+       * 针对一些特殊的控件, 需要替换掉它的原有事件.
+       */
+      Eterna.prototype.changeSpecialObjEvent = function(configData, webObj)
+      {
+         if (webObj.data("___specialEventChanged"))
+         {
+            return;
+         }
+         webObj.data("___specialEventChanged", 1);
+         var elem = webObj.get(0);
+         var tagA = jQuery.nodeName(elem, "a");
+         var tagForm = jQuery.nodeName(elem, "form");
+         if (tagA || tagForm)
+         {
+            var eventNames, eventNameOns, specialTypes;
+            var count = 1;
+            if (tagA)
+            {
+               eventNames = ["click"];
+               eventNameOns = ["onclick"];
+               specialTypes = ["a:click"];
+            }
+            else
+            {
+               eventNames = ["submit"];
+               eventNameOns = ["onsubmit"];
+               specialTypes = ["form:submit"];
+            }
+            for (var eventIndex = 0; eventIndex < count; eventIndex++)
+            {
+               var eventName = eventNames[eventIndex];
+               var eventNameOn = eventNameOns[eventIndex];
+               var specialType = specialTypes[eventIndex];
+               var tmpParamData = {
+                  webObj:webObj,objConfig:configData,_eterna:this,specialType:specialType
+               };
+               var theEvents = webObj.data("events");
+               if (theEvents != null)
+               {
+                  theEvents = theEvents[eventName];
+               }
+               if (theEvents == null)
+               {
+                  theEvents = [];
+               }
+               else
+               {
+                  // 这里要把数组复制一份, 因为jQuery在remove事件时会把数组清空
+                  var newArr = [];
+                  for (var i = 0; i < theEvents.length; i++)
+                  {
+                     newArr.push(theEvents[i]);
+                  }
+                  theEvents = newArr;
+               }
+               tmpParamData.events = theEvents;
+               if (elem[eventNameOn] != null)
+               {
+                  tmpParamData.eventHandler = elem[eventNameOn];
+                  elem[eventNameOn] = null;
+               }
+               webObj.unbind(eventName);
+               webObj.bind(eventName, tmpParamData, eterna_specialEventHandler);
+            }
+         }
+      }
+
       Eterna.prototype.dealEvents = function(configData, webObj, parent, myTemp)
       {
          for (var i = 0; i < configData.events.length; i++)
          {
             var theEvent = configData.events[i];
             var objParam = false;
-            var tmpParamData = {webObj:webObj,objConfig:configData,eventConfig:theEvent}
+            var tmpParamData = {
+               webObj:webObj,objConfig:configData,_eterna:this,eventConfig:theEvent
+            };
 
             if (parent != null)
             {
@@ -1673,21 +1932,285 @@ function Eterna($E, eterna_debug, rootWebObj)
             {
                tmpParamData.eventParam = theEvent.param;
             }
-            webObj.bind(theEvent.type, tmpParamData, theEvent.fn);
+            webObj.bind(theEvent.type, tmpParamData, eterna_normalEventHandler);
+            if (theEvent.type == EG_EVENT_WILL_INIT && !eterna_existsWillInitObj(webObj))
+            {
+               // 如果当前事件名称为[EG_EVENT_WILL_INIT]且当前对象未添加到待初始化列表中,
+               // 则将其添加到列表中
+               eterna_addWillInitObj(webObj);
+            }
          }
       }
 
-      Eterna.prototype.dealSubComponent = function(configData, webObj)
+      Eterna.prototype.dealLoopComponent = function(configData, webObj, virtualParent)
+      {
+         if (configData.loopCondition)
+         {
+            while (this.executeScript(null, configData, configData.loopCondition))
+            {
+               this.dealSubComponent(configData, webObj, virtualParent);
+            }
+         }
+         else if (eg_temp.dataName != null)
+         {
+            var tmpData = (typeof eg_temp.dataName == "string") ?
+                  this.$E.D[eg_temp.dataName] : eg_temp.dataName;
+            var useData = (typeof eg_temp.dataName == "string"); // 标识是否数据集里的数据
+            if (tmpData != null)
+            {
+               var theCount = null;
+               var theData = tmpData;
+               if (typeof tmpData == "object")
+               {
+                  if (typeof tmpData.rowCount == "number")
+                  {
+                     theCount = tmpData.rowCount;
+                  }
+                  else if (typeof tmpData.length == "number")
+                  {
+                     theCount = tmpData.length;
+                  }
+               }
+               else if (typeof tmpData == "number")
+               {
+                  theCount = tmpData;
+               }
+               if (theCount != null)
+               {
+                  var temp_index = eg_temp.index;
+                  for (var index = 0; index < theCount; index++)
+                  {
+                     eg_temp.index = index;
+                     this.dealSubComponent(configData, webObj, virtualParent);
+                     if (useData)
+                     {
+                        // 将数据重新赋值, 这样即使循环体里改变了, 这里能改回来
+                        this.$E.D[eg_temp.dataName] = theData;
+                     }
+                  }
+                  eg_temp.index = temp_index;
+               }
+            }
+         }
+      }
+
+      Eterna.prototype.dealSubComponent = function(configData, webObj, virtualParent)
       {
          for (var i = 0; i < configData.subs.length; i++)
          {
             var sub = configData.subs[i];
-            var tmpObj = this.createComponent(sub, webObj);
+            var tmpObj = this.createComponent(sub, webObj, virtualParent);
             if (tmpObj != null)
             {
                webObj.append(tmpObj);
             }
          }
+      }
+
+      /**
+       * 对于保留模板的继承控件, 第二次生成时, 需要清理其内部的子节点
+       */
+      Eterna.prototype.clearInheritSub = function(webObj)
+      {
+         var tmpSubs = webObj.children();
+         for (var i = tmpSubs.size() - 1; i >= 0; i--)
+         {
+            var obj = tmpSubs.eq(i);
+            if (obj.data("configData") == null)
+            {
+               // 没有配置信息, 说明到了原始节点, 清理完成
+               break;
+            }
+            var tmpInfo = obj.data(EG_INHERIT_INFO);
+            if (tmpInfo == null || !tmpInfo[EG_KEEP_BASE_OBJ])
+            {
+               // 如果为普通控件或不保留模板的继承控件, 则将其删除
+               obj.remove();
+            }
+            else
+            {
+               // 否则说明到了保留模板的继承控件, 清理完成
+               break;
+            }
+         }
+      }
+
+      Eterna.prototype.createInheritObj = function(configData, parent, virtualParent)
+      {
+         var result = {returnNULL:true,nullObj:null,webObj:null};
+         var baseObj = null;
+         var tmpInheritInfo = null;
+         if (configData[EG_INHERIT_BASE] != null)
+         {
+            var keepBase = configData[EG_INHERIT_BASE][EG_KEEP_BASE_OBJ];
+            tmpInheritInfo = {name:configData[EG_INHERIT_BASE].name};
+            if (keepBase)
+            {
+               tmpInheritInfo.primaryDisplay = configData[EG_INHERIT_BASE].primaryDisplay;
+               baseObj = configData[EG_INHERIT_BASE].baseObj;
+               // 这里需要返回null, 但在初始化的时候需要有对象
+               result.nullObj = baseObj;
+               if (baseObj.css("display") != tmpInheritInfo.primaryDisplay)
+               {
+                  baseObj.css("display", tmpInheritInfo.primaryDisplay);
+               }
+               this.clearInheritSub(baseObj);
+            }
+            else
+            {
+               baseObj = configData[EG_INHERIT_BASE].baseObj.clone(true);
+               result.returnNULL = false;
+            }
+            tmpInheritInfo[EG_FLAG_TAG] = configData[EG_INHERIT_BASE][EG_FLAG_TAG];
+            tmpInheritInfo[EG_KEEP_BASE_OBJ] = keepBase;
+            result.webObj = baseObj;
+         }
+         else
+         {
+            var tmpInheritObj = null;
+            var theParent = null;
+            if (parent != null)
+            {
+               tmpInheritObj = parent.webObjList ? parent.inheritObj : parent;
+               theParent = parent.webObjList ? parent.realParent : parent;
+            }
+            if (!virtualParent && tmpInheritObj != null && typeof tmpInheritObj.jquery == "string"
+                  && tmpInheritObj.data(EG_SWAP_INFO) != null)
+            {
+               var swapInfo = tmpInheritObj.data(EG_SWAP_INFO);
+               if (swapInfo.name == configData.name)
+               {
+                  result.webObj = tmpInheritObj;
+                  // 这里需要返回null, 但在初始化的时候需要有对象
+                  result.nullObj = tmpInheritObj;
+                  baseObj = tmpInheritObj;
+                  tmpInheritInfo = {name:configData.name};
+                  tmpInheritInfo[EG_FLAG_TAG] = swapInfo[EG_FLAG_TAG];
+                  tmpInheritInfo[EG_KEEP_BASE_OBJ] = 1;
+                  tmpInheritInfo.primaryDisplay = tmpInheritObj.css("display");
+                  var inheritBase = {baseObj:tmpInheritObj,name:configData.name};
+                  inheritBase[EG_FLAG_TAG] = swapInfo[EG_FLAG_TAG];
+                  inheritBase[EG_KEEP_BASE_OBJ] = 1;
+                  inheritBase.primaryDisplay = tmpInheritInfo.primaryDisplay;
+                  configData[EG_INHERIT_BASE] = inheritBase;
+               }
+            }
+            if (baseObj == null && configData[EG_INHERIT_GLOBAL_SEARCH] != null)
+            {
+               var searchObj = configData[EG_INHERIT_GLOBAL_SEARCH];
+               tmpInheritInfo = this.findInheritObj(configData, jQuery("body"),
+                     searchObj[EG_FLAG_TAG], result, true);
+               if (tmpInheritInfo != null)
+               {
+                  baseObj = result.webObj;
+               }
+            }
+            if (baseObj == null && theParent != null && theParent.data(EG_INHERIT_INFO) != null)
+            {
+               var inheritInfo = theParent.data(EG_INHERIT_INFO);
+               tmpInheritInfo = this.findInheritObj(configData, theParent,
+                     inheritInfo[EG_FLAG_TAG], result, virtualParent);
+               if (tmpInheritInfo != null)
+               {
+                  baseObj = result.webObj;
+               }
+            }
+            if (baseObj == null && eg_cache.templateRootCache.length > 0)
+            {
+               var lastIndex = eg_cache.templateRootCache.length - 1;
+               var rootObj = eg_cache.templateRootCache[lastIndex].rootObj;
+               var swapFlag = eg_cache.templateRootCache[lastIndex][EG_FLAG_TAG];
+               tmpInheritInfo = this.findInheritObj(configData, rootObj, swapFlag, result, true);
+               if (tmpInheritInfo != null)
+               {
+                  baseObj = result.webObj;
+               }
+            }
+         }
+         if (baseObj != null)
+         {
+            this.appendParam(baseObj, configData, null);
+            if (configData.objValue != null)
+            {
+               var tmpObj = this.getValue(configData.objValue);
+               if (tmpObj.exists)
+               {
+                  baseObj.val(tmpObj.value);
+               }
+            }
+            if (configData.text != null)
+            {
+               var tmpObj = this.getValue(configData.text);
+               if (tmpObj.exists)
+               {
+                  baseObj.text(tmpObj.value);
+               }
+            }
+            baseObj.data(EG_INHERIT_INFO, tmpInheritInfo);
+         }
+         else
+         {
+            if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
+            {
+               this.printException("The inheritObj's template not found or not valid!");
+            }
+         }
+         return result;
+      }
+
+      Eterna.prototype.findInheritObj = function(configData, findBase, swapFlag, result, needClone)
+      {
+         if (swapFlag == null)
+         {
+            swapFlag = EG_SWAP_FLAG;
+         }
+         var searchName = configData.name;
+         if (configData[EG_SWAP_FLAG] != null)
+         {
+            searchName = configData[EG_SWAP_FLAG];
+         }
+         var gSearch = configData[EG_INHERIT_GLOBAL_SEARCH] != null;
+         if (gSearch && this.cache[EG_SUFFIX_ID_FLAG] != null)
+         {
+            // 全局搜索时, 需要加上名称后缀
+            searchName += this.cache[EG_SUFFIX_ID_FLAG];
+         }
+         var tmpInheritInfo = null;
+         var tObj = jQuery("[" + swapFlag + "='" + ef_toScriptString(searchName) + "']", findBase);
+         if (tObj.size() == 1)
+         {
+            tmpInheritInfo = {name:searchName};
+            tmpInheritInfo[EG_FLAG_TAG] = swapFlag;
+            if (needClone)
+            {
+               tmpInheritInfo[EG_KEEP_BASE_OBJ] = 0;
+               var inheritBase = {baseObj:tObj.clone(true),name:searchName};
+               inheritBase[EG_FLAG_TAG] = swapFlag;
+               inheritBase[EG_KEEP_BASE_OBJ] = 0;
+               configData[EG_INHERIT_BASE] = inheritBase;
+               var baseObj = tObj.clone(true);
+               result.webObj = baseObj;
+               result.returnNULL = false;
+               if (tObj.attr(EG_KEEP_OBJ_WHEN_USE) != "1")
+               {
+                  tObj.remove();
+               }
+            }
+            else
+            {
+               tmpInheritInfo[EG_KEEP_BASE_OBJ] = 1;
+               tmpInheritInfo.primaryDisplay = tObj.css("display");
+               var inheritBase = {baseObj:tObj,name:searchName};
+               inheritBase[EG_FLAG_TAG] = swapFlag;
+               inheritBase[EG_KEEP_BASE_OBJ] = 1;
+               inheritBase.primaryDisplay = tmpInheritInfo.primaryDisplay;
+               configData[EG_INHERIT_BASE] = inheritBase;
+               result.webObj = tObj;
+               // 这里需要返回null, 但在初始化的时候需要有对象
+               result.nullObj = tObj;
+            }
+         }
+         return tmpInheritInfo;
       }
 
       Eterna.prototype.createWebObj = function(configData, type, extType)
@@ -1743,10 +2266,6 @@ function Eterna($E, eterna_debug, rootWebObj)
             {
                obj.text(tmpObj.value);
             }
-         }
-         else if (configData.htmlBody != null)
-         {
-            obj.html(configData.htmlBody);
          }
          else if (configData.html != null)
          {
@@ -2924,11 +3443,23 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
       }
 
-      this.createComponent = function(configData, parent)
+      this.createComponent = function(configData, parent, virtualParent)
       {
          this.pushFunctionStack(new Array("createComponent", Eterna.prototype.createComponent,
-               "configData", configData, "parent", parent));
-         var result = Eterna.prototype.createComponent.call(this, configData, parent);
+               "configData", configData, "parent", parent, "virtualParent", virtualParent));
+         var result = Eterna.prototype.createComponent.call(this, configData, parent, virtualParent);
+         this.popFunctionStack();
+         if (typeof result != 'undefined')
+         {
+            return result;
+         }
+      }
+
+      this.changeSpecialObjEvent = function(configData, webObj)
+      {
+         this.pushFunctionStack(new Array("changeSpecialObjEvent", Eterna.prototype.changeSpecialObjEvent,
+               "configData", configData, "webObj", webObj));
+         var result = Eterna.prototype.changeSpecialObjEvent.call(this, configData, webObj);
          this.popFunctionStack();
          if (typeof result != 'undefined')
          {
@@ -2948,11 +3479,49 @@ function Eterna($E, eterna_debug, rootWebObj)
          }
       }
 
-      this.dealSubComponent = function(configData, webObj)
+      this.dealLoopComponent = function(configData, webObj, virtualParent)
+      {
+         this.pushFunctionStack(new Array("dealLoopComponent", Eterna.prototype.dealLoopComponent,
+               "configData", configData, "webObj", webObj, "virtualParent", virtualParent));
+         var result = Eterna.prototype.dealLoopComponent.call(this, configData, webObj, virtualParent);
+         this.popFunctionStack();
+         if (typeof result != 'undefined')
+         {
+            return result;
+         }
+      }
+
+      this.dealSubComponent = function(configData, webObj, virtualParent)
       {
          this.pushFunctionStack(new Array("dealSubComponent", Eterna.prototype.dealSubComponent,
-               "configData", configData, "webObj", webObj));
-         var result = Eterna.prototype.dealSubComponent.call(this, configData, webObj);
+               "configData", configData, "webObj", webObj, "virtualParent", virtualParent));
+         var result = Eterna.prototype.dealSubComponent.call(this, configData, webObj, virtualParent);
+         this.popFunctionStack();
+         if (typeof result != 'undefined')
+         {
+            return result;
+         }
+      }
+
+      this.createInheritObj = function(configData, parent, virtualParent)
+      {
+         this.pushFunctionStack(new Array("createInheritObj", Eterna.prototype.createInheritObj,
+               "configData", configData, "parent", parent, "virtualParent", virtualParent));
+         var result = Eterna.prototype.createInheritObj.call(this, configData, parent, virtualParent);
+         this.popFunctionStack();
+         if (typeof result != 'undefined')
+         {
+            return result;
+         }
+      }
+
+      this.findInheritObj = function(configData, findBase, swapFlag, result, needClone)
+      {
+         this.pushFunctionStack(new Array("findInheritObj", Eterna.prototype.findInheritObj,
+               "configData", configData, "findBase", findBase, "swapFlag", swapFlag,
+               "result", result, "needClone", needClone));
+         var result = Eterna.prototype.findInheritObj.call(this, configData, findBase, swapFlag,
+               result, needClone);
          this.popFunctionStack();
          if (typeof result != 'undefined')
          {
@@ -3229,6 +3798,36 @@ function eterna_checkEternaData($E)
    return $E;
 }
 
+eterna_initEternaCache = function(_eterna, newData)
+{
+   if (newData != null && newData.cache != null)
+   {
+      var cache = newData.cache;
+      for (var key in cache)
+      {
+         _eterna.cache[key] = cache[key];
+      }
+   }
+}
+
+/**
+ * 当获得的对象不是json时, 将数据以html的方式放入到根节点中.
+ */
+eterna_initTextData = function(_eterna, textData)
+{
+   if (_eterna.rootWebObj != null)
+   {
+      _eterna.rootWebObj.html(textData);
+      var specialObjs = _eterna.queryWebObj("a, form");
+      for (var i = 0; i < specialObjs.size(); i++)
+      {
+         var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
+         _eterna.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+      }
+      eterna_doInitObjs(_eterna.rootWebObj);
+   }
+}
+
 // 添加一个需要等待初始化的对象
 function eterna_addWillInitObj(obj, priority)
 {
@@ -3257,6 +3856,19 @@ function eterna_addWillInitObj(obj, priority)
       eterna_moveArrayValue(eg_cache.willInitObjs,
             eg_cache.willInitObjs.length - 1, tmpI);
    }
+}
+
+// 检查参数中的对象是否在等待初始化的对象列表中
+function eterna_existsWillInitObj(obj)
+{
+   for (var i = 0; i < eg_cache.willInitObjs.length; i++)
+   {
+      if (obj == eg_cache.willInitObjs[i].obj)
+      {
+         return true;
+      }
+   }
+   return false;
 }
 
 // 注册一个静态的初始化方法, 如果priority为-1, 则删除已注册的
@@ -3343,7 +3955,7 @@ function eterna_moveArrayValue(arr, fromIndex, toIndex)
    arr[toIndex] = tmp;
 }
 
-// 触发所有等待初始化的对象的willInit事件
+// 触发所有等待初始化的对象的[EG_EVENT_WILL_INIT]事件
 // 然后执行所有的静态初始化方法
 function eterna_doInitObjs(theObj)
 {
@@ -3351,7 +3963,20 @@ function eterna_doInitObjs(theObj)
    eg_cache.willInitObjs = [];
    for (var i = 0; i < objs.length; i++)
    {
-      objs[i].obj.trigger("willInit");
+      var tmpObj = objs[i].obj;
+      try
+      {
+         if (typeof tmpObj.jquery == "string")
+         {
+            tmpObj.trigger(EG_EVENT_WILL_INIT);
+         }
+         else
+         {
+            // 如果不是jQuery对象, 则作为方法调用
+            tmpObj();
+         }
+      }
+      catch (ex) {}
    }
    if (theObj != null)
    {
@@ -3388,9 +4013,10 @@ function eterna_closeAllWindow()
 {
    for (var i = 0; i < eg_cache.openedObjs.length; i++)
    {
-      if (!eg_cache.openedObjs[i].winObj.closed)
+      var tmpObj = eg_cache.openedObjs[i];
+      if (tmpObj.winObj != null && !tmpObj.winObj.closed)
       {
-         eg_cache.openedObjs[i].winObj.close();
+         tmpObj.winObj.close();
       }
    }
 }
@@ -3443,21 +4069,163 @@ function eterna_getResourceValue(resArray, params)
 }
 
 /**
- * 判断字符串是否为空.
- * null   :   true
- * ""     :   true
- * " "    :   false
+ * 执行特殊控件的特殊事件.
  */
-function ef_isEmpty(str)
+function eterna_specialEventHandler(event)
 {
-   return str == null || str == "";
+   var webObj = event.data.webObj;
+   var specialType = event.data.specialType;
+   var _eterna = event.data._eterna;
+   var events = event.data.events;
+   var eventHandler = event.data.eventHandler;
+   var oldData = event.data;
+   var oldHandleObj = event.handleObj;
+   var needExecute = true;
+   try
+   {
+      if (eventHandler != null)
+      {
+         event.data = null;
+         event.handleObj = null;
+         if (eventHandler.call(event.target, event) === false)
+         {
+            needExecute = false;
+         }
+      }
+      for (var i = 0; i < events.length; i++)
+      {
+         var eObj = events[i];
+         event.data = eObj.data;
+         event.handleObj = eObj;
+         if (eObj.handler.call(event.target, event) === false)
+         {
+            needExecute = false;
+         }
+      }
+   }
+   catch (ex)
+   {
+      _eterna.pushFunctionStack(new Array("eterna_specialEventHandler", eterna_specialEventHandler));
+      _eterna.printException(ex);
+      _eterna.popFunctionStack();
+   }
+   event.data = oldData;
+   event.handleObj = oldHandleObj;
+   if (needExecute)
+   {
+      if (_eterna.cache.useAJAX && !event[EG_STOP_AJAX])
+      {
+         if (specialType == "a:click")
+         {
+            var url = webObj.attr("href");
+            if (url == null || url == "")
+            {
+               return false;
+            }
+            if (eterna_checkScriptStr(url))
+            {
+               return true;
+            }
+            _eterna.ajaxVisit(url, event.clickParam);
+            return false;
+         }
+         else if (specialType == "form:submit")
+         {
+            var action = webObj.attr("action");
+            if (action == null || action == "")
+            {
+               return false;
+            }
+            if (eterna_checkScriptStr(action))
+            {
+               return true;
+            }
+            var tData = eg_temp.tempData;
+            if (tData == null || (tData.reloadObjs == null && tData.reloadDatas == null))
+            {
+               _eterna.ajaxVisit(action, webObj);
+            }
+            else
+            {
+               _eterna.partReload(action, webObj, tData.reloadObjs, tData.reloadDatas);
+            }
+            return false;
+         }
+      }
+      else
+      {
+         return true;
+      }
+   }
+   else
+   {
+      return false;
+   }
 }
 
 /**
- * 去除字符串右边的空白字符
+ * 检查是否为执行脚本的字符串.
  */
-function ef_trimRight(str)
+function eterna_checkScriptStr(str)
 {
+   if (str == null)
+   {
+      return false;
+   }
+   if (typeof str != "string")
+   {
+      return false;
+   }
+   str = str.toLowerCase();
+   for (var i = 0; i < EG_SCRIPT_STR_PREFIX_ARR.length; i++)
+   {
+      if (str.indexOf(EG_SCRIPT_STR_PREFIX_ARR[i]) == 0)
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
+/**
+ * 执行普通的事件.
+ */
+function eterna_normalEventHandler(event)
+{
+   var eventConfig = event.data.eventConfig;
+   if (eventConfig.type == EG_EVENT_WILL_INIT)
+   {
+      // 如果为[EG_EVENT_WILL_INIT], 则要停止事件的冒泡
+      event.stopPropagation();
+   }
+   var _eterna = event.data._eterna;
+   var tempBak = _eterna.egTemp();
+   try
+   {
+      _eterna.egTemp(event.data.egTemp);
+      var webObj = event.data.webObj;
+      var objConfig = event.data.objConfig;
+      var result = eventConfig.fn.call(event.target, event, webObj, objConfig);
+      if (typeof result != "undefined")
+      {
+         return result;
+      }
+   }
+   finally
+   {
+      _eterna.egTemp(tempBak);
+   }
+}
+
+/**
+ * 处理获得的远程数据, 去除字符串右边的空白字符, 存储html文本等.
+ */
+function eterna_dealRemoteData(str)
+{
+   if (str == null)
+   {
+      return null;
+   }
    var endPos = str.length;
    for (var i = str.length - 1; i >= 0; i--)
    {
@@ -3470,7 +4238,38 @@ function ef_trimRight(str)
          break;
       }
    }
-   return str.substring(0, endPos);
+   str = str.substring(0, endPos);
+   var index = str.indexOf(EG_JSON_SPLIT_FLAG);
+   if (index != -1)
+   {
+      var tmpDiv = jQuery("<div/>");
+      tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
+      var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
+      if (dataDiv.size() == 0)
+      {
+         dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
+         dataDiv.hide();
+         jQuery("body").append(dataDiv);
+      }
+      var tmpSubs = tmpDiv.children();
+      for (var i = 0; i < tmpSubs.size(); i++)
+      {
+         dataDiv.append(tmpSubs.eq(i));
+      }
+      return str.substring(0, index);
+   }
+   return str;
+}
+
+/**
+ * 判断字符串是否为空.
+ * null   :   true
+ * ""     :   true
+ * " "    :   false
+ */
+function ef_isEmpty(str)
+{
+   return str == null || str == "";
 }
 
 /**
@@ -3784,10 +4583,11 @@ function ef_formatNumber(num, pattern)
 /**
  * 用于存放创建控件时产生临时列表
  */
-function WebObjList(parent)
+function WebObjList(parent, inheritObj)
 {
    this.data = [];
    this.realParent = parent;
+   this.inheritObj = inheritObj;
 
    if (typeof WebObjList._initialized == 'undefined')
    {
@@ -3801,7 +4601,7 @@ function WebObjList(parent)
 
       WebObjList.prototype.get = function(index)
       {
-         return this.data[index];
+         return this.data[index].get(0);
       }
 
       WebObjList.prototype.eq = function(index)

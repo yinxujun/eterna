@@ -1,7 +1,6 @@
 
 package self.micromagic.cg;
 
-import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,17 +11,31 @@ public class BeanDescriptor
 {
    private Map cells;
    private CellDescriptor initCell;
-
-   /**
-    * 这里使用<code>WeakReference</code>来引用单元的类型, 这样就不会影响其正常的释放.
-    */
-   private WeakReference beanType;
+   private Class beanType;
+   private ConverterManager converterManager;
 
    BeanDescriptor(Class beanType, Map cells, CellDescriptor initCell)
    {
-      this.beanType = new WeakReference(beanType);
+      this.beanType = beanType;
       this.cells = cells;
       this.initCell = initCell;
+      this.converterManager = BeanTool.converterManager;
+   }
+
+   /**
+    * 获取与此bean相关的类型转换器管理者.
+    */
+   ConverterManager getConverterManager()
+   {
+      return this.converterManager;
+   }
+
+   /**
+    * 设置与此bean相关的类型转换器管理者.
+    */
+   void setConverterManager(ConverterManager converterManager)
+   {
+      this.converterManager = converterManager;
    }
 
    /**
@@ -30,7 +43,7 @@ public class BeanDescriptor
     */
    public Class getBeanType()
    {
-      return (Class) beanType.get();
+      return this.beanType;
    }
 
    /**

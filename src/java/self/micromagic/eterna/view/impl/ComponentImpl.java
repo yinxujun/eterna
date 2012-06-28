@@ -11,7 +11,6 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.view.BaseManager;
 import self.micromagic.eterna.view.Component;
 import self.micromagic.eterna.view.ComponentGenerator;
 import self.micromagic.eterna.view.StringCoder;
