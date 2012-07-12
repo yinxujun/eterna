@@ -12,7 +12,7 @@ import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
-public class ValueContainerMapEntrySet extends AbstractSet
+class ValueContainerMapEntrySet extends AbstractSet
       implements Set
 {
    private ValueContainerMap vcm;

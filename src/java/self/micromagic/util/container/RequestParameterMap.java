@@ -281,14 +281,31 @@ public class RequestParameterMap
 
    public Collection values()
    {
+		if (this.parseValue)
+		{
+			return new RequestParameterMapEntrySet(this, true);
+		}
       return this.paramMap.values();
    }
 
    public Set entrySet()
    {
       this.checkEdit();
+		if (this.parseValue)
+		{
+			return new RequestParameterMapEntrySet(this, false);
+		}
       return this.paramMap.entrySet();
    }
+
+	/**
+	 * 获取真正的EntrySet
+	 */
+	Set realEntrySet()
+	{
+      this.checkEdit();
+      return this.paramMap.entrySet();
+	}
 
    public boolean equals(Object obj)
    {
@@ -317,6 +334,11 @@ public class RequestParameterMap
 
    public boolean containsValue(Object value)
    {
+		if (this.parseValue)
+		{
+			Set s = new RequestParameterMapEntrySet(this, true);
+			return s.contains(value);
+		}
       return this.paramMap.containsValue(value);
    }
 
