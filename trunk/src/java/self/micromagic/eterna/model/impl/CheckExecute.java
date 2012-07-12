@@ -119,18 +119,21 @@ public class CheckExecute extends AbstractExecute
          if (AppData.getAppLogType() != 0)
          {
             Element nowNode = data.getCurrentNode();
-            Element rNode = nowNode.addElement("check-result");
-            rNode.addAttribute("value", String.valueOf(checkResult));
-            if (obj1 != null)
-            {
-               Element vNode = rNode.addElement("obj1");
-               AppDataLogExecute.printObject(vNode, obj1);
-            }
-            if (obj2 != null)
-            {
-               Element vNode = rNode.addElement("obj2");
-               AppDataLogExecute.printObject(vNode, obj2);
-            }
+				if (nowNode != null)
+				{
+					Element rNode = nowNode.addElement("check-result");
+					rNode.addAttribute("value", String.valueOf(checkResult));
+					if (obj1 != null)
+					{
+						Element vNode = rNode.addElement("obj1");
+						AppDataLogExecute.printObject(vNode, obj1);
+					}
+					if (obj2 != null)
+					{
+						Element vNode = rNode.addElement("obj2");
+						AppDataLogExecute.printObject(vNode, obj2);
+					}
+				}
          }
          if (checkResult)
          {

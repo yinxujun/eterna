@@ -7,6 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+
+import self.micromagic.util.Utility;
+import org.apache.commons.collections.ReferenceMap;
 
 /**
  * 以<code>Class</code>为键值缓存对象, 这些对象在键值<code>Class</code>被
@@ -14,13 +19,9 @@ import java.lang.reflect.Field;
  * 仅仅使用<code>WeakHashMap</code>无法满足这样的要求, 因为存储的值中也会引用
  * 键值的<code>Class</code>或和其有关联的对象. 这样就会造成键值<code>Class</code>
  * 本身无法被释放, 也就无法达到之前想要的目的. <p>
- * 这里的实现方式为: 通过在键值<code>Class</code>的<code>ClassLoader</code>中动
- * 态创建一个类, 在这个类中创建一个静态属性, 类型为<code>Map</code>, 这样这个
- * map中的所有的值都会随着<code>ClassLoader</code>被释放而释放掉. <p>
- * 注: 如果要使其正常工作, 需要有javassist. <p>
- *
- * 其实如果在<code>ClassLoader</code>中能有一个Map类型的属性, 用于缓存一些对象
- * 的话, 也就不需要<code>ClassKeyCache</code>来实现这样的功能了.
+ * 这里的实现方式为: 通过在键值<code>Class</code>的<code>ClassLoader</code>中载
+ * 入一个类, 在这个类中创建一个静态属性, 类型为<code>Map</code>, 这样这个map中
+ * 的所有的值都会随着<code>ClassLoader</code>被释放而释放掉. <p>
  */
 public class ClassKeyCache
 {
@@ -33,6 +34,7 @@ public class ClassKeyCache
    {
       this.caches = new WeakHashMap();
    }
+
    /**
     * 获得一个<code>ClassKeyCache</code>的实例.
     */
@@ -128,9 +130,9 @@ public class ClassKeyCache
       return cc;
    }
 
-   private static synchronized CacheCell getCacheCell0(ClassLoader cl, Map cache)
+   private static synchronized CacheCell getCacheCell0(ClassLoader cl, Map caches)
    {
-      CacheCell cc = (CacheCell) cache.get(cl);
+      CacheCell cc = (CacheCell) caches.get(cl);
       if (cc == null)
       {
          if (cl == null)
@@ -139,25 +141,92 @@ public class ClassKeyCache
          }
          else
          {
-            String[] imports = {ClassGenerator.getPackageString(Map.class)};
-            ClassGenerator cg = ClassGenerator.createClassGenerator(ClassKeyCache.class, null, imports);
-            cg.setClassLoader(cl);
-            cg.setCompileType(JavassistCG.COMPILE_TYPE);
-            // 这里用不着WeakHashMap, 因为这个类会随着ClassLoader一起被释放
-            cg.addField("public static Map cache = new HashMap();");
             try
             {
-               cc = new CacheCellImpl1(cg.createClass());
+               cc = new CacheCellImpl1(getCachesClass(cl));
             }
             catch (Throwable ex)
             {
-               // 如果自动编译过程中出现错误, 则用系统的缓存单元
+               // 如果定义Class的过程中出现错误, 则用系统的缓存单元
                cc = new CacheCellImpl0();
             }
          }
-         cache.put(cl, cc);
+         caches.put(cl, cc);
       }
       return cc;
+   }
+
+   private static Class getCachesClass(ClassLoader loader)
+         throws Exception
+   {
+      Class cachesClass = (Class) cachesClassCache.get(loader);
+      if (cachesClass != null)
+      {
+         return cachesClass;
+      }
+      byte[] b = cachesClassDef;
+      if (b == null)
+      {
+         return CacheCellImpl0.class;
+      }
+      Class cl = Class.forName("java.lang.ClassLoader");
+      Class[] paramTypes = { String.class, byte[].class, int.class, int.class};
+      Object[] args = {cachesClassName, b, new Integer(0), new Integer(b.length)};
+      java.lang.reflect.Method method = cl.getDeclaredMethod("defineClass", paramTypes);
+      try
+      {
+         method.setAccessible(true);
+         cachesClass = (Class) method.invoke(loader, args);
+         method.setAccessible(false);
+      }
+      catch (ClassFormatError ex)
+      {
+         cachesClass = loader.loadClass(cachesClassName);
+      }
+      cachesClassCache.put(loader, cachesClass);
+      return cachesClass;
+   }
+
+   private static byte[] getCachesClassDef(String name)
+   {
+      try
+      {
+         String path = name.replace('.', '/') + ".class";
+         InputStream in = ClassKeyCache.class.getClassLoader().getResourceAsStream(path);
+         ByteArrayOutputStream bOut = new ByteArrayOutputStream(128);
+         Utility.copyStream(in, bOut);
+         in.close();
+         return bOut.toByteArray();
+      }
+      catch (Exception ex)
+      {
+         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+         {
+            CG.log.error("Init caches class def error.", ex);
+         }
+         return null;
+      }
+   }
+
+   /**
+    * 存放缓存数据的类 的缓存
+    */
+   private static Map cachesClassCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.WEAK);
+
+   /**
+    * 存放缓存数据的类名.
+    */
+   private static final String cachesClassName;
+
+   /**
+    * 存放缓存数据的类定义.
+    */
+   private static final byte[] cachesClassDef;
+
+   static
+   {
+      cachesClassName = ClassKeyCache.class.getName() + "$Caches";
+      cachesClassDef = getCachesClassDef(cachesClassName);
    }
 
    /**
@@ -234,9 +303,15 @@ public class ClassKeyCache
             }
             try
             {
-               Field f = c.getField("cache");
                // 这段代码应该只会执行一次, 只要类不被释放, 这个缓存也不会被释放
-               cache = (Map) f.get(null);
+               Field f = c.getField("caches");
+               Map caches = (Map) f.get(null);
+               cache = (Map) caches.get(this);
+               if (cache == null)
+               {
+                  cache = new HashMap();
+                  caches.put(this, cache);
+               }
                this.cacheObj = new WeakReference(cache);
             }
             catch (Exception ex)

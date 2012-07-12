@@ -1,30 +1,29 @@
 
 package self.micromagic.eterna.tag;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletRequest;
 
+import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.ModelExport;
-import self.micromagic.eterna.digester.FactoryManager;
-import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.view.ViewAdapter;
+import self.micromagic.util.container.RequestParameterMap;
 import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.container.ValueContainerMap;
-import self.micromagic.util.container.RequestParameterMap;
 
 /**
  * 在JSP中, 可通过此标签在页面中定义一个eterna对象.
  */
-public class EternaDefine extends TagSupport
+public class EternaDefine extends InitBaseTag
 {
    /**
     * 默认的空界面的名称.
@@ -36,20 +35,6 @@ public class EternaDefine extends TagSupport
     */
    public static final String CONTEXT_FMI_PREFIX = "$context.";
 
-   /**
-    * 在_eterna.cache中存放区分多个同名控件时使用的后缀的名称.
-    */
-   public static final String SUFFIX_ID_FLAG = "eSuffixId";
-
-   /**
-    * 在_eterna.cache中存放根控件的名称.
-    */
-   public static final String ROOT_OBJ_ID_FLAG = "eRootObjId";
-
-   /**
-    * 在_eterna.cache中存放模板根控件标记的名称.
-    */
-   public static final String SCATTER_FLAG = "scatterFlag";
 
    private String name;
    private String instanceName;
@@ -57,10 +42,6 @@ public class EternaDefine extends TagSupport
    private String param;
    private String viewName;
    private String data;
-   private String parentElement;
-   private String suffixId;
-   private boolean useAJAX;
-   private String scatterFlag;
 
    public int doStartTag()
          throws JspException
@@ -164,11 +145,7 @@ public class EternaDefine extends TagSupport
          ViewAdapter view = f.createViewAdapter(tmpViewName);
          JspWriter out = this.pageContext.getOut();
          String dataType = view.getDataType(nowData);
-         if (!ViewAdapter.DATA_TYPE_WEB.equals(dataType))
-         {
-            view.printView(out, nowData, this.getCacheMap(view));
-         }
-         else
+         if (ViewAdapter.DATA_TYPE_WEB.equals(dataType))
          {
             out.println("<script language=\"javascript\">");
             out.println("(function() {");
@@ -178,11 +155,11 @@ public class EternaDefine extends TagSupport
             out.println("var eternaData = $E;");
             out.println("var eterna_debug = " + view.getDebug() + ";");
             out.println("var _eterna = new Eterna(eternaData, eterna_debug, null);");
-            if (this.useAJAX)
+            if (this.isUseAJAX())
             {
                out.println("_eterna.cache.useAJAX = true;");
             }
-            if (this.parentElement != null)
+            if (this.getParentElement() != null)
             {
                out.println("jQuery(document).ready(function(){");
                out.println("_eterna.reInit();");
@@ -191,6 +168,10 @@ public class EternaDefine extends TagSupport
             out.println("window." + this.name + " = _eterna;");
             out.println("})();");
             out.println("</script>");
+         }
+         else
+         {
+            view.printView(out, nowData, this.getCacheMap(view));
          }
       }
       catch (ConfigurationException ex)
@@ -210,35 +191,6 @@ public class EternaDefine extends TagSupport
          ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, oldData);
       }
       return SKIP_BODY;
-   }
-
-   private Map getCacheMap(ViewAdapter view)
-         throws ConfigurationException
-   {
-      Map cache = new HashMap();
-      if (this.suffixId != null)
-      {
-         cache.put(SUFFIX_ID_FLAG, this.suffixId);
-      }
-      if (this.parentElement != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG, this.parentElement);
-      }
-      if (this.scatterFlag != null)
-      {
-         cache.put(SCATTER_FLAG, this.scatterFlag);
-      }
-      String width = view.getWidth();
-      String height = view.getHeight();
-      if (width != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG + ".width", width);
-      }
-      if (height != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG + ".height", height);
-      }
-      return cache.size() > 0 ? cache : null;
    }
 
    private EternaFactory getEternaFactory()
@@ -283,10 +235,6 @@ public class EternaDefine extends TagSupport
       this.param = null;
       this.viewName = null;
       this.data = null;
-      this.parentElement = null;
-      this.suffixId = null;
-      this.useAJAX = false;
-      this.scatterFlag = null;
       super.release();
    }
 
@@ -348,46 +296,6 @@ public class EternaDefine extends TagSupport
    public void setData(String data)
    {
       this.data = data;
-   }
-
-   public String getParentElement()
-   {
-      return this.parentElement;
-   }
-
-   public void setParentElement(String parentElement)
-   {
-      this.parentElement = parentElement;
-   }
-
-   public String getSuffixId()
-   {
-      return this.suffixId;
-   }
-
-   public void setSuffixId(String suffixId)
-   {
-      this.suffixId = suffixId;
-   }
-
-   public boolean isUseAJAX()
-   {
-      return this.useAJAX;
-   }
-
-   public void setUseAJAX(boolean useAJAX)
-   {
-      this.useAJAX = useAJAX;
-   }
-
-   public String getScatterFlag()
-   {
-      return this.scatterFlag;
-   }
-
-   public void setScatterFlag(String scatterFlag)
-   {
-      this.scatterFlag = scatterFlag;
    }
 
 }

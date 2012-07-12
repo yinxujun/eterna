@@ -414,7 +414,7 @@ public class ViewAdapterImpl extends AbstractGenerator
 
       if (webData)
       {
-         if (cache != null)
+         if (cache != null && cache.size() > 0)
          {
             out.write(",\ncache:");
             this.dataPrinter.printMap(out, cache);
