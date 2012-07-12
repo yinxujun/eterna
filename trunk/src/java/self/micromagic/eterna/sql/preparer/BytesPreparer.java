@@ -4,7 +4,7 @@ package self.micromagic.eterna.sql.preparer;
 import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.BytesConverter;
+import self.micromagic.util.converter.BytesConverter;
 
 class BytesPreparer extends AbstractValuePreparer
 {
