@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.BooleanConverter;
+import self.micromagic.util.converter.BooleanConverter;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.StringTool;
 

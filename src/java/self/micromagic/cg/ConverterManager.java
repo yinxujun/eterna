@@ -4,8 +4,8 @@ package self.micromagic.cg;
 import java.beans.PropertyEditor;
 import java.util.HashMap;
 
-import self.micromagic.eterna.sql.converter.ObjectConverter;
-import self.micromagic.eterna.sql.converter.ValueConverter;
+import self.micromagic.util.converter.ObjectConverter;
+import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.util.Utility;
 
 /**

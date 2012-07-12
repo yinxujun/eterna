@@ -8,7 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.TimeConverter;
+import self.micromagic.util.converter.TimeConverter;
 
 class TimePreparer extends AbstractValuePreparer
 {

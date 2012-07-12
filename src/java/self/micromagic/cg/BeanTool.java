@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.eterna.sql.converter.*;
+import self.micromagic.util.converter.*;
 import self.micromagic.util.MemoryChars;
 import self.micromagic.util.MemoryStream;
 import self.micromagic.util.ResManager;
@@ -851,7 +851,7 @@ public class BeanTool
       codeRes.printRes(GET_FIRST_VALUE_RES, paramCache, 1, sa).appendln();
       String typeName = ClassGenerator.getClassName(type);
       paramCache.put("declareType", typeName);
-      paramCache.put("converterType", "self.micromagic.eterna.sql.converter."
+      paramCache.put("converterType", "self.micromagic.util.converter."
             + wrapName + "Converter");
       paramCache.put("converterName", converterBase + ".getConverter(" + vcIndex + ")");
       paramCache.put("converterMethod",

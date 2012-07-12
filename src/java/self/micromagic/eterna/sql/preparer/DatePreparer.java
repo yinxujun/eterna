@@ -8,7 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.DateConverter;
+import self.micromagic.util.converter.DateConverter;
 
 class DatePreparer extends AbstractValuePreparer
 {

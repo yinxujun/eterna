@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.eterna.sql.converter.ValueConverter;
+import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 

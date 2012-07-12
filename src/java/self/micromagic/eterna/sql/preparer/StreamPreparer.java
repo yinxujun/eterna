@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.StreamConverter;
+import self.micromagic.util.converter.StreamConverter;
 import self.micromagic.util.Utility;
 
 class StreamPreparer extends AbstractValuePreparer

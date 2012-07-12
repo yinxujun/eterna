@@ -7,7 +7,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.DoubleConverter;
+import self.micromagic.util.converter.DoubleConverter;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 class DoublePreparer extends AbstractValuePreparer

@@ -28,9 +28,9 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import self.micromagic.eterna.sql.converter.BooleanConverter;
-import self.micromagic.eterna.sql.converter.IntegerConverter;
-import self.micromagic.eterna.sql.converter.ValueConverter;
+import self.micromagic.util.converter.BooleanConverter;
+import self.micromagic.util.converter.IntegerConverter;
+import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.cg.ClassGenerator;
 
 public class Utility

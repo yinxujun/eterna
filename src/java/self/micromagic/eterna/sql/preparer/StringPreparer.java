@@ -4,7 +4,7 @@ package self.micromagic.eterna.sql.preparer;
 import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.PreparedStatementWrap;
-import self.micromagic.eterna.sql.converter.StringConverter;
+import self.micromagic.util.converter.StringConverter;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
