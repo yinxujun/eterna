@@ -7,19 +7,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.cg.ClassGenerator;
 import self.micromagic.cg.ClassKeyCache;
+import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.digester.FactoryManager;
 import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.share.Generator;
-import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
+import self.micromagic.util.container.SynHashMap;
+import self.micromagic.util.container.ThreadCache;
 
 /**
  * 动态类的生成工具.
@@ -139,7 +139,7 @@ public class CodeClassTool
    /**
     * 路径类的缓存, 主键为路径类, 值为此路径类的ClassLoader.
     */
-   private static Map pathClassCache = new WeakHashMap();
+   private static Map pathClassCache = new SynHashMap(8, SynHashMap.WEAK);
 
    /**
     * 注册一个用于读取类信息的路径类. <p>

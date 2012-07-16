@@ -2,13 +2,12 @@
 package self.micromagic.util;
 
 import java.io.File;
-import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.Writer;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Iterator;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +18,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogConfigurationException;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
-import self.micromagic.eterna.model.AppData;
 import self.micromagic.cg.ClassGenerator;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -53,10 +53,10 @@ public class Jdk14Factory extends LogFactory
    private static int consoleFlushDelay = 5000;
    private static StreamHandler consoleLoggerHander;
    private static Logger defaultLogger;
-   private static Map otherLoggerMap = new HashMap();
+   private static Map otherLoggerMap = new SynHashMap();
 
-   private Map attributes = new HashMap();
-   private Map instances = new HashMap();
+   private Map attributes = new SynHashMap();
+   private Map instances = new SynHashMap();
 
    public static final String EXCEPTION_LOG_PROPERTY = "self.micromagic.eterna.exception.logType";
    protected static int EXCEPTION_LOG_TYPE = 0;

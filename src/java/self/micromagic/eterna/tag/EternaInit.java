@@ -10,7 +10,6 @@ import self.micromagic.app.WebApp;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.view.ViewAdapter;
-import self.micromagic.util.StringTool;
 
 /**
  * 在JSP中, 可通过此标签在页面中初始化Eterna对象.
@@ -39,11 +38,10 @@ public class EternaInit extends InitBaseTag
 
    private String view;
    private String appData;
-   private String jsList;
-   private String cssList;
 	private int printHTML;
 	private String charset;
 	private String divClass;
+	private boolean includeBody = false;
 
    public int doStartTag()
          throws JspException
@@ -59,6 +57,8 @@ public class EternaInit extends InitBaseTag
 			if (ViewAdapter.DATA_TYPE_WEB.equals(dataType))
 			{
 				this.printInitPage(view, data, out);
+				this.includeBody = true;
+				return EVAL_BODY_INCLUDE;
 			}
 			else
 			{
@@ -67,26 +67,52 @@ public class EternaInit extends InitBaseTag
       }
       catch (ConfigurationException ex)
       {
-         DefaultFinder.log.warn("Error in service.", ex);
+         DefaultFinder.log.warn("Error in init.", ex);
       }
       catch (Throwable ex)
       {
-         DefaultFinder.log.error("Other Error in service.", ex);
+         DefaultFinder.log.error("Other Error in init.", ex);
       }
       return SKIP_BODY;
    }
 
-	private void printSourceList(JspWriter out, boolean jsResource, String resList)
-         throws IOException
+	public int doEndTag()
+			throws JspException
 	{
-		if (resList != null)
+		if (!this.includeBody)
 		{
-			String[] arr = StringTool.separateString(resList, ";", true);
-			for (int i = 0; i < arr.length; i++)
-			{
-				out.println("window._loadResource(\"" + arr[i] + "\", " + jsResource + ");");
-			}
+			return EVAL_PAGE;
 		}
+      try
+      {
+			JspWriter out = this.pageContext.getOut();
+			if (this.printHTML == PRINT_HTML_ALL)
+			{
+				out.println("</head>");
+				out.println("<body>");
+			}
+			if (this.printHTML >= PRINT_HTML_PART)
+			{
+				String divName = this.getParentElement();
+				String sId = this.getSuffixId();
+				if (sId != null)
+				{
+					divName += sId;
+				}
+				String classDef = this.divClass == null ? "" : " class=\"" + this.divClass + "\"";
+				out.println("<div id=\"" + divName + "\"" + classDef + "></div>");
+			}
+			if (this.printHTML == PRINT_HTML_ALL)
+			{
+				out.println("</body>");
+				out.println("</html>");
+			}
+      }
+      catch (Throwable ex)
+      {
+         DefaultFinder.log.error("Other Error in init.", ex);
+      }
+		return EVAL_PAGE;
 	}
 
 	/**
@@ -97,40 +123,6 @@ public class EternaInit extends InitBaseTag
 	{
 		out.println("<script language=\"javascript\">");
 		out.println("(function() {");
-
-		// 创建载入资源的方法
-		out.println("if (typeof _pageInitializedURL == \"undefined\")");
-		out.println("{");
-		out.println("window._pageInitializedURL = {};");
-		out.println("window._loadResource = function (url, jsResource)");
-		out.println("{");
-		out.println("if (window._pageInitializedURL[url])");
-		out.println("{");
-		out.println("return;");
-		out.println("}");
-		out.println("window._pageInitializedURL[url] = 1;");
-		out.println("var resObj;");
-		out.println("if (jsResource)");
-		out.println("{");
-		out.println("resObj = document.createElement(\"script\");");
-		out.println("resObj.type = \"text/javascript\";");
-		out.println("resObj.async = true;");
-		out.println("resObj.src = url;");
-		out.println("}");
-		out.println("else");
-		out.println("{");
-		out.println("resObj = document.createElement(\"link\");");
-		out.println("resObj.type = \"text/css\";");
-		out.println("resObj.rel = \"stylesheet\";");
-		out.println("resObj.href = url;");
-		out.println("}");
-		out.println("var s = document.getElementsByTagName('script')[0];");
-		out.println("s.parentNode.insertBefore(resObj, s);");
-		out.println("};");
-		out.println("}"); // end if (typeof _pageInitializedURL == \"undefined\")
-
-		this.printSourceList(out, true, this.jsList);
-		this.printSourceList(out, false, this.cssList);
 		out.println("var retryFind = false;");
 		this.printEternaScript(view, data, out);
 
@@ -212,38 +204,16 @@ public class EternaInit extends InitBaseTag
 			out.println("<meta http-equiv=\"pragma\" content=\"no-cache\"/>");
 		}
 		this.printInitScript(view, data, out);
-		if (this.printHTML == PRINT_HTML_ALL)
-		{
-			out.println("</head>");
-			out.println("<body>");
-		}
-		if (this.printHTML >= PRINT_HTML_PART)
-		{
-			String divName = this.getParentElement();
-			String sId = this.getSuffixId();
-			if (sId != null)
-			{
-				divName += sId;
-			}
-			String classDef = this.divClass == null ? "" : " class=\"" + this.divClass + "\"";
-			out.println("<div id=\"" + divName + "\"" + classDef + "></div>");
-		}
-		if (this.printHTML == PRINT_HTML_ALL)
-		{
-			out.println("</body>");
-			out.println("</html>");
-		}
 	}
 
    public void release()
    {
       this.view = null;
       this.appData = null;
-      this.jsList = null;
-      this.cssList = null;
 		this.printHTML = 0;
 		this.charset = null;
 		this.divClass = null;
+		this.includeBody = false;
       super.release();
    }
 
@@ -265,26 +235,6 @@ public class EternaInit extends InitBaseTag
 	public void setAppData(String appData)
 	{
 		this.appData = appData;
-	}
-
-	public String getJsList()
-	{
-		return this.jsList;
-	}
-
-	public void setJsList(String jsList)
-	{
-		this.jsList = jsList;
-	}
-
-	public String getCssList()
-	{
-		return this.cssList;
-	}
-
-	public void setCssList(String cssList)
-	{
-		this.cssList = cssList;
 	}
 
 	public int getPrintHTML()

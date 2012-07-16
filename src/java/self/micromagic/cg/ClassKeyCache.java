@@ -1,17 +1,15 @@
 
 package self.micromagic.cg;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 import self.micromagic.util.Utility;
-import org.apache.commons.collections.ReferenceMap;
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * 以<code>Class</code>为键值缓存对象, 这些对象在键值<code>Class</code>被
@@ -32,7 +30,7 @@ public class ClassKeyCache
 
    private ClassKeyCache()
    {
-      this.caches = new WeakHashMap();
+      this.caches = new SynHashMap(8, SynHashMap.WEAK);
    }
 
    /**
@@ -211,7 +209,7 @@ public class ClassKeyCache
    /**
     * 存放缓存数据的类 的缓存
     */
-   private static Map cachesClassCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.WEAK);
+   private static Map cachesClassCache = new SynHashMap(8, SynHashMap.WEAK);
 
    /**
     * 存放缓存数据的类名.
@@ -250,7 +248,7 @@ public class ClassKeyCache
    private static class CacheCellImpl0
          implements CacheCell
    {
-      private Map cache = new HashMap();
+      private Map cache = new SynHashMap();
 
       public Object get(Class c)
       {
@@ -301,30 +299,36 @@ public class ClassKeyCache
             {
                return null;
             }
-            try
-            {
-               // 这段代码应该只会执行一次, 只要类不被释放, 这个缓存也不会被释放
-               Field f = c.getField("caches");
-               Map caches = (Map) f.get(null);
-               cache = (Map) caches.get(this);
-               if (cache == null)
-               {
-                  cache = new HashMap();
-                  caches.put(this, cache);
-               }
-               this.cacheObj = new WeakReference(cache);
-            }
-            catch (Exception ex)
-            {
-               if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-               {
-                  CG.log.error("Create cache error.", ex);
-               }
-               return null;
-            }
+            cache = this.getCache0(c);
          }
          return cache;
       }
+
+		private synchronized Map getCache0(Class c)
+		{
+			try
+			{
+				// 这段代码应该只会执行一次, 只要类不被释放, 这个缓存也不会被释放
+				Field f = c.getField("caches");
+				Map caches = (Map) f.get(null);
+				Map cache = (Map) caches.get(this);
+				if (cache == null)
+				{
+					cache = new SynHashMap();
+					caches.put(this, cache);
+				}
+				this.cacheObj = new WeakReference(cache);
+				return cache;
+			}
+			catch (Exception ex)
+			{
+				if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+				{
+					CG.log.error("Create cache error.", ex);
+				}
+				return null;
+			}
+		}
 
       public Object get(Class c)
       {

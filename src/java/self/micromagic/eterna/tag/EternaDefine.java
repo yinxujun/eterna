@@ -168,23 +168,29 @@ public class EternaDefine extends InitBaseTag
             out.println("window." + this.name + " = _eterna;");
             out.println("})();");
             out.println("</script>");
+				return EVAL_BODY_INCLUDE;
          }
          else
          {
             view.printView(out, nowData, this.getCacheMap(view));
+				if (ViewAdapter.DATA_TYPE_ALL.equals(dataType))
+				{
+					out.println(ViewAdapter.JSON_SPLIT_FLAG);
+					return EVAL_BODY_INCLUDE;
+				}
          }
       }
       catch (ConfigurationException ex)
       {
-         DefaultFinder.log.warn("Error in service.", ex);
+         DefaultFinder.log.warn("Error in def.", ex);
       }
       catch (SQLException ex)
       {
-         DefaultFinder.log.warn("SQL Error in service.", ex);
+         DefaultFinder.log.warn("SQL Error in def.", ex);
       }
       catch (Throwable ex)
       {
-         DefaultFinder.log.error("Other Error in service.", ex);
+         DefaultFinder.log.error("Other Error in def.", ex);
       }
       finally
       {
