@@ -1,6 +1,20 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.1==
+修复了针对session优化后出现的一个问题。<br>
+在参数绑定时(self.micromagic.eterna.model.ParamSetManager)，因为是空字符串而产生的类型转换错误，不记录警告日志。<br>
+修复了self.micromagic.app.WebApp中的QueryTool获取的EternaFactory在重新初始化后没有释放的问题。<br>
+增加了self.micromagic.dc包，里面为各类动态代码的生成工具。<br>
+将包self.micromagic.eterna.sql.converter移至了self.micromagic.util包下。<br>
+将类self.micromagic.app.JavaCodeExecute移至了self.micromagic.dc包下。<br>
+调整了self.micromagic.eterna.sql.preparer包下类的结构。<br>
+增加了从初始化cache中构造self.micromagic.eterna.share.DataSourceManager。<br>
+在self.micromagic.eterna.digester.FactoryManager.Instance接口中增加了setAttribute、removeAttribute及getAttribute方法。<br>
+增加了self.micromagic.util.ext.SimpleDataSource类，用于处理一些不支持事务的数据库。<br>
+eterna_global.xml中增加了getData_row方法。作用为：读取多行结果集中的一行, 并以单行结果集的形式返回。<br>
+增加了在页面中直接生成页面脚本的标签，见web/eterna.tld。<br>
+----
 ==1.5.0==
 request-parameter、request-attribute、session-attribute可以使用缩写：RP、RA、SA。<br>
 修复了self.micromagic.eterna.model.impl.ModelCallerImpl中，transactionType为new时的一个错误。<br>
