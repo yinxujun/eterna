@@ -1,22 +1,22 @@
 
 package self.micromagic.cg;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.lang.ref.WeakReference;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.Map;
 
 import javassist.CannotCompileException;
+import javassist.ClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtNewConstructor;
 import javassist.CtNewMethod;
 import javassist.NotFoundException;
-import javassist.ClassPath;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * 通过javassist对类进行编译的工具.
@@ -116,7 +116,7 @@ public class JavassistCG
    }
 
 
-   private static Map classPoolCache = new WeakHashMap();
+   private static Map classPoolCache = new SynHashMap(8, SynHashMap.WEAK);
 
    /**
     * 根据使用的ClassLoader获得一个ClassPool.

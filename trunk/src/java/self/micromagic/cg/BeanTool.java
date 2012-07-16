@@ -27,6 +27,7 @@ import self.micromagic.util.ResManager;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * 对bean进行操作的工具.
@@ -171,7 +172,7 @@ public class BeanTool
    /**
     * 移除BeanMap的结构信息, 移除后再次使用时就能够重新构造结构信息.
     */
-   public static void removeBeanDescriptor(Class type)
+   public static synchronized void removeBeanDescriptor(Class type)
    {
       beanDescriptorCache.removeProperty(type);
       //beanDescriptorCache.remove(type);
@@ -877,7 +878,7 @@ public class BeanTool
    /**
     * 用于判断一个类名是否为bean的map.
     */
-   static Map beanClassNameCheckMap = new HashMap();
+   static Map beanClassNameCheckMap = new SynHashMap();
 
    /**
     * 存放bean的类名模板的集合.

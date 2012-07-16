@@ -4524,19 +4524,22 @@ function eterna_dealRemoteData(str)
 	var index = str.indexOf(EG_JSON_SPLIT_FLAG);
 	if (index != -1)
 	{
-		var tmpDiv = jQuery("<div/>");
-		tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
-		var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
-		if (dataDiv.size() == 0)
+		if (index + EG_JSON_SPLIT_FLAG.length < str.length)
 		{
-			dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
-			dataDiv.hide();
-			jQuery("body").append(dataDiv);
-		}
-		var tmpSubs = tmpDiv.children();
-		for (var i = 0; i < tmpSubs.size(); i++)
-		{
-			dataDiv.append(tmpSubs.eq(i));
+			var tmpDiv = jQuery("<div/>");
+			tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
+			var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
+			if (dataDiv.size() == 0)
+			{
+				dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
+				dataDiv.hide();
+				jQuery("body").append(dataDiv);
+			}
+			var tmpSubs = tmpDiv.children();
+			for (var i = 0; i < tmpSubs.size(); i++)
+			{
+				dataDiv.append(tmpSubs.eq(i));
+			}
 		}
 		return str.substring(0, index);
 	}

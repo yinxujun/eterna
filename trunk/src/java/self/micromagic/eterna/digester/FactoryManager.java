@@ -50,6 +50,7 @@ import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.container.ThreadCache;
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -154,7 +155,7 @@ public class FactoryManager
 
    private static Document logDocument = null;
    private static Element logs = null;
-   private static Map instanceMap = new HashMap();
+   private static Map instanceMap = new SynHashMap();
    private static GlobalImpl globalInstance;
    private static Instance current;
    private static Factory currentFactory;

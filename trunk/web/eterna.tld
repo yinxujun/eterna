@@ -10,7 +10,7 @@
    <tag>
       <name>def</name>
       <tag-class>self.micromagic.eterna.tag.EternaDefine</tag-class>
-      <body-content>empty</body-content>
+      <body-content>JSP</body-content>
       <description>在页面中定义一个eterna对象</description>
       <attribute>
          <name>name</name>
@@ -98,20 +98,21 @@
          </description>
       </attribute>
       <example><![CDATA[
-         <e:def name="tmp" viewName="sample.view"/>
-         <div id="testDiv"></div>
-         <script language="javascript">
-            // 调用getData_value方法
-            var value = tmp.callFunction("getData_value", "testData", "col1", 12);
-            // 生成samle控件放到 id为"test"的节点中
-            var newObj = tmp.newComponent("sample", "testDiv");
-         </script>
+         <e:def name="tmp" viewName="sample.view">
+				<div id="testDiv"></div>
+				<script language="javascript">
+					// 调用getData_value方法
+					var value = tmp.callFunction("getData_value", "testData", "col1", 12);
+					// 生成samle控件放到 id为"test"的节点中
+					var newObj = tmp.newComponent("sample", "testDiv");
+				</script>
+			</e:def>
       ]]></example>
    </tag>
    <tag>
       <name>init</name>
       <tag-class>self.micromagic.eterna.tag.EternaInit</tag-class>
-      <body-content>empty</body-content>
+      <body-content>JSP</body-content>
       <description>在页面中初始化Eterna对象</description>
       <attribute>
          <name>view</name>
@@ -129,24 +130,6 @@
          <description>
             查找AppData对象的名称, 此对象需要能够在PageContext中被找到.
             默认值为: WebApp.APPDATA_TAG
-         </description>
-      </attribute>
-      <attribute>
-         <name>jsList</name>
-         <required>false</required>
-         <rtexprvalue>true</rtexprvalue>
-         <description>
-            需要载入的js路径列表, 以";"分隔.
-				注: 如果是以"/"起始的路径, 不需要加上下文路径.
-         </description>
-      </attribute>
-      <attribute>
-         <name>cssList</name>
-         <required>false</required>
-         <rtexprvalue>true</rtexprvalue>
-         <description>
-            需要载入的样式文件路径列表, 以";"分隔.
-				注: 如果是以"/"起始的路径, 不需要加上下文路径.
          </description>
       </attribute>
       <attribute>
@@ -218,8 +201,43 @@
          </description>
       </attribute>
       <example><![CDATA[
-         <e:init parentElement="testDiv" suffixId="_1"/>
-         <div id="testDiv_1"></div>
+         <e:init parentElement="testDiv" suffixId="_1" printHTML="1">
+				<e:res url="/eterna.js"/>
+			</e:init>
+      ]]></example>
+   </tag>
+   <tag>
+      <name>res</name>
+      <tag-class>self.micromagic.eterna.tag.EternaRes</tag-class>
+      <body-content>empty</body-content>
+      <description>在页面中动态加载需要的资源文件</description>
+      <attribute>
+         <name>url</name>
+         <required>true</required>
+         <rtexprvalue>true</rtexprvalue>
+         <description>
+            资源文件的路径, 注: 如果是以"/"起始的路径, 不需要加上下文路径.
+         </description>
+      </attribute>
+      <attribute>
+         <name>jsResource</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+         <type>boolean</type>
+         <description>
+            是否为js资源, 默认为true, 如果设为false表示为css资源.
+         </description>
+      </attribute>
+      <attribute>
+         <name>charset</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+         <description>
+            设置资源的编码格式, 默认值为UTF-8.
+         </description>
+      </attribute>
+      <example><![CDATA[
+         <e:res url="/eterna.js"/>
       ]]></example>
    </tag>
 </taglib>

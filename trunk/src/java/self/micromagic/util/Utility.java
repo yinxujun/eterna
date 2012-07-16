@@ -269,7 +269,7 @@ public class Utility
    /**
     * 根据ClassLoader获得本上下文中的指定的配置文件
     */
-   public static Properties getProperties(ClassLoader cl, ObjectRef prop_URL, String propLocal)
+   public static synchronized Properties getProperties(ClassLoader cl, ObjectRef prop_URL, String propLocal)
    {
       String tmpLocal = propLocal == null ? PROPERTIES_NAME : propLocal;
       try
