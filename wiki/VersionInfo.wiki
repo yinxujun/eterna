@@ -1,6 +1,9 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.2==
+修复了一个会造成框架无法初始化的bug。<br>
+----
 ==1.5.1==
 修复了针对session优化后出现的一个问题。<br>
 在参数绑定时(self.micromagic.eterna.model.ParamSetManager)，因为是空字符串而产生的类型转换错误，不记录警告日志。<br>
