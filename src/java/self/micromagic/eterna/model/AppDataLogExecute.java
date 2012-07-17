@@ -13,8 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Enumeration;
 
 import org.dom4j.Element;
+import org.apache.commons.collections.iterators.EnumerationIterator;
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
 import self.micromagic.cg.ClassGenerator;
@@ -293,6 +295,19 @@ public class AppDataLogExecute extends AbstractExecute
          }
       }
 
+		private void printIterator(Element parent, Iterator itr)
+				throws Exception
+		{
+			int index = 0;
+			while (itr.hasNext())
+			{
+				Element vNode = parent.addElement("value");
+				vNode.addAttribute("index", String.valueOf(index));
+				this.printObject(vNode, itr.next());
+				index++;
+			}
+		}
+
       public void printObject(Element parent, Object value)
             throws Exception
       {
@@ -408,6 +423,24 @@ public class AppDataLogExecute extends AbstractExecute
          {
             printObject(parent, ((SessionCache.Property) value).getValue());
          }
+			else if (value instanceof Iterator)
+			{
+				parent.addAttribute("type", "Iterator");
+            if (this.checkAndPush(parent, value))
+            {
+					this.printIterator(parent, (Iterator) value);
+               this.pop();
+            }
+			}
+			else if (value instanceof Enumeration)
+			{
+				parent.addAttribute("type", "Enumeration");
+            if (this.checkAndPush(parent, value))
+            {
+					this.printIterator(parent, new EnumerationIterator((Enumeration) value));
+               this.pop();
+            }
+			}
          else if (value.getClass().isArray())
          {
             parent.addAttribute("type", "Array");

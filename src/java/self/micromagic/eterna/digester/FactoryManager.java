@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.WeakHashMap;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -49,8 +48,8 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
-import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.container.SynHashMap;
+import self.micromagic.util.container.ThreadCache;
 
 /**
  * ≈‰÷√Àµ√˜:
@@ -1326,7 +1325,7 @@ public class FactoryManager
                {
                   if (this.listenerMap == null)
                   {
-                     this.listenerMap = new WeakHashMap(2, 0.75f);
+                     this.listenerMap = new SynHashMap(2, SynHashMap.WEAK);
                   }
                }
             }

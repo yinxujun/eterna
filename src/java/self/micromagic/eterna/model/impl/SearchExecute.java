@@ -97,6 +97,7 @@ public class SearchExecute extends AbstractExecute
       if (config == null || config.length() == 0)
       {
          this.queryResult = null;
+			return;
       }
       if (config.indexOf(':') == -1)
       {
@@ -113,6 +114,7 @@ public class SearchExecute extends AbstractExecute
       if (config == null || config.length() == 0)
       {
          this.searchManager = null;
+			return;
       }
       if (config.indexOf(':') == -1)
       {
@@ -129,6 +131,7 @@ public class SearchExecute extends AbstractExecute
       if (config == null || config.length() == 0)
       {
          this.searchCount = null;
+			return;
       }
       if (config.indexOf(':') == -1)
       {
