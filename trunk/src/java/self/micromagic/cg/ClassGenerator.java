@@ -480,6 +480,8 @@ public class ClassGenerator
       }
       catch (Throwable ex)
       {
+         // 如果出现异常, 这可能是jdk版本小于1.5, 使用getName方法来获取类名
+         nameAccessor = new ClassNameAccessor();
          if (!(ex instanceof UnsupportedClassVersionError))
          {
             if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
@@ -487,8 +489,6 @@ public class ClassGenerator
                CG.log.error("init name accessor error.", ex);
             }
          }
-         // 如果出现异常, 这可能是jdk版本小于1.5, 使用getName方法来获取类名
-         nameAccessor = new ClassNameAccessor();
       }
       try
       {

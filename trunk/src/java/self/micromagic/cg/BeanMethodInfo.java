@@ -112,7 +112,7 @@ public class BeanMethodInfo
     * @param beanClass   bean类
     * @return      bean相关的方法列表
     */
-   public static BeanMethodInfo[] getBeanMethods(Class beanClass)
+   public static synchronized BeanMethodInfo[] getBeanMethods(Class beanClass)
    {
       BeanMethodInfo[] result = (BeanMethodInfo[]) beanMethodsCache.get(beanClass);
       if (result != null)

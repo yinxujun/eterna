@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Enumeration;
 
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
@@ -172,6 +173,14 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             this.printMap(out, (Map) value);
          }
+			else if (value instanceof Iterator)
+			{
+				this.printIterator(out, (Iterator) value);
+			}
+			else if (value instanceof Enumeration)
+			{
+				this.printEnumeration(out, (Enumeration) value);
+			}
          else if (value.getClass().isArray())
          {
             if (value.getClass().getComponentType().isPrimitive())
@@ -382,12 +391,42 @@ public class DataPrinterImpl extends AbstractGenerator
       out.write("]");
    }
 
+	public void printEnumeration(Writer out, Enumeration e)
+         throws IOException, ConfigurationException
+	{
+      out.write("[");
+		int count = 0;
+      while (e.hasMoreElements())
+      {
+			if (count > 0)
+			{
+            out.write(",");
+			}
+         Object value = e.nextElement();
+         if (value != null)
+         {
+            this.print(out, value);
+         }
+         else
+         {
+            out.write("null");
+         }
+			count++;
+      }
+      out.write("]");
+	}
+
    public void printIterator(Writer out, Iterator itr)
          throws IOException, ConfigurationException
    {
       out.write("[");
+		int count = 0;
       while (itr.hasNext())
       {
+			if (count > 0)
+			{
+            out.write(",");
+			}
          Object value = itr.next();
          if (value != null)
          {
@@ -397,14 +436,10 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             out.write("null");
          }
-         if (itr.hasNext())
-         {
-            out.write(",");
-         }
+			count++;
       }
       out.write("]");
    }
-
 
    public void print(Writer out, boolean b)
          throws IOException, ConfigurationException
