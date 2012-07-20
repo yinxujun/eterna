@@ -1,5 +1,5 @@
 
-/** version: 1.5.1 */
+/** version: 1.5.2 */
 
 /*
 (function(window) {
@@ -10,7 +10,7 @@ window.Eterna = Eterna;
 })(window);
 */
 
-var ___ETERNA_VERSION = "1.5.1";
+var ___ETERNA_VERSION = "1.5.2";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 var ED_GET_VALUE = 0x1;
 var ED_EXECUTE_SCRIPT = 0x2;
@@ -1209,7 +1209,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 			}
 			else
 			{
-				pObj = jQuery("body");
+				pObj = this.rootWebObj == null ? jQuery("body") : this.rootWebObj;
 			}
 			var tmpParent = new WebObjList(pObj);
 			var result = this.createComponent(objConfig, tmpParent);
