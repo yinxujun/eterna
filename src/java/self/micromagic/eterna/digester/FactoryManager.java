@@ -1138,14 +1138,29 @@ public class FactoryManager
          }
       }
 
+		/**
+		 * 开始(重新)初始化.
+		 */
+		protected void beginReInit()
+		{
+		}
+
+		/**
+		 * 结束(重新)初始化.
+		 */
+		protected void endReInit()
+		{
+		}
+
       /**
        * (重新)初始化工厂管理器
        * @param msg  存放初始化的返回信息
        */
-      public void reInit(StringRef msg)
+      public final void reInit(StringRef msg)
       {
          synchronized (FactoryManager.class)
          {
+				this.beginReInit();
             // 根据initCache中的值初始化工厂管理器实例中的属性
             Map attrs = FactoryManager.getInitCache();
             if (attrs != null)
@@ -1227,6 +1242,7 @@ public class FactoryManager
                FactoryManager.currentFactory = oldCF;
                FactoryManager.current = oldInstance;
                SameCheckRule.clearDealedObjMap();
+					this.endReInit();
             }
          }
       }
@@ -1950,12 +1966,15 @@ public class FactoryManager
          return result;
       }
 
-      public void reInit(StringRef msg)
-      {
+		protected void beginReInit()
+		{
          this.atInitialize = true;
-         super.reInit(msg);
+		}
+
+		protected void endReInit()
+		{
          this.atInitialize = false;
-      }
+		}
 
       protected void initializeElse()
             throws ConfigurationException
