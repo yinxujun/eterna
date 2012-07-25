@@ -1,8 +1,8 @@
-#summary 后端配置的属性(attribute)名和界面端的属性对应关系
+#summary 后端配置的属性名和界面端的属性对应关系
 #labels Phase-Implementation
 
-=属性(attribute)名的对应关系说明=
-界面中的`table-from`和`table-list`可以通过`baseName`属性来指定引用`query`、`reader-manager`或`search`的相关配置。而节点中的特殊属性也可设置在这些配置的`attribute`中。<br>
+=属性名的对应关系说明=
+界面中的`table-from`和`table-list`可以通过`baseName`属性来指定引用`query`、`reader-manager`或`search`的相关配置。而节点中的特殊属性也可设置在这些配置的*`attribute`*中。<br>
 关于baseName的使用：<br>
 `query:XXX`：表示使用`query`->`readers`中的`reader`列表。<br>
 `reader:XXX`：表示使用`reader-manager`中的`reader`列表。<br>
