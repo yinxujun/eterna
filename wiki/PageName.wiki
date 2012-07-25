@@ -40,4 +40,4 @@
 
 =attribute名称的对应表=
 ||attribute名称||R||Q||S||table-form||table-list||
-||initScript||有效||有效||有效||init-script||init-script||
+||initScript||有效||有效||有效||子节点：init-script<br>或属性：initScript||init-script||
