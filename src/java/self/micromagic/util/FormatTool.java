@@ -10,11 +10,16 @@ import java.util.Date;
 
 public class FormatTool
 {
-   private static DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-   private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-   private static DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-   private static NumberFormat currencyFormat = new DecimalFormat("#0.00");
-   private static NumberFormat currency2Format = new DecimalFormat("#,##0.00");
+	/**
+	 * 完整的日期类型的格式化.
+	 */
+	public static final DateFormat dateFullFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z");
+
+   private static final DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+   private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+   private static final NumberFormat currencyFormat = new DecimalFormat("#0.00");
+   private static final NumberFormat currency2Format = new DecimalFormat("#,##0.00");
 
    /**
     * 格式化输出当前的日期-时间

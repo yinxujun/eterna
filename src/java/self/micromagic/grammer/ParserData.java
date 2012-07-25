@@ -254,13 +254,13 @@ public class ParserData
 
    private void appendGrammerCell(List gclist, StringAppender buf)
    {
-      buf.append("[");
+      buf.append('[');
       Iterator itr = gclist.iterator();
       while (itr.hasNext())
       {
          GrammerCell cell = (GrammerCell) itr.next();
          String type = GrammerManager.getGrammerElementTypeName(cell.grammerElement.getType());
-         buf.append(type).append(":");
+         buf.append(type).append(':');
          if (cell.subCells != null)
          {
             this.appendGrammerCell(cell.subCells, buf);
@@ -271,10 +271,10 @@ public class ParserData
          }
          if (itr.hasNext())
          {
-            buf.append(",");
+            buf.append(',');
          }
       }
-      buf.append("]");
+      buf.append(']');
    }
 
    private static class IndexStore

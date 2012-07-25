@@ -2,10 +2,13 @@
 package self.micromagic.eterna.search;
 
 import java.util.List;
+import java.io.Writer;
+import java.io.IOException;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
+import self.micromagic.eterna.view.DataPrinter;
 
 public interface SearchManager
 {
@@ -173,7 +176,8 @@ public interface SearchManager
 
    }
 
-   public static class Attributes
+   public static final class Attributes
+			implements DataPrinter.BeanPrinter
    {
       /**
        * ´æ´¢Ò³ºÅµÄ¿Ø¼þÃû³Æ
@@ -215,6 +219,19 @@ public interface SearchManager
          this.queryTypeClear = queryTypeClear == null ? "clear" : queryTypeClear;
          this.queryTypeReset = queryTypeReset == null ? "set" : queryTypeReset;
       }
+
+		public void print(DataPrinter p, Writer out, Object bean)
+				throws IOException, ConfigurationException
+		{
+			p.printObjectBegin(out);
+			p.printPair(out, "pageNumTag", this.pageNumTag, true);
+			p.printPair(out, "pageSizeTag", this.pageSizeTag, false);
+			p.printPair(out, "querySettingTag", this.querySettingTag, false);
+			p.printPair(out, "queryTypeClear", this.queryTypeClear, false);
+			p.printPair(out, "queryTypeReset", this.queryTypeReset, false);
+			p.printPair(out, "queryTypeTag", this.queryTypeTag, false);
+			p.printObjectEnd(out);
+		}
 
    }
 

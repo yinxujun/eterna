@@ -244,17 +244,21 @@ public class TableFormImpl extends AbstractTable
 
       out.write(",cells:[");
       Iterator cellItr = this.getCells();
+		boolean hasCell = false;
       while (cellItr.hasNext())
       {
+			if (hasCell)
+			{
+            out.write(',');
+			}
+			else
+			{
+				hasCell = true;
+			}
          Cell cell = (Cell) cellItr.next();
          cell.print(out, data, view);
-
-         if (cellItr.hasNext())
-         {
-            out.write(",");
-         }
       }
-      out.write("]");
+      out.write(']');
    }
 
    public String getType()

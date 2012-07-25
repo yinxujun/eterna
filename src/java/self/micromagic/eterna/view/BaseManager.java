@@ -19,13 +19,13 @@ import self.micromagic.util.StringAppender;
 
 public class BaseManager
 {
-   public static final String DATA_SRC = "dataSrc";
-   public static final String INIT_PARAM = "initParam";
    public static final String NEW_ROW = "newRow";
    public static final String REQUIRED = "required";
    public static final String CELL_SIZE = "cellSize";
    public static final String CONTAINER_PARAM = "containerParam";
    public static final String TITLE_PARAM = "titleParam";
+   public static final String DATA_SRC = "dataSrc";
+   public static final String INIT_PARAM = "initParam";
    public static final String BEFORE_INIT = "beforeInit";
    public static final String INIT_SCRIPT = "initScript";
 
@@ -36,13 +36,13 @@ public class BaseManager
    static
    {
       definedNameSet.add("value");
-      definedNameSet.add(DATA_SRC);
-      definedNameSet.add(INIT_PARAM);
       definedNameSet.add(NEW_ROW);
       definedNameSet.add(REQUIRED);
       definedNameSet.add(CELL_SIZE);
       definedNameSet.add(CONTAINER_PARAM);
       definedNameSet.add(TITLE_PARAM);
+      definedNameSet.add(DATA_SRC);
+      definedNameSet.add(INIT_PARAM);
       definedNameSet.add(BEFORE_INIT);
       definedNameSet.add(INIT_SCRIPT);
       definedNameSet.add(ResultReader.INPUT_TYPE_FLG);
@@ -85,7 +85,7 @@ public class BaseManager
          ResultReader temp = (ResultReader) itr.next();
          if (temp.isVisible())
          {
-            this.items.add(new ReaderItem(temp));
+            this.items.add(new ReaderItem(this.stringCoder, temp));
          }
       }
    }
@@ -99,7 +99,7 @@ public class BaseManager
          ConditionProperty temp = search.getConditionProperty(i);
          if (temp.isVisible())
          {
-            this.items.add(new PropertyItem(temp));
+            this.items.add(new PropertyItem(this.stringCoder, temp));
          }
       }
    }
@@ -159,8 +159,10 @@ public class BaseManager
 
    }
 
-   abstract class AbstractItem
+   abstract static class AbstractItem
+			implements Item
    {
+   	protected StringCoder stringCoder;
       private String dataSrc;
       private boolean newRow;
       private boolean required;
@@ -170,6 +172,11 @@ public class BaseManager
       private String initScript;
       private int[] cellSize;
       protected String initParam;
+
+		public AbstractItem(StringCoder stringCoder)
+		{
+			this.stringCoder = stringCoder;
+		}
 
       protected void initItem()
             throws ConfigurationException
@@ -237,15 +244,16 @@ public class BaseManager
 
    }
 
-   class ReaderItem extends AbstractItem
+   static class ReaderItem extends AbstractItem
          implements Item
    {
       private ResultReader reader;
       private String inputType;
 
-      public ReaderItem(ResultReader reader)
+      public ReaderItem(StringCoder stringCoder, ResultReader reader)
             throws ConfigurationException
       {
+			super(stringCoder);
          this.reader = reader;
 
          this.initItem();
@@ -272,11 +280,11 @@ public class BaseManager
                   {
                      if (buf.length() > 0)
                      {
-                        buf.append(",");
+                        buf.append(',');
                      }
-                     buf.append(name).append(":").append("\"");
-                     buf.append(stringCoder.toJsonString((String) reader.getAttribute(name)));
-                     buf.append("\"");
+                     buf.append(name).append(":\"");
+                     buf.append(this.stringCoder.toJsonString((String) reader.getAttribute(name)));
+                     buf.append('"');
                   }
                }
                if (buf.length() > 0)
@@ -336,9 +344,10 @@ public class BaseManager
    {
       private ConditionProperty property;
 
-      public PropertyItem(ConditionProperty property)
+      public PropertyItem(StringCoder stringCoder, ConditionProperty property)
             throws ConfigurationException
       {
+			super(stringCoder);
          this.property = property;
 
          this.initItem();
@@ -360,11 +369,11 @@ public class BaseManager
                   {
                      if (buf.length() > 0)
                      {
-                        buf.append(",");
+                        buf.append(',');
                      }
-                     buf.append(name).append(":").append("\"");
-                     buf.append(stringCoder.toJsonString(property.getAttribute(name)));
-                     buf.append("\"");
+                     buf.append(name).append(":\"");
+                     buf.append(this.stringCoder.toJsonString(property.getAttribute(name)));
+                     buf.append('"');
                   }
                }
                if (buf.length() > 0)

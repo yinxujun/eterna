@@ -205,17 +205,16 @@ public abstract class AbstractTable extends ComponentImpl
 
       if (this.getDataName() != null)
       {
-         out.write(",dataName:");
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(this.getDataName()));
-         out.write("\"");
+         out.write(",dataName:\"");
+         this.stringCoder.toJsonStringWithoutCheck(out, this.getDataName());
+         out.write('"');
       }
 
       if (this.getTR() != null)
       {
          out.write(",tr:{");
          this.getTR().printBody(out, data, view);
-         out.write("}");
+         out.write('}');
       }
    }
 
@@ -397,10 +396,9 @@ public abstract class AbstractTable extends ComponentImpl
          out.write(",title:{");
          if (this.getCaption() != null)
          {
-            out.write("caption:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(this.getCaption()));
-            out.write("\"");
+            out.write("caption:\"");
+            this.stringCoder.toJsonStringWithoutCheck(out, this.getCaption());
+            out.write('"');
          }
          else
          {
@@ -409,22 +407,19 @@ public abstract class AbstractTable extends ComponentImpl
          this.printSpecialTitle(out, data);
          if (this.getTitleParam() != null)
          {
-            out.write(",");
+            out.write(',');
             out.write(this.getTitleParam());
          }
          if (this.isIgnoreGlobalTitleParam())
          {
             out.write(",ignoreGlobal:1");
          }
-         out.write("}");
-
-         out.write(",container:{");
+         out.write("},container:{");
          if (this.getDefaultValue() != null)
          {
-            out.write("defaultValue:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(this.getDefaultValue()));
-            out.write("\"");
+            out.write("defaultValue:\"");
+            this.stringCoder.toJsonStringWithoutCheck(out, this.getDefaultValue());
+            out.write('"');
          }
          else
          {
@@ -436,20 +431,19 @@ public abstract class AbstractTable extends ComponentImpl
             out.write(",value:{dataName:");
             if (!this.isOtherData())
             {
-               out.write("\"");
-               out.write(this.stringCoder.toJsonString(this.getDataName()));
-               out.write("\"");
+               out.write('"');
+               this.stringCoder.toJsonString(out, this.getDataName());
+               out.write('"');
             }
             else
             {
-               out.write("\"");
-               out.write(this.stringCoder.toJsonString(this.otherDataName));
-               out.write("\"");
+               out.write('"');
+               this.stringCoder.toJsonString(out, this.otherDataName);
+               out.write('"');
             }
             out.write(",srcName:\"");
-            out.write(this.stringCoder.toJsonString(this.getSrcName()));
-            out.write("\"");
-            out.write("}");
+            this.stringCoder.toJsonString(out, this.getSrcName());
+            out.write("\"}");
          }
          else
          {
@@ -458,31 +452,29 @@ public abstract class AbstractTable extends ComponentImpl
          }
          if (this.getContainerParam() != null)
          {
-            out.write(",");
+            out.write(',');
             out.write(this.getContainerParam());
          }
          if (this.isIgnoreGlobalContainerParam())
          {
             out.write(",ignoreGlobal:1");
          }
-         out.write("}");
+         out.write('}');
 
          this.printSpecialElse(out, data);
 
          if (this.getInitParam() != null)
          {
-            out.write(",initParam:");
-            out.write("{");
+            out.write(",initParam:{");
             out.write(this.getInitParam());
-            out.write("}");
+            out.write('}');
          }
          if (this.getTypicalComponent() != null)
          {
             String idName = ViewTool.createTypicalComponentName(data, this.getTypicalComponent());
-            out.write(",typicalComponent:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(idName));
-            out.write("\"");
+            out.write(",typicalComponent:\"");
+            this.stringCoder.toJsonString(out, idName);
+            out.write('"');
          }
 
       }

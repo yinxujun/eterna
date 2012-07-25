@@ -179,30 +179,29 @@ public final class AttributeComponent extends ComponentImpl
          throws IOException, ConfigurationException
    {
       super.printSpecialBody(out, data, view);
-      out.write(",");
+      out.write(',');
       out.write(NO_SUB_FLAG);
       out.write(":1");
       if (!StringTool.isEmpty(this.bodyHTML))
       {
-         out.write(",bodyString:");
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(this.bodyHTML));
-         out.write("\"");
+         out.write(",bodyString:\"");
+         this.stringCoder.toJsonStringWithoutCheck(out, this.bodyHTML);
+         out.write('"');
       }
       if (SPECIAL_TYPE_INHERIT.equals(this.type))
       {
-         out.write(",");
+         out.write(',');
          out.write(INHERIT_GLOBAL_SEARCH);
          out.write(":{gSearch:1");
          if (this.swapFlag != null)
          {
-            out.write(",");
+            out.write(',');
             out.write(FLAG_TAG);
             out.write(":\"");
-            out.write(this.stringCoder.toJsonString(this.swapFlag));
-            out.write("\"");
+            this.stringCoder.toJsonStringWithoutCheck(out, this.swapFlag);
+            out.write('"');
          }
-         out.write("}");
+         out.write('}');
       }
    }
 

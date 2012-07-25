@@ -61,17 +61,17 @@ public class ViewWrapComponent extends ComponentImpl
             buf.append("css:{");
             if (this.view.getWidth() != null)
             {
-               buf.append("width:").append("\"").append(this.view.getWidth()).append("\"");
+               buf.append("width:\"").append(this.view.getWidth()).append('"');
             }
             if (this.view.getHeight() != null)
             {
                if (this.view.getWidth() != null)
                {
-                  buf.append(",");
+                  buf.append(',');
                }
-               buf.append("height:").append("\"").append(this.view.getHeight()).append("\"");
+               buf.append("height:\"").append(this.view.getHeight()).append('"');
             }
-            buf.append("}");
+            buf.append('}');
             this.componentParam = new String(buf.toString());
          }
       }

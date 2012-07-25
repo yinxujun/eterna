@@ -1,26 +1,29 @@
 
-/** version: 1.5.2 */
+/** version: 1.5.3 */
 
-/*
 (function(window) {
 
-// @todo change to this
-window.Eterna = Eterna;
+if (typeof $eternaInitialized == "undefined")
+{
+	window.$eternaInitialized = 1;
+}
+else
+{
+	return;
+}
 
-})(window);
-*/
-
-var ___ETERNA_VERSION = "1.5.2";
+var ___ETERNA_VERSION = "1.5.3";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
-var ED_GET_VALUE = 0x1;
-var ED_EXECUTE_SCRIPT = 0x2;
-var ED_SHOW_CREATED_HTML = 0x4;
-var ED_SHOW_OTHERS = 0x8;
-var ED_BASE = 0x10;
-var ED_HIGHER = 0x80;
-var ED_FN_CALLED = 0x30;
-var ED_FNC_STACK = 0x40;
-var ED_COM_CREATED = 0x20;
+window.ED_GET_VALUE = 0x1;
+window.ED_EXECUTE_SCRIPT = 0x2;
+window.ED_SHOW_CREATED_HTML = 0x4;
+window.ED_SHOW_OTHERS = 0x8;
+window.ED_BASE = 0x10;
+window.ED_HIGHER = 0x80;
+window.ED_FN_CALLED = 0x30;
+window.ED_FNC_STACK = 0x40;
+window.ED_COM_CREATED = 0x20;
+
 
 if (typeof jQuery == 'undefined' && typeof $ == "object" && typeof $.jquery == "string")
 {
@@ -29,9 +32,9 @@ if (typeof jQuery == 'undefined' && typeof $ == "object" && typeof $.jquery == "
 
 // EE = ETERNA_EVENT
 var EE_SUB_WINDOW_CLOSE = "lock_close";
-var eterna_table_td_empty_value = "&nbsp;";
-var eterna_tableForm_title_pluse = "";
-var eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
+window.eterna_table_td_empty_value = "&nbsp;";
+window.eterna_tableForm_title_pluse = "";
+window.eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
 {
 	if (titleValue.exists && titleValue.value != null && titleValue.value != "")
 	{
@@ -76,13 +79,13 @@ var eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, cont
 		titleObj.html(eterna_table_td_empty_value);
 	}
 };
-var eterna_tableForm_requared_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
+window.eterna_tableForm_requared_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
 {
 	var tObj = jQuery("<span>*</span>");
 	tObj.css("color", "red");
 	titleObj.prepend(tObj);
 };
-var eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, upTitle, _eterna)
+window.eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, upTitle, _eterna)
 {
 	if (titleValue.exists && titleValue.value != null && titleValue.value != "")
 	{
@@ -119,19 +122,20 @@ var eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, up
 		titleObj.html(eterna_table_td_empty_value);
 	}
 };
-var eterna_select_default_value = [["","-不限-"]];
+window.eterna_select_default_value = [["","-不限-"]];
 
 var eterna_com_stack = [];
 var eterna_fn_stack = [];
 
+
 // eg = eterna_globe
-var EG_SMA = "searchManager_attributes";
-var EG_DATA_TYPE = "___dataType";
-var EG_DATA_TYPE_ONLYRECORD = "data";
-var EG_DATA_TYPE_DATA = "data";
-var EG_DATA_TYPE_REST = "REST";
-var EG_DATA_TYPE_ALL = "all";
-var EG_DATA_TYPE_WEB = "web";
+window.EG_SMA = "searchManager_attributes";
+window.EG_DATA_TYPE = "___dataType";
+window.EG_DATA_TYPE_ONLYRECORD = "data";
+window.EG_DATA_TYPE_DATA = "data";
+window.EG_DATA_TYPE_REST = "REST";
+window.EG_DATA_TYPE_ALL = "all";
+window.EG_DATA_TYPE_WEB = "web";
 
 var EG_SCRIPT_STR_PREFIX_ARR = ["javascript:", "vbscript:"];
 var EG_JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
@@ -149,59 +153,55 @@ var EG_SWAP_INFO = "___swapInfo";
 var EG_SCATTER_INIT_FLAG = "initId";
 var EG_INHERIT_FLAG = "inherit";
 var EG_INHERIT_INFO = "___inheritInfo";
-var EG_INHERIT_BASE = "___baseObj";  //这个的存储结构需要修改
+var EG_INHERIT_BASE = "___baseObj";
 var EG_INHERIT_GLOBAL_SEARCH = "inheritGlobalSearch";
 var EG_KEEP_BASE_OBJ = "keepBaseObj";
 var EG_OLD_BASE_OBJ = "oldBaseObj";
 var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
-if (typeof $eternaInitialized == "undefined")
+
+var eg_cache = {
+	willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
+	eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false
+};
+
+var EG_TEMP_NAMES = [
+	"dataName", "srcName", "index", "columnCount", "rowNum",
+	"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
+	"name", "caption", "valueObj", "param", "tempData",
+	"sysTemplateRoot", "sysOptions"
+];
+
+var eg_temp = {};
+
+window.eg_cache = eg_cache;
+window.eg_temp = eg_temp;
+
+// 初始化parentEterna
+if (typeof dialogArguments == 'object')
 {
-	window.$eternaInitialized = 1;
-
-	var eg_cache = {
-		willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
-		eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false
-	};
-
-	var EG_TEMP_NAMES = [
-		"dataName", "srcName", "index", "columnCount", "rowNum",
-		"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
-		"name", "caption", "valueObj", "param", "tempData",
-		"sysTemplateRoot", "sysOptions"
-	];
-
-	var eg_temp = {};
-
-	window.eg_cache = eg_cache;
-	window.EG_TEMP_NAMES = EG_TEMP_NAMES;
-	window.eg_temp = eg_temp;
-
-	// 初始化parentEterna
-	if (typeof dialogArguments == 'object')
+	if (dialogArguments.parentEterna != null)
 	{
-		if (dialogArguments.parentEterna != null)
+		eg_cache.parentEterna = dialogArguments.parentEterna;
+		window.opener = dialogArguments.parentWindow;
+	}
+}
+if (opener != null && eg_cache.parentEterna == null)
+{
+	try
+	{
+		if (opener.eterna_getParentEterna != null)
 		{
-			eg_cache.parentEterna = dialogArguments.parentEterna;
-			window.opener = dialogArguments.parentWindow;
+			eg_cache.parentEterna = opener.eterna_getParentEterna(window);
 		}
 	}
-	if (opener != null && eg_cache.parentEterna == null)
-	{
-		try
-		{
-			if (opener.eterna_getParentEterna != null)
-			{
-				eg_cache.parentEterna = opener.eterna_getParentEterna(window);
-			}
-		}
-		catch (tmpEX) {}
-	}
+	catch (tmpEX) {}
 }
 
 var eg_caculateWidth_fix;
 var eg_defaultWidth = 80;
+
 
 
 function Eterna($E, eterna_debug, rootWebObj)
@@ -3868,6 +3868,9 @@ function Eterna($E, eterna_debug, rootWebObj)
 
 }
 
+window.Eterna = Eterna;
+
+
 // 检查框架的数据是否合法, 不完整的将会补充完整, 并且在数据结构上与老版本兼容
 var EG_ED_COMPATIBLE_NAMES = {
 	G:"global", D:"records", V:"view", T:"typical", F:"eFns", R:"res"
@@ -3903,7 +3906,7 @@ function eterna_checkEternaData($E)
 	return $E;
 }
 
-eterna_initEternaCache = function(_eterna, newData)
+function eterna_initEternaCache(_eterna, newData)
 {
 	if (newData != null && newData.cache != null)
 	{
@@ -3918,7 +3921,7 @@ eterna_initEternaCache = function(_eterna, newData)
 /**
  * 当获得的对象不是json时, 将数据以html的方式放入到根节点中.
  */
-eterna_initTextData = function(_eterna, textData)
+function eterna_initTextData(_eterna, textData)
 {
 	if (_eterna.rootWebObj != null)
 	{
@@ -3934,7 +3937,7 @@ eterna_initTextData = function(_eterna, textData)
 }
 
 // 添加一个需要等待初始化的对象
-function eterna_addWillInitObj(obj, priority)
+window.eterna_addWillInitObj = function(obj, priority)
 {
 	if (priority == null)
 	{
@@ -3977,7 +3980,7 @@ function eterna_existsWillInitObj(obj)
 }
 
 // 注册一个静态的初始化方法, 如果priority为-1, 则删除已注册的
-function eterna_registerStaticInitFn(fn, priority)
+window.eterna_registerStaticInitFn = function(fn, priority)
 {
 	var delIndex = -1;
 	for (var i = 0; i < eg_cache.staticInitFns.length; i++)
@@ -4062,7 +4065,7 @@ function eterna_moveArrayValue(arr, fromIndex, toIndex)
 
 // 触发所有等待初始化的对象的[EG_EVENT_WILL_INIT]事件
 // 然后执行所有的静态初始化方法
-function eterna_doInitObjs(theObj)
+window.eterna_doInitObjs = function(theObj)
 {
 	var objs = eg_cache.willInitObjs;
 	eg_cache.willInitObjs = [];
@@ -4181,7 +4184,7 @@ else
 /**
  * 获取文本资源的值
  */
-function eterna_getResourceValue(resArray, params)
+window.eterna_getResourceValue = function(resArray, params)
 {
 	if (params == null)
 	{
@@ -4555,7 +4558,7 @@ function eterna_dealRemoteData(str)
  * debug		调试信息的输出等级
  * recall	  如果需要异步加载, 要给出回调函数
  */
-function ef_loadEterna(url, param, divObj, useAJAX, debug, recall)
+window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
 {
 	var eterna_debug = debug;
 	var $E = {};
@@ -4643,7 +4646,7 @@ function ef_loadEterna(url, param, divObj, useAJAX, debug, recall)
  * ""	  :	true
  * " "	 :	false
  */
-function ef_isEmpty(str)
+window.ef_isEmpty = function(str)
 {
 	return str == null || str == "";
 }
@@ -4651,7 +4654,7 @@ function ef_isEmpty(str)
 /**
  * 将字符串中需转义的字符设上转义符
  */
-function ef_toScriptString(str)
+window.ef_toScriptString = function(str)
 {
 	if (str == null)
 	{
@@ -4716,7 +4719,7 @@ function ef_toScriptString(str)
 /**
  * 动态加载脚本
  */
-function ef_loadScript(flag, scriptPath, recall)
+window.ef_loadScript = function(flag, scriptPath, recall)
 {
 	if (eg_cache.loadedScripts[flag])
 	{
@@ -4757,7 +4760,7 @@ function ef_loadScript(flag, scriptPath, recall)
  * @param num
  * @param pattern
  */
-function ef_formatNumber(num, pattern)
+window.ef_formatNumber = function(num, pattern)
 {
 	if (typeof num != "number")
 	{
@@ -4992,3 +4995,5 @@ function WebObjList(parent, inheritObj)
 	}
 
 }
+
+})(window);

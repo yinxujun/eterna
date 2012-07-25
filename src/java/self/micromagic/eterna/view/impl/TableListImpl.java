@@ -207,17 +207,21 @@ public class TableListImpl extends AbstractTable
 
       out.write(",columns:[");
       Iterator columnItr = this.getColumns();
+		boolean hasColumn = false;
       while (columnItr.hasNext())
       {
+			if (hasColumn)
+			{
+            out.write(',');
+			}
+			else
+			{
+				hasColumn = true;
+			}
          TableList.Column column = (TableList.Column) columnItr.next();
          column.print(out, data, view);
-
-         if (columnItr.hasNext())
-         {
-            out.write(",");
-         }
       }
-      out.write("]");
+      out.write(']');
    }
 
    public String getType()

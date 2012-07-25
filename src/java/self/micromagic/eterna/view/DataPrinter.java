@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Iterator;
 import java.sql.SQLException;
+import java.text.DateFormat;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
@@ -142,6 +143,58 @@ public interface DataPrinter
     * @param itr          迭代器
     */
    void printIterator(Writer out, Iterator itr) throws IOException, ConfigurationException;
+
+	/**
+	 * 输出对象的起始符.
+    *
+    * @param out          输出流
+	 */
+	void printObjectBegin(Writer out) throws IOException, ConfigurationException;
+
+	/**
+	 * 输出对象的结束符.
+    *
+    * @param out          输出流
+	 */
+	void printObjectEnd(Writer out) throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        整型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        字符串值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, String value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        对象值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, Object value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 设置日期类型的数据使用的格式化方式.
+	 */
+	void setDateFormat(DateFormat format);
 
    /**
     * 获取一个bean实例的输出器.
