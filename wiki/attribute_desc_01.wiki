@@ -1,4 +1,4 @@
-#summary 数据库访问层中的属性(attribute)名和界面端的属性对应关系
+#summary 后端配置的属性(attribute)名和界面端的属性对应关系
 #labels Phase-Implementation
 
 =属性(attribute)名的对应关系说明=
