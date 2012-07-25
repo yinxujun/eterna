@@ -5,7 +5,8 @@
 关于baseName的使用：<br>
 `query:XXX`：表示使用`query`->`readers`中的`reader`列表。<br>
 `reader:XXX`：表示使用`reader-manager`中的`reader`列表。<br>
-`search:XXX`：表示使用`search`->`condition-propertys`中的`condition-property`列表。<br>
+`search:XXX`：表示使用`search`->`condition-propertys`中的`condition-property`列。<br>
+注：`search:XXX`只能在*table-form*中使用<br>
 下面这段代码为引用的样例:
 {{{
 <reader-manager name="r">
@@ -40,4 +41,19 @@
 
 =attribute名称的对应表=
 ||attribute名称||R||Q||S||table-form||table-list||
-||initScript||有效||有效||有效||子节点：init-script<br>或属性：initScript||init-script||
+||initScript||有效||有效||有效||子节点：init-script或属性：initScript||子节点：init-script或属性：initScript||
+||beforeInit||有效||有效||有效||子节点：before-init或属性：beforeInit||子节点：before-init或属性：beforeInit||
+||initParam||有效||有效||有效||子节点：init-param或属性：initParam||子节点：init-param或属性：initParam||
+||titleParam||有效||有效||有效||子节点：title-param或属性：titleParam||子节点：title-param或属性：titleParam||
+||containerParam||有效||有效||有效||子节点：component-param或属性：comParam||子节点：component-param或属性：comParam||
+||cellSize||有效||有效||有效||属性：titleSize和containerSize||无效||
+||required||有效||有效||有效||属性：required||无效||
+||newRow||有效||有效||有效||属性：newRow||无效||
+<br>
+表中各字段的说明：<br>
+attribute名称：可定义在配置中的属性名称。<br>
+R：属性定义在`query`->`readers`中的`reader`列表中是否有效。<br>
+Q：属性定义在`reader-manager`中的`reader`列表中是否有效。<br>
+S：属性定义在`search`->`condition-propertys`中的`condition-property`列表中是否有效。<br>
+table-form：对应`table-form`->`cells`中的`cell`列表的属性。<br>
+table-list：对应`table-list`->`columns`中的`column`列表的属性。
