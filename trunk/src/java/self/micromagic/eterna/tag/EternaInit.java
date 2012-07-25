@@ -56,12 +56,13 @@ public class EternaInit extends InitBaseTag
 			String dataType = view.getDataType(data);
 			if (ViewAdapter.DATA_TYPE_WEB.equals(dataType))
 			{
-				this.printInitPage(view, data, out);
 				this.includeBody = true;
+				this.printInitPage(view, data, out);
 				return EVAL_BODY_INCLUDE;
 			}
 			else
 			{
+				this.includeBody = false;
 				view.printView(out, data, this.getCacheMap(view));
 			}
       }

@@ -402,7 +402,7 @@ public class Jdk14Factory extends LogFactory
             temp.append("Jdk14 log  name:").append(logName).append(", Level:").append(level);
             if (logFile != null)
             {
-               temp.append(", file(").append(logFile).append(",");
+               temp.append(", file(").append(logFile).append(',');
                int tempI = ((filesize % 1024) * 10 + 512) / 1024;
                if (tempI == 10)
                {
@@ -413,10 +413,10 @@ public class Jdk14Factory extends LogFactory
                   temp.append(filesize / 1024);
                   if (tempI > 0)
                   {
-                     temp.append(".").append(tempI);
+                     temp.append('.').append(tempI);
                   }
                }
-               temp.append("k").append(",").append(filecount).append(")");
+               temp.append("k,").append(filecount).append(')');
             }
             System.out.println(temp);
             logger.setLevel(level);

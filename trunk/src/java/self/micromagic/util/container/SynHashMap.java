@@ -208,7 +208,7 @@ public class SynHashMap extends AbstractMap
 			this.expungeStaleEntries0();
 		}
    }
-   protected synchronized void expungeStaleEntries0()
+   protected void expungeStaleEntries0()
 	{
 		SynEntry[] tmpTable = this.table;
 		Object r;
@@ -218,27 +218,30 @@ public class SynHashMap extends AbstractMap
 			SynEntry entry = ((Ref) r).getEntry();
 			hash = entry.hash;
 			int i = indexFor(hash, tmpTable.length);
-			SynEntry prev = tmpTable[i];
-			SynEntry e = prev;
-			while (e != null)
+			// 这里需要修改size, 所以需要加上同步锁
+			synchronized (this)
 			{
-				SynEntry next = e.next;
-				if (entry.sameEntry(e))
+				SynEntry prev = tmpTable[i];
+				SynEntry e = prev;
+				while (e != null)
 				{
-					this.size--;
-					if (prev == e)
+					SynEntry next = e.next;
+					if (entry == e || entry.sameEntry(e))
 					{
-						tmpTable[i] = next;
+						if (prev == e)
+						{
+							tmpTable[i] = next;
+						}
+						else
+						{
+							prev.next = next;
+						}
+						this.size--;
+						break;
 					}
-					else
-					{
-						prev.next = next;
-					}
-					e.recordRemoval(this);
-					break;
+					prev = e;
+					e = next;
 				}
-				prev = e;
-				e = next;
 			}
 		}
    }
@@ -282,16 +285,30 @@ public class SynHashMap extends AbstractMap
 	{
 		if (key == null)
 		{
-			return getForNullKey();
+			return this.getForNullKey();
 		}
 		int hash = hash(key.hashCode());
 		SynEntry[] tmpTable = this.getTable();
-		for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
+		if (this.keyRefType == HARD)
 		{
-			Object k;
-			if (e.hash == hash && ((k = e.getKey()) == key || key.equals(k)))
+			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
 			{
-				return e.value;
+				Object k;
+				if (e.hash == hash && ((k = e.hardKey) == key || key.equals(k)))
+				{
+					return e.value;
+				}
+			}
+		}
+		else
+		{
+			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
+			{
+				Object k;
+				if (e.hash == hash && ((k = e.refKey.get()) == key || key.equals(k)))
+				{
+					return e.value;
+				}
 			}
 		}
 		return null;
@@ -303,11 +320,24 @@ public class SynHashMap extends AbstractMap
 	protected Object getForNullKey()
 	{
 		SynEntry[] tmpTable = this.getTable();
-		for (SynEntry e = tmpTable[0]; e != null; e = e.next)
+		if (this.keyRefType == HARD)
 		{
-			if (e.getKey() == null)
+			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
 			{
-				return e.value;
+				if (e.hardKey == null)
+				{
+					return e.value;
+				}
+			}
+		}
+		else
+		{
+			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
+			{
+				if (e.refKey == null)
+				{
+					return e.value;
+				}
 			}
 		}
 		return null;
@@ -326,19 +356,65 @@ public class SynHashMap extends AbstractMap
 	 */
 	protected SynEntry getEntry(Object key)
 	{
-		int hash = (key == null) ? 0 : hash(key.hashCode());
-		SynEntry[] tmpTable = this.table;
-		for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
+		if (key == null)
 		{
-			Object k;
-			if (e.hash == hash && ((k = e.getKey()) == key || (key != null && key.equals(k))))
+			return this.getEntryForNullKey();
+		}
+		int hash = hash(key.hashCode());
+		SynEntry[] tmpTable = this.getTable();
+		if (this.keyRefType == HARD)
+		{
+			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
 			{
-				return e;
+				Object k;
+				if (e.hash == hash && ((k = e.hardKey) == key || key.equals(k)))
+				{
+					return e;
+				}
+			}
+		}
+		else
+		{
+			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
+			{
+				Object k;
+				if (e.hash == hash && ((k = e.refKey.get()) == key || key.equals(k)))
+				{
+					return e;
+				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * 获取key为null的Entry.
+	 */
+	protected SynEntry getEntryForNullKey()
+	{
+		SynEntry[] tmpTable = this.getTable();
+		if (this.keyRefType == HARD)
+		{
+			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
+			{
+				if (e.hardKey == null)
+				{
+					return e;
+				}
+			}
+		}
+		else
+		{
+			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
+			{
+				if (e.refKey == null)
+				{
+					return e;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * 添加一个key value对.
@@ -347,7 +423,7 @@ public class SynHashMap extends AbstractMap
 	{
 		if (key == null)
 		{
-			return putForNullKey(value);
+			return this.putForNullKey(value);
 		}
 		int hash = hash(key.hashCode());
 		SynEntry[] tmpTable = this.getTable();
@@ -359,7 +435,6 @@ public class SynHashMap extends AbstractMap
 			{
 				Object oldValue = e.value;
 				e.value = value;
-				e.recordAccess(this);
 				return oldValue;
 			}
 		}
@@ -371,7 +446,7 @@ public class SynHashMap extends AbstractMap
 	/**
 	 * 添加一个key为null的value.
 	 */
-	protected synchronized Object putForNullKey(Object value)
+	protected final Object putForNullKey(Object value)
 	{
 		SynEntry[] tmpTable = this.getTable();
 		for (SynEntry e = tmpTable[0]; e != null; e = e.next)
@@ -380,7 +455,6 @@ public class SynHashMap extends AbstractMap
 			{
 				Object oldValue = e.value;
 				e.value = value;
-				e.recordAccess(this);
 				return oldValue;
 			}
 		}
@@ -392,7 +466,7 @@ public class SynHashMap extends AbstractMap
 	/**
 	 * 用于内部使用的添加key value对.
 	 */
-	protected synchronized void putForCreate(Object key, Object value)
+	protected final void putForCreate(Object key, Object value)
 	{
 		int hash = (key == null) ? 0 : hash(key.hashCode());
 		SynEntry[] tmpTable = this.table;
@@ -412,7 +486,7 @@ public class SynHashMap extends AbstractMap
 	/**
 	 * 用于内部使用, 添加map中的key value对.
 	 */
-	protected void putAllForCreate(Map m)
+	protected synchronized void putAllForCreate(Map m)
 	{
 		for (Iterator i = m.entrySet().iterator(); i.hasNext();)
 		{
@@ -447,7 +521,7 @@ public class SynHashMap extends AbstractMap
 	/**
 	 * 将所有的Entry移到新的hash表中.
 	 */
-	protected synchronized void transfer(SynEntry[] newTable)
+	protected final void transfer(SynEntry[] newTable)
 	{
 		SynEntry[] src = this.table;
 		int newCapacity = newTable.length;
@@ -489,14 +563,14 @@ public class SynHashMap extends AbstractMap
 			{
 				targetCapacity = MAXIMUM_CAPACITY;
 			}
-			int newCapacity = table.length;
+			int newCapacity = this.table.length;
 			while (newCapacity < targetCapacity)
 			{
 				newCapacity <<= 1;
 			}
-			if (newCapacity > table.length)
+			if (newCapacity > this.table.length)
 			{
-				resize(newCapacity);
+				this.resize(newCapacity);
 			}
 		}
 		for (Iterator i = m.entrySet().iterator(); i.hasNext();)
@@ -541,7 +615,6 @@ public class SynHashMap extends AbstractMap
 				{
 					prev.next = next;
 				}
-				e.recordRemoval(this);
 				return e;
 			}
 			prev = e;
@@ -582,7 +655,6 @@ public class SynHashMap extends AbstractMap
 				{
 					prev.next = next;
 				}
-				e.recordRemoval(this);
 				return e;
 			}
 			prev = e;
@@ -826,26 +898,12 @@ public class SynHashMap extends AbstractMap
 			}
 		}
 
-		/**
-		 * 当通过put(k,v)修改了一个已存在的Entry时, 会调用此方法.
-		 */
-		protected void recordAccess(SynHashMap m)
-		{
-		}
-
-		/**
-		 * 当通过remove移除了一个已存在的Entry时, 会调用此方法.
-		 */
-		protected void recordRemoval(SynHashMap m)
-		{
-		}
-
 	}
 
 	/**
 	 * 添加一个Entry.
 	 */
-	protected synchronized void addEntry(int hash, Object key, Object value, int bucketIndex)
+	protected final void addEntry(int hash, Object key, Object value, int bucketIndex)
 	{
 		SynEntry e = this.table[bucketIndex];
 		this.table[bucketIndex] = new SynEntry(hash, key, value, e, this.keyRefType, this.queue);
@@ -858,7 +916,7 @@ public class SynHashMap extends AbstractMap
 	/**
 	 * 创建一个Entry, 在初始化 反序列化 clone时使用.
 	 */
-	protected synchronized void createEntry(int hash, Object key, Object value, int bucketIndex)
+	protected final void createEntry(int hash, Object key, Object value, int bucketIndex)
 	{
 		SynEntry e = this.table[bucketIndex];
 		this.table[bucketIndex] = new SynEntry(hash, key, value, e, this.keyRefType, this.queue);

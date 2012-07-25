@@ -60,7 +60,7 @@ public class JsonPrinter
     *
     * @param c           字符值
     */
-   public JsonPrinter print(Writer out, char c)
+   public JsonPrinter print(char c)
          throws IOException
    {
       try
@@ -194,7 +194,7 @@ public class JsonPrinter
     *
     * @param values       要输出的Object对象数组
     */
-   public JsonPrinter print(Writer out, Object[] values)
+   public JsonPrinter print(Object[] values)
          throws IOException
    {
       try

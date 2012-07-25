@@ -3,21 +3,21 @@ package self.micromagic.eterna.view.impl;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Enumeration;
 
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
 import self.micromagic.cg.ClassGenerator;
 import self.micromagic.cg.ClassKeyCache;
 import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.search.SearchAdapter;
-import self.micromagic.eterna.search.SearchManager;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.Tool;
@@ -27,11 +27,13 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.eterna.view.DataPrinterGenerator;
 import self.micromagic.eterna.view.StringCoder;
+import self.micromagic.util.FormatTool;
 
 public class DataPrinterImpl extends AbstractGenerator
       implements DataPrinter, DataPrinterGenerator
 {
    protected StringCoder stringCoder;
+	protected DateFormat dateFormat = FormatTool.dateFullFormat;
 
    public DataPrinterImpl()
    {
@@ -56,18 +58,22 @@ public class DataPrinterImpl extends AbstractGenerator
       while (entrys.hasNext())
       {
          Map.Entry entry = (Map.Entry) entrys.next();
-         String key = (String) entry.getKey();
          Object value = entry.getValue();
          if (value != null)
          {
+				Object key = entry.getKey();
+         	String keyStr = key == null ? null : key.toString();
             if (hasPreData || !first)
             {
                // 输出data数据集前面会有其它数据或不是第一个数据时，需要先输出","
-               out.write(",");
+               out.write(',');
             }
-            first = false;
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(key));
+				else
+				{
+            	first = false;
+				}
+            out.write('"');
+            this.stringCoder.toJsonString(out, keyStr);
             out.write("\":");
             this.print(out, value);
          }
@@ -77,230 +83,146 @@ public class DataPrinterImpl extends AbstractGenerator
    public void print(Writer out, Object value)
          throws IOException, ConfigurationException
    {
-      try
-      {
-         if (value == null)
-         {
-            out.write("null");
-         }
-         else if (value instanceof String)
-         {
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString((String) value));
-            out.write("\"");
-         }
-         else if (value instanceof ResultRow)
-         {
-            this.printResultRow(out, (ResultRow) value);
-         }
-         else if (value instanceof SearchManager)
-         {
-            SearchManager sm = (SearchManager) value;
-            Iterator itr = sm.getConditions().iterator();
-            boolean hasValue = false;
-            out.write("{");
-            while (itr.hasNext())
-            {
-               SearchManager.Condition con = (SearchManager.Condition) itr.next();
-               if (con.value != null)
-               {
-                  if (hasValue)
-                  {
-                     out.write(",");
-                  }
-                  hasValue = true;
-                  out.write("\"");
-                  out.write(this.stringCoder.toJsonString(con.name));
-                  out.write("\":\"");
-                  out.write(this.stringCoder.toJsonString(con.value));
-                  out.write("\"");
-               }
-            }
-            out.write("}");
-         }
-         else if (value instanceof ResultIterator)
-         {
-            out.write("{");
-            this.printResultIterator(out, (ResultIterator) value);
-            out.write("}");
-         }
-         else if (value instanceof Collection)
-         {
-            this.printCollection(out, (Collection) value);
-         }
-         else if (value instanceof SearchAdapter.Result)
-         {
-            out.write("{");
-            SearchAdapter.Result result = (SearchAdapter.Result) value;
-            this.printResultIterator(out, result.queryResult);
-            out.write(",pageNum:");
-            out.write(String.valueOf(result.pageNum));
-            out.write(",pageSize:");
-            out.write(String.valueOf(result.pageSize));
-            out.write(",searchName:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(result.searchName));
-            out.write("\"");
-            if (result.queryResult.isRealRecordCountAvailable())
-            {
-               out.write(",totalCount:");
-               out.write(String.valueOf(result.queryResult.getRealRecordCount()));
-            }
-            if (result.singleOrderName != null)
-            {
-               out.write(",orderName:");
-               out.write("\"");
-               out.write(this.stringCoder.toJsonString(result.singleOrderName));
-               out.write("\"");
-               out.write(",orderDesc:");
-               out.write(result.singleOrderDesc ? "1" : "0");
-            }
-            out.write(",hasNextPage:");
-            out.write(result.queryResult.isHasMoreRecord() ? "1" : "0");
-            out.write("}");
-         }
-         else if (value instanceof SearchManager.Attributes)
-         {
-            out.write("{");
-            this.printSearchAttributes(out, (SearchManager.Attributes) value);
-            out.write("}");
-         }
-         else if (value instanceof Number || value instanceof Boolean)
-         {
-            out.write(value.toString());
-         }
-         else if (value instanceof Map)
-         {
-            this.printMap(out, (Map) value);
-         }
-			else if (value instanceof Iterator)
+		if (value == null)
+		{
+			out.write("null");
+		}
+		else if (value instanceof Number || value instanceof Boolean)
+		{
+			out.write(value.toString());
+		}
+		else if (value instanceof Map)
+		{
+			this.printMap(out, (Map) value);
+		}
+		else if (value instanceof Collection)
+		{
+			this.printCollection(out, (Collection) value);
+		}
+		else if (value instanceof ResultRow)
+		{
+			try
 			{
-				this.printIterator(out, (Iterator) value);
+				this.printResultRow(out, (ResultRow) value);
 			}
-			else if (value instanceof Enumeration)
+			catch (SQLException ex)
 			{
-				this.printEnumeration(out, (Enumeration) value);
+				throw new ConfigurationException(ex);
 			}
-         else if (value.getClass().isArray())
-         {
-            if (value.getClass().getComponentType().isPrimitive())
-            {
-               // 如果是基本类型, 需要以反射的方式获取每个元素
-               int length = Array.getLength(value);
-               out.write("[");
-               for (int i = 0; i < length; i++)
-               {
-                  if (i > 0)
-                  {
-                     out.write(",");
-                  }
-                  Object tmpObj = Array.get(value, i);
-                  if (tmpObj != null)
-                  {
-                     this.print(out, tmpObj);
-                  }
-                  else
-                  {
-                     out.write("null");
-                  }
-               }
-               out.write("]");
-            }
-            else
-            {
-               this.print(out, (Object[]) value);
-            }
-         }
-         else if (value instanceof BeanPrinter)
-         {
-            ((BeanPrinter) value).print(this, out, value);
-         }
-         else if (Tool.isBean(value.getClass()))
-         {
-            BeanPrinter bp = this.getBeanPrinter(value.getClass());
-            out.write("{");
-            bp.print(this, out, value);
-            out.write("}");
-         }
-         else
-         {
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(String.valueOf(value)));
-            out.write("\"");
-         }
-      }
-      catch (SQLException ex)
-      {
-         log.error("SQL error in printObject.", ex);
-         throw new ConfigurationException(ex);
-      }
+		}
+		else if (value instanceof ResultIterator)
+		{
+			out.write('{');
+			try
+			{
+				this.printResultIterator(out, (ResultIterator) value);
+			}
+			catch (SQLException ex)
+			{
+				throw new ConfigurationException(ex);
+			}
+			out.write('}');
+		}
+		else if (value instanceof Iterator)
+		{
+			this.printIterator(out, (Iterator) value);
+		}
+		else if (value instanceof String)
+		{
+			out.write('"');
+			this.stringCoder.toJsonStringWithoutCheck(out, (String) value);
+			out.write('"');
+		}
+		else if (value instanceof BeanPrinter)
+		{
+			((BeanPrinter) value).print(this, out, value);
+		}
+		else if (value instanceof Enumeration)
+		{
+			this.printEnumeration(out, (Enumeration) value);
+		}
+		else if (value instanceof Object[])
+		{
+			this.print(out, (Object[]) value);
+		}
+		else if (value instanceof int[])
+		{
+			this.print(out, (int[]) value);
+		}
+		else if (value instanceof double[])
+		{
+			this.print(out, (double[]) value);
+		}
+		else if (value instanceof Date)
+		{
+			this.print(out, this.dateFormat.format((Date) value));
+		}
+		else if (value instanceof Calendar)
+		{
+			Date d = ((Calendar) value).getTime();
+			this.print(out, this.dateFormat.format(d));
+		}
+		else if (Tool.isBean(value.getClass()))
+		{
+			BeanPrinter bp = this.getBeanPrinter(value.getClass());
+			out.write('{');
+			bp.print(this, out, value);
+			out.write('}');
+		}
+		else if (value instanceof boolean[])
+		{
+			this.print(out, (boolean[]) value);
+		}
+		else if (value instanceof long[])
+		{
+			this.print(out, (long[]) value);
+		}
+		else if (value instanceof char[])
+		{
+			this.print(out, (char[]) value);
+		}
+		else if (value instanceof float[])
+		{
+			this.print(out, (float[]) value);
+		}
+		else if (value instanceof byte[])
+		{
+			this.print(out, (byte[]) value);
+		}
+		else if (value instanceof short[])
+		{
+			this.print(out, (short[]) value);
+		}
+		else
+		{
+			out.write('"');
+			this.stringCoder.toJsonStringWithoutCheck(out, String.valueOf(value));
+			out.write('"');
+		}
    }
 
    public void print(Writer out, Object[] values)
          throws IOException, ConfigurationException
    {
-      if (values == null)
-      {
-         out.write("null");
-      }
-      else
-      {
-         out.write("[");
-         for (int i = 0; i < values.length; i++)
-         {
-            if (i > 0)
-            {
-               out.write(",");
-            }
-            Object value = values[i];
-            if (value != null)
-            {
-               this.print(out, value);
-            }
-            else
-            {
-               out.write("null");
-            }
-         }
-         out.write("]");
-      }
+		out.write('[');
+		if (values.length > 0)
+		{
+			this.print(out, values[0]);
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+			this.print(out, values[i]);
+		}
+		out.write(']');
    }
 
    public void printMap(Writer out, Map map)
          throws IOException, ConfigurationException
    {
-      out.write("{");
+      out.write('{');
       this.printData(out, map, false);
-      out.write("}");
-   }
-
-   protected void printSearchAttributes(Writer out, SearchManager.Attributes sma)
-         throws IOException
-   {
-      out.write("pageNumTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.pageNumTag));
-      out.write("\"");
-      out.write(",pageSizeTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.pageSizeTag));
-      out.write("\"");
-      out.write(",querySettingTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.querySettingTag));
-      out.write("\"");
-      out.write(",queryTypeClear:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeClear));
-      out.write("\"");
-      out.write(",queryTypeReset:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeReset));
-      out.write("\"");
-      out.write(",queryTypeTag:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(sma.queryTypeTag));
-      out.write("\"");
+      out.write('}');
    }
 
    protected void printCollection(Writer out, Collection collection)
@@ -319,7 +241,7 @@ public class DataPrinterImpl extends AbstractGenerator
    public void printResultRow(Writer out, ResultRow row)
          throws IOException, ConfigurationException, SQLException
    {
-      out.write("{");
+      out.write('{');
       ResultMetaData rmd = row.getResultIterator().getMetaData();
       int count = rmd.getColumnCount();
       boolean firstSetted = false;
@@ -329,17 +251,17 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             if (firstSetted)
             {
-               out.write(",");
+               out.write(',');
             }
             firstSetted = true;
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(rmd.getColumnName(i)));
+            out.write('"');
+            this.stringCoder.toJsonString(out, rmd.getColumnName(i));
             out.write("\":\"");
-            out.write(this.stringCoder.toJsonString(row.getFormated(i)));
-            out.write("\"");
+            this.stringCoder.toJsonString(out, row.getFormated(i));
+            out.write('"');
          }
       }
-      out.write("}");
+      out.write('}');
    }
 
    public void printResultIterator(Writer out, ResultIterator ritr)
@@ -355,90 +277,80 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             if (firstSetted)
             {
-               out.write(",");
+               out.write(',');
             }
-            firstSetted = true;
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(rmd.getColumnName(i)));
+				else
+				{
+            	firstSetted = true;
+				}
+            out.write('"');
+            this.stringCoder.toJsonString(out, rmd.getColumnName(i));
             out.write("\":");
             out.write(String.valueOf(i));
          }
       }
-      out.write("}");
+      out.write('}');
       out.write(",rowCount:");
       out.write(String.valueOf(ritr.getRecordCount()));
       out.write(",rows:[");
+		boolean nextRow = false;
       while (ritr.hasNext())
       {
+			if (nextRow)
+			{
+            out.write(',');
+			}
+			else
+			{
+				nextRow = true;
+			}
          ResultRow row = (ResultRow) ritr.next();
-         out.write("[");
+         out.write('[');
          for (int i = 1; i <= count; i++)
          {
             if (i > 1)
             {
-               out.write(",");
+               out.write(',');
             }
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(row.getFormated(i)));
-            out.write("\"");
+            out.write('"');
+            this.stringCoder.toJsonString(out, row.getFormated(i));
+            out.write('"');
          }
-         out.write("]");
-         if (ritr.hasNext())
-         {
-            out.write(",");
-         }
+         out.write(']');
       }
-      out.write("]");
+      out.write(']');
    }
 
 	public void printEnumeration(Writer out, Enumeration e)
          throws IOException, ConfigurationException
 	{
-      out.write("[");
-		int count = 0;
+      out.write('[');
+		if (e.hasMoreElements())
+		{
+			this.print(out, e.nextElement());
+		}
       while (e.hasMoreElements())
       {
-			if (count > 0)
-			{
-            out.write(",");
-			}
-         Object value = e.nextElement();
-         if (value != null)
-         {
-            this.print(out, value);
-         }
-         else
-         {
-            out.write("null");
-         }
-			count++;
+			out.write(',');
+			this.print(out, e.nextElement());
       }
-      out.write("]");
+      out.write(']');
 	}
 
    public void printIterator(Writer out, Iterator itr)
          throws IOException, ConfigurationException
    {
-      out.write("[");
-		int count = 0;
+      out.write('[');
+		if (itr.hasNext())
+		{
+			this.print(out, itr.next());
+		}
       while (itr.hasNext())
       {
-			if (count > 0)
-			{
-            out.write(",");
-			}
-         Object value = itr.next();
-         if (value != null)
-         {
-            this.print(out, value);
-         }
-         else
-         {
-            out.write("null");
-         }
-			count++;
+			out.write(',');
+			this.print(out, itr.next());
       }
-      out.write("]");
+      out.write(']');
    }
 
    public void print(Writer out, boolean b)
@@ -447,36 +359,167 @@ public class DataPrinterImpl extends AbstractGenerator
       out.write(b ? "true" : "false");
    }
 
+   public void print(Writer out, boolean[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+      	out.write(values[0] ? "true" : "false");
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+      	out.write(values[i] ? "true" : "false");
+		}
+		out.write(']');
+   }
+
    public void print(Writer out, char c)
          throws IOException, ConfigurationException
    {
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(String.valueOf(c)));
-      out.write("\"");
+      out.write('"');
+		this.stringCoder.toJsonString(out, c);
+      out.write('"');
+   }
+
+   public void print(Writer out, char[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+			out.write('"');
+			this.stringCoder.toJsonString(out, values[0]);
+			out.write('"');
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(",\"");
+			this.stringCoder.toJsonString(out, values[i]);
+			out.write('"');
+		}
+		out.write(']');
    }
 
    public void print(Writer out, int i)
          throws IOException, ConfigurationException
    {
-      out.write(String.valueOf(i));
+      out.write(Integer.toString(i, 10));
+   }
+
+   public void print(Writer out, int[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+      	out.write(Integer.toString(values[0], 10));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+      	out.write(Integer.toString(values[i], 10));
+		}
+		out.write(']');
+   }
+
+   public void print(Writer out, byte[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+      	out.write(Integer.toString(values[0], 10));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+      	out.write(Integer.toString(values[i], 10));
+		}
+		out.write(']');
+   }
+
+   public void print(Writer out, short[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+      	out.write(Integer.toString(values[0], 10));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+      	out.write(Integer.toString(values[i], 10));
+		}
+		out.write(']');
    }
 
    public void print(Writer out, long l)
          throws IOException, ConfigurationException
    {
-      out.write(String.valueOf(l));
+      out.write(Long.toString(l, 10));
+   }
+
+   public void print(Writer out, long[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+			out.write(Long.toString(values[0], 10));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+			out.write(Long.toString(values[i], 10));
+		}
+		out.write(']');
    }
 
    public void print(Writer out, float f)
          throws IOException, ConfigurationException
    {
-      out.write(String.valueOf(f));
+      out.write(Float.toString(f));
+   }
+
+   public void print(Writer out, float[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+			out.write(Float.toString(values[0]));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+			out.write(Float.toString(values[i]));
+		}
+		out.write(']');
    }
 
    public void print(Writer out, double d)
          throws IOException, ConfigurationException
    {
-      out.write(String.valueOf(d));
+      out.write(Double.toString(d));
+   }
+
+   public void print(Writer out, double[] values)
+         throws IOException, ConfigurationException
+   {
+		out.write('[');
+		if (values.length > 0)
+		{
+			out.write(Double.toString(values[0]));
+		}
+		for (int i = 1; i < values.length; i++)
+		{
+			out.write(',');
+			out.write(Double.toString(values[i]));
+		}
+		out.write(']');
    }
 
    public void print(Writer out, String s)
@@ -488,11 +531,68 @@ public class DataPrinterImpl extends AbstractGenerator
       }
       else
       {
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(s));
-         out.write("\"");
+         out.write('"');
+         this.stringCoder.toJsonStringWithoutCheck(out, s);
+         out.write('"');
       }
    }
+
+	public void printObjectBegin(Writer out)
+			throws IOException
+	{
+		out.write('{');
+	}
+
+	public void printObjectEnd(Writer out)
+			throws IOException
+	{
+		out.write('}');
+	}
+
+	public void printPair(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, String value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, Object value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void setDateFormat(DateFormat format)
+	{
+		if (format == null)
+		{
+			throw new NullPointerException("The param format is null.");
+		}
+		this.dateFormat = format;
+	}
 
    public DataPrinter createDataPrinter()
    {
@@ -577,11 +677,11 @@ public class DataPrinterImpl extends AbstractGenerator
             {
                if (!first)
                {
-                  out.write(",");
+                  out.write(',');
                }
                first = false;
                Field f = this.fields[i];
-               out.write("\"");
+               out.write('"');
                out.write(f.getName());
                out.write("\":");
                p.print(out, f.get(bean));
@@ -593,10 +693,10 @@ public class DataPrinterImpl extends AbstractGenerator
                {
                   if (!first)
                   {
-                     out.write(",");
+                     out.write(',');
                   }
                   first = false;
-                  out.write("\"");
+                  out.write('"');
                   out.write(m.name);
                   out.write("\":");
                   p.print(out, m.method.invoke(bean, new Object[0]));

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Enumeration;
+import java.util.Date;
+import java.util.Calendar;
 
 import org.dom4j.Element;
 import org.apache.commons.collections.iterators.EnumerationIterator;
@@ -32,6 +34,7 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.container.SessionCache;
+import self.micromagic.util.FormatTool;
 
 public class AppDataLogExecute extends AbstractExecute
       implements Execute, Generator
@@ -441,6 +444,30 @@ public class AppDataLogExecute extends AbstractExecute
                this.pop();
             }
 			}
+			else if (value instanceof Date)
+			{
+            parent.addAttribute("type", "Date");
+            parent.addAttribute("value", FormatTool.dateFullFormat.format((Date) value));
+			}
+			else if (value instanceof Calendar)
+			{
+            parent.addAttribute("type", "Calendar");
+				Date d = ((Calendar) value).getTime();
+            parent.addAttribute("value", FormatTool.dateFullFormat.format(d));
+			}
+         else if (value instanceof BeanPrinter)
+         {
+            ((BeanPrinter) value).print(this, parent, value);
+         }
+         else if (Tool.isBean(value.getClass()))
+         {
+            parent.addAttribute("type", "bean:" + ClassGenerator.getClassName(value.getClass()));
+            if (this.checkAndPush(parent, value))
+            {
+               this.printBean(parent, value);
+               this.pop();
+            }
+         }
          else if (value.getClass().isArray())
          {
             parent.addAttribute("type", "Array");
@@ -461,19 +488,6 @@ public class AppDataLogExecute extends AbstractExecute
                {
                   this.printCollection(parent, Arrays.asList((Object[]) value));
                }
-               this.pop();
-            }
-         }
-         else if (value instanceof BeanPrinter)
-         {
-            ((BeanPrinter) value).print(this, parent, value);
-         }
-         else if (Tool.isBean(value.getClass()))
-         {
-            parent.addAttribute("type", "bean:" + ClassGenerator.getClassName(value.getClass()));
-            if (this.checkAndPush(parent, value))
-            {
-               this.printBean(parent, value);
                this.pop();
             }
          }

@@ -388,10 +388,9 @@ public class ReplacementImpl extends ComponentImpl
       if (this.linkTypical)
       {
          String idName = ViewTool.createTypicalComponentName(data, this.baseComponent);
-         out.write(",typicalComponent:");
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(idName));
-         out.write("\"");
+         out.write(",typicalComponent:\"");
+         this.stringCoder.toJsonString(out, idName);
+         out.write('"');
       }
       else if (!this.linkTypical && this.baseComponent != null)
       {

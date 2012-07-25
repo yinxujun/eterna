@@ -120,7 +120,7 @@ class QuickStringAppender
 
    public StringAppender append(boolean value)
    {
-	   return this.append(String.valueOf(value));
+	   return this.append(value ? "true" : "false");
    }
 
    public StringAppender append(char ch)
@@ -136,22 +136,22 @@ class QuickStringAppender
 
    public StringAppender append(int value)
    {
-	   return this.append(String.valueOf(value));
+	   return this.append(Integer.toString(value, 10));
    }
 
    public StringAppender append(long value)
    {
-	   return this.append(String.valueOf(value));
+	   return this.append(Long.toString(value, 10));
    }
 
    public StringAppender append(float value)
    {
-	   return this.append(String.valueOf(value));
+	   return this.append(Float.toString(value));
    }
 
    public StringAppender append(double value)
    {
-	   return this.append(String.valueOf(value));
+	   return this.append(Double.toString(value));
    }
 
    public StringAppender appendln()

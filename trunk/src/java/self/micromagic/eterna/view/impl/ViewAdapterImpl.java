@@ -228,48 +228,50 @@ public class ViewAdapterImpl extends AbstractGenerator
       return (EternaFactory) this.factory;
    }
 
+	private static final String DEBUG_EVENT_CODE = ",fn:function(event,webObj,objConfig){"
+			+ "try{"
+			+ "return event.data.eventConfig._fn.call(this,event,webObj,objConfig);"
+   		+ "}"
+			+ "catch(ex){"
+			+ "if(eterna_debug >= ED_FN_CALLED){"
+	      + "eterna_fn_stack.push(new Array(event.data.eventConfig.type,event.data.eventConfig._fn,\"event.data\",event.data));"
+			+ "_eterna.printException(ex);"
+			+ "eterna_fn_stack.pop();"
+			+ "}"
+			+ "throw ex;"
+			+ "}"
+			+ "},_fn:function(event,webObj,objConfig){";
+
    public void printEvent(Writer out, AppData data, Component.Event event)
          throws IOException, ConfigurationException
    {
-      out.write("{type:");
-      out.write("\"");
-      out.write(stringCoder.toJsonString(event.getName()));
-      out.write("\"");
+      out.write("{type:\"");
+      this.stringCoder.toJsonString(out, event.getName());
+      out.write('"');
 
-      if (event.getScriptParam() != null)
+      if (!StringTool.isEmpty(event.getScriptParam()))
       {
-         out.write(",param:");
-         out.write("\"");
-         out.write(stringCoder.toJsonString(event.getScriptParam()));
-         out.write("\"");
+         out.write(",param:\"");
+         this.stringCoder.toJsonStringWithoutCheck(out, event.getScriptParam());
+         out.write('"');
       }
 
       String eventBegin = "var configData=objConfig;";
       if (this.getDebug() >= ETERNA_VIEW_DEBUG_BASE)
       {
-         out.write(",fn:function(event,webObj,objConfig){");
-         out.write("try{");
-         out.write("return event.data.eventConfig._fn.call(this,event,webObj,objConfig);");
-         out.write("}catch(ex){");
-         out.write("if(eterna_debug >= ED_FN_CALLED){");
-         out.write("eterna_fn_stack.push(new Array(event.data.eventConfig.type,event.data.eventConfig._fn,");
-         out.write("\"event.data\",event.data));");
-         out.write("_eterna.printException(ex);");
-         out.write("eterna_fn_stack.pop();throw ex;}}");
-         out.write("}");
-         out.write(",_fn:function(event,webObj,objConfig){");
+         out.write(DEBUG_EVENT_CODE);
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write("}");
+         out.write('}');
       }
       else
       {
          out.write(",fn:function(event,webObj,objConfig){");
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write("}");
+         out.write('}');
       }
-      out.write("}");
+      out.write('}');
    }
 
    public void printFunction(Writer out, AppData data, String key, Function fn)
@@ -288,34 +290,27 @@ public class ViewAdapterImpl extends AbstractGenerator
       if (this.getDebug() >= ETERNA_VIEW_DEBUG_BASE)
       {
          out.write("\"$ef_");
-         out.write(this.stringCoder.toJsonString(key));
-         out.write("\":");
-         out.write("function(");
+         this.stringCoder.toJsonString(out, key);
+         out.write("\":function(");
          out.write(param);
          out.write("){");
          out.write(fn.getBody());
-         out.write("}");
-
-         out.write(",\"");
-         out.write(this.stringCoder.toJsonString(key));
-         out.write("\":");
-         out.write("function(");
+         out.write("},\"");
+         this.stringCoder.toJsonString(out, key);
+         out.write("\":function(");
          out.write(param);
-         out.write("){try{");
-         out.write("return $E.F[\"$ef_");
-         out.write(this.stringCoder.toJsonString(key));
+         out.write("){try{return $E.F[\"$ef_");
+         this.stringCoder.toJsonString(out, key);
          out.write("\"].call(this");
          if (param.length() > 0)
          {
-            out.write(",");
+            out.write(',');
             out.write(param);
          }
-         out.write(");}catch(ex){");
-         out.write("if (eterna_debug >= ED_FN_CALLED){");
-         out.write("eterna_fn_stack.push(new Array(\"");
-         out.write(this.stringCoder.toJsonString(key));
+         out.write(");}catch(ex){if(eterna_debug >= ED_FN_CALLED){eterna_fn_stack.push(new Array(\"");
+         this.stringCoder.toJsonString(out, key);
          out.write("\",$E.F[\"$ef_");
-         out.write(this.stringCoder.toJsonString(key));
+         this.stringCoder.toJsonString(out, key);
          out.write("\"]");
          String[] params = StringTool.separateString(param, ",", true);
          for (int i = 0; i < params.length; i++)
@@ -325,35 +320,28 @@ public class ViewAdapterImpl extends AbstractGenerator
             out.write("\",");
             out.write(params[i]);
          }
-         out.write("));");
-         out.write("_eterna.printException(ex);");
-         out.write("eterna_fn_stack.pop();throw ex;}}");
-         out.write("}");
+         out.write("));_eterna.printException(ex);eterna_fn_stack.pop();}throw ex;}}");
       }
       else
       {
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(key));
-         out.write("\":");
-         out.write("function(");
+         out.write('"');
+         this.stringCoder.toJsonString(out, key);
+         out.write("\":function(");
          out.write(param);
          out.write("){");
          out.write(fn.getBody());
-         out.write("}");
+         out.write('}');
       }
    }
 
    protected void printResource(Writer out, String name, Resource resource)
          throws IOException, ConfigurationException
    {
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(name));
-      out.write("\":");
-      out.write("function(){");
-      out.write("var resArray=");
+      out.write('"');
+      this.stringCoder.toJsonString(out, name);
+      out.write("\":function(){var resArray=");
       this.dataPrinter.printIterator(out, resource.getParsedRessource());
-      out.write(";return eterna_getResourceValue(resArray,arguments);");
-      out.write("}");
+      out.write(";return eterna_getResourceValue(resArray,arguments);}");
    }
 
    public void printView(Writer out, AppData data)
@@ -378,7 +366,7 @@ public class ViewAdapterImpl extends AbstractGenerator
          restData = true;
       }
 
-      out.write("{");
+      out.write('{');
 
       if (webData)
       {
@@ -389,27 +377,22 @@ public class ViewAdapterImpl extends AbstractGenerator
 
       if (!restData)
       {
-         out.write("D:{");
-         out.write("root:");
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(data.contextRoot));
-         out.write("\"");
-         out.write(",modelNameTag:");
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(this.getFactory().getModelNameTag()));
-         out.write("\"");
+         out.write("D:{root:\"");
+         this.stringCoder.toJsonString(out, data.contextRoot);
+         out.write("\",modelNameTag:\"");
+         this.stringCoder.toJsonString(out, this.getFactory().getModelNameTag());
+         out.write('"');
          if (data.modelName != null)
          {
-            out.write(",modelName:");
-            out.write("\"");
-            out.write(this.stringCoder.toJsonString(data.modelName));
-            out.write("\"");
+            out.write(",modelName:\"");
+            this.stringCoder.toJsonStringWithoutCheck(out, data.modelName);
+            out.write('"');
          }
       }
       this.dataPrinter.printData(out, data.dataMap, !restData);
       if (!restData)
       {
-         out.write("}");
+         out.write('}');
       }
 
       if (webData)
@@ -447,32 +430,35 @@ public class ViewAdapterImpl extends AbstractGenerator
                   }
 
                   out.write(",\nV:[");
+						boolean hasComponent = false;
                   Iterator itr = this.getComponents();
                   while (itr.hasNext())
                   {
+							if (hasComponent)
+							{
+                        out.write(',');
+							}
+							else
+							{
+								hasComponent = true;
+							}
                      Component com = (Component) itr.next();
                      com.print(out, data, this);
-                     if (itr.hasNext())
-                     {
-                        out.write(",");
-                     }
                   }
-                  out.write("]");
+                  out.write(']');
 
                   if (this.initScript != null)
                   {
-                     out.write(",\ninit:");
-                     out.write("\"");
-                     stringCoder.toJsonString(out, this.initScript);
-                     out.write("\"");
+                     out.write(",\ninit:\"");
+                     this.stringCoder.toJsonStringWithoutCheck(out, this.initScript);
+                     out.write('"');
                   }
 
                   if (this.beforeInit != null)
                   {
-                     out.write(",beforeInit:");
-                     out.write("\"");
-                     stringCoder.toJsonString(out, this.beforeInit);
-                     out.write("\"");
+                     out.write(",beforeInit:\"");
+                     this.stringCoder.toJsonStringWithoutCheck(out, this.beforeInit);
+                     out.write('"');
                   }
 
                   Map typical = data.getSpcialDataMap(TYPICAL_COMPONENTS_MAP, true);
@@ -481,7 +467,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                   {
                      out.write(",\nT:{");
                      this.printTypical(out, data, typical, null);
-                     out.write("}");
+                     out.write('}');
                   }
 
                   Map fnMap = (Map) data.getSpcialData(VIEW_CACHE, DYNAMIC_FUNCTIONS);
@@ -507,7 +493,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                         {
                            if (hasFunction)
                            {
-                              out.write(",");
+                              out.write(',');
                            }
                            else
                            {
@@ -516,7 +502,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                            this.printFunction(out, data, key, fn);
                         }
                      }
-                     out.write("}");
+                     out.write('}');
                   }
 
                   Set resourceSet = (Set) data.getSpcialData(VIEW_CACHE, DYNAMIC_RESOURCE_NAMES);
@@ -541,7 +527,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                         {
                            if (hasResource)
                            {
-                              out.write(",");
+                              out.write(',');
                            }
                            else
                            {
@@ -554,7 +540,7 @@ public class ViewAdapterImpl extends AbstractGenerator
                            log.error("Not found the resource:[" + name + "].");
                         }
                      }
-                     out.write("}");
+                     out.write('}');
                   }
 
                   out = oldOut;
@@ -574,7 +560,7 @@ public class ViewAdapterImpl extends AbstractGenerator
          }
       }
 
-      out.write("}");
+      out.write('}');
    }
 
    /**
@@ -594,7 +580,7 @@ public class ViewAdapterImpl extends AbstractGenerator
       else
       {
          // allMap 不为空，表示是递归进来的，所以要加个","
-         out.write(",");
+         out.write(',');
       }
 
       Iterator itr = typical.entrySet().iterator();
@@ -603,15 +589,14 @@ public class ViewAdapterImpl extends AbstractGenerator
          Map.Entry entry = (Map.Entry) itr.next();
          String key = (String) entry.getKey();
          Component com = (Component) entry.getValue();
-         out.write("\"");
-         out.write(this.stringCoder.toJsonString(key));
-         out.write("\"");
-         out.write(":");
+         out.write('"');
+         this.stringCoder.toJsonString(out, key);
+         out.write("\":");
          com.print(out, data, this);
 
          if (itr.hasNext())
          {
-            out.write(",");
+            out.write(',');
          }
       }
 

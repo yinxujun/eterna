@@ -91,23 +91,20 @@ public class ComponentImpl extends AbstractGenerator
    public void print(Writer out, AppData data, ViewAdapter view)
          throws IOException, ConfigurationException
    {
-      out.write("{");
+      out.write('{');
       this.printBody(out, data, view);
       this.printSpecialBody(out, data, view);
-      out.write("}");
+      out.write('}');
    }
 
    public void printBody(Writer out, AppData data, ViewAdapter view)
          throws IOException, ConfigurationException
    {
-      out.write("name:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(this.getName()));
-      out.write("\"");
-      out.write(",type:");
-      out.write("\"");
-      out.write(this.stringCoder.toJsonString(this.getType()));
-      out.write("\"");
+      out.write("name:\"");
+      this.stringCoder.toJsonString(out, this.getName());
+      out.write("\",type:\"");
+      this.stringCoder.toJsonString(out, this.getType());
+      out.write('"');
 
       if (this.isIgnoreGlobalParam())
       {
@@ -115,58 +112,64 @@ public class ComponentImpl extends AbstractGenerator
       }
       if (this.getComponentParam() != null)
       {
-         out.write(",");
+         out.write(',');
          out.write(this.getComponentParam());
       }
 
+		boolean nextItr = false;
       Iterator eventItr = this.getEvents();
       if (eventItr.hasNext())
       {
          out.write(",events:[");
          while (eventItr.hasNext())
          {
+				if (nextItr)
+				{
+               out.write(',');
+				}
+				else
+				{
+					nextItr = true;
+				}
             Event e = (Event) eventItr.next();
             view.printEvent(out, data, e);
-
-            if (eventItr.hasNext())
-            {
-               out.write(",");
-            }
          }
-         out.write("]");
+         out.write(']');
       }
 
+		nextItr = false;
       Iterator subComponentItr = this.getSubComponents();
       if (subComponentItr.hasNext())
       {
          out.write(",subs:[");
          while (subComponentItr.hasNext())
          {
+				if (nextItr)
+				{
+               out.write(',');
+				}
+				else
+				{
+					nextItr = true;
+				}
             Component sub = (Component) subComponentItr.next();
             sub.print(out, data, view);
-
-            if (subComponentItr.hasNext())
-            {
-               out.write(",");
-            }
          }
-         out.write("]");
+         out.write(']');
       }
 
-      if (this.getInitScript() != null)
+      if (!StringTool.isEmpty(this.getInitScript()))
       {
-         out.write(",init:");
-         out.write("\"");
-         this.stringCoder.toJsonString(out, this.getInitScript());
-         out.write("\"");
+         out.write(",init:\"");
+         this.stringCoder.toJsonStringWithoutCheck(out, this.getInitScript());
+         out.write('\"');
       }
 
-      if (this.getBeforeInit() != null)
+      if (!StringTool.isEmpty(this.getBeforeInit()))
       {
-         out.write(",beforeInit:");
-         out.write("\"");
-         this.stringCoder.toJsonString(out, this.getBeforeInit());
-         out.write("\"");
+         out.write(",beforeInit:\"");
+         this.stringCoder.toJsonStringWithoutCheck(out, this.getBeforeInit());
+         out.write('"');
       }
    }
 

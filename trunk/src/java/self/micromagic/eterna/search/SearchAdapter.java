@@ -2,6 +2,8 @@
 package self.micromagic.eterna.search;
 
 import java.io.Reader;
+import java.io.Writer;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -10,6 +12,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultIterator;
+import self.micromagic.eterna.view.DataPrinter;
 
 public interface SearchAdapter
 {
@@ -145,7 +148,8 @@ public interface SearchAdapter
    Result doSearch(AppData data, Connection conn)
          throws ConfigurationException, SQLException;
 
-   public static class Result
+   public static final class Result
+			implements DataPrinter.BeanPrinter
    {
       public final int pageSize;
       public final int pageNum;
@@ -168,6 +172,34 @@ public interface SearchAdapter
          this.singleOrderName = singleOrderName;
          this.singleOrderDesc = singleOrderDesc;
       }
+
+		public void print(DataPrinter p, Writer out, Object bean)
+				throws IOException, ConfigurationException
+		{
+			try
+			{
+				p.printObjectBegin(out);
+				p.printResultIterator(out, this.queryResult);
+				p.printPair(out, "pageNum", this.pageNum, false);
+				p.printPair(out, "pageSize", this.pageSize, false);
+				p.printPair(out, "searchName", this.searchName, false);
+				if (this.queryResult.isRealRecordCountAvailable())
+				{
+					p.printPair(out, "totalCount", this.queryResult.getRealRecordCount(), false);
+				}
+				if (this.singleOrderName != null)
+				{
+					p.printPair(out, "orderName", this.singleOrderName, false);
+					p.printPair(out, "orderDesc", this.singleOrderDesc ? 1 : 0, false);
+				}
+				p.printPair(out, "hasNextPage", this.queryResult.isHasMoreRecord() ? 1 : 0, false);
+				p.printObjectEnd(out);
+			}
+			catch (SQLException ex)
+			{
+				throw new ConfigurationException(ex);
+			}
+		}
 
    }
 

@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.io.Writer;
+import java.io.IOException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -23,11 +25,12 @@ import self.micromagic.eterna.search.SearchManagerGenerator;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
+import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 public class SearchManagerImpl extends AbstractGenerator
-      implements SearchManagerGenerator, SearchManager
+      implements SearchManagerGenerator, SearchManager, DataPrinter.BeanPrinter
 {
    static final String SEARCHMANAGER_DEALED_PREFIX = "ETERNA_SEARCHMANAGER_DEALED:";
 
@@ -683,5 +686,23 @@ public class SearchManagerImpl extends AbstractGenerator
    {
       return new SearchManagerImpl();
    }
+
+	public void print(DataPrinter p, Writer out, Object bean)
+			throws IOException, ConfigurationException
+	{
+		Iterator itr = this.getConditions().iterator();
+		boolean firstValue = true;
+		p.printObjectBegin(out);
+		while (itr.hasNext())
+		{
+			SearchManager.Condition con = (SearchManager.Condition) itr.next();
+			if (con.value != null)
+			{
+				p.printPair(out, con.name, con.value, firstValue);
+				firstValue = false;
+			}
+		}
+		p.printObjectEnd(out);
+	}
 
 }

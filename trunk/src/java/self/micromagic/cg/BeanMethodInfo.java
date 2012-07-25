@@ -1,15 +1,15 @@
 
 package self.micromagic.cg;
 
+import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collection;
-import java.beans.Introspector;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.ReferenceMap;
 
@@ -121,7 +121,7 @@ public class BeanMethodInfo
       }
 
       Method[] methodList = beanClass.getMethods();
-      Map tmpMethodsCache = new HashMap();
+      Map tmpMethodsCache = new LinkedHashMap();
       for (int i = 0; i < methodList.length; i++)
       {
          Method method = methodList[i];
