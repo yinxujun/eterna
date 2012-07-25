@@ -1,0 +1,43 @@
+#summary 数据库访问层中的属性(attribute)名和界面端的属性对应关系
+
+=属性(attribute)名的对应关系说明=
+界面中的*table-from*和*table-list*可以通过`baseName`属性来指定引用*query*、*reader-manager*或*search*的相关配置。而节点中的特殊属性也可设置在这些配置的*attribute*中。<br>
+关于baseName的使用：<br>
+`query:XXX`：表示使用`query`->`readers`中的`reader`列表。<br>
+`reader:XXX`：表示使用`reader-manager`中的`reader`列表。<br>
+`search:XXX`：表示使用`search`->`condition-propertys`中的`condition-property`列表。<br>
+下面这段代码为引用的样例:
+{{{
+<reader-manager name="r">
+   <reader name="col1" caption="test1"/> 
+   <reader name="col2" caption="test2"/> 
+</reader-manager>			
+<view name="v">
+   <table-list name="t" baseName="reader:r">
+      <columns>
+         <column name="col2">
+            <init-script>if () ...</init-script>
+         </column>
+      </columns>
+   </table-list> 
+</view>
+}}}
+上面这段代码中，*init-script*节点可以直接设置到`reader`的*attribute*中。
+{{{
+<reader-manager name="r">
+   <reader name="col1" caption="test1"/> 
+   <reader name="col2" caption="test2">
+      <attribute name="initScript" value="if () ..."/>
+   </reader> 
+</reader-manager>			
+<view name="v">
+   <table-list name="t" baseName="reader:r">
+   </table-list> 
+</view>
+}}}
+这样修改后，一下常用的属性可以定义在被应用的配置中，无需在界面模块中重复定义。<br>
+<br><br>
+
+=attribute名称的对应表=
+||attribute名称||R||Q||S||table-form||table-list||
+||initScript||有效||有效||有效||init-script||init-script||
