@@ -129,16 +129,16 @@ public class EternaInit extends InitBaseTag
 
 		// 如果定义了jQuery
 		out.println("if (typeof jQuery != \"undefined\")");
-		out.println("{");
+		out.println('{');
 		out.println("jQuery(document).ready(function(){");
 		out.println("eCheckInitFn();");
 		out.println("});");
-		out.println("}");
-		out.println("{");
+		out.println('}');
+		out.println('{');
 		out.println("retryFind = true;");
 		// 如果未定义jQuery, 则延迟200毫秒后再尝试
 		out.println("setTimeout(eCheckInitFn, 200);");
-		out.println("}");
+		out.println('}');
 
 		out.println("})();");
 		out.println("</script>");
@@ -152,10 +152,10 @@ public class EternaInit extends InitBaseTag
 	{
 		// 定义初始化Eterna的方法
 		out.println("var eInitFn = function ()");
-		out.println("{");
+		out.println('{');
 		out.print("var $E = ");
 		view.printView(out, data, this.getCacheMap(view));
-		out.println(";");
+		out.println(';');
 		out.println("var eternaData = $E;");
 		String debug = this.pageContext.getRequest().getParameter(PARAM_DEBUF_FLAG);
 		if (debug == null)
@@ -169,24 +169,24 @@ public class EternaInit extends InitBaseTag
 			out.println("_eterna.cache.useAJAX = true;");
 		}
 		out.println("if (retryFind)");
-		out.println("{");
+		out.println('{');
 		out.println("_eterna.cache.retryFindCount = 5;");
-		out.println("}");
+		out.println('}');
 		out.println("_eterna.reInit();");
 		out.println("};");
 
 		// 定义检查并初始化Eterna的方法
 		out.println("var eCheckInitFn = function ()");
-		out.println("{");
+		out.println('{');
 		out.println("if (typeof jQuery != \"undefined\" && typeof Eterna != \"undefined\")");
-		out.println("{");
+		out.println('{');
 		out.println("eInitFn();");
-		out.println("}");
+		out.println('}');
 		out.println("else");
-		out.println("{");
+		out.println('{');
 		// 如果有需要的对象未生成, 则延迟200毫秒后再尝试
 		out.println("setTimeout(eCheckInitFn, 200);");
-		out.println("}");
+		out.println('}');
 		out.println("};");
 	}
 

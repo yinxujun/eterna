@@ -82,7 +82,7 @@ public class InConditionParamBind extends AbstractGenerator
             {
                subStr.append(", ");
             }
-            subStr.append("?");
+            subStr.append('?');
             ValuePreparer preparer = vpg.createPreparer(values[i]);
             preparer.setRelativeIndex(i + 1);
             preparer.setName(this.paramName);

@@ -1231,7 +1231,7 @@ public class FactoryManager
                      tmpBuf.append(temp.toString());
                      temp = tmpBuf;
                   }
-                  msg.setString(temp.append("[").append(ex.getMessage()).append("]").toString());
+                  msg.setString(temp.append('[').append(ex.getMessage()).append(']').toString());
                }
                ConfigurationException.config = null;
                ConfigurationException.objName = null;

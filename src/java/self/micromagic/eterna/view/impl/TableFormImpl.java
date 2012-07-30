@@ -240,7 +240,7 @@ public class TableFormImpl extends AbstractTable
 
       out.write(",columns:[");
       out.write(this.columns);
-      out.write("]");
+      out.write(']');
 
       out.write(",cells:[");
       Iterator cellItr = this.getCells();

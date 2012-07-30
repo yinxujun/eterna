@@ -143,7 +143,7 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
          {
             return;
          }
-         int index = formatPattern.indexOf(":");
+         int index = formatPattern.indexOf(':');
          if (index != -1)
          {
             this.trueValue = formatPattern.substring(0, index);

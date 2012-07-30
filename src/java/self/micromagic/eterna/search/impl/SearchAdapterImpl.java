@@ -47,7 +47,7 @@ import self.micromagic.util.MemoryChars;
 public class SearchAdapterImpl extends AbstractGenerator
       implements SearchAdapter, SearchAdapterGenerator
 {
-   private final static int[] conditionDocumentCounts = {1, 3, 7};
+   private static final int[] conditionDocumentCounts = {1, 3, 7};
 
    private int maxPageSize = -1;
 

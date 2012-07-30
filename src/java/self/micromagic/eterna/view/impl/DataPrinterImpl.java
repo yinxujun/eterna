@@ -87,6 +87,12 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			out.write("null");
 		}
+		else if (value instanceof String)
+		{
+			out.write('"');
+			this.stringCoder.toJsonStringWithoutCheck(out, (String) value);
+			out.write('"');
+		}
 		else if (value instanceof Number || value instanceof Boolean)
 		{
 			out.write(value.toString());
@@ -126,12 +132,6 @@ public class DataPrinterImpl extends AbstractGenerator
 		else if (value instanceof Iterator)
 		{
 			this.printIterator(out, (Iterator) value);
-		}
-		else if (value instanceof String)
-		{
-			out.write('"');
-			this.stringCoder.toJsonStringWithoutCheck(out, (String) value);
-			out.write('"');
 		}
 		else if (value instanceof BeanPrinter)
 		{

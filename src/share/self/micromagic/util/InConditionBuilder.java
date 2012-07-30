@@ -82,7 +82,7 @@ public class InConditionBuilder extends AbstractGenerator
                {
                   sqlPart.append(", ");
                }
-               sqlPart.append("?");
+               sqlPart.append('?');
                preparers[i] = cp.createValuePreparer(temp);
             }
             sqlPart.append(')');

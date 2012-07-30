@@ -199,7 +199,7 @@ public class ModelCallerImpl
          if (AppData.log.isInfoEnabled())
          {
             StringAppender buf = StringTool.createStringAppender(128);
-            buf.append("Not found the model:").append(data.modelName).append(".");
+            buf.append("Not found the model:").append(data.modelName).append('.');
             AppData.log.warn(buf, ex);
          }
          return null;
@@ -416,7 +416,7 @@ public class ModelCallerImpl
       String dataType = data.getRequestParameter(ViewAdapter.DATA_TYPE);
       if (dataType != null)
       {
-         buf.append(ViewAdapter.DATA_TYPE).append("=").append(URLEncoder.encode(dataType, charset));
+         buf.append(ViewAdapter.DATA_TYPE).append('=').append(URLEncoder.encode(dataType, charset));
       }
       Iterator params = data.dataMap.entrySet().iterator();
       while (params.hasNext())
@@ -431,7 +431,7 @@ public class ModelCallerImpl
          {
             if (buf.length() > 0)
             {
-               buf.append("&");
+               buf.append('&');
             }
             String name = URLEncoder.encode(String.valueOf(entry.getKey()), charset);
             Object value = entry.getValue();
@@ -446,15 +446,15 @@ public class ModelCallerImpl
                   {
                      if (hasValue)
                      {
-                        buf.append("&");
+                        buf.append('&');
                      }
                      hasValue = true;
-                     buf.append(name).append("=").append(URLEncoder.encode(String.valueOf(tmp), charset));
+                     buf.append(name).append('=').append(URLEncoder.encode(String.valueOf(tmp), charset));
                   }
                }
                if (!hasValue)
                {
-                  buf.append(name).append("=");
+                  buf.append(name).append('=');
                }
             }
             else if (value.getClass().isArray())
@@ -468,20 +468,20 @@ public class ModelCallerImpl
                   {
                      if (hasValue)
                      {
-                        buf.append("&");
+                        buf.append('&');
                      }
                      hasValue = true;
-                     buf.append(name).append("=").append(URLEncoder.encode(String.valueOf(tmp), charset));
+                     buf.append(name).append('=').append(URLEncoder.encode(String.valueOf(tmp), charset));
                   }
                }
                if (!hasValue)
                {
-                  buf.append(name).append("=");
+                  buf.append(name).append('=');
                }
             }
             else
             {
-               buf.append(name).append("=").append(URLEncoder.encode(String.valueOf(value), charset));
+               buf.append(name).append('=').append(URLEncoder.encode(String.valueOf(value), charset));
             }
          }
       }

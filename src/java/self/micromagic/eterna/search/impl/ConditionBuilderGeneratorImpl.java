@@ -12,15 +12,18 @@ import self.micromagic.eterna.search.ConditionBuilder;
 import self.micromagic.eterna.search.ConditionProperty;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
-import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       implements ConditionBuilderGenerator
 {
+	private static final String EQUALS_OPT_TAG = "=";
+	private static final String LIKE_OPT_TAG = "LIKE";
+	private static final String CHECK_OPT_TAG = "CHECK";
+
    // 这里再定义一边, 防止ConditionBuilder接口中定义的被修改
-   private final static String[] OPERATOR_NAMES = {
+   private static final String[] OPERATOR_NAMES = {
       "isNull", "notNull", "checkNull",
       "equal", "notEqual", "large", "below", "notLarge", "notBelow",
       "beginWith", "endWith", "include", "match"
@@ -36,7 +39,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       int index = 0;
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NULL", -1));
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NOT NULL", -1));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("CHECK", -1));
+      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(CHECK_OPT_TAG, -1));
 
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("=", 0));
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<>", 0));
@@ -44,10 +47,10 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<", 0));
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<=", 0));
       builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(">=", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("LIKE", 1));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("LIKE", 2));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("LIKE", 3));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("LIKE", 0));
+      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(LIKE_OPT_TAG, 1));
+      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(LIKE_OPT_TAG, 2));
+      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(LIKE_OPT_TAG, 3));
+      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(LIKE_OPT_TAG, 0));
    }
 
    public void setCaption(String caption)
@@ -83,7 +86,51 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       return cb;
    }
 
-   private static class ConditionBuilderImpl
+	/**
+	 * 处理匹配查询的字符串中需要转义的字符. <p>
+	 * 如果没有需要转义的字符串, 会直接返回原字符串, 因此可以
+	 * 用<code>newStr == oldStr</code>判断是否有处理.
+	 */
+	public static String dealEscapeString(String str)
+	{
+		if (str == null)
+		{
+			return null;
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			String appendStr = null;
+			if (c == '%' || c == '_' || c == '\\')
+			{
+				appendStr = "\\" + c;
+				modifyCount++;
+			}
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16)
+						.append(str.substring(0, i));
+				//这里将modifyCount的个数增加, 防止下一次调用使他继续进入这个初始化
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append(c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
+
+   public static class ConditionBuilderImpl
          implements ConditionBuilder, Cloneable
    {
       private String name;
@@ -127,66 +174,48 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       {
          if (this.optType == -1)
          {
-            if ("CHECK".equals(this.operator))
+            if (CHECK_OPT_TAG.equalsIgnoreCase(this.operator))
             {
-               return "1".equals(value) ?
-                     new Condition(colName + " IS NULL") : new Condition(colName + " IS NOT NULL");
-
+               return "1".equals(value) ? new Condition(colName + " IS NULL")
+							: new Condition(colName + " IS NOT NULL");
             }
             else
             {
                int count = colName.length() + this.operator.length() + 1;
                StringAppender temp = StringTool.createStringAppender(count);
-               temp.append(colName).append(" ").append(this.operator);
+               temp.append(colName).append(' ').append(this.operator);
                return new Condition(temp.toString());
             }
          }
 
          if (value == null || value.length() == 0)
          {
-            if (TypeManager.isTypeString(cp.getColumnType()))
-            {
-               String tempOp1, tempOp2;
-               String linkOp;
-               if ("=".equals(this.operator))
-               {
-                  tempOp1 = " IS NULL";
-                  tempOp2 = " = ''";
-                  linkOp = " OR ";
-               }
-               else if ("LIKE".equals(this.operator))
-               {
-                  tempOp1 = " LIKE '%'";
-                  tempOp2 = " IS NULL";
-                  linkOp = " OR ";
-               }
-               else
-               {
-                  tempOp1 = " IS NOT NULL";
-                  tempOp2 = " <> ''";
-                  linkOp = " AND ";
-               }
-               int count = colName.length() + tempOp1.length() + tempOp2.length() + 8;
-               count = count * 2;
-               StringAppender temp = StringTool.createStringAppender(count);
-               temp.append("(").append(colName).append(tempOp1).append(linkOp);
-               temp.append(colName).append(tempOp2).append(")");
-               return new Condition(temp.toString());
-            }
-            else
-            {
-               String temp = "=".equals(this.operator) || "LIKE".equals(this.operator) ?
-                     colName + " IS NULL" : colName + " IS NOT NULL";
-               return new Condition(temp);
-            }
+				return this.getNullCheckCondition(colName);
          }
 
          int count = colName.length() + this.operator.length() + 3;
          StringAppender sqlPart = StringTool.createStringAppender(count);
-         sqlPart.append(colName).append(" ").append(this.operator).append(" ?");
+         sqlPart.append(colName).append(' ').append(this.operator).append(" ?");
          ValuePreparer[] preparers = new ValuePreparer[1];
          if (TypeManager.isTypeString(cp.getColumnType()))
          {
+				if (LIKE_OPT_TAG.equalsIgnoreCase(this.operator))
+				{
+					if (this.optType == 0)
+					{
+						// 对于match, 默认加上escape
+						sqlPart.append(" escape '\\'");
+					}
+					else
+					{
+                  String newStr = dealEscapeString(value);
+						if (newStr != value)
+						{
+							value = newStr;
+							sqlPart.append(" escape '\\'");
+						}
+					}
+				}
             String strValue = "";
             if (this.optType == 0)
             {
@@ -211,7 +240,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
          else
          {
             String opt = this.operator;
-            if ("LIKE".equals(opt))
+            if (LIKE_OPT_TAG.equalsIgnoreCase(opt))
             {
                opt = "=";
             }
@@ -219,6 +248,47 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
          }
          return new Condition(sqlPart.toString(), preparers);
       }
+
+		protected Condition getNullCheckCondition(String colName)
+		{
+			boolean equalsFlag = EQUALS_OPT_TAG.equalsIgnoreCase(this.operator)
+					|| LIKE_OPT_TAG.equalsIgnoreCase(this.operator);
+			String temp =  equalsFlag ? colName + " IS NULL" : colName + " IS NOT NULL";
+			return new Condition(temp);
+			/*
+			对于字符串的情况, 这里不做是否为空字符串的判断, 如果需要可以重写这个方法,
+			然后在配置中定义自己的builder
+			if (TypeManager.isTypeString(cp.getColumnType()))
+			{
+				String tempOp1, tempOp2;
+				String linkOp;
+				if ("=".equals(this.operator))
+				{
+					tempOp1 = " IS NULL";
+					tempOp2 = " = ''";
+					linkOp = " OR ";
+				}
+				else if (LIKE_OPT_TAG.equalsIgnoreCase(this.operator))
+				{
+					tempOp1 = " LIKE '%'";
+					tempOp2 = " IS NULL";
+					linkOp = " OR ";
+				}
+				else
+				{
+					tempOp1 = " IS NOT NULL";
+					tempOp2 = " <> ''";
+					linkOp = " AND ";
+				}
+				int count = colName.length() + tempOp1.length() + tempOp2.length() + 8;
+				count = count * 2;
+				StringAppender temp = StringTool.createStringAppender(count);
+				temp.append('(').append(colName).append(tempOp1).append(linkOp);
+				temp.append(colName).append(tempOp2).append(')');
+				return new Condition(temp.toString());
+			}
+			*/
+		}
 
       protected Object clone()
       {

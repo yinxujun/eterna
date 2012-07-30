@@ -22,7 +22,7 @@ public abstract class AbstractExportExecute extends AbstractExecute
    /**
     * 标识是否是使用数据集中的指定值来作为文件名.
     */
-   public final static String DATA_FILE_NAME_PREFIX = "$data.";
+   public static final String DATA_FILE_NAME_PREFIX = "$data.";
 
    public static final String DOWNLOAD_CONTENTTYPE = "download.contentType";
    public static final String DOWNLOAD_FILENAME = "download.fileName";

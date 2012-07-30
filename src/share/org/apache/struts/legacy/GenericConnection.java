@@ -201,7 +201,7 @@ public class GenericConnection implements Connection {
     // ----------------------------------------------------- Instance Constants
 
 
-    private final static String SQLEXCEPTION_CLOSED = "Connection was closed.";
+    private static final String SQLEXCEPTION_CLOSED = "Connection was closed.";
 
 
     // ----------------------------------------------------- Instance Variables

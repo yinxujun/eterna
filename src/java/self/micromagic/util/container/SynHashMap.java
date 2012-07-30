@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import self.micromagic.util.Utility;
+
 /**
  * 一个同步的HashMap, 大部分代码参考jdk1.6的HashMap来编写的. <p>
  * 这里的实现方式是, 对会修改size的方法进行同步, 如: put remove等, 对读取的方法
@@ -104,7 +106,12 @@ public class SynHashMap extends AbstractMap
    /**
     * 用于清除的引用的队列.
     */
-	private final ReferenceQueue queue = new ReferenceQueue();
+	protected final ReferenceQueue queue = new ReferenceQueue();
+
+	/**
+	 * 在调用get和containsKey操作时是否要检查引用的对象是否已释放.
+	 */
+	protected boolean checkRefWhenGet = false;
 
 	/**
 	 * 创建一个空的<tt>SynHashMap</tt>.
@@ -185,6 +192,26 @@ public class SynHashMap extends AbstractMap
 				HARD, DEFAULT_LOAD_FACTOR);
 		putAllForCreate(m);
 	}
+
+	/**
+	 * 在调用get和containsKey操作时是否要检查引用的对象是否已释放.
+	 */
+	public boolean isCheckRefWhenGet()
+	{
+		return this.checkRefWhenGet;
+	}
+
+	/**
+	 * 设置在调用get和containsKey操作时是否要检查引用的对象是否已释放. <p>
+	 * 因为引用的释放大部分情况是应用的重新加载, 所以之后都会伴随put操作,
+	 * 因此, get操作时就可以不用检查引用的释放, 这样能够加快get的效率.
+	 */
+	public void setCheckRefWhenGet(boolean checkRefWhenGet)
+	{
+		// 对于硬引用的方式, 不需要检查是否被释放
+		this.checkRefWhenGet = this.keyRefType == HARD ? false : checkRefWhenGet;
+	}
+
 
 	// internal utilities
 
@@ -288,7 +315,7 @@ public class SynHashMap extends AbstractMap
 			return this.getForNullKey();
 		}
 		int hash = hash(key.hashCode());
-		SynEntry[] tmpTable = this.getTable();
+		SynEntry[] tmpTable = this.checkRefWhenGet ? this.getTable() : this.table;
 		if (this.keyRefType == HARD)
 		{
 			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
@@ -319,7 +346,7 @@ public class SynHashMap extends AbstractMap
 	 */
 	protected Object getForNullKey()
 	{
-		SynEntry[] tmpTable = this.getTable();
+		SynEntry[] tmpTable = this.checkRefWhenGet ? this.getTable() : this.table;
 		if (this.keyRefType == HARD)
 		{
 			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
@@ -361,7 +388,7 @@ public class SynHashMap extends AbstractMap
 			return this.getEntryForNullKey();
 		}
 		int hash = hash(key.hashCode());
-		SynEntry[] tmpTable = this.getTable();
+		SynEntry[] tmpTable = this.checkRefWhenGet ? this.getTable() : this.table;
 		if (this.keyRefType == HARD)
 		{
 			for (SynEntry e = tmpTable[indexFor(hash, tmpTable.length)]; e != null; e = e.next)
@@ -392,7 +419,7 @@ public class SynHashMap extends AbstractMap
 	 */
 	protected SynEntry getEntryForNullKey()
 	{
-		SynEntry[] tmpTable = this.getTable();
+		SynEntry[] tmpTable = this.checkRefWhenGet ? this.getTable() : this.table;
 		if (this.keyRefType == HARD)
 		{
 			for (SynEntry e = tmpTable[0]; e != null; e = e.next)
@@ -860,24 +887,15 @@ public class SynHashMap extends AbstractMap
 				return false;
 			}
 			Map.Entry e = (Map.Entry) o;
-			Object k1 = this.getKey();
-			Object k2 = e.getKey();
-			if (k1 == k2 || (k1 != null && k1.equals(k2)))
-			{
-				Object v1 = this.getValue();
-				Object v2 = e.getValue();
-				if (v1 == v2 || (v1 != null && v1.equals(v2)))
-				{
-					return true;
-				}
-			}
-			return false;
+			return Utility.objectEquals(this.getKey(), e.getKey())
+					&& Utility.objectEquals(this.getValue(), e.getValue());
 		}
 
 		public final int hashCode()
 		{
-			return (this.getKey() == null ? 0 : this.getKey().hashCode()) ^
-					(this.getValue() == null ? 0 : this.getValue().hashCode());
+			Object key = this.getKey();
+			Object value = this.getValue();
+			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
 		}
 
 		public final String toString()

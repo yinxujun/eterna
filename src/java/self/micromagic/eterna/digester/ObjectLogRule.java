@@ -35,7 +35,7 @@ public class ObjectLogRule extends MyRule
       }
       StringAppender temp = StringTool.createStringAppender(
             this.objType.length() + theName.length() + 2);
-      temp.append(this.objType).append("[").append(theName).append("]");
+      temp.append(this.objType).append('[').append(theName).append(']');
       ConfigurationException.objName = temp.toString();
    }
 
@@ -66,7 +66,7 @@ public class ObjectLogRule extends MyRule
       }
       StringAppender temp = StringTool.createStringAppender(
             type.length() + name.length() + 2);
-      temp.append(type).append("[").append(name).append("]");
+      temp.append(type).append('[').append(name).append(']');
       ConfigurationException.objName = temp.toString();
    }
 

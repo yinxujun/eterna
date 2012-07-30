@@ -10,8 +10,8 @@ import self.micromagic.util.Utility;
 
 public interface UserManager
 {
-   public final static Log log = Utility.createLog("user");
-   public final static String ETERNA_USER = "self.micromagic.eterna.user";
+   public static final Log log = Utility.createLog("user");
+   public static final String ETERNA_USER = "self.micromagic.eterna.user";
 
    /**
     * 初始化这个UserManager.

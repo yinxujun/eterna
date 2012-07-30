@@ -61,38 +61,38 @@ public class EternaRes extends TagSupport
 	{
 		// 创建载入资源的方法
 		out.println("if (typeof _pageInitializedURL == \"undefined\")");
-		out.println("{");
+		out.println('{');
 		out.println("window._pageInitializedURL = {};");
 		out.println("window._loadResource = function (jsResource, url, charset)");
-		out.println("{");
+		out.println('{');
 		out.println("if (window._pageInitializedURL[url])");
-		out.println("{");
+		out.println('{');
 		out.println("return;");
-		out.println("}");
+		out.println('}');
 		out.println("window._pageInitializedURL[url] = 1;");
 		out.println("var resObj;");
 		out.println("if (jsResource)");
-		out.println("{");
+		out.println('{');
 		out.println("resObj = document.createElement(\"script\");");
 		out.println("resObj.type = \"text/javascript\";");
 		out.println("resObj.async = true;");
 		out.println("resObj.src = url;");
-		out.println("}");
+		out.println('}');
 		out.println("else");
-		out.println("{");
+		out.println('{');
 		out.println("resObj = document.createElement(\"link\");");
 		out.println("resObj.type = \"text/css\";");
 		out.println("resObj.rel = \"stylesheet\";");
 		out.println("resObj.href = url;");
-		out.println("}");
+		out.println('}');
 		out.println("if (charset != null)");
-		out.println("{");
+		out.println('{');
 		out.println("resObj.charset = charset;");
-		out.println("}");
+		out.println('}');
 		out.println("var s = document.getElementsByTagName('script')[0];");
 		out.println("s.parentNode.insertBefore(resObj, s);");
 		out.println("};");
-		out.println("}"); // end if (typeof _pageInitializedURL == \"undefined\")
+		out.println('}'); // end if (typeof _pageInitializedURL == \"undefined\")
 	}
 
    public void release()

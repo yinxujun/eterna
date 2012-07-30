@@ -403,13 +403,9 @@ public class Utility
     * obj1 != obj2
     * obj1 == obj1
     */
-   public static boolean objectEquals(Object thisObj, Object otherObj)
+   public static boolean objectEquals(Object obj1, Object obj2)
    {
-      if (thisObj == null)
-      {
-         return otherObj == null;
-      }
-      return thisObj.equals(otherObj);
+		return obj1 == obj2 || (obj1 != null && obj1.equals(obj2));
    }
 
    /**
@@ -784,7 +780,7 @@ public class Utility
       }
    }
 
-   private final static String[] DATASOURCE_PROPERTIES = {
+   private static final String[] DATASOURCE_PROPERTIES = {
       "description", "String", "driverClass", "String", "maxCount", "int", "minCount", "int",
       "url", "String", "user", "String", "password", "String", "autoCommit", "boolean"
    };
@@ -1301,7 +1297,7 @@ public class Utility
          {
             temp.append(" method:(");
          }
-         temp.append(member == null ? "<released>" : member.getName()).append(")").append("]");
+         temp.append(member == null ? "<released>" : member.getName()).append(')').append(']');
          return temp.toString();
       }
 

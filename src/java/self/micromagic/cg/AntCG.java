@@ -115,12 +115,12 @@ public class AntCG
       out.appendln();
       if (pName != null)
       {
-         out.append("package ").append(pName).append(";").appendln().appendln();
+         out.append("package ").append(pName).append(';').appendln().appendln();
       }
       String[] packages = cg.getPackages();
       for (int i = 0; i < packages.length; i++)
       {
-         out.append("import ").append(packages[i]).append(".*").append(";").appendln();;
+         out.append("import ").append(packages[i]).append(".*;").appendln();
       }
       out.appendln().append("public class ").append(cName);
       Class baseClass = cg.getSuperClass();
@@ -146,7 +146,7 @@ public class AntCG
       {
          out.appendln();
       }
-      out.append("{").appendln();
+      out.append('{').appendln();
       String[] fields = cg.getFields();
       for (int i = 0; i < fields.length; i++)
       {
@@ -162,7 +162,7 @@ public class AntCG
       {
          out.append(ResManager.indentCode(methods[i], 1)).appendln().appendln();
       }
-      out.append("}");
+      out.append('}');
       if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
       {
          log.info(out.toString());

@@ -784,7 +784,7 @@ public class GenericDataSource implements DataSource {
         sb.append(useCount);
         sb.append(", user=");
         sb.append(user);
-        sb.append("]");
+        sb.append(']');
         return (sb.toString());
 
     }

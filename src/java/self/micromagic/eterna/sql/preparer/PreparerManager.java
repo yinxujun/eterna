@@ -165,7 +165,7 @@ public class PreparerManager
       {
          StringAppender buf = StringTool.createStringAppender(18);
          buf.append("[index:").append(index).append(" size:")
-               .append(this.preparers.length + 1).append("]");
+               .append(this.preparers.length + 1).append(']');
          throw new IndexOutOfBoundsException(buf.toString());
       }
       if (this.insertedPM == null)
@@ -311,7 +311,7 @@ public class PreparerManager
             if (this.sqlAdapter != null)
             {
                buf.append("In").append(this.sqlAdapter.getType()).append(" [")
-                     .append(this.sqlAdapter.getName()).append("]");
+                     .append(this.sqlAdapter.getName()).append(']');
                buf.append(", the parameter");
             }
             else
@@ -320,10 +320,10 @@ public class PreparerManager
             }
             if (this.parameterArray != null)
             {
-               buf.append(" [").append(this.parameterArray[i].getName()).append("]");
+               buf.append(" [").append(this.parameterArray[i].getName()).append(']');
             }
             buf.append(" not setted. real:").append(realIndex);
-            buf.append(" relative:").append(i + 1).append(".");
+            buf.append(" relative:").append(i + 1).append('.');
             throw new ConfigurationException(buf.toString());
          }
          else

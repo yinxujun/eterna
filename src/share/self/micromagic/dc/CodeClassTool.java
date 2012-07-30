@@ -123,9 +123,9 @@ public class CodeClassTool
       }
       cg.setClassLoader(baseClass.getClassLoader());
       StringAppender tmpCode = StringTool.createStringAppender(bodyCode.length() + 32);
-      tmpCode.append(methodHead).appendln().append("{").appendln();
+      tmpCode.append(methodHead).appendln().append('{').appendln();
       tmpCode.append(bodyCode);
-      tmpCode.appendln().append("}");
+      tmpCode.appendln().append('}');
       cg.addMethod(tmpCode.toString());
       if (DC_COMPILE_TYPE != null)
       {

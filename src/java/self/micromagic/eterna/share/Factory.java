@@ -6,7 +6,7 @@ import self.micromagic.eterna.digester.FactoryManager;
 
 public interface Factory
 {
-   final static int MAX_ADAPTER_COUNT = 1024 * 16;
+   static final int MAX_ADAPTER_COUNT = 1024 * 16;
 
    void initialize(FactoryManager.Instance factoryManager, Factory shareFactory)
          throws ConfigurationException;
