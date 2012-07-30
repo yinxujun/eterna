@@ -1,0 +1,37 @@
+#summary eterna.js中的方法介绍
+#labels Deprecated
+
+=Eterna对象中的方法及属性=
+Eterna对象是页面中的核心对象，在view模块的脚本中，此对象的引用名称为“`_eterna`”。下面一一介绍此对象中的属性及方法。
+
+==eterna_debug==
+类型：属性。<br>
+说明：当前Eterna对象的debug等级。
+
+==eternaVersion==
+类型：属性。<br>
+说明：当前Eterna对象的版本号。
+
+==rootWebObj==
+类型：属性。<br>
+说明：当前Eterna对象的作用域，是一个jQuery对象，view模块中生成的所有界面对象都在此对象中。
+
+==egTemp==
+类型：方法。<br>
+参数列表<br>
+temp：一个代表上下文环境变量json对象，此参数为可选。<br>
+说明：<br>
+当给出了temp参数时，此方法是将temp中的数据复制到上下文环境变量“`eg_temp`”中。<br>
+当未给此temp参数时，此方法是将上下文环境变量“`eg_temp`”中的数据复制一份并返回。<br>
+例子：
+{{{
+eg_temp.name = "1";
+// 复制当前的上下文环境
+var tmp = _eterna.eg_temp();
+eg_temp.name = "2";
+alert(eg_temp.name);   // <- 打印的值为2
+// 恢复当前的上下文环境
+_eterna.eg_temp(tmp);
+alert(eg_temp.name);   // <- 打印的值为1
+}}}
+
