@@ -295,7 +295,7 @@ public class SpellCoder
    /**
     * Æ´ÒôË÷Òý±í
     */
-   private final static short[][] _spellCodeIndex;
+   private static final short[][] _spellCodeIndex;
 
    static
    {
@@ -344,7 +344,7 @@ public class SpellCoder
    /**
     * ÂÞÂí×ÖÄ¸
     */
-   private final static String[] _charIndex1 = {
+   private static final String[] _charIndex1 = {
       "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "", "", "", "", "", "",
       "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
       "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
@@ -356,7 +356,7 @@ public class SpellCoder
    /**
     * Ï£À°×ÖÄ¸
     */
-   private final static String[] _charIndex2 = {
+   private static final String[] _charIndex2 = {
       "a", "b", "g", "d", "e", "z", "e", "th", "i", "k", "l", "m", "n", "x", "o", "p", "r",
       "s", "t", "u", "ph", "kh", "ps", "o"
    };

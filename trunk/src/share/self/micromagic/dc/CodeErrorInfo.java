@@ -38,9 +38,10 @@ public class CodeErrorInfo
       if (this.message == null)
       {
          StringAppender buf = StringTool.createStringAppender(256);
-         buf.append("CodeErrorInfo:[\n   position:").append(this.position).append("\n")
-               .append("   error:").append(this.error.getMessage()).append("\n")
-               .append("   code:\n").append(this.code).append("\n")
+         buf.append("CodeErrorInfo:[").appendln()
+					.append("   position:").append(this.position).appendln()
+               .append("   error:").append(this.error.getMessage()).appendln()
+               .append("   code:").appendln().append(this.code).appendln()
                .append(" ]");
          this.message = buf.toString();
       }

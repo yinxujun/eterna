@@ -131,7 +131,7 @@ public class PageManager
       this.out.println("var pageChanged = false;");
 
       this.out.println("function doPageChanged(changeNum, newPage, pageSize)");
-      this.out.println("{");
+      this.out.println('{');
 
       this.out.println("   if (!pageChanged)");
       this.out.println("   {");
@@ -146,12 +146,12 @@ public class PageManager
       this.out.println("   {");
       this.out.print("      document.");
       this.out.print(FORM_NAME);
-      this.out.print(".");
+      this.out.print('.');
       this.out.print(this.attributes.pageNumTag);
       this.out.println(".value = newPage - 1;");
       this.out.print("      document.");
       this.out.print(FORM_NAME);
-      this.out.print(".");
+      this.out.print('.');
       this.out.print(this.attributes.pageSizeTag);
       this.out.println(".value = pageSize < 1 ? 1 : pageSize > 300 ? 300 : pageSize;");
       this.out.println("   }");
@@ -160,16 +160,16 @@ public class PageManager
       this.out.println("   {");
       this.out.print("      document.");
       this.out.print(FORM_NAME);
-      this.out.print(".");
+      this.out.print('.');
       this.out.print(this.attributes.pageNumTag);
       this.out.print(".value = changeNum + ");
       this.out.print(this.result.pageNum);
-      this.out.println(";");
+      this.out.println(';');
       this.out.println("   }");
       this.out.print("   document.");
       this.out.print(FORM_NAME);
       this.out.println(".submit();");
-      this.out.println("}");
+      this.out.println('}');
 
       this.out.println("</script>");
 

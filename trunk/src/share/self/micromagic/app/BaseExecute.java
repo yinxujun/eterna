@@ -29,7 +29,7 @@ public class BaseExecute extends AbstractExecute
    /**
     * 标识是否是使用数据集中的指定值来作为属性值.
     */
-   public final static String DATA_ATTRIBUTE_NAME_PREFIX = "$data.";
+   public static final String DATA_ATTRIBUTE_NAME_PREFIX = "$data.";
 
    /**
     * 此属性会在初始化时赋值, 可在需要时使用.
@@ -44,7 +44,7 @@ public class BaseExecute extends AbstractExecute
    /**
     * 日志记录.
     */
-   protected final static Log log = WebApp.log;
+   protected static final Log log = WebApp.log;
 
    /**
     * 实现了<code>self.micromagic.eterna.model.Execute</code>接口的初始化方法.

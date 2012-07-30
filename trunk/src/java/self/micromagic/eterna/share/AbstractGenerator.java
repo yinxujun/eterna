@@ -9,7 +9,7 @@ import self.micromagic.eterna.digester.ConfigurationException;
 public abstract class AbstractGenerator
       implements Generator
 {
-   protected final static Log log = EternaFactoryImpl.log;
+   protected static final Log log = EternaFactoryImpl.log;
 
    protected AttributeManager attributes = new AttributeManager();
 

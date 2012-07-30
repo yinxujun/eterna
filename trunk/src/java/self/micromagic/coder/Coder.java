@@ -6,7 +6,7 @@ public interface Coder
    /**
     * 长度为0的字节数组, 在编码解码时需要的话可以使用.
     */
-   public final static byte[] EMPTY_BYTE_ARRAY = new byte[0];
+   public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
    /**
     * 以自身为副本, 生成一个新的<code>Coder</code>. <p>

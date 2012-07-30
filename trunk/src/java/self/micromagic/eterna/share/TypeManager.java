@@ -9,26 +9,26 @@ import self.micromagic.util.Utility;
 
 public class TypeManager
 {
-   public final static int TYPE_IGNORE = 0;
-   public final static int TYPE_STRING = 1;
-   public final static int TYPE_INTEGER = 2;
-   public final static int TYPE_DOUBLE = 3;
-   public final static int TYPE_BYTES = 4;
-   public final static int TYPE_BOOLEAN = 5;
-   public final static int TYPE_DATE = 6;
-   public final static int TYPE_TIMPSTAMP = 7;
-   public final static int TYPE_LONG = 8;
-   public final static int TYPE_TIME = 9;
-   public final static int TYPE_SHORT = 10;
-   public final static int TYPE_BYTE = 11;
-   public final static int TYPE_FLOAT = 12;
-   public final static int TYPE_OBJECT = 13;
-   public final static int TYPE_BIGSTRING = 14;
-   public final static int TYPE_STREAM = 15;
-   public final static int TYPE_READER = 16;
-   public final static int TYPE_DECIMAL = 17;
+   public static final int TYPE_IGNORE = 0;
+   public static final int TYPE_STRING = 1;
+   public static final int TYPE_INTEGER = 2;
+   public static final int TYPE_DOUBLE = 3;
+   public static final int TYPE_BYTES = 4;
+   public static final int TYPE_BOOLEAN = 5;
+   public static final int TYPE_DATE = 6;
+   public static final int TYPE_TIMPSTAMP = 7;
+   public static final int TYPE_LONG = 8;
+   public static final int TYPE_TIME = 9;
+   public static final int TYPE_SHORT = 10;
+   public static final int TYPE_BYTE = 11;
+   public static final int TYPE_FLOAT = 12;
+   public static final int TYPE_OBJECT = 13;
+   public static final int TYPE_BIGSTRING = 14;
+   public static final int TYPE_STREAM = 15;
+   public static final int TYPE_READER = 16;
+   public static final int TYPE_DECIMAL = 17;
 
-   public final static int TYPES_COUNT = 18;
+   public static final int TYPES_COUNT = 18;
 
    private static Map paramMap = new HashMap();
 

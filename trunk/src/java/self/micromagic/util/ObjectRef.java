@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class ObjectRef
       implements Serializable
 {
-   protected final static int MORE_EQUAL = -1;
-   protected final static int TRUE_EQUAL = 1;
-   protected final static int FALSE_EQUAL = 0;
+   protected static final int MORE_EQUAL = -1;
+   protected static final int TRUE_EQUAL = 1;
+   protected static final int FALSE_EQUAL = 0;
 
    private Object obj;
 

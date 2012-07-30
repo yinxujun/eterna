@@ -573,9 +573,9 @@ public class BeanMap extends AbstractMap
       return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_ENTRY);
    }
 
-   private final static int BEANMAP_SET_TYPE_ENTRY = 1;
-   private final static int BEANMAP_SET_TYPE_VALUE = 2;
-   private final static int BEANMAP_SET_TYPE_KEY = 3;
+   private static final int BEANMAP_SET_TYPE_ENTRY = 1;
+   private static final int BEANMAP_SET_TYPE_VALUE = 2;
+   private static final int BEANMAP_SET_TYPE_KEY = 3;
 
    private static class BeanMapEntrySet extends AbstractSet
          implements Set

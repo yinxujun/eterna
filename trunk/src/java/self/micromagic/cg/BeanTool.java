@@ -216,7 +216,7 @@ public class BeanTool
                   .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
                   .toString();
             String endCode =  StringTool.createStringAppender()
-                  .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
+                  .append("   return ").append(SETTED_COUNT_NAME).append(';').toString();
             String[] imports = {
                ClassGenerator.getPackageString(Map.class),
                ClassGenerator.getPackageString(BeanTool.class),
@@ -303,7 +303,7 @@ public class BeanTool
 
             // 这里的fnName和前面的相同, 就不用重新赋值了
             beginCode = StringTool.createStringAppender().append(fnName).appendln()
-                  .append("      throws Exception").appendln().append("{").toString();
+                  .append("      throws Exception").appendln().append('{').toString();
             endCode = "}";
             String bodyCode = "return new " + ClassGenerator.getClassName(beanClass) + "();";
             BeanPropertyReader tmpBPR;
@@ -359,12 +359,12 @@ public class BeanTool
                   .append("public int setBeanValues(Object bean, Map values, String prefix)").appendln()
                   .append("      throws Exception").toString();
             String beginCode = StringTool.createStringAppender()
-                  .append("   Object ").append(TMP_OBJ_NAME).append(";").appendln()
+                  .append("   Object ").append(TMP_OBJ_NAME).append(';').appendln()
                   .append("   int ").append(SETTED_COUNT_NAME).append(" = 0;").appendln()
-                  .append("   String ").append(TMP_STR_NAME).append(";").appendln()
+                  .append("   String ").append(TMP_STR_NAME).append(';').appendln()
                   .toString();
             String endCode =  StringTool.createStringAppender()
-                  .append("   return ").append(SETTED_COUNT_NAME).append(";").toString();
+                  .append("   return ").append(SETTED_COUNT_NAME).append(';').toString();
             String[] imports = {
                ClassGenerator.getPackageString(Map.class),
                ClassGenerator.getPackageString(BeanTool.class),
@@ -472,10 +472,10 @@ public class BeanTool
    {
       ClassGenerator cg = ClassGenerator.createClassGenerator(suffix, beanClass, interfaceClass, imports);
       StringAppender function = StringTool.createStringAppender(256);
-      function.append(methodHead).appendln().append("{").appendln();
-      function.append("   ").append(ClassGenerator.getClassName(beanClass)).append(" ").append(BeanTool.BEAN_NAME)
+      function.append(methodHead).appendln().append('{').appendln();
+      function.append("   ").append(ClassGenerator.getClassName(beanClass)).append(' ').append(BeanTool.BEAN_NAME)
             .append(" = (").append(ClassGenerator.getClassName(beanClass)).append(") ").append(beanParamName)
-            .append(";").appendln();
+            .append(';').appendln();
       boolean first = true;
 
       Map dataMap = new HashMap();
@@ -546,7 +546,7 @@ public class BeanTool
             }
          }
       }
-      function.append("}");
+      function.append('}');
 
       cg.addMethod(function.toString());
       cg.setClassLoader(beanClass.getClassLoader());
@@ -583,10 +583,10 @@ public class BeanTool
    {
       ClassGenerator cg = ClassGenerator.createClassGenerator("Processer", beanClass, interfaceClass, imports);
       StringAppender function = StringTool.createStringAppender(256);
-      function.append(methodHead).appendln().append("{").appendln();
-      function.append("   ").append(ClassGenerator.getClassName(beanClass)).append(" ").append(BeanTool.BEAN_NAME)
+      function.append(methodHead).appendln().append('{').appendln();
+      function.append("   ").append(ClassGenerator.getClassName(beanClass)).append(' ').append(BeanTool.BEAN_NAME)
             .append(" = (").append(ClassGenerator.getClassName(beanClass)).append(") ").append(beanParamName)
-            .append(";").appendln();
+            .append(';').appendln();
       function.append(beginCode).appendln();
 
       Field[] fields = getBeanFields(beanClass);
@@ -630,7 +630,7 @@ public class BeanTool
             function.append(code).appendln();
          }
       }
-      function.append(endCode).appendln().append("}");
+      function.append(endCode).appendln().append('}');
 
       cg.addMethod(function.toString());
       cg.setClassLoader(beanClass.getClassLoader());
@@ -667,12 +667,12 @@ public class BeanTool
    {
       Map result = new HashMap();
       String beginCode0 = StringTool.createStringAppender(256)
-            .append(methodHead).appendln().append("{").appendln()
-            .append("   ").append(ClassGenerator.getClassName(beanClass)).append(" ").append(BeanTool.BEAN_NAME)
+            .append(methodHead).appendln().append('{').appendln()
+            .append("   ").append(ClassGenerator.getClassName(beanClass)).append(' ').append(BeanTool.BEAN_NAME)
             .append(" = (").append(ClassGenerator.getClassName(beanClass)).append(") ").append(beanParamName)
-            .append(";").appendln().append(beginCode).appendln().toString();
+            .append(';').appendln().append(beginCode).appendln().toString();
       String endCode0 = StringTool.isEmpty(endCode) ? "}"
-            : StringTool.createStringAppender(endCode, 5, false).appendln().append("}").toString();
+            : StringTool.createStringAppender(endCode, 5, false).appendln().append('}').toString();
 
       Field[] fields = getBeanFields(beanClass);
       for (int i = 0; i < fields.length; i++)

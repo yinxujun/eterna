@@ -254,7 +254,7 @@ public class SearchManagerImpl extends AbstractGenerator
             }
             if (index > 0)
             {
-               buf.append(")");
+               buf.append(')');
             }
          }
       }
@@ -354,7 +354,7 @@ public class SearchManagerImpl extends AbstractGenerator
                }
                else
                {
-                  buf.append("(");
+                  buf.append('(');
                }
                buf.append(cbCon.sqlPart);
                for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
@@ -368,7 +368,7 @@ public class SearchManagerImpl extends AbstractGenerator
       }
       if (buf.length() > 1)
       {
-         buf.append(")");
+         buf.append(')');
          this.preparedCondition = buf.toString();
       }
       else
@@ -565,7 +565,7 @@ public class SearchManagerImpl extends AbstractGenerator
             }
             if (buf.length() > 0)
             {
-               buf.append(")");
+               buf.append(')');
             }
          }
       }

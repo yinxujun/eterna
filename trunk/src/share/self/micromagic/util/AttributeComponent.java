@@ -63,8 +63,8 @@ public final class AttributeComponent extends ComponentImpl
       if (autoSet)
       {
          StringAppender buf = StringTool.createStringAppender();
-         buf.appendln().append("if (objConfig.bodyString != null)").appendln().append("{").appendln()
-               .append("webObj.html(objConfig.bodyString);").appendln().append("}").appendln();
+         buf.appendln().append("if (objConfig.bodyString != null)").appendln().append('{').appendln()
+               .append("webObj.html(objConfig.bodyString);").appendln().append('}').appendln();
          if (this.swapFlag == null)
          {
             buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();

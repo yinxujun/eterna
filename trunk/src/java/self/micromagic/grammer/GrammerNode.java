@@ -86,7 +86,7 @@ public class GrammerNode extends AbstractElement
       StringAppender buf = StringTool.createStringAppender();
       buf.append("Node:").append(this.getName()).append(':')
             .append(this.otherCharType).append(',').append(this.endType)
-            .append(":").append(GrammerManager.getGrammerElementTypeName(this.getType()));
+            .append(':').append(GrammerManager.getGrammerElementTypeName(this.getType()));
       if (this.trueCheckers != null)
       {
          buf.append(":T").append(Utils.dealString2EditCode(this.trueCheckers.toString()));

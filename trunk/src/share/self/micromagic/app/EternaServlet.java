@@ -206,9 +206,9 @@ public class EternaServlet extends HttpServlet
             StringAppender url = StringTool.createStringAppender(512);
             url.append(request.getScheme()).append("://").append(request.getHeader("host"));
             url.append(request.getContextPath()).append(request.getServletPath());
-            url.append("?").append(this.getFactoryManager().getEternaFactory().getModelNameTag());
-            url.append("=").append(URLEncoder.encode(export.getModelName(), this.charset));
-            url.append("&");
+            url.append('?').append(this.getFactoryManager().getEternaFactory().getModelNameTag());
+            url.append('=').append(URLEncoder.encode(export.getModelName(), this.charset));
+            url.append('&');
             url.append(this.getFactoryManager().getEternaFactory().getModelCaller()
                   .prepareParam(data, this.charset));
             response.sendRedirect(url.toString());
@@ -225,11 +225,11 @@ public class EternaServlet extends HttpServlet
             url.append(path);
             if (path.indexOf('?') != -1)
             {
-               url.append("&");
+               url.append('&');
             }
             else
             {
-               url.append("?");
+               url.append('?');
             }
             url.append(this.getFactoryManager().getEternaFactory().getModelCaller()
                   .prepareParam(data, this.charset));

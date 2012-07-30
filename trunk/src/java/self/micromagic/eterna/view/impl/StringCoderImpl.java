@@ -17,32 +17,32 @@ public class StringCoderImpl
    /**
     * 解析名称的最大长度.
     */
-   protected final static int MAX_PARSE_LENGTH = 32;
+   protected static final int MAX_PARSE_LENGTH = 32;
 
 	/**
 	 * 字符字典表的尺寸.
 	 */
-	protected final static int CHAR_TABLE_SIZE = 128;
+	protected static final int CHAR_TABLE_SIZE = 128;
 
 	/**
 	 * JSON的特殊字符.
 	 */
-	protected final static String[] ESCAPES_JSON = new String[CHAR_TABLE_SIZE];
+	protected static final String[] ESCAPES_JSON = new String[CHAR_TABLE_SIZE];
 
 	/**
 	 * HTML的特殊字符.
 	 */
-	protected final static String[] ESCAPES_HTML = new String[CHAR_TABLE_SIZE];
+	protected static final String[] ESCAPES_HTML = new String[CHAR_TABLE_SIZE];
 
 	/**
 	 * 有效的名称字符.
 	 */
-	protected final static boolean[] VALID_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
+	protected static final boolean[] VALID_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
 
 	/**
 	 * 有效的起始名称字符.
 	 */
-	protected final static boolean[] VALID_FIRST_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
+	protected static final boolean[] VALID_FIRST_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
 
 	static
 	{

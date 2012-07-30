@@ -263,7 +263,7 @@ public class SQLManager
          buf.append(plus);
          if (dynamicAuto)
          {
-            buf.append("]");
+            buf.append(']');
          }
       }
    }

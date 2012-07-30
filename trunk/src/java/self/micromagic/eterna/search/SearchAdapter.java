@@ -16,14 +16,14 @@ import self.micromagic.eterna.view.DataPrinter;
 
 public interface SearchAdapter
 {
-   public final static String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
-   public final static String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
+   public static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
+   public static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
 
    /**
     * 设置单列排序的参数名. <p>
     * 参数格式为: [searchName]/order。
     */
-   public final static String SINGLE_ORDER_SUFIX = ".order";
+   public static final String SINGLE_ORDER_SUFIX = ".order";
 
    /**
     * 设置默认每页行数的属性名称. <p>
@@ -34,7 +34,7 @@ public interface SearchAdapter
     *    </attributes>
     * </search>
     */
-   public final static String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
+   public static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
 
    /**
     * 用于标志是否要强制读取列设置. <p>
@@ -47,7 +47,7 @@ public interface SearchAdapter
     * 注: 使用此标志强制读取的列设置不会被缓存, 也就是说下次强制读取表示未
     *     设置的话, 读取的列设置仍然是前一次缓存的值
     */
-   public final static String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
+   public static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
 
    /**
     * 用于标志是否要读取所有的记录. <p>
@@ -57,7 +57,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.READ_ALL_ROW);
     */
-   public final static String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
+   public static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
 
    /**
     * 用于标志读取的记录数. <p>
@@ -67,7 +67,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.READ_ROW_START_AND_COUNT);
     */
-   public final static String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
+   public static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
 
    /**
     * 用于标志是否要读取所有的记录. <p>
@@ -78,7 +78,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.HOLD_CONNECTION);
     */
-   public final static String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
+   public static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
 
    String getName() throws ConfigurationException;
 

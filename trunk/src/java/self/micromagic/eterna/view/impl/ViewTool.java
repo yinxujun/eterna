@@ -31,7 +31,7 @@ import self.micromagic.util.StringAppender;
  */
 public class ViewTool
 {
-   public final static Log log = Tool.log;
+   public static final Log log = Tool.log;
 
    public static final int GRAMMER_TYPE_NONE = 0;
    public static final int GRAMMER_TYPE_JSON = 1;
@@ -342,7 +342,7 @@ public class ViewTool
                   {
                      if (plusName.charAt(plusName.length() - 1) == 'V')
                      {
-                        buf.append("[").append(tmpName).append("]");
+                        buf.append('[').append(tmpName).append(']');
                      }
                      else
                      {

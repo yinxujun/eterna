@@ -12,20 +12,20 @@ import self.micromagic.util.ObjectRef;
 
 public interface ModelCaller
 {
-   public final static String DEFAULT_MODEL_TAG = "self.micromagic.default.model";
-   public final static String DEFAULT_MODEL_NAME = "index";
+   public static final String DEFAULT_MODEL_TAG = "self.micromagic.default.model";
+   public static final String DEFAULT_MODEL_NAME = "index";
 
    /**
     * @deprecated
     * @see DataSourceManager#DATA_SOURCE_MAP
     */
-   public final static String DATA_SOURCE_MAP = DataSourceManager.DATA_SOURCE_MAP;
+   public static final String DATA_SOURCE_MAP = DataSourceManager.DATA_SOURCE_MAP;
 
    /**
     * @deprecated
     * @see DataSourceManager#DEFAULT_DATA_SOURCE_NAME
     */
-   public final static String DEFAULT_DATA_SOURCE_NAME = DataSourceManager.DEFAULT_DATA_SOURCE_NAME;
+   public static final String DEFAULT_DATA_SOURCE_NAME = DataSourceManager.DEFAULT_DATA_SOURCE_NAME;
 
    void initModelCaller(EternaFactory factory) throws ConfigurationException;
 

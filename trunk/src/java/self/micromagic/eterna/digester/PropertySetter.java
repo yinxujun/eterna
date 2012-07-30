@@ -127,9 +127,9 @@ public abstract class PropertySetter
  */
 abstract class SinglePropertySetter extends PropertySetter
 {
-   public final static Class[] STRING_TYPE = new Class[]{String.class};
-   public final static Class[] INTEGER_TYPE = new Class[]{int.class};
-   public final static Class[] BOOLEAN_TYPE = new Class[]{boolean.class};
+   public static final Class[] STRING_TYPE = new Class[]{String.class};
+   public static final Class[] INTEGER_TYPE = new Class[]{int.class};
+   public static final Class[] BOOLEAN_TYPE = new Class[]{boolean.class};
 
    protected String attributeName;
    protected String defaultValue;
@@ -622,8 +622,8 @@ class IntegerPropertySetter extends SinglePropertySetter
  */
 class EmptyPropertySetter extends PropertySetter
 {
-   public final static Class[] EMPTY_TYPE = new Class[0];
-   public final static Object[] EMPTY_VALUE = new Object[0];
+   public static final Class[] EMPTY_TYPE = new Class[0];
+   public static final Object[] EMPTY_VALUE = new Object[0];
 
    public EmptyPropertySetter(String methodName)
    {

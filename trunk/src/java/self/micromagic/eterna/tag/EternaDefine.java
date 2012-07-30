@@ -151,7 +151,7 @@ public class EternaDefine extends InitBaseTag
             out.println("(function() {");
             out.print("var $E = ");
             view.printView(out, nowData, this.getCacheMap(view));
-            out.println(";");
+            out.println(';');
             out.println("var eternaData = $E;");
             out.println("var eterna_debug = " + view.getDebug() + ";");
             out.println("var _eterna = new Eterna(eternaData, eterna_debug, null);");

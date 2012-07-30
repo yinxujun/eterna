@@ -50,7 +50,7 @@ import self.micromagic.eterna.view.impl.StringCoderImpl;
 public class EternaFactoryImpl extends AbstractFactory
       implements EternaFactory
 {
-   protected final static Log log = Tool.log;
+   protected static final Log log = Tool.log;
 
    private EternaFactory shareEternaFactory;
    private EternaFactoryImpl sameShare;

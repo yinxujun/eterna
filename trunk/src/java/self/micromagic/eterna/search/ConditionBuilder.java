@@ -16,7 +16,7 @@ import self.micromagic.util.StringTool;
  */
 public interface ConditionBuilder
 {
-   public final static String[] OPERATOR_NAMES = {
+   public static final String[] OPERATOR_NAMES = {
       "isNull", "notNull", "checkNull",
       "equal", "notEqual", "large", "below", "notLarge", "notBelow",
       "beginWith", "endWith", "include", "match"
@@ -66,7 +66,7 @@ public interface ConditionBuilder
             int count = this.sqlPart.length() + 39;
             StringAppender buf = StringTool.createStringAppender(count);
             buf.append("Condition[sqlPart:(").append(this.sqlPart);
-            buf.append("),preparerCount:").append(this.preparers.length).append("]");
+            buf.append("),preparerCount:").append(this.preparers.length).append(']');
             this.toStrBuf = buf.toString();
          }
          return this.toStrBuf;

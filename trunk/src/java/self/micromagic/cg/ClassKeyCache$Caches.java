@@ -2,13 +2,14 @@
 package self.micromagic.cg;
 
 import java.util.Map;
-import java.util.WeakHashMap;
+
+import self.micromagic.util.container.SynHashMap;
 
 /**
  * 需要定义在<code>ClassLoader</code>中, 存放缓存数据的类.
  */
 public class ClassKeyCache$Caches
 {
-   public static Map caches = new WeakHashMap();
+   public static Map caches = new SynHashMap(8, SynHashMap.WEAK);
 
 }

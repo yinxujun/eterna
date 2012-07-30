@@ -36,7 +36,7 @@ public class Utils
    public static String PRE_PAGE_TAG = "self.pre.page";
    public static String NEXT_PAGE_TAG = "self.next.page";
 
-   public final static String SERVER_ROOT_TAG = "self.server.root";
+   public static final String SERVER_ROOT_TAG = "self.server.root";
 
    public static int parseInt(String str)
    {
@@ -96,7 +96,7 @@ public class Utils
       {
          StringAppender temp = StringTool.createStringAppender(256);
          temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
-               .append("=").append(prePage).append("\">上一页</a>");
+               .append('=').append(prePage).append("\">上一页</a>");
          prePageHref = temp.toString();
       }
       else
@@ -107,7 +107,7 @@ public class Utils
       {
          StringAppender temp = StringTool.createStringAppender(256);
          temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
-               .append("=").append(result.pageNum + 1).append("\">下一页</a>");
+               .append('=').append(result.pageNum + 1).append("\">下一页</a>");
          nextPageFref = temp.toString();
       }
       else
@@ -137,7 +137,7 @@ public class Utils
       String queryStr = request.getQueryString();
       if (queryStr != null)
       {
-         href = request.getRequestURL().append("?")
+         href = request.getRequestURL().append('?')
                .append(request.getQueryString()).toString();
       }
       else
@@ -171,10 +171,10 @@ public class Utils
       }
 
       out.println("function doTreeSelect()");
-      out.println("{");
+      out.println('{');
       out.print("   var sName = ");
       out.print(value);
-      out.println(";");
+      out.println(';');
 
       out.print("   showModalDialog(\"");
       out.print(root);
@@ -185,7 +185,7 @@ public class Utils
       out.print("         new Array(window, ");
       out.print(returnMethod);
       out.println("), \"dialogWidth:380px;dialogHeight:460px;center:yes;status:no;help:no\");");
-      out.println("}");
+      out.println('}');
 
       if (withScriptTag)
       {
@@ -221,12 +221,12 @@ public class Utils
       }
 
       out.println("function doSearch()");
-      out.println("{");
+      out.println('{');
       out.print("   var queryXML = document.");
       out.print(formName);
-      out.print(".");
+      out.print('.');
       out.print(attributes.querySettingTag);
-      out.println(";");
+      out.println(';');
       out.println("   queryXML.value = \"\";");
 
       out.print("   showModalDialog(\"");
@@ -242,7 +242,7 @@ public class Utils
       out.print(formName);
       out.println(".submit();");
       out.println("   }");
-      out.println("}");
+      out.println('}');
 
       if (withScriptTag)
       {
@@ -278,12 +278,12 @@ public class Utils
       }
 
       out.println("function doSearch()");
-      out.println("{");
+      out.println('{');
       out.print("   var queryXML = document.");
       out.print(formName);
-      out.print(".");
+      out.print('.');
       out.print(attributes.querySettingTag);
-      out.println(";");
+      out.println(';');
       out.println("   queryXML.value = \"\";");
 
       out.print("   showModalDialog(\"");
@@ -297,7 +297,7 @@ public class Utils
       out.println("   {");
       out.println("      document.queryForm.submit();");
       out.println("   }");
-      out.println("}");
+      out.println('}');
 
       if (withScriptTag)
       {
@@ -552,7 +552,7 @@ public class Utils
                }
                else
                {
-                  out.write("\n");
+                  out.write('\n');
                }
                break;
             case ' ':
@@ -565,13 +565,13 @@ public class Utils
                   }
                   else
                   {
-                     out.write(" ");
+                     out.write(' ');
                      preSpace = true;
                   }
                }
                else
                {
-                  out.write(" ");
+                  out.write(' ');
                }
                break;
             default:
@@ -725,27 +725,29 @@ public class Utils
                      int d = (int) str.charAt(i + 1);
                      if (d >= 0xDC00 && d <= 0xDFFF)
                      {
-                        bytes = (((char) c) + "" + ((char) d)).getBytes(charsetName);
+               			StringAppender tmpBuf = StringTool.createStringAppender(2)
+										.append((char) c).append((char) d);
+                        bytes = tmpBuf.toString().getBytes(charsetName);
                         i++;
                      }
                   }
                   if (bytes == null)
                   {
-                     bytes = (((char) c) + "").getBytes(charsetName);
+                     bytes = String.valueOf((char) c).getBytes(charsetName);
                   }
                }
                else
                {
-                  bytes = (((char) c) + "").getBytes(charsetName);
+                  bytes = String.valueOf((char) c).getBytes(charsetName);
                }
                StringAppender tAS = StringTool.createStringAppender(bytes.length * 3);
                for (int index = 0; index < bytes.length; index++)
                {
-                  tAS.append("%");
+                  tAS.append('%');
                   int tbyte = bytes[index] & 0xff;
                   if (tbyte < 16)
                   {
-                     tAS.append("0");
+                     tAS.append('0');
                   }
                   else
                   {
@@ -847,7 +849,7 @@ public class Utils
          month -= 12 * offYear;
       }
       StringAppender date = StringTool.createStringAppender(10);
-      return date.append(year).append("-").append(month + 1).append("-")
+      return date.append(year).append('-').append(month + 1).append('-')
             .append(monthDay).toString();
    }
 

@@ -33,30 +33,30 @@ import self.micromagic.util.container.ValueContainerMap;
 
 public interface WebApp
 {
-   public final static Log log = Utility.createLog("app");
+   public static final Log log = Utility.createLog("app");
 
-   public final static String DEFAULT_MODEL_TAG = "defaultModel";
-   public final static String VIEW_TAG = "self.micromagic.view";
-   public final static String APPDATA_TAG = "self.micromagic.appData";
+   public static final String DEFAULT_MODEL_TAG = "defaultModel";
+   public static final String VIEW_TAG = "self.micromagic.view";
+   public static final String APPDATA_TAG = "self.micromagic.appData";
 
-   public final static QueryTool queryTool = new QueryTool();
-   public final static AppTool appTool = new AppTool();
+   public static final QueryTool queryTool = new QueryTool();
+   public static final AppTool appTool = new AppTool();
 
-   public final static String SERVER_ROOT_TAG = "self.micromagic.server.contextRoot";
+   public static final String SERVER_ROOT_TAG = "self.micromagic.server.contextRoot";
 
-   public final static String SESSION_SECURITY_MANAGER = "self.micromagic.security.manager.";
-   public final static String SECURITY_NAME = "security";
-   public final static String NORIGHT_PAGE = "noright";
-   public final static String ERROR_PAGE = "error";
-   public final static String ERROR_404 = "error404";
-   public final static String MESSAGE_PAGE = "message";
-   public final static String LIST_PAGE = "list";
-   public final static String EXCEL_PAGE = "excel";
-   public final static String LIST_METHOD = "listMethod";
+   public static final String SESSION_SECURITY_MANAGER = "self.micromagic.security.manager.";
+   public static final String SECURITY_NAME = "security";
+   public static final String NORIGHT_PAGE = "noright";
+   public static final String ERROR_PAGE = "error";
+   public static final String ERROR_404 = "error404";
+   public static final String MESSAGE_PAGE = "message";
+   public static final String LIST_PAGE = "list";
+   public static final String EXCEL_PAGE = "excel";
+   public static final String LIST_METHOD = "listMethod";
 
-   public final static String PERFORM_IN_APPLICATION = Utility.getProperty(
+   public static final String PERFORM_IN_APPLICATION = Utility.getProperty(
          "self.micromagic.app_perform", "do");
-   public final static String METHOD_NAME = Utility.getProperty(
+   public static final String METHOD_NAME = Utility.getProperty(
          "self.micromagic.method_name", "method");
 
    public static class AppTool

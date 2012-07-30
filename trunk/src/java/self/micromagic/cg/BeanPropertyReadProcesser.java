@@ -109,24 +109,24 @@ class BeanPropertyReadProcesser
       String fnName = "public Object getBeanValue(CellDescriptor cd, int[] indexs, Object arrObj, "
             + "String prefix, BeanMap beanMap)";
       String beginCode = StringTool.createStringAppender().append(fnName).appendln()
-            .append("      throws Exception").appendln().append("{").appendln()
-            .append(ClassGenerator.getClassName(eType)).append(arrVLStr1).append(" ")
+            .append("      throws Exception").appendln().append('{').appendln()
+            .append(ClassGenerator.getClassName(eType)).append(arrVLStr1).append(' ')
             .append(BeanTool.DEF_ARRAY_NAME).append(" = (").append(ClassGenerator.getClassName(eType))
             .append(arrVLStr1).append(") arrObj;").toString();
       String endCode = "}";
       StringAppender arrVL2 = StringTool.createStringAppender();
       StringAppender arrDef = StringTool.createStringAppender();
       arrDef.append("private ").append(ClassGenerator.getClassName(BeanPropertyReader.class))
-            .append("[] ").append(BeanTool.PROCESSER_ARRAY_NAME).append(";");
+            .append("[] ").append(BeanTool.PROCESSER_ARRAY_NAME).append(';');
       cg.addField(arrDef.toString());
       StringAppender arrInit = StringTool.createStringAppender();
       arrInit.append("public ${").append(CG.THIS_NAME).append("}()").appendln()
-            .append("{").appendln().append("this.").append(BeanTool.PROCESSER_ARRAY_NAME)
+            .append('{').appendln().append("this.").append(BeanTool.PROCESSER_ARRAY_NAME)
             .append(" = new ").append(ClassGenerator.getClassName(BeanPropertyReader.class))
-            .append("[").append(level.value).append("];").appendln();
+            .append('[').append(level.value).append("];").appendln();
       for (int i = 0; i < level.value; i++)
       {
-         arrVL2.append("[").append(BeanTool.INDEXS_NAME).append("[").append(i).append("]]");
+         arrVL2.append('[').append(BeanTool.INDEXS_NAME).append('[').append(i).append("]]");
          this.paramCache.put("arrayVisitList", arrVL2.toString());
          StringAppender bodyCode = StringTool.createStringAppender();
          if (i == level.value - 1 && tmpWrapName != null)
@@ -136,11 +136,11 @@ class BeanPropertyReadProcesser
          BeanTool.codeRes.printRes(tmpResName, this.paramCache, 0, bodyCode).appendln();
          Object defObj = BeanTool.createPropertyProcesser("P_arr_" + pName, this.beanClass,
                BeanPropertyReader.class, beginCode, bodyCode.toString(), endCode, imports);
-         arrInit.append("this.").append(BeanTool.PROCESSER_ARRAY_NAME).append("[").append(i)
+         arrInit.append("this.").append(BeanTool.PROCESSER_ARRAY_NAME).append('[').append(i)
                .append("] = new ").append(ClassGenerator.getClassName(defObj.getClass()))
                .append("();").appendln();
       }
-      arrInit.append("}");
+      arrInit.append('}');
       cg.addConstructor(arrInit.toString());
       return sa;
    }

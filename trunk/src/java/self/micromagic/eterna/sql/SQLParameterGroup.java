@@ -14,7 +14,7 @@ public interface SQLParameterGroup
    /**
     * ignoreList列表中, 加上此标记名表示忽略参数组中同名的参数
     */
-   public final static String IGNORE_SAME_NAME = "$ignoreSame";
+   public static final String IGNORE_SAME_NAME = "$ignoreSame";
 
    /**
     * 初始化本SQLParameterGroup对象, 系统会在初始化时调用此方法. <p>
