@@ -1,0 +1,7 @@
+#summary 全局配置中的方法介绍
+#labels Deprecated
+
+=全局配置文件=
+默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”,里面定义了一些常用的方法及控件。
+
+= Details =
