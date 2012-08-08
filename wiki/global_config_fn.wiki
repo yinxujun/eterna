@@ -4,4 +4,45 @@
 =全局配置文件=
 默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”,里面定义了一些常用的方法及控件。
 
-= Details =
+==invertSelect==
+{{{
+说明：
+对一组checkbox进行反选或全选操作。
+参数列表
+objs：通过jQuery筛选的checkbox列表，或者是checkbox的id。
+container：当第一个参数为checkbox的id，此参数表示在哪个范围内筛选。
+selectAll：是否为全选模式，ture为全选，false（默认值）为反选。
+}}}
+例子：
+{{{
+// 对id为tmp的一组checkbox进行反选
+{$ef:invertSelect}("tmp");
+// 对id为tmp的一组checkbox进行全选
+{$ef:invertSelect}("tmp", true);
+// 对optTable对象中，id为tmp的一组checkbox进行全选
+{$ef:invertSelect}("tmp", _eterna.getWebObj("optTable"), true);
+}}}
+
+==checkSelected==
+{{{
+说明：
+判断一组checkbox或radion中是否有选中。
+id：需要被判断的一组checkbox或radio的id。
+msg：当没有被选中的对象时，显示的提示信息。
+container：在哪个范围内筛选。
+returnSelected：是否返回被选中的列表而不是true或false。
+}}}
+例子：
+{{{
+// 对id为tmp的一组checkbox或radio进行判断是否选中
+if ({$ef:checkSelected}("tmp", "请至少选择一条记录！"))
+{
+   ...
+}
+// 对id为tmp的一组checkbox或radio进行判断是否选中，并返回选中的列表
+var objs = {$ef:checkSelected}("tmp", "请先选择！", true);
+if (objs != null)
+{
+   ...
+}
+}}}
