@@ -22,14 +22,12 @@ public interface SpecialLog
     * 记录日志.
     *
     * @param sql           发生日志的<code>SQLAdapter</code>
-    * @param adapterType   <code>SQLAdapter</code>的类型
     * @param xmlLog        已记录日志信息的xml节点
     * @param usedTime      sql执行用时
     * @param exception     出错时抛出的异常
     * @param conn          执行<code>SQLAdapter</code>所使用的数据库连接
     */
-   void logSQL(SQLAdapter sql, String adapterType, Element xmlLog, long usedTime,
-         Throwable exception, Connection conn)
+   void logSQL(SQLAdapter sql, Element xmlLog, long usedTime, Throwable exception, Connection conn)
          throws ConfigurationException, SQLException;
 
 }

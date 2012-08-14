@@ -15,24 +15,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
-import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
-import org.dom4j.Element;
 
 class CountQueryAdapter
       implements QueryAdapter
@@ -48,7 +47,9 @@ class CountQueryAdapter
    {
       this.query = query;
       this.name = "[count]+" + query.getName();
-      ResultReader tmpReader = ResultReaders.createReader("int", "theCount");
+      ResultReaders.ObjectReader tmpReader
+				= (ResultReaders.ObjectReader) ResultReaders.createReader("int", "theCount");
+		tmpReader.setColumnIndex(1);
       ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
       temp.setName("[ReaderManager]+" + this.getName());
       temp.addReader(tmpReader);
@@ -121,7 +122,7 @@ class CountQueryAdapter
       }
       finally
       {
-         if (SQLAdapterImpl.logSQL(this, "count", System.currentTimeMillis() - startTime, exception, conn))
+         if (SQLAdapterImpl.logSQL(this, System.currentTimeMillis() - startTime, exception, conn))
          {
             if (result != null && AppData.getAppLogType() == 1)
             {
@@ -146,7 +147,7 @@ class CountQueryAdapter
    public String getPreparedSQL()
          throws ConfigurationException
    {
-      String tmpSQL = this.query.getPreparedSQL();
+      String tmpSQL = this.query.getPrimitiveQuerySQL();
       if (this.oldSQL == tmpSQL)
       {
          return this.cacheSQL;
@@ -160,6 +161,12 @@ class CountQueryAdapter
       this.cacheSQL = buf.toString();
       return this.cacheSQL;
    }
+
+	public String getPrimitiveQuerySQL()
+			throws ConfigurationException
+	{
+		return this.query.getPrimitiveQuerySQL();
+	}
 
    public ResultReaderManager getReaderManager()
          throws ConfigurationException

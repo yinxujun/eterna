@@ -161,7 +161,7 @@ var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
 
-var eg_cache = {
+window.eg_cache = {
 	willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
 	eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false
 };
@@ -173,10 +173,8 @@ var EG_TEMP_NAMES = [
 	"sysTemplateRoot", "sysOptions"
 ];
 
-var eg_temp = {};
+window.eg_temp = {};
 
-window.eg_cache = eg_cache;
-window.eg_temp = eg_temp;
 
 // 初始化parentEterna
 if (typeof dialogArguments == 'object')
@@ -4104,7 +4102,7 @@ window.eterna_doInitObjs = function(theObj)
 }
 
 // 获取打开此窗口的eterna对象
-function eterna_getParentEterna(winObj)
+window.eterna_getParentEterna = function(winObj)
 {
 	for (var i = 0; i < eg_cache.openedObjs.length; i++)
 	{

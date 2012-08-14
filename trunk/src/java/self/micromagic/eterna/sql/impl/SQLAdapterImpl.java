@@ -122,13 +122,12 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
     * 记录sql日志
     *
     * @param sql           要记录的sql适配器对象
-    * @param adapterType   sql适配器类型, 如: query, update
     * @param usedTime      sql执行所用的时间, 单位为毫秒
     * @param exception     执行时出现的异常
     * @param conn          执行此sql使用的数据库连接
     * @return              是否保存了sql日志
     */
-   protected static boolean logSQL(SQLAdapter sql, String adapterType, long usedTime, Throwable exception,
+   protected static boolean logSQL(SQLAdapter sql, long usedTime, Throwable exception,
          Connection conn)
          throws SQLException, ConfigurationException
    {
@@ -140,19 +139,19 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
       Element theLog;
       if ((logType & SQL_LOG_TYPE_SAVE) != 0)
       {
-         theLog = FactoryManager.createLogNode(adapterType);
+         theLog = FactoryManager.createLogNode(sql.getType());
          if (AppData.getAppLogType() == 1)
          {
             Element nowNode = AppData.getCurrentData().getCurrentNode();
             if (nowNode != null)
             {
-               logSQL(sql, usedTime, exception, nowNode.addElement(adapterType));
+               logSQL(sql, usedTime, exception, nowNode.addElement(sql.getType()));
             }
          }
       }
       else
       {
-         theLog = DocumentHelper.createElement(adapterType);
+         theLog = DocumentHelper.createElement(sql.getType());
       }
       logSQL(sql, usedTime, exception, theLog);
       if ((logType & SQL_LOG_TYPE_SPECIAL) != 0)
@@ -160,7 +159,7 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
          SpecialLog sl = sql.getFactory().getSpecialLog();
          if (sl != null)
          {
-            sl.logSQL(sql, adapterType, theLog, usedTime, exception, conn);
+            sl.logSQL(sql, theLog, usedTime, exception, conn);
          }
       }
       if ((logType & SQL_LOG_TYPE_PRINT) != 0)
@@ -173,22 +172,21 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
    /**
     * 记录sql日志
     *
-    * @param adapterType   sql适配器类型, 如: query, update
     * @param usedTime      sql执行所用的时间, 单位为毫秒
     * @param exception     执行时出现的异常
     * @param conn          执行此sql使用的数据库连接
     * @return              是否保存了sql日志
     */
-   protected boolean logSQL(String adapterType, long usedTime, Throwable exception, Connection conn)
+   protected boolean logSQL(long usedTime, Throwable exception, Connection conn)
          throws SQLException, ConfigurationException
    {
-      return logSQL(this, adapterType, usedTime, exception, conn);
+      return logSQL(this, usedTime, exception, conn);
    }
 
    public void execute(Connection conn)
          throws ConfigurationException, SQLException
    {
-      this.logSQL("sql", 0L, null, conn);
+      this.logSQL(0L, null, conn);
    }
 
    protected Object clone()

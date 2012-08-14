@@ -1940,10 +1940,17 @@ public class FactoryManager
                               result.add(temp);
                            }
                         }
+								else
+								{
+									temp = this.parseFileName(sc.getRealPath(tStr.substring(4)), null);
+                           if (temp != null)
+                           {
+                              result.add(temp);
+                           }
+								}
                      }
                      catch (IOException ex) {}
                   }
-                  return null;
                }
                else if (tStr.startsWith("http:"))
                {
