@@ -118,7 +118,7 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
       }
       finally
       {
-         if (this.logSQL("query", System.currentTimeMillis() - startTime, exception, conn))
+         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
          {
             if (result != null && AppData.getAppLogType() == 1)
             {
@@ -133,12 +133,12 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
       }
    }
 
-   protected ResultRow readResults(List readerList, ResultSet rs,
-         ResultIterator resultIterator)
+   protected ResultRow readResults(ResultReaderManager readerManager, Object[] row,
+			ResultIterator resultIterator)
          throws ConfigurationException, SQLException
    {
-      ResultRowImpl rowSet = new ResultRowImpl(this.getResults(readerList, rs),
-            resultIterator, this.getReaderManager0(null), this.getPermission0());
+      ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator,
+				readerManager, this.getPermission0());
       return rowSet;
    }
 
@@ -166,7 +166,7 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
          Object[] values;
          try
          {
-            values = QueryAdapterImpl.this.getResults(this.readerList, rs);
+            values = getResults(QueryAdapterImpl.this, this.readerList, rs);
          }
          catch (ConfigurationException ex)
          {

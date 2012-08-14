@@ -11,6 +11,12 @@ import self.micromagic.util.BooleanRef;
 public interface QueryAdapter extends SQLAdapter
 {
    /**
+    * 设置是否需要检查数据库名称的标签, 如果设为true(默认值)表示需要检查.
+	 * 对于一些数据库, 当设置了startRow和maxRows时, 会添加获取记录数限制的语句.
+    */
+   public static final String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
+
+   /**
     * 可设置的其它ResultReaderManager的名称列表, 以逗号分割.
     */
    public static final String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
@@ -34,6 +40,15 @@ public interface QueryAdapter extends SQLAdapter
     * 如果查询时要根据权限来控制列的显示, 请在执行前设置权限类.
     */
    void setPermission(Permission permission);
+
+	/**
+	 * 获得原始的查询语句.
+	 * 当调用<code>getPreparedSQL</code>, 获取的SQL有可能是被转换过的,
+	 * 如: 当设置了startRow和maxRows时, 会添加获取记录数限制的语句等.
+	 *
+	 * @see #getPreparedSQL
+	 */
+	String getPrimitiveQuerySQL() throws ConfigurationException;
 
    /**
     * 获得ResultReader的排序方式字符串.
@@ -111,7 +126,7 @@ public interface QueryAdapter extends SQLAdapter
    void setStartRow(int startRow) throws SQLException;
 
    /**
-    * 获取该查询对象是从读取的最大记录数, 默认值为"-1", 表示
+    * 获取该查询对象读取的最大记录数, 默认值为"-1", 表示
     * 取完为止.
     */
    int getMaxRows() throws SQLException;
@@ -129,7 +144,7 @@ public interface QueryAdapter extends SQLAdapter
    int getTotalCount() throws ConfigurationException;
 
    /**
-    * 设置总记录数记录数. <p>
+    * 设置该查询对象的记录数. <p>
     * 默认值为<code>TOTAL_COUNT_AUTO(-1)</code>.
     *
     * @param totalCount   总记录数.

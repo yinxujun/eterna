@@ -70,7 +70,7 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
       }
       finally
       {
-         this.logSQL("update", System.currentTimeMillis() - startTime, exception, conn);
+         this.logSQL(System.currentTimeMillis() - startTime, exception, conn);
          if (stmt != null)
          {
             stmt.close();
@@ -123,7 +123,7 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
       }
       finally
       {
-         if (this.logSQL("update", System.currentTimeMillis() - startTime, exception, conn))
+         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
          {
             if (result != -1 && AppData.getAppLogType() == 1)
             {

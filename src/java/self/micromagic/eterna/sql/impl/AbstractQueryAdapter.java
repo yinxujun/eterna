@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.ListIterator;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
@@ -53,6 +54,12 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
    private int startRow = 1;
    private int maxRows = -1;
    private int totalCount = -1;
+	private QueryHelper queryHelper = null;
+
+	/**
+	 * 获取查询辅助工具时, 是否要检查数据库的名称.
+	 */
+	private boolean checkDatabaseName = true;
 
    public void initialize(EternaFactory factory)
          throws ConfigurationException
@@ -83,6 +90,12 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
             }
          }
       }
+
+		tmp = (String) this.getAttribute(CHECK_DATABASE_NAME_FLAG);
+		if (tmp != null)
+		{
+			this.checkDatabaseName = "true".equalsIgnoreCase(tmp);
+		}
    }
 
    public String getType()
@@ -254,6 +267,30 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
    {
       this.permission = permission;
    }
+
+	/**
+	 * 获取一个查询辅助工具.
+	 */
+	protected QueryHelper getQueryHelper(Connection conn)
+			throws SQLException
+	{
+		return this.checkDatabaseName ?
+				this.queryHelper = QueryHelper.getInstance(this, conn, this.queryHelper)
+				: this.queryHelper == null ? this.queryHelper = new QueryHelper(this) : this.queryHelper;
+	}
+
+	public String getPreparedSQL()
+			throws ConfigurationException
+	{
+		String preparedSQL = super.getPreparedSQL();
+		return this.queryHelper == null ? preparedSQL : this.queryHelper.getQuerySQL(preparedSQL);
+	}
+
+	public String getPrimitiveQuerySQL()
+			throws ConfigurationException
+	{
+		return super.getPreparedSQL();
+	}
 
    public void setReaderManagerName(String name)
    {
@@ -447,6 +484,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          throws ConfigurationException, SQLException
    {
       long startTime = System.currentTimeMillis();
+		QueryHelper qh = this.getQueryHelper(conn);
       Statement stmt = null;
       ResultSet rs = null;
       Throwable exception = null;
@@ -482,8 +520,22 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
             }
             rs = stmt.executeQuery(this.getPreparedSQL());
          }
-         ResultIteratorImpl ritr = this.executeQuery(rs);
-         if (ritr.needCount)
+			ResultReaderManager readerManager = this.getReaderManager0(rs);
+      	List readerList = readerManager.getReaderList(this.getPermission0());
+			List tmpList = qh.readResults(rs, readerList);
+         ResultIteratorImpl ritr = new ResultIteratorImpl(readerList);
+			ListIterator litr = tmpList.listIterator();
+			while (litr.hasNext())
+			{
+				ResultRow row = this.readResults(readerManager, (Object[]) litr.next(), ritr);
+				litr.set(row);
+			}
+			ritr.setResult(tmpList);
+			ritr.realRecordCount = qh.getRealRecordCount();
+			ritr.recordCount = qh.getRecordCount();
+			ritr.realRecordCountAvailable = qh.isRealRecordCountAvailable();
+			ritr.hasMoreRecord = qh.hasMoreRecord();
+         if (qh.needCount())
          {
             rs.close();
             stmt.close();
@@ -522,7 +574,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       }
       finally
       {
-         if (this.logSQL("query", System.currentTimeMillis() - startTime, exception, conn))
+         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
          {
             if (result != null && AppData.getAppLogType() == 1)
             {
@@ -544,6 +596,122 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       }
    }
 
+   private void initDefaultResultReaders(ResultSet rs)
+         throws ConfigurationException, SQLException
+   {
+      Map temp = new HashMap();
+      ResultSetMetaData meta = rs.getMetaData();
+      int count = meta.getColumnCount();
+      for (int i = 0; i < count; i++)
+      {
+         String colname = meta.getColumnName(i + 1);
+         String name = colname;
+         if (temp.get(name) != null)
+         {
+            name = colname + "+" + (i + 1);
+         }
+         temp.put(name, colname);
+         ResultReaders.ObjectReader reader = new ResultReaders.ObjectReader(name);
+         reader.setColumnIndex(i + 1);
+         this.readerManager.addReader(reader);
+      }
+   }
+
+   protected static Object[] getResults(QueryAdapter query, List readerList, ResultSet rs)
+         throws ConfigurationException, SQLException
+   {
+      int count = readerList.size();
+      Iterator itr = readerList.iterator();
+      Object[] values = new Object[count];
+      ResultReader reader = null;
+      try
+      {
+         for (int i = 0; i < count; i++)
+         {
+            reader = (ResultReader) itr.next();
+            values[i] = reader.readResult(rs);
+         }
+      }
+      catch (Throwable ex)
+      {
+         if (reader != null)
+         {
+            log.error("Error when read result, reader[" + reader.getName()
+                  + "], query[" + query.getName() + "].");
+         }
+         if (ex instanceof SQLException)
+         {
+            throw (SQLException) ex;
+         }
+         else if (ex instanceof ConfigurationException)
+         {
+            throw (ConfigurationException) ex;
+         }
+         else if (ex instanceof RuntimeException)
+         {
+            throw (RuntimeException) ex;
+         }
+         else
+         {
+            throw new ConfigurationException(ex);
+         }
+      }
+      return values;
+   }
+
+   protected abstract ResultRow readResults(ResultReaderManager readerManager, Object[] row,
+			ResultIterator resultIterator)
+         throws ConfigurationException, SQLException;
+
+   private class ResultIteratorImpl extends AbstractResultIterator
+         implements ResultIterator
+   {
+      private int realRecordCount;
+      private int recordCount;
+      private boolean realRecordCountAvailable;
+      private boolean hasMoreRecord;
+
+      public ResultIteratorImpl(List readerList)
+      {
+         super(readerList);
+      }
+
+      public void setResult(List result)
+      {
+         this.result = result;
+         this.resultItr = this.result.iterator();
+      }
+
+      public ResultMetaData getMetaData()
+      {
+         return new ResultMetaDataImpl(this.readerList, AbstractQueryAdapter.this);
+      }
+
+      public int getRealRecordCount()
+      {
+         return this.realRecordCount;
+      }
+
+      public int getRecordCount()
+      {
+         return this.recordCount;
+      }
+
+      public boolean isRealRecordCountAvailable()
+      {
+         return this.realRecordCountAvailable;
+      }
+
+      public boolean isHasMoreRecord()
+      {
+         return this.hasMoreRecord;
+      }
+
+   }
+
+}
+
+/*
    private ResultIteratorImpl executeQuery(ResultSet rs)
          throws ConfigurationException, SQLException
    {
@@ -626,8 +794,8 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
                for (; rs.next(); recordCount++);
             }
             realRecordCount = recordCount;
-            realRecordCountAvailable = true;
          }
+			realRecordCountAvailable = true;
       }
       else if (this.totalCount == TOTAL_COUNT_NONE)
       {
@@ -664,119 +832,4 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       ritr.hasMoreRecord = hasMoreRecord;
       return ritr;
    }
-
-   private void initDefaultResultReaders(ResultSet rs)
-         throws ConfigurationException, SQLException
-   {
-      Map temp = new HashMap();
-      ResultSetMetaData meta = rs.getMetaData();
-      int count = meta.getColumnCount();
-      for (int i = 0; i < count; i++)
-      {
-         String colname = meta.getColumnName(i + 1);
-         String name = colname;
-         if (temp.get(name) != null)
-         {
-            name = colname + "+" + (i + 1);
-         }
-         temp.put(name, colname);
-         ResultReaders.ObjectReader reader = new ResultReaders.ObjectReader(name);
-         reader.setColumnIndex(i + 1);
-         this.readerManager.addReader(reader);
-      }
-   }
-
-   protected Object[] getResults(List readerList, ResultSet rs)
-         throws ConfigurationException, SQLException
-   {
-      int count = readerList.size();
-      Iterator itr = readerList.iterator();
-      Object[] values = new Object[count];
-      ResultReader reader = null;
-      try
-      {
-         for (int i = 0; i < count; i++)
-         {
-            reader = (ResultReader) itr.next();
-            values[i] = reader.readResult(rs);
-         }
-      }
-      catch (Throwable ex)
-      {
-         if (reader != null)
-         {
-            log.error("Error when read result, reader[" + reader.getName()
-                  + "], query[" + this.getName() + "].");
-         }
-         if (ex instanceof SQLException)
-         {
-            throw (SQLException) ex;
-         }
-         else if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         else if (ex instanceof RuntimeException)
-         {
-            throw (RuntimeException) ex;
-         }
-         else
-         {
-            throw new ConfigurationException(ex);
-         }
-      }
-      return values;
-   }
-
-   protected abstract ResultRow readResults(List readerList, ResultSet rs,
-         ResultIterator resultIterator)
-         throws ConfigurationException, SQLException;
-
-   private class ResultIteratorImpl extends AbstractResultIterator
-         implements ResultIterator
-   {
-      private int realRecordCount;
-      private int recordCount;
-      private boolean realRecordCountAvailable;
-      private boolean hasMoreRecord;
-      private boolean needCount = false;
-
-      public ResultIteratorImpl(List readerList)
-      {
-         super(readerList);
-      }
-
-      public void setResult(List result)
-      {
-         this.result = result;
-         this.resultItr = this.result.iterator();
-      }
-
-      public ResultMetaData getMetaData()
-      {
-         return new ResultMetaDataImpl(this.readerList, AbstractQueryAdapter.this);
-      }
-
-      public int getRealRecordCount()
-      {
-         return this.realRecordCount;
-      }
-
-      public int getRecordCount()
-      {
-         return this.recordCount;
-      }
-
-      public boolean isRealRecordCountAvailable()
-      {
-         return this.realRecordCountAvailable;
-      }
-
-      public boolean isHasMoreRecord()
-      {
-         return this.hasMoreRecord;
-      }
-
-   }
-
-}
+*/
