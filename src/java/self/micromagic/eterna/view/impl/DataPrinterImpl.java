@@ -549,7 +549,67 @@ public class DataPrinterImpl extends AbstractGenerator
 		out.write('}');
 	}
 
+	public void printPair(Writer out, String key, boolean value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, char value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
 	public void printPair(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, long value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, float value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		this.print(out, key);
+		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPair(Writer out, String key, double value, boolean first)
 			throws IOException, ConfigurationException
 	{
 		if (!first)
@@ -628,11 +688,9 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             String mh = "public void print(DataPrinter p, Writer out, Object bean)"
                   + " throws IOException, ConfigurationException";
-            String ut = "out.write(\"\\\"${name}\\\":\");"
-                  + "p.print(out, ${value});";
-            String pt = "out.write(\"\\\"${name}\\\":\");"
-                  + "p.print(out, ${o_value});";
-            String lt = "out.write(\",\");";
+            String ut = "p.printPair(out, \"${name}\", ${value}, ${first});";
+            String pt = "p.printPair(out, \"${name}\", ${o_value}, ${first});";
+            String lt = "";
             String[] imports = new String[]{
                ClassGenerator.getPackageString(DataPrinter.class),
                ClassGenerator.getPackageString(Writer.class),

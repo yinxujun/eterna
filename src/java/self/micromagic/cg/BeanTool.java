@@ -491,9 +491,9 @@ public class BeanTool
          {
             function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap, true)).appendln();
          }
-         first = false;
          dataMap.clear();
          Field f = fields[i];
+         dataMap.put("first", String.valueOf(first));
          dataMap.put("name", f.getName());
          dataMap.put("type", "field");
          if (f.getType().isPrimitive())
@@ -511,6 +511,7 @@ public class BeanTool
             dataMap.put("value", BeanTool.BEAN_NAME + "." + f.getName());
             function.append(Utility.resolveDynamicPropnames(unitTemplate, dataMap, true)).appendln();
          }
+         first = false;
       }
       BeanMethodInfo[] methods = processerType == BEAN_PROCESSER_TYPE_W ?
             BeanTool.getBeanWriteMethods(beanClass) : BeanTool.getBeanReadMethods(beanClass);
@@ -524,7 +525,7 @@ public class BeanTool
                function.append(Utility.resolveDynamicPropnames(linkTemplate, dataMap, true))
                      .appendln();
             }
-            first = false;
+         	dataMap.put("first", String.valueOf(first));
             dataMap.put("name", m.name);
             dataMap.put("type", "method");
             if (m.type.isPrimitive())
@@ -544,6 +545,7 @@ public class BeanTool
                function.append(Utility.resolveDynamicPropnames(unitTemplate, dataMap, true))
                      .appendln();
             }
+            first = false;
          }
       }
       function.append('}');

@@ -16,14 +16,14 @@ import self.micromagic.eterna.view.DataPrinter;
 
 public interface SearchAdapter
 {
-   public static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
-   public static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
+   static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
+   static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
 
    /**
     * 设置单列排序的参数名. <p>
     * 参数格式为: [searchName]/order。
     */
-   public static final String SINGLE_ORDER_SUFIX = ".order";
+   static final String SINGLE_ORDER_SUFIX = ".order";
 
    /**
     * 设置默认每页行数的属性名称. <p>
@@ -34,7 +34,7 @@ public interface SearchAdapter
     *    </attributes>
     * </search>
     */
-   public static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
+   static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
 
    /**
     * 用于标志是否要强制读取列设置. <p>
@@ -47,7 +47,7 @@ public interface SearchAdapter
     * 注: 使用此标志强制读取的列设置不会被缓存, 也就是说下次强制读取表示未
     *     设置的话, 读取的列设置仍然是前一次缓存的值
     */
-   public static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
+   static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
 
    /**
     * 用于标志是否要读取所有的记录. <p>
@@ -57,7 +57,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.READ_ALL_ROW);
     */
-   public static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
+   static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
 
    /**
     * 用于标志读取的记录数. <p>
@@ -67,7 +67,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.READ_ROW_START_AND_COUNT);
     */
-   public static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
+   static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
 
    /**
     * 用于标志是否要读取所有的记录. <p>
@@ -78,7 +78,7 @@ public interface SearchAdapter
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.HOLD_CONNECTION);
     */
-   public static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
+   static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
 
    String getName() throws ConfigurationException;
 
@@ -89,6 +89,11 @@ public interface SearchAdapter
    String[] getAttributeNames() throws ConfigurationException;
 
    String getOtherSearchManagerName() throws ConfigurationException;
+
+	/**
+	 * 获取其它辅助设置条件及参数的search, 用于分布式条件查询的时候使用.
+	 */
+	SearchAdapter[] getOtherSearchs() throws ConfigurationException;
 
    String getConditionPropertyOrderWithOther() throws ConfigurationException;
 
@@ -106,6 +111,16 @@ public interface SearchAdapter
     * 判断是否需要在条件外面带上括号"(", ")".
     */
    boolean isNeedWrap() throws ConfigurationException;
+
+   /**
+    * 获得ColumnSetting的类型, 用于区分读取哪个ColumnSetting.
+    */
+   String getColumnSettingType() throws ConfigurationException;
+
+   /**
+    * 获得设置的ColumnSetting, SearchAdapter将用它来设置查询的列.
+    */
+   ColumnSetting getColumnSetting() throws ConfigurationException;
 
    /**
     * 获得绑定的参数设置器<code>ParameterSetting</code>.
@@ -136,8 +151,7 @@ public interface SearchAdapter
     * @param data   数据, 里面包含了request的parameter, request的attribute,
     *               session的attritute
     */
-   SearchManager getSearchManager(AppData data)
-         throws ConfigurationException;
+   SearchManager getSearchManager(AppData data) throws ConfigurationException;
 
    /**
     * 执行查询, 并获得结果.
@@ -145,19 +159,53 @@ public interface SearchAdapter
     * @param data   数据, 里面包含了request的parameter, request的attribute,
     *               session的attritute
     */
-   Result doSearch(AppData data, Connection conn)
-         throws ConfigurationException, SQLException;
+   Result doSearch(AppData data, Connection conn) throws ConfigurationException, SQLException;
 
-   public static final class Result
+	/**
+	 * 搜索的结果.
+	 */
+   static final class Result
 			implements DataPrinter.BeanPrinter
    {
+		/**
+		 * 分页的尺寸.
+		 */
       public final int pageSize;
+
+		/**
+		 * 当前的页数.
+		 * 从0开始, 第一页为0 第二页为1 ...
+		 */
       public final int pageNum;
+
+		/**
+		 * 使用的search对象的名称.
+		 */
       public final String searchName;
+
+		/**
+		 * 使用的query对象的名称.
+		 */
       public final String queryName;
+
+		/**
+		 * 搜索的结果集.
+		 */
       public final ResultIterator queryResult;
+
+		/**
+		 * 搜索统计的结果集.
+		 */
       public final ResultIterator searchCount;
+
+		/**
+		 * 设置的单列排序的reader名称.
+		 */
       public final String singleOrderName;
+
+		/**
+		 * 单列排序是否为降序.
+		 */
       public final boolean singleOrderDesc;
 
       public Result(String searchName, String queryName, ResultIterator queryResult, ResultIterator searchCount,
@@ -172,6 +220,18 @@ public interface SearchAdapter
          this.singleOrderName = singleOrderName;
          this.singleOrderDesc = singleOrderDesc;
       }
+
+		public Result(Result old, String queryName, ResultIterator queryResult)
+		{
+         this.pageSize = old.pageSize;
+         this.pageNum = old.pageNum;
+         this.searchName = old.searchName;
+         this.queryName = queryName;
+         this.queryResult = queryResult;
+         this.searchCount = old.searchCount;
+         this.singleOrderName = old.singleOrderName;
+         this.singleOrderDesc = old.singleOrderDesc;
+		}
 
 		public void print(DataPrinter p, Writer out, Object bean)
 				throws IOException, ConfigurationException
@@ -203,9 +263,19 @@ public interface SearchAdapter
 
    }
 
-   public static class StartAndCount
+	/**
+	 * 查询的起始值及获取的记录数.
+	 */
+   static final class StartAndCount
    {
+		/**
+		 * 查询的起始值.
+		 */
       public final int start;
+
+		/**
+		 * 获取的记录数.
+		 */
       public final int count;
 
       public StartAndCount(int start, int count)
@@ -213,6 +283,7 @@ public interface SearchAdapter
          this.start = start;
          this.count = count;
       }
+
    }
 
 }

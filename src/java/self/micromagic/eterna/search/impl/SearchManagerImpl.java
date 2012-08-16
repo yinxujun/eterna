@@ -34,7 +34,7 @@ public class SearchManagerImpl extends AbstractGenerator
 {
    static final String SEARCHMANAGER_DEALED_PREFIX = "ETERNA_SEARCHMANAGER_DEALED:";
 
-   private transient SearchManager.Attributes attributes = SearchManager.DEFAULT_PROPERTIES;
+   private transient Attributes attributes = DEFAULT_PROPERTIES;
 
    private transient String preparedCondition = "";
    private transient PreparerManager generatedPM = null;
@@ -64,11 +64,12 @@ public class SearchManagerImpl extends AbstractGenerator
    public boolean hasQueryType(AppData data)
    {
       String temp;
-      if (data.getRequestAttributeMap().get(FORCE_DEAL_CONDITION) != null)
+		Map raMap = data.getRequestAttributeMap();
+      if (raMap.get(FORCE_DEAL_CONDITION) != null)
       {
          temp = this.attributes.queryTypeReset;
       }
-      else if (data.getRequestAttributeMap().get(FORCE_CLEAR_CONDITION) != null)
+      else if (raMap.get(FORCE_CLEAR_CONDITION) != null)
       {
          temp = this.attributes.queryTypeClear;
       }
@@ -76,7 +77,8 @@ public class SearchManagerImpl extends AbstractGenerator
       {
          temp = data.getRequestParameter(this.attributes.queryTypeTag);
       }
-      return this.attributes.queryTypeReset.equals(temp) || this.attributes.queryTypeClear.equals(temp);
+      return temp != null
+				&& (this.attributes.queryTypeReset.equals(temp) || this.attributes.queryTypeClear.equals(temp));
    }
 
    public int getConditionVersion()
@@ -212,8 +214,7 @@ public class SearchManagerImpl extends AbstractGenerator
                      cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
                      if (saveCondition)
                      {
-                        this.addCondition(new SearchManager.Condition(cp.getName(),
-                              group.attributeValue("name"), value, cb));
+                        this.addCondition(new Condition(cp.getName(), group.attributeValue("name"), value, cb));
                      }
                   }
                   catch (Exception ex)
@@ -270,14 +271,15 @@ public class SearchManagerImpl extends AbstractGenerator
       int pSize = preparerList.size();
       if (pSize > 0)
       {
-         this.generatedPM = new PreparerManager(pSize);
+         PreparerManager tmpPM = new PreparerManager(pSize);
          Iterator itr = preparerList.iterator();
          for (int i = 0; i < pSize; i++)
          {
             ValuePreparer preparer = (ValuePreparer) itr.next();
             preparer.setRelativeIndex(i + 1);
-            this.generatedPM.setValuePreparer(preparer);
+            tmpPM.setValuePreparer(preparer);
          }
+			this.generatedPM = tmpPM;
       }
       else
       {
@@ -333,8 +335,7 @@ public class SearchManagerImpl extends AbstractGenerator
                cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
                if (saveCondition)
                {
-                  this.addCondition(new SearchManager.Condition(cp.getName(),
-                        null, value, cb));
+                  this.addCondition(new Condition(cp.getName(), null, value, cb));
                }
             }
             catch (Exception ex)
@@ -382,14 +383,15 @@ public class SearchManagerImpl extends AbstractGenerator
       int pSize = preparerList.size();
       if (pSize > 0)
       {
-         this.generatedPM = new PreparerManager(pSize);
+         PreparerManager tmpPM = new PreparerManager(pSize);
          Iterator itr = preparerList.iterator();
          for (int i = 0; i < pSize; i++)
          {
             ValuePreparer preparer = (ValuePreparer) itr.next();
             preparer.setRelativeIndex(i + 1);
-            this.generatedPM.setValuePreparer(preparer);
+            tmpPM.setValuePreparer(preparer);
          }
+			this.generatedPM = tmpPM;
       }
       else
       {
@@ -600,18 +602,17 @@ public class SearchManagerImpl extends AbstractGenerator
       return result;
    }
 
-   public SearchManager.Attributes getAttributes()
+   public Attributes getAttributes()
    {
       return this.attributes;
    }
 
-   public void setAttributes(SearchManager.Attributes attributes)
+   public void setAttributes(Attributes attributes)
    {
-      this.attributes = attributes == null ?
-            SearchManager.DEFAULT_PROPERTIES : attributes;
+      this.attributes = attributes == null ? DEFAULT_PROPERTIES : attributes;
    }
 
-   public SearchManager.Condition getCondition(String name)
+   public Condition getCondition(String name)
    {
       if (this.conditionMap == null)
       {
@@ -622,7 +623,7 @@ public class SearchManagerImpl extends AbstractGenerator
       {
          return null;
       }
-      return (SearchManager.Condition) list.get(0);
+      return (Condition) list.get(0);
    }
 
    public List getConditions(String name)
@@ -658,7 +659,7 @@ public class SearchManagerImpl extends AbstractGenerator
       }
    }
 
-   private void addCondition(SearchManager.Condition condition)
+   private void addCondition(Condition condition)
    {
       if (this.conditionList == null)
       {
@@ -695,7 +696,7 @@ public class SearchManagerImpl extends AbstractGenerator
 		p.printObjectBegin(out);
 		while (itr.hasNext())
 		{
-			SearchManager.Condition con = (SearchManager.Condition) itr.next();
+			Condition con = (Condition) itr.next();
 			if (con.value != null)
 			{
 				p.printPair(out, con.name, con.value, firstValue);

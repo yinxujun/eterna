@@ -1,16 +1,17 @@
 
 package self.micromagic.eterna.sql.impl;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Connection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * 查询执行的辅助工具.
@@ -105,6 +106,15 @@ public class QueryHelper
 		return this.query.getTotalCount();
 	}
 
+   /**
+    * 获取该查询对象设置的总记录数扩展信息.
+    */
+   public QueryAdapter.TotalCountExt getTotalCountExt()
+			throws ConfigurationException
+	{
+		return this.query.getTotalCountExt();
+	}
+
 	/**
 	 * 读取结果集中的数据.
 	 *
@@ -145,16 +155,24 @@ public class QueryHelper
       ArrayList result;
       if (!hasRecord)
       {
-			// 没有记录数表示已经移到的最后一条, 临时记录数-1为总记录数
-         this.realRecordCount = tmpRecordCount - 1;
-         this.realRecordCountAvailable = true;
-         this.hasMoreRecord = false;
+			int totalCount = this.getTotalCount();
+			if (totalCount >= 0)
+			{
+				this.setTotalCountInfo(totalCount, this.getTotalCountExt());
+			}
+			else
+			{
+				// 没有记录数表示已经移到的最后一条, 临时记录数-1为总记录数
+				this.realRecordCount = tmpRecordCount - 1;
+				this.realRecordCountAvailable = true;
+				this.hasMoreRecord = false;
+			}
          result = new ArrayList(0);
       }
       else
       {
 			int maxRows = this.getMaxRows();
-         result = new ArrayList(maxRows == -1 ? 32 : this.getMaxRows());
+         result = new ArrayList(maxRows == -1 ? 32 : maxRows);
          if (maxRows == -1)
          {
             while (rs.next())
@@ -162,9 +180,17 @@ public class QueryHelper
                tmpRecordCount++;
                result.add(QueryAdapterImpl.getResults(this.query, readerList, rs));
             }
-            this.realRecordCount = tmpRecordCount;
-            this.realRecordCountAvailable = true;
-            this.hasMoreRecord = false;
+				int totalCount = this.getTotalCount();
+				if (totalCount >= 0)
+				{
+					this.setTotalCountInfo(totalCount, this.getTotalCountExt());
+				}
+				else
+				{
+					this.realRecordCount = tmpRecordCount;
+					this.realRecordCountAvailable = true;
+					this.hasMoreRecord = false;
+				}
          }
          else
          {
@@ -220,15 +246,7 @@ public class QueryHelper
 				}
 				else if (totalCount >= 0)
 				{
-					if (!this.realRecordCountAvailable)
-					{
-						this.realRecordCount = totalCount;
-						this.realRecordCountAvailable = true;
-					}
-					else
-					{
-						this.realRecordCount = tmpRecordCount;
-					}
+					this.setTotalCountInfo(totalCount, this.getTotalCountExt());
 				}
          }
       }
@@ -236,6 +254,20 @@ public class QueryHelper
       this.recordCount = result.size();
       return result;
    }
+
+	/**
+	 * 当totalCount为0-N时设置总记录数等信息.
+	 */
+	protected void setTotalCountInfo(int totalCount, QueryAdapter.TotalCountExt ext)
+	{
+		this.realRecordCount = totalCount;
+		this.realRecordCountAvailable = true;
+		if (ext != null)
+		{
+			this.hasMoreRecord = ext.hasMoreRecord;
+			this.realRecordCountAvailable = ext.realRecordCountAvailable;
+		}
+	}
 
 	protected int recordCount;
    protected int realRecordCount;
@@ -288,6 +320,7 @@ public class QueryHelper
 		private int nowStartRow = 1;
 		private int nowMaxRows = -1;
 		private int nowTotalCount = QueryAdapter.TOTAL_COUNT_NONE;
+		private QueryAdapter.TotalCountExt nowTotalCountExt = null;
 		private String oldPreparedSQL;
 		private String cacheSQL;
 		private boolean useOldSQL = false;
@@ -314,7 +347,8 @@ public class QueryHelper
 				try
 				{
 					if (this.oldPreparedSQL != preparedSQL || this.nowStartRow != query.getStartRow()
-							|| this.nowMaxRows != query.getMaxRows() || this.nowTotalCount != query.getTotalCount())
+							|| this.nowMaxRows != query.getMaxRows() || this.nowTotalCount != query.getTotalCount()
+							|| !Utility.objectEquals(this.nowTotalCountExt, query.getTotalCountExt()))
 					{
 						this.cacheSQL = null;
 					}
@@ -332,6 +366,7 @@ public class QueryHelper
 					this.nowStartRow = query.getStartRow();
 					this.nowMaxRows = query.getMaxRows();
 					this.nowTotalCount = query.getTotalCount();
+					this.nowTotalCountExt = query.getTotalCountExt();
 				}
 				catch (SQLException ex)
 				{
@@ -385,27 +420,34 @@ public class QueryHelper
 			this.hasMoreRecord = false;
 			this.needCount = false;
 
-			int maxRows = this.getMaxRows();
 			QueryAdapter query = this.getQueryAdapter();
-			ArrayList result = new ArrayList(maxRows == -1 ? 32 : this.getMaxRows());
-			if (maxRows == -1)
+			ArrayList result = new ArrayList(this.nowMaxRows == -1 ? 32 : this.nowMaxRows);
+			if (this.nowMaxRows == -1)
 			{
 				while (rs.next())
 				{
 					tmpRecordCount++;
 					result.add(QueryAdapterImpl.getResults(query, readerList, rs));
 				}
-				if (tmpRecordCount > 0)
+				int totalCount = this.nowTotalCount;
+				if (totalCount >= 0)
 				{
-					this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
-					this.realRecordCountAvailable = true;
+					this.setTotalCountInfo(totalCount, this.nowTotalCountExt);
 				}
-            this.hasMoreRecord = false;
+				else
+				{
+					if (tmpRecordCount > 0)
+					{
+						this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
+						this.realRecordCountAvailable = true;
+					}
+					this.hasMoreRecord = false;
+				}
 			}
 			else
 			{
 				int i = 0;
-				for (; i < maxRows && (this.hasMoreRecord = rs.next()); i++)
+				for (; i < this.nowMaxRows && (this.hasMoreRecord = rs.next()); i++)
 				{
 					tmpRecordCount++;
 					result.add(QueryAdapterImpl.getResults(query, readerList, rs));
@@ -422,7 +464,7 @@ public class QueryHelper
 					this.realRecordCountAvailable = true;
 				}
 
-				int totalCount = this.getTotalCount();
+				int totalCount = this.nowTotalCount;
 				if (totalCount == QueryAdapter.TOTAL_COUNT_NONE)
 				{
 					this.realRecordCount = tmpRecordCount;
@@ -440,15 +482,7 @@ public class QueryHelper
 				}
 				else if (totalCount >= 0)
 				{
-					if (!this.realRecordCountAvailable)
-					{
-						this.realRecordCount = totalCount;
-						this.realRecordCountAvailable = true;
-					}
-					else
-					{
-						this.realRecordCount = tmpRecordCount;
-					}
+					this.setTotalCountInfo(totalCount, this.nowTotalCountExt);
 				}
 			}
 

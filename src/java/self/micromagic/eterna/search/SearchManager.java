@@ -20,7 +20,7 @@ public interface SearchManager
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.FORCE_CLEAR_CONDITION);
     */
-   public static final String FORCE_CLEAR_CONDITION = "ETERNA_FORCE_CLEAR_CONDITION";
+   static final String FORCE_CLEAR_CONDITION = "ETERNA_FORCE_CLEAR_CONDITION";
 
    /**
     * 用于标志是否要强制处理request中的条件. <p>
@@ -31,7 +31,7 @@ public interface SearchManager
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.FORCE_DEAL_CONDITION);
     */
-   public static final String FORCE_DEAL_CONDITION = "ETERNA_FORCE_DEAL_CONDITION";
+   static final String FORCE_DEAL_CONDITION = "ETERNA_FORCE_DEAL_CONDITION";
 
    /**
     * 用于标志是否要将所有的Condition保存下来, 以便使用. <p>
@@ -41,19 +41,22 @@ public interface SearchManager
     * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
     * request.removeAttribute(SearchManager.SAVE_CONDITION);
     */
-   public static final String SAVE_CONDITION = "ETERNA_SAVE_CONDITION";
+   static final String SAVE_CONDITION = "ETERNA_SAVE_CONDITION";
 
    /**
     * 标识是否是使用数据集中的指定值来作为条件的默认值.
     */
-   public static final String DATA_DEFAULT_VALUE_PREFIX = "$data.";
+   static final String DATA_DEFAULT_VALUE_PREFIX = "$data.";
 
    /**
     * 分页时单页可显示的最大记录数.
     */
-   public static final int MAX_PAGE_SIZE = 256;
+   static final int MAX_PAGE_SIZE = 1024;
 
-   public static final Attributes DEFAULT_PROPERTIES = new Attributes(
+	/**
+	 * 默认的查询相关的配置属性.
+	 */
+   static final Attributes DEFAULT_PROPERTIES = new Attributes(
          null, null, null, null, null, null);
 
    /**
@@ -69,12 +72,12 @@ public interface SearchManager
    /**
     * 是否存在查询标志.
     */
-   public boolean hasQueryType(AppData data) throws ConfigurationException;
+   boolean hasQueryType(AppData data) throws ConfigurationException;
 
    /**
     * 获得当前的条件版本, 每更新一次条件版本自动增1, 起始版本号为1.
     */
-   public int getConditionVersion() throws ConfigurationException;
+   int getConditionVersion() throws ConfigurationException;
 
    /**
     * 根据request中的信息, 设置条件和页号.
@@ -143,7 +146,10 @@ public interface SearchManager
     */
    List getConditions();
 
-   public static class Condition
+	/**
+	 * 保存的查询条件单元.
+	 */
+   static final class Condition
    {
       /**
        * 条件的名词
@@ -165,8 +171,7 @@ public interface SearchManager
        */
       public final ConditionBuilder builder;
 
-      public Condition(String name, String group, String value,
-            ConditionBuilder builder)
+      public Condition(String name, String group, String value, ConditionBuilder builder)
       {
          this.name = name;
          this.group = group;
@@ -176,7 +181,10 @@ public interface SearchManager
 
    }
 
-   public static final class Attributes
+	/**
+	 * 查询相关的配置属性.
+	 */
+   static final class Attributes
 			implements DataPrinter.BeanPrinter
    {
       /**
