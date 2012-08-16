@@ -52,6 +52,11 @@ public class CallQuery extends QueryAdapterImpl
       }
    }
 
+	public String getType()
+	{
+		return "call";
+	}
+
    public ResultIterator executeQueryHoldConnection(Connection conn)
          throws ConfigurationException, SQLException
    {
@@ -129,7 +134,7 @@ public class CallQuery extends QueryAdapterImpl
       }
       finally
       {
-         if (this.logSQL("call", System.currentTimeMillis() - startTime, exception, conn))
+         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
          {
             if (result != null && AppData.getAppLogType() == 1)
             {

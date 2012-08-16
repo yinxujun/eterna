@@ -158,6 +158,7 @@ public interface SearchAdapter
     *
     * @param data   数据, 里面包含了request的parameter, request的attribute,
     *               session的attritute
+	 * @param conn   数据库连接
     */
    Result doSearch(AppData data, Connection conn) throws ConfigurationException, SQLException;
 

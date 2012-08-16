@@ -19,6 +19,9 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreater;
+import self.micromagic.eterna.security.UserManager;
+import self.micromagic.eterna.security.User;
+import self.micromagic.eterna.security.EmptyPermission;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
@@ -112,7 +115,7 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 			}
 			this.keyIndexs[i] = keyReaders.getIndexByName(keyN);
 			this.vpcs[i] = factory.createValuePreparerCreater(
-					TypeManager.getPureType(keyReaders.getReader(keyN).getType()));
+					TypeManager.getPureType(keyReaders.getReaderInList(this.keyIndexs[i] - 1).getType()));
 			this.colNames[i] = colN;
 			this.conditionItemSize += colN.length() + 4;
 			if (i > 1)
@@ -144,7 +147,20 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 	public Result doSearch(AppData data, Connection conn)
 			throws ConfigurationException, SQLException
 	{
-		Result result = super.doSearch(data, conn);
+		if (this.needSynchronize)
+		{
+			synchronized (this)
+			{
+				return this.doSearch0(data, conn);
+			}
+		}
+		return this.doSearch0(data, conn);
+	}
+
+	protected Result doSearch0(AppData data, Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		Result result = super.doSearch0(data, conn, true);
 		ResultIterator ritr = result.queryResult;
 		QueryAdapter nextQuery;
 		if (this.sameSearch || this.assistSearchIndex != -1)
@@ -152,15 +168,12 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 			SearchAdapter assistSearch = this.sameSearch ? this
 					: this.getFactory().createSearchAdapter(this.assistSearchIndex);
 			BooleanRef first = new BooleanRef();
-			SearchManager manager = this.getSearchManager(data);
+			SearchManager manager = assistSearch.getSearchManager(data);
 			nextQuery = getQueryAdapter(data, conn, assistSearch, first, this.sessionNextQueryTag, manager,
 					this.nextQueryIndex, assistSearch.getColumnSetting(), assistSearch.getColumnSettingType());
 			if (this.needAssistCondition)
 			{
-				if (assistSearch.getOtherSearchs() != null)
-				{
-					dealOthers(data, conn, assistSearch.getOtherSearchs(), nextQuery, first.value);
-				}
+				dealOthers(data, conn, assistSearch.getOtherSearchs(), nextQuery, first.value);
 				if (assistSearch.getConditionIndex() > 0)
 				{
 					if (assistSearch.isSpecialCondition())
@@ -178,12 +191,25 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 			}
 			if (assistSearch.getParameterSetting() != null)
 			{
-				assistSearch.getParameterSetting().setParameter(nextQuery, this, first.value, data, conn);
+				assistSearch.getParameterSetting().setParameter(nextQuery, assistSearch, first.value, data, conn);
 			}
 		}
 		else
 		{
 			nextQuery = this.getFactory().createQueryAdapter(this.nextQueryIndex);
+			UserManager um = this.getFactory().getUserManager();
+			if (um != null)
+			{
+				User user = um.getUser(data);
+				if (user != null)
+				{
+					nextQuery.setPermission(user.getPermission());
+				}
+				else
+				{
+					nextQuery.setPermission(EmptyPermission.getInstance());
+				}
+			}
 		}
 		if (nextQuery.canOrder())
 		{

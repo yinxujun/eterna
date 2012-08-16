@@ -8,49 +8,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.AppDataLogExecute;
+import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.util.converter.BooleanConverter;
-import self.micromagic.util.converter.ByteConverter;
-import self.micromagic.util.converter.BytesConverter;
-import self.micromagic.util.converter.DateConverter;
-import self.micromagic.util.converter.DoubleConverter;
-import self.micromagic.util.converter.FloatConverter;
-import self.micromagic.util.converter.IntegerConverter;
-import self.micromagic.util.converter.LongConverter;
-import self.micromagic.util.converter.ShortConverter;
-import self.micromagic.util.converter.StringConverter;
-import self.micromagic.util.converter.TimeConverter;
-import self.micromagic.util.converter.TimestampConverter;
-import self.micromagic.util.converter.StreamConverter;
-import self.micromagic.util.converter.ReaderConverter;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.AppDataLogExecute;
-import self.micromagic.eterna.model.ModelAdapter;
-import org.dom4j.Element;
 
 public class QueryAdapterImpl extends AbstractQueryAdapter
       implements QueryAdapter
 {
-   static StringConverter strConvert = new StringConverter();
-   static BooleanConverter boolConvert = new BooleanConverter();
-   static ByteConverter byteConvert = new ByteConverter();
-   static ShortConverter shortConvert = new ShortConverter();
-   static IntegerConverter intConvert = new IntegerConverter();
-   static LongConverter longConvert = new LongConverter();
-   static FloatConverter floatConvert = new FloatConverter();
-   static DoubleConverter doubleConvert = new DoubleConverter();
-   static BytesConverter bytesConvert = new BytesConverter();
-   static DateConverter dateConvert = new DateConverter();
-   static TimeConverter timeConvert = new TimeConverter();
-   static TimestampConverter timestampConvert = new TimestampConverter();
-   static StreamConverter streamConvert = new StreamConverter();
-   static ReaderConverter readerConvert = new ReaderConverter();
-
    public ResultIterator executeQueryHoldConnection(Connection conn)
          throws ConfigurationException, SQLException
    {
@@ -176,6 +147,7 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
                QueryAdapterImpl.this.getPermission0());
          return rowSet;
       }
+
    }
 
 }

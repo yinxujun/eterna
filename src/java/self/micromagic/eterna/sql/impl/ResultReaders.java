@@ -46,6 +46,11 @@ import self.micromagic.cg.ClassGenerator;
 
 public abstract class ResultReaders
 {
+	/**
+	 * 在arrtibute中设置读取时是否需要获取列的索引值.
+	 */
+	public static final String CHECK_INDEX_FLAG = "checkIndex";
+
    public static class ObjectReader
          implements ResultReader
    {
@@ -65,10 +70,10 @@ public abstract class ResultReaders
 
       protected String columnName = null;
       protected int columnIndex = -1;
+		protected boolean checkIndex;
 
       protected ValueConverter converter;
       protected AttributeManager attributes;
-
 
       public int getType()
       {
@@ -101,6 +106,11 @@ public abstract class ResultReaders
          {
             this.caption = Tool.translateCaption(factory, this.getName());
          }
+			String tmpStr = (String) this.getAttribute(CHECK_INDEX_FLAG);
+			if (tmpStr != null)
+			{
+				this.checkIndex = "true".equalsIgnoreCase(tmpStr);
+			}
       }
 
       public boolean isIgnore()
@@ -171,6 +181,19 @@ public abstract class ResultReaders
       {
          return this.useIndexOrName;
       }
+
+		/**
+		 * 设置在读取时是否需要获取列的索引值, 之后对数据的读取都是通过这个列的索引值.
+		 */
+		public void setCheckIndex(boolean checkIndex)
+		{
+			this.checkIndex = checkIndex;
+		}
+
+		public boolean isCheckIndex()
+		{
+			return this.checkIndex;
+		}
 
       public void setHtmlFilter(boolean htmlFilter)
       {
@@ -261,9 +284,29 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getObject(this.columnIndex) : rs.getObject(this.columnName);
       }
+
+		/**
+		 * 尝试将列名转换成索引值.
+		 */
+		protected boolean transIndex(ResultSet rs)
+		{
+			if (this.checkIndex)
+			{
+				try
+				{
+					this.columnIndex = rs.findColumn(this.columnName);
+					return this.useIndexOrName = true;
+				}
+				catch (SQLException ex)
+				{
+					this.checkIndex = false;
+				}
+			}
+			return false;
+		}
 
       public Object readCall(CallableStatement call, int index)
             throws SQLException
@@ -278,7 +321,7 @@ public abstract class ResultReaders
          {
             return null;
          }
-         if (obj instanceof  ResultSet)
+         if (obj instanceof ResultSet)
          {
             try
             {
@@ -318,7 +361,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getString(this.columnIndex) : rs.getString(this.columnName);
       }
 
@@ -353,7 +396,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         Reader reader = this.useIndexOrName ?
+         Reader reader = this.useIndexOrName || this.transIndex(rs) ?
                rs.getCharacterStream(this.columnIndex) : rs.getCharacterStream(this.columnName);
          if (reader == null)
          {
@@ -424,7 +467,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         InputStream ins = this.useIndexOrName ?
+         InputStream ins = this.useIndexOrName || this.transIndex(rs) ?
                rs.getBinaryStream(this.columnIndex) : rs.getBinaryStream(this.columnName);
          if (ins == null)
          {
@@ -481,7 +524,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         Reader reader = this.useIndexOrName ?
+         Reader reader = this.useIndexOrName || this.transIndex(rs) ?
                rs.getCharacterStream(this.columnIndex) : rs.getCharacterStream(this.columnName);
          if (reader == null)
          {
@@ -533,7 +576,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         boolean booleanValue = this.useIndexOrName ?
+         boolean booleanValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getBoolean(this.columnIndex) : rs.getBoolean(this.columnName);
          return rs.wasNull() ? null : new Boolean(booleanValue);
       }
@@ -564,7 +607,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         byte byteValue = this.useIndexOrName ?
+         byte byteValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getByte(this.columnIndex) : rs.getByte(this.columnName);
          return rs.wasNull() ? null : new Byte(byteValue);
       }
@@ -595,7 +638,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         short shortValue = this.useIndexOrName ?
+         short shortValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getShort(this.columnIndex) : rs.getShort(this.columnName);
          return rs.wasNull() ? null : new Short(shortValue);
       }
@@ -626,7 +669,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         int intValue = this.useIndexOrName ?
+         int intValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getInt(this.columnIndex) : rs.getInt(this.columnName);
          return rs.wasNull() ? null : new Integer(intValue);
       }
@@ -657,7 +700,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         long longValue = this.useIndexOrName ?
+         long longValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getLong(this.columnIndex) : rs.getLong(this.columnName);
          return rs.wasNull() ? null : new Long(longValue);
       }
@@ -688,7 +731,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         float floatValue = this.useIndexOrName ?
+         float floatValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getFloat(this.columnIndex) : rs.getFloat(this.columnName);
          return rs.wasNull() ? null : new Float(floatValue);
       }
@@ -719,7 +762,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         double doubleValue = this.useIndexOrName ?
+         double doubleValue = this.useIndexOrName || this.transIndex(rs) ?
                rs.getDouble(this.columnIndex) : rs.getDouble(this.columnName);
          return rs.wasNull() ? null : new Double(doubleValue);
       }
@@ -749,7 +792,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getBytes(this.columnIndex): rs.getBytes(this.columnName);
       }
 
@@ -778,7 +821,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getDate(this.columnIndex) : rs.getDate(this.columnName);
       }
 
@@ -807,7 +850,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getTime(this.columnIndex) : rs.getTime(this.columnName);
       }
 
@@ -836,7 +879,7 @@ public abstract class ResultReaders
       public Object readResult(ResultSet rs)
             throws SQLException
       {
-         return this.useIndexOrName ?
+         return this.useIndexOrName || this.transIndex(rs) ?
                rs.getTimestamp(this.columnIndex) : rs.getTimestamp(this.columnName);
       }
 
