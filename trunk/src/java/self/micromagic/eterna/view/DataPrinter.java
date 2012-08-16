@@ -163,10 +163,65 @@ public interface DataPrinter
 	 *
     * @param out          输出流
     * @param key          名称
+    * @param value        布尔值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, boolean value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        字符值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, char value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
     * @param value        整型值
     * @param first        是否为对象中的第一组值
 	 */
 	void printPair(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        长整型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, long value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        浮点型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, float value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        双精度浮点型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPair(Writer out, String key, double value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**

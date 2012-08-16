@@ -158,6 +158,25 @@ public interface QueryAdapter extends SQLAdapter
    void setTotalCount(int totalCount) throws ConfigurationException;
 
    /**
+    * 设置该查询对象的记录数. <p>
+    *
+    * @param totalCount   总记录数.
+    * @param ext          扩展信息, 只有在totalCount的值设为0-N时才有效.
+    *
+    * @see #setTotalCount(int)
+    * @see #TOTAL_COUNT_AUTO
+    * @see #TOTAL_COUNT_NONE
+    * @see #TOTAL_COUNT_COUNT
+    */
+   void setTotalCount(int totalCount, TotalCountExt ext) throws ConfigurationException;
+
+   /**
+    * 获取该查询对象设置的总记录数扩展信息. <p>
+	 * 只有在totalCount的值设为0-N时, 该值才有效.
+    */
+   TotalCountExt getTotalCountExt() throws ConfigurationException;
+
+   /**
     * 获得查询的结果, 用于少量(100条左右)数据的查询.
     * <p>实现者要保存结果, 在数据库连接<code>Connection</code>被关闭的时候,
     * 也要能够读取数据.
@@ -184,5 +203,43 @@ public interface QueryAdapter extends SQLAdapter
     */
    ResultIterator executeQueryHoldConnection(Connection conn)
          throws ConfigurationException, SQLException;
+
+	/**
+	 * 设置总记录数的扩展信息.
+	 */
+	static final class TotalCountExt
+	{
+		/**
+		 * 是否还有更多记录.
+		 */
+		public final boolean hasMoreRecord;
+
+		/**
+		 * 总记录数是否可用.
+		 */
+		public final boolean realRecordCountAvailable;
+
+		public TotalCountExt(boolean hasMoreRecord, boolean realRecordCountAvailable)
+		{
+			this.hasMoreRecord = hasMoreRecord;
+			this.realRecordCountAvailable = realRecordCountAvailable;
+		}
+
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+			{
+				return true;
+			}
+			if (obj instanceof TotalCountExt)
+			{
+				TotalCountExt other = (TotalCountExt) obj;
+				return this.hasMoreRecord == other.hasMoreRecord
+						&& this.realRecordCountAvailable == other.realRecordCountAvailable;
+			}
+			return false;
+		}
+
+	}
 
 }

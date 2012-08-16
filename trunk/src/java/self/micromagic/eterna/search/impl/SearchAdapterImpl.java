@@ -67,7 +67,7 @@ public class SearchAdapterImpl extends AbstractGenerator
    private int countSearchIndex = -1;
 
    private String otherName;
-   private SearchAdapter[] others;
+   private SearchAdapter[] others = null;
    private String conditionPropertyOrderWithOther = null;
 
    private boolean needWrap = true;
@@ -83,6 +83,12 @@ public class SearchAdapterImpl extends AbstractGenerator
    private int conditionDocumentCount = 1;
    private MemoryChars conditionDocument = null;
    private MemoryChars[] conditionDocuments = null;
+
+	/**
+	 * 执行搜索时(doSearch), 是否要加同步锁.
+	 * 在search的attribute中通过needSynchronize属性名进行设置.
+	 */
+	private boolean needSynchronize = false;
 
    private boolean initialized = false;
 
@@ -191,6 +197,12 @@ public class SearchAdapterImpl extends AbstractGenerator
             throw new ConfigurationException("Can't set conditionIndex 0 in a search witch has conditionProperty.");
          }
       }
+
+		String tmpStr = (String) this.getAttribute("needSynchronize");
+		if (tmpStr != null)
+		{
+			this.needSynchronize = "true".equalsIgnoreCase(tmpStr);
+		}
    }
 
    public Object create()
@@ -281,10 +293,20 @@ public class SearchAdapterImpl extends AbstractGenerator
       this.conditionIndex = index;
    }
 
+   public String getColumnSettingType()
+   {
+      return this.columnType;
+   }
+
    public void setColumnSettingType(String type)
    {
       this.columnType = type;
    }
+
+	public ColumnSetting getColumnSetting()
+	{
+		return this.columnSetting;
+	}
 
    public void setColumnSetting(ColumnSetting setting)
    {
@@ -305,6 +327,17 @@ public class SearchAdapterImpl extends AbstractGenerator
    {
       return this.otherName;
    }
+
+	public SearchAdapter[] getOtherSearchs()
+	{
+		if (this.others == null)
+		{
+			return null;
+		}
+		SearchAdapter[] result = new SearchAdapter[this.others.length];
+		System.arraycopy(this.others, 0, result, 0, this.others.length);
+		return result;
+	}
 
    public void setOtherSearchManagerName(String otherName)
    {
@@ -602,7 +635,20 @@ public class SearchAdapterImpl extends AbstractGenerator
       return manager;
    }
 
-   public synchronized SearchAdapter.Result doSearch(AppData data, Connection conn)
+	public Result doSearch(AppData data, Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		if (this.needSynchronize)
+		{
+			synchronized (this)
+			{
+				return this.doSearch0(data, conn);
+			}
+		}
+		return this.doSearch0(data, conn);
+	}
+
+   public Result doSearch0(AppData data, Connection conn)
          throws ConfigurationException, SQLException
    {
       if (log.isDebugEnabled())
@@ -613,7 +659,8 @@ public class SearchAdapterImpl extends AbstractGenerator
       Map raMap = data.getRequestAttributeMap();
       BooleanRef isFirst = new BooleanRef();
       SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
-      QueryAdapter query = this.getQueryAdapter(data, conn, isFirst, manager);
+      QueryAdapter query = getQueryAdapter(data, conn, this, isFirst, this.sessionQueryTag,
+				manager, this.queryIndex, this.columnSetting, this.columnType);
       manager.setPageNumAndCondition(data, this);
 
       if (query == null)
@@ -652,30 +699,7 @@ public class SearchAdapterImpl extends AbstractGenerator
       query.setStartRow(startRow + 1);
       if (this.others != null)
       {
-         for (int i = 0; i < this.others.length; i++)
-         {
-            SearchAdapter other = this.others[i];
-            if (other.getConditionIndex() > 0)
-            {
-               SearchManager om = other.getSearchManager(data);
-               if (other.isSpecialCondition())
-               {
-                  String subConSQL = om.getSpecialConditionPart(other, other.isNeedWrap());
-                  PreparerManager spm = om.getSpecialPreparerManager(other);
-                  query.setSubSQL(other.getConditionIndex(), subConSQL, spm);
-               }
-               else
-               {
-                  query.setSubSQL(other.getConditionIndex(), om.getConditionPart(other.isNeedWrap()),
-                        om.getPreparerManager());
-               }
-            }
-            ParameterSetting ps = other.getParameterSetting();
-            if (ps != null)
-            {
-               ps.setParameter(query, other, isFirst.value, data, conn);
-            }
-         }
+			dealOthers(data, conn, this.others, query, isFirst.value);
       }
       if (this.conditionIndex > 0)
       {
@@ -703,10 +727,10 @@ public class SearchAdapterImpl extends AbstractGenerator
          if (orderStr != null)
          {
             query.setSingleOrder(orderStr);
-            BooleanRef tmp = new BooleanRef();
-            singleOrederName = query.getSingleOrder(tmp);
-            singleOrederDesc = tmp.value;
          }
+			BooleanRef tmp = new BooleanRef();
+			singleOrederName = query.getSingleOrder(tmp);
+			singleOrederDesc = tmp.value;
       }
 
       if (log.isDebugEnabled())
@@ -749,31 +773,82 @@ public class SearchAdapterImpl extends AbstractGenerator
       }
       Result result = new Result(this.name, this.queryName, ritr, countRitr, maxRow, pageNum,
             singleOrederName, singleOrederDesc);
-
       if (log.isDebugEnabled())
       {
          log.debug("End execute query:" + System.currentTimeMillis());
       }
-
       return result;
    }
 
-   private QueryAdapter getQueryAdapter(AppData data, Connection conn, BooleanRef first,
-         SearchManager searchManager)
+	/**
+	 * 通过其他的辅助search来设置条件.
+	 *
+	 * @param data      AppData对象
+	 * @param conn      数据库连接
+	 * @param others    其他的辅助search
+	 * @param query     用于执行查询的query对象
+	 * @param first     是否为第一次执行
+	 */
+	protected static void dealOthers(AppData data, Connection conn, SearchAdapter[] others,
+			QueryAdapter query, boolean first)
+			throws ConfigurationException
+	{
+		for (int i = 0; i < others.length; i++)
+		{
+			SearchAdapter other = others[i];
+			if (other.getConditionIndex() > 0)
+			{
+				SearchManager om = other.getSearchManager(data);
+				if (other.isSpecialCondition())
+				{
+					String subConSQL = om.getSpecialConditionPart(other, other.isNeedWrap());
+					PreparerManager spm = om.getSpecialPreparerManager(other);
+					query.setSubSQL(other.getConditionIndex(), subConSQL, spm);
+				}
+				else
+				{
+					query.setSubSQL(other.getConditionIndex(), om.getConditionPart(other.isNeedWrap()),
+							om.getPreparerManager());
+				}
+			}
+			ParameterSetting ps = other.getParameterSetting();
+			if (ps != null)
+			{
+				ps.setParameter(query, other, first, data, conn);
+			}
+		}
+	}
+
+
+	/**
+	 * 获得一个用于执行查询的query对象.
+	 *
+	 * @param data              AppData对象
+	 * @param conn              数据库连接, 在获取列设置时会使用到
+	 * @param search            当前的search对象
+	 * @param first             出参, 是否为第一次执行, 第一次进入或重新设置了条件时, 值为true
+	 * @param sessionQueryTag   query放在session中使用的名称
+	 * @param searchManager     搜索的管理器, 用于控制分页及查询条件
+	 * @param queryIndex        用于获取查询的索引值
+	 * @param columnSetting     用于进行列设置的对象
+	 * @param columnType        列设置的类型, 用于区分读取哪个列设置
+	 */
+   protected static QueryAdapter getQueryAdapter(AppData data, Connection conn, SearchAdapter search,
+			BooleanRef first, String sessionQueryTag, SearchManager searchManager, int queryIndex,
+			ColumnSetting columnSetting, String columnType)
          throws ConfigurationException
    {
-      if (this.queryIndex == -1)
+      if (queryIndex == -1)
       {
          return null;
       }
       QueryAdapter query = null;
       if (data.getRequestAttributeMap().get(FORCE_LOAD_COLUMN_SETTING) != null)
       {
-         query = this.getFactory().createQueryAdapter(this.queryIndex);
-         if (this.columnSetting != null)
+         query = search.getFactory().createQueryAdapter(queryIndex);
+         if (columnSetting != null)
          {
-            String[] colSetting = this.columnSetting.getColumnSetting(
-                  this.columnType, query, this, true, data, conn);
+            String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, true, data, conn);
             if (colSetting != null)
             {
                ResultReaderManager readerManager = query.getReaderManager();
@@ -781,7 +856,7 @@ public class SearchAdapterImpl extends AbstractGenerator
                query.setReaderManager(readerManager);
             }
          }
-         UserManager um = this.getFactory().getUserManager();
+         UserManager um = search.getFactory().getUserManager();
          if (um != null)
          {
             User user = um.getUser(data);
@@ -798,15 +873,15 @@ public class SearchAdapterImpl extends AbstractGenerator
          return query;
       }
 
-      Map queryMap = (Map) SessionCache.getInstance().getProperty(
-            data.getSessionAttributeMap(), SESSION_SEARCH_QUERY);
+		Map saMap = data.getSessionAttributeMap();
+      Map queryMap = (Map) SessionCache.getInstance().getProperty(saMap, SESSION_SEARCH_QUERY);
       if (queryMap == null)
       {
          queryMap = new HashMap();
-         SessionCache.getInstance().setProperty(data.getSessionAttributeMap(), SESSION_SEARCH_QUERY, queryMap);
+         SessionCache.getInstance().setProperty(saMap, SESSION_SEARCH_QUERY, queryMap);
       }
 
-      QueryContainer qc = (QueryContainer) queryMap.get(this.sessionQueryTag);
+      QueryContainer qc = (QueryContainer) queryMap.get(sessionQueryTag);
       int qcVersion;
       if (qc == null)
       {
@@ -821,8 +896,8 @@ public class SearchAdapterImpl extends AbstractGenerator
       if (isFirst || qc == null)
       {
          isFirst = true;
-         query = this.getFactory().createQueryAdapter(this.queryIndex);
-         UserManager um = this.getFactory().getUserManager();
+         query = search.getFactory().createQueryAdapter(queryIndex);
+         UserManager um = search.getFactory().getUserManager();
          if (um != null)
          {
             User user = um.getUser(data);
@@ -835,16 +910,15 @@ public class SearchAdapterImpl extends AbstractGenerator
                query.setPermission(EmptyPermission.getInstance());
             }
          }
-         queryMap.put(this.sessionQueryTag, new QueryContainer(query, qcVersion));
+         queryMap.put(sessionQueryTag, new QueryContainer(query, qcVersion));
       }
       else
       {
          query = qc.query;
       }
-      if (this.columnSetting != null)
+      if (columnSetting != null)
       {
-         String[] colSetting = this.columnSetting.getColumnSetting(
-               this.columnType, query, this, isFirst, data, conn);
+         String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, isFirst, data, conn);
          if (colSetting != null)
          {
             ResultReaderManager readerManager = query.getReaderManager();
@@ -983,7 +1057,7 @@ public class SearchAdapterImpl extends AbstractGenerator
 
    }
 
-   private class QueryContainer
+   protected static class QueryContainer
    {
       public final QueryAdapter query;
       public final int conditionVersion;

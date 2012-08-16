@@ -316,6 +316,11 @@ class CountQueryAdapter
       return 1;
    }
 
+	public TotalCountExt getTotalCountExt()
+	{
+		return null;
+	}
+
    public void setStartRow(int startRow)
    {
       throw new UnsupportedOperationException();
@@ -330,6 +335,11 @@ class CountQueryAdapter
    {
       throw new UnsupportedOperationException();
    }
+
+	public void setTotalCount(int totalCount, TotalCountExt ext)
+	{
+      throw new UnsupportedOperationException();
+	}
 
    public void setPermission(Permission permission)
    {

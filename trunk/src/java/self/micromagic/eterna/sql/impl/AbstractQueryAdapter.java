@@ -54,6 +54,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
    private int startRow = 1;
    private int maxRows = -1;
    private int totalCount = -1;
+   private TotalCountExt totalCountExt = null;
 	private QueryHelper queryHelper = null;
 
 	/**
@@ -467,12 +468,24 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
    public void setTotalCount(int totalCount)
          throws ConfigurationException
    {
+		this.setTotalCount(totalCount, null);
+   }
+
+	public void setTotalCount(int totalCount, TotalCountExt ext)
+			throws ConfigurationException
+	{
       if (this.totalCount < -3)
       {
          throw new ConfigurationException("Error total count:" + totalCount + ".");
       }
       this.totalCount = totalCount;
-   }
+		this.totalCountExt = ext;
+	}
+
+	public TotalCountExt getTotalCountExt()
+	{
+		return this.totalCountExt;
+	}
 
    public void execute(Connection conn)
          throws ConfigurationException, SQLException
