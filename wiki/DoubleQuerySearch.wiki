@@ -1,4 +1,4 @@
-#summary 两次查询的搜索.
+#summary 两次查询的搜索
 #labels Phase-Implementation
 
 =两次查询的搜索=
