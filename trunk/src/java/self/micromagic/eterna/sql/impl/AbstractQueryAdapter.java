@@ -114,7 +114,12 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       Iterator itr = this.tempResultReaders.iterator();
       while (itr.hasNext())
       {
-         temp.addReader((ResultReader) itr.next());
+			ResultReader r = (ResultReader) itr.next();
+			if (r instanceof ResultReaders.ObjectReader)
+			{
+				((ResultReaders.ObjectReader) r).setCheckIndex(true);
+			}
+         temp.addReader(r);
       }
       temp.initialize(this.getFactory());
       if (temp.getReaderCount() > 0)
@@ -547,7 +552,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ritr.realRecordCount = qh.getRealRecordCount();
 			ritr.recordCount = qh.getRecordCount();
 			ritr.realRecordCountAvailable = qh.isRealRecordCountAvailable();
-			ritr.hasMoreRecord = qh.hasMoreRecord();
+			ritr.hasMoreRecord = qh.isHasMoreRecord();
          if (qh.needCount())
          {
             rs.close();

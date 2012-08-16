@@ -66,14 +66,19 @@
          -->
 
          <typical-component name="nbsp" type="span">
-            <init-script><![CDATA[ webObj.html("&nbsp;"); ]]></init-script>
+				<component-param><![CDATA[html:"&nbsp;"]]></component-param>
          </typical-component>
          <typical-component name="nbsp2" type="span">
-            <init-script><![CDATA[ webObj.html("&nbsp; "); ]]></init-script>
+				<component-param><![CDATA[html:"&nbsp; "]]></component-param>
          </typical-component>
 
-         <!-- 对checkbos反选 -->
-         <function name="invertSelect" param="objs, container">
+         <!-- 对checkbos反选或全选 -->
+         <function name="invertSelect" param="objs, container, selectAll">
+            if (typeof container == "boolean")
+				{
+					selectAll = container;
+					container = null;
+				}
             if (objs == null)
             {
                return;
@@ -87,31 +92,35 @@
             {
                list = objs;
             }
-            list.each(function (){this.checked = !this.checked;});
+				if (selectAll)
+				{
+					list.each(function (){this.checked = true;});
+				}
+				else
+				{
+            	list.each(function (){this.checked = !this.checked;});
+				}
          </function>
 
-			<!--判断是否有选择-->
-			<function name="checkSelected" param="objs, msg, container">
-            if (objs == null)
+			<!-- 判断是否有选中 -->
+			<function name="checkSelected" param="id, msg, container, returnSelected">
+            if (typeof container == "boolean")
+				{
+					returnSelected = container;
+					container = null;
+				}
+            if (id == null)
             {
-               return false;
+               return returnSelected ? null : false;
             }
-            var list;
-            if (typeof objs == 'string')
-            {
-               var idObj = _eterna.checkIdValid(objs);
-               list = _eterna.queryWebObj(idObj.idStr + ":checked", container);
-            }
-            else
-            {
-               list = objs;
-            }
-			   if(list.size() == 0)
+				var idObj = _eterna.checkIdValid(id);
+				var list = _eterna.queryWebObj(idObj.idStr + ":checked", container);
+			   if (list.size() == 0)
             {
 			      alert(msg == null ? {$res:needSelected}() : msg);
-			      return false;
+			      return returnSelected ? null : false;
 			   }
-				return true;
+				return returnSelected ? list : true;
 			</function>
          <resource name="needSelected">请先选择！</resource>
 

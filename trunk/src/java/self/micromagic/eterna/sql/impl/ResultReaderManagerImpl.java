@@ -31,7 +31,7 @@ public class ResultReaderManagerImpl
     * 锁住 readerMap 的标志, 比如在调用query的getReaderManager方法时
     * 就不需要复制 readerMap.
     */
-   private boolean locked2 = false;
+   private boolean readMapLocked = false;
 
    private boolean nonePermission;
    private boolean colNameSensitive = true;
@@ -71,7 +71,7 @@ public class ResultReaderManagerImpl
       this.orderStr = null;
    }
 
-   public ResultReaderManagerImpl(boolean nonePomission, boolean lock2,
+   public ResultReaderManagerImpl(boolean nonePomission, boolean readMapLocked,
          String readerOrder, Map readerMap, Map nameToIndexMap, List allReaderList,
          List readerList, List orderList, String orderStr)
    {
@@ -79,13 +79,13 @@ public class ResultReaderManagerImpl
       this.nonePermission = nonePomission;
 
       this.locked = false;
-      this.locked2 = lock2;
+      this.readMapLocked = readMapLocked;
 
       this.readerOrder = readerOrder;
-      this.readerMap = lock2 ? readerMap : new HashMap(readerMap);
-      this.nameToIndexMap = lock2 ? nameToIndexMap : new HashMap(nameToIndexMap);
-      this.allReaderList = lock2 ? allReaderList : null;
-      this.readerList = lock2 ? readerList : new ArrayList(readerList);
+      this.readerMap = readMapLocked ? readerMap : new HashMap(readerMap);
+      this.nameToIndexMap = readMapLocked ? nameToIndexMap : new HashMap(nameToIndexMap);
+      this.allReaderList = readMapLocked ? allReaderList : null;
+      this.readerList = readMapLocked ? readerList : new ArrayList(readerList);
       this.orderList = orderList;
       this.orderStr = orderStr;
    }
@@ -97,7 +97,7 @@ public class ResultReaderManagerImpl
       this.nonePermission = nonePomission;
 
       this.locked = false;
-      this.locked2 = false;
+      this.readMapLocked = false;
 
       this.readerOrder = readerOrder;
       this.readerMap = new HashMap(readerMap);
@@ -223,7 +223,7 @@ public class ResultReaderManagerImpl
    public ResultReader addReader(ResultReader reader)
          throws ConfigurationException
    {
-      if (this.locked2)
+      if (this.readMapLocked)
       {
          throw new ConfigurationException("You can't add reader at initialized ResultReaderManager.");
       }
@@ -481,8 +481,7 @@ public class ResultReaderManagerImpl
          }
          index++;
       }
-      this.readerList = new ArrayList(resultList.size());
-      this.readerList.addAll(resultList);
+      this.readerList = new ArrayList(resultList);
       this.allReaderList = Collections.unmodifiableList(resultList);
       return this.allReaderList;
    }

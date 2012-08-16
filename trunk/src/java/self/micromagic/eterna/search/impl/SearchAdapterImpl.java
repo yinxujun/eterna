@@ -88,7 +88,7 @@ public class SearchAdapterImpl extends AbstractGenerator
 	 * 执行搜索时(doSearch), 是否要加同步锁.
 	 * 在search的attribute中通过needSynchronize属性名进行设置.
 	 */
-	private boolean needSynchronize = false;
+	protected boolean needSynchronize = false;
 
    private boolean initialized = false;
 
@@ -642,13 +642,20 @@ public class SearchAdapterImpl extends AbstractGenerator
 		{
 			synchronized (this)
 			{
-				return this.doSearch0(data, conn);
+				return this.doSearch0(data, conn, false);
 			}
 		}
-		return this.doSearch0(data, conn);
+		return this.doSearch0(data, conn, false);
 	}
 
-   public Result doSearch0(AppData data, Connection conn)
+   /**
+    * 执行查询, 并获得结果.
+    *
+    * @param data        AppData对象
+	 * @param conn        数据库连接
+	 * @param onlySearch  是否为仅执行搜索, 不进行列设置或全记录获取
+    */
+   protected Result doSearch0(AppData data, Connection conn, boolean onlySearch)
          throws ConfigurationException, SQLException
    {
       if (log.isDebugEnabled())
@@ -659,8 +666,8 @@ public class SearchAdapterImpl extends AbstractGenerator
       Map raMap = data.getRequestAttributeMap();
       BooleanRef isFirst = new BooleanRef();
       SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
-      QueryAdapter query = getQueryAdapter(data, conn, this, isFirst, this.sessionQueryTag,
-				manager, this.queryIndex, this.columnSetting, this.columnType);
+      QueryAdapter query = getQueryAdapter(data, conn, this, isFirst, this.sessionQueryTag, manager,
+				this.queryIndex, onlySearch ? null : this.columnSetting, onlySearch ? null : this.columnType);
       manager.setPageNumAndCondition(data, this);
 
       if (query == null)
@@ -671,36 +678,33 @@ public class SearchAdapterImpl extends AbstractGenerator
       int maxRow = manager.getPageSize(this.getPageSize());
       int pageNum = manager.getPageNum();
       int startRow = pageNum * maxRow;
-      if ("1".equals(raMap.get(READ_ALL_ROW)))
-      {
-         startRow = 0;
-         pageNum = -1;
-         maxRow = -1;
-      }
-      else
-      {
-         Object start_and_count = raMap.get(READ_ROW_START_AND_COUNT);
-         if (start_and_count != null & start_and_count instanceof StartAndCount)
-         {
-            StartAndCount temp = (StartAndCount) start_and_count;
-            maxRow = temp.count;
-            if (temp.start >= 0)
-            {
-               startRow = temp.start - 1;
-               pageNum = -1;
-            }
-            else
-            {
-               startRow = pageNum * maxRow;
-            }
-         }
-      }
+		if ("1".equals(raMap.get(READ_ALL_ROW)) && !onlySearch)
+		{
+			startRow = 0;
+			pageNum = -1;
+			maxRow = -1;
+		}
+		else
+		{
+			Object start_and_count = raMap.get(READ_ROW_START_AND_COUNT);
+			if (start_and_count != null & start_and_count instanceof StartAndCount)
+			{
+				StartAndCount temp = (StartAndCount) start_and_count;
+				maxRow = temp.count;
+				if (temp.start >= 0)
+				{
+					startRow = temp.start - 1;
+					pageNum = -1;
+				}
+				else
+				{
+					startRow = pageNum * maxRow;
+				}
+			}
+		}
       query.setMaxRows(maxRow);
       query.setStartRow(startRow + 1);
-      if (this.others != null)
-      {
-			dealOthers(data, conn, this.others, query, isFirst.value);
-      }
+		dealOthers(data, conn, this.others, query, isFirst.value);
       if (this.conditionIndex > 0)
       {
          if (this.specialCondition)
@@ -741,7 +745,7 @@ public class SearchAdapterImpl extends AbstractGenerator
       //System.out.println("Search SQL:" + query.getPreparedSQL());
       ResultIterator countRitr = null;
       ResultIterator ritr;
-      if ("1".equals(raMap.get(HOLD_CONNECTION)))
+      if ("1".equals(raMap.get(HOLD_CONNECTION)) && !onlySearch)
       {
          ritr = query.executeQueryHoldConnection(conn);
       }
@@ -793,6 +797,10 @@ public class SearchAdapterImpl extends AbstractGenerator
 			QueryAdapter query, boolean first)
 			throws ConfigurationException
 	{
+		if (others == null)
+		{
+			return;
+		}
 		for (int i = 0; i < others.length; i++)
 		{
 			SearchAdapter other = others[i];
@@ -843,19 +851,17 @@ public class SearchAdapterImpl extends AbstractGenerator
          return null;
       }
       QueryAdapter query = null;
-      if (data.getRequestAttributeMap().get(FORCE_LOAD_COLUMN_SETTING) != null)
+		Map raMap = data.getRequestAttributeMap();
+      if ("1".equals(raMap.get(FORCE_LOAD_COLUMN_SETTING)) && columnSetting != null)
       {
          query = search.getFactory().createQueryAdapter(queryIndex);
-         if (columnSetting != null)
-         {
-            String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, true, data, conn);
-            if (colSetting != null)
-            {
-               ResultReaderManager readerManager = query.getReaderManager();
-               readerManager.setReaderList(colSetting);
-               query.setReaderManager(readerManager);
-            }
-         }
+			String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, true, data, conn);
+			if (colSetting != null)
+			{
+				ResultReaderManager readerManager = query.getReaderManager();
+				readerManager.setReaderList(colSetting);
+				query.setReaderManager(readerManager);
+			}
          UserManager um = search.getFactory().getUserManager();
          if (um != null)
          {

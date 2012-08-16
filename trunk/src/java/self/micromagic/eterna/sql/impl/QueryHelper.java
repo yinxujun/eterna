@@ -302,7 +302,7 @@ public class QueryHelper
 	/**
 	 * 实际查询结果中是否还有更多的记录.
 	 */
-	public boolean hasMoreRecord()
+	public boolean isHasMoreRecord()
 	{
 		return this.hasMoreRecord;
 	}

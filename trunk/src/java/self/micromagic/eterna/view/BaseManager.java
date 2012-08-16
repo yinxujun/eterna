@@ -13,6 +13,7 @@ import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.eterna.view.impl.ViewTool;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.StringAppender;
@@ -45,7 +46,8 @@ public class BaseManager
       definedNameSet.add(INIT_PARAM);
       definedNameSet.add(BEFORE_INIT);
       definedNameSet.add(INIT_SCRIPT);
-      definedNameSet.add(ResultReader.INPUT_TYPE_FLG);
+      definedNameSet.add(ResultReader.INPUT_TYPE_FLAG);
+      definedNameSet.add(ResultReaders.CHECK_INDEX_FLAG);
    }
 
    /**
@@ -257,7 +259,7 @@ public class BaseManager
          this.reader = reader;
 
          this.initItem();
-         this.inputType = (String) this.reader.getAttribute(ResultReader.INPUT_TYPE_FLG);
+         this.inputType = (String) this.reader.getAttribute(ResultReader.INPUT_TYPE_FLAG);
          String tmp = (String) this.reader.getAttribute(INIT_PARAM);
          if (tmp != null)
          {

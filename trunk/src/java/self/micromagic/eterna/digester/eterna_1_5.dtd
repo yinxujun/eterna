@@ -362,8 +362,7 @@ class:className
 
 <!-- "update"元素用于具体描述一个"UpdateAdapter"对象.
 
-     name            "UpdateAdapter"的名称, 它在同一个"SQLAdapterFactory"中
-                     必须是唯一的.
+     name            "UpdateAdapter"的名称, 它在同一个"Factory"中必须是唯一的.
 
      logType         为这个update单独设定sql日志记录的方式.
                      可选的类型有: save, print, special, none

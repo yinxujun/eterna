@@ -14,13 +14,13 @@ public interface ResultReader
    /**
     * 在arrtibute中设置输入框类型使用的名称.
     */
-   public static final String INPUT_TYPE_FLG = "inputType";
+   public static final String INPUT_TYPE_FLAG = "inputType";
 
    /**
     * 初始化本reader对象, 系统会在初始化时调用此方法. <p>
     * 该方法的主要作用是根据设置的format的名称来初始化format对象.
     *
-    * @param factory  SQLAdapterFactory的实例, 可以从中获得format对象
+    * @param factory  EternaFactory的实例, 可以从中获得format对象
     */
    void initialize(EternaFactory factory) throws ConfigurationException;
 

@@ -14,6 +14,20 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.util.converter.StringConverter;
+import self.micromagic.util.converter.BooleanConverter;
+import self.micromagic.util.converter.ByteConverter;
+import self.micromagic.util.converter.ShortConverter;
+import self.micromagic.util.converter.IntegerConverter;
+import self.micromagic.util.converter.LongConverter;
+import self.micromagic.util.converter.FloatConverter;
+import self.micromagic.util.converter.DoubleConverter;
+import self.micromagic.util.converter.BytesConverter;
+import self.micromagic.util.converter.DateConverter;
+import self.micromagic.util.converter.TimeConverter;
+import self.micromagic.util.converter.TimestampConverter;
+import self.micromagic.util.converter.StreamConverter;
+import self.micromagic.util.converter.ReaderConverter;
 
 public class ResultRowImpl implements ResultRow
 {
@@ -23,7 +37,7 @@ public class ResultRowImpl implements ResultRow
    private ResultIterator resultIterator;
 
    private String[] formateds;
-   private boolean lastReadWasNull = false;
+   private boolean wasNull = false;
 
    public ResultRowImpl(Object[] values, ResultIterator resultIterator,
          ResultReaderManager readerManager, Permission permission)
@@ -43,32 +57,51 @@ public class ResultRowImpl implements ResultRow
    public String getFormated(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      if (this.values[columnIndex - 1] == null)
+		int cIndex = columnIndex - 1;
+      if (this.values[cIndex] == null)
       {
-         return "";
+			this.wasNull = true;
+			if (this.formateds[cIndex] != null)
+			{
+				return this.formateds[cIndex];
+			}
+			ResultReader reader = this.readerManager.getReaderInList(cIndex);
+			if (reader.getFormat() != null)
+			{
+				String tmp = null;
+				try
+				{
+					tmp = reader.getFormat().format(null, this, this.permission);
+				}
+				catch (Exception ex)
+				{
+				  	SQLManager.log.error(this.getFormatErrMsg(columnIndex), ex);
+				}
+				return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
+			}
+         return this.formateds[cIndex] = "";
       }
-      if (this.formateds[columnIndex - 1] != null)
+		this.wasNull = false;
+      if (this.formateds[cIndex] != null)
       {
-         return this.formateds[columnIndex - 1];
+         return this.formateds[cIndex];
       }
-      ResultReader reader = this.readerManager.getReaderInList(columnIndex - 1);
+      ResultReader reader = this.readerManager.getReaderInList(cIndex);
       if (reader.getFormat() == null)
       {
-         this.formateds[columnIndex - 1] = QueryAdapterImpl.strConvert.convertToString(this.values[columnIndex - 1]);
-         return this.formateds[columnIndex - 1];
+         this.formateds[cIndex] = strConvert.convertToString(this.values[cIndex]);
+         return this.formateds[cIndex];
       }
+		String tmp = null;
       try
       {
-         this.formateds[columnIndex - 1] = reader.getFormat().format(
-               this.values[columnIndex - 1], this, this.permission);
+         tmp = reader.getFormat().format(this.values[cIndex], this, this.permission);
       }
       catch (Exception ex)
       {
-        SQLManager.log.error("When format the column [" + columnIndex
-              + "], value ["  + this.values[columnIndex - 1] + "]", ex);
+        	SQLManager.log.error(this.getFormatErrMsg(columnIndex), ex);
       }
-      return this.formateds[columnIndex - 1];
+		return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
    }
 
    public String getFormated(String columnName)
@@ -78,93 +111,101 @@ public class ResultRowImpl implements ResultRow
       return this.getFormated(index);
    }
 
+	private String getFormatErrMsg(int columnIndex)
+         throws ConfigurationException
+	{
+      return "When format the column [" + columnIndex
+	  			+ ":" +  this.readerManager.getReaderInList(columnIndex - 1).getName()
+				+ "], value ["  + this.values[columnIndex - 1] + "]";
+	}
+
    public boolean wasNull()
    {
-      return this.lastReadWasNull;
+      return this.wasNull;
    }
 
    public String getString(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.strConvert.convertToString(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return strConvert.convertToString(this.values[columnIndex - 1]);
    }
 
    public boolean getBoolean(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.boolConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return boolConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public byte getByte(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.byteConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return byteConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public short getShort(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.shortConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return shortConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public int getInt(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.intConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return intConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public long getLong(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.longConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return longConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public float getFloat(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.floatConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return floatConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public double getDouble(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.doubleConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return doubleConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public byte[] getBytes(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.bytesConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return bytesConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public Date getDate(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.dateConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return dateConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public Time getTime(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.timeConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return timeConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public Timestamp getTimestamp(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.timestampConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return timestampConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public String getString(String columnName)
@@ -253,7 +294,7 @@ public class ResultRowImpl implements ResultRow
 
    public Object getObject(int readerIndex)
    {
-      this.lastReadWasNull = this.values[readerIndex - 1] == null;
+      this.wasNull = this.values[readerIndex - 1] == null;
       return this.values[readerIndex - 1];
    }
 
@@ -278,8 +319,8 @@ public class ResultRowImpl implements ResultRow
    public InputStream getBinaryStream(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.streamConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return streamConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public InputStream getBinaryStream(String columnName)
@@ -292,8 +333,8 @@ public class ResultRowImpl implements ResultRow
    public Reader getCharacterStream(int columnIndex)
          throws ConfigurationException
    {
-      this.lastReadWasNull = this.values[columnIndex - 1] == null;
-      return QueryAdapterImpl.readerConvert.getResult(this.values[columnIndex - 1]);
+      this.wasNull = this.values[columnIndex - 1] == null;
+      return readerConvert.getResult(this.values[columnIndex - 1]);
    }
 
    public Reader getCharacterStream(String columnName)
@@ -314,5 +355,20 @@ public class ResultRowImpl implements ResultRow
    {
       return this.readerManager.getIndexByName(columnName, notThrow);
    }
+
+   static StringConverter strConvert = new StringConverter();
+   static BooleanConverter boolConvert = new BooleanConverter();
+   static ByteConverter byteConvert = new ByteConverter();
+   static ShortConverter shortConvert = new ShortConverter();
+   static IntegerConverter intConvert = new IntegerConverter();
+   static LongConverter longConvert = new LongConverter();
+   static FloatConverter floatConvert = new FloatConverter();
+   static DoubleConverter doubleConvert = new DoubleConverter();
+   static BytesConverter bytesConvert = new BytesConverter();
+   static DateConverter dateConvert = new DateConverter();
+   static TimeConverter timeConvert = new TimeConverter();
+   static TimestampConverter timestampConvert = new TimestampConverter();
+   static StreamConverter streamConvert = new StreamConverter();
+   static ReaderConverter readerConvert = new ReaderConverter();
 
 }
