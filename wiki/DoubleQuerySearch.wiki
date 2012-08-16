@@ -1,0 +1,13 @@
+#summary 两次查询的搜索.
+
+=两次查询的搜索=
+实现类为：`self.micromagic.eterna.search.DoubleQuerySearch`。<br>
+其执行过程为：第一次查询，取出所有的主键；第二次查询，根据前一次查询结果中的主键值，取出正式的结果。<br>
+<br>
+需要在search节点中设置的attribute值如下：
+||名称||必须||说明||
+||nextQueryName||是||第二次查询的query名称||
+||keyConditionIndex||否||上面这个query中设置key条件的索引值, 默认值为1||
+||keyNameList||是||主键名称列表, 格式为  name1,name2,... 或 name1:col1,name2,...||
+||assistSearchName||否||辅助的search名称, 用于设置其他的条件, 可使用$same表示使用本search||
+||needAssistCondition||否||是否需要辅助search的条件, 当assistSearchName为$same时默认值为false<br>当assistSearchName为其它search的名称时默认值为true||
