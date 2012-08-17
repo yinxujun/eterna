@@ -13,3 +13,16 @@
 ||keyNameList||是||主键名称列表, 格式为  name1,name2,... 或 name1:col1,name2,...||
 ||assistSearchName||否||辅助的search名称，用于设置其他的条件，可使用$same表示使用本search||
 ||needAssistCondition||否||是否需要设置辅助search的条件，当assistSearchName为$same时默认值为false<br>当assistSearchName为其它search的名称时默认值为true||
+
+
+=样例=
+假设有两个表，一个是人员信息表，id是此表的主键，userInfo是个大数据字段；一个是工作情况表，id是外键，id+createDate是主键，workInfo是个大数据字段。现在要做一个查询，查出所有人的工作情况，如果没有工作情况，仅列出人员信息。<br>
+表数据如下：<br>
+sample_a，人员信息
+||1||测试1||测试1的用户信息||
+||2||测试2||测试2的用户信息||
+||3||其他1||其他1的用户信息||
+||4||其他2||其他2的用户信息||
+||5||测试3||测试3的用户信息||
+||6||其他3||其他3的用户信息||
+sample_b，工作情况
