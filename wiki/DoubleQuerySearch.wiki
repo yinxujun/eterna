@@ -70,7 +70,7 @@ sample_b，工作情况
    </readers>
 </query>
 }}}
-执行结果：
+执行结果，传入的name条件值为“测试”：
 {{{
 <query name="a.query">
    <prepared-sql>
