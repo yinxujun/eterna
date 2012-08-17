@@ -107,7 +107,8 @@ sample_b，工作情况
       select a.id, a.name, a.userInfo, b.createDate, b.workInfo
       from sample_a a left join sample_b b on a.id = b.id
       where ((a.id = ? AND createDate = ?) OR (a.id = ? AND createDate = ?)
-            OR (a.id = ? AND createDate = ?) OR (a.id = ? AND createDate is null))</prepared-sql>
+            OR (a.id = ? AND createDate = ?) OR (a.id = ? AND createDate is null))
+   </prepared-sql>
    <parameters>
       <parameter index="1" type="int">1</parameter>
       <parameter index="2" type="Date">2012-08-09</parameter>
