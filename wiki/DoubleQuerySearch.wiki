@@ -72,7 +72,7 @@ sample_b，工作情况
 }}}
 执行结果：
 {{{
-<query name="a.query" time="2012-08-17 09:14:31" usedTime="265">
+<query name="a.query">
    <prepared-sql>
       select a.id, b.createDate
       from sample_a a left join sample_b b on a.id = b.id
@@ -100,7 +100,7 @@ sample_b，工作情况
       <value columnName="createDate" type="Date" value=""/>
    </value>
 </result>
-<query name="b.query" time="2012-08-17 09:14:31" usedTime="63">
+<query name="b.query">
    <prepared-sql>
       select a.id, a.name, a.userInfo, b.createDate, b.workInfo
       from sample_a a left join sample_b b on a.id = b.id
