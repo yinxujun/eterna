@@ -25,4 +25,125 @@ sample_a，人员信息
 ||4||其他2||其他2的用户信息||
 ||5||测试3||测试3的用户信息||
 ||6||其他3||其他3的用户信息||
+
 sample_b，工作情况
+||1||2012-8-9||测试1 2012年8月9日的工作日志||
+||2||2012-8-9||测试2 2012年8月9日的工作日志||
+||1||2012-8-10||测试1 2012年8月10日的工作日志||
+
+<br>
+注，以上业务场景及相关数据纯属虚构，如有雷同，不甚荣幸。<br>
+<br>
+代码样例：
+{{{
+<query name="a.query">
+   <prepared-sql>
+      select a.id, b.createDate
+      from sample_a a left join sample_b b on a.id = b.id
+      #sub[where $]
+   </prepared-sql>
+   <readers>
+      <reader name="id" type="int"/>
+      <reader name="createDate" type="Date"/>
+   </readers>
+</query>
+<search name="sample.search" queryName="a.query" pageSize="5"
+      generator="self.micromagic.eterna.search.DoubleQuerySearch">
+   <condition-propertys>
+      <condition-property name="name" colType="String"/>
+   </condition-propertys>
+   <attribute name="nextQueryName" value="b.query"/>
+   <attribute name="keyNameList" value="id:a.id,createDate"/>
+</search>
+<query name="b.query">
+   <prepared-sql>
+      select a.id, a.name, a.userInfo, b.createDate, b.workInfo
+      from sample_a a left join sample_b b on a.id = b.id
+      #sub[where $]
+   </prepared-sql>
+   <readers>
+      <reader name="id" type="int"/>
+      <reader name="name" type="String"/>
+      <reader name="userInfo" type="String"/>
+      <reader name="createDate" type="Date"/>
+      <reader name="workInfo" type="String"/>
+   </readers>
+</query>
+}}}
+执行结果：
+{{{
+<query name="a.query" time="2012-08-17 09:14:31" usedTime="265">
+   <prepared-sql>
+      select a.id, b.createDate
+      from sample_a a left join sample_b b on a.id = b.id
+      where (name LIKE ?)
+   </prepared-sql>
+   <parameters>
+      <parameter name="name" index="1" type="String">%测试%</parameter>
+   </parameters>
+</query>
+<result type="ResultIterator" rowCount="4">
+   <value index="1" type="ResultRow" columnCount="2">
+      <value columnName="id" type="int" value="1"/>
+      <value columnName="createDate" type="Date" value="2012-08-09"/>
+   </value>
+   <value index="2" type="ResultRow" columnCount="2">
+      <value columnName="id" type="int" value="2"/>
+      <value columnName="createDate" type="Date" value="2012-08-09"/>
+   </value>
+   <value index="3" type="ResultRow" columnCount="2">
+      <value columnName="id" type="int" value="1"/>
+      <value columnName="createDate" type="Date" value="2012-08-10"/>
+   </value>
+   <value index="4" type="ResultRow" columnCount="2">
+      <value columnName="id" type="int" value="5"/>
+      <value columnName="createDate" type="Date" value=""/>
+   </value>
+</result>
+<query name="b.query" time="2012-08-17 09:14:31" usedTime="63">
+   <prepared-sql>
+      select a.id, a.name, a.userInfo, b.createDate, b.workInfo
+      from sample_a a left join sample_b b on a.id = b.id
+      where ((a.id = ? AND createDate = ?) OR (a.id = ? AND createDate = ?)
+            OR (a.id = ? AND createDate = ?) OR (a.id = ? AND createDate is null))</prepared-sql>
+   <parameters>
+      <parameter index="1" type="int">1</parameter>
+      <parameter index="2" type="Date">2012-08-09</parameter>
+      <parameter index="3" type="int">2</parameter>
+      <parameter index="4" type="Date">2012-08-09</parameter>
+      <parameter index="5" type="int">1</parameter>
+      <parameter index="6" type="Date">2012-08-10</parameter>
+      <parameter index="7" type="int">5</parameter>
+   </parameters>
+</query>
+<result type="ResultIterator" rowCount="4">
+   <value index="1" type="ResultRow" columnCount="5">
+      <value columnName="id" type="int" value="1"/>
+      <value columnName="name" type="String" value="测试1"/>
+      <value columnName="userInfo" type="String" value="测试1的用户信息"/>
+      <value columnName="createDate" type="Date" value="2012-08-09"/>
+      <value columnName="workInfo" type="String" value="测试1 2012年8月9日的工作日志"/>
+   </value>
+   <value index="2" type="ResultRow" columnCount="5">
+      <value columnName="id" type="int" value="2"/>
+      <value columnName="name" type="String" value="测试2"/>
+      <value columnName="userInfo" type="String" value="测试2的用户信息"/>
+      <value columnName="createDate" type="Date" value="2012-08-09"/>
+      <value columnName="workInfo" type="String" value="测试2 2012年8月9日的工作日志"/>
+   </value>
+   <value index="3" type="ResultRow" columnCount="5">
+      <value columnName="id" type="int" value="1"/>
+      <value columnName="name" type="String" value="测试1"/>
+      <value columnName="userInfo" type="String" value="测试1的用户信息"/>
+      <value columnName="createDate" type="Date" value="2012-08-10"/>
+      <value columnName="workInfo" type="String" value="测试1 2012年8月10日的工作日志"/>
+   </value>
+   <value index="4" type="ResultRow" columnCount="5">
+      <value columnName="id" type="int" value="5"/>
+      <value columnName="name" type="String" value="测试3"/>
+      <value columnName="userInfo" type="String" value="测试3的用户信息"/>
+      <value columnName="createDate" type="Date" value=""/>
+      <value columnName="workInfo" type="String" value=""/>
+   </value>
+</result>
+}}}
