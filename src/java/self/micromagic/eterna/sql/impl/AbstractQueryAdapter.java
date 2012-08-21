@@ -53,7 +53,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 
    private int startRow = 1;
    private int maxRows = -1;
-   private int totalCount = -1;
+   private int totalCount = TOTAL_COUNT_NONE;
    private TotalCountExt totalCountExt = null;
 	private QueryHelper queryHelper = null;
 
@@ -117,7 +117,11 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ResultReader r = (ResultReader) itr.next();
 			if (r instanceof ResultReaders.ObjectReader)
 			{
-				((ResultReaders.ObjectReader) r).setCheckIndex(true);
+				ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
+				if (tmpR.getAttribute(ResultReaders.CHECK_INDEX_FLAG) == null)
+				{
+					tmpR.setCheckIndex(true);
+				}
 			}
          temp.addReader(r);
       }
@@ -626,6 +630,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          String name = colname;
          if (temp.get(name) != null)
          {
+				// 当存在重复的列名时, 后面的列加上索引号
             name = colname + "+" + (i + 1);
          }
          temp.put(name, colname);

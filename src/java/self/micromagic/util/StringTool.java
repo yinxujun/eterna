@@ -280,13 +280,10 @@ public class StringTool
       }
       link = link == null ? "" : link;
       StringAppender buf = StringTool.createStringAppender(arr.length * (link.length() + 16));
-      for (int i = 0; i < arr.length; i++)
+		buf.append(arr[0]);
+      for (int i = 1; i < arr.length; i++)
       {
-         if (i > 0)
-         {
-            buf.append(link);
-         }
-         buf.append(arr[i]);
+			buf.append(link).append(arr[i]);
       }
       return buf.toString();
    }

@@ -13,7 +13,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.util.BooleanRef;
+import self.micromagic.util.converter.BooleanConverter;
 
 public class ResultFormatGeneratorImpl extends AbstractGenerator
       implements ResultFormatGenerator
@@ -119,12 +119,12 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
 
       public String format(Object obj, Permission permission)
       {
-         return this.format.format(obj);
+         return obj == null ? "" : this.format.format(obj);
       }
 
       public String format(Object obj, ResultRow row, Permission permission)
       {
-         return this.format.format(obj);
+         return obj == null ? "" : this.format.format(obj);
       }
 
    }
@@ -132,6 +132,8 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
    private static class BooleanFormat
          implements ResultFormat
    {
+		private static final BooleanConverter booleanConverter = new BooleanConverter();
+
       private String trueValue = "Yes";
       private String falseValue = "No";
       private String name;
@@ -160,13 +162,21 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
 
       public String format(Object obj, Permission permission)
       {
-         boolean v = BooleanRef.getBooleanValue(obj);
+			if (obj == null)
+			{
+				return "";
+			}
+         boolean v = booleanConverter.convertToBoolean(obj);
          return v ? this.trueValue : this.falseValue;
       }
 
       public String format(Object obj, ResultRow row, Permission permission)
       {
-         boolean v = BooleanRef.getBooleanValue(obj);
+			if (obj == null)
+			{
+				return "";
+			}
+         boolean v = booleanConverter.convertToBoolean(obj);
          return v ? this.trueValue : this.falseValue;
       }
 
