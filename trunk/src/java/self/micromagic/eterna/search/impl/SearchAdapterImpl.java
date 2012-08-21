@@ -61,7 +61,7 @@ public class SearchAdapterImpl extends AbstractGenerator
    private String columnType;
    private ColumnSetting columnSetting = null;
    private ParameterSetting parameterSetting = null;
-   private int countType = 0;
+   private int countType = QueryAdapter.TOTAL_COUNT_AUTO;
    private String countReaderName = null;
    private String countSearchName = null;
    private int countSearchIndex = -1;

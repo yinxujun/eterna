@@ -36,7 +36,7 @@ window.eterna_table_td_empty_value = "&nbsp;";
 window.eterna_tableForm_title_pluse = "";
 window.eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
 {
-	if (titleValue.exists && titleValue.value != null && titleValue.value != "")
+	if (titleValue.exists && !ef_isEmpty(titleValue.value))
 	{
 		if (titleValue.html)
 		{
@@ -87,7 +87,7 @@ window.eterna_tableForm_requared_fn = function (cellConfig, titleValue, titleObj
 };
 window.eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, upTitle, _eterna)
 {
-	if (titleValue.exists && titleValue.value != null && titleValue.value != "")
+	if (titleValue.exists && !ef_isEmpty(titleValue.value))
 	{
 		if (titleValue.html)
 		{
@@ -788,6 +788,11 @@ function Eterna($E, eterna_debug, rootWebObj)
 
 		Eterna.prototype.getWebObj = function(id, container, index)
 		{
+			if (typeof container == "number")
+			{
+				index = container;
+				container = null;
+			}
 			if (container == null)
 			{
 				container = this.rootWebObj;
@@ -1553,7 +1558,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 					var tmpResult = eval(str.substring(9));
 					if (valueObj.exists == -1)
 					{
-						if (tmpResult != null && tmpResult != "")
+						if (!ef_isEmpty(tmpResult))
 						{
 							valueObj.exists = 1;
 							valueObj.value = tmpResult;
@@ -2324,7 +2329,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 			if (configData.objName != null)
 			{
 				var tmpObj = this.getValue(configData.objName);
-				if (tmpObj.exists && tmpObj.value != "")
+				if (tmpObj.exists && !ef_isEmpty(tmpObj.value))
 				{
 					objStr += " name=\"" + tmpObj.value + "\"";
 				}
@@ -2748,7 +2753,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 			if (cell.title.caption != null)
 			{
 				titleObj = this.getValue(cell.title.caption);
-				if (titleObj.exists && titleObj.value != "")
+				if (titleObj.exists && !ef_isEmpty(titleObj.value))
 				{
 					eg_temp.caption = titleObj.value;
 				}
@@ -2786,7 +2791,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 				cellObj.exists = true;
 				if (cell.subs == null && cell.typicalComponent == null)
 				{
-					if (valueObj.exists && valueObj.value != "")
+					if (valueObj.exists && !ef_isEmpty(valueObj.value))
 					{
 						if (valueObj.html)
 						{
@@ -3405,7 +3410,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 
 			if (column.subs == null && column.typicalComponent == null)
 			{
-				if (tmpObj.exists && tmpObj.value != "")
+				if (tmpObj.exists && !ef_isEmpty(tmpObj.value))
 				{
 					if (tmpObj.html)
 					{
@@ -4646,7 +4651,7 @@ window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
  */
 window.ef_isEmpty = function(str)
 {
-	return str == null || str == "";
+	return str == null || (typeof str == "string" && str == "");
 }
 
 /**

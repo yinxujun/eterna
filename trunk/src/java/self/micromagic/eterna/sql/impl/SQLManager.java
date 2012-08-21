@@ -30,10 +30,12 @@ public class SQLManager
    public static final String PARAMETER_NAME = "param";
    public static final String CONSTANT_NAME = "const";
 
-   public static final String AUTO_TYPE_QUERY = "query";
+   public static final String AUTO_TYPE_AND = "and";
+   public static final String AUTO_TYPE_OR = "or";
    public static final String AUTO_TYPE_UPDATE = "update";
    public static final String AUTO_TYPE_INSERT_N = "insertN";
    public static final String AUTO_TYPE_INSERT_V = "insertV";
+   public static final String AUTO_TYPE_QUERY = "query";
 
    public static final char TEMPLATE_BEGIN = '[';
    public static final char TEMPLATE_END = ']';
@@ -193,11 +195,7 @@ public class SQLManager
                   autoName = autoName.substring(0, autoName.length() - 1);
                   dynamicAuto = true;
                }
-               if (AUTO_TYPE_QUERY.equals(autoName))
-               {
-                  this.dealAuto(" = ?", " and ", tStr, buf, paramArray, begin, end, true, dynamicAuto);
-               }
-               else if (AUTO_TYPE_UPDATE.equals(autoName))
+					if (AUTO_TYPE_UPDATE.equals(autoName))
                {
                   this.dealAuto(" = ?", ", ", tStr, buf, paramArray, begin, end, true, dynamicAuto);
                }
@@ -208,6 +206,14 @@ public class SQLManager
                else if (AUTO_TYPE_INSERT_V.equals(autoName))
                {
                   this.dealAuto("?", ", ", tStr, buf, paramArray, begin, end, false, dynamicAuto);
+               }
+               else if (AUTO_TYPE_OR.equals(autoName))
+               {
+                  this.dealAuto(" = ?", " or ", tStr, buf, paramArray, begin, end, true, dynamicAuto);
+               }
+               else if (AUTO_TYPE_AND.equals(autoName) || AUTO_TYPE_QUERY.equals(autoName))
+               {
+                  this.dealAuto(" = ?", " and ", tStr, buf, paramArray, begin, end, true, dynamicAuto);
                }
                else
                {

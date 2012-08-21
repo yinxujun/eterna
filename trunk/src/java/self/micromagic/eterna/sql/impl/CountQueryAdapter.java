@@ -53,7 +53,7 @@ class CountQueryAdapter
       ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
       temp.setName("[ReaderManager]+" + this.getName());
       temp.addReader(tmpReader);
-      temp.initialize(this.getFactory());
+      temp.initialize(query.getFactory());
       this.readerManager = temp;
    }
 
@@ -550,7 +550,6 @@ class CountQueryAdapter
    {
       throw new UnsupportedOperationException();
    }
-
 
    private class CountResultIterator extends AbstractResultIterator
          implements ResultIterator

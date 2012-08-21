@@ -28,6 +28,8 @@ import self.micromagic.util.converter.TimeConverter;
 import self.micromagic.util.converter.TimestampConverter;
 import self.micromagic.util.converter.StreamConverter;
 import self.micromagic.util.converter.ReaderConverter;
+import self.micromagic.util.StringAppender;
+import self.micromagic.util.StringTool;
 
 public class ResultRowImpl implements ResultRow
 {
@@ -75,7 +77,7 @@ public class ResultRowImpl implements ResultRow
 				}
 				catch (Exception ex)
 				{
-				  	SQLManager.log.error(this.getFormatErrMsg(columnIndex), ex);
+				  	SQLManager.log.warn(this.getFormatErrMsg(columnIndex), ex);
 				}
 				return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
 			}
@@ -99,7 +101,7 @@ public class ResultRowImpl implements ResultRow
       }
       catch (Exception ex)
       {
-        	SQLManager.log.error(this.getFormatErrMsg(columnIndex), ex);
+        	SQLManager.log.warn(this.getFormatErrMsg(columnIndex), ex);
       }
 		return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
    }
@@ -114,9 +116,12 @@ public class ResultRowImpl implements ResultRow
 	private String getFormatErrMsg(int columnIndex)
          throws ConfigurationException
 	{
-      return "When format the column [" + columnIndex
-	  			+ ":" +  this.readerManager.getReaderInList(columnIndex - 1).getName()
-				+ "], value ["  + this.values[columnIndex - 1] + "]";
+		StringAppender buf = StringTool.createStringAppender(128);
+		buf.append("When format the column [").append(columnIndex).append(':')
+				.append(this.readerManager.getReaderInList(columnIndex - 1).getName())
+				.append("] in readerManager [").append(this.readerManager.getName())
+				.append("], value [").append(this.values[columnIndex - 1]).append("].");
+      return buf.toString();
 	}
 
    public boolean wasNull()

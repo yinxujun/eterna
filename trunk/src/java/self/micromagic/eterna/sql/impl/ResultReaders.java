@@ -106,6 +106,10 @@ public abstract class ResultReaders
          {
             this.caption = Tool.translateCaption(factory, this.getName());
          }
+			if (this.attributes == null)
+			{
+				this.attributes = new AttributeManager();
+			}
 			String tmpStr = (String) this.getAttribute(CHECK_INDEX_FLAG);
 			if (tmpStr != null)
 			{

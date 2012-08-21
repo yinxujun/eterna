@@ -189,12 +189,6 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
       this.logSQL(0L, null, conn);
    }
 
-   protected Object clone()
-   {
-      SQLAdapterImpl other = (SQLAdapterImpl) super.clone();
-      return other;
-   }
-
    public void setNull(int parameterIndex, int sqlType) throws ConfigurationException
    {
       this.setValuePreparer(this.vpcg.createNullPreparer(parameterIndex, sqlType));
