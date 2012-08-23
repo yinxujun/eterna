@@ -46,7 +46,7 @@ public class EternaRes extends TagSupport
 				}
 			}
 			String params = this.jsResource + ", \"" + tmpURL + "\"" + charsetDef;
-			out.println( "window._loadResource(" + params + ");");
+			out.println( "window.ef_loadResource(" + params + ");");
 			out.println("</script>");
 		}
       catch (Throwable ex)
@@ -60,16 +60,27 @@ public class EternaRes extends TagSupport
 			throws IOException
 	{
 		// 创建载入资源的方法
-		out.println("if (typeof _pageInitializedURL == \"undefined\")");
+		out.println("if (typeof eg_pageInitializedURL == \"undefined\")");
 		out.println('{');
-		out.println("window._pageInitializedURL = {};");
-		out.println("window._loadResource = function (jsResource, url, charset)");
+		out.println("window.eg_pageInitializedURL = {};");
+		out.println("window.ef_loadResource = function (jsResource, url, charset)");
 		out.println('{');
-		out.println("if (window._pageInitializedURL[url])");
+		out.println("if (window.eg_pageInitializedURL[url])");
 		out.println('{');
 		out.println("return;");
 		out.println('}');
-		out.println("window._pageInitializedURL[url] = 1;");
+		out.println("window.eg_pageInitializedURL[url] = 1;");
+		out.println("if (typeof _resVersion != \"undefined\")");
+		out.println("{");
+		out.println("if (url.indexOf(\"?\") == -1)");
+		out.println("{");
+		out.println("url += \"?_v=\" + _resVersion;");
+		out.println("}");
+		out.println("else");
+		out.println("{");
+		out.println("url += \"&_v=\" + _resVersion;");
+		out.println("}");
+		out.println("}");
 		out.println("var resObj;");
 		out.println("if (jsResource)");
 		out.println('{');
@@ -92,7 +103,7 @@ public class EternaRes extends TagSupport
 		out.println("var s = document.getElementsByTagName('script')[0];");
 		out.println("s.parentNode.insertBefore(resObj, s);");
 		out.println("};");
-		out.println('}'); // end if (typeof _pageInitializedURL == \"undefined\")
+		out.println('}'); // end if (typeof eg_pageInitializedURL == \"undefined\")
 	}
 
    public void release()
