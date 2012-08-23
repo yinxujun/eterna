@@ -25,7 +25,14 @@ import self.micromagic.util.Utility;
 
 public class SQLAdapterImpl extends AbstractSQLAdapter
 {
+	/**
+	 * 全局的sql日志的记录类型.
+	 */
    protected static int SQL_LOG_TYPE = 0;
+
+	/**
+	 * 当前对象的sql日志记录类型.
+	 */
    protected int sqlLogType = 0;
 
    static
@@ -39,6 +46,21 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
          log.warn("Error in init sql log type.", ex);
       }
    }
+
+	public SQLAdapter createSQLAdapter()
+			throws ConfigurationException
+	{
+		SQLAdapterImpl other = new SQLAdapterImpl();
+		this.copy(other);
+		return other;
+	}
+
+	protected void copy(SQLAdapter copyObj)
+	{
+		super.copy(copyObj);
+		SQLAdapterImpl other = (SQLAdapterImpl) copyObj;
+		other.sqlLogType = this.sqlLogType;
+	}
 
    public String getType()
    {

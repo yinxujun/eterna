@@ -12,7 +12,6 @@ import self.micromagic.util.Utility;
  * 设置属性时的转换器管理者.
  */
 class ConverterManager
-      implements Cloneable
 {
    private ValueConverter[] converters = new ValueConverter[16];
    private int usedCount;
@@ -103,21 +102,15 @@ class ConverterManager
    }
 
    /**
-    * 克隆转换器管理者.
+    * 复制转换器管理者.
     */
-   public Object clone()
+   public ConverterManager copy()
    {
-      ConverterManager result = null;
-      try
-      {
-         result = (ConverterManager) super.clone();
-      }
-      catch (CloneNotSupportedException e)
-      {
-         // assert false;
-      }
-      result.converters = (ValueConverter[]) this.converters.clone();
-      result.converterIndexMap = (HashMap) this.converterIndexMap.clone();
+      ConverterManager result = new ConverterManager();
+		result.usedCount = this.usedCount;
+      result.converters = new ValueConverter[this.converters.length];
+		System.arraycopy(this.converters, 0, result.converters, 0, result.converters.length);
+      result.converterIndexMap = new HashMap(this.converterIndexMap);
       return result;
    }
 

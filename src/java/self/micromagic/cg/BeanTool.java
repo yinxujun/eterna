@@ -797,7 +797,7 @@ public class BeanTool
       BeanDescriptor bd = getBeanDescriptor(beanClass);
       if (bd.getConverterManager() == converterManager)
       {
-         bd.setConverterManager((ConverterManager) converterManager.clone());
+         bd.setConverterManager(converterManager.copy());
       }
       bd.getConverterManager().registerConverter(type, converter);
    }
@@ -810,7 +810,7 @@ public class BeanTool
       BeanDescriptor bd = getBeanDescriptor(beanClass);
       if (bd.getConverterManager() == converterManager)
       {
-         bd.setConverterManager((ConverterManager) converterManager.clone());
+         bd.setConverterManager(converterManager.copy());
       }
       bd.getConverterManager().registerPropertyEditor(type, pe);
    }

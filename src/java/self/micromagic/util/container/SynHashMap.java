@@ -559,7 +559,7 @@ public class SynHashMap extends AbstractMap
 			{
 				do
 				{
-					e = (SynEntry) e.clone();
+					e = e.copy();
 					SynEntry next = e.next;
 					int i = indexFor(e.hash, newCapacity);
 					e.next = newTable[i];
@@ -823,7 +823,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	protected static class SynEntry
-			implements Map.Entry, Cloneable
+			implements Map.Entry
 	{
 		protected final Object hardKey;
 		protected final Ref refKey;
@@ -856,6 +856,13 @@ public class SynHashMap extends AbstractMap
 			this.value = v;
 			this.next = n;
 			this.hash = h;
+		}
+
+		private SynEntry(int h, Object hardKey, Ref refKey)
+		{
+			this.hash = h;
+			this.hardKey = hardKey;
+			this.refKey = refKey;
 		}
 
 		public Object getKey()
@@ -903,17 +910,12 @@ public class SynHashMap extends AbstractMap
 			return this.getKey() + "=" + this.getValue();
 		}
 
-		protected Object clone()
+		protected SynEntry copy()
 		{
-			try
-			{
-				return super.clone();
-			}
-			catch (CloneNotSupportedException ex)
-			{
-				// 因为实现了Cloneable, 所以不会出现这个异常
-				throw new Error(ex);
-			}
+			SynEntry result = new SynEntry(this.hash, this.hardKey, this.refKey);
+			result.value = this.value;
+			result.next = this.next;
+			return result;
 		}
 
 	}

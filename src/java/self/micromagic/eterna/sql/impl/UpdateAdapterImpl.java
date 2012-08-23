@@ -12,6 +12,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.sql.UpdateAdapter;
 import self.micromagic.eterna.sql.UpdateAdapterGenerator;
+import self.micromagic.eterna.sql.SQLAdapter;
 
 public class UpdateAdapterImpl extends SQLAdapterImpl
       implements UpdateAdapter, UpdateAdapterGenerator
@@ -21,10 +22,18 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
       return SQL_TYPE_UPDATE;
    }
 
+	public SQLAdapter createSQLAdapter()
+			throws ConfigurationException
+	{
+		return this.createUpdateAdapter();
+	}
+
    public UpdateAdapter createUpdateAdapter()
          throws ConfigurationException
    {
-      return (UpdateAdapter) this.create();
+		UpdateAdapterImpl other = new UpdateAdapterImpl();
+		this.copy(other);
+		return other;
    }
 
    public void execute(Connection conn)

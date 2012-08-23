@@ -13,6 +13,8 @@ import java.util.Map;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.AttributeManager;
+import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SQLAdapterGenerator;
@@ -26,7 +28,7 @@ import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
 import self.micromagic.util.container.UnmodifiableIterator;
 
 public abstract class AbstractSQLAdapter extends AbstractGenerator
-      implements Cloneable, SQLAdapter, SQLAdapterGenerator
+      implements SQLAdapter, SQLAdapterGenerator
 {
    private String preparedSQL = null;
    private SQLManager sqlManager = null;
@@ -94,36 +96,31 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
       }
    }
 
-   public SQLAdapter createSQLAdapter()
-         throws ConfigurationException
-   {
-      return (SQLAdapter) this.clone();
-   }
-
    public Object create()
          throws ConfigurationException
    {
       return this.createSQLAdapter();
    }
 
-   protected Object clone()
-   {
-      try
-      {
-         AbstractSQLAdapter other = (AbstractSQLAdapter) super.clone();
-         if (this.preparedSQL != null)
-         {
-            other.preparerManager = new PreparerManager(other, this.parameterArray);
-            other.sqlManager = this.sqlManager.copy(true);
-         }
-         return other;
-      }
-      catch (CloneNotSupportedException e)
-      {
-         // this shouldn't happen, since we are Cloneable
-         throw new InternalError();
-      }
-   }
+	protected void copy(SQLAdapter copyObj)
+	{
+		AbstractSQLAdapter other = (AbstractSQLAdapter) copyObj;
+		if (this.preparedSQL != null)
+		{
+			other.preparerManager = new PreparerManager(other, this.parameterArray);
+			other.sqlManager = this.sqlManager.copy(true);
+			other.preparedSQL = this.preparedSQL;
+		}
+		other.paramGroup = this.paramGroup;
+		other.parameterNameMap = this.parameterNameMap;
+		other.parameterArray = this.parameterArray;
+		other.vpcg = this.vpcg;
+		other.initialized = this.initialized;
+
+   	other.attributes = this.attributes;
+   	other.name = this.name;
+   	other.factory = this.factory;
+	}
 
    public int getParameterCount()
          throws ConfigurationException

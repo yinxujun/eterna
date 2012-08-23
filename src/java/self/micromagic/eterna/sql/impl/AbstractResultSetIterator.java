@@ -13,7 +13,7 @@ import org.apache.commons.logging.Log;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
 
-abstract public class AbstractResultSetIterator
+public abstract class AbstractResultSetIterator
       implements ResultIterator, Runnable
 {
    protected static final Log log = SQLManager.log;

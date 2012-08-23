@@ -160,9 +160,10 @@ public class ModelAdapterImpl extends AbstractGenerator
          System.arraycopy(data.caches, 0, caches, 0, caches.length);
       }
       boolean needLogApp = AppData.getAppLogType() != 0;
+		Element beginNode = null;
       if (needLogApp)
       {
-         data.beginNode("model", this.getName(), null);
+         beginNode = data.beginNode("model", this.getName(), null);
       }
       ObjectRef errorRef = new ObjectRef();
       try
@@ -196,7 +197,7 @@ public class ModelAdapterImpl extends AbstractGenerator
          }
          if (needLogApp)
          {
-            data.endNode((Throwable) errorRef.getObject(), data.export);
+            data.endNode(beginNode, (Throwable) errorRef.getObject(), data.export);
          }
          if (this.keepCaches)
          {
@@ -222,6 +223,7 @@ public class ModelAdapterImpl extends AbstractGenerator
       int index = 0;
       String executeType = "";
       ModelExport tmpExport = null;
+		Element el = null;
       try
       {
          Iterator itr = this.executes.iterator();
@@ -231,14 +233,14 @@ public class ModelAdapterImpl extends AbstractGenerator
             executeType = execute.getExecuteType();
             if (needLogApp)
             {
-               Element el = data.beginNode("execute", execute.getExecuteType(),
+               el = data.beginNode("execute", execute.getExecuteType(),
                      "index:" + (index + 1) + ", name:" + execute.getName());
                el.addAttribute("class", ClassGenerator.getClassName(execute.getClass()));
             }
             ModelExport export = execute.execute(data, conn);
             if (needLogApp)
             {
-               data.endNode(null, export);
+               data.endNode(el, null, export);
             }
             if (export != null)
             {
@@ -277,7 +279,7 @@ public class ModelAdapterImpl extends AbstractGenerator
             if (needLogApp)
             {
                // 出错时需要多设置一次结束, 因为在循环中的那个被跳过了
-               data.endNode((Throwable) errorRef.getObject(), tmpExport);
+               data.endNode(el, (Throwable) errorRef.getObject(), tmpExport);
             }
             log.error("Error in model:" + this.getName() + ", executeType:" + executeType
                   + ", executeIndex:" + (index + 1) + ", id:" + data.getAppId());

@@ -72,4 +72,20 @@ public class CustomResultIterator extends AbstractResultIterator
       return false;
    }
 
+	public ResultIterator copy()
+			throws ConfigurationException
+	{
+		CustomResultIterator ritr = new CustomResultIterator(this.rrm, this.permission);
+		this.copy(ritr);
+		return ritr;
+	}
+
+	protected void copy(ResultIterator copyObj)
+			throws ConfigurationException
+	{
+		super.copy(copyObj);
+		CustomResultIterator ritr = (CustomResultIterator) copyObj;
+		ritr.recordCount = this.recordCount;
+	}
+
 }

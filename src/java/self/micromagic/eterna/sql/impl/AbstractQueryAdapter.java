@@ -26,6 +26,7 @@ import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.util.BooleanRef;
@@ -216,15 +217,19 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       this.tempNameToIndexMap.put(reader.getName(), new Integer(this.tempResultReaders.size()));
    }
 
-   protected Object clone()
-   {
-      AbstractQueryAdapter other = (AbstractQueryAdapter) super.clone();
-      other.permission = null;
-      other.orderStrs = null;
-      other.orderNames = null;
-      other.readerManagerSetted = false;
-      other.startRow = 1;
-      other.maxRows = -1;
+	protected void copy(SQLAdapter copyObj)
+	{
+		super.copy(copyObj);
+		AbstractQueryAdapter other = (AbstractQueryAdapter) copyObj;
+		other.readerOrder = this.readerOrder;
+		other.tempResultReaders = this.tempResultReaders;
+		other.otherReaderManagerSet = this.otherReaderManagerSet;
+		other.tempNameToIndexMap = this.tempNameToIndexMap;
+		other.readerManager = this.readerManager;
+		other.readerManagerName = this.readerManagerName;
+		other.forwardOnly = this.forwardOnly;
+		other.checkDatabaseName = this.checkDatabaseName;
+		other.orderIndex = this.orderIndex;
       if (other.orderIndex != -1)
       {
          // 如果设置了orderIndex, 先置上默认的值
@@ -234,14 +239,13 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          }
          catch (ConfigurationException ex) {}
       }
-      return other;
-   }
+	}
 
-   public QueryAdapter createQueryAdapter()
-         throws ConfigurationException
-   {
-      return (QueryAdapter) this.create();
-   }
+	public SQLAdapter createSQLAdapter()
+			throws ConfigurationException
+	{
+		return this.createQueryAdapter();
+	}
 
    public void setOrderIndex(int orderIndex)
    {
@@ -729,6 +733,25 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       {
          return this.hasMoreRecord;
       }
+
+		public ResultIterator copy()
+				throws ConfigurationException
+		{
+			ResultIteratorImpl ritr = new ResultIteratorImpl(this.readerList);
+			this.copy(ritr);
+			return ritr;
+		}
+
+		protected void copy(ResultIterator copyObj)
+				throws ConfigurationException
+		{
+			super.copy(copyObj);
+			ResultIteratorImpl ritr = (ResultIteratorImpl) copyObj;
+			ritr.realRecordCount = this.realRecordCount;
+			ritr.recordCount = this.recordCount;
+			ritr.realRecordCountAvailable = this.realRecordCountAvailable;
+			ritr.hasMoreRecord = this.hasMoreRecord;
+		}
 
    }
 
