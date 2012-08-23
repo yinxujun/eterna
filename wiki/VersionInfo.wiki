@@ -6,7 +6,7 @@
 修复了在界面中直接对eg_temp赋值后，造成事件中获取的值不正常的问题。<br>
 self.micromagic.eterna.sql.SpecialLog:中的logSQL方法做了调整。<br>
 self.micromagic.eterna.sql.impl.SQLAdapterImpl:中的logSQL方法做了调整。<br>
-增加了`self.micromagic.eterna.search.DoubleQuerySearch`，进行两次查询的搜索，详见[http://code.google.com/p/eterna/wiki/DoubleQuerySearch 两次查询的搜索]。<br>
+增加了self.micromagic.eterna.search.`DoubleQuerySearch`，进行两次查询的搜索，详见[http://code.google.com/p/eterna/wiki/DoubleQuerySearch 两次查询的搜索]。<br>
 self.micromagic.eterna.view.Replacement:中的initReplace方法做了调整。<br>
 ----
 ==1.5.2==
