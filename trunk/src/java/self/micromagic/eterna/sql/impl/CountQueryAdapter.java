@@ -36,13 +36,13 @@ import self.micromagic.util.StringTool;
 class CountQueryAdapter
       implements QueryAdapter
 {
-   private AbstractQueryAdapter query;
+   private QueryAdapter query;
    private String name;
    private ResultReaderManager readerManager;
    private String cacheSQL = null;
    private String oldSQL = null;
 
-   public CountQueryAdapter(AbstractQueryAdapter query)
+   public CountQueryAdapter(QueryAdapter query)
          throws ConfigurationException
    {
       this.query = query;
@@ -589,6 +589,14 @@ class CountQueryAdapter
       {
          return false;
       }
+
+		public ResultIterator copy()
+				throws ConfigurationException
+		{
+			CountResultIterator ritr = new CountResultIterator(this.readerList);
+			super.copy(ritr);
+			return ritr;
+		}
 
    }
 

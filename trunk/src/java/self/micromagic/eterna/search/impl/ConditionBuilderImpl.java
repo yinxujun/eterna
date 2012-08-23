@@ -11,7 +11,7 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 class ConditionBuilderImpl
-		implements ConditionBuilder, Cloneable
+		implements ConditionBuilder
 {
 	static final String EQUALS_OPT_TAG = "=";
 	static final String LIKE_OPT_TAG = "LIKE";
@@ -174,15 +174,12 @@ class ConditionBuilderImpl
 		*/
 	}
 
-	protected Object clone()
+	protected ConditionBuilderImpl copy()
 	{
-		Object obj = null;
-		try
-		{
-			obj = super.clone();
-		}
-		catch (CloneNotSupportedException ex) {}
-		return obj;
+		ConditionBuilderImpl result = new ConditionBuilderImpl(this.operator, this.optType);
+		result.name = this.name;
+		result.caption = this.caption;
+		return result;
 	}
 
 }

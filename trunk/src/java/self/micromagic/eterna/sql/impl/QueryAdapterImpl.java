@@ -22,6 +22,14 @@ import self.micromagic.eterna.sql.ResultRow;
 public class QueryAdapterImpl extends AbstractQueryAdapter
       implements QueryAdapter
 {
+	public QueryAdapter createQueryAdapter()
+			throws ConfigurationException
+	{
+		QueryAdapterImpl other = new QueryAdapterImpl();
+		this.copy(other);
+		return other;
+	}
+
    public ResultIterator executeQueryHoldConnection(Connection conn)
          throws ConfigurationException, SQLException
    {

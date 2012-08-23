@@ -76,7 +76,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       }
       else
       {
-         cb = (ConditionBuilderImpl) cb.clone();
+         cb = cb.copy();
       }
       cb.name = this.name;
       cb.caption = this.caption == null ? this.name : this.caption;

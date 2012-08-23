@@ -17,11 +17,20 @@ import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.impl.QueryAdapterImpl;
 import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 
 public class CallQuery extends QueryAdapterImpl
 {
+	public QueryAdapter createQueryAdapter()
+			throws ConfigurationException
+	{
+		CallQuery other = new CallQuery();
+		this.copy(other);
+		return other;
+	}
+
    public void initialize(EternaFactory factory)
          throws ConfigurationException
    {

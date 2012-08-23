@@ -56,7 +56,7 @@ public class BeanMap extends AbstractMap
    {
       if (!this.converterManagerCopied)
       {
-         this.converterManager = (ConverterManager) this.converterManager.clone();
+         this.converterManager = this.converterManager.copy();
          this.converterManagerCopied = true;
       }
       this.converterManager.registerConverter(type, converter);
@@ -69,7 +69,7 @@ public class BeanMap extends AbstractMap
    {
       if (!this.converterManagerCopied)
       {
-         this.converterManager = (ConverterManager) this.converterManager.clone();
+         this.converterManager = this.converterManager.copy();
          this.converterManagerCopied = true;
       }
       this.converterManager.registerPropertyEditor(type, pe);

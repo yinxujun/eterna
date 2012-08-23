@@ -26,6 +26,7 @@ import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import org.dom4j.Element;
 
 public class ModelCallerImpl
       implements ModelCaller
@@ -111,9 +112,10 @@ public class ModelCallerImpl
       }
 
       boolean needLogApp = AppData.getAppLogType() != 0;
+		Element beginNode = null;
       if (needLogApp)
       {
-         data.beginNode("call", data.modelName, null);
+         beginNode = data.beginNode("call", data.modelName, null);
          AppDataLogExecute.printAppData(data);
       }
       boolean commited = false;
@@ -136,7 +138,7 @@ public class ModelCallerImpl
             try
             {
                AppDataLogExecute.printAppData(data);
-               data.endNode(null, null);
+               data.endNode(beginNode, null, null);
             }
             catch (Throwable ex) {}
          }

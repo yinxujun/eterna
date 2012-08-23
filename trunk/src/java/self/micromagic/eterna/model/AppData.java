@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Date;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Attribute;
 import org.dom4j.io.XMLWriter;
 import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.share.Tool;
@@ -215,7 +217,7 @@ public class AppData
       {
          msgNode.setText(msg);
       }
-      msgNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
+      msgNode.addAttribute("time", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
    }
 
    /**
@@ -248,14 +250,17 @@ public class AppData
       }
       else
       {
-         node.addAttribute("beginTime", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
+         node.addAttribute("beginTime", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
+			node.addAttribute("_time", Long.toString(System.currentTimeMillis()));
       }
       this.nodeStack.add(node);
       return node;
    }
 
    /**
-    * 在app日志中记录一个节点结束标记
+    * 在app日志中记录一个节点结束标记.
+	 * @deprecated
+	 * @see #endNode(Element, Throwable, ModelExport)
     */
    public Element endNode(Throwable error, ModelExport export)
    {
@@ -280,47 +285,118 @@ public class AppData
       }
       if (this.nodeStack.size() == 0)
       {
-         node.addAttribute("endTime", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
-         synchronized (AppData.class)
-         {
-            Element logs;
-            if (logDocument == null)
-            {
-               logDocument = DocumentHelper.createDocument();
-               Element root = logDocument.addElement("eterna");
-               logs = root.addElement("logs");
-            }
-            else
-            {
-               logs = logDocument.getRootElement().element("logs");
-            }
-
-            if (logs.elements().size() > 256)
-            {
-               // 当节点过多时, 清除最先添加的几个节点
-               Iterator itr = logs.elementIterator();
-               try
-               {
-                  for (int i = 0; i < 128; i++)
-                  {
-                     itr.next();
-                     itr.remove();
-                  }
-               }
-               catch (Exception ex)
-               {
-                  // 当去除节点出错时, 则清空日志
-                  log.warn("Remove app log error.", ex);
-                  logDocument = DocumentHelper.createDocument();
-                  Element root = logDocument.addElement("eterna");
-                  logs = root.addElement("logs");
-               }
-            }
-            logs.add(node);
-         }
+			logNode(node);
       }
       return node;
    }
+
+   /**
+    * 在app日志中记录一个节点结束标记.
+	 *
+	 * @param node    调用beginNode获得的Element对象
+	 * @param error   执行过程中抛出的异常
+	 * @param export  执行完成后需要转向的export
+    */
+   public Element endNode(Element node, Throwable error, ModelExport export)
+   {
+      if (APP_LOG_TYPE == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
+      {
+         // 如果日志处于关闭状态且节点堆栈为空的状态才返回null不做记录
+         return null;
+      }
+      if (this.nodeStack == null || this.nodeStack.size() == 0)
+      {
+         log.error("You haven't begined a node in this app.");
+         return null;
+      }
+		int nodePos = this.nodeStack.size() - 1;
+		Element current = null;
+		for (; nodePos >= 0; nodePos--)
+		{
+      	current = (Element) this.nodeStack.get(nodePos);
+			if (node == current)
+			{
+				break;
+			}
+		}
+		if (node == current)
+		{
+			int index = this.nodeStack.size() - 1;
+			for (; index >= nodePos; index--)
+			{
+				current = (Element) this.nodeStack.remove(index);
+				if (node != current)
+				{
+					current.addAttribute("notEnd", "true");
+				}
+			}
+			if (error != null)
+			{
+				node.addAttribute("error", error.toString());
+			}
+			if (export != null)
+			{
+				node.addAttribute("export", export.getName());
+			}
+			if (this.nodeStack.size() == 0)
+			{
+				logNode(node);
+			}
+		}
+		else
+		{
+			log.error("Not found the node:" + node.asXML());
+		}
+      return node;
+   }
+
+	private static synchronized void logNode(Element node)
+	{
+		node.addAttribute("endTime", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
+		try
+		{
+			Attribute _time = node.attribute("_time");
+			String beginTimeStr = _time.getValue();
+			node.remove(_time);
+			long beginTime = Long.parseLong(beginTimeStr);
+			node.addAttribute("useTime", Long.toString(System.currentTimeMillis() - beginTime));
+		}
+		catch (Exception ex) {}
+		Element logs;
+		if (logDocument == null)
+		{
+			logDocument = DocumentHelper.createDocument();
+			Element root = logDocument.addElement("eterna");
+			logs = root.addElement("logs");
+		}
+		else
+		{
+			logs = logDocument.getRootElement().element("logs");
+		}
+
+		if (logs.elements().size() > 256)
+		{
+			// 当节点过多时, 清除最先添加的几个节点
+			Iterator itr = logs.elementIterator();
+			try
+			{
+				for (int i = 0; i < 128; i++)
+				{
+					itr.next();
+					itr.remove();
+				}
+			}
+			catch (Exception ex)
+			{
+				// 当去除节点出错时, 则清空日志
+				log.warn("Remove app log error.", ex);
+				logDocument = DocumentHelper.createDocument();
+				Element root = logDocument.addElement("eterna");
+				logs = root.addElement("logs");
+			}
+		}
+		logs.add(node);
+	}
 
    /**
     * 获得当前线程中的AppData对象

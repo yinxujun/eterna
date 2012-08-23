@@ -9,8 +9,8 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.digester.ConfigurationException;
 
-abstract public class AbstractResultIterator
-      implements ResultIterator, Cloneable
+public abstract class AbstractResultIterator
+      implements ResultIterator
 {
    protected List result;
    protected Iterator resultItr = null;
@@ -99,14 +99,18 @@ abstract public class AbstractResultIterator
    {
    }
 
-   public ResultIterator copy()
+   protected void copy(ResultIterator copyObj)
          throws ConfigurationException
    {
       try
       {
-         AbstractResultIterator newRitr = (AbstractResultIterator) this.clone();
-         newRitr.beforeFirst();
-         return newRitr;
+			AbstractResultIterator other = (AbstractResultIterator) copyObj;
+			other.result = this.result;
+			other.resultItr = this.resultItr;
+			other.readerList = this.readerList;
+			other.preFetchList = this.preFetchList;
+			other.currentRow = this.currentRow;
+         other.beforeFirst();
       }
       catch (Exception ex)
       {
