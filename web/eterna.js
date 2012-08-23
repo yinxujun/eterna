@@ -24,11 +24,28 @@ window.ED_FN_CALLED = 0x30;
 window.ED_FNC_STACK = 0x40;
 window.ED_COM_CREATED = 0x20;
 
-
-if (typeof jQuery == 'undefined' && typeof $ == "object" && typeof $.jquery == "string")
+var jQueryInitCount = 0;
+function jQueryInit()
 {
-	window.jQuery = $;
+	if (typeof jQuery == 'undefined' && typeof $ == "object" && typeof $.jquery == "string")
+	{
+		window.jQuery = $;
+	}
+	if (typeof jQuery != 'undefined')
+	{
+		// 不使用深度序列化方式
+		jQuery.ajaxSettings.traditional = true;
+	}
+	else
+	{
+		if (jQueryInitCount < 16)
+		{
+			jQueryInitCount++;
+			setTimeout(jQueryInit, 200);
+		}
+	}
 }
+jQueryInit();
 
 // EE = ETERNA_EVENT
 var EE_SUB_WINDOW_CLOSE = "lock_close";
@@ -220,9 +237,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 
 	if (typeof Eterna._initialized == 'undefined')
 	{
-		// 不使用深度序列化方式
-		jQuery.ajaxSettings.traditional = true;
-
 		Eterna._initialized = true;
 		Eterna._oldDebug = eterna_debug;
 
@@ -4722,13 +4736,68 @@ window.ef_toScriptString = function(str)
 /**
  * 动态加载脚本
  */
+if (typeof eg_pageInitializedURL == "undefined")
+{
+	window.eg_pageInitializedURL = {};
+	window.ef_loadResource = function (jsResource, url, charset)
+	{
+		if (window.eg_pageInitializedURL[url])
+		{
+			return;
+		}
+		window.eg_pageInitializedURL[url] = 1;
+		if (typeof _resVersion != "undefined")
+		{
+			if (url.indexOf("?") == -1)
+			{
+				url += "?_v=" + _resVersion;
+			}
+			else
+			{
+				url += "&_v=" + _resVersion;
+			}
+		}
+		var resObj;
+		if (jsResource)
+		{
+			resObj = document.createElement("script");
+			resObj.type = "text/javascript";
+			resObj.async = true;
+			resObj.src = url;
+		}
+		else
+		{
+			resObj = document.createElement("link");
+			resObj.type = "text/css";
+			resObj.rel = "stylesheet";
+			resObj.href = url;
+		}
+		if (charset != null)
+		{
+			resObj.charset = charset;
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(resObj, s);
+	};
+}
 window.ef_loadScript = function(flag, scriptPath, recall)
 {
-	if (eg_cache.loadedScripts[flag])
+	if (window.eg_pageInitializedURL[scriptPath])
 	{
 		return;
 	}
-	eg_cache.loadedScripts[flag] = 1;
+	window.eg_pageInitializedURL[scriptPath] = 1;
+	if (typeof _resVersion != "undefined")
+	{
+		if (scriptPath.indexOf("?") == -1)
+		{
+			scriptPath += "?_v=" + _resVersion;
+		}
+		else
+		{
+			scriptPath += "&_v=" + _resVersion;
+		}
+	}
 	var scriptObj = document.createElement('script');
 	scriptObj.type = 'text/javascript';
 	scriptObj.async = true;

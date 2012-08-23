@@ -298,6 +298,10 @@ public class ReplacementImpl extends ComponentImpl
                      ri.setName(name);
                      ri.initialize(factory, this);
 							ri.initBase(factory, rInfo.base);
+							if (ri.linkTypical)
+							{
+								ri.replacedList = null;
+							}
                      itr.set(ri);
                   }
                   // 有节点替换, 需要将linkTypical设为false
@@ -328,7 +332,6 @@ public class ReplacementImpl extends ComponentImpl
 				if (pri.linkTypical)
 				{
 					pri.changeLinkTypical();
-					pri.linkTypical = false;
 				}
 			}
 		}
@@ -366,7 +369,7 @@ public class ReplacementImpl extends ComponentImpl
 			}
 			com = tmp.getBaseComponent();
 		}
-		return false;
+		return com instanceof Replacement;
 	}
 
 	/**
