@@ -28,10 +28,10 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import self.micromagic.util.converter.BooleanConverter;
-import self.micromagic.util.converter.IntegerConverter;
-import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.cg.ClassGenerator;
+import self.micromagic.util.converter.BooleanConverter;
+import self.micromagic.util.converter.ConverterFinder;
+import self.micromagic.util.converter.IntegerConverter;
 
 public class Utility
 {
@@ -1109,11 +1109,6 @@ public class Utility
        */
       private boolean fieldMember;
 
-      /**
-       * 如果为属性成员时, 当类型为整型或布尔型时, 使用的转换器.
-       */
-      private ValueConverter fieldConverter = null;
-
       private PropertyManager(String key, boolean fieldMember, Class baseClass, Member optMember)
       {
          expunge();
@@ -1143,20 +1138,6 @@ public class Utility
          if (Modifier.isFinal(theField.getModifiers()))
          {
             throw new IllegalArgumentException("The field can't be final.");
-         }
-         if (int.class == theField.getType())
-         {
-            this.fieldConverter = intConverter;
-         }
-         else if (boolean.class == theField.getType())
-         {
-            this.fieldConverter = boolanConverter;
-         }
-         else if (String.class != theField.getType())
-         {
-            throw new IllegalArgumentException("Error field type, class:["
-                  + ClassGenerator.getClassName(theClass) + "], field:[" + theField.getName()
-                  + "], type:[" + ClassGenerator.getClassName(theField.getType()) + "].");
          }
       }
 
@@ -1199,15 +1180,16 @@ public class Utility
          {
             Object objValue = value;
             Field theField = (Field) member;
-            if (this.fieldConverter != null)
+            if (theField.getType() != String.class)
             {
                try
                {
-                  objValue = this.fieldConverter.convert(value);
+                  objValue = ConverterFinder.findConverter(theField.getType(), false).convert(value);
                }
                catch (Throwable ex)
                {
-                  Utility.createLog("util").warn("Type convert error.", ex);
+						String typeName = ClassGenerator.getClassName(theField.getType());
+                  Utility.createLog("util").warn("Type convert error for:[" + typeName + "].", ex);
                   return;
                }
             }

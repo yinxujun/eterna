@@ -150,11 +150,11 @@ public class ObjectConverter
       return new ConfigurationException(getCastErrorMessage(obj, needType));
    }
 
-   public Object clone()
+   public ValueConverter copy()
    {
       try
       {
-         return super.clone();
+         return (ValueConverter) super.clone();
       }
       catch (Exception ex)
       {

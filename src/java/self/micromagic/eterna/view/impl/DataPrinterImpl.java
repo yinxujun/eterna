@@ -157,17 +157,17 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			this.print(out, this.dateFormat.format((Date) value));
 		}
-		else if (value instanceof Calendar)
-		{
-			Date d = ((Calendar) value).getTime();
-			this.print(out, this.dateFormat.format(d));
-		}
 		else if (Tool.isBean(value.getClass()))
 		{
 			BeanPrinter bp = this.getBeanPrinter(value.getClass());
 			out.write('{');
 			bp.print(this, out, value);
 			out.write('}');
+		}
+		else if (value instanceof Calendar)
+		{
+			Date d = ((Calendar) value).getTime();
+			this.print(out, this.dateFormat.format(d));
 		}
 		else if (value instanceof boolean[])
 		{
@@ -585,6 +585,19 @@ public class DataPrinterImpl extends AbstractGenerator
 		this.print(out, value);
 	}
 
+	public void printPairWithoutCheck(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		out.write('"');
+		out.write(key);
+		out.write("\":");
+		this.print(out, value);
+	}
+
 	public void printPair(Writer out, String key, long value, boolean first)
 			throws IOException, ConfigurationException
 	{
@@ -594,6 +607,19 @@ public class DataPrinterImpl extends AbstractGenerator
 		}
 		this.print(out, key);
 		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPairWithoutCheck(Writer out, String key, long value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		out.write('"');
+		out.write(key);
+		out.write("\":");
 		this.print(out, value);
 	}
 
@@ -621,6 +647,19 @@ public class DataPrinterImpl extends AbstractGenerator
 		this.print(out, value);
 	}
 
+	public void printPairWithoutCheck(Writer out, String key, double value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		out.write('"');
+		out.write(key);
+		out.write("\":");
+		this.print(out, value);
+	}
+
 	public void printPair(Writer out, String key, String value, boolean first)
 			throws IOException, ConfigurationException
 	{
@@ -633,6 +672,19 @@ public class DataPrinterImpl extends AbstractGenerator
 		this.print(out, value);
 	}
 
+	public void printPairWithoutCheck(Writer out, String key, String value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		out.write('"');
+		out.write(key);
+		out.write("\":");
+		this.print(out, value);
+	}
+
 	public void printPair(Writer out, String key, Object value, boolean first)
 			throws IOException, ConfigurationException
 	{
@@ -642,6 +694,19 @@ public class DataPrinterImpl extends AbstractGenerator
 		}
 		this.print(out, key);
 		out.write(':');
+		this.print(out, value);
+	}
+
+	public void printPairWithoutCheck(Writer out, String key, Object value, boolean first)
+			throws IOException, ConfigurationException
+	{
+		if (!first)
+		{
+			out.write(',');
+		}
+		out.write('"');
+		out.write(key);
+		out.write("\":");
 		this.print(out, value);
 	}
 
@@ -686,11 +751,21 @@ public class DataPrinterImpl extends AbstractGenerator
       {
          try
          {
+				/*
             String mh = "public void print(DataPrinter p, Writer out, Object bean)"
                   + " throws IOException, ConfigurationException";
             String ut = "p.printPair(out, \"${name}\", ${value}, ${first});";
             String pt = "p.printPair(out, \"${name}\", ${o_value}, ${first});";
             String lt = "";
+				使用上面这段代码，对bean的处理效率明显下降
+				*/
+            String mh = "public void print(DataPrinter p, Writer out, Object bean)"
+                  + " throws IOException, ConfigurationException";
+            String ut = "out.write(\"\\\"${name}\\\":\");"
+                  + "p.print(out, ${value});";
+            String pt = "out.write(\"\\\"${name}\\\":\");"
+                  + "p.print(out, ${o_value});";
+            String lt = "out.write(\",\");";
             String[] imports = new String[]{
                ClassGenerator.getPackageString(DataPrinter.class),
                ClassGenerator.getPackageString(Writer.class),

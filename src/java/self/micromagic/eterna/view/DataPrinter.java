@@ -192,6 +192,17 @@ public interface DataPrinter
 			throws IOException, ConfigurationException;
 
 	/**
+	 * 输出一组key-value对, 不检查参数key是否为null, 是否包含特殊字符.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        整型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPairWithoutCheck(Writer out, String key, int value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
 	 * 输出一组key-value对.
 	 *
     * @param out          输出流
@@ -200,6 +211,17 @@ public interface DataPrinter
     * @param first        是否为对象中的第一组值
 	 */
 	void printPair(Writer out, String key, long value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对, 不检查参数key是否为null, 是否包含特殊字符.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        长整型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPairWithoutCheck(Writer out, String key, long value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
@@ -225,6 +247,17 @@ public interface DataPrinter
 			throws IOException, ConfigurationException;
 
 	/**
+	 * 输出一组key-value对, 不检查参数key是否为null, 是否包含特殊字符.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        双精度浮点型值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPairWithoutCheck(Writer out, String key, double value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
 	 * 输出一组key-value对.
 	 *
     * @param out          输出流
@@ -236,6 +269,17 @@ public interface DataPrinter
 			throws IOException, ConfigurationException;
 
 	/**
+	 * 输出一组key-value对, 不检查参数key是否为null, 是否包含特殊字符.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        字符串值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPairWithoutCheck(Writer out, String key, String value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
 	 * 输出一组key-value对.
 	 *
     * @param out          输出流
@@ -244,6 +288,17 @@ public interface DataPrinter
     * @param first        是否为对象中的第一组值
 	 */
 	void printPair(Writer out, String key, Object value, boolean first)
+			throws IOException, ConfigurationException;
+
+	/**
+	 * 输出一组key-value对, 不检查参数key是否为null, 是否包含特殊字符.
+	 *
+    * @param out          输出流
+    * @param key          名称
+    * @param value        对象值
+    * @param first        是否为对象中的第一组值
+	 */
+	void printPairWithoutCheck(Writer out, String key, Object value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**

@@ -232,12 +232,12 @@ public interface SearchManager
 				throws IOException, ConfigurationException
 		{
 			p.printObjectBegin(out);
-			p.printPair(out, "pageNumTag", this.pageNumTag, true);
-			p.printPair(out, "pageSizeTag", this.pageSizeTag, false);
-			p.printPair(out, "querySettingTag", this.querySettingTag, false);
-			p.printPair(out, "queryTypeClear", this.queryTypeClear, false);
-			p.printPair(out, "queryTypeReset", this.queryTypeReset, false);
-			p.printPair(out, "queryTypeTag", this.queryTypeTag, false);
+			p.printPairWithoutCheck(out, "pageNumTag", this.pageNumTag, true);
+			p.printPairWithoutCheck(out, "pageSizeTag", this.pageSizeTag, false);
+			p.printPairWithoutCheck(out, "querySettingTag", this.querySettingTag, false);
+			p.printPairWithoutCheck(out, "queryTypeClear", this.queryTypeClear, false);
+			p.printPairWithoutCheck(out, "queryTypeReset", this.queryTypeReset, false);
+			p.printPairWithoutCheck(out, "queryTypeTag", this.queryTypeTag, false);
 			p.printObjectEnd(out);
 		}
 

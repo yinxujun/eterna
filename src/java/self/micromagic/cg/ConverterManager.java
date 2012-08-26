@@ -89,7 +89,7 @@ class ConverterManager
       if (type.isPrimitive())
       {
          int tmpI = this.getConverterIndex(type);
-         ValueConverter vc = (ValueConverter) this.converters[tmpI].clone();
+         ValueConverter vc = this.converters[tmpI].copy();
          vc.setPropertyEditor(pe);
          this.converters[tmpI] = vc;
       }

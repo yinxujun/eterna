@@ -8,12 +8,14 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.QueryAdapter;
+import self.micromagic.eterna.sql.ResultReaderManager;
 
 public class ResultMetaDataImpl
       implements ResultMetaData
 {
    private ResultReader[] readers;
    private QueryAdapter query;
+   private ResultReaderManager readerManager;
 
    public ResultMetaDataImpl(List readerList, QueryAdapter query)
    {
@@ -59,5 +61,11 @@ public class ResultMetaDataImpl
    {
       return this.readers[column - 1];
    }
+
+	public ResultReader findColumnReader(String columnName)
+			throws ConfigurationException
+	{
+		return null;
+	}
 
 }
