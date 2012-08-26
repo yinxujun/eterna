@@ -60,6 +60,9 @@ public interface ValueConverter extends Cloneable
     */
    String convertToString(Object value, boolean changeNullToEmpty);
 
-   Object clone();
+	/**
+	 * 复制当前的值转换器.
+	 */
+	ValueConverter copy();
 
 }

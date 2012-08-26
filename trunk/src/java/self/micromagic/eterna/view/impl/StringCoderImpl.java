@@ -59,7 +59,7 @@ public class StringCoderImpl
 		ESCAPES_JSON['\''] = "\\'";
 		ESCAPES_JSON['\\'] = "\\\\";
 		ESCAPES_JSON['/'] = "\\/";
-		ESCAPES_JSON['<'] = "\\u003C";  // 074 = 0x3C = '<';
+		ESCAPES_JSON['<'] = "\\u003c";  // 074 = 0x3c = '<';
 
 		ESCAPES_HTML['<'] = "&lt;";
 		ESCAPES_HTML['>'] = "&gt;";

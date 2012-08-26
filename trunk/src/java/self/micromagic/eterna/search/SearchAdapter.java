@@ -241,19 +241,19 @@ public interface SearchAdapter
 			{
 				p.printObjectBegin(out);
 				p.printResultIterator(out, this.queryResult);
-				p.printPair(out, "pageNum", this.pageNum, false);
-				p.printPair(out, "pageSize", this.pageSize, false);
-				p.printPair(out, "searchName", this.searchName, false);
+				p.printPairWithoutCheck(out, "pageNum", this.pageNum, false);
+				p.printPairWithoutCheck(out, "pageSize", this.pageSize, false);
+				p.printPairWithoutCheck(out, "searchName", this.searchName, false);
 				if (this.queryResult.isRealRecordCountAvailable())
 				{
-					p.printPair(out, "totalCount", this.queryResult.getRealRecordCount(), false);
+					p.printPairWithoutCheck(out, "totalCount", this.queryResult.getRealRecordCount(), false);
 				}
 				if (this.singleOrderName != null)
 				{
-					p.printPair(out, "orderName", this.singleOrderName, false);
-					p.printPair(out, "orderDesc", this.singleOrderDesc ? 1 : 0, false);
+					p.printPairWithoutCheck(out, "orderName", this.singleOrderName, false);
+					p.printPairWithoutCheck(out, "orderDesc", this.singleOrderDesc ? 1 : 0, false);
 				}
-				p.printPair(out, "hasNextPage", this.queryResult.isHasMoreRecord() ? 1 : 0, false);
+				p.printPairWithoutCheck(out, "hasNextPage", this.queryResult.isHasMoreRecord() ? 1 : 0, false);
 				p.printObjectEnd(out);
 			}
 			catch (SQLException ex)

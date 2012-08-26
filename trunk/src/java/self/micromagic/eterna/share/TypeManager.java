@@ -4,8 +4,13 @@ package self.micromagic.eterna.share;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
 
 import self.micromagic.util.Utility;
+import self.micromagic.util.converter.ValueConverter;
+import self.micromagic.util.converter.ConverterFinder;
 
 public class TypeManager
 {
@@ -74,6 +79,28 @@ public class TypeManager
       "Decimal"
    };
 
+   private static ValueConverter[] converters;
+   private static Class[] javaTypes = {
+      null,
+      String.class,
+      int.class,
+      double.class,
+      byte[].class,
+      boolean.class,
+      java.sql.Date.class,
+      java.sql.Timestamp.class,
+      long.class,
+      java.sql.Time.class,
+      short.class,
+      byte.class,
+      float.class,
+      Object.class,
+      String.class,
+      InputStream.class,
+      Reader.class,
+      BigDecimal.class
+   };
+
    static
    {
       paramMap.put("ignore", Utility.INTEGER_0);
@@ -95,8 +122,26 @@ public class TypeManager
       paramMap.put("Stream", Utility.INTEGER_15);
       paramMap.put("Reader", new Integer(16));
       paramMap.put("Decimal", new Integer(17));
+
+		converters = new ValueConverter[javaTypes.length];
+		for (int i = 0; i < javaTypes.length; i++)
+		{
+			Class type = javaTypes[i];
+			if (type != null)
+			{
+				converters[i] = ConverterFinder.findConverter(type, true);
+				converters[i].setNeedThrow(false);
+			}
+		}
    }
 
+	/**
+	 * 根据类型的名称获得类型的id.
+	 *
+	 * @param name   类型的名称
+	 * @return    与类型名称对应的id, 如果该类型名称没有对应的类型id则
+	 *            返回TYPE_IGNORE
+	 */
    public static int getTypeId(String name)
    {
       if (name == null)
@@ -129,6 +174,14 @@ public class TypeManager
       return i == null ? TYPE_IGNORE : i.intValue() | param;
    }
 
+	/**
+	 * 获取纯类型id.
+	 * 纯类型id保存在类型id的低8位, 有效类型id还包括其它参数,
+	 * 如: 长度 精度等.
+	 *
+	 * @param id  类型的id
+	 * @return   纯类型id, 如果给出的类型id无效则返回TYPE_IGNORE
+	 */
    public static int getPureType(int id)
    {
       int realId = id & 0xff;
@@ -139,6 +192,13 @@ public class TypeManager
       return realId;
    }
 
+	/**
+	 * 根据类型id获取类型的名称.
+	 *
+	 * @param id  类型的id
+	 * @return  与此类型id对应的类型名称, 如果给出的类型id无效
+	 *          则返回null
+	 */
    public static String getTypeName(int id)
    {
       int realId = id & 0xff;
@@ -158,6 +218,12 @@ public class TypeManager
       return temp;
    }
 
+	/**
+	 * 获取类型id对应的SQL的类型.
+	 *
+	 * @param id  类型的id
+	 * @return  SQL的类型, 如果给出的类型id无效则返回Types.NULL
+	 */
    public static int getSQLType(int id)
    {
       int realId = id & 0xff;
@@ -168,6 +234,44 @@ public class TypeManager
       return SQL_TYPES[realId];
    }
 
+	/**
+	 * 获取类型id对应的Java的类型.
+	 *
+	 * @param id  类型的id
+	 * @return  Java的类型, 如果给出的类型id无效则返回null
+	 */
+   public static Class getJavaType(int id)
+   {
+      int realId = id & 0xff;
+      if (realId < 0 || realId >= javaTypes.length)
+      {
+         return null;
+      }
+      return javaTypes[realId];
+   }
+
+	/**
+	 * 获取类型id对应的类型转换器.
+	 *
+	 * @param id  类型的id
+	 * @return  类型转换器, 如果给出的类型id无效则返回null
+	 */
+   public static ValueConverter getConverter(int id)
+   {
+      int realId = id & 0xff;
+      if (realId < 0 || realId >= converters.length)
+      {
+         return null;
+      }
+      return converters[realId];
+   }
+
+	/**
+	 * 判断给出的类型id是否是一个数字类型.
+	 *
+	 * @param id  类型的id
+	 * @return  true表示此类型id为一个数字类型
+	 */
    public static boolean isTypeNumber(int id)
    {
       int realId = id & 0xff;
@@ -180,6 +284,12 @@ public class TypeManager
             || realId == TYPE_DECIMAL;
    }
 
+	/**
+	 * 判断给出的类型id是否是一个日期类型.
+	 *
+	 * @param id  类型的id
+	 * @return  true表示此类型id为一个日期类型
+	 */
    public static boolean isTypeDate(int id)
    {
       int realId = id & 0xff;
@@ -190,6 +300,12 @@ public class TypeManager
       return realId == TYPE_DATE || realId == TYPE_TIME || realId == TYPE_TIMPSTAMP;
    }
 
+	/**
+	 * 判断给出的类型id是否是一个字符串类型.
+	 *
+	 * @param id  类型的id
+	 * @return  true表示此类型id为一个字符串类型
+	 */
    public static boolean isTypeString(int id)
    {
       int realId = id & 0xff;

@@ -43,4 +43,11 @@ public interface ResultMetaData
     */
    ResultReader getColumnReader(int column) throws ConfigurationException;
 
+   /**
+    * 查找用于读取某列的ResultReader对象.
+    *
+    * @param columnName 某列的名称
+    */
+   ResultReader findColumnReader(String columnName) throws ConfigurationException;
+
 }

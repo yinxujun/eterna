@@ -1,12 +1,11 @@
 
 package self.micromagic.util;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.io.File;
-import java.io.StringWriter;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
 import java.util.Map;
 
 import self.micromagic.eterna.digester.ConfigurationException;
@@ -128,7 +127,7 @@ public final class AttributeComponent extends ComponentImpl
          try
          {
             int size = (int) htmlFile.length();
-            StringWriter sw = new StringWriter(size);
+            StringTool.StringAppenderWriter sw = new StringTool.StringAppenderWriter(size);
             FileInputStream fis = new FileInputStream(htmlFile);
             InputStreamReader isr = new InputStreamReader(fis, this.charset);
             Utility.copyChars(isr, sw);
