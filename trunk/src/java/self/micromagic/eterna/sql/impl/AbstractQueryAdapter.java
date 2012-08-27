@@ -9,29 +9,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.ListIterator;
 
+import org.dom4j.Element;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.model.AppData;
+import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.QueryAdapterGenerator;
 import self.micromagic.eterna.sql.ResultIterator;
-import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
-import self.micromagic.eterna.model.AppData;
-import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringTool;
-import org.dom4j.Element;
 
 public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       implements QueryAdapter, QueryAdapterGenerator
@@ -549,7 +548,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ResultReaderManager readerManager = this.getReaderManager0(rs);
       	List readerList = readerManager.getReaderList(this.getPermission0());
 			List tmpList = qh.readResults(rs, readerList);
-         ResultIteratorImpl ritr = new ResultIteratorImpl(readerList);
+         ResultIteratorImpl ritr = new ResultIteratorImpl(readerManager, readerList, this);
 			ListIterator litr = tmpList.listIterator();
 			while (litr.hasNext())
 			{
@@ -663,8 +662,8 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       {
          if (reader != null)
          {
-            log.error("Error when read result, reader[" + reader.getName()
-                  + "], query[" + query.getName() + "].");
+            log.error("Error when read result, reader [" + reader.getName()
+                  + "], query [" + query.getName() + "].");
          }
          if (ex instanceof SQLException)
          {
@@ -690,7 +689,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ResultIterator resultIterator)
          throws ConfigurationException, SQLException;
 
-   private class ResultIteratorImpl extends AbstractResultIterator
+   private static class ResultIteratorImpl extends AbstractResultIterator
          implements ResultIterator
    {
       private int realRecordCount;
@@ -698,20 +697,21 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       private boolean realRecordCountAvailable;
       private boolean hasMoreRecord;
 
-      public ResultIteratorImpl(List readerList)
-      {
+      public ResultIteratorImpl(ResultReaderManager readarManager, List readerList, QueryAdapter query)
+		{
          super(readerList);
+			this.readerManager = readarManager;
+			this.query = query;
       }
+
+		private ResultIteratorImpl()
+		{
+		}
 
       public void setResult(List result)
       {
          this.result = result;
          this.resultItr = this.result.iterator();
-      }
-
-      public ResultMetaData getMetaData()
-      {
-         return new ResultMetaDataImpl(this.readerList, AbstractQueryAdapter.this);
       }
 
       public int getRealRecordCount()
@@ -737,7 +737,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		public ResultIterator copy()
 				throws ConfigurationException
 		{
-			ResultIteratorImpl ritr = new ResultIteratorImpl(this.readerList);
+			ResultIteratorImpl ritr = new ResultIteratorImpl();
 			this.copy(ritr);
 			return ritr;
 		}

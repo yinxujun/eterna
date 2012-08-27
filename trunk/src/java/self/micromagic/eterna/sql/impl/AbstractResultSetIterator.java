@@ -147,7 +147,6 @@ public abstract class AbstractResultSetIterator
 
    protected abstract ResultRow getResultRow(ResultSet rs) throws SQLException;
 
-
    public boolean beforeFirst()
    {
       try

@@ -116,8 +116,7 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
 			ResultIterator resultIterator)
          throws ConfigurationException, SQLException
    {
-      ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator,
-				readerManager, this.getPermission0());
+      ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator, this.getPermission0());
       return rowSet;
    }
 
@@ -125,6 +124,7 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
    {
       private ResultReaderManager readerManager;
       private List readerList;
+      private ResultMetaData metaData = null;
 
       public ResultSetIteratorImpl(Connection conn, Statement stmt, ResultSet rs,
             ResultReaderManager readerManager, List readerList)
@@ -135,8 +135,14 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
       }
 
       public ResultMetaData getMetaData()
-      {
-         return new ResultMetaDataImpl(this.readerList, QueryAdapterImpl.this);
+				throws ConfigurationException
+		{
+			if (this.metaData == null)
+			{
+         	this.metaData = new ResultMetaDataImpl(
+						this.readerList, this.readerManager, QueryAdapterImpl.this);
+			}
+			return this.metaData;
       }
 
       protected ResultRow getResultRow(ResultSet rs)
@@ -146,14 +152,13 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
          try
          {
             values = getResults(QueryAdapterImpl.this, this.readerList, rs);
+				return new ResultRowImpl(values, this, QueryAdapterImpl.this.getPermission0());
          }
          catch (ConfigurationException ex)
          {
+				log.error("Error in get results.", ex);
             throw new SQLException(ex.getMessage());
          }
-         ResultRowImpl rowSet = new ResultRowImpl(values, this, this.readerManager,
-               QueryAdapterImpl.this.getPermission0());
-         return rowSet;
       }
 
    }

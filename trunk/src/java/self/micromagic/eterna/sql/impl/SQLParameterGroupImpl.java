@@ -182,13 +182,21 @@ public class SQLParameterGroupImpl
                SQLParameterGeneratorImpl spg = new SQLParameterGeneratorImpl();
                spg.setFactory(this.readerManager.getFactory());
                spg.setName(reader.getName());
-               String colName = reader.getColumnName();
+               String colName = (String) reader.getAttribute(READER_COLNAME_FLAG);
                if (colName != null)
                {
                   spg.setColumnName(colName);
                }
+					else
+					{
+						colName = reader.getColumnName();
+						if (colName != null)
+						{
+							spg.setColumnName(colName);
+						}
+					}
                spg.setParamType(TypeManager.getTypeName(reader.getType()));
-               String vpcName = (String) reader.getAttribute("vpcName");
+               String vpcName = (String) reader.getAttribute(READER_VPC_FLAG);
                if (vpcName != null)
                {
                   spg.setParamVPC(vpcName);

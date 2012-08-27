@@ -3,36 +3,84 @@ package self.micromagic.eterna.sql.impl;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.util.Utility;
 
 public class ResultMetaDataImpl
       implements ResultMetaData
 {
+   private String name;
    private ResultReader[] readers;
    private QueryAdapter query;
    private ResultReaderManager readerManager;
+   private Map nameToIndexMap = null;
+	private boolean colNameSensitive = true;
 
-   public ResultMetaDataImpl(List readerList, QueryAdapter query)
-   {
+   public ResultMetaDataImpl(List readerList, ResultReaderManager readerManager, QueryAdapter query)
+			throws ConfigurationException
+	{
       this.query = query;
       int count = readerList.size();
-      readers = new ResultReader[count];
+      this.readers = new ResultReader[count];
       Iterator itr = readerList.iterator();
-      for (int i = 0; i < readers.length; i++)
+      for (int i = 0; i < this.readers.length; i++)
       {
-         readers[i] = (ResultReader) itr.next();
+         this.readers[i] = (ResultReader) itr.next();
       }
+		this.readerManager = readerManager;
+		if (readerManager == null || !readerManager.isLocked())
+		{
+			this.colNameSensitive = readerManager == null ? true : readerManager.isColNameSensitive();
+			// 当readerManager为null或未锁定时, 需要构造自己的名称值对应表
+			this.nameToIndexMap = new HashMap((int) (count * 1.5));
+			for (int i = 0; i < this.readers.length; i++)
+			{
+				ResultReader r = this.readers[i];
+				if (this.colNameSensitive)
+				{
+					this.nameToIndexMap.put(r.getName(), Utility.createInteger(i + 1));
+				}
+				else
+				{
+					this.nameToIndexMap.put(r.getName().toUpperCase(), Utility.createInteger(i + 1));
+				}
+			}
+		}
+		if (this.query != null)
+		{
+			this.name = "query [" + this.query.getName() + "]";
+		}
+		else if (this.readerManager != null)
+		{
+			this.name = "reader manager [" + this.readerManager.getName() + "]";
+		}
+		else
+		{
+			this.name = "unknow";
+		}
    }
 
    public QueryAdapter getQuery()
    {
       return this.query;
    }
+
+	public ResultReaderManager getReaderManager()
+	{
+		return this.readerManager;
+	}
+
+	public String getName()
+	{
+		return this.name;
+	}
 
    public int getColumnCount()
    {
@@ -62,10 +110,37 @@ public class ResultMetaDataImpl
       return this.readers[column - 1];
    }
 
-	public ResultReader findColumnReader(String columnName)
+	public int findColumn(String columnName)
 			throws ConfigurationException
 	{
-		return null;
+		return this.findColumn(columnName, false);
+	}
+
+	public int findColumn(String columnName, boolean notThrow)
+			throws ConfigurationException
+	{
+		if (this.nameToIndexMap == null)
+		{
+			return this.readerManager.getIndexByName(columnName, notThrow);
+		}
+		else
+		{
+			Integer i = (Integer) this.nameToIndexMap.get(
+					this.colNameSensitive ? columnName : columnName.toUpperCase());
+			if (i == null)
+			{
+				if (notThrow)
+				{
+					return -1;
+				}
+				else
+				{
+					throw new ConfigurationException(
+							"Invalid column name:[" + columnName + "] at " + this.getName() + ".");
+				}
+			}
+			return i.intValue();
+		}
 	}
 
 }

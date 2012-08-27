@@ -24,7 +24,6 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
-import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
@@ -92,8 +91,8 @@ class CountQueryAdapter
 
          rs.next();
          Object[] values = new Object[]{new Integer(rs.getInt(1))};
-         CountResultIterator critr = new CountResultIterator(this.readerManager.getReaderList());
-         ResultRowImpl rowSet = new ResultRowImpl(values, critr, this.readerManager, null);
+         CountResultIterator critr = new CountResultIterator(this.readerManager, this);
+         ResultRowImpl rowSet = new ResultRowImpl(values, critr, null);
          ArrayList results = new ArrayList(2);
          results.add(rowSet);
          critr.setResult(results);
@@ -551,23 +550,24 @@ class CountQueryAdapter
       throw new UnsupportedOperationException();
    }
 
-   private class CountResultIterator extends AbstractResultIterator
+   private static class CountResultIterator extends AbstractResultIterator
          implements ResultIterator
    {
-      public CountResultIterator(List readerList)
-      {
-         super(readerList);
+      public CountResultIterator(ResultReaderManager readerManager, QueryAdapter query)
+				throws ConfigurationException
+		{
+         super(readerManager, null);
+			this.query = query;
       }
+
+		private CountResultIterator()
+		{
+		}
 
       public void setResult(List result)
       {
          this.result = result;
          this.resultItr = this.result.iterator();
-      }
-
-      public ResultMetaData getMetaData()
-      {
-         return new ResultMetaDataImpl(this.readerList, CountQueryAdapter.this);
       }
 
       public int getRealRecordCount()
@@ -593,7 +593,7 @@ class CountQueryAdapter
 		public ResultIterator copy()
 				throws ConfigurationException
 		{
-			CountResultIterator ritr = new CountResultIterator(this.readerList);
+			CountResultIterator ritr = new CountResultIterator();
 			super.copy(ritr);
 			return ritr;
 		}
