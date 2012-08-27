@@ -1,18 +1,17 @@
 
 package self.micromagic.app;
 
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
+import java.sql.SQLException;
 
-import self.micromagic.eterna.sql.ResultIterator;
-import self.micromagic.eterna.sql.ResultRow;
-import self.micromagic.eterna.sql.ResultMetaData;
-import self.micromagic.eterna.sql.ResultReaderManager;
-import self.micromagic.eterna.sql.impl.ResultMetaDataImpl;
-import self.micromagic.eterna.sql.impl.AbstractResultIterator;
-import self.micromagic.eterna.sql.impl.ResultRowImpl;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
+import self.micromagic.eterna.sql.ResultIterator;
+import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.impl.AbstractResultIterator;
+import self.micromagic.eterna.sql.impl.ResultRowImpl;
 
 /**
  * @deprecated
@@ -22,7 +21,6 @@ public class CustomResultIterator extends AbstractResultIterator
       implements ResultIterator
 {
    private int recordCount = 0;
-   private ResultReaderManager rrm;
    private Permission permission;
 
    /**
@@ -38,11 +36,15 @@ public class CustomResultIterator extends AbstractResultIterator
    public CustomResultIterator(ResultReaderManager rrm, Permission permission)
          throws ConfigurationException
    {
-      super(rrm.getReaderList());
-      this.rrm = rrm;
+      super(rrm, permission);
       this.permission = permission;
       this.result = new LinkedList();
    }
+
+	private CustomResultIterator(Permission permission)
+	{
+		this.permission = permission;
+	}
 
    public ResultRow createRow(Object[] values)
          throws ConfigurationException
@@ -53,17 +55,24 @@ public class CustomResultIterator extends AbstractResultIterator
    public ResultRow createRow(Object[] values, boolean autoAdd)
          throws ConfigurationException
    {
-      if (this.rrm == null)
+      if (this.readerManager == null)
       {
          throw new ConfigurationException("Must use [CustomResultIterator(ResultReaderManager, Permission)] "
                + "to constructor this object.");
       }
-      ResultRow row = new ResultRowImpl(values, this, this.rrm, this.permission);
-      if (autoAdd)
-      {
-         this.result.add(row);
-      }
-      return row;
+		try
+		{
+      	ResultRow row = new ResultRowImpl(values, this, this.permission);
+			if (autoAdd)
+			{
+				this.result.add(row);
+			}
+			return row;
+		}
+		catch (SQLException ex)
+		{
+			throw new ConfigurationException(ex);
+		}
    }
 
    /**
@@ -79,11 +88,6 @@ public class CustomResultIterator extends AbstractResultIterator
    {
       this.resultItr = this.result.iterator();
       this.recordCount = this.result.size();
-   }
-
-   public ResultMetaData getMetaData()
-   {
-      return new ResultMetaDataImpl(this.readerList, null);
    }
 
    public int getRealRecordCount()
@@ -109,7 +113,7 @@ public class CustomResultIterator extends AbstractResultIterator
 	public ResultIterator copy()
 			throws ConfigurationException
 	{
-		CustomResultIterator ritr = new CustomResultIterator(this.rrm, this.permission);
+		CustomResultIterator ritr = new CustomResultIterator(this.permission);
 		this.copy(ritr);
 		return ritr;
 	}

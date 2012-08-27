@@ -548,34 +548,34 @@ public interface ResultRow
     * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
     * 取出指定列的值.
     *
-    * @param readerIndex 该列对应reader的索引值, 第一个是1, 第二个是2, ...
+    * @param columnIndex 该列对应reader的索引值, 第一个是1, 第二个是2, ...
     * @return  持有该列值的<code>java.lang.Object</code>
     * @exception SQLException  假如访问数据库时出错
     */
-   Object getObject(int readerIndex) throws SQLException, ConfigurationException;
+   Object getObject(int columnIndex) throws SQLException, ConfigurationException;
 
    /**
     * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
     * 取出指定列的值.
     *
-    * @param readerName  这个列对应reader的名称
+    * @param columnName  这个列对应reader的名称
     * @return  持有该列值的<code>java.lang.Object</code>
     * @exception SQLException   假如访问数据库时出错
     */
-   Object getObject(String readerName) throws SQLException, ConfigurationException;
+   Object getObject(String columnName) throws SQLException, ConfigurationException;
 
    /**
     * 在当前行<code>ResultRow</code>对象中以<code>Object</code>的形式
     * 取出指定列的值.
     *
-    * @param readerName  这个列对应reader的名称
+    * @param columnName  这个列对应reader的名称
     * @param notThrow    设为<code>true<code>时, 当对应名称的reader不存在时
     *                    不会抛出异常, 而只是返回null
     * @return  持有该列值的<code>java.lang.Object</code>,
     *          或null(当对应名称的reader不存在时)
     * @exception SQLException   假如访问数据库时出错
     */
-   Object getObject(String readerName, boolean notThrow) throws SQLException, ConfigurationException;
+   Object getObject(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
 
    //----------------------------------------------------------------
 

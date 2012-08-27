@@ -49,10 +49,17 @@ public interface ResultReaderManager
    EternaFactory getFactory() throws ConfigurationException;
 
    /**
-    * 设置列名是否是大小写敏感的, 默认的是敏感的.<p>
+    * 设置列名是否是大小写敏感的, 默认的是敏感的. <p>
     * 注: 只有在没有添加reader的时候才能设置这个属性.
     */
    void setColNameSensitive(boolean colNameSensitive) throws ConfigurationException;
+
+   /**
+    * 获取列名是否大小写敏感的. <p>
+    *
+	 * @return  true为大小写敏感的, false为不区分大小写
+    */
+   boolean isColNameSensitive() throws ConfigurationException;
 
    /**
     * 获得ResultReader的排序方式字符串.
@@ -126,19 +133,24 @@ public interface ResultReaderManager
    /**
     * 获得一个<code>ResultReader</code>的列表.
     * 此方法列出的是所有的<code>ResultReader</code>.
+	 * 无论setReaderList设置了怎样的值, 都是返回所有的.
     *
     * @return  用于读取数据的所有<code>ResultReader</code>的列表.
     * @throws ConfigurationException  当相关配置出错时
+	 * @see #setReaderList
     */
    List getReaderList() throws ConfigurationException;
 
    /**
     * 根据权限, 获得一个<code>ResultReader</code>的列表.
+	 * 如果setReaderList设置了显示的<code>ResultReader</code>, 那返回的列表只会在
+	 * 此范围内.
     * 如果某个列没有读取权限的话, 那相应的列会替换为<code>NullResultReader</code>
     * 的实例.
     *
     * @return  正式用于读取数据的<code>ResultReader</code>的列表.
     * @throws ConfigurationException  当相关配置出错时
+	 * @see #setReaderList
     */
    List getReaderList(Permission permission) throws ConfigurationException;
 
@@ -157,6 +169,14 @@ public interface ResultReaderManager
     * @see #copy(String)
     */
    void lock() throws ConfigurationException;
+
+   /**
+    * 判断是否已锁住所有属性, 这样使用者只能读取, 而不能修改. <p>
+    *
+	 * @return  true表示已锁, false表示未锁
+    * @see #lock
+    */
+   boolean isLocked() throws ConfigurationException;
 
    /**
     * 复制自身的所有属性, 并返回.

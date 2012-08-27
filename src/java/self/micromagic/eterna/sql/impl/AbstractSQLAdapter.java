@@ -13,8 +13,6 @@ import java.util.Map;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.share.AttributeManager;
-import self.micromagic.eterna.share.Factory;
 import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SQLAdapterGenerator;

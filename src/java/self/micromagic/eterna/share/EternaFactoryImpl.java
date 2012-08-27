@@ -519,7 +519,7 @@ public class EternaFactoryImpl extends AbstractFactory
       {
          if (!FactoryManager.isSuperInit())
          {
-            log.warn("Duplicate ResultReaderManager [" + name + "].");
+            log.warn("Duplicate reader manager [" + name + "].");
          }
       }
       else if (manager != null)

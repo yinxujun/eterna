@@ -131,7 +131,7 @@ public class ResultReaderManagerImpl
                if (this.parents[0] == null)
                {
                   SQLManager.log.warn(
-                        "The ResultReaderManager [" + this.parentName + "] not found.");
+                        "The reader manager [" + this.parentName + "] not found.");
                }
             }
             else
@@ -144,7 +144,7 @@ public class ResultReaderManagerImpl
                   this.parents[i] = factory.getReaderManager(temp);
                   if (this.parents[i] == null)
                   {
-                     SQLManager.log.warn("The ResultReaderManager [" + temp + "] not found.");
+                     SQLManager.log.warn("The reader manager [" + temp + "] not found.");
                   }
                }
             }
@@ -263,6 +263,11 @@ public class ResultReaderManagerImpl
       }
    }
 
+	public boolean isColNameSensitive()
+	{
+		return this.colNameSensitive;
+	}
+
    public void setReaderList(String[] names)
          throws ConfigurationException
    {
@@ -353,12 +358,32 @@ public class ResultReaderManagerImpl
       return this.orderStr;
    }
 
+   /**
+    * 获得一个<code>ResultReader</code>的列表.
+    * 此方法列出的是所有的<code>ResultReader</code>.
+	 * 无论setReaderList设置了怎样的值, 都是返回所有的.
+    *
+    * @return  用于读取数据的所有<code>ResultReader</code>的列表.
+    * @throws ConfigurationException  当相关配置出错时
+	 * @see #setReaderList
+    */
    public List getReaderList()
          throws ConfigurationException
    {
       return this.getReaderList0();
    }
 
+   /**
+    * 根据权限, 获得一个<code>ResultReader</code>的列表.
+	 * 如果setReaderList设置了显示的<code>ResultReader</code>, 那返回的列表只会在
+	 * 此范围内.
+    * 如果某个列没有读取权限的话, 那相应的列会替换为<code>NullResultReader</code>
+    * 的实例.
+    *
+    * @return  正式用于读取数据的<code>ResultReader</code>的列表.
+    * @throws ConfigurationException  当相关配置出错时
+	 * @see #setReaderList
+    */
    public List getReaderList(Permission permission)
          throws ConfigurationException
    {
@@ -433,6 +458,11 @@ public class ResultReaderManagerImpl
    {
       this.locked = true;
    }
+
+	public boolean isLocked()
+	{
+		return this.locked;
+	}
 
    public ResultReaderManager copy(String copyName)
          throws ConfigurationException

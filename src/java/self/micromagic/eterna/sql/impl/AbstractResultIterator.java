@@ -4,10 +4,15 @@ package self.micromagic.eterna.sql.impl;
 import java.util.List;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.sql.SQLException;
 
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultMetaData;
+import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.security.Permission;
 
 public abstract class AbstractResultIterator
       implements ResultIterator
@@ -15,13 +20,37 @@ public abstract class AbstractResultIterator
    protected List result;
    protected Iterator resultItr = null;
    protected List readerList;
+   protected ResultReaderManager readerManager;
    protected List preFetchList = null;
    protected ResultRow currentRow = null;
+   protected ResultMetaData metaData = null;
+   protected QueryAdapter query = null;
 
    public AbstractResultIterator(List readerList)
    {
       this.readerList = readerList;
    }
+
+	public AbstractResultIterator(ResultReaderManager readerManager, Permission permission)
+			throws ConfigurationException
+	{
+		this.readerManager = readerManager;
+		this.readerList = readerManager.getReaderList(permission);
+	}
+
+	protected AbstractResultIterator()
+	{
+	}
+
+	public ResultMetaData getMetaData()
+			throws SQLException, ConfigurationException
+	{
+		if (this.metaData == null)
+		{
+			this.metaData = new ResultMetaDataImpl(this.readerList, this.readerManager, this.query);
+		}
+		return this.metaData;
+	}
 
    public boolean hasMoreRow()
    {
@@ -102,20 +131,16 @@ public abstract class AbstractResultIterator
    protected void copy(ResultIterator copyObj)
          throws ConfigurationException
    {
-      try
-      {
-			AbstractResultIterator other = (AbstractResultIterator) copyObj;
-			other.result = this.result;
-			other.resultItr = this.resultItr;
-			other.readerList = this.readerList;
-			other.preFetchList = this.preFetchList;
-			other.currentRow = this.currentRow;
-         other.beforeFirst();
-      }
-      catch (Exception ex)
-      {
-         throw new ConfigurationException(ex);
-      }
+		AbstractResultIterator other = (AbstractResultIterator) copyObj;
+		other.result = this.result;
+		other.resultItr = this.resultItr;
+		other.readerList = this.readerList;
+		other.readerManager = this.readerManager;
+		other.preFetchList = this.preFetchList;
+		other.currentRow = this.currentRow;
+		other.metaData = this.metaData;
+		other.query = this.query;
+		other.beforeFirst();
    }
 
    public boolean hasNext()

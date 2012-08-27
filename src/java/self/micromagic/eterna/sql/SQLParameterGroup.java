@@ -12,6 +12,16 @@ import self.micromagic.eterna.digester.ConfigurationException;
 public interface SQLParameterGroup
 {
    /**
+    * 在reader的arrtibute中设置VPC使用的名称.
+    */
+   public static final String READER_VPC_FLAG = "vpcName";
+
+   /**
+    * 在reader的arrtibute中设置columnName使用的名称.
+    */
+   public static final String READER_COLNAME_FLAG = "columnName";
+
+   /**
     * ignoreList列表中, 加上此标记名表示忽略参数组中同名的参数
     */
    public static final String IGNORE_SAME_NAME = "$ignoreSame";

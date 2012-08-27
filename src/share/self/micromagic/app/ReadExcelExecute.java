@@ -104,7 +104,7 @@ public class ReadExcelExecute extends AbstractExecute
          this.readerManager = model.getFactory().getReaderManager(temp);
          if (this.readerManager == null)
          {
-            throw new ConfigurationException("Not found the readManager [" + temp + "].");
+            throw new ConfigurationException("Not found the reader manager [" + temp + "].");
          }
          if (this.needRowIndex)
          {
@@ -122,7 +122,8 @@ public class ReadExcelExecute extends AbstractExecute
             ResultReader reader = (ResultReader) itr.next();
             if (!reader.isUseColumnIndex() && !this.needRowIndex && i == 0)
             {
-               throw new ConfigurationException("In the readManager [" + temp + "], all reader must set colIndex.");
+               throw new ConfigurationException(
+							"In the reader manager [" + temp + "], all reader must set colIndex.");
             }
             this.readers[i] = reader;
             this.needTrim[i] = true;

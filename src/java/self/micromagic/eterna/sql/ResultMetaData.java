@@ -11,6 +11,17 @@ public interface ResultMetaData
    QueryAdapter getQuery() throws ConfigurationException;
 
    /**
+    * 获取<code>ResultIterator</code>对应的<code>ResultReaderManager</code>.
+    */
+   ResultReaderManager getReaderManager() throws ConfigurationException;
+
+   /**
+    * 获取<code>ResultIterator</code>对应的名称.
+	 * 此名称可以是对应query的名字, 也可以是对应reader-manager的名字.
+    */
+   String getName() throws ConfigurationException;
+
+   /**
     * 获取<code>ResultIterator</code>中列的个数.
     */
    int getColumnCount() throws ConfigurationException;
@@ -44,10 +55,23 @@ public interface ResultMetaData
    ResultReader getColumnReader(int column) throws ConfigurationException;
 
    /**
-    * 查找用于读取某列的ResultReader对象.
+    * 根据列名查找此列所在的索引值.
     *
     * @param columnName 某列的名称
+	 * @return  该列所在的索引值
+	 *          第一列为1, 第二列为2, ...
     */
-   ResultReader findColumnReader(String columnName) throws ConfigurationException;
+   int findColumn(String columnName) throws ConfigurationException;
+
+   /**
+    * 根据列名查找此列所在的索引值.
+    *
+    * @param columnName  某列的名称
+    * @param notThrow    设为<code>true<code>时, 当该列名不存在时不会抛出异常,
+	 *                    而只是返回-1
+    * @return  该列所在所在的索引值, 或-1(当该列名不存在时)
+	 *          第一列为1, 第二列为2, ...
+    */
+   int findColumn(String columnName, boolean notThrow) throws ConfigurationException;
 
 }

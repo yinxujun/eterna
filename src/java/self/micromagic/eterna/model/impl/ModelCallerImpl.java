@@ -386,7 +386,7 @@ public class ModelCallerImpl
                      myConn.commit();
                   }
                   this.closeConnection(myConn);
-                  // oldConn不为空, 则设回原来的conn
+                  // oldConn不为空, 则设回原来的conn, 如果为空则保留此conn直到请求结束
                   this.setPreConnection(oldConn, preConn, dsName);
                }
                break;

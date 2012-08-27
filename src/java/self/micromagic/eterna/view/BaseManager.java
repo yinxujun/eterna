@@ -13,6 +13,7 @@ import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.SQLParameterGroup;
 import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.eterna.view.impl.ViewTool;
 import self.micromagic.util.StringTool;
@@ -29,6 +30,7 @@ public class BaseManager
    public static final String INIT_PARAM = "initParam";
    public static final String BEFORE_INIT = "beforeInit";
    public static final String INIT_SCRIPT = "initScript";
+   public static final char SPECIAL_FLAG = '.';
 
    public static final String ETERNA_INITIALIZED_FLAG = "eterna_initialized";
 
@@ -37,6 +39,8 @@ public class BaseManager
    static
    {
       definedNameSet.add("value");
+      definedNameSet.add(SQLParameterGroup.READER_VPC_FLAG);
+      definedNameSet.add(SQLParameterGroup.READER_COLNAME_FLAG);
       definedNameSet.add(NEW_ROW);
       definedNameSet.add(REQUIRED);
       definedNameSet.add(CELL_SIZE);
@@ -274,8 +278,10 @@ public class BaseManager
                for (int i = 0; i < names.length; i++)
                {
                   String name = names[i];
-                  if (name != null && name.startsWith("print."))
+                  if (name != null && name.indexOf(SPECIAL_FLAG) > 0)
                   {
+							// 名称中包含SPECIAL_FLAG, 且不是以SPECIAL_FLAG开始的
+							// 不能作为init param的属性
                      continue;
                   }
                   if (!definedNameSet.contains(name))
