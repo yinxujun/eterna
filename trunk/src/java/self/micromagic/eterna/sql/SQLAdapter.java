@@ -90,6 +90,9 @@ public interface SQLAdapter
 
    /**
     * 获取包含所有SQLParameter的迭代器.
+	 * 迭代器中的所有SQLParameter必需按索引值从小到大顺序排列.
+	 *
+	 * @see SQLParameter#getIndex
     */
    Iterator getParameterIterator() throws ConfigurationException;
 

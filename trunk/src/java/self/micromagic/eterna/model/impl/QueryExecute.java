@@ -17,6 +17,7 @@ import self.micromagic.eterna.security.User;
 import self.micromagic.eterna.security.UserManager;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultIterator;
+import self.micromagic.eterna.sql.SQLAdapter;
 import org.dom4j.Element;
 
 public class QueryExecute extends SQLExecute
@@ -25,7 +26,7 @@ public class QueryExecute extends SQLExecute
    private int start = 1;
    private int count = -1;
    private int countType = QueryAdapter.TOTAL_COUNT_NONE;
-   protected int queryAdapterIndex;
+   protected int queryAdapterIndex = -1;
 
    public void initialize(ModelAdapter model)
          throws ConfigurationException
@@ -37,6 +38,13 @@ public class QueryExecute extends SQLExecute
       super.initialize(model);
       this.queryAdapterIndex = this.factory.getQueryAdapterId(this.getName());
    }
+
+	protected SQLAdapter getSQL()
+			throws ConfigurationException
+	{
+		return this.queryAdapterIndex == -1 ? this.factory.createQueryAdapter(this.getName())
+				: this.factory.createQueryAdapter(this.queryAdapterIndex);
+	}
 
    public String getExecuteType()
    {

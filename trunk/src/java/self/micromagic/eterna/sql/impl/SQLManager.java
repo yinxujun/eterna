@@ -174,20 +174,8 @@ public class SQLManager
             }
             try
             {
-               int begin = Integer.parseInt(arr[1]);
-               int end = Integer.parseInt(arr[2]);
-               if (begin < 0)
-               {
-                  begin = paramArray.length + begin;
-               }
-               else
-               {
-                  begin -= 1;
-               }
-               if (end < 0)
-               {
-                  end = paramArray.length + end + 1;
-               }
+               int begin = this.getAutoParamIndex(arr[1], paramArray) - 1;
+               int end = this.getAutoParamIndex(arr[2], paramArray);
                String autoName = arr[0];
                boolean dynamicAuto = false;
                if (autoName.endsWith("D"))
@@ -241,6 +229,53 @@ public class SQLManager
       buf.append(dealedSql);
       return new String(buf.toString());
    }
+
+	/**
+	 * 获取自动代码生成的索引值.
+	 */
+	private int getAutoParamIndex(String indexExp, SQLParameter[] paramArray)
+         throws ConfigurationException
+	{
+		if (indexExp.startsWith("i"))
+		{
+			// i+XXX, i-XXX, i=XXX
+			char flag = indexExp.charAt(1);
+			String name = indexExp.substring(2);
+			for (int i = 0; i < paramArray.length; i++)
+			{
+				if (name.equals(paramArray[i].getName()))
+				{
+					if (flag == '+')
+					{
+						return i + 2;
+					}
+					else if (flag == '=')
+					{
+						return i + 1;
+					}
+					else if (flag == '-')
+					{
+						return i;
+					}
+					else
+					{
+						throw new IllegalArgumentException("Error flag:[" + flag + "].");
+					}
+				}
+			}
+			throw new IllegalArgumentException("Not found the param name:[" + name + "].");
+		}
+		else
+		{
+			// number
+      	int index = Integer.parseInt(indexExp);
+			if (index < 0)
+			{
+				index = paramArray.length + index + 1;
+			}
+			return index;
+		}
+	}
 
    private void dealAuto(String plus, String separator, String template, StringAppender buf,
          SQLParameter[] paramArray, int begin, int end, boolean needName, boolean dynamicAuto)
