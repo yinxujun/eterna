@@ -13,6 +13,7 @@ import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.ParamBind;
 import self.micromagic.eterna.model.ParamSetManager;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.sql.SQLAdapter;
 
 public abstract class SQLExecute extends AbstractExecute
       implements Execute
@@ -38,6 +39,8 @@ public abstract class SQLExecute extends AbstractExecute
          ((ParamBind) itr.next()).initialize(model, this);
       }
    }
+
+	protected abstract SQLAdapter getSQL() throws ConfigurationException;
 
    public boolean isPushResult()
    {

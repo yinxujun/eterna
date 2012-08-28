@@ -38,9 +38,10 @@ public class ParamSetManager
       {
          SQLParameter param = (SQLParameter) itr.next();
          // 因为parameter的index从1开始，所以要减1
-         this.params[param.getIndex() - 1] = param;
-         this.paramsSetted[param.getIndex() - 1] = false;
-         this.paramsValues[param.getIndex() - 1] = null;
+			int paramIndex = param.getIndex() - 1;
+         this.params[paramIndex] = param;
+         this.paramsSetted[paramIndex] = false;
+         this.paramsValues[paramIndex] = null;
       }
    }
 
@@ -171,8 +172,9 @@ public class ParamSetManager
       SQLParameter param = this.sql.getParameter(name);
       preparerValue(this.sql, param, value);
       // 因为parameter的index从1开始，所以要减1
-      this.paramsSetted[param.getIndex() - 1] = true;
-      this.paramsValues[param.getIndex() - 1] = value;
+		int paramIndex = param.getIndex() - 1;
+      this.paramsSetted[paramIndex] = true;
+      this.paramsValues[paramIndex] = value;
    }
 
    public void setIgnore(String name)
@@ -189,8 +191,9 @@ public class ParamSetManager
                .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
       }
       // 因为parameter的index从1开始，所以要减1
-      this.paramsSetted[param.getIndex() - 1] = true;
-      this.paramsValues[param.getIndex() - 1] = null;
+		int paramIndex = param.getIndex() - 1;
+      this.paramsSetted[paramIndex] = true;
+      this.paramsValues[paramIndex] = null;
    }
 
    public Object getParamValue(String name)
@@ -279,7 +282,8 @@ public class ParamSetManager
       int loopCount = -1;
       for (int i = 0; i < names.length; i++)
       {
-         SQLParameter param = this.sql.getParameter(names[i].sqlName);
+         SQLParameter param = names[i].sqlIndex == -1 ?
+					this.sql.getParameter(names[i].sqlName) : this.params[names[i].sqlIndex - 1];
          Object[] array = null;
          if (index == 0)
          {
@@ -311,8 +315,9 @@ public class ParamSetManager
          {
             loopCount = array.length;
             preparerValue(this.sql, param, array[index]);
-            this.paramsSetted[param.getIndex() - 1] = true;
-            this.paramsValues[param.getIndex() - 1] = array[index];
+				int paramIndex = param.getIndex() - 1;
+            this.paramsSetted[paramIndex] = true;
+            this.paramsValues[paramIndex] = array[index];
          }
          else
          {
@@ -327,7 +332,8 @@ public class ParamSetManager
    {
       for (int i = 0; i < names.length; i++)
       {
-         SQLParameter param = this.sql.getParameter(names[i].sqlName);
+         SQLParameter param = names[i].sqlIndex == -1 ?
+					this.sql.getParameter(names[i].sqlName) : this.params[names[i].sqlIndex - 1];
          Object value = values.get(names[i].srcName);
          if (value != null)
          {
@@ -344,8 +350,9 @@ public class ParamSetManager
             {
                preparerValue(this.sql, param, value);
             }
-            this.paramsSetted[param.getIndex() - 1] = true;
-            this.paramsValues[param.getIndex() - 1] = value;
+				int paramIndex = param.getIndex() - 1;
+            this.paramsSetted[paramIndex] = true;
+            this.paramsValues[paramIndex] = value;
          }
          else
          {
@@ -400,7 +407,8 @@ public class ParamSetManager
          ResultRow row = ritr.nextRow();
          for (int i = 0; i < names.length; i++)
          {
-            SQLParameter param = this.sql.getParameter(names[i].sqlName);
+				SQLParameter param = names[i].sqlIndex == -1 ?
+						this.sql.getParameter(names[i].sqlName) : this.params[names[i].sqlIndex - 1];
             int colIndex = -1;
             try
             {
@@ -412,8 +420,9 @@ public class ParamSetManager
             {
                Object value = row.getObject(colIndex);
                preparerValue(this.sql, param, value);
-               this.paramsSetted[param.getIndex() - 1] = true;
-               this.paramsValues[param.getIndex() - 1] = value;
+					int paramIndex = param.getIndex() - 1;
+               this.paramsSetted[paramIndex] = true;
+               this.paramsValues[paramIndex] = value;
             }
             else
             {
@@ -433,7 +442,8 @@ public class ParamSetManager
    {
       for (int i = 0; i < names.length; i++)
       {
-         SQLParameter param = this.sql.getParameter(names[i].sqlName);
+         SQLParameter param = names[i].sqlIndex == -1 ?
+					this.sql.getParameter(names[i].sqlName) : this.params[names[i].sqlIndex - 1];
          int colIndex = -1;
          try
          {
@@ -445,8 +455,9 @@ public class ParamSetManager
          {
             Object value = values.getObject(colIndex);
             preparerValue(this.sql, param, value);
-            this.paramsSetted[param.getIndex() - 1] = true;
-            this.paramsValues[param.getIndex() - 1] = value;
+				int paramIndex = param.getIndex() - 1;
+            this.paramsSetted[paramIndex] = true;
+            this.paramsValues[paramIndex] = value;
          }
          else
          {
@@ -479,7 +490,8 @@ public class ParamSetManager
    {
       for (int i = 0; i < names.length; i++)
       {
-         SQLParameter param = this.sql.getParameter(names[i].sqlName);
+         SQLParameter param = names[i].sqlIndex == -1 ?
+					this.sql.getParameter(names[i].sqlName) : this.params[names[i].sqlIndex - 1];
          SearchManager.Condition con = searchManager.getCondition(names[i].srcName);
          if (con != null)
          {
@@ -506,8 +518,9 @@ public class ParamSetManager
          this.sql.setValuePreparer(this.sql.getFactory().getDefaultValuePreparerCreaterGenerator()
                .createNullPreparer(param.getIndex(), TypeManager.getSQLType(param.getType())));
       }
-      this.paramsSetted[param.getIndex() - 1] = true;
-      this.paramsValues[param.getIndex() - 1] = null;
+		int paramIndex = param.getIndex() - 1;
+      this.paramsSetted[paramIndex] = true;
+      this.paramsValues[paramIndex] = null;
    }
 
    public int setParams(Name[] names, int index)
@@ -536,9 +549,11 @@ public class ParamSetManager
    {
       public final String srcName;
       public final String sqlName;
+      public final int sqlIndex;
 
       public Name(String srcName, String sqlName)
       {
+			this.sqlIndex = -1;
          this.srcName = StringTool.intern(srcName);
          if (srcName == sqlName)
          {
@@ -550,6 +565,21 @@ public class ParamSetManager
             this.sqlName = StringTool.intern(sqlName);
          }
       }
+
+		public Name(Name other, int sqlIndex)
+		{
+			this.sqlIndex = sqlIndex;
+			if (other != null)
+			{
+				this.srcName = other.srcName;
+				this.sqlName = other.sqlName;
+			}
+			else
+			{
+				this.srcName = null;
+				this.sqlName = null;
+			}
+		}
 
    }
 

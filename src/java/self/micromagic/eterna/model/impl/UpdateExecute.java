@@ -14,12 +14,13 @@ import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.model.ParamSetManager;
 import self.micromagic.eterna.model.UpdateExecuteGenerator;
 import self.micromagic.eterna.sql.UpdateAdapter;
+import self.micromagic.eterna.sql.SQLAdapter;
 
 public class UpdateExecute extends SQLExecute
       implements Execute, UpdateExecuteGenerator
 {
    protected boolean multiType = false;
-   protected int updateAdapterIndex;
+   protected int updateAdapterIndex = -1;
 
    public void initialize(ModelAdapter model)
          throws ConfigurationException
@@ -31,6 +32,13 @@ public class UpdateExecute extends SQLExecute
       super.initialize(model);
       this.updateAdapterIndex = this.factory.getUpdateAdapterId(this.getName());
    }
+
+	protected SQLAdapter getSQL()
+			throws ConfigurationException
+	{
+		return this.updateAdapterIndex == -1 ? this.factory.createUpdateAdapter(this.getName())
+				: this.factory.createUpdateAdapter(this.updateAdapterIndex);
+	}
 
    public String getExecuteType()
    {

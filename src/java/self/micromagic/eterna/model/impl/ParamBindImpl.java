@@ -16,6 +16,8 @@ import self.micromagic.eterna.search.SearchManager;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.SQLAdapter;
+import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.util.StringTool;
 
 public class ParamBindImpl extends AbstractGenerator
@@ -40,7 +42,7 @@ public class ParamBindImpl extends AbstractGenerator
          if (this.names == null || this.names.length == 0)
          {
             log.warn("Because not give the sub index at attribute names, so set names = 1.");
-            this.names = new ParamSetManager.Name[]{new ParamSetManager.Name("1", "1")};
+            this.names = new ParamSetManager.Name[]{new ParamSetManager.Name(null, 1)};
          }
          else
          {
@@ -48,7 +50,8 @@ public class ParamBindImpl extends AbstractGenerator
             {
                try
                {
-                  Integer.parseInt(this.names[i].sqlName);
+						this.names[i] = new ParamSetManager.Name(
+								this.names[i], Integer.parseInt(this.names[i].sqlName));
                }
                catch (Exception ex)
                {
@@ -58,6 +61,25 @@ public class ParamBindImpl extends AbstractGenerator
             }
          }
       }
+		else
+		{
+			if (this.names != null && execute instanceof SQLExecute)
+			{
+				try
+				{
+					SQLAdapter sql = ((SQLExecute) execute).getSQL();
+					for (int i = 0; i < this.names.length; i++)
+					{
+						SQLParameter param = sql.getParameter(this.names[i].sqlName);
+						this.names[i] = new ParamSetManager.Name(this.names[i], param.getIndex());
+					}
+				}
+				catch (ConfigurationException ex)
+				{
+					log.error("Error in parse name index.", ex);
+				}
+			}
+		}
    }
 
    public boolean isLoop()
@@ -135,7 +157,7 @@ public class ParamBindImpl extends AbstractGenerator
          {
             for (int i = 0; i < this.names.length; i++)
             {
-               psm.setSubSQL(Integer.parseInt(this.names[i].sqlName), (String) tempValue);
+               psm.setSubSQL(this.names[i].sqlIndex, (String) tempValue);
             }
          }
          else if (tempValue instanceof SearchManager)
@@ -143,8 +165,7 @@ public class ParamBindImpl extends AbstractGenerator
             SearchManager sm = (SearchManager) tempValue;
             for (int i = 0; i < this.names.length; i++)
             {
-               psm.setSubSQL(Integer.parseInt(this.names[i].sqlName),
-                     sm.getConditionPart(), sm.getPreparerManager());
+               psm.setSubSQL(this.names[i].sqlIndex, sm.getConditionPart(), sm.getPreparerManager());
             }
          }
          else if (tempValue instanceof SearchAdapter)
@@ -153,8 +174,8 @@ public class ParamBindImpl extends AbstractGenerator
             SearchManager sm = sa.getSearchManager(data);
             for (int i = 0; i < this.names.length; i++)
             {
-               psm.setSubSQL(Integer.parseInt(this.names[i].sqlName),
-                     sm.getSpecialConditionPart(sa), sm.getSpecialPreparerManager(sa));
+               psm.setSubSQL(this.names[i].sqlIndex, sm.getSpecialConditionPart(sa),
+							sm.getSpecialPreparerManager(sa));
             }
          }
       }
