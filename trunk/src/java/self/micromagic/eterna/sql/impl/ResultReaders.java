@@ -52,7 +52,7 @@ public abstract class ResultReaders
 	public static final String CHECK_INDEX_FLAG = "checkIndex";
 
    public static class ObjectReader
-         implements ResultReader
+         implements ResultReader, Cloneable
    {
       protected String name;
       protected String orderName;
@@ -60,15 +60,14 @@ public abstract class ResultReaders
       protected ResultFormat format;
 
       private int width = -1;
-      private String caption = null;
+      private String caption;
 
-      protected PermissionSet permissionSet = null;
+      protected PermissionSet permissionSet;
       protected boolean htmlFilter = true;
       protected boolean visible = true;
 
-      protected boolean useIndexOrName = false;
-
-      protected String columnName = null;
+      protected boolean useIndexOrName;
+      protected String columnName;
       protected int columnIndex = -1;
 		protected boolean checkIndex;
 
@@ -82,9 +81,7 @@ public abstract class ResultReaders
 
       public ObjectReader(String name)
       {
-         this.name = name;
-         this.columnName = name;
-         this.orderName = name;
+         this.name = this.columnName = this.orderName = name;
       }
 
       public void initialize(EternaFactory factory)
@@ -116,6 +113,22 @@ public abstract class ResultReaders
 				this.checkIndex = "true".equalsIgnoreCase(tmpStr);
 			}
       }
+
+		/**
+		 * 复制当前的ObjectReader.
+		 */
+		public ObjectReader copy()
+		{
+			try
+			{
+				return (ObjectReader) super.clone();
+			}
+			catch (CloneNotSupportedException ex)
+			{
+         	// assert false
+				throw new Error();
+			}
+		}
 
       public boolean isIgnore()
       {
@@ -194,6 +207,9 @@ public abstract class ResultReaders
 			this.checkIndex = checkIndex;
 		}
 
+		/**
+		 * 在以列名方式读取数据时, 是否要获取此列的索引值.
+		 */
 		public boolean isCheckIndex()
 		{
 			return this.checkIndex;

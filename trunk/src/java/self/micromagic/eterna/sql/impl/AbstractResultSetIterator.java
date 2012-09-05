@@ -18,16 +18,16 @@ public abstract class AbstractResultSetIterator
 {
    protected static final Log log = SQLManager.log;
 
-   private int idleTime = 0;
+   private int idleTime;
    private Connection conn;
    private Statement stmt;
    private ResultSet resultSet;
-   protected List preFetchList = null;
-   protected ResultRow currentRow = null;
+   protected List preFetchList;
+   protected ResultRow currentRow;
 
-   private boolean hasNext = false;
-   private boolean isMovedNext = false;
-   private boolean closed = false;
+   private boolean hasNext;
+   private boolean isMovedNext;
+   private boolean closed;
 
    public AbstractResultSetIterator(Connection conn, Statement stmt, ResultSet rs)
    {

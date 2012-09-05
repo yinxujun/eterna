@@ -9,19 +9,19 @@ import self.micromagic.eterna.sql.ResultReaderGenerator;
 public class ResultReaderGeneratorImpl extends AbstractGenerator
       implements ResultReaderGenerator
 {
-   private String formatName = null;
-   private String columnName = null;
-   private int columnIndex = -1;
+   private String formatName;
    private String type;
-   private String orderName = null;
-   private String permissions = null;
+   private String orderName;
+   private String permissions;
    private boolean htmlFilter = true;
    private boolean visible = true;
 
    private int width = -1;
-   private String caption = null;
+   private String caption;
 
-   protected boolean useIndexOrName = false;
+   private String columnName;
+   private int columnIndex = -1;
+   protected boolean useIndexOrName;
 
    public void setOrderName(String orderName)
    {

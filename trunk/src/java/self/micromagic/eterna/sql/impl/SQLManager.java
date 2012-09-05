@@ -49,7 +49,7 @@ public class SQLManager
    private int[] subPartIndexs = new int[0];
 
    private boolean changed = true;
-   private String cacheSQL = null;
+   private String cacheSQL;
 
    public void initialize(EternaFactory factory)
          throws ConfigurationException

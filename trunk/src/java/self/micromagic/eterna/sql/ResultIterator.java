@@ -62,8 +62,10 @@ public interface ResultIterator extends Iterator
 
    /**
     * 获取这个<code>ResultIterator</code>的副本.
+	 * 生成副本的同时会调用beforeFirst方法, 将游标移到第一行之前.
     *
     * @return    生成的副本, 如果无法生成副本则返回<code>null</code>.
+	 * @see #beforeFirst
     */
    ResultIterator copy() throws ConfigurationException;
 

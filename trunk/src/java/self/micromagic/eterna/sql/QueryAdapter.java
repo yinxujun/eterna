@@ -6,15 +6,27 @@ import java.sql.SQLException;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
+import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.util.BooleanRef;
 
 public interface QueryAdapter extends SQLAdapter
 {
    /**
-    * 设置是否需要检查数据库名称的标签, 如果设为true(默认值)表示需要检查.
+    * 设置是否需要检查数据库名称的标签, 如果设为true(默认值)表示需要检查. <p>
 	 * 对于一些数据库, 当设置了startRow和maxRows时, 会添加获取记录数限制的语句.
     */
    public static final String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
+
+   /**
+    * 复制所有的ResultReader. <p>
+	 * 如果设为true, 则会在初始化时复制所有继承了ResultReaders.ObjectReader
+	 * 的ResultReader, 并且将其checkIndex属性设为true.
+	 * 默认值为false.
+	 *
+	 * @see ResultReaders.ObjectReader
+	 * @see ResultReaders.ObjectReader#setCheckIndex
+    */
+   public static final String COPY_READERS_FLAG = "copyReaders";
 
    /**
     * 可设置的其它ResultReaderManager的名称列表, 以逗号分割.

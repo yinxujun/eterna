@@ -35,27 +35,26 @@ import self.micromagic.util.StringTool;
 public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       implements QueryAdapter, QueryAdapterGenerator
 {
-   private String readerOrder = null;
-   private List tempResultReaders = new ArrayList();
-   private Set otherReaderManagerSet = null;
-   private Map tempNameToIndexMap = new HashMap();
-   private ResultReaderManager readerManager = null;
-   private boolean readerManagerSetted = false;
-   private String readerManagerName = null;
+   private String readerOrder;
+   private List tempResultReaders;
+   private Set otherReaderManagerSet;
+   private Map tempNameToIndexMap;
+   private ResultReaderManager readerManager;
+   private boolean readerManagerSetted;
+   private String readerManagerName;
 
-   protected Permission permission = null;
-
+   protected Permission permission;
    private int orderIndex = -1;
    private boolean forwardOnly = true;
-   private String[] orderStrs = null;
-   private String[] orderNames = null;
-   private QueryAdapter countQuery = null;
+   private String[] orderStrs;
+   private String[] orderNames;
 
    private int startRow = 1;
    private int maxRows = -1;
    private int totalCount = TOTAL_COUNT_NONE;
-   private TotalCountExt totalCountExt = null;
-	private QueryHelper queryHelper = null;
+   private TotalCountExt totalCountExt;
+   private QueryAdapter countQuery;
+	private QueryHelper queryHelper;
 
 	/**
 	 * 获取查询辅助工具时, 是否要检查数据库的名称.
@@ -70,11 +69,15 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          return;
       }
       super.initialize(factory);
+		/*
       Iterator itr = this.tempResultReaders.iterator();
       while (itr.hasNext())
       {
          ((ResultReader) itr.next()).initialize(this.getFactory());
       }
+		// 这里不需要初始化reader, 在createTempReaderManager中会通过
+		// ResultReaderManagerImpl对其初始化
+		*/
       this.readerManager = this.createTempReaderManager();
       this.tempResultReaders = null;
       this.tempNameToIndexMap = null;
@@ -108,27 +111,61 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          throws ConfigurationException
    {
       ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
-      temp.setName("[query]+" + this.getName());
+      temp.setName("<query>/" + this.getName());
       temp.setParentName(this.readerManagerName);
       temp.setReaderOrder(this.readerOrder);
-      Iterator itr = this.tempResultReaders.iterator();
-      while (itr.hasNext())
-      {
-			ResultReader r = (ResultReader) itr.next();
-			if (r instanceof ResultReaders.ObjectReader)
+		boolean hasCheckIndexFlag = false;
+		if (this.tempResultReaders != null)
+		{
+			Iterator itr = this.tempResultReaders.iterator();
+			while (itr.hasNext())
 			{
-				ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
-				if (tmpR.getAttribute(ResultReaders.CHECK_INDEX_FLAG) == null)
+				ResultReader r = (ResultReader) itr.next();
+				if (r instanceof ResultReaders.ObjectReader)
 				{
-					tmpR.setCheckIndex(true);
+					ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
+					if (tmpR.getAttribute(ResultReaders.CHECK_INDEX_FLAG) == null)
+					{
+						tmpR.setCheckIndex(true);
+					}
+					else
+					{
+						hasCheckIndexFlag = true;
+					}
 				}
+				temp.addReader(r);
 			}
-         temp.addReader(r);
-      }
+		}
       temp.initialize(this.getFactory());
       if (temp.getReaderCount() > 0)
       {
-         temp.lock();
+         if ("true".equals(this.getAttribute(COPY_READERS_FLAG))
+					&& (hasCheckIndexFlag || this.readerManagerName != null))
+			{
+				ResultReaderManagerImpl allReaders = new ResultReaderManagerImpl();
+      		allReaders.setName("<query>/" + this.getName());
+				// 这里先执行初始化, 因为将要添加的reader都已被初始化过了
+            allReaders.initialize(this.getFactory());
+				Iterator itr = temp.getReaderList().iterator();
+				while (itr.hasNext())
+				{
+					ResultReader r = (ResultReader) itr.next();
+					if (r instanceof ResultReaders.ObjectReader)
+					{
+						ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
+						if (!tmpR.isCheckIndex())
+						{
+							// 如果checkIndex属性为false, 则复制后将其设为true
+							tmpR = tmpR.copy();
+							tmpR.setCheckIndex(true);
+							r = tmpR;
+						}
+					}
+					allReaders.addReader(r);
+				}
+				temp = allReaders;
+			}
+			temp.lock();
       }
       return temp;
    }
@@ -182,10 +219,9 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
          }
          this.readerManager = readerManager;
          this.readerManagerSetted = true;
-         /* @todo lock
-            这里需要考虑下是否需要锁上, 因为查询完后如果再调用setReaderList(String[])方法就会
-            有问题
-            如果锁上的话, 前面的getReaderManager方法就要一直复制一个新的readerManager
+         /*
+            这里不需要不需要锁上, 因为在ResultMetaDataImpl中, 会判断ResultReaderManager
+				未锁上的话, 会重新构造一个“名称-索引值”的对应表
          */
       }
       if (this.orderIndex != -1)
@@ -206,6 +242,16 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
    public void addResultReader(ResultReader reader)
          throws ConfigurationException
    {
+		if (this.initialized)
+		{
+			throw new ConfigurationException(
+					"Can't add reader in initialized " + this.getType() + " [" + this.getName() + "].");
+		}
+		else if (this.tempNameToIndexMap == null)
+		{
+			this.tempNameToIndexMap = new HashMap();
+			this.tempResultReaders = new ArrayList();
+		}
       if (this.tempNameToIndexMap.containsKey(reader.getName()))
       {
          throw new ConfigurationException(

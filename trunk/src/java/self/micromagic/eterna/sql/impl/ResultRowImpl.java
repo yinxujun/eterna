@@ -39,7 +39,7 @@ public class ResultRowImpl implements ResultRow
    private ResultIterator resultIterator;
 
    private String[] formateds;
-   private boolean wasNull = false;
+   private boolean wasNull;
 
    public ResultRowImpl(Object[] values, ResultIterator resultIterator, Permission permission)
 			throws ConfigurationException, SQLException

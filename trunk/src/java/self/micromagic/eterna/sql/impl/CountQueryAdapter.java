@@ -38,19 +38,19 @@ class CountQueryAdapter
    private QueryAdapter query;
    private String name;
    private ResultReaderManager readerManager;
-   private String cacheSQL = null;
-   private String oldSQL = null;
+   private String cacheSQL;
+   private String oldSQL;
 
    public CountQueryAdapter(QueryAdapter query)
          throws ConfigurationException
    {
       this.query = query;
-      this.name = "[count]+" + query.getName();
+      this.name = "<count>/" + query.getName();
       ResultReaders.ObjectReader tmpReader
 				= (ResultReaders.ObjectReader) ResultReaders.createReader("int", "theCount");
 		tmpReader.setColumnIndex(1);
       ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
-      temp.setName("[ReaderManager]+" + this.getName());
+      temp.setName("<readers>/" + this.name);
       temp.addReader(tmpReader);
       temp.initialize(query.getFactory());
       this.readerManager = temp;

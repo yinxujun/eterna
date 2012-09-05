@@ -81,7 +81,10 @@ public class Utility
 
    public static final String LINE_SEPARATOR;
 
-   private static final int DEFAULT_BUFSIZE = 1024;
+	/**
+	 * 复制数据时默认的缓存大小.
+	 */
+   private static final int DEFAULT_BUFSIZE = 128;
 
    /**
     * 在处理文本的动态属性时, 是否要显示处理失败的信息
@@ -556,7 +559,7 @@ public class Utility
    public static void copyStream(InputStream in, OutputStream out)
          throws IOException
    {
-      copyStream(in, out, DEFAULT_BUFSIZE);
+		copyStream(in, out, new byte[DEFAULT_BUFSIZE]);
    }
 
    /**
@@ -570,7 +573,7 @@ public class Utility
    public static int copyStream(int limit, InputStream in, OutputStream out)
          throws IOException
    {
-      return copyStream(limit, in, out, DEFAULT_BUFSIZE);
+      return copyStream(limit, in, out, new byte[DEFAULT_BUFSIZE]);
    }
 
    /**
@@ -582,7 +585,17 @@ public class Utility
          throws IOException
    {
       bufSize = bufSize <= 0 ? DEFAULT_BUFSIZE : bufSize;
-      byte[] buf = new byte[bufSize];
+		copyStream(in, out, new byte[bufSize]);
+   }
+
+   /**
+    * 将in中的值全部复制到out中, 但是不关闭in和out.
+    *
+    * @param buf  复制时使用的缓存
+    */
+   public static void copyStream(InputStream in, OutputStream out, byte[] buf)
+         throws IOException
+   {
       int readCount = in.read(buf);
       while (readCount > 0)
       {
@@ -618,6 +631,34 @@ public class Utility
       }
       bufSize = bufSize <= 0 ? DEFAULT_BUFSIZE : bufSize;
       byte[] buf = new byte[limit > bufSize ? bufSize : limit];
+		return copyStream(limit, in, out, buf);
+   }
+
+   /**
+    * 将in中的值部分复制到out中(复制limit个字节), 但是不关闭in和out.
+    *
+    * @param limit     复制的字节个数, 如果为-1, 则表示没有限制
+    * @param buf       复制时使用的缓存
+    *
+    * @return   实际复制的字节数, 如果参数limit设置为-1, 则不会计算实际复制的个数,
+    *           返回值为-1
+    */
+   public static int copyStream(int limit, InputStream in, OutputStream out, byte[] buf)
+         throws IOException
+   {
+      if (limit == -1)
+      {
+         copyStream(in, out, buf);
+         return -1;
+      }
+      if (limit < 0)
+      {
+         throw new IllegalArgumentException("Error limit:" + limit);
+      }
+      if (limit == 0)
+      {
+         return 0;
+      }
       int allCount = 0;
       int leftCount = limit;
       int readCount = in.read(buf);
@@ -641,7 +682,7 @@ public class Utility
    public static void copyChars(Reader in, Writer out)
          throws IOException
    {
-      copyChars(in, out, DEFAULT_BUFSIZE);
+      copyChars(in, out, new char[DEFAULT_BUFSIZE]);
    }
 
    /**
@@ -655,7 +696,7 @@ public class Utility
    public static int copyChars(int limit, Reader in, Writer out)
          throws IOException
    {
-      return copyChars(limit, in, out, DEFAULT_BUFSIZE);
+      return copyChars(limit, in, out, new char[DEFAULT_BUFSIZE]);
    }
 
    /**
@@ -667,7 +708,17 @@ public class Utility
          throws IOException
    {
       bufSize = bufSize <= 0 ? DEFAULT_BUFSIZE : bufSize;
-      char[] buf = new char[bufSize];
+		copyChars(in, out, new char[bufSize]);
+   }
+
+   /**
+    * 将in中的值全部复制到out中, 但是不关闭in和out.
+    *
+    * @param buf  复制时使用的缓存
+    */
+   public static void copyChars(Reader in, Writer out, char[] buf)
+         throws IOException
+   {
       int readCount = in.read(buf);
       while (readCount > 0)
       {
@@ -703,6 +754,34 @@ public class Utility
       }
       bufSize = bufSize <= 0 ? DEFAULT_BUFSIZE : bufSize;
       char[] buf = new char[limit > bufSize ? bufSize : limit];
+		return copyChars(limit, in, out, buf);
+   }
+
+   /**
+    * 将in中的值部分复制到out中(复制limit个字节), 但是不关闭in和out.
+    *
+    * @param limit     复制的字节个数, 如果为-1, 则表示没有限制
+    * @param buf       复制时使用的缓存
+    *
+    * @return   实际复制的字节数, 如果参数limit设置为-1, 则不会计算实际复制的个数,
+    *           返回值为-1
+    */
+   public static int copyChars(int limit, Reader in, Writer out, char[] buf)
+         throws IOException
+   {
+      if (limit == -1)
+      {
+         copyChars(in, out, buf);
+         return -1;
+      }
+      if (limit < 0)
+      {
+         throw new IllegalArgumentException("Error limit:" + limit);
+      }
+      if (limit == 0)
+      {
+         return 0;
+      }
       int allCount = 0;
       int leftCount = limit;
       int readCount = in.read(buf);

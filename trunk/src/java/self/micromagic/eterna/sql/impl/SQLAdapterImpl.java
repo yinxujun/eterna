@@ -33,7 +33,7 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
 	/**
 	 * 当前对象的sql日志记录类型.
 	 */
-   protected int sqlLogType = 0;
+   protected int sqlLogType;
 
    static
    {

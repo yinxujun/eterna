@@ -122,7 +122,7 @@ public class EternaInit extends InitBaseTag
 	private void printInitScript(ViewAdapter view, AppData data, JspWriter out)
          throws IOException, ConfigurationException
 	{
-		out.println("<script language=\"javascript\">");
+		out.println("<script type=\"text/javascript\">");
 		out.println("(function() {");
 		out.println("var retryFind = false;");
 		this.printEternaScript(view, data, out);

@@ -25,20 +25,20 @@ public class ResultReaderManagerImpl
       implements ResultReaderManager
 {
    private boolean initialized;
-   private boolean locked = false;
+   private boolean locked;
 
    /**
     * 锁住 readerMap 的标志, 比如在调用query的getReaderManager方法时
     * 就不需要复制 readerMap.
     */
-   private boolean readMapLocked = false;
+   private boolean readMapLocked;
 
    private boolean nonePermission;
-   private boolean colNameSensitive = true;
+   private boolean colNameSensitive;
 
-   private String name = null;
-   private String parentName = null;
-   private ResultReaderManager[] parents = null;
+   private String name;
+   private String parentName;
+   private ResultReaderManager[] parents;
    private EternaFactory factory;
 
    /**
@@ -63,6 +63,7 @@ public class ResultReaderManagerImpl
    {
       this.initialized = false;
       this.nonePermission = true;
+      this.colNameSensitive = true;
 
       this.readerMap = new HashMap();
       this.nameToIndexMap = new HashMap();
@@ -71,41 +72,40 @@ public class ResultReaderManagerImpl
       this.orderStr = null;
    }
 
-   public ResultReaderManagerImpl(boolean nonePomission, boolean readMapLocked,
-         String readerOrder, Map readerMap, Map nameToIndexMap, List allReaderList,
-         List readerList, List orderList, String orderStr)
+   protected ResultReaderManagerImpl(ResultReaderManagerImpl other, boolean readMapLocked)
    {
       this.initialized = true;
-      this.nonePermission = nonePomission;
+      this.nonePermission = other.nonePermission;
+      this.colNameSensitive = other.colNameSensitive;
 
       this.locked = false;
       this.readMapLocked = readMapLocked;
 
-      this.readerOrder = readerOrder;
-      this.readerMap = readMapLocked ? readerMap : new HashMap(readerMap);
-      this.nameToIndexMap = readMapLocked ? nameToIndexMap : new HashMap(nameToIndexMap);
-      this.allReaderList = readMapLocked ? allReaderList : null;
-      this.readerList = readMapLocked ? readerList : new ArrayList(readerList);
-      this.orderList = orderList;
-      this.orderStr = orderStr;
+      this.readerOrder = other.readerOrder;
+      this.readerMap = readMapLocked ? other.readerMap : new HashMap(other.readerMap);
+      this.nameToIndexMap = readMapLocked ? other.nameToIndexMap : new HashMap(other.nameToIndexMap);
+      this.allReaderList = readMapLocked ? other.allReaderList : null;
+      this.readerList = readMapLocked ? other.readerList : new ArrayList(other.readerList);
+      this.orderList = other.orderList;
+      this.orderStr = other.orderStr;
    }
 
-   public ResultReaderManagerImpl(boolean nonePomission, String readerOrder, Map readerMap,
-         Map nameToIndexMap, List readerList, List orderList, String orderStr)
+   protected ResultReaderManagerImpl(ResultReaderManagerImpl other)
    {
       this.initialized = false;
-      this.nonePermission = nonePomission;
+      this.nonePermission = other.nonePermission;
+      this.colNameSensitive = other.colNameSensitive;
 
       this.locked = false;
       this.readMapLocked = false;
 
-      this.readerOrder = readerOrder;
-      this.readerMap = new HashMap(readerMap);
-      this.nameToIndexMap = new HashMap(nameToIndexMap);
+      this.readerOrder = other.readerOrder;
+      this.readerMap = new HashMap(other.readerMap);
+      this.nameToIndexMap = new HashMap(other.nameToIndexMap);
       this.allReaderList = null;
-      this.readerList = new ArrayList(readerList);
-      this.orderList = new ArrayList(orderList);
-      this.orderStr = orderStr;
+      this.readerList = new ArrayList(other.readerList);
+      this.orderList = new ArrayList(other.orderList);
+      this.orderStr = other.orderStr;
    }
 
    public void initialize(EternaFactory factory)
@@ -233,7 +233,7 @@ public class ResultReaderManagerImpl
       }
 
       this.allReaderList = null;
-      if (reader.getPermissionSet() != null)
+      if (this.nonePermission && reader.getPermissionSet() != null)
       {
          this.nonePermission = false;
       }
@@ -326,8 +326,8 @@ public class ResultReaderManagerImpl
          else
          {
             throw new ConfigurationException(
-                  "Invalid ResultReader name:" + name + " at ResultReaderManager "
-                  + this.getName() + ".");
+                  "Invalid ResultReader name:[" + name + "] at ResultReaderManager ["
+                  + this.getName() + "].");
          }
       }
       return i.intValue();
@@ -471,16 +471,13 @@ public class ResultReaderManagerImpl
       if (this.initialized)
       {
          this.getReaderList0();
-         other = new ResultReaderManagerImpl(this.nonePermission, copyName == null,
-               this.readerOrder, this.readerMap, this.nameToIndexMap, this.allReaderList,
-               this.readerList, this.orderList, this.orderStr);
+         other = new ResultReaderManagerImpl(this, copyName == null);
       }
       else
       {
-         other = new ResultReaderManagerImpl(this.nonePermission, this.readerOrder, this.readerMap,
-               this.nameToIndexMap, this.readerList, this.orderList, this.orderStr);
+         other = new ResultReaderManagerImpl(this);
       }
-      other.name = copyName == null ? this.name : this.name + "+" + copyName;
+      other.name = copyName == null ? this.name : this.name + "/" + copyName;
       other.parentName = this.parentName;
       other.parents = this.parents;
       return other;
@@ -510,6 +507,10 @@ public class ResultReaderManagerImpl
             this.nameToIndexMap.put(reader.getName().toUpperCase(), Utility.createInteger(index));
          }
          index++;
+			if (this.nonePermission && reader.getPermissionSet() != null)
+			{
+				this.nonePermission = false;
+			}
       }
       this.readerList = new ArrayList(resultList);
       this.allReaderList = Collections.unmodifiableList(resultList);
