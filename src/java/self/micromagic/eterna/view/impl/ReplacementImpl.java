@@ -44,12 +44,12 @@ public class ReplacementImpl extends ComponentImpl
 	/**
 	 * 是否检查需要直接引用baseComponent.
 	 */
-   protected boolean checkLinkTypical = false;
+   protected boolean checkLinkTypical;
 
 	/**
 	 * 是否定义了特殊的事件.
 	 */
-   protected boolean hasSpecialEvent = false;
+   protected boolean hasSpecialEvent;
 
 	/**
 	 * 是否是个外覆的Replacement.
@@ -59,10 +59,10 @@ public class ReplacementImpl extends ComponentImpl
 	/**
 	 * 基础控件是否为Replacement.
 	 */
-	protected boolean baseReplacement = false;
+	protected boolean baseReplacement;
 
-   private ViewAdapterGenerator.ModifiableViewRes viewRes = null;
-   private List replacedList = null;
+   private ViewAdapterGenerator.ModifiableViewRes viewRes;
+   private List replacedList;
 
    public void initialize(EternaFactory factory, Component parent)
          throws ConfigurationException
@@ -599,6 +599,11 @@ public class ReplacementImpl extends ComponentImpl
       while (itr.hasNext())
       {
          Component sub = (Component) itr.next();
+			if (!this.isReplacement(sub))
+			{
+				// 当不是一个Replacement控件(即非外覆控件), 需要解包
+				sub = this.unWrapReplacement(sub);
+			}
          if (name.equals(sub.getName()))
 			{
 				nowIndex.value++;

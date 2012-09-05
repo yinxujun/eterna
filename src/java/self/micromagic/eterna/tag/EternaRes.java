@@ -27,7 +27,7 @@ public class EternaRes extends TagSupport
       try
       {
 			JspWriter out = this.pageContext.getOut();
-			out.println("<script language=\"javascript\">");
+			out.println("<script type=\"text/javascript\">");
 			String inited = (String) this.pageContext.getAttribute(
 					LOAD_RES_INITED_FLAG, PageContext.REQUEST_SCOPE);
 			if (inited == null)

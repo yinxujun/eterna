@@ -196,30 +196,92 @@ public interface WebApp
             String modelName, boolean noJump)
             throws ConfigurationException, SQLException, IOException
       {
+			Object oldRef = null;
          ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
          if (preConn == null)
          {
             preConn = new ObjectRef(conn);
             data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN, preConn);
          }
-         ModelAdapter tmpModel = factory.createModelAdapter(modelName);
-         int tType = tmpModel.getTransactionType();
-         if (noJump)
-         {
-            try
-            {
-               return factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
-            }
-            catch (Throwable ex)
-            {
-               Utility.createLog("pay").error("Error in call model", ex);
-               return tmpModel.getErrorExport();
-            }
-         }
-         else
-         {
-            return factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
-         }
+			else
+			{
+				oldRef = preConn.getObject();
+				preConn.setObject(conn);
+			}
+      	boolean executed = false;
+			try
+			{
+				ModelAdapter tmpModel = factory.createModelAdapter(modelName);
+				int tType = tmpModel.getTransactionType();
+				ModelExport export;
+				if (noJump)
+				{
+					try
+					{
+						export = factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+						executed = true;
+					}
+					catch (Throwable ex)
+					{
+						log.error("Error in call model", ex);
+						export = tmpModel.getErrorExport();
+					}
+				}
+				else
+				{
+					export = factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+					executed = true;
+				}
+				return export;
+			}
+			finally
+			{
+				Object tmp = preConn.getObject();
+			   preConn.setObject(oldRef);
+				if (tmp != null)
+				{
+					if (tmp instanceof Connection)
+					{
+						if (conn != tmp)
+						{
+							// 当引用的连接与当前连接不一致时, 表示生成了新的连接, 需要将其关闭
+							Connection tmpConn = (Connection) tmp;
+							if (!executed) tmpConn.rollback();
+							else tmpConn.commit();
+							tmpConn.close();
+						}
+					}
+					else if (preConn.getObject() instanceof Map)
+					{
+						// 当引用的对象为Map时, 表示生成了新的连接, 需要将其关闭
+						Map map = (Map) preConn.getObject();
+						Iterator values = map.values().iterator();
+						while (values.hasNext())
+						{
+							Connection tmpConn = (Connection) values.next();
+							if (tmpConn == conn)
+							{
+								// 当前连接不需要关闭
+								continue;
+							}
+							try
+							{
+								if (!executed) tmpConn.rollback();
+								else tmpConn.commit();
+								tmpConn.close();
+							}
+							catch (SQLException sex)
+							{
+								log.error("*** Error in close connection.", sex);
+							}
+						}
+					}
+					else
+					{
+						log.error("Error preConn type:" + tmp.getClass() + ".");
+					}
+				}
+			}
       }
 
    }

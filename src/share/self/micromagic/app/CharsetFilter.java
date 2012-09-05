@@ -10,13 +10,27 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.commons.logging.Log;
 import self.micromagic.util.Utility;
 
+/**
+ * 设置编码格式及内容类型的过滤器.
+ *
+ * 可设置的参数如下:
+ *
+ * charset            使用的字符集, 默认值为: UTF-8
+ *
+ * contentType        输出的内容类型, 默认值为: text/html
+ *
+ * forceSet           当已经设置过编码格式时, 是否还要继续设置
+ *                    默认值为: false
+ *
+ */
 public class CharsetFilter
       implements Filter, WebApp
 {
-   private String charset = "utf-8";
+   private String charset = "UTF-8";
+	private String contentType = "text/html";
+   private boolean forceSet = false;
 
    public void init(FilterConfig filterConfig)
          throws ServletException
@@ -25,24 +39,37 @@ public class CharsetFilter
       if (temp != null)
       {
          this.charset = temp;
-         Utility.setProperty(Utility.CHARSET_TAG, this.charset);
       }
       else
       {
-         temp = Utility.getProperty(Utility.CHARSET_TAG);
-         if (temp != null && !temp.equals(this.charset))
-         {
-            this.charset = temp;
-         }
+			this.charset = getConfigCharset(this.charset);
       }
+		temp = filterConfig.getInitParameter("contentType");
+		if (temp != null)
+		{
+			this.contentType = temp;
+		}
+		temp = filterConfig.getInitParameter("forceSet");
+		if (temp != null)
+		{
+			this.forceSet = temp.equalsIgnoreCase("true");
+		}
    }
 
    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
          throws IOException, ServletException
    {
-      if (!this.charset.equals(request.getCharacterEncoding()))
+      if (this.forceSet || request.getCharacterEncoding() == null)
       {
          request.setCharacterEncoding(this.charset);
+			if (this.contentType.startsWith("text/"))
+			{
+				response.setContentType(this.contentType + ";charset=" + this.charset);
+			}
+			else
+			{
+				response.setContentType(this.contentType);
+			}
       }
       chain.doFilter(request, response);
    }
@@ -50,5 +77,16 @@ public class CharsetFilter
    public void destroy()
    {
    }
+
+	/**
+	 * 从配置中获取编码格式.
+	 *
+	 * @param defaultValue  当配置中不存在编码格式设置时, 使用此默认值
+	 */
+	public static String getConfigCharset(String defaultValue)
+	{
+      String charset = Utility.getProperty(Utility.CHARSET_TAG);
+		return charset == null ? defaultValue : charset;
+	}
 
 }

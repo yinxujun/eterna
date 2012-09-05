@@ -18,13 +18,13 @@ public abstract class AbstractResultIterator
       implements ResultIterator
 {
    protected List result;
-   protected Iterator resultItr = null;
+   protected Iterator resultItr;
    protected List readerList;
    protected ResultReaderManager readerManager;
-   protected List preFetchList = null;
-   protected ResultRow currentRow = null;
-   protected ResultMetaData metaData = null;
-   protected QueryAdapter query = null;
+   protected List preFetchList;
+   protected ResultRow currentRow;
+   protected ResultMetaData metaData;
+   protected QueryAdapter query;
 
    public AbstractResultIterator(List readerList)
    {

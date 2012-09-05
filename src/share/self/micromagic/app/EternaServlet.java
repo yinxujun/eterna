@@ -24,11 +24,30 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.container.ValueContainerMap;
 import self.micromagic.util.container.RequestParameterMap;
 
+/**
+ * 用于加载eterna配置的servlet.
+ *
+ * 可设置的参数如下:
+ *
+ * defaultModel       当没有指定model名称时, 调用此属性指定的默认的model
+ *                    默认值为: ModelCaller.DEFAULT_MODEL_NAME
+ *
+ * initFiles          需要加载的eterna的配置文件列表
+ *
+ * parentFiles        需要加载的eterna父配置文件列表
+ *
+ * charset            使用的字符集, 默认值为: UTF-8
+ *
+ *
+ * @see ModelCaller#DEFAULT_MODEL_NAME
+ * @see FactoryManager#CONFIG_INIT_FILES
+ * @see FactoryManager#CONFIG_INIT_PARENTFILES
+ */
 public class EternaServlet extends HttpServlet
       implements WebApp
 {
    protected FactoryManager.Instance factoryManager = null;
-   protected String defaultModel = "index";
+   protected String defaultModel = ModelCaller.DEFAULT_MODEL_NAME;
    private String charset = "UTF-8";
    protected boolean initFactoryManager = true;
 
@@ -57,11 +76,7 @@ public class EternaServlet extends HttpServlet
       }
       else
       {
-         temp = Utility.getProperty(Utility.CHARSET_TAG);
-         if (temp != null && !temp.equals(this.charset))
-         {
-            this.charset = temp;
-         }
+			this.charset = CharsetFilter.getConfigCharset(this.charset);
       }
    }
 
@@ -144,15 +159,7 @@ public class EternaServlet extends HttpServlet
             }
          }
 
-         if (this.defaultModel != null)
-         {
-            request.setAttribute(ModelCaller.DEFAULT_MODEL_TAG, this.defaultModel);
-         }
-         else
-         {
-            request.setAttribute(ModelCaller.DEFAULT_MODEL_TAG, ModelCaller.DEFAULT_MODEL_NAME);
-         }
-
+			request.setAttribute(ModelCaller.DEFAULT_MODEL_TAG, this.defaultModel);
          ModelExport export = this.getFactoryManager().getEternaFactory().getModelCaller().callModel(data);
          if (export != null)
          {

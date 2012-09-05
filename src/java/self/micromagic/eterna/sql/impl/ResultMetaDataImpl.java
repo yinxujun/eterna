@@ -20,7 +20,7 @@ public class ResultMetaDataImpl
    private ResultReader[] readers;
    private QueryAdapter query;
    private ResultReaderManager readerManager;
-   private Map nameToIndexMap = null;
+   private Map nameToIndexMap;
 	private boolean colNameSensitive = true;
 
    public ResultMetaDataImpl(List readerList, ResultReaderManager readerManager, QueryAdapter query)

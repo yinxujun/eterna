@@ -147,7 +147,7 @@ public class EternaDefine extends InitBaseTag
          String dataType = view.getDataType(nowData);
          if (ViewAdapter.DATA_TYPE_WEB.equals(dataType))
          {
-            out.println("<script language=\"javascript\">");
+            out.println("<script type=\"text/javascript\">");
             out.println("(function() {");
             out.print("var $E = ");
             view.printView(out, nowData, this.getCacheMap(view));

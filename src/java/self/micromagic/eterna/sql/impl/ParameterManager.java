@@ -15,12 +15,12 @@ public class ParameterManager
    public static final int NORMAL_PARAMETER = 0;
    public static final int DYNAMIC_PARAMETER = 1;
 
-   private SQLParameter param = null;
+   private SQLParameter param;
    private int type;
    private String groupName;
-   private boolean parameterSetted = false;
+   private boolean parameterSetted;
 
-   private boolean checked = false;
+   private boolean checked;
    private String[] templates = StringTool.EMPTY_STRING_ARRAY;
 
    private int index;

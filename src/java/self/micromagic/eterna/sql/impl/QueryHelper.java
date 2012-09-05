@@ -320,10 +320,10 @@ public class QueryHelper
 		private int nowStartRow = 1;
 		private int nowMaxRows = -1;
 		private int nowTotalCount = QueryAdapter.TOTAL_COUNT_NONE;
-		private QueryAdapter.TotalCountExt nowTotalCountExt = null;
+		private QueryAdapter.TotalCountExt nowTotalCountExt;
 		private String oldPreparedSQL;
 		private String cacheSQL;
-		private boolean useOldSQL = false;
+		private boolean useOldSQL;
 
 		public OracleQueryHelper(QueryAdapter query)
 		{

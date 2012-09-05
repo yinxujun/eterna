@@ -28,16 +28,16 @@ import self.micromagic.util.container.UnmodifiableIterator;
 public abstract class AbstractSQLAdapter extends AbstractGenerator
       implements SQLAdapter, SQLAdapterGenerator
 {
-   private String preparedSQL = null;
-   private SQLManager sqlManager = null;
-   private PreparerManager preparerManager = null;
-   private SQLParameterGroup paramGroup = new SQLParameterGroupImpl();
+   private String preparedSQL;
+   private SQLManager sqlManager;
+   private PreparerManager preparerManager;
+   private SQLParameterGroup paramGroup;
 
-   private Map parameterNameMap = new HashMap();
+   private Map parameterNameMap;
    private SQLParameter[] parameterArray;
    protected ValuePreparerCreaterGenerator vpcg;
 
-   protected boolean initialized = false;
+   protected boolean initialized;
 
    public EternaFactory getFactory()
    {
@@ -53,21 +53,24 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
          {
             throw new ConfigurationException( "Can't initialize without preparedSQL.");
          }
-
          this.initialized = true;
 
          this.vpcg = factory.getDefaultValuePreparerCreaterGenerator();
-         this.paramGroup.initialize(factory);
-         Iterator itr = this.paramGroup.getParameterGeneratorIterator();
          List paramList = new ArrayList();
-         int paramIndex = 1;
-         while (itr.hasNext())
-         {
-            SQLParameterGenerator spg = (SQLParameterGenerator) itr.next();
-            SQLParameter param = spg.createParameter(paramIndex++);
-            param.initialize(this.getFactory());
-            paramList.add(param);
-         }
+			if (this.paramGroup != null)
+			{
+				this.paramGroup.initialize(factory);
+				Iterator itr = this.paramGroup.getParameterGeneratorIterator();
+				int paramIndex = 1;
+				while (itr.hasNext())
+				{
+					SQLParameterGenerator spg = (SQLParameterGenerator) itr.next();
+					SQLParameter param = spg.createParameter(paramIndex++);
+					param.initialize(this.getFactory());
+					paramList.add(param);
+				}
+				this.paramGroup = null;
+			}
          SQLParameter[] paramArray = new SQLParameter[paramList.size()];
          paramList.toArray(paramArray);
          this.parameterArray = paramArray;
@@ -76,11 +79,9 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
          String tmpSQL = this.sqlManager.frontParse(this.preparedSQL, paramArray);
          this.sqlManager.parse(tmpSQL);
          this.preparerManager = new PreparerManager(this, paramArray);
+         this.sqlManager.initialize(this.getFactory());
 
-         if (this.sqlManager != null)
-         {
-            this.sqlManager.initialize(this.getFactory());
-         }
+   		this.parameterNameMap = new HashMap();
          for (int i = 0; i < paramArray.length; i++)
          {
             SQLParameter param = paramArray[i];
@@ -331,20 +332,38 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
             ParameterManager pm = this.sqlManager.getParameterManager(i);
             pm.clearParam();
          }
-         this.parameterNameMap.clear();
+         this.parameterNameMap = null;
       }
-      this.paramGroup = new SQLParameterGroupImpl();
+      this.paramGroup = null;
    }
 
    public void addParameter(SQLParameterGenerator paramGenerator)
          throws ConfigurationException
    {
+		if (this.initialized)
+		{
+			throw new ConfigurationException(
+					"Can't add parameter in initialized " + this.getType() + " [" + this.getName() + "].");
+		}
+		else if (this.paramGroup == null)
+		{
+			this.paramGroup = new SQLParameterGroupImpl();
+		}
       this.paramGroup.addParameter(paramGenerator);
    }
 
    public void addParameterRef(String groupName, String ignoreList)
          throws ConfigurationException
    {
+		if (this.initialized)
+		{
+			throw new ConfigurationException(
+					"Can't add parameter ref in initialized " + this.getType() + " [" + this.getName() + "].");
+		}
+		else if (this.paramGroup == null)
+		{
+			this.paramGroup = new SQLParameterGroupImpl();
+		}
       this.paramGroup.addParameterRef(groupName, ignoreList);
    }
 
@@ -360,8 +379,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
       SQLParameter p = (SQLParameter) this.parameterNameMap.get(paramName);
       if (p == null)
       {
-         throw new ConfigurationException(
-               "Invalid parameter name:" + paramName + ".");
+         throw new ConfigurationException("Invalid parameter name:[" + paramName + "].");
       }
       return p;
    }
