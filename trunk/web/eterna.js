@@ -1,5 +1,5 @@
 
-/** version: 1.5.3 */
+/** version: 1.5.4 */
 
 (function(window) {
 
@@ -12,7 +12,7 @@ else
 	return;
 }
 
-var ___ETERNA_VERSION = "1.5.3";
+var ___ETERNA_VERSION = "1.5.4";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 window.ED_GET_VALUE = 0x1;
 window.ED_EXECUTE_SCRIPT = 0x2;
@@ -3356,13 +3356,21 @@ function Eterna($E, eterna_debug, rootWebObj)
 				var tmpObj;
 				if (column.title.caption != null)
 				{
-					var tmpObj = this.getValue(column.title.caption);
+					tmpObj = this.getValue(column.title.caption);
+					if (tmpObj.exists && !ef_isEmpty(tmpObj.value))
+					{
+						eg_temp.caption = tmpObj.value;
+					}
 				}
 				else
 				{
 					tmpObj = {exists:0,value:"",html:0};
 				}
 				eterna_tableList_title_fn(column, tdObj_t, tmpObj, false, this);
+				if (eg_temp.caption != null)
+				{
+					column.titleCaption = eg_temp.caption;
+				}
 				if (column.width != null)
 				{
 					tdObj_t.attr("width", column.width + (percentWidth ? "%" : ""));
@@ -3391,6 +3399,10 @@ function Eterna($E, eterna_debug, rootWebObj)
 			else
 			{
 				eg_temp.param = {};
+			}
+			if (column.titleCaption != null)
+			{
+				eg_temp.caption = column.titleCaption;
 			}
 			var tmpObj;
 			if (column.container.value != null)
