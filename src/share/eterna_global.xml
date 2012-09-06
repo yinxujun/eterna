@@ -916,6 +916,184 @@
             </events>
          </typical-component>
 
+			<!-- 检查选择项的数据是否存在, 是否需要加载, true表示加载完成, 可以继续 -->
+			<function name="select_options_data_check" param="theObj"><![CDATA[
+				var optionsCache = _eterna.cache["_optionsCache"];
+				if (optionsCache == null)
+				{
+					optionsCache = {initDataFlag:{},waitObjs:{}};
+					_eterna.cache["_optionsCache"] = optionsCache;
+				}
+				if (eg_temp.param != null && eg_temp.param.optionsList != null)
+				{
+					var optionsName = eg_temp.param.optionsList;
+					if ({$dataV:optionsName} == null)
+					{
+						var flag = optionsCache.initDataFlag[optionsName];
+						var synLoad = eg_temp.param.optionsSynLoad == null ? false : eg_temp.param.optionsSynLoad;
+						if (flag == null || synLoad)
+						{
+							var queryNameTag = "queryName";
+							if (eg_temp.param.queryNameTag != null)
+							{
+								queryNameTag = eg_temp.param.queryNameTag;
+							}
+                     var params = {};
+							params[queryNameTag] = optionsName;
+                     var queryModel = "codeQuery";
+                     if (eg_temp.param.queryModel != null)
+                     {
+                        queryModel = eg_temp.param.queryModel;
+                     }
+							if (synLoad)
+							{
+								// 如果是同步载入, 则直接加载
+								{$ef:reload}(params, queryModel, [], [optionsName]);
+								if ({$dataV:optionsName} != null)
+								{
+									return true;
+								}
+								else
+								{
+									{$ef:select_options_data_check_addFlag}(theObj, optionsName, 1);
+									return false;
+								}
+							}
+							else
+							{
+								// 如果未初始化, 则设上等待初始化标记, 并进行异步载入
+								optionsCache.initDataFlag[optionsName] = "wait";
+								var recallFn = function () {
+									// 重载前加上是本控件发起初始化的标志
+									var tmpData = recallFn.theObj.data("egTemp").tempData;
+									if (tmpData == null)
+									{
+										 recallFn.theObj.data("egTemp").tempData = {optionsInitObj:1};
+									}
+									else
+									{
+										tmpData.optionsInitObj = 1;
+									}
+									recallFn._eterna.reloadWebObj(recallFn.theObj);
+								};
+								recallFn._eterna = _eterna;
+								recallFn.theObj = theObj;
+								// 这里通过recall来重载, 因为失败后不会触发控件的重载
+								{$ef:reload}(params, queryModel, [], [optionsName], true, recallFn);
+								{$ef:select_options_data_check_addFlag}(theObj, optionsName, 0);
+								return false;
+							}
+						}
+						else if (flag == "wait")
+						{
+                  	if (eg_temp.tempData != null && eg_temp.tempData.optionsInitObj == 1)
+							{
+								// 如果是此对象发起的载入, 则要设上失败标记, 并唤醒等待的对象
+								optionsCache.initDataFlag[optionsName] = "error";
+								{$ef:select_options_data_check_addFlag}(theObj, optionsName, 1);
+								var waitObjs = optionsCache.waitObjs[optionsName];
+								if (waitObjs != null)
+								{
+									optionsCache.waitObjs[optionsName] = null;
+									for (var i = 0; i < waitObjs.length; i++)
+									{
+										_eterna.reloadWebObj(waitObjs[i]);
+									}
+								}
+							}
+							else
+							{
+								// 如果不是此对象发起的载入, 则进行等待, 并加入等待列表
+								{$ef:select_options_data_check_addFlag}(theObj, optionsName, 0);
+								if (optionsCache.waitObjs[optionsName] == null)
+								{
+									optionsCache.waitObjs[optionsName] = [theObj];
+								}
+								else
+								{
+									optionsCache.waitObjs[optionsName].push(theObj);
+								}
+							}
+							return false;
+						}
+						else if (flag == "error")
+						{
+							// 如果发生错误, 则要设上失败标记
+							{$ef:select_options_data_check_addFlag}(theObj, optionsName, 1);
+							return false;
+						}
+					}
+					else if (eg_temp.tempData != null && eg_temp.tempData.optionsInitObj == 1)
+					{
+						optionsCache.initDataFlag[optionsName] = "success";
+						// 如果是此对象发起的载入, 则要唤醒等待的对象
+						var waitObjs = optionsCache.waitObjs[optionsName];
+						if (waitObjs != null)
+						{
+							optionsCache.waitObjs[optionsName] = null;
+							for (var i = 0; i < waitObjs.length; i++)
+							{
+                     	_eterna.reloadWebObj(waitObjs[i]);
+							}
+						}
+					}
+				}
+				return true;
+			]]></function>
+			<!-- 检查选择项的数据时, 添加状态标记 -->
+			<function name="select_options_data_check_addFlag" param="theObj, dataName, type"><![CDATA[
+				var option = jQuery("<option/>");
+				option.text(type == 0 ? "loading..." : "error");
+				theObj.append(option);
+				if (type != 0)
+				{
+					var msgObj = jQuery("<center/>");
+					var cName = eg_temp.caption == null ? "" : eg_temp.caption;
+					if (eg_temp.index != null && eg_temp.rowNum != null)
+					{
+						cName += "(" + eg_temp.rowNum + ")";
+					}
+					msgObj.text({$res:select_options_data_check_errMsg}(cName, dataName));
+					if (_eterna.rootWebObj != null)
+					{
+						_eterna.rootWebObj.prepend(msgObj);
+					}
+					else
+					{
+						jQuery("body").prepend(msgObj);
+					}
+					if (_eterna.cache.optionsDataCheckMsgList == null)
+					{
+						_eterna.cache.optionsDataCheckMsgList = [];
+						msgObj.fadeOut(5000, {$ef:select_options_data_check_msgEnd});
+					}
+					else
+					{
+						_eterna.cache.optionsDataCheckMsgList.push(msgObj);
+						msgObj.hide();
+					}
+				}
+			]]></function>
+			<function name="select_options_data_check_msgEnd">
+				jQuery(this).remove();
+				if (_eterna.cache.optionsDataCheckMsgList != null)
+				{
+					if (_eterna.cache.optionsDataCheckMsgList.length == 0)
+					{
+						_eterna.cache.optionsDataCheckMsgList = null;
+					}
+					else
+					{
+						var tmpObj = _eterna.cache.optionsDataCheckMsgList.pop();
+						tmpObj.show();
+						tmpObj.fadeOut(5000, {$ef:select_options_data_check_msgEnd});
+					}
+				}
+			</function>
+			<resource name="select_options_data_check_errMsg">
+				在加载{0}选项时发生错误，需要的数据集名称为{1}，您可尝试按[F5]刷新页面或联系开发人员解决此问题。
+			</resource>
+
          <typical-component name="select" type="select">
             <init-script><![CDATA[
                var needDefaultWidth = {$ef:checkNeedDefaultWidth}(objConfig);
@@ -924,80 +1102,20 @@
                {
                   webObj.attr("id", eg_temp.name);
                }
-
-               var selectDefault = eterna_select_default_value;
-               if (eg_temp.param != null)
-               {
-                  if (eg_temp.param.selectDefault != null)
-                  {
-                     selectDefault = eg_temp.param.selectDefault;
-                  }
-                  if (eg_temp.param.selectWidth != null)
-                  {
-                     needDefaultWidth = false;
-                     webObj.css("width", eg_temp.param.selectWidth);
-                  }
-               }
-               for (var i = 0; i < selectDefault.length; i++)
-               {
-                  var option = jQuery("<option/>");
-                  option.attr("value", selectDefault[i][0]);
-                  option.text(selectDefault[i][1]);
-                  webObj.append(option);
-               }
-
-               if (eg_temp.param != null && eg_temp.param.optionsList != null)
-               {
-                  if ({$dataV:eg_temp.param.optionsList} == null)
-                  {
-                     var optionsName = eg_temp.param.optionsList;
-                     var params = {queryName:optionsName};
-                     var queryModel = "codeQuery";
-                     if (eg_temp.param.queryModel != null)
-                     {
-                        queryModel = eg_temp.param.queryModel;
-                     }
-                     {$ef:reload}(params, queryModel, [], [optionsName]);
-                  }
-                  if ({$dataV:eg_temp.param.optionsList} != null)
-                  {
-                     var rows = {$dataV:eg_temp.param.optionsList}.rows;
-                     for (var i = 0; i < rows.length; i++)
-                     {
-                        var option = jQuery("<option/>");
-                        option.attr("value", rows[i][0]);
-                        option.text(rows[i][1]);
-                        webObj.append(option);
-                     }
-                  }
-               }
-               if (eg_temp.valueObj != null && eg_temp.valueObj.exists)
-               {
-                  webObj.val(eg_temp.valueObj.value);
-               }
-               else if (eg_temp.dataName == null || {$dataV:eg_temp.dataName} == null)
-               {
-                  if (eg_temp.param != null)
-                  {
-                     if (eg_temp.param.defaultValueTag != null && {$dataV:eg_temp.param.defaultValueTag} != null)
-                     {
-                        webObj.val({$dataV:eg_temp.param.defaultValueTag});
-                     }
-                     else if (eg_temp.param.defaultValue != null)
-                     {
-                        webObj.val(eg_temp.param.defaultValue);
-                     }
-                  }
-               }
-               else
-               {
-                  webObj.val("");
-               }
-
+					if (eg_temp.param != null && eg_temp.param.selectWidth != null)
+					{
+						needDefaultWidth = false;
+						webObj.css("width", eg_temp.param.selectWidth);
+					}
                if (needDefaultWidth)
                {
                   webObj.css("width", {$res:component_defaultWidth}());
                }
+
+					if ({$ef:select_options_data_check}(webObj))
+					{
+						{$ef:select_options_init_fn}(webObj);
+					}
             ]]></init-script>
             <events>
                <event name="change"><![CDATA[
@@ -1009,6 +1127,58 @@
                <event name="save">{$ef:setData_value}(eg_temp.valueObj, webObj.val());</event>
             </events>
          </typical-component>
+			<!-- 下拉选择控件选项及选择值的控件 -->
+			<function name="select_options_init_fn" param="webObj"><![CDATA[
+				var selectDefault = eterna_select_default_value;
+				if (eg_temp.param != null && eg_temp.param.selectDefault != null)
+				{
+					selectDefault = eg_temp.param.selectDefault;
+				}
+				for (var i = 0; i < selectDefault.length; i++)
+				{
+					var option = jQuery("<option/>");
+					option.attr("value", selectDefault[i][0]);
+					option.text(selectDefault[i][1]);
+					webObj.append(option);
+				}
+
+				if (eg_temp.param != null && eg_temp.param.optionsList != null)
+				{
+					if ({$dataV:eg_temp.param.optionsList} != null)
+					{
+						var rows = {$dataV:eg_temp.param.optionsList}.rows;
+						for (var i = 0; i < rows.length; i++)
+						{
+							var option = jQuery("<option/>");
+							option.attr("value", rows[i][0]);
+							option.text(rows[i][1]);
+							webObj.append(option);
+						}
+					}
+				}
+				if (eg_temp.valueObj != null && eg_temp.valueObj.exists)
+				{
+					webObj.val(eg_temp.valueObj.value);
+				}
+				else if (eg_temp.dataName == null || {$dataV:eg_temp.dataName} == null)
+				{
+					if (eg_temp.param != null)
+					{
+						if (eg_temp.param.defaultValueTag != null && {$dataV:eg_temp.param.defaultValueTag} != null)
+						{
+							webObj.val({$dataV:eg_temp.param.defaultValueTag});
+						}
+						else if (eg_temp.param.defaultValue != null)
+						{
+							webObj.val(eg_temp.param.defaultValue);
+						}
+					}
+				}
+				else
+				{
+					webObj.val("");
+				}
+			]]></function>
 
          <typical-component name="select_sub" type="select">
             <init-script><![CDATA[
@@ -1018,28 +1188,28 @@
                {
                   webObj.attr("id", eg_temp.name);
                }
-               eterna_addWillInitObj(webObj);
-
+					if (eg_temp.param != null && eg_temp.param.selectWidth != null)
+					{
+						needDefaultWidth = false;
+						webObj.css("width", eg_temp.param.selectWidth);
+					}
                if (needDefaultWidth)
                {
                   webObj.css("width", {$res:component_defaultWidth}());
                }
+
+					if ({$ef:select_options_data_check}(webObj))
+					{
+						eterna_addWillInitObj(webObj);
+					}
             ]]></init-script>
             <events>
                <event name="willInit"><![CDATA[
-                  var selectDefault = eterna_select_default_value;
-                  if (eg_temp.param != null)
-                  {
-                     if (eg_temp.param.selectDefault != null)
-                     {
-                        selectDefault = eg_temp.param.selectDefault;
-                     }
-                     if (eg_temp.param.selectWidth != null)
-                     {
-                        needDefaultWidth = false;
-                        webObj.css("width", eg_temp.param.selectWidth);
-                     }
-                  }
+						var selectDefault = eterna_select_default_value;
+						if (eg_temp.param != null && eg_temp.param.selectDefault != null)
+						{
+							selectDefault = eg_temp.param.selectDefault;
+						}
                   for (var i = 0; i < selectDefault.length; i++)
                   {
                      var option = jQuery("<option/>");
@@ -1050,17 +1220,6 @@
 
                   if (eg_temp.param != null && eg_temp.param.optionsList != null)
                   {
-                     if ({$dataV:eg_temp.param.optionsList} == null)
-                     {
-                        var optionsName = eg_temp.param.optionsList;
-                        var params = {queryName:optionsName};
-                        var queryModel = "codeQuery";
-                        if (eg_temp.param.queryModel != null)
-                        {
-                           queryModel = eg_temp.param.queryModel;
-                        }
-                        {$ef:reload}(params, queryModel, [], [optionsName]);
-                     }
                      var pId = {$ef:getWebObjValue}(eg_temp.param.parentSelectId);
                      if ({$dataV:eg_temp.param.optionsList} != null)
                      {

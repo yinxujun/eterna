@@ -61,7 +61,7 @@ public class ShareSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // ππ‘ÏDataSourceManager
-      setter = new DataSourceManagerSetter("class", "setDataSourceManager");
+      setter = new DataSourceManagerSetter("className", "setDataSourceManager");
       digester.addRule("eterna-config/factory/data-source-manager", new PropertySetRule(setter));
       digester.addRule("eterna-config/factory/data-source-manager",
             new ObjectLogRule("name", "DataSourceManager"));
@@ -311,6 +311,15 @@ public class ShareSet extends RuleSetBase
          return Collections.unmodifiableMap(this.dataSourceMap);
       }
 
+		protected boolean hasDataSource(String name)
+		{
+			if (this.dataSourceMap == null)
+			{
+				return false;
+			}
+			return this.dataSourceMap.containsKey(name);
+		}
+
       public String getDefaultDataSourceName()
             throws ConfigurationException
       {
@@ -327,7 +336,7 @@ public class ShareSet extends RuleSetBase
          this.defaultDataSourceName = name;
       }
 
-      void addDataSource(String name, DataSource ds)
+      protected void addDataSource(String name, DataSource ds)
       {
          if (this.dataSourceMap == null)
          {
