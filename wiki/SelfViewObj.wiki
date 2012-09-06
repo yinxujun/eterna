@@ -60,7 +60,7 @@
 <typical-component name="boolean_component" type="div">
    <before-init>if (eg_temp.name == null) eg_temp.name = "yn";</before-init>
    <component name="yes" type="input-radio" comParam="objValue:'1'">
-      <init-script> <![CDATA[
+      <init-script><![CDATA[
          var param = eg_temp.param;
          if (param != null)
          {
@@ -70,27 +70,22 @@
             }
             if (param.checkedValue != null && webObj.val() == param.checkedValue)
             {
-               eterna_addWillInitObj(webObj);
+               webObj.prop("checked", true);
             }
          }
-      ]]> </init-script>
-      <events>
-         <event name="willInit">
-            webObj.attr("checked", true);
-         </event>
-      </events>
+      ]]></init-script>
    </component>
    <component name="yes_lable" type="span" comParam="text:'是'">
-      <init-script> <![CDATA[
+      <init-script><![CDATA[
          var param = eg_temp.param;
          if (param != null && param.yesLabel != null)
          {
             webObj.text(param.yesLabel);
          }
-      ]]> </init-script>
+      ]]></init-script>
    </component>
    <component name="no" type="input-radio" comParam="objValue:'0'">
-      <init-script> <![CDATA[
+      <init-script><![CDATA[
          var param = eg_temp.param;
          if (param != null)
          {
@@ -100,24 +95,19 @@
             }
             if (param.checkedValue != null && webObj.val() == param.checkedValue)
             {
-               eterna_addWillInitObj(webObj);
+               webObj.prop("checked", true);
             }
          }
-      ]]> </init-script>
-      <events>
-         <event name="willInit">
-            webObj.attr("checked", true);
-         </event>
-      </events>
+      ]]></init-script>
    </component>
    <component name="no_lable" type="span" comParam="text:'否'">
-      <init-script> <![CDATA[
+      <init-script><![CDATA[
          var param = eg_temp.param;
          if (param != null && param.noLabel != null)
          {
             webObj.text(param.noLabel);
          }
-      ]]> </init-script>
+      ]]></init-script>
    </component>
 </typical-component>
 }}}
