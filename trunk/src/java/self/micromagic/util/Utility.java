@@ -875,6 +875,7 @@ public class Utility
          String value = prop.getProperty("dataSource." + name);
          if (value != null)
          {
+				value = resolveDynamicPropnames(value);
             String fName = "set" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
             Class[] params = STR_PARAM;
             if ("int".equals(type))
@@ -885,17 +886,25 @@ public class Utility
             {
                params = new Class[]{boolean.class};
             }
-            Method m = c.getDeclaredMethod(fName, params);
-            Object v = value;
-            if ("int".equals(type))
-            {
-               v = new Integer(value);
-            }
-            else if ("boolean".equals(type))
-            {
-               v = new Boolean(value);
-            }
-            m.invoke(dataSource, new Object[]{v});
+				try
+				{
+					Method m = c.getDeclaredMethod(fName, params);
+					Object v = value;
+					if ("int".equals(type))
+					{
+						v = new Integer(value);
+					}
+					else if ("boolean".equals(type))
+					{
+						v = new Boolean(value);
+					}
+					m.invoke(dataSource, new Object[]{v});
+				}
+				catch (Exception ex)
+				{
+					System.out.println("Not found method:" + fName + ", in datasource:"
+							+ dataSource.getClass().getName() + ".");
+				}
          }
       }
    }
