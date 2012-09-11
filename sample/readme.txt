@@ -2,6 +2,14 @@
 例子中需要的表都已经建好了，无需做任何改动，可在eclipse中直接运行。第一次运行时，需要选择一个应用服务器。
 
 
+eclipse导入项目说明
+1. 将压缩包解压后，把test目录（目录名称可以修改）放到eclipse的工作区下。
+2. 打开eclipse，选择菜单file->import，在弹出窗口中选择General->Existing Projects into Workspace，然后选择刚复制进去的test目录，点finish。
+3. 在Project Explorer中，选中Deployment Descriptor: test->Servlets->test，右键点击，选择Run As->Run on Server。
+4. 在弹出窗口中选择一个应用服务器（建议使用Tomcat v6.0）即可。如果未配置服务器的话，配置一个就可以了。
+注：jdk需要1.5或以上版本。
+
+
 micromagic_config.properties文件中的几个配置的说明：
 
 一、
