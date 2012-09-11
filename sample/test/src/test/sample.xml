@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_5.dtd">
+
+<!-- 例子 -->
+<eterna-config>
+	<factory>
+
+		<objs>
+
+			<view name="textList.view">
+				<replacement name="t" baseComponentName="text_list_view_template">
+					<table-list name="listTable" baseName="query:textList.query" dataName="listData" ignoreGlobal="true">
+						<component-param>attr:{border:0,cellPadding:1,cellSpacing:0,width:'100%'}</component-param>
+						<tr name="tableList_TR.text_list_listTable_tr" comParam="css:{cursor:'pointer'}" />
+						<columns>
+							<column name="$typical" ignoreGlobal="true" comParam="attr:{noWrap:true}" />
+						</columns>
+					</table-list>
+				</replacement>
+			</view>
+			<export name="textList1.export" viewName="textList.view" path="${page.view}" />
+			<export name="textList2.export" viewName="text_list_common.view" path="${page.view}" />
+			<model name="textList.model" modelExportName="textList1.export">
+				<query-execute queryName="textList.query" count="15">
+					<param-bind src="request-parameter" names="name,name:spellName" />
+				</query-execute>
+				<trans-execute from="stack" to="data:listData" />
+			</model>
+			<query name="textList.query">
+				<prepared-sql>
+					select u.id, u.name, u.spellName, s.sexName, d.deptName
+					#const(fromPart)
+					where u.spellName like ? || '%' or name like ? || '%'
+				</prepared-sql>
+				<parameters>
+					<parameter name="spellName" type="String" />
+					<parameter name="name" type="String" />
+				</parameters>
+				<readers>
+					<reader name="id" type="int" visible="false" />
+					<reader name="name" type="String" />
+					<reader name="spellName" type="String" />
+					<reader name="sexName" type="String" />
+					<reader name="deptName" type="String" />
+				</readers>
+			</query>
+
+			<!-- 查询语句中from部分的sql -->
+			<constant name="fromPart" value="$useBodyText">
+				from t_student u
+				left join t_sex s on s.sexId = u.sex
+				left join t_dept d on d.deptId = u.dept
+			</constant>
+
+			<export name="list.export" viewName="list.view" path="${page.view}" />
+			<model name="list" modelExportName="list.export">
+				<search-execute searchName="list.search" queryResultName="listInfo" />
+			</model>
+			<view name="list.view">
+				<replacement name="search"
+					baseComponentName="search_component;toolbar,conditions,list">
+					<before-init>
+						eg_temp.dataName = "listInfo";
+						{$dataV:eg_temp.dataName + "_modelName"} = "list";
+						{$dataV:eg_temp.dataName + "_searchName"} = "list.search";
+					</before-init>
+					<replacement name="toolbar" baseComponentName="toolbar_component">
+						<before-init>
+							{$parentScript}
+							btns.push({name:'添加',img:'add.gif',model:'get',params:{type:'add'}});
+							btns.push({name:'导入',img:'input.gif',click:function(){alert("导入暂未实现!");}});
+							btns.push({name:'导出',img:'output.gif',click:function(){alert("导出暂未实现!");}});
+							btns.push({name:'反选',img:'select.gif',click:function(){alert("反选暂未实现!");}});
+						</before-init>
+					</replacement>
+					<table-form name="conditions" columns="10,23,10,23,10,24" baseName="search:list.search" dataName="searchManager">
+						<cells cellOrder="title">
+							<cell name="title" caption="学生信息查询" titleSize="-1" containerSize="0" titleParam="css:{'text-align':'left'}" />
+							<cell name="submit" titleSize="0" containerSize="-1" typicalComponentName="buttons" initParam="queryBtn:1" />
+						</cells>
+					</table-form>
+					<table-list name="list" baseName="query:list.query" dataName="listInfo">
+						<columns>
+							<column name="opt" caption="操作" srcName="id" typicalComponentName="common_list_operator" />
+						</columns>
+					</table-list>
+				</replacement>
+			</view>
+
+			<query name="list.query">
+				<prepared-sql>
+					select u.*, s.sexName, d.deptName
+					#const(fromPart)
+					#sub[where $]
+					order by id desc
+				</prepared-sql>
+				<readers>
+					<reader name="id" type="int" />
+					<reader name="name" type="String" />
+					<reader name="spellName" type="String" />
+					<reader name="sexName" type="String" />
+					<reader name="deptName" type="String" />
+					<reader name="age" type="int" />
+					<reader name="comeDate" type="Date" />
+					<reader name="grade" type="int" />
+					<reader name="email" type="String" />
+				</readers>
+			</query>
+			<search name="list.search" queryName="list.query" pageSize="5">
+				<condition-propertys>
+					<condition-property name="name" colType="String" inputType="text_list">
+						<attribute name="initParam" value="loadModel:'textList.model',listDataName:'listData',listSrcName:'name'" />
+					</condition-property>
+					<condition-property name="sex" colType="String" inputType="select">
+						<attribute name="initParam" value="optionsList:'code.sex'" />
+					</condition-property>
+					<condition-property name="age" colType="int" inputType="text_range" defaultBuilder="notBelow" />
+					<condition-property name="age2" colName="age" colType="int" visible="false" defaultBuilder="notLarge" />
+					<condition-property name="dept" colType="String" inputType="select">
+						<attribute name="initParam" value="optionsList:'code.dept'" />
+					</condition-property>
+					<condition-property name="comeDate" colType="Date" inputType="text_date_range" defaultBuilder="notBelow" />
+					<condition-property name="comeDate2" colName="comeDate" colType="Date" visible="false" defaultBuilder="notLarge" />
+					<condition-property name="grade" colType="int" inputType="select_year" />
+				</condition-propertys>
+			</search>
+
+			<export name="detail.export" viewName="detail.view" path="${page.view}" />
+			<model name="get" modelExportName="detail.export">
+				<trans-execute from="request-parameter:type" to="data:type" opt="getFirstString" />
+				<query-execute queryName="get.query">
+					<param-bind src="request-parameter" names="id" />
+				</query-execute>
+				<trans-execute from="stack" to="data:studentInfo" opt="getFirstRow" />
+			</model>
+			<view name="detail.view">
+				<replacement name="form" baseComponentName="form_template">
+					<before-init>
+						{$parentScript}
+						eg_temp.dataName = "studentInfo";
+						var type = {$data:type};
+						if (type == "add")
+						{
+							eg_temp.tempData.title = "学生信息添加";
+							eg_temp.tempData.modelName = "add";
+						}
+						else if (type == "modify")
+						{
+							eg_temp.tempData.title = "学生信息修改";
+							eg_temp.tempData.modelName = "modify";
+							eg_temp.tempData.keyList.push("id");
+						}
+						else
+						{
+							eg_temp.tempData.modelName = "delete";
+							{$data:onlyView} = 1;
+						}
+					</before-init>
+					<table-form name="form_body" columns="20,30,20,30" baseName="query:get.query" dataName="studentInfo">
+						<cells cellOrder="title">
+							<cell name="title" caption="[script]:eg_temp.tempData.title" 
+								titleSize="-1" containerSize="0" titleParam="css:{'text-align':'left'}" />
+							<cell name="submit" titleSize="0" containerSize="-1" typicalComponentName="buttons" initParam="returnBtn:1" />
+						</cells>
+					</table-form>
+				</replacement>
+			</view>
+
+			<query name="get.query">
+				<prepared-sql>
+					select u.*, s.sexName as sex_show, d.deptName as dept_show
+					#const(fromPart)
+					where id = ?
+				</prepared-sql>
+				<parameters>
+					<parameter name="id" type="int" />
+				</parameters>
+				<readers>
+					<reader name="id" type="int" />
+					<reader name="name" type="String">
+						<attribute name="inputType" value="text_label" />
+						<attribute name="initParam" value="checks:[{type:'notEmpty'}]" />
+					</reader>
+					<reader name="spellName" type="String">
+						<attribute name="inputType" value="text_label" />
+					</reader>
+					<reader name="sex" type="String">
+						<attribute name="inputType" value="select_label" />
+						<attribute name="initParam"
+							value="optionsList:'code.sex',checks:[{type:'notEmpty'}]" />
+					</reader>
+					<reader name="sex_show" type="String" visible="false" />
+					<reader name="dept" type="String">
+						<attribute name="inputType" value="select_label" />
+						<attribute name="initParam"
+							value="optionsList:'code.dept',checks:[{type:'notEmpty'}]" />
+					</reader>
+					<reader name="dept_show" type="String" visible="false" />
+					<reader name="age" type="int">
+						<attribute name="inputType" value="text_label" />
+						<attribute name="initParam"
+							value="checks:[{type:'notEmpty'},{type:'number',range:[20,50],pattern:[2]}]" />
+					</reader>
+					<reader name="grade" type="int">
+						<attribute name="inputType" value="select_year_label" />
+					</reader>
+					<reader name="comeDate" type="Date">
+						<attribute name="inputType" value="text_date_label" />
+						<attribute name="initParam" value="checks:[{type:'notEmpty'}]" />
+					</reader>
+					<reader name="email" type="String">
+						<attribute name="inputType" value="text_label" />
+						<attribute name="initParam" value="checks:[{type:'email'}]" />
+					</reader>
+				</readers>
+			</query>
+
+			<export name="go.list.export" modelName="list" />
+			<model name="add" modelExportName="go.list.export">
+				<update-execute updateName="add.update">
+					<param-bind src="request-parameter" />
+				</update-execute>
+			</model>
+			<model name="modify" modelExportName="go.list.export">
+				<update-execute updateName="modify.update">
+					<param-bind src="request-parameter" />
+				</update-execute>
+			</model>
+			<model name="delete" modelExportName="go.list.export">
+				<update-execute updateName="delete.update">
+					<param-bind src="request-parameter" />
+				</update-execute>
+			</model>
+
+			<parameter-group name="updateParam">
+				<parameter name="name" type="String" />
+				<parameter name="spellName" type="String" />
+				<parameter name="sex" type="String" />
+				<parameter name="dept" type="String" />
+				<parameter name="email" type="String" />
+				<parameter name="age" type="int" />
+				<parameter name="grade" type="int" />
+				<parameter name="comeDate" type="Date" />
+			</parameter-group>
+
+			<update name="add.update">
+				<prepared-sql>
+					insert into t_student (id, #auto[insertN,1,-1])
+					values (nvl((select max(id) from t_student), 0) + 1, #auto[insertV,1,-1])
+				</prepared-sql>
+				<parameters>
+					<parameter-ref groupName="updateParam" />
+				</parameters>
+			</update>
+			<update name="modify.update">
+				<prepared-sql>
+					update t_student set #auto[update,1,-2]
+					where id = ?
+				</prepared-sql>
+				<parameters>
+					<parameter-ref groupName="updateParam" />
+					<parameter name="id" type="int" />
+				</parameters>
+			</update>
+			<update name="delete.update">
+				<prepared-sql>
+					delete from t_student where id = ?
+				</prepared-sql>
+				<parameters>
+					<parameter name="id" type="int" />
+				</parameters>
+			</update>
+
+		</objs>
+
+		<attributes>
+
+			<attribute name="caption.translate" value="$useBodyText">
+				id=编号;
+				name=姓名;
+				spellName=姓名拼音;
+				sex=性别;
+				sexName=性别;
+				dept=学院;
+				deptName=学院;
+				age=年龄;
+				comeDate=入学日期;
+				grade=年级;
+				email=邮箱;
+			</attribute>
+
+		</attributes>
+
+	</factory>
+</eterna-config>
