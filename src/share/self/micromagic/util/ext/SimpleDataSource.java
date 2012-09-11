@@ -3,12 +3,14 @@ package self.micromagic.util.ext;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.DriverManager;
+import java.sql.Driver;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import self.micromagic.util.ext.SimpleConnection;
+import self.micromagic.util.Utility;
 
 /**
  * 一个简易的数据源实现, 不使用数据库连接缓冲池, 关闭后直接释放.
@@ -22,10 +24,20 @@ public class SimpleDataSource
    protected String description;
    protected String url;
    protected String driverClass;
-   protected String user = null;
-   protected String password = null;
+   protected String user;
+   protected String password;
    protected boolean autoCommit = true;
-   protected boolean autoCommitSetted = false;
+   protected boolean autoCommitSetted;
+
+   /**
+    * 数据库的驱动类.
+    */
+   protected Driver driver;
+
+	/**
+	 * 默认的连接属性.
+	 */
+	protected Properties defaultProperties;
 
    /**
     * 获取数据库连接.
@@ -33,7 +45,7 @@ public class SimpleDataSource
    public Connection getConnection()
          throws SQLException
    {
-      return this.getConnection(this.user, this.password);
+      return this.getConnection(null, null);
    }
 
    /**
@@ -42,34 +54,40 @@ public class SimpleDataSource
    public Connection getConnection(String username, String password)
          throws SQLException
    {
-      try
-      {
-         if (this.url == null)
-         {
-            throw new SQLException("The connetion url hasn't setted!");
-         }
-         if (this.driverClass == null)
-         {
-            throw new SQLException("The connetion driverClass hasn't setted!");
-         }
-         Class.forName(this.driverClass);
-         Connection conn;
-         if (username == null && password == null)
-         {
-            conn = new SimpleConnection(this.autoCommitSetted, DriverManager.getConnection(this.url));
-         }
-         else
-         {
-            conn = new SimpleConnection(this.autoCommitSetted,
-                  DriverManager.getConnection(this.url, username, password));
-         }
-         conn.setAutoCommit(this.autoCommit);
-         return conn;
-      }
-      catch (ClassNotFoundException ex)
-      {
-         throw new SQLException(ex.getMessage());
-      }
+		if (this.url == null)
+		{
+			throw new SQLException("The connetion url hasn't setted!");
+		}
+		if (this.driverClass == null)
+		{
+			throw new SQLException("The connetion driverClass hasn't setted!");
+		}
+		if (this.driver == null)
+		{
+			try
+			{
+				this.driver = createDriver(this.driverClass);
+			}
+			catch (Exception ex)
+			{
+				throw new SQLException("open: " + ex);
+			}
+		}
+		Connection conn;
+		if (username == null && password == null)
+		{
+			conn = new SimpleConnection(this.autoCommitSetted,
+					this.driver.connect(this.url, this.getDefaultProperties()));
+		}
+		else
+		{
+			Properties p = new Properties();
+			p.setProperty("user", user);
+			p.setProperty("password", password);
+			conn = new SimpleConnection(this.autoCommitSetted, this.driver.connect(this.url, p));
+		}
+		conn.setAutoCommit(this.autoCommit);
+		return conn;
    }
 
    /**
@@ -139,6 +157,35 @@ public class SimpleDataSource
    public boolean isAutoCommitSetted()
    {
       return autoCommitSetted;
+   }
+
+	/**
+	 * 根据给出的类名, 创建数据库的驱动类.
+	 */
+   private static Driver createDriver(String className)
+   		throws ClassNotFoundException, IllegalAccessException, InstantiationException
+	{
+		return (Driver) Utility.getContextClassLoader().loadClass(className).newInstance();
+   }
+
+	/**
+	 * 获取默认的连接属性.
+	 */
+   private Properties getDefaultProperties()
+	{
+		if (this.defaultProperties == null)
+		{
+			synchronized (this)
+			{
+				if (this.defaultProperties == null)
+				{
+					this.defaultProperties = new Properties();
+					this.defaultProperties.setProperty("user", this.user);
+					this.defaultProperties.setProperty("password", this.password);
+				}
+			}
+		}
+		return this.defaultProperties;
    }
 
    public PrintWriter getLogWriter()

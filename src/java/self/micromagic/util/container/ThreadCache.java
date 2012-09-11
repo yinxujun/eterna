@@ -11,18 +11,25 @@ public class ThreadCache
 {
    /**
     * 存放<code>ThreadCache</code>实例的<code>ThreadLocal</code>的实现.
+	 *
+	 * 新版本中取消了这种实现方式.
+	 * 因为在应用服务器会使用线程缓冲池, 这样线程是不会被释放的, 那缓存在线程
+	 * 中的对象也不会被释放. 当应用被重新加载的时候, 原来的应用就无法被释放,
+	 * 因为新的应用产生了新的ThreadLocal, 不会覆盖原来的, 从而造成内存的泄漏.
     */
-   private static ThreadLocal cache = new ThreadLocalCache();
+   //private static final ThreadLocal localCache = new ThreadLocalCache();
 
-   private static int globalVersion = 0;
+	/**
+	 * 保存所有创建的线程缓存.
+	 */
+	private static final Map threadCaches = new SynHashMap(32, SynHashMap.WEAK);
+
 
    private Map propertys;
-   private int thisVersion = 0;
 
    private ThreadCache()
    {
       this.propertys = new HashMap();
-      this.thisVersion = globalVersion;
    }
 
    /**
@@ -30,27 +37,30 @@ public class ThreadCache
     */
    public static ThreadCache getInstance()
    {
-      ThreadCache threadCache = (ThreadCache) cache.get();
+		/*
+      ThreadCache threadCache = (ThreadCache) localCache.get();
       if (threadCache == null)
       {
          threadCache = new ThreadCache();
-         cache.set(threadCache);
+         localCache.set(threadCache);
       }
+		*/
+		Thread t = Thread.currentThread();
+		ThreadCache threadCache = (ThreadCache) threadCaches.get(t);
+		if (threadCache == null)
+		{
+			synchronized (threadCaches)
+			{
+				// 在同步的环境下再判断是否存在, 不存在的话再生成
+				threadCache = (ThreadCache) threadCaches.get(t);
+				if (threadCache == null)
+				{
+					threadCache = new ThreadCache();
+					threadCaches.put(t, threadCache);
+				}
+			}
+		}
       return threadCache;
-   }
-
-   /**
-    * 检查当前的线程缓存是否有效.
-    */
-   private boolean checkVersion()
-   {
-      if (this.thisVersion != globalVersion)
-      {
-         this.propertys.clear();
-         this.thisVersion = globalVersion;
-         return false;
-      }
-      return true;
    }
 
    /**
@@ -61,7 +71,6 @@ public class ThreadCache
     */
    public void setProperty(String name, Object property)
    {
-      this.checkVersion();
       this.propertys.put(name, property);
    }
 
@@ -72,11 +81,7 @@ public class ThreadCache
     */
    public Object getProperty(String name)
    {
-      if (this.checkVersion())
-      {
-         return this.propertys.get(name);
-      }
-      return null;
+		return this.propertys.get(name);
    }
 
    /**
@@ -86,10 +91,7 @@ public class ThreadCache
     */
    public void removeProperty(String name)
    {
-      if (this.checkVersion())
-      {
-         this.propertys.remove(name);
-      }
+		this.propertys.remove(name);
    }
 
    /**
@@ -97,7 +99,6 @@ public class ThreadCache
     */
    public int size()
    {
-      this.checkVersion();
       return this.propertys.size();
    }
 
@@ -106,10 +107,7 @@ public class ThreadCache
     */
    public void clearPropertys()
    {
-      if (this.checkVersion())
-      {
-         this.propertys.clear();
-      }
+		this.propertys.clear();
    }
 
    /**
@@ -117,15 +115,19 @@ public class ThreadCache
     */
    public static void clearAllPropertys()
    {
-      globalVersion++;
+		threadCaches.clear();
    }
 
+	/*
+	取消了ThreadLocal的方式获取线程缓存
    private static class ThreadLocalCache extends ThreadLocal
    {
       protected Object initialValue()
       {
          return new ThreadCache();
       }
+
    }
+	*/
 
 }
