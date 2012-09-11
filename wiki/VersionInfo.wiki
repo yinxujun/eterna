@@ -1,6 +1,11 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.4==
+将self.micromagic.eterna.sql.impl包下一些类的clone方法改为copy方法。<br>
+修复了data-source-manager节点设置className属性时没有效果的错误。<br>
+将样例做成了eclipse的项目包，可以在eclipse中直接运行。<br>
+----
 ==1.5.3==
 修复了使用init标签时，访问类型不为web时仍然会有页面代码输出的bug。<br>
 修复了在界面中直接对eg_temp赋值后，造成事件中获取的值不正常的问题。<br>
