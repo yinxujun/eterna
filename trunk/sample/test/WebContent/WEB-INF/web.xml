@@ -14,7 +14,7 @@
 		</init-param>
 		<init-param>
 			<param-name>defaultModel</param-name>
-			<param-value>exp</param-value>
+			<param-value>index</param-value>
 		</init-param>
 	</servlet>
 

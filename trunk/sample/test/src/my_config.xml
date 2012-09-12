@@ -19,12 +19,32 @@
 				}
 				if (urlHead != null)
 				{
-					var param = {};
-					param[{$data:modelNameTag}] = modelName;
+					var param;
 					if (dataType != null)
 					{
-					  param[EG_DATA_TYPE] = dataType;
+					  if (typeof dataType == "string")
+                  {
+							param = {};
+					  		param[EG_DATA_TYPE] = dataType;
+                  }
+                  else
+                  {
+                     if (dataType.___dataType != null)
+                     {
+                     	param = dataType.param;
+					  			param[EG_DATA_TYPE] = dataType.___dataType;
+                     }
+                     else
+                     {
+                     	param = dataType;
+                     }
+                  }
 					}
+					else
+					{
+						param = {};
+					}
+					param[{$data:modelNameTag}] = modelName;
 					urlHead = urlHead + jQuery.param(param);
 				}
 				return urlHead;
