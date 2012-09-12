@@ -63,7 +63,7 @@
 					</component>
 				</component>
 				<component name="6" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'一个完整的CRUD操作的样例，对应表：t_student，t_sex，t_dept。名称查询条件会有补完提示。'">
+					<component name="a" type="a" comParam="text:'一个完整的CRUD操作的样例，对应表：t_student，t_sex，t_dept。名称查询条件会有补完提示，姓名及部门列可排序。'">
 						<init-script>webObj.attr("href", {$ef:getHeadURL}("list"));</init-script>
 					</component>
 				</component>
@@ -150,25 +150,29 @@
 				</replacement>
 			</view>
 
-			<query name="list.query">
+			<query name="list.query" orderIndex="2">
 				<prepared-sql>
 					select u.*, s.sexName, d.deptName
 					#const(fromPart)
 					#sub[where $]
-					order by id desc
+					order by #sub[$,] id desc
 				</prepared-sql>
 				<readers>
 					<reader name="id" type="int" />
-					<reader name="name" type="String" />
+					<reader name="name" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, '姓名')" type="String" />
 					<reader name="spellName" type="String" />
 					<reader name="sexName" type="String" />
-					<reader name="deptName" type="String" />
+					<reader name="deptName" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$res:deptRes}())" type="String">
+						<attribute name="orderName" value="dept" />
+					</reader>
 					<reader name="age" type="int" />
 					<reader name="comeDate" type="Date" />
 					<reader name="grade" type="int" />
 					<reader name="email" type="String" />
+					<reader name="dept" type="String" visible="false" orderName="u.dept"/>
 				</readers>
 			</query>
+			<resource name="deptRes">部门</resource>
 			<search name="list.search" queryName="list.query" pageSize="5">
 				<condition-propertys>
 					<condition-property name="name" colType="String" inputType="text_list">
@@ -344,8 +348,8 @@
 				spellName=姓名拼音;
 				sex=性别;
 				sexName=性别;
-				dept=学院;
-				deptName=学院;
+				dept=部门;
+				deptName=部门;
 				age=年龄;
 				comeDate=入学日期;
 				grade=年级;
