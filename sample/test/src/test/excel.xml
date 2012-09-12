@@ -9,8 +9,7 @@
 			<model name="importStart" positions="servlet,portletAction,portletRender"
 				transactionType="notNeed" modelExportName="import.export">
 			</model>
-			<export name="import.export" path="${page.view}" viewName="import.view"
-				errorExport="true" />
+			<export name="import.export" path="${page.view}" viewName="import.view" errorExport="true" />
 
 			<model name="uploadTest" positions="servlet,portletAction" modelExportName="import.export">
 				<execute name="getFile" generator="self.micromagic.app.UploadExecute">
