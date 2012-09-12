@@ -285,6 +285,62 @@
 					<replacement name="search_page_tool_3" baseComponentName="search_page_form" />
 				</component>
 			</typical-component>
+			
+			<!-- 可排序的标题控件 -->
+			<typical-component name="search_order_title" type="none">
+				<before-init>
+           		var param = _eterna.egTempParam();
+           		if (param.orderName == null)
+           		{
+           			param.orderName = eg_temp.srcName;
+           		}
+					var tmpParam = {};
+					var poName = {$dataV:eg_temp.dataName + '_searchName'} + ".order";
+					tmpParam[poName] = param.orderName;
+					param.orderURL = {$ef:getHeadURL}({$dataV:eg_temp.dataName+'_modelName'}, tmpParam);
+				</before-init>
+				<component name="title" type="a" comParam="css:{'text-decoration':'none'}">
+					<init-script><![CDATA[
+            		var param = _eterna.egTempParam();
+						if (ef_isEmpty(param.caption))
+						{
+							webObj.html(eterna_table_td_empty_value);
+						}
+						else
+						{
+							webObj.text(param.caption);
+						}
+						webObj.attr("href", param.orderURL);
+					]]></init-script>
+				</component>
+				<component name="i" type="img" comParam="css:{'margin-left':'6px','vertical-align':'middle',cursor:'pointer',width:'9px',height:'19px'}">
+					<before-init>
+            		var param = _eterna.egTempParam();
+						checkResult = {$dataV:eg_temp.dataName}.orderName == param.orderName;
+					</before-init>
+					<init-script>
+						var src = {$ef:getImgPath}({$dataV:eg_temp.dataName}.orderDesc ? "down.gif" : "up.gif");
+						webObj.attr("src", src);
+					</init-script>
+					<events>
+						<event name="click">
+							var param = _eterna.egTempParam();
+							_eterna.doVisit(param.orderURL);
+						</event>
+					</events>
+				</component>
+			</typical-component>
+         <!-- 设置标题控件的方法 -->
+         <function name="createSearchOrderTitle" param="valueObj, caption">
+            valueObj.exists = 1;
+            valueObj.html = 1;
+            var param = _eterna.egTempParam(true);
+            if (caption != null)
+            {
+            	param.caption = caption;
+           	}
+            valueObj.value = {$typical:search_order_title};
+         </function>
 
 		</objs>
 
