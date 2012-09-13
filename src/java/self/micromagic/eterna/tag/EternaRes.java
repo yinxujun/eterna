@@ -70,15 +70,15 @@ public class EternaRes extends TagSupport
 		out.println("return;");
 		out.println('}');
 		out.println("window.eg_pageInitializedURL[url] = 1;");
-		out.println("if (typeof _resVersion != \"undefined\")");
+		out.println("if (typeof eg_resVersion != \"undefined\")");
 		out.println("{");
 		out.println("if (url.indexOf(\"?\") == -1)");
 		out.println("{");
-		out.println("url += \"?_v=\" + _resVersion;");
+		out.println("url += \"?_v=\" + eg_resVersion;");
 		out.println("}");
 		out.println("else");
 		out.println("{");
-		out.println("url += \"&_v=\" + _resVersion;");
+		out.println("url += \"&_v=\" + eg_resVersion;");
 		out.println("}");
 		out.println("}");
 		out.println("var resObj;");

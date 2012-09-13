@@ -1,5 +1,5 @@
 
-/** version: 1.5.4 */
+/** version: 1.5.5 */
 
 (function(window) {
 
@@ -12,7 +12,7 @@ else
 	return;
 }
 
-var ___ETERNA_VERSION = "1.5.4";
+var ___ETERNA_VERSION = "1.5.5";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 window.ED_GET_VALUE = 0x1;
 window.ED_EXECUTE_SCRIPT = 0x2;
@@ -4758,15 +4758,15 @@ if (typeof eg_pageInitializedURL == "undefined")
 			return;
 		}
 		window.eg_pageInitializedURL[url] = 1;
-		if (typeof _resVersion != "undefined")
+		if (typeof eg_resVersion != "undefined")
 		{
 			if (url.indexOf("?") == -1)
 			{
-				url += "?_v=" + _resVersion;
+				url += "?_v=" + eg_resVersion;
 			}
 			else
 			{
-				url += "&_v=" + _resVersion;
+				url += "&_v=" + eg_resVersion;
 			}
 		}
 		var resObj;
@@ -4799,15 +4799,15 @@ window.ef_loadScript = function(flag, scriptPath, recall)
 		return;
 	}
 	window.eg_pageInitializedURL[scriptPath] = 1;
-	if (typeof _resVersion != "undefined")
+	if (typeof eg_resVersion != "undefined")
 	{
 		if (scriptPath.indexOf("?") == -1)
 		{
-			scriptPath += "?_v=" + _resVersion;
+			scriptPath += "?_v=" + eg_resVersion;
 		}
 		else
 		{
-			scriptPath += "&_v=" + _resVersion;
+			scriptPath += "&_v=" + eg_resVersion;
 		}
 	}
 	var scriptObj = document.createElement('script');
