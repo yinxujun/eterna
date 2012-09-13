@@ -1,5 +1,6 @@
 例子中使用的是java开发的开源数据库H2，数据库文件在test\WebContent\WEB-INF\db下。
 例子中需要的表都已经建好了，无需做任何改动，可在eclipse中直接运行。第一次运行时，需要配置一个应用服务器。
+首页的地址为：http://域名:端口/test/test.do
 
 
 eclipse导入项目说明
