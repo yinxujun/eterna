@@ -11,6 +11,10 @@ eclipse导入项目说明
 注：jdk需要1.5或以上版本。
 
 
+如果你使用的是myeclipse或其它的开发工具，则可以先建一个web项目，然后分别将src和WebContent目录下的文件复制到对应的目录下即可。
+
+
+
 micromagic_config.properties文件中的几个配置的说明：
 
 一、
