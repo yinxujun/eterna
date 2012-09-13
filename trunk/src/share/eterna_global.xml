@@ -1667,11 +1667,11 @@
 							<event name="click">
 								if (webObj.data("confirmMsg") != null)
 								{
-									webObj.data("doClick", confirm(webObj.data("confirmMsg")));
+									return confirm(webObj.data("confirmMsg"));
 								}
 								else
 								{
-									webObj.data("doClick", true);
+									return true;
 								}
 							</event>
 						</events>

@@ -282,7 +282,7 @@
 				</readers>
 			</query>
 
-			<export name="go.list.export" modelName="list" />
+			<export name="go.list.export" modelName="list" redirect="true" />
 			<model name="add" modelExportName="go.list.export">
 				<update-execute updateName="add.update">
 					<param-bind src="request-parameter" />
