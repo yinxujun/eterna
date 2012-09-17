@@ -88,6 +88,7 @@ VALUES (? #param(v)[, ?] #param(s)[, ?])
 以"#auto"开始，"type"为生成语句的模板，"num1"为重第几个参数开始动态生成语句片段，"num2"为生成到第几个参数。<br>
 "num1"和"num2"为正数时表示从第一个开始，如1表示第一个、2表示第二个...<br>
 "num1"和"num2"为负数时表示从最后一个开始，如-1表示最后一个、-2表示倒数第二个...<br>
+"num1"和"num2"为名称格式时，i+XXX表示到XXX之后，i-XXX表示到XXX之前，i=XXX表示到XXX。<br>
 "num2"的最终结果值必需大于"num1"，如参数列表的总数为5，num1设为-2，num2设为3，这样是非法的，因为-2的最终结果值为4，大于3。<br>
 type模板的说明如下：
 {{{
@@ -132,6 +133,19 @@ insertVD
 insert语句值部分的动态参数模板，例子如下：
 #auto[insertVD,1,2]
 生成的结果为：#param(dAuto_1)[, ?]#param(dAuto_2)[, ?]
+}}}
+名称格式的样例如下：
+{{{
+如果parameters的配置有name、sex，age这3个参数
+
+动态语句生成的配置为：#auto[update,1,i-sex]
+生成的结果为：name = ?
+
+动态语句生成的配置为：#auto[update,1,i=sex]
+生成的结果为：name = ?, sex = ?
+
+动态语句生成的配置为：#auto[update,1,i+sex]
+生成的结果为：name = ?, sex = ?, age = ?
 }}}
 <br>
 =const 常量=
