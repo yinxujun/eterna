@@ -42,7 +42,7 @@ public class ViewTool
       "typical", "$E.T", "res", "$E.R",
       "data", "$E.D", "dataV", "$E.D", "tmpData", "D", "tmpDataV", "D",
       "efV", "$E.F", "typicalV", "$E.T", "resV", "$E.R",
-      "global", "$E.G", "globalV", "$E.G"
+      "global", "$E.G", "globalV", "$E.G", "caption", "$"
    };
    private static final int PLUS_GRAMMER_CELL_COUNT = 5;
 
@@ -337,19 +337,39 @@ public class ViewTool
                         viewRes.addResourceNames(tmpName);
                      }
                   }
-                  buf.append(PLUS_NAMES[i + 1]);
-                  if (tmpName.length() > 0)
-                  {
-                     if (plusName.charAt(plusName.length() - 1) == 'V')
-                     {
-                        buf.append('[').append(tmpName).append(']');
-                     }
-                     else
-                     {
-                        buf.append(factory.getStringCoder().parseJsonRefName(tmpName));
-                     }
-                  }
-                  validPlusName = true;
+						if ("$".equals(PLUS_NAMES[i + 1]))
+						{
+                     if ("caption".equals(plusName))
+							{
+								buf.append('"');
+								String caption = Tool.translateCaption(factory, tmpName);
+								if (caption == null)
+								{
+									buf.append(factory.getStringCoder().toJsonString(tmpName));
+								}
+								else
+								{
+									buf.append(factory.getStringCoder().toJsonString(caption));
+								}
+								buf.append('"');
+							}
+						}
+						else
+						{
+							buf.append(PLUS_NAMES[i + 1]);
+							if (tmpName.length() > 0)
+							{
+								if (plusName.charAt(plusName.length() - 1) == 'V')
+								{
+									buf.append('[').append(tmpName).append(']');
+								}
+								else
+								{
+									buf.append(factory.getStringCoder().parseJsonRefName(tmpName));
+								}
+							}
+						}
+						validPlusName = true;
                   break;
                }
             }

@@ -236,7 +236,7 @@ public class SQLManager
 	private int getAutoParamIndex(String indexExp, SQLParameter[] paramArray)
          throws ConfigurationException
 	{
-		if (indexExp.startsWith("i"))
+		if (indexExp.charAt(0) == 'i')
 		{
 			// i+XXX, i-XXX, i=XXX
 			char flag = indexExp.charAt(1);
