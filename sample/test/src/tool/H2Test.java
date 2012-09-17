@@ -22,8 +22,9 @@ public class H2Test
 		System.out.println("projectPath:" + projectPath);
 		// 获取数据库文件所在的目录, test//WebContent/WEB-INF/db
 		String baseDir = projectPath + "/WebContent/WEB-INF/db";
-		Connection conn = DriverManager.getConnection("jdbc:h2:" + baseDir + "/test", "sa", "sa"); 
-		ResultSet rs = conn.createStatement().executeQuery("select * from t_student");
+		Connection conn1 = DriverManager.getConnection("jdbc:h2:" + baseDir + "/test", "sa", "sa"); 
+		conn1.setAutoCommit(false);
+		ResultSet rs = conn1.createStatement().executeQuery("select * from my_table");
 		while (rs.next())
 		{
 			System.out.print(rs.getString(1) + ",");
@@ -33,14 +34,51 @@ public class H2Test
 			System.out.println(rs.getString(5)); 
 		}
 		rs.close();
-		rs = conn.createStatement().executeQuery("select * from my_table");
+		conn1.createStatement().executeUpdate("update my_table set name = 'tt测试3' where id = 't003'");
+		Connection conn2 = DriverManager.getConnection("jdbc:h2:" + baseDir + "/test", "sa", "sa"); 
+		conn2.setAutoCommit(false);
+		rs = conn2.createStatement().executeQuery("select * from t_student");
 		while (rs.next())
 		{
 			System.out.print(rs.getString(1) + ",");
 			System.out.print(rs.getString(2) + ",");
 			System.out.println(rs.getString(3));
+		}			
+		T t = new T();
+		t.conn = conn1;
+		t.start();
+		System.out.println("begin update 2:" + System.currentTimeMillis());	
+		try
+		{
+			conn2.createStatement().executeUpdate("update my_table set name = 'tt测试t3' where id = 't003'");
 		}
-		conn.close();
+		catch (Exception ex)
+		{
+			System.out.println(ex);
+		}
+		System.out.println("  end update 2:" + System.currentTimeMillis());
+		conn2.commit();
+		conn1.close();
+		conn2.close();
+	}
+	
+	static class T extends Thread
+	{
+		Connection conn;
+		
+		public void run()
+		{
+			try
+			{
+				sleep(800L);
+				conn.commit();
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
+		}
+		
 	}
 	
 }
