@@ -48,6 +48,7 @@ public interface StringCoder
 
 	/**
 	 * 将字符串转换成json格式的字符串, 并直接写入到输出流out中.
+	 * 如果str参数为null, 则不输出.
 	 *
 	 * @param out     输出流
 	 * @param str     要进行转换的字符串

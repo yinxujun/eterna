@@ -159,10 +159,10 @@
 				</prepared-sql>
 				<readers>
 					<reader name="id" type="int" />
-					<reader name="name" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, '姓名')" type="String" />
+					<reader name="name" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$caption:name})" type="String" />
 					<reader name="spellName" type="String" />
 					<reader name="sexName" type="String" />
-					<reader name="deptName" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$res:deptRes}())" type="String">
+					<reader name="deptName" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$caption:dept})" type="String">
 						<attribute name="orderName" value="dept" />
 					</reader>
 					<reader name="age" type="int" />
@@ -172,7 +172,6 @@
 					<reader name="dept" type="String" visible="false" orderName="u.dept"/>
 				</readers>
 			</query>
-			<resource name="deptRes">部门</resource>
 			<search name="list.search" queryName="list.query" pageSize="5">
 				<condition-propertys>
 					<condition-property name="name" colType="String" inputType="text_list">

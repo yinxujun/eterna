@@ -113,6 +113,7 @@
       <group-cell><queue type="name" chars="typical"/></group-cell>
       <group-cell><queue type="name" chars="globalV"/></group-cell>
       <group-cell><queue type="name" chars="global"/></group-cell>
+      <group-cell><queue type="name" chars="caption"/></group-cell>
    </group>
 
    <!-- 注释 -->
