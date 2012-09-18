@@ -289,11 +289,11 @@
 			<!-- 可排序的标题控件 -->
 			<typical-component name="search_order_title_component" type="none">
 				<before-init>
-           		var param = _eterna.egTempParam(true);
-           		if (param.orderName == null)
-           		{
-           			param.orderName = eg_temp.srcName;
-           		}
+					var param = _eterna.egTempParam(true);
+					if (param.orderName == null)
+					{
+						param.orderName = eg_temp.srcName;
+					}
 					var tmpParam = {};
 					var poName = {$dataV:eg_temp.dataName + '_searchName'} + EG_ORDER_SUFIX;
 					tmpParam[poName] = param.orderName;
@@ -301,7 +301,7 @@
 				</before-init>
 				<component name="title" type="a" comParam="css:{'text-decoration':'none'}">
 					<init-script><![CDATA[
-            		var param = _eterna.egTempParam();
+						var param = _eterna.egTempParam();
 						if (ef_isEmpty(eg_temp.caption))
 						{
 							webObj.html(eterna_table_td_empty_value);
@@ -315,7 +315,7 @@
 				</component>
 				<component name="i" type="img" comParam="css:{'margin-left':'6px','vertical-align':'middle',cursor:'pointer',width:'9px',height:'19px'}">
 					<before-init>
-            		var param = _eterna.egTempParam();
+						var param = _eterna.egTempParam();
 						checkResult = {$dataV:eg_temp.dataName}.orderName == param.orderName;
 					</before-init>
 					<init-script>
@@ -330,16 +330,16 @@
 					</events>
 				</component>
 			</typical-component>
-         <!-- 设置标题控件的方法 -->
-         <function name="createSearchOrderTitle" param="valueObj, caption">
-            valueObj.exists = 1;
-            valueObj.html = 1;
-            if (caption != null)
-            {
-            	valueObj.caption = caption;
-           	}
-            valueObj.value = {$typical:search_order_title_component};
-         </function>
+			<!-- 设置标题控件的方法 -->
+			<function name="createSearchOrderTitle" param="valueObj, caption">
+				valueObj.exists = 1;
+				valueObj.html = 1;
+				if (caption != null)
+				{
+					valueObj.caption = caption;
+				}
+				valueObj.value = {$typical:search_order_title_component};
+			</function>
 
 		</objs>
 
