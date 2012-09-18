@@ -68,6 +68,7 @@ import self.micromagic.util.container.ThreadCache;
  * 全局初始化时是否要载入默认的配置
  * cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;
  *
+ * @author micromagic@sina.com
  */
 public class FactoryManager
 {

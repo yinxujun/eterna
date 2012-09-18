@@ -4,12 +4,14 @@ package self.micromagic.eterna.view.impl;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.view.BaseManager;
 import self.micromagic.eterna.view.Function;
 import self.micromagic.eterna.view.FunctionGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class FunctionImpl extends AbstractGenerator
          implements Function, FunctionGenerator
 {

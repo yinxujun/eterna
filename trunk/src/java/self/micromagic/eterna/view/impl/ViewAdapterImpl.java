@@ -26,6 +26,9 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.container.UnmodifiableIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ViewAdapterImpl extends AbstractGenerator
       implements ViewAdapter, ViewAdapterGenerator
 {

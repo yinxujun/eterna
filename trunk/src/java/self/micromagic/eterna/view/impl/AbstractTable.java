@@ -16,6 +16,9 @@ import self.micromagic.eterna.view.TableListGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public abstract class AbstractTable extends ComponentImpl
 {
    protected boolean autoArrange = true;
@@ -603,10 +606,8 @@ public abstract class AbstractTable extends ComponentImpl
          if (this.viewRes == null)
          {
             this.viewRes = super.getModifiableViewRes();
-            this.titleParam = ViewTool.dealScriptPart(
-                  this.viewRes, this.titleParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
-            this.initParam = ViewTool.dealScriptPart(
-                  this.viewRes, this.initParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
+				this.titleParam = this.dealParamPart(this.titleParam, this.viewRes);
+				this.initParam = this.dealParamPart(this.initParam, this.viewRes);
             this.caption = ViewTool.dealScriptPart(
                   this.viewRes, this.caption, ViewTool.GRAMMER_TYPE_NONE, this.getFactory());
             this.defaultValue = ViewTool.dealScriptPart(
