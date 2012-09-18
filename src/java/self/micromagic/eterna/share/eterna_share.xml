@@ -2,7 +2,9 @@
 
 <!--
 	eterna框架的一些基本定义
-	如: 一些基本的大于 小于 的builder等
+	如: 一些基本的 大于 小于 的builder, 包含的vpc 等
+
+	@author micromagic@sina.com
 -->
 <eterna-config>
 	<factory>

@@ -44,12 +44,20 @@ import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.cg.ClassGenerator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public abstract class ResultReaders
 {
 	/**
 	 * 在arrtibute中设置读取时是否需要获取列的索引值.
 	 */
 	public static final String CHECK_INDEX_FLAG = "checkIndex";
+
+	/**
+	 * ResultReader默认的空属性集.
+	 */
+	private static final AttributeManager EMPTY_ATTRIBUTES = new AttributeManager();
 
    public static class ObjectReader
          implements ResultReader, Cloneable
@@ -72,7 +80,7 @@ public abstract class ResultReaders
 		protected boolean checkIndex;
 
       protected ValueConverter converter;
-      protected AttributeManager attributes;
+      protected AttributeManager attributes = EMPTY_ATTRIBUTES;
 
       public int getType()
       {
@@ -103,10 +111,6 @@ public abstract class ResultReaders
          {
             this.caption = Tool.translateCaption(factory, this.getName());
          }
-			if (this.attributes == null)
-			{
-				this.attributes = new AttributeManager();
-			}
 			String tmpStr = (String) this.getAttribute(CHECK_INDEX_FLAG);
 			if (tmpStr != null)
 			{

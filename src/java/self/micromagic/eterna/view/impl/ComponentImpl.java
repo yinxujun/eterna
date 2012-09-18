@@ -20,6 +20,9 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.container.UnmodifiableIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ComponentImpl extends AbstractGenerator
       implements Component, ComponentGenerator
 {
@@ -313,8 +316,7 @@ public class ComponentImpl extends AbstractGenerator
                this.viewRes, this.beforeInit, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
          this.initScript = ViewTool.dealScriptPart(
                this.viewRes, this.initScript, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
-         this.componentParam = ViewTool.dealScriptPart(
-               this.viewRes, this.componentParam, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
+         this.componentParam = this.dealParamPart(this.componentParam, this.viewRes);
 
          Iterator eventItr = this.getEvents();
          while (eventItr.hasNext())
@@ -332,6 +334,20 @@ public class ComponentImpl extends AbstractGenerator
       }
       return this.viewRes;
    }
+
+	/**
+	 * 处理参数部分的脚本, 如: component-param, init-param.
+	 */
+	protected String dealParamPart(String param, ViewAdapterGenerator.ModifiableViewRes viewRes)
+         throws ConfigurationException
+	{
+		// 为空或者没有代码都返回null
+		if (param == null || param.trim().length() == 0)
+		{
+			return null;
+		}
+		return ViewTool.dealScriptPart(viewRes, param, ViewTool.GRAMMER_TYPE_JSON, this.getFactory());
+	}
 
    public ViewAdapter.ViewRes getViewRes()
          throws ConfigurationException

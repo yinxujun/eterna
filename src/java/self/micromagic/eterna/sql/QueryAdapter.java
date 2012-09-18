@@ -9,6 +9,9 @@ import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.util.BooleanRef;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface QueryAdapter extends SQLAdapter
 {
    /**

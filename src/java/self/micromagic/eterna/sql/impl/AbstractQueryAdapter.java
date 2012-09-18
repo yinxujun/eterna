@@ -32,6 +32,9 @@ import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       implements QueryAdapter, QueryAdapterGenerator
 {
@@ -139,8 +142,15 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
       temp.initialize(this.getFactory());
       if (temp.getReaderCount() > 0)
       {
-         if ("true".equals(this.getAttribute(COPY_READERS_FLAG))
-					&& (hasCheckIndexFlag || this.readerManagerName != null))
+			// 当设置了baseReaderManager且没有checkIndex的设置时, 复制的默认值为true
+			boolean needCopy = this.readerManager != null && !hasCheckIndexFlag;
+			String needCopyStr = (String) this.getAttribute(COPY_READERS_FLAG);
+			// 当设置了copyReaders时, 使用设置的值
+			if (needCopyStr != null)
+			{
+				needCopy = "true".equalsIgnoreCase(needCopyStr);
+			}
+         if (needCopy)
 			{
 				ResultReaderManagerImpl allReaders = new ResultReaderManagerImpl();
       		allReaders.setName("<query>/" + this.getName());
@@ -153,7 +163,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 					if (r instanceof ResultReaders.ObjectReader)
 					{
 						ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
-						if (!tmpR.isCheckIndex())
+						if (!tmpR.isCheckIndex() && !tmpR.isUseColumnIndex())
 						{
 							// 如果checkIndex属性为false, 则复制后将其设为true
 							tmpR = tmpR.copy();

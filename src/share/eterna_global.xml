@@ -2,28 +2,30 @@
 <!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_5.dtd">
 
 <!--
-一些公用方法及组件
-使用时需要定义getHeadURL方法, 用于生成访问的地址头, 例子如下:
-<function name="getHeadURL" param="modelName, dataType"><![CDATA[
-	var urlHead = "";
-	if ({$data:servletPath} != null)
-	{
-		urlHead = {$data:root} + {$data:servletPath} + "?";
-	}
-	else
-	{
-		urlHead = "?";
-	}
-	if (urlHead != null)
-	{
-		urlHead = urlHead + {$data:modelNameTag} + "=" + modelName;
-		if (dataType != null)
+	一些公用方法及组件
+	使用时需要定义getHeadURL方法, 用于生成访问的地址头, 例子如下:
+	<function name="getHeadURL" param="modelName, dataType"><![CDATA[
+		var urlHead = "";
+		if ({$data:servletPath} != null)
 		{
-			urlHead = urlHead + "&" + EG_DATA_TYPE + "=" + dataType;
+			urlHead = {$data:root} + {$data:servletPath} + "?";
 		}
-	}
-	return urlHead;
-]]></function>
+		else
+		{
+			urlHead = "?";
+		}
+		if (urlHead != null)
+		{
+			urlHead = urlHead + {$data:modelNameTag} + "=" + modelName;
+			if (dataType != null)
+			{
+				urlHead = urlHead + "&" + EG_DATA_TYPE + "=" + dataType;
+			}
+		}
+		return urlHead;
+	]]></function>
+
+	@author micromagic@sina.com
 -->
 <eterna-config>
 	<factory>

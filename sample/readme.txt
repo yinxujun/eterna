@@ -12,6 +12,7 @@ eclipse导入项目说明
 
 
 如果你使用的是myeclipse或其它的开发工具，则可以先建一个web项目，然后分别将src和WebContent目录下的文件复制到对应的目录下即可。
+如果你没有开发工具，则可将bulid下的classes复制到WebContent/WEB-INF下，然后将WebContent放入web应用服务器（如：tomcat）就可运行了。
 
 
 

@@ -13,8 +13,7 @@ import java.util.Map;
 /**
  * <code>StringTool</code>类是实现一些常用的字符串处理. <p>
  *
- * @author  micromagic
- * @version 1.0, 2002-10-18
+ * @author  micromagic@sina.com
  */
 public class StringTool
 {

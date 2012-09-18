@@ -53,6 +53,14 @@ window.eterna_table_td_empty_value = "&nbsp;";
 window.eterna_tableForm_title_pluse = "";
 window.eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, containerObj, _eterna)
 {
+	if (titleValue.caption != null)
+	{
+		eg_temp.caption = titleValue.caption;
+	}
+	if (titleValue.config != null)
+	{
+		_eterna.appendParam(titleObj, titleValue.config, null);
+	}
 	if (titleValue.exists && !ef_isEmpty(titleValue.value))
 	{
 		if (titleValue.html)
@@ -63,14 +71,6 @@ window.eterna_tableForm_title_fn = function (cellConfig, titleValue, titleObj, c
 				if (tmpCom != null)
 				{
 					titleObj.append(tmpCom);
-				}
-				if (titleValue.caption != null)
-				{
-					eg_temp.caption = titleValue.caption;
-				}
-				if (titleValue.config != null)
-				{
-					_eterna.appendParam(titleObj, titleValue.config, null);
 				}
 			}
 			else
@@ -104,6 +104,14 @@ window.eterna_tableForm_requared_fn = function (cellConfig, titleValue, titleObj
 };
 window.eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue, upTitle, _eterna)
 {
+	if (titleValue.caption != null)
+	{
+		eg_temp.caption = titleValue.caption;
+	}
+	if (titleValue.config != null)
+	{
+		_eterna.appendParam(titleObj, titleValue.config, null);
+	}
 	if (titleValue.exists && !ef_isEmpty(titleValue.value))
 	{
 		if (titleValue.html)
@@ -114,14 +122,6 @@ window.eterna_tableList_title_fn = function (columnConfig, titleObj, titleValue,
 				if (tmpCom != null)
 				{
 					titleObj.append(tmpCom);
-				}
-				if (titleValue.caption != null)
-				{
-					eg_temp.caption = titleValue.caption;
-				}
-				if (titleValue.config != null)
-				{
-					_eterna.appendParam(titleObj, titleValue.config, null);
 				}
 			}
 			else
@@ -153,6 +153,7 @@ window.EG_DATA_TYPE_DATA = "data";
 window.EG_DATA_TYPE_REST = "REST";
 window.EG_DATA_TYPE_ALL = "all";
 window.EG_DATA_TYPE_WEB = "web";
+window.EG_ORDER_SUFIX = ".order";
 
 var EG_SCRIPT_STR_PREFIX_ARR = ["javascript:", "vbscript:"];
 var EG_JSON_SPLIT_FLAG = "<!-- eterna json data split -->";

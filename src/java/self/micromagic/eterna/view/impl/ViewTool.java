@@ -28,6 +28,8 @@ import self.micromagic.util.StringAppender;
 
 /**
  * 视图模块中需要用到的一些公共方法.
+ *
+ * @author micromagic@sina.com
  */
 public class ViewTool
 {
