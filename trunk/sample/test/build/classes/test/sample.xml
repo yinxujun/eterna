@@ -67,6 +67,11 @@
 						<init-script>webObj.attr("href", {$ef:getHeadURL}("list"));</init-script>
 					</component>
 				</component>
+				<component name="7" type="div" comParam="css:{'margin-top':'5px'}">
+					<component name="a" type="a" comParam="text:'代码表管理的样例，对应表：t_code1，t_code2。如何使用span_modifiable控件，及相似的管理内容编写。'">
+						<init-script>webObj.attr("href", {$ef:getHeadURL}("codeManage.index"));</init-script>
+					</component>
+				</component>
 			</view>
 
 

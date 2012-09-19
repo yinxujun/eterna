@@ -21,6 +21,9 @@ import self.micromagic.cg.ClassGenerator;
 import self.micromagic.util.ObjectRef;
 import org.dom4j.Element;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ModelAdapterImpl extends AbstractGenerator
       implements ModelAdapter, ModelAdapterGenerator
 {

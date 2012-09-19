@@ -506,7 +506,7 @@ public class ClassGenerator
       }
       catch (Throwable ex)
       {
-         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
          {
             CG.log.error("AntCG init error.", ex);
          }

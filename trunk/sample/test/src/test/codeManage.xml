@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eterna-config PUBLIC "eterna" "http://eterna.googlecode.com/files/eterna_1_5.dtd">
+
+<!-- 
+	代码表的管理
+	相关表有：
+	create table t_code1 
+	(
+		id1 integer,
+		codeValue1 varchar(30),
+		listIndex1 integer
+	) 
+	create table t_code2 
+	(
+		id2 integer,
+		codeValue2 varchar(30),
+		listIndex2 integer
+	)
+	
+	此例子为span_modifiable控件的使用样例（tool/spanModifable.xml）
+	以及如何对相似的管理内容进行编写
+-->
+<eterna-config>
+	<factory>
+	
+		<objs>
+
+			<model name="codeManage.index" modelExportName="codeManage.export" />
+			<export name="codeManage.export" path="${page.view}" viewName="codeManage.view" />
+			<export name="codeManage.goto.index" modelName="codeManage.list" redirect="true" />
+			<view name="codeManage.view">
+				<component name="menu" type="div">
+					<component name="1" type="a" comParam="text:'代码表1'">
+						<init-script>webObj.attr("href", {$ef:getHeadURL}("codeManage.list", {codeType:'c1'}));</init-script>
+					</component>
+					<component name="2" type="a" comParam="text:'代码表2',css:{'margin-left':'12px'}">
+						<init-script>webObj.attr("href", {$ef:getHeadURL}("codeManage.list", {codeType:'c2'}));</init-script>
+					</component>
+				</component>
+				<component name="main" type="div" comParam="css:{width:'500px'}">
+					<before-init>checkResult = {$data:codeType} != null;</before-init>
+					<component name="title" type="h1">
+						<init-script>webObj.text({$data:codeCaption} + "代码表管理");</init-script>
+					</component>
+					<component name="br" type="br" />
+					<replacement name="toolbar" baseComponentName="toolbar_component">
+						<before-init>
+							{$parentScript}
+							btns.push({name:'添加',img:'add.gif',model:'codeManage.add',params:{codeType:{$data:codeType}}});
+						</before-init>
+					</replacement>
+					<table-list name="codeList" dataName="codeList" baseName="query:codeManage.list.query" 
+						comParam="attr:{id:'codeTable'}">
+						<columns>
+							<column name="opt" srcName="id" caption="操作">
+								<component name="1" type="a" comParam="text:'删除'">
+									<init-script>
+										var params = {
+											id:eg_temp.valueObj.value,
+											codeType:{$data:codeType}
+										};
+										webObj.attr("href", {$ef:getHeadURL}("codeManage.delete", params));
+									</init-script>
+								</component>
+							</column>
+						</columns>
+					</table-list>
+				</component>
+			</view>
+			
+			<model name="codeManage.list" modelExportName="codeManage.export">
+				<trans-execute from="RP:codeType" opt="getFirstString" to="data:codeType" />
+				<execute name="getType" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="attrCode" value="codeTypeParse" />
+					<attribute name="code.typeFlag" value="codeType" />
+					<attribute name="code.toCache" value="1" />
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<query-execute queryName="codeManage.list.query">
+					<param-bind src="cache:1" subSQL="true" names="table:1,index:2,index:3" />
+				</query-execute>
+				<trans-execute from="cache:1" opt="getMapValue:caption" to="data:codeCaption" />
+				<trans-execute from="stack" to="data:codeList" />
+			</model>
+			<query name="codeManage.list.query">
+				<prepared-sql>
+					select * from #sub
+					where #sub &gt; 0
+					order by #sub
+				</prepared-sql>
+				<readers>
+					<reader name="id" colIndex="1" type="int" caption="编号" width="25" />
+					<reader name="value" colIndex="2" type="String" caption="[script]:{$data:codeCaption}">
+						<attribute name="inputType" value="value_manage_component" />
+					</reader>
+				</readers>
+			</query>
+
+			<model name="codeManage.add" modelExportName="codeManage.goto.index">
+				<trans-execute from="RP:codeType" opt="getFirstString" to="data:codeType" />
+				<execute name="getType" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="attrCode" value="codeTypeParse" />
+					<attribute name="code.typeFlag" value="codeType" />
+					<attribute name="code.toCache" value="1" />
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<query-execute queryName="codeManage.getMaxId.query">
+					<param-bind src="cache:1" subSQL="true" names="table:2,id:1" />
+				</query-execute>
+				<trans-execute from="stack" opt="getFirstRow" to="cache:2" />
+				<execute name="nextId" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="code" value="$useBodyText">
+						ResultRow row = (ResultRow) data.caches[2];
+						if (row == null)
+						{
+							data.caches[2] = Utility.INTEGER_1;
+						}
+						else
+						{
+							data.caches[2] = new Integer(row.getInt(1) + 1);
+						}
+						return null;
+					</attribute>
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<update-execute updateName="codeManage.add.update">
+					<param-bind src="cache:1" subSQL="true" names="table:1,id:2,value:3,index:4" />
+					<param-bind src="cache:2" names="id,value,index" />
+				</update-execute>
+			</model>
+			<query name="codeManage.getMaxId.query">
+				<prepared-sql>
+					select max(#sub) from #sub
+				</prepared-sql>
+				<readers>
+					<reader name="max" colIndex="1" type="int" />
+				</readers>
+			</query>
+			<update name="codeManage.add.update">
+				<prepared-sql>
+					insert into #sub (#sub, #sub, #sub) values (?, ?, ?)
+				</prepared-sql>
+				<parameters>
+					<parameter name="id" type="int" />
+					<parameter name="value" type="String" />
+					<parameter name="index" type="int" />
+				</parameters>
+			</update>
+			
+			<model name="codeManage.delete" modelExportName="codeManage.goto.index">
+				<trans-execute from="RP:codeType" opt="getFirstString" to="data:codeType" />
+				<execute name="getType" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="attrCode" value="codeTypeParse" />
+					<attribute name="code.typeFlag" value="codeType" />
+					<attribute name="code.toCache" value="1" />
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<update-execute updateName="codeManage.delete.update">
+					<param-bind src="cache:1" subSQL="true" names="table:1,id:3,index:2" />
+					<param-bind src="RP" names="id" />
+				</update-execute>
+			</model>
+			<update name="codeManage.delete.update">
+				<prepared-sql>
+					update #sub set #sub = -1 where #sub = ?
+				</prepared-sql>
+				<parameters>
+					<parameter name="id" type="int" />
+				</parameters>
+			</update>
+			
+			<model name="codeManage.modify">
+				<execute name="getType" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="attrCode" value="codeTypeParse" />
+					<attribute name="code.typeFlag" value="codeType" />
+					<attribute name="code.toCache" value="1" />
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<update-execute updateName="codeManage.modify.update">
+					<param-bind src="cache:1" subSQL="true" names="table:1,id:3,value:2" />
+					<param-bind src="RP" names="ID:id,value" />
+				</update-execute>
+			</model>
+			<update name="codeManage.modify.update">
+				<prepared-sql>
+					update #sub set #sub = ? where #sub = ?
+				</prepared-sql>
+				<parameters>
+					<parameter name="value" type="String" />
+					<parameter name="id" type="int" />
+				</parameters>
+			</update>
+			
+			<model name="codeManage.order" modelExportName="ajax.export">
+				<execute name="getType" generator="self.micromagic.dc.JavaCodeExecute">
+					<attribute name="attrCode" value="codeTypeParse" />
+					<attribute name="code.typeFlag" value="codeType" />
+					<attribute name="code.toCache" value="1" />
+					<attribute name="throwCompileError" value="true" />
+				</execute>
+				<update-execute updateName="codeManage.order.update">
+					<param-bind src="cache:1" subSQL="true" names="table:1,id:3,index:2" />
+					<param-bind src="RP" names="ID:id,INDEX:index" loop="true" />
+				</update-execute>
+				<query-execute queryName="codeManage.list.query">
+					<param-bind src="cache:1" subSQL="true" names="table:1,index:2,index:3" />
+				</query-execute>
+				<trans-execute from="stack" to="data:codeList" />
+			</model>
+			<update name="codeManage.order.update">
+				<prepared-sql>
+					update #sub set #sub = ? where #sub = ?
+				</prepared-sql>
+				<parameters>
+					<parameter name="index" type="int" />
+					<parameter name="id" type="int" />
+				</parameters>
+			</update>
+			
+			<!-- 用于管理代码值的控件 -->
+			<typical-replacement name="value_manage_component" baseComponentName="span_modifiable"
+				comParam="css:{cursor:'pointer'}">
+				<before-init>
+					var tempData = _eterna.egTempData(true);
+					tempData.canDrag = 1;
+					tempData.color = "blue";
+					tempData.bgColor = "gray";
+					tempData.objGroupId = "codeValues";
+					tempData.params = {codeType:{$data:codeType}};
+					tempData.ID = {$ef:findData_value}("id");
+					tempData.modelName = "codeManage.modify";
+					tempData.orderModelName = "codeManage.order";
+					tempData.orderReloadObjs = ["codeTable"];
+					tempData.orderReloadDatas = ["codeList"];
+					if (eg_temp.valueObj.exists)
+					{
+						tempData.value = eg_temp.valueObj.value;
+					}
+				</before-init>
+			</typical-replacement>
+			
+		</objs>
+		
+		<attributes>
+		
+			<!-- 获取某个代码表的相关信息，如：表名，列名等 -->
+			<attribute name="codeTypeParse" value="$useBodyText">
+				String type = data.getRequestParameter("${code.typeFlag}");
+				Map param = new HashMap();
+				if ("c1".equals(type))
+				{
+					param.put("table", "t_code1");
+					param.put("id", "id1");
+					param.put("value", "codeValue1");
+					param.put("index", "listIndex1");
+					param.put("caption", "专业");
+					data.caches[${code.toCache}] = param;
+				}
+				else if ("c2".equals(type))
+				{
+					param.put("table", "t_code2");
+					param.put("id", "id2");
+					param.put("value", "codeValue2");
+					param.put("index", "listIndex2");
+					param.put("caption", "院系");
+					data.caches[${code.toCache}] = param;
+				}
+				else
+				{
+					throw new self.micromagic.eterna.digester.ConfigurationException("Error type:" + type + ".");
+				}
+				return null;
+			</attribute>
+			
+		</attributes>
+		
+	</factory>
+</eterna-config>

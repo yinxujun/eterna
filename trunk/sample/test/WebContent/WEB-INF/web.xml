@@ -10,7 +10,10 @@
 		<servlet-class>test.Test</servlet-class>
 		<init-param>
 			<param-name>initFiles</param-name>
-			<param-value>cp:test/sample.xml;cp:test/test.xml;cp:test/my.xml;cp:test/exp.xml;cp:test/excel.xml;</param-value>
+			<param-value>
+				cp:test/sample.xml;cp:test/test.xml;cp:test/my.xml;cp:test/exp.xml;
+				cp:test/excel.xml;cp:test/codeManage.xml;
+			</param-value>
 		</init-param>
 		<init-param>
 			<param-name>defaultModel</param-name>

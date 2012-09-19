@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ModelAdapter
 {
    /**

@@ -13,7 +13,8 @@
 			need tempData:
 			ID, canDrag, color, bgColor, editBorder,
 			tableName, idName, params, value, values, nextGroupId,
-			modelName, orderModelName, reloadObjs, reloadDatas,
+			modelName, reloadObjs, reloadDatas,
+			orderModelName, orderReloadObjs, orderReloadDatas,
 			containerId, objGroupId, [and others...]
 			-->
 			<typical-component name="span_modifiable" type="span">
@@ -395,8 +396,8 @@
 				ttt = theObj.data("reloadObjs");
 				if (theObj.data("orderModelName") != null)
 				{
-					return [params, theObj.data("orderModelName"), theObj.data("reloadObjs"),
-							theObj.data("reloadDatas")];
+					return [params, theObj.data("orderModelName"), theObj.data("orderReloadObjs"),
+							theObj.data("orderReloadDatas")];
 				}
 				return null;
 			]]></function>
