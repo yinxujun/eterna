@@ -19,10 +19,20 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.eterna.sql.SQLParameter;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.container.RequestParameterMap;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ParamBindImpl extends AbstractGenerator
       implements ParamBind, ParamBindGenerator
 {
+	/**
+	 * 当subSQL为true, 同时没有设置names属性时, 用此默认值.
+	 */
+	private static final ParamSetManager.Name[] DEFAULT_SUBSQL_NAMES
+			= new ParamSetManager.Name[]{new ParamSetManager.Name(null, 1)};
+
    protected ParamSetManager.Name[] names = null;
    protected DataHandler srcHandler = new DataHandler("src", false, true);
 
@@ -41,8 +51,10 @@ public class ParamBindImpl extends AbstractGenerator
       {
          if (this.names == null || this.names.length == 0)
          {
-            log.warn("Because not give the sub index at attribute names, so set names = 1.");
-            this.names = new ParamSetManager.Name[]{new ParamSetManager.Name(null, 1)};
+            log.warn("Because not give the sub index at attribute names, so set names = 1."
+						+ " model:" + model.getName() + ", execute:" + execute.getExecuteType()
+						+ "#" + execute.getName() + ".");
+            this.names = DEFAULT_SUBSQL_NAMES;
          }
          else
          {
@@ -153,7 +165,14 @@ public class ParamBindImpl extends AbstractGenerator
 
       if (this.subSQL)
       {
-         if (tempValue instanceof String)
+			if (tempValue == null)
+			{
+            for (int i = 0; i < this.names.length; i++)
+            {
+               psm.setSubSQL(this.names[i].sqlIndex, "");
+            }
+			}
+         else if (tempValue instanceof String)
          {
             for (int i = 0; i < this.names.length; i++)
             {
@@ -178,6 +197,26 @@ public class ParamBindImpl extends AbstractGenerator
 							sm.getSpecialPreparerManager(sa));
             }
          }
+			else if (tempValue instanceof Map)
+			{
+				Map subs = (Map) tempValue;
+            for (int i = 0; i < this.names.length; i++)
+            {
+					String v = RequestParameterMap.getFirstParam(subs.get(this.names[i].srcName));
+					if (v == null)
+					{
+						psm.setSubSQL(this.names[i].sqlIndex, "");
+					}
+					else
+					{
+						psm.setSubSQL(this.names[i].sqlIndex, v);
+					}
+            }
+			}
+			else
+			{
+				throw new ConfigurationException("Error src type:" + tempValue.getClass() + ".");
+			}
       }
       else
       {
