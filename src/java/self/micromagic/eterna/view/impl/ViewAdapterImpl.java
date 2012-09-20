@@ -265,16 +265,15 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write(DEBUG_EVENT_CODE);
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write('}');
+         out.write("}}");
       }
       else
       {
          out.write(",fn:function(event,webObj,objConfig){");
          out.write(eventBegin);
          out.write(event.getScriptBody());
-         out.write('}');
+         out.write("}}");
       }
-      out.write('}');
    }
 
    public void printFunction(Writer out, AppData data, String key, Function fn)
@@ -586,21 +585,25 @@ public class ViewAdapterImpl extends AbstractGenerator
          out.write(',');
       }
 
+      boolean first = true;
       Iterator itr = typical.entrySet().iterator();
       while (itr.hasNext())
       {
          Map.Entry entry = (Map.Entry) itr.next();
          String key = (String) entry.getKey();
          Component com = (Component) entry.getValue();
-         out.write('"');
+			if (first)
+			{
+				first = false;
+         	out.write('"');
+			}
+			else
+			{
+				out.write(",\"");
+			}
          this.stringCoder.toJsonString(out, key);
          out.write("\":");
          com.print(out, data, this);
-
-         if (itr.hasNext())
-         {
-            out.write(',');
-         }
       }
 
       Map newTypical = data.getSpcialDataMap(TYPICAL_COMPONENTS_MAP, true);

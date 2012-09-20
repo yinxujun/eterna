@@ -29,6 +29,9 @@ import self.micromagic.eterna.view.DataPrinterGenerator;
 import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.util.FormatTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class DataPrinterImpl extends AbstractGenerator
       implements DataPrinter, DataPrinterGenerator
 {
@@ -66,13 +69,13 @@ public class DataPrinterImpl extends AbstractGenerator
             if (hasPreData || !first)
             {
                // 输出data数据集前面会有其它数据或不是第一个数据时，需要先输出","
-               out.write(',');
+               out.write(",\"");
             }
 				else
 				{
             	first = false;
+            	out.write('"');
 				}
-            out.write('"');
             this.stringCoder.toJsonString(out, keyStr);
             out.write("\":");
             this.print(out, value);
@@ -251,10 +254,13 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             if (firstSetted)
             {
-               out.write(',');
+               out.write(",\"");
             }
-            firstSetted = true;
-            out.write('"');
+				else
+				{
+            	firstSetted = true;
+            	out.write('"');
+				}
             this.stringCoder.toJsonString(out, rmd.getColumnName(i));
             out.write("\":\"");
             this.stringCoder.toJsonString(out, row.getFormated(i));
@@ -277,20 +283,19 @@ public class DataPrinterImpl extends AbstractGenerator
          {
             if (firstSetted)
             {
-               out.write(',');
+               out.write(",\"");
             }
 				else
 				{
             	firstSetted = true;
+					out.write('"');
 				}
-            out.write('"');
             this.stringCoder.toJsonString(out, rmd.getColumnName(i));
             out.write("\":");
             out.write(String.valueOf(i));
          }
       }
-      out.write('}');
-      out.write(",rowCount:");
+      out.write("},rowCount:");
       out.write(String.valueOf(ritr.getRecordCount()));
       out.write(",rows:[");
 		boolean nextRow = false;
@@ -298,21 +303,24 @@ public class DataPrinterImpl extends AbstractGenerator
       {
 			if (nextRow)
 			{
-            out.write(',');
+            out.write(",[");
 			}
 			else
 			{
 				nextRow = true;
+         	out.write('[');
 			}
          ResultRow row = (ResultRow) ritr.next();
-         out.write('[');
          for (int i = 1; i <= count; i++)
          {
             if (i > 1)
             {
-               out.write(',');
+               out.write(",\"");
             }
-            out.write('"');
+				else
+				{
+            	out.write('"');
+				}
             this.stringCoder.toJsonString(out, row.getFormated(i));
             out.write('"');
          }
@@ -369,8 +377,7 @@ public class DataPrinterImpl extends AbstractGenerator
 		}
 		for (int i = 1; i < values.length; i++)
 		{
-			out.write(',');
-      	out.write(values[i] ? "true" : "false");
+      	out.write(values[i] ? ",true" : ",false");
 		}
 		out.write(']');
    }
@@ -588,11 +595,14 @@ public class DataPrinterImpl extends AbstractGenerator
 	public void printPairWithoutCheck(Writer out, String key, int value, boolean first)
 			throws IOException, ConfigurationException
 	{
-		if (!first)
+		if (first)
 		{
-			out.write(',');
+			out.write('"');
 		}
-		out.write('"');
+		else
+		{
+			out.write(",\"");
+		}
 		out.write(key);
 		out.write("\":");
 		this.print(out, value);
@@ -613,11 +623,14 @@ public class DataPrinterImpl extends AbstractGenerator
 	public void printPairWithoutCheck(Writer out, String key, long value, boolean first)
 			throws IOException, ConfigurationException
 	{
-		if (!first)
+		if (first)
 		{
-			out.write(',');
+			out.write('"');
 		}
-		out.write('"');
+		else
+		{
+			out.write(",\"");
+		}
 		out.write(key);
 		out.write("\":");
 		this.print(out, value);
@@ -650,11 +663,14 @@ public class DataPrinterImpl extends AbstractGenerator
 	public void printPairWithoutCheck(Writer out, String key, double value, boolean first)
 			throws IOException, ConfigurationException
 	{
-		if (!first)
+		if (first)
 		{
-			out.write(',');
+			out.write('"');
 		}
-		out.write('"');
+		else
+		{
+			out.write(",\"");
+		}
 		out.write(key);
 		out.write("\":");
 		this.print(out, value);
@@ -675,11 +691,14 @@ public class DataPrinterImpl extends AbstractGenerator
 	public void printPairWithoutCheck(Writer out, String key, String value, boolean first)
 			throws IOException, ConfigurationException
 	{
-		if (!first)
+		if (first)
 		{
-			out.write(',');
+			out.write('"');
 		}
-		out.write('"');
+		else
+		{
+			out.write(",\"");
+		}
 		out.write(key);
 		out.write("\":");
 		this.print(out, value);
@@ -700,11 +719,14 @@ public class DataPrinterImpl extends AbstractGenerator
 	public void printPairWithoutCheck(Writer out, String key, Object value, boolean first)
 			throws IOException, ConfigurationException
 	{
-		if (!first)
+		if (first)
 		{
-			out.write(',');
+			out.write('"');
 		}
-		out.write('"');
+		else
+		{
+			out.write(",\"");
+		}
 		out.write(key);
 		out.write("\":");
 		this.print(out, value);
@@ -808,13 +830,16 @@ public class DataPrinterImpl extends AbstractGenerator
             boolean first = true;
             for (int i = 0; i < this.fields.length; i++)
             {
-               if (!first)
+               if (first)
+					{
+               	first = false;
+               	out.write('"');
+					}
+					else
                {
-                  out.write(',');
+                  out.write(",\"");
                }
-               first = false;
                Field f = this.fields[i];
-               out.write('"');
                out.write(f.getName());
                out.write("\":");
                p.print(out, f.get(bean));
@@ -824,12 +849,15 @@ public class DataPrinterImpl extends AbstractGenerator
                BeanMethodInfo m = this.methods[i];
                if (m.method != null)
                {
-                  if (!first)
+                  if (first)
                   {
-                     out.write(',');
+							first = false;
+							out.write('"');
                   }
-                  first = false;
-                  out.write('"');
+						else
+						{
+							out.write(",\"");
+						}
                   out.write(m.name);
                   out.write("\":");
                   p.print(out, m.method.invoke(bean, new Object[0]));
