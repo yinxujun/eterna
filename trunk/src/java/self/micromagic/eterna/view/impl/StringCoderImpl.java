@@ -11,6 +11,9 @@ import self.micromagic.eterna.view.StringCoder;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class StringCoderImpl
       implements StringCoder
 {
@@ -274,18 +277,24 @@ public class StringCoderImpl
 				StringInfo.valid = false;
 			}
 		}
+		int startOutPos = 0;
       for (int i = 0; i < len; i++)
       {
          char c = str.charAt(i);
 			if (c < CHAR_TABLE_SIZE && ESCAPES_JSON[c] != null)
 			{
+				if (startOutPos < i)
+				{
+					out.write(str, startOutPos, i - startOutPos);
+				}
 				out.write(ESCAPES_JSON[c]);
-			}
-			else
-			{
-				out.write(c);
+				startOutPos = i + 1;
 			}
       }
+		if (startOutPos < len)
+		{
+			out.write(str, startOutPos, len - startOutPos);
+		}
 	}
 
 	public void toJsonString(Writer out, int c)
@@ -303,9 +312,9 @@ public class StringCoderImpl
 
 
    /**
-    * 当字符在200以上时, 使用反射调获取char数组比使用charAt更快.
+    * 当字符在100以上时, 使用反射调获取char数组比使用charAt更快.
     */
-   private static final int REFLECT_GET_GAP = 200;
+   private static final int REFLECT_GET_GAP = 100;
 
 	private static class StringInfo
 	{
@@ -344,6 +353,7 @@ public class StringCoderImpl
 				valid = false;
 			}
 		}
+
 	}
 
 }

@@ -1,6 +1,9 @@
 
 package self.micromagic.util;
 
+/**
+ * @author micromagic.sina.com
+ */
 class StringTool$StringBufferCreater
 		implements StringAppender, StringTool.StringAppenderCreater
 {
@@ -34,7 +37,7 @@ class StringTool$StringBufferCreater
 
 	public StringAppender append(String str, int startIndex, int length)
 	{
-		this.buf.append(str.substring(startIndex, length));
+		this.buf.append(str.substring(startIndex, startIndex + length));
 		return this;
 	}
 

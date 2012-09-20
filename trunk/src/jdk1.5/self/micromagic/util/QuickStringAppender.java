@@ -5,6 +5,8 @@ import java.lang.reflect.Constructor;
 
 /**
  * 一个快速的字符串拼接工具.
+ *
+ * @author micromagic.sina.com
  */
 class QuickStringAppender
       implements StringAppender, StringTool.StringAppenderCreater
