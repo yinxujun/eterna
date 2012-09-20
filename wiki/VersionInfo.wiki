@@ -1,6 +1,11 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.5==
+修复了eterna_global.xml中定义的list_operator控件，在需要确认时点击取消仍然继续执行的bug。<br>
+script代码中增加了{$caption:name}，用于获取标题的翻译值。<br>
+修复了self.micromagic.util.StringAppend实现类中append(String, int, int)方法的一个bug。<br>
+----
 ==1.5.4==
 将self.micromagic.eterna.sql.impl包下一些类的clone方法改为copy方法。<br>
 修复了data-source-manager节点设置className属性时没有效果的错误。<br>
