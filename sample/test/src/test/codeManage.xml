@@ -24,7 +24,7 @@
 	<factory>
 		<objs>
 
-			<model name="codeManage.index" modelExportName="codeManage.export" />
+			<model name="codeManage.index" modelExportName="codeManage.export" transactionType="notNeed" />
 			<export name="codeManage.export" path="${page.view}" viewName="codeManage.view" />
 			<export name="codeManage.goto.index" modelName="codeManage.list" redirect="true" />
 			<view name="codeManage.view">
@@ -65,7 +65,110 @@
 						</columns>
 					</table-list>
 				</component>
+				<component name="sample" type="none">
+					<before-init>checkResult = {$data:codeType} == null;</before-init>
+					<component name="title" type="h1" comParam="text:'span_modifiable样例'" />
+					<component name="t" type="table" comParam="attr:{border:1,cellPadding:5},css:{'font-size':'16px'}">
+						<component name="loop" type="loop">
+							<before-init>
+								eg_temp.dataName = "row_count";
+								{$dataV:eg_temp.dataName} = 8;
+							</before-init>
+							<component name="tr" type="tr">
+								<init-script>webObj.attr("id", "s_tr_" + eg_temp.index);</init-script>
+								<component name="td1" type="td">
+									<replacement name="1" baseComponentName="span_modifiable_sample">
+										<before-init>
+											var tdName = "td1"
+											{$parentScript}
+											tempData.objGroupId = "td1";
+											tempData.containerId = "s_tr_" + eg_temp.index;
+										</before-init>
+									</replacement>
+								</component>
+								<component name="td2" type="td">
+									<replacement name="2" baseComponentName="span_modifiable_sample">
+										<before-init>
+											var tdName = "td2"
+											{$parentScript}
+											tempData.focusGroupId = "f2";
+											tempData.canDrag = 0;
+										</before-init>
+									</replacement>
+								</component>
+								<component name="td3" type="td">
+									<init-script>webObj.attr("id", "s_td3_" + eg_temp.index);</init-script>
+									<replacement name="3" baseComponentName="span_modifiable_sample">
+										<before-init>
+											var tdName = "td3"
+											{$parentScript}
+											tempData.focusGroupId = "f2";
+											tempData.objGroupId = "tr_" + eg_temp.index;
+											tempData.containerId = "s_td3_" + eg_temp.index;
+										</before-init>
+									</replacement>
+								</component>
+								<component name="td4" type="td">
+									<init-script>webObj.attr("id", "s_td4_" + eg_temp.index);</init-script>
+									<replacement name="4" baseComponentName="span_modifiable_sample">
+										<before-init>
+											var tdName = "td4"
+											{$parentScript}
+											tempData.focusGroupId = "f2";
+											tempData.objGroupId = "tr_" + eg_temp.index;
+											tempData.containerId = "s_td4_" + eg_temp.index;
+										</before-init>
+									</replacement>
+								</component>
+								<component name="td5" type="td">
+									<init-script>webObj.attr("id", "s_td5_" + eg_temp.index);</init-script>
+									<replacement name="5" baseComponentName="span_modifiable_sample">
+										<before-init>
+											var tdName = "td5"
+											{$parentScript}
+											tempData.focusGroupId = "f2";
+											tempData.objGroupId = "tr_" + eg_temp.index;
+											tempData.containerId = "s_td5_" + eg_temp.index;
+										</before-init>
+									</replacement>
+								</component>
+							</component>
+						</component>
+					</component>
+					<component name="msg" type="div" comParam="attr:{id:'msgArea'}" />
+				</component>
 			</view>
+			<typical-replacement name="span_modifiable_sample" baseComponentName="span_modifiable"
+				comParam="css:{cursor:'pointer'}">
+				<before-init>
+					var tempData = _eterna.egTempData(true);
+					tempData.canDrag = 1;  
+					tempData.ID = tdName + "_" + eg_temp.index;
+					tempData.value = tempData.ID;
+				</before-init>
+				<events>
+					<event name="beginModify">
+						_eterna.getWebObj("msgArea").text(webObj.data("ID") + " 开始修改");
+					</event>
+					<event name="endModify">
+						if (webObj.data("value") == "error")
+						{
+							webObj.data("valid", 0);
+							_eterna.getWebObj("msgArea").text(webObj.data("ID") + " 值不合法");
+						}
+						else
+						{
+							_eterna.getWebObj("msgArea").text(webObj.data("ID") + " 修改完成");
+						}
+					</event>
+					<event name="beginDrag">
+						_eterna.getWebObj("msgArea").text(webObj.data("ID") + " 开始拖动");
+					</event>
+					<event name="endDrag">
+						_eterna.getWebObj("msgArea").text(webObj.data("ID") + " 拖动完成");
+					</event>
+				</events>
+			</typical-replacement>
 			
 			<!-- 查询出所有的代码记录（排序值小于等于0的表示已删除的） -->
 			<model name="codeManage.list" modelExportName="codeManage.export">
