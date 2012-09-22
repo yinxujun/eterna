@@ -12,10 +12,10 @@
 			可编辑的span文本控件
 			need tempData:
 			ID, canDrag, color, bgColor, editBorder,
-			tableName, idName, params, value, values, nextGroupId,
+			tableName, idName, params, value, values, 
 			modelName, reloadObjs, reloadDatas,
 			orderModelName, orderReloadObjs, orderReloadDatas,
-			containerId, objGroupId, [and others...]
+			containerId, objGroupId, focusGroupId, [and others...]
 			-->
 			<typical-component name="span_modifiable" type="span">
 				<init-script>
@@ -28,7 +28,7 @@
 					{
 						webObj.text(tempData.value);
 					}
-					webObj.data("objIndex", {$ef:getSpanModifableIndex}());
+					webObj.data("spanMobjId", {$ef:getSpanModifableObjId}());
 					if (tempData.ID != null)
 					{
 						var tmpId = "spanM_" + tempData.ID;
@@ -40,7 +40,15 @@
 					}
 					if (tempData.objGroupId != null)
 					{
-						webObj.attr("objGroupId", tempData.objGroupId)
+						webObj.attr("spanMobjGroupId", tempData.objGroupId);
+						if (tempData.focusGroupId == null)
+						{
+							webObj.attr("spanMfocusGroupId", tempData.objGroupId);
+						}
+					}
+					if (tempData.focusGroupId != null)
+					{
+						webObj.attr("spanMfocusGroupId", tempData.focusGroupId);
 					}
 					webObj.data("cursor", webObj.css("cursor"));
 					for (key in tempData)
@@ -80,8 +88,8 @@
 							{$data:___inDrag} = 1;
 							{$data:___spanM_selected} = webObj;
 
-							var gId = {$data:___spanM_selected}.attr("objGroupId");
-							_eterna.queryWebObj("span[objGroupId=" + gId + "]").data("dragGroup", 1);
+							var gId = {$data:___spanM_selected}.attr("spanMobjGroupId");
+							_eterna.queryWebObj("span[spanMobjGroupId=" + gId + "]").data("dragGroup", 1);
 						}
 					]]></event>
 					<event name="mousemove">
@@ -96,20 +104,30 @@
 					<event name="mouseup"><![CDATA[
 						if ({$data:___inDrag} && !{$data:___locked})
 						{
-							if (webObj.data("objIndex") != {$data:___spanM_selected}.data("objIndex")
+							if (webObj.data("spanMobjId") != {$data:___spanM_selected}.data("spanMobjId")
 									&& webObj.data("dragGroup") == 1)
 							{
 								var obj1 = {$data:___spanM_selected}.data("containerId") != null ?
 										_eterna.getWebObj({$data:___spanM_selected}.data("containerId")) : {$data:___spanM_selected};
 								var obj2 = webObj.data("containerId") != null ?
 										_eterna.getWebObj(webObj.data("containerId")) : webObj;
-								if ({$data:___spanM_selected}.data("objIndex") > webObj.data("objIndex"))
+								var objId1 = {$data:___spanM_selected}.data("spanMobjId");
+								var objId2 = webObj.data("spanMobjId");
+								var gId = {$data:___spanM_selected}.attr("spanMobjGroupId");
+								var gObjs = _eterna.queryWebObj("span[spanMobjGroupId=" + gId + "]");
+								var len = gObjs.size();
+								for (var i = 0; i < len; i++)
 								{
-									obj2.before(obj1);
-								}
-								else
-								{
-									obj2.after(obj1);
+									if (objId2 == gObjs.eq(i).data("spanMobjId"))
+									{
+										obj2.before(obj1);
+										break;
+									}
+									else if (objId1 == gObjs.eq(i).data("spanMobjId"))
+									{
+										obj2.after(obj1);
+										break;
+									}
 								}
 								{$data:___spanM_selected}.data("objMoved", 1);
 								var p = {$ef:spanM_orderItems}({$data:___spanM_selected}, webObj);
@@ -162,6 +180,7 @@
 				textObj.focus();
 				textObj.select();
 				spanObj.data("beginModify", 1);
+				spanObj.data("editObj", textObj);
 				spanObj.trigger("beginModify");
 			]]></function>
 
@@ -175,22 +194,20 @@
 			</function>
 
 			<function name="spanM_moveToNextObj" param="spanObj"><![CDATA[
-				var gId = spanObj.data("objGroupId");
-				if (spanObj.data("nextGroupId") != null)
-				{
-					gId = spanObj.data("nextGroupId");
-				}
-				if (gId == null)
+				var fId = spanObj.attr("spanMfocusGroupId");
+				if (fId == null)
 				{
 					return;
 				}
 				var nextObj = null;
-				var gObjs = _eterna.queryWebObj("span[objGroupId=" + gId + "]");
-				for (var i = 0; i < gObjs.size(); i++)
+				var fObjs = _eterna.queryWebObj("span[spanMfocusGroupId=" + fId + "]");
+				var len = fObjs.size() - 1;
+				var nowId = spanObj.data("spanMobjId");
+				for (var i = 0; i < len; i++)
 				{
-					if (gObjs.eq(i).data("objIndex") > spanObj.data("objIndex"))
+					if (nowId == fObjs.eq(i).data("spanMobjId"))
 					{
-						nextObj = gObjs.eq(i);
+						nextObj = fObjs.eq(i + 1);
 						break;
 					}
 				}
@@ -216,8 +233,8 @@
 					textObj.data("needToNext", 1);
 					textObj.blur();
 				}
-				else if (event.keyCode != 20 && event.keyCode != 136 && event.keyCode != 137  // 3Lock
-						&& !(event.keyCode >= 37 && event.keyCode <= 40))							  // 左上右下
+				else if (event.keyCode != 20 && event.keyCode != 136 && event.keyCode != 137 // 3Lock
+						&& !(event.keyCode >= 37 && event.keyCode <= 40)) // 左上右下
 				{
 					var tObj = jQuery('<span></span>');
 					_eterna.rootWebObj.append(tObj);
@@ -234,10 +251,16 @@
 				var newValue = textObj.val();
 				var oldValue = spanObj.data("value");
 				spanObj.data("value", newValue);
+				spanObj.data("oldValue", oldValue);
 				spanObj.data("valueChanged", newValue != oldValue);
 				spanObj.data("valid", 1);
-				var endFlag = spanObj.trigger("endModify");
-				if (!spanObj.data("valid"))
+				spanObj.trigger("endModify");
+				var canModifyValue = spanObj.data("valid");
+				spanObj.removeData("oldValue");
+				spanObj.removeData("valueChanged");
+				spanObj.removeData("valid");
+				spanObj.removeData("editObj");
+				if (!canModifyValue)
 				{
 					spanObj.data("value", oldValue);
 					if (oldValue == null || oldValue == "")
@@ -343,9 +366,10 @@
 						{$data:___spanM_movedDiv} = null;
 					}
 
-					var gId = {$data:___spanM_selected}.attr("objGroupId");
-					var gObjs = _eterna.queryWebObj("span[objGroupId=" + gId + "]");
-					for (var i = 0; i < gObjs.size(); i++)
+					var gId = {$data:___spanM_selected}.attr("spanMobjGroupId");
+					var gObjs = _eterna.queryWebObj("span[spanMobjGroupId=" + gId + "]");
+					var len = gObjs.size();
+					for (var i = 0; i < len; i++)
 					{
 						var thisObj = gObjs.eq(i);
 						thisObj.data("dragGroup", 0);
@@ -374,71 +398,25 @@
 				{
 					params.idName = theObj.data("idName");
 				}
-				var gId = theObj.attr("objGroupId");
-				var gObjs = _eterna.queryWebObj("span[objGroupId=" + gId + "]");
+				var gId = theObj.attr("spanMobjGroupId");
+				var gObjs = _eterna.queryWebObj("span[spanMobjGroupId=" + gId + "]");
 				params.ID = [];
 				params.INDEX = [];
-				var gIdSet = {};
-				for (var i = 0; i < gObjs.size(); i++)
+				var len = gObjs.size();
+				for (var i = 0; i < len; i++)
 				{
 					params.ID.push(gObjs.eq(i).data("ID"));
 					params.INDEX.push(i + 1);
-					if (gObjs.eq(i).data("nextGroupId") != null)
-					{
-						{$ef:spanM_reOrderObjIndex}(gObjs.eq(i).data("nextGroupId"), gIdSet);
-					}
 				}
-				{$ef:spanM_reOrderObjIndex}(gId, gIdSet);
-				var ttt = theObj.data("reloadObjs");
 				theObj.data("targetObj", targetObj);
 				theObj.trigger("moving");
 				theObj.removeData("targetObj");
-				ttt = theObj.data("reloadObjs");
 				if (theObj.data("orderModelName") != null)
 				{
 					return [params, theObj.data("orderModelName"), theObj.data("orderReloadObjs"),
 							theObj.data("orderReloadDatas")];
 				}
 				return null;
-			]]></function>
-
-			<!-- 对objIndex重新排序 -->
-			<function name="spanM_reOrderObjIndex" param="gId, gIdSet"><![CDATA[
-				if (gIdSet[gId])
-				{
-					return;
-				}
-				gIdSet[gId] = 1;
-				var gObjs = _eterna.queryWebObj("span[objGroupId=" + gId + "]");
-				var indexChanged = false;
-				var indexs = [];
-				for (var i = 0; i < gObjs.size(); i++)
-				{
-					if (gObjs.eq(i).data("nextGroupId") != null)
-					{
-						{$ef:spanM_reOrderObjIndex}(gObjs.eq(i).data("nextGroupId"), gIdSet);
-					}
-					indexs.push(gObjs.eq(i).data("objIndex"));
-					for (var j = i; j > 0; j--)
-					{
-						if (indexs[j] > indexs[j - 1])
-						{
-							break;
-						}
-						indexChanged = true;
-						var tmp = indexs[j];
-						indexs[j] = indexs[j - 1];
-						indexs[j - 1] = tmp;
-					}
-				}
-				if (indexChanged)
-				{
-					// 重新排列objIndex的值
-					for (var i = 0; i < gObjs.size(); i++)
-					{
-						gObjs.eq(i).data("objIndex", indexs[i]);
-					}
-				}
 			]]></function>
 
 
@@ -456,16 +434,16 @@
 				return false;
 			</function>
 
-			<function name="getSpanModifableIndex">
-				if ({$data:___spanM_objIndex} == null)
+			<function name="getSpanModifableObjId">
+				if ({$data:___spanM_objId} == null)
 				{
-					{$data:___spanM_objIndex} = 0;
+					{$data:___spanM_objId} = 1;
 				}
 				else
 				{
-					{$data:___spanM_objIndex} += 1;
+					{$data:___spanM_objId} += 1;
 				}
-				return {$data:___spanM_objIndex};
+				return {$data:___spanM_objId};
 			</function>
 
 		</objs>
