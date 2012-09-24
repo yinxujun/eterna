@@ -79,7 +79,7 @@
 								<component name="td1" type="td">
 									<replacement name="1" baseComponentName="span_modifiable_sample">
 										<before-init>
-											var tdName = "td1"
+											var tdName = "td1";
 											{$parentScript}
 											tempData.objGroupId = "td1";
 											tempData.containerId = "s_tr_" + eg_temp.index;
@@ -89,7 +89,7 @@
 								<component name="td2" type="td">
 									<replacement name="2" baseComponentName="span_modifiable_sample">
 										<before-init>
-											var tdName = "td2"
+											var tdName = "td2";
 											{$parentScript}
 											tempData.focusGroupId = "f2";
 											tempData.canDrag = 0;
@@ -100,7 +100,7 @@
 									<init-script>webObj.attr("id", "s_td3_" + eg_temp.index);</init-script>
 									<replacement name="3" baseComponentName="span_modifiable_sample">
 										<before-init>
-											var tdName = "td3"
+											var tdName = "td3";
 											{$parentScript}
 											tempData.focusGroupId = "f2";
 											tempData.objGroupId = "tr_" + eg_temp.index;
@@ -112,7 +112,7 @@
 									<init-script>webObj.attr("id", "s_td4_" + eg_temp.index);</init-script>
 									<replacement name="4" baseComponentName="span_modifiable_sample">
 										<before-init>
-											var tdName = "td4"
+											var tdName = "td4";
 											{$parentScript}
 											tempData.focusGroupId = "f2";
 											tempData.objGroupId = "tr_" + eg_temp.index;
@@ -124,7 +124,7 @@
 									<init-script>webObj.attr("id", "s_td5_" + eg_temp.index);</init-script>
 									<replacement name="5" baseComponentName="span_modifiable_sample">
 										<before-init>
-											var tdName = "td5"
+											var tdName = "td5";
 											{$parentScript}
 											tempData.focusGroupId = "f2";
 											tempData.objGroupId = "tr_" + eg_temp.index;
