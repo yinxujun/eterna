@@ -229,13 +229,26 @@
 			</description>
 		</attribute>
 		<attribute>
+			<name>scriptParam</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+				jsResource为true时才有效, 以json格式设置, 参数有:
+				alwaysExecute   设为ture表示每次都要执行script代码
+            async           设为true表示采用异步加载的方式
+			</description>
+		</attribute>
+		<attribute>
 			<name>charset</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<description>设置资源的编码格式</description>
 		</attribute>
 		<example><![CDATA[
+			普通例子
 			<e:res url="/eterna.js"/>
+			设置scriptParam的例子
+			<e:res url="/eterna.js" scriptParam="{alwaysExecute:true,async:true}"/>
 		]]></example>
 	</tag>
 </taglib>

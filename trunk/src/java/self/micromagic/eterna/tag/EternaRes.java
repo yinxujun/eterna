@@ -10,6 +10,11 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 在JSP中, 可通过此标签载入一个资源文件.
+ *
+ * @author micromagic@sina.com
+ */
 public class EternaRes extends TagSupport
 {
    /**
@@ -20,6 +25,7 @@ public class EternaRes extends TagSupport
    private String url;
 	private String charset;
    private boolean jsResource = true;
+   private String scriptParam;
 
    public int doStartTag()
          throws JspException
@@ -45,7 +51,15 @@ public class EternaRes extends TagSupport
 					tmpURL = ((HttpServletRequest) req).getContextPath() + this.url;
 				}
 			}
-			String params = this.jsResource + ", \"" + tmpURL + "\"" + charsetDef;
+			String params;
+			if (this.jsResource && this.scriptParam != null)
+			{
+				params = this.scriptParam + ", \"" + tmpURL + "\"" + charsetDef;
+			}
+			else
+			{
+				params = this.jsResource + ", \"" + tmpURL + "\"" + charsetDef;
+			}
 			out.println( "window.ef_loadResource(" + params + ");");
 			out.println("</script>");
 		}
@@ -111,6 +125,7 @@ public class EternaRes extends TagSupport
       this.url = null;
       this.charset = null;
 		this.jsResource = true;
+		this.scriptParam = null;
       super.release();
    }
 
@@ -122,6 +137,16 @@ public class EternaRes extends TagSupport
 	public void setJsResource(boolean jsResource)
 	{
 		this.jsResource = jsResource;
+	}
+
+	public String getScriptParam()
+	{
+		return this.scriptParam;
+	}
+
+	public void setScriptParam(String param)
+	{
+		this.scriptParam = param;
 	}
 
 	public String getUrl()

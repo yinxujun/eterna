@@ -8,6 +8,8 @@ import org.apache.commons.logging.Log;
 
 /**
  * 默认的工厂实例查询者.
+ *
+ * @author micromagic@sina.com
  */
 public class DefaultFinder
       implements InstanceFinder

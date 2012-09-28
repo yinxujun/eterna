@@ -9,6 +9,9 @@ import javax.servlet.jsp.tagext.TagSupport;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class InitBaseTag extends TagSupport
 {
    /**

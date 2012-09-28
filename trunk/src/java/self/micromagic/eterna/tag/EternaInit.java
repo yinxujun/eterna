@@ -13,6 +13,8 @@ import self.micromagic.eterna.view.ViewAdapter;
 
 /**
  * 在JSP中, 可通过此标签在页面中初始化Eterna对象.
+ *
+ * @author micromagic@sina.com
  */
 public class EternaInit extends InitBaseTag
 {
