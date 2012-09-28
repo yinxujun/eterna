@@ -22,6 +22,8 @@ import self.micromagic.util.container.ValueContainerMap;
 
 /**
  * 在JSP中, 可通过此标签在页面中定义一个eterna对象.
+ *
+ * @author micromagic@sina.com
  */
 public class EternaDefine extends InitBaseTag
 {

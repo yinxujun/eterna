@@ -1,5 +1,5 @@
 
-/** version: 1.5.5 */
+/** version: 1.5.6 */
 
 (function(window) {
 
@@ -12,7 +12,7 @@ else
 	return;
 }
 
-var ___ETERNA_VERSION = "1.5.5";
+var ___ETERNA_VERSION = "1.5.6";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 window.ED_GET_VALUE = 0x1;
 window.ED_EXECUTE_SCRIPT = 0x2;
@@ -178,6 +178,8 @@ var EG_OLD_BASE_OBJ = "oldBaseObj";
 var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
+
+window.currentEterna = null;
 
 window.eg_cache = {
 	willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
@@ -387,7 +389,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 					successFn.status = textStatus;
 					if (eterna_checkRemoteData(data))
 					{
-						successFn.data = eval("(" + eterna_dealRemoteData(data) + ")");
+						successFn.data = eval("(" + eterna_dealRemoteData(_eterna, data) + ")");
 					}
 					else
 					{
@@ -1931,7 +1933,19 @@ function Eterna($E, eterna_debug, rootWebObj)
 						var newArr = [];
 						for (var i = 0; i < theEvents.length; i++)
 						{
-							newArr.push(theEvents[i]);
+							if (theEvents[i].handler == eterna_specialEventHandler)
+							{
+								// 如果事件的handler就是特殊事件, 这取出它的事件列表
+								var tmpArr = theEvents[i].data.events;
+								for (var j = 0; j < tmpArr.length; j++)
+								{
+									newArr.push(tmpArr[j]);
+								}
+							}
+							else
+							{
+								newArr.push(theEvents[i]);
+							}
 						}
 						theEvents = newArr;
 					}
@@ -3953,16 +3967,25 @@ function eterna_initEternaCache(_eterna, newData)
  */
 function eterna_initTextData(_eterna, textData)
 {
-	if (_eterna.rootWebObj != null)
+	var oldEterna = currentEterna;
+	currentEterna = _eterna;
+	try
 	{
-		_eterna.rootWebObj.html(textData);
-		var specialObjs = _eterna.queryWebObj("a, form");
-		for (var i = 0; i < specialObjs.size(); i++)
+		if (_eterna.rootWebObj != null)
 		{
-			var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
-			_eterna.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+			_eterna.rootWebObj.html(textData);
+			eterna_doInitObjs(_eterna.rootWebObj);
+			var specialObjs = _eterna.queryWebObj("a, form");
+			for (var i = 0; i < specialObjs.size(); i++)
+			{
+				var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
+				_eterna.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+			}
 		}
-		eterna_doInitObjs(_eterna.rootWebObj);
+	}
+	finally
+	{
+		currentEterna = oldEterna;
 	}
 }
 
@@ -4535,7 +4558,7 @@ function eterna_checkRemoteData(str)
 /**
  * 处理获得的远程数据, 去除字符串右边的空白字符, 存储html文本等.
  */
-function eterna_dealRemoteData(str)
+function eterna_dealRemoteData(_eterna, str)
 {
 	if (str == null)
 	{
@@ -4559,19 +4582,28 @@ function eterna_dealRemoteData(str)
 	{
 		if (index + EG_JSON_SPLIT_FLAG.length < str.length)
 		{
-			var tmpDiv = jQuery("<div/>");
-			tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
-			var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
-			if (dataDiv.size() == 0)
+			var oldEterna = currentEterna;
+			currentEterna = _eterna;
+			try
 			{
-				dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
-				dataDiv.hide();
-				jQuery("body").append(dataDiv);
+				var tmpDiv = jQuery("<div/>");
+				tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
+				var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
+				if (dataDiv.size() == 0)
+				{
+					dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
+					dataDiv.hide();
+					jQuery("body").append(dataDiv);
+				}
+				var tmpSubs = tmpDiv.children();
+				for (var i = 0; i < tmpSubs.size(); i++)
+				{
+					dataDiv.append(tmpSubs.eq(i));
+				}
 			}
-			var tmpSubs = tmpDiv.children();
-			for (var i = 0; i < tmpSubs.size(); i++)
+			finally
 			{
-				dataDiv.append(tmpSubs.eq(i));
+				currentEterna = oldEterna;
 			}
 		}
 		return str.substring(0, index);
@@ -4610,7 +4642,7 @@ window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
 			{
 				if (eterna_checkRemoteData(textData))
 				{
-					var str = eterna_dealRemoteData(textData);
+					var str = eterna_dealRemoteData(_eterna, textData);
 					var tmpData = eval("(" + str + ")");
 					_eterna.changeEternaData(tmpData);
 					eg_temp = {};
@@ -4639,7 +4671,7 @@ window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
 				{
 					if (eterna_checkRemoteData(textData))
 					{
-						var str = eterna_dealRemoteData(result);
+						var str = eterna_dealRemoteData(_eterna, result);
 						var tmpData = eval("(" + str + ")");
 						_eterna.changeEternaData(tmpData);
 						eg_temp = {};
@@ -4752,47 +4784,64 @@ window.ef_toScriptString = function(str)
 if (typeof eg_pageInitializedURL == "undefined")
 {
 	window.eg_pageInitializedURL = {};
-	window.ef_loadResource = function (jsResource, url, charset)
+}
+
+window.ef_loadResource = function (jsResource, url, charset)
+{
+	if (window.eg_pageInitializedURL[url])
 	{
-		if (window.eg_pageInitializedURL[url])
+		if (!jsResource || !jsResource.alwaysExecute)
 		{
 			return;
 		}
-		window.eg_pageInitializedURL[url] = 1;
-		if (typeof eg_resVersion != "undefined")
+	}
+	window.eg_pageInitializedURL[url] = 1;
+	if (typeof eg_resVersion != "undefined")
+	{
+		if (url.indexOf("?") == -1)
 		{
-			if (url.indexOf("?") == -1)
-			{
-				url += "?_v=" + eg_resVersion;
-			}
-			else
-			{
-				url += "&_v=" + eg_resVersion;
-			}
-		}
-		var resObj;
-		if (jsResource)
-		{
-			resObj = document.createElement("script");
-			resObj.type = "text/javascript";
-			resObj.async = true;
-			resObj.src = url;
+			url += "?_v=" + eg_resVersion;
 		}
 		else
 		{
-			resObj = document.createElement("link");
-			resObj.type = "text/css";
-			resObj.rel = "stylesheet";
-			resObj.href = url;
+			url += "&_v=" + eg_resVersion;
 		}
-		if (charset != null)
+	}
+	var resObj;
+	if (jsResource)
+	{
+		if (typeof jQuery != 'undefined' && jsResource.async != true)
 		{
-			resObj.charset = charset;
+			// 注: 除非返回数据里有编码格式头, 否则默认使用utf-8编码格式
+			var opt = {type:"GET",global:false,url:url,async:false,dataType:"script",cache:true};
+			if (typeof jsResource.cache != "undefined")
+			{
+				opt.cache = jsResource.cache;
+			}
+			jQuery.ajax(opt);
+			// 同步加载完成后直接退出, 不执行后面的代码
+			return;
 		}
-		var s = document.getElementsByTagName("script")[0];
-		s.parentNode.insertBefore(resObj, s);
-	};
+		resObj = document.createElement("script");
+		resObj.type = "text/javascript";
+		resObj.async = true;
+		resObj.src = url;
+	}
+	else
+	{
+		resObj = document.createElement("link");
+		resObj.type = "text/css";
+		resObj.rel = "stylesheet";
+		resObj.href = url;
+	}
+	if (charset != null)
+	{
+		resObj.charset = charset;
+	}
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(resObj, s);
 }
+
 window.ef_loadScript = function(flag, scriptPath, recall)
 {
 	if (window.eg_pageInitializedURL[scriptPath])
@@ -4834,7 +4883,7 @@ window.ef_loadScript = function(flag, scriptPath, recall)
 			if (recall != null) recall();
 		};
 	}
-};
+}
 
 /**
  * 格式化数字显示方式

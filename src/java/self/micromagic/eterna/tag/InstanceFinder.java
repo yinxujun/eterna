@@ -5,6 +5,8 @@ import self.micromagic.eterna.digester.FactoryManager;
 
 /**
  * 工厂实例的查询者.
+ *
+ * @author micromagic@sina.com
  */
 public interface InstanceFinder
 {
