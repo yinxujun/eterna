@@ -156,6 +156,17 @@
 			</description>
 		</attribute>
 		<attribute>
+			<name>docType</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description><![CDATA[
+				当printHTML设为2时, 此值才有效, 用于设置页面的文档类型.
+				默认值为
+				<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+				      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			]]></description>
+		</attribute>
+		<attribute>
 			<name>divClass</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
