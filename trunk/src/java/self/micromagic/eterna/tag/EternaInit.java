@@ -42,6 +42,7 @@ public class EternaInit extends InitBaseTag
    private String appData;
 	private int printHTML;
 	private String charset;
+	private String docType;
 	private String divClass;
 	private boolean includeBody = false;
 
@@ -200,8 +201,17 @@ public class EternaInit extends InitBaseTag
 	{
 		if (this.printHTML == PRINT_HTML_ALL)
 		{
+			if (this.docType == null)
+			{
+				out.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
+						+ " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			}
+			else
+			{
+				out.println(this.docType);
+			}
 			String charset = this.charset == null ? "UTF-8" : this.charset;
-			out.println("<html>");
+			out.println("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
 			out.println("<head>");
 			out.println("<meta http-equiv=\"content-type\" content=\"text/html; charset=" + charset + "\"/>");
 			out.println("<meta http-equiv=\"pragma\" content=\"no-cache\"/>");
@@ -215,6 +225,7 @@ public class EternaInit extends InitBaseTag
       this.appData = null;
 		this.printHTML = 0;
 		this.charset = null;
+		this.docType = null;
 		this.divClass = null;
 		this.includeBody = false;
       super.release();
@@ -258,6 +269,16 @@ public class EternaInit extends InitBaseTag
 	public void setCharset(String charset)
 	{
 		this.charset = charset;
+	}
+
+	public String getDocType()
+	{
+		return this.docType;
+	}
+
+	public void setDocType(String docType)
+	{
+		this.docType = docType;
 	}
 
 	public String getDivClass()
