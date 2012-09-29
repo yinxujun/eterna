@@ -213,6 +213,21 @@ setTimeout(init_page_eterna_<%= eternaId %>, 100);
   # 判断js文件是否已引用，不重复引用
   # 给界面生成一个独立的命名空间，这样在portlet中就不会发生冲突
 <br><br>
+如果你使用taglib，那这个页面代码能够更简单：
+{{{
+<%@ page session="false" contentType="text/html;charset=UTF-8"%><%@
+    page import ="self.micromagic.eterna.view.impl.ViewTool"%><%@
+    taglib prefix="e" uri="http://code.google.com/p/eterna" %><%
+   String id = "_" + ViewTool.createEternaId();
+%><e:init parentElement="eternaShow" divClass="eternaFrame" printHTML="2" suffixId="<%= id %>">
+<e:res url="/eterna/jquery.js"/>
+<e:res url="/eterna/eterna.js"/>
+<e:res url="/My97DatePicker/WdatePicker.js"/>
+<e:res url="/res/sample.css" jsResource="false" charset="UTF-8"/>
+</e:init>
+}}}
+`<%@ taglib prefix="e" uri="http://code.google.com/p/eterna" %>`这段代码为对tablib的引用(当然需要先在web.xml中定义好uri)，“e:init”标签的功能同上面的那段jsp代码所实现的功能。
+<br><br>
 
 
 =公共配置=
