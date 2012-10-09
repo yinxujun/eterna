@@ -6,6 +6,9 @@ import java.util.Iterator;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ResultIterator extends Iterator
 {
    /**
@@ -31,7 +34,7 @@ public interface ResultIterator extends Iterator
     * 这个操作并不会将游标移动, 所以就算是调用多次, 游标也是在原来位置.
     * 如果剩余记录数没那么多, 那返回null.
     *
-    * @param index    要预取之后的第几条记录
+    * @param index    要预取之后的第几条记录, 1为第一条 2为第二条
     */
    ResultRow preFetch(int index) throws SQLException, ConfigurationException;
 

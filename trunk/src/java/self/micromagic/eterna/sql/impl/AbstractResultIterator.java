@@ -14,6 +14,9 @@ import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.Permission;
 
+/**
+ * @author micromagic@sina.com
+ */
 public abstract class AbstractResultIterator
       implements ResultIterator
 {

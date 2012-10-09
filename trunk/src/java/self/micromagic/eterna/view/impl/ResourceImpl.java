@@ -1,23 +1,25 @@
 
 package self.micromagic.eterna.view.impl;
 
-import java.util.Iterator;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
-import self.micromagic.eterna.view.ResourceGenerator;
-import self.micromagic.eterna.view.Resource;
-import self.micromagic.eterna.view.BaseManager;
+import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.EternaFactory;
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.util.container.UnmodifiableIterator;
-import self.micromagic.util.Utility;
+import self.micromagic.eterna.view.Resource;
+import self.micromagic.eterna.view.ResourceGenerator;
+import self.micromagic.grammer.ParserData;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
-import self.micromagic.grammer.ParserData;
+import self.micromagic.util.Utility;
+import self.micromagic.util.container.PreFetchIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ResourceImpl extends AbstractGenerator
       implements Resource, ResourceGenerator
 {
@@ -79,7 +81,7 @@ public class ResourceImpl extends AbstractGenerator
 
    public Iterator getParsedRessource()
    {
-      return new UnmodifiableIterator(Arrays.asList(this.resArray).iterator());
+      return new PreFetchIterator(Arrays.asList(this.resArray).iterator(), false);
    }
 
    public String getValue()

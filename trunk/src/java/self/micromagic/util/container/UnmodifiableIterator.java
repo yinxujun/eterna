@@ -7,6 +7,9 @@ import java.util.Enumeration;
 import org.apache.commons.collections.iterators.EmptyIterator;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class UnmodifiableIterator
       implements Iterator
 {

@@ -18,7 +18,7 @@ import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
-import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 
 /**
  * @author micromagic@sina.com
@@ -202,7 +202,7 @@ public class ComponentImpl extends AbstractGenerator
    public Iterator getSubComponents()
          throws ConfigurationException
    {
-      return new UnmodifiableIterator(this.componentList.iterator());
+      return new PreFetchIterator(this.componentList.iterator(), false);
    }
 
    public void addComponent(Component com)
@@ -226,7 +226,7 @@ public class ComponentImpl extends AbstractGenerator
    public Iterator getEvents()
          throws ConfigurationException
    {
-      return new UnmodifiableIterator(this.eventList.iterator());
+      return new PreFetchIterator(this.eventList.iterator(), false);
    }
 
    public void addEvent(Event event)

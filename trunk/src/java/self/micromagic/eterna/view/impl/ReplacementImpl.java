@@ -20,10 +20,14 @@ import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.util.container.MultiIterator;
 import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 import self.micromagic.util.StringRef;
 import self.micromagic.util.IntegerRef;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ReplacementImpl extends ComponentImpl
       implements Replacement, ReplacementGenerator
 {
@@ -513,7 +517,7 @@ public class ReplacementImpl extends ComponentImpl
       {
          return UnmodifiableIterator.EMPTY_ITERATOR;
       }
-      return new UnmodifiableIterator(this.replacedList.iterator());
+      return new PreFetchIterator(this.replacedList.iterator(), false);
    }
 
    public Iterator getEvents()

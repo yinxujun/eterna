@@ -1,23 +1,26 @@
 
 package self.micromagic.eterna.sql.impl;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
-import self.micromagic.eterna.sql.SQLParameterGroup;
-import self.micromagic.eterna.sql.SQLParameterGenerator;
-import self.micromagic.eterna.sql.ResultReaderManager;
-import self.micromagic.eterna.sql.ResultReader;
+import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.TypeManager;
-import self.micromagic.eterna.digester.ConfigurationException;
+import self.micromagic.eterna.sql.ResultReader;
+import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.SQLParameterGenerator;
+import self.micromagic.eterna.sql.SQLParameterGroup;
 import self.micromagic.util.StringTool;
-import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class SQLParameterGroupImpl
       implements SQLParameterGroup
 {
@@ -116,7 +119,7 @@ public class SQLParameterGroupImpl
 
    public Iterator getParameterGeneratorIterator()
    {
-      return new UnmodifiableIterator(this.paramGeneratorList.iterator());
+      return new PreFetchIterator(this.paramGeneratorList.iterator(), false);
    }
 
    public void addParameter(SQLParameterGenerator paramGenerator)
@@ -204,7 +207,7 @@ public class SQLParameterGroupImpl
                this.groupList.add(spg);
             }
          }
-         return new UnmodifiableIterator(this.groupList.iterator());
+         return new PreFetchIterator(this.groupList.iterator(), false);
       }
 
       public void addParameter(SQLParameterGenerator paramGenerator) {}

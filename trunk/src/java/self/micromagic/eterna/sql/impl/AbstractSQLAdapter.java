@@ -23,8 +23,11 @@ import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
 import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
-import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public abstract class AbstractSQLAdapter extends AbstractGenerator
       implements SQLAdapter, SQLAdapterGenerator
 {
@@ -297,7 +300,7 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
    public Iterator getParameterIterator()
          throws ConfigurationException
    {
-      return new UnmodifiableIterator(Arrays.asList(this.parameterArray).iterator());
+      return new PreFetchIterator(Arrays.asList(this.parameterArray).iterator(), false);
    }
 
    private void addParameterNameMap(SQLParameter param)

@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.Calendar;
 
 import org.dom4j.Element;
-import org.apache.commons.collections.iterators.EnumerationIterator;
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
 import self.micromagic.cg.ClassGenerator;
@@ -34,8 +33,13 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.container.SessionCache;
+import self.micromagic.util.container.PreFetchIterator;
 import self.micromagic.util.FormatTool;
+import self.micromagic.util.BooleanRef;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class AppDataLogExecute extends AbstractExecute
       implements Execute, Generator
 {
@@ -298,16 +302,18 @@ public class AppDataLogExecute extends AbstractExecute
          }
       }
 
-		private void printIterator(Element parent, Iterator itr)
+		private void printIterator(Element parent, PreFetchIterator itr)
 				throws Exception
 		{
-			int index = 0;
-			while (itr.hasNext())
+			int index = 1;
+			BooleanRef hasNext = new BooleanRef();
+			Object obj = itr.prefetch(index, hasNext);
+			while (hasNext.value)
 			{
 				Element vNode = parent.addElement("value");
-				vNode.addAttribute("index", String.valueOf(index));
-				this.printObject(vNode, itr.next());
-				index++;
+				vNode.addAttribute("index", String.valueOf(index - 1));
+				this.printObject(vNode, obj);
+				obj = itr.prefetch(++index, hasNext);
 			}
 		}
 
@@ -429,20 +435,24 @@ public class AppDataLogExecute extends AbstractExecute
 			else if (value instanceof Iterator)
 			{
 				parent.addAttribute("type", "Iterator");
-            if (this.checkAndPush(parent, value))
+				// 只有类型为PreFetchIterator时才能以预取值的方式记录，否则会将游标移到最后
+            if (value instanceof PreFetchIterator)
             {
-					this.printIterator(parent, (Iterator) value);
-               this.pop();
+					if (this.checkAndPush(parent, value))
+					{
+						this.printIterator(parent, (PreFetchIterator) value);
+						this.pop();
+					}
             }
+				else
+				{
+					parent.addAttribute("msg", "Can not read!");
+				}
 			}
 			else if (value instanceof Enumeration)
 			{
-				parent.addAttribute("type", "Enumeration");
-            if (this.checkAndPush(parent, value))
-            {
-					this.printIterator(parent, new EnumerationIterator((Enumeration) value));
-               this.pop();
-            }
+				// Enumeration迭代显示的话会将游标移到最后, 所以这里只能记录类型
+				parent.addAttribute("type", "Enumeration").addAttribute("msg", "Can not read!");
 			}
 			else if (value instanceof Date)
 			{

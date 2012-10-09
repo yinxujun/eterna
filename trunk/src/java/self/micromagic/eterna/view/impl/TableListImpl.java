@@ -23,8 +23,11 @@ import self.micromagic.eterna.view.TableList;
 import self.micromagic.eterna.view.TableListGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
-import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class TableListImpl extends AbstractTable
       implements TableList, TableListGenerator
 {
@@ -238,7 +241,7 @@ public class TableListImpl extends AbstractTable
 
    public Iterator getColumns()
    {
-      return new UnmodifiableIterator(this.columns.iterator());
+      return new PreFetchIterator(this.columns.iterator(), false);
    }
 
    public void addColumn(Column column)
