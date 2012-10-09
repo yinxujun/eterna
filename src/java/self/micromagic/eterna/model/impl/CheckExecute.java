@@ -19,6 +19,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.ObjectRef;
 import self.micromagic.util.Utility;
+import self.micromagic.util.StringAppender;
 import org.dom4j.Element;
 
 public class CheckExecute extends AbstractExecute
@@ -65,8 +66,16 @@ public class CheckExecute extends AbstractExecute
       }
       super.initialize(model);
 
+      if (this.checkOpt == null)
+      {
+         throw new ConfigurationException("The attribute checkPattern must be setted.");
+      }
+
+		StringAppender nameBuf = StringTool.createStringAppender(64);
+		nameBuf.append('[');
       if (this.trueExportName != null)
       {
+			nameBuf.append("trueExport:").append(this.trueExportName);
          this.trueExport = model.getFactory().getModelExport(this.trueExportName);
          if (this.trueExport == null)
          {
@@ -75,11 +84,15 @@ public class CheckExecute extends AbstractExecute
       }
       if (this.trueModelName != null)
       {
+			if (nameBuf.length() > 0) nameBuf.append(',');
+			nameBuf.append("trueModel:").append(this.trueModelName);
          this.trueModelIndex = model.getFactory().getModelAdapterId(this.trueModelName);
       }
 
       if (this.falseExportName != null)
       {
+			if (nameBuf.length() > 0) nameBuf.append(',');
+			nameBuf.append("falseExport:").append(this.falseExportName);
          this.falseExport = model.getFactory().getModelExport(this.falseExportName);
          if (this.falseExport == null)
          {
@@ -88,13 +101,17 @@ public class CheckExecute extends AbstractExecute
       }
       if (this.falseModelName != null)
       {
+			if (nameBuf.length() > 0) nameBuf.append(',');
+			nameBuf.append("falseModel:").append(this.falseModelName);
          this.falseModelIndex = model.getFactory().getModelAdapterId(this.falseModelName);
       }
+		if (nameBuf.length() > 0) nameBuf.append(',');
+		nameBuf.append("loopType:").append(this.loopType).append(']');
 
-      if (this.checkOpt == null)
-      {
-         throw new ConfigurationException("Check operator must be setted.");
-      }
+		if (this.name == null)
+		{
+			this.name = StringTool.intern(nameBuf.toString());
+		}
    }
 
    public String getExecuteType()
@@ -123,14 +140,17 @@ public class CheckExecute extends AbstractExecute
 				{
 					Element rNode = nowNode.addElement("check-result");
 					rNode.addAttribute("value", String.valueOf(checkResult));
+					rNode.addAttribute("checkPattern", this.checkOpt.toString());
 					if (obj1 != null)
 					{
 						Element vNode = rNode.addElement("obj1");
+						vNode.addAttribute("cache", Integer.toString(this.obj1Index));
 						AppDataLogExecute.printObject(vNode, obj1);
 					}
 					if (obj2 != null)
 					{
 						Element vNode = rNode.addElement("obj2");
+						vNode.addAttribute("cache", Integer.toString(this.obj2Index));
 						AppDataLogExecute.printObject(vNode, obj2);
 					}
 				}
@@ -299,10 +319,6 @@ public class CheckExecute extends AbstractExecute
          throws ConfigurationException
    {
       this.falseModelName = name;
-      if (this.getName() == null)
-      {
-         this.setName(name);
-      }
    }
 
    private static class HasNextCheck
@@ -319,6 +335,12 @@ public class CheckExecute extends AbstractExecute
          }
          return false;
       }
+
+		public String toString()
+		{
+			return "hasNext";
+		}
+
    }
 
    private static class NullCheck
@@ -331,6 +353,12 @@ public class CheckExecute extends AbstractExecute
       {
          return value1 == null;
       }
+
+		public String toString()
+		{
+			return "nullCheck";
+		}
+
    }
 
    private static class ArrayCheck
@@ -347,6 +375,12 @@ public class CheckExecute extends AbstractExecute
          }
          return value1.getClass().isArray();
       }
+
+		public String toString()
+		{
+			return "arrayCheck";
+		}
+
    }
 
    private static class ClassTypeCheck
@@ -368,6 +402,12 @@ public class CheckExecute extends AbstractExecute
          }
          return this.checkClass.isInstance(value1);
       }
+
+		public String toString()
+		{
+			return "typeCheck";
+		}
+
    }
 
    private static class CompareCheck
@@ -409,6 +449,12 @@ public class CheckExecute extends AbstractExecute
                   + value1.getClass() + ", 2:" + value2.getClass() + ".");
          }
       }
+
+		public String toString()
+		{
+			return this.compareResult == 0 ? "=" : this.compareResult < 0 ? "<" : ">";
+		}
+
    }
 
 }

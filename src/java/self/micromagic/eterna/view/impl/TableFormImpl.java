@@ -25,6 +25,7 @@ import self.micromagic.eterna.view.TableFormGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
 import self.micromagic.util.container.UnmodifiableIterator;
+import self.micromagic.util.container.PreFetchIterator;
 
 public class TableFormImpl extends AbstractTable
       implements TableForm, TableFormGenerator
@@ -286,7 +287,7 @@ public class TableFormImpl extends AbstractTable
 
    public Iterator getCells()
    {
-      return new UnmodifiableIterator(this.cells.iterator());
+      return new PreFetchIterator(this.cells.iterator(), false);
    }
 
    public void addCell(Cell cell)

@@ -162,7 +162,7 @@
 				eg_cache.eventName = oldEventName;
 			]]></function>
 
-			<!-- 触发某个节点下所有控件的[eventName]事件 -->
+			<!-- 对指定对象下的子节点进行替换 -->
 			<function name="swapAttributeComponentSubs" param="theObj, configData, swapFlag"><![CDATA[
 				if (configData.subs != null)
 				{

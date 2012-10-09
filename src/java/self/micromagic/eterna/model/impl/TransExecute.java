@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.digester.ObjectCreateRule;
@@ -33,7 +34,9 @@ import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.eterna.search.SearchManager;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.StringRef;
+import self.micromagic.util.container.PreFetchIterator;
 import org.dom4j.Element;
+import org.apache.commons.collections.iterators.EnumerationIterator;
 
 public class TransExecute extends AbstractExecute
       implements Execute, TransExecuteGenerator
@@ -394,26 +397,34 @@ public class TransExecute extends AbstractExecute
          }
          if (value instanceof Iterator)
          {
+				if (!(value instanceof PreFetchIterator))
+				{
+					return new PreFetchIterator((Iterator) value);
+				}
             return value;
          }
          else if (value instanceof Collection)
          {
-            return ((Collection) value).iterator();
+            return new PreFetchIterator(((Collection) value).iterator());
          }
          else if (value instanceof Object[])
          {
-            return Arrays.asList((Object[]) value).iterator();
+            return new PreFetchIterator(Arrays.asList((Object[]) value).iterator());
          }
          else if (value instanceof Map)
          {
-            return ((Map) value).entrySet().iterator();
+            return new PreFetchIterator(((Map) value).entrySet().iterator());
          }
+			else if (value instanceof Enumeration)
+			{
+				return new PreFetchIterator(new EnumerationIterator((Enumeration) value));
+			}
          throw new ConfigurationException("Error Object type:" + value.getClass() + ".");
       }
 
       public String toString()
       {
-         return "getFirstString";
+         return "toIterator";
       }
 
    }
