@@ -21,6 +21,21 @@ import self.micromagic.util.Utility;
 public class QueryHelper
 {
 	/**
+	 * mysql数据库名称.
+	 */
+	public static final String DB_NAME_MYSQL = "MySQL";
+
+	/**
+	 * oracle数据库名称.
+	 */
+	public static final String DB_NAME_ORACLE = "Oracle";
+
+	/**
+	 * 其他普通数据库名称
+	 */
+	public static final String DB_NAME_COMMON = "Common";
+
+	/**
 	 * 获取一个查询辅助工具的实例.
 	 *
 	 * @param query      查询的对象, 用于构造查询辅助工具
@@ -32,12 +47,17 @@ public class QueryHelper
 			throws SQLException
 	{
 		String dbName = conn.getMetaData().getDatabaseProductName();
-		if ("Oracle".equals(dbName))
+		if (DB_NAME_ORACLE.equals(dbName))
 		{
-			return oldHelper != null && dbName.equals(oldHelper.getType()) ?
+			return oldHelper != null && DB_NAME_ORACLE.equals(oldHelper.getType()) ?
 			 		oldHelper : new OracleQueryHelper(query);
 		}
-		return oldHelper != null && "Common".equals(oldHelper.getType()) ?
+		else if (DB_NAME_MYSQL.equals(dbName))
+		{
+			return oldHelper != null && DB_NAME_MYSQL.equals(oldHelper.getType()) ?
+			 		oldHelper : new MySqlQueryHelper(query);
+		}
+		return oldHelper != null && DB_NAME_COMMON.equals(oldHelper.getType()) ?
 				oldHelper : new QueryHelper(query);
 	}
 
@@ -67,7 +87,7 @@ public class QueryHelper
 	 */
 	public String getType()
 	{
-		return "Common";
+		return DB_NAME_COMMON;
 	}
 
 	/**
@@ -315,28 +335,25 @@ public class QueryHelper
 		return this.needCount;
 	}
 
-	static class OracleQueryHelper extends QueryHelper
+	static abstract class SpecialQueryHelper extends QueryHelper
 	{
-		private int nowStartRow = 1;
-		private int nowMaxRows = -1;
-		private int nowTotalCount = QueryAdapter.TOTAL_COUNT_NONE;
-		private QueryAdapter.TotalCountExt nowTotalCountExt;
-		private String oldPreparedSQL;
-		private String cacheSQL;
-		private boolean useOldSQL;
+		protected int nowStartRow = 1;
+		protected int nowMaxRows = -1;
+		protected int nowTotalCount = QueryAdapter.TOTAL_COUNT_NONE;
+		protected QueryAdapter.TotalCountExt nowTotalCountExt;
+		protected String oldPreparedSQL;
+		protected String cacheSQL;
+		protected boolean useOldSQL;
 
-		public OracleQueryHelper(QueryAdapter query)
+		public SpecialQueryHelper(QueryAdapter query)
 		{
 			super(query);
 		}
 
 		/**
-		 * 获取当前查询工具的类型.
+		 * 构造特殊的用于分页的SQL语句.
 		 */
-		public String getType()
-		{
-			return "Oracle";
-		}
+		protected abstract String createSpecialSQL(String preparedSQL);
 
 		public String getQuerySQL(String preparedSQL)
 				throws ConfigurationException
@@ -380,27 +397,7 @@ public class QueryHelper
 				}
 				else
 				{
-               if (this.nowStartRow == 1)
-					{
-						String part1 = "select * from (";
-						String part2 = ") tmpTable where rownum <= " + (this.nowMaxRows + 1);
-						StringAppender buf = StringTool.createStringAppender(
-								part1.length() + part2.length() + preparedSQL.length());
-						buf.append(part1).append(preparedSQL).append(part2);
-						this.cacheSQL = buf.toString();
-					}
-					else
-					{
-						String condition1 = this.nowMaxRows == - 1 ? ""
-								: " where rownum <= " + (this.nowMaxRows + this.nowStartRow);
-						String condition2 = " where theOracleRuwNum >= " + this.nowStartRow;
-						String part1 = "select * from (select tmpTable1.*, rownum as theOracleRuwNum from (";
-						String part2 = ") tmpTable1" + condition1 + ") tmpTable2" + condition2;
-						StringAppender buf = StringTool.createStringAppender(
-								part1.length() + part2.length() + preparedSQL.length());
-						buf.append(part1).append(preparedSQL).append(part2);
-						this.cacheSQL = buf.toString();
-					}
+					this.cacheSQL = this.createSpecialSQL(preparedSQL);
 				}
 			}
 			return this.cacheSQL;
@@ -488,6 +485,80 @@ public class QueryHelper
 
 			this.recordCount = result.size();
 			return result;
+		}
+
+	}
+
+	static class OracleQueryHelper extends SpecialQueryHelper
+	{
+		public OracleQueryHelper(QueryAdapter query)
+		{
+			super(query);
+		}
+
+		/**
+		 * 获取当前查询工具的类型.
+		 */
+		public String getType()
+		{
+			return DB_NAME_ORACLE;
+		}
+
+		protected String createSpecialSQL(String preparedSQL)
+		{
+			if (this.nowStartRow == 1)
+			{
+				String part1 = "select * from (";
+				String part2 = ") tmpTable where rownum <= " + (this.nowMaxRows + 1);
+				StringAppender buf = StringTool.createStringAppender(
+						part1.length() + part2.length() + preparedSQL.length());
+				buf.append(part1).append(preparedSQL).append(part2);
+				return buf.toString();
+			}
+			else
+			{
+				String condition1 = this.nowMaxRows == -1 ? ""
+						: " where rownum <= " + (this.nowMaxRows + this.nowStartRow);
+				String condition2 = " where theOracleRuwNum >= " + this.nowStartRow;
+				String part1 = "select * from (select tmpTable1.*, rownum as theOracleRuwNum from (";
+				String part2 = ") tmpTable1" + condition1 + ") tmpTable2" + condition2;
+				StringAppender buf = StringTool.createStringAppender(
+						part1.length() + part2.length() + preparedSQL.length());
+				buf.append(part1).append(preparedSQL).append(part2);
+				return buf.toString();
+			}
+		}
+
+	}
+
+	static class MySqlQueryHelper extends SpecialQueryHelper
+	{
+		public MySqlQueryHelper(QueryAdapter query)
+		{
+			super(query);
+		}
+
+		/**
+		 * 获取当前查询工具的类型.
+		 */
+		public String getType()
+		{
+			return DB_NAME_MYSQL;
+		}
+
+		protected String createSpecialSQL(String preparedSQL)
+		{
+			if (this.nowStartRow == 1)
+			{
+				String appendStr = " limit " + (this.nowMaxRows + 1);
+				return preparedSQL + appendStr;
+			}
+			else
+			{
+				int count = this.nowMaxRows == -1 ? Integer.MAX_VALUE : this.nowMaxRows + 1;
+				String appendStr = " limit " + (this.nowStartRow - 1) + ", " + count;
+				return preparedSQL + appendStr;
+			}
 		}
 
 	}

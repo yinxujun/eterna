@@ -243,6 +243,10 @@ public class CheckExecute extends AbstractExecute
          {
             this.checkOpt = HasNextCheck.instance;
          }
+         else if ("empty".equals(params[1]))
+         {
+            this.checkOpt = EmptyCheck.instance;
+         }
          else if ("<".equals(params[1]))
          {
             this.checkOpt = CompareCheck.instance[0];
@@ -357,6 +361,24 @@ public class CheckExecute extends AbstractExecute
 		public String toString()
 		{
 			return "nullCheck";
+		}
+
+   }
+
+   private static class EmptyCheck
+         implements CheckOperator
+   {
+      static EmptyCheck instance = new EmptyCheck();
+
+      public boolean check(Object value1, Object value2)
+            throws ConfigurationException
+      {
+         return value1 == null || "".equals(value1);
+      }
+
+		public String toString()
+		{
+			return "emptyCheck";
 		}
 
    }
