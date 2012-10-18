@@ -163,9 +163,7 @@ public class EternaDefine extends InitBaseTag
             }
             if (this.getParentElement() != null)
             {
-               out.println("jQuery(document).ready(function(){");
-               out.println("_eterna.reInit();");
-               out.println("});");
+               out.println("jQuery(_eterna.reInit);");
             }
             out.println("window." + this.name + " = _eterna;");
             out.println("})();");

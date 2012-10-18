@@ -333,12 +333,19 @@
 			<!-- 设置标题控件的方法 -->
 			<function name="createSearchOrderTitle" param="valueObj, caption">
 				valueObj.exists = 1;
-				valueObj.html = 1;
-				if (caption != null)
+				if (eg_temp.extInfoRWD)
 				{
-					valueObj.caption = caption;
+					valueObj.value = caption;
 				}
-				valueObj.value = {$typical:search_order_title_component};
+				else
+				{
+					valueObj.html = 1;
+					if (caption != null)
+					{
+						valueObj.caption = caption;
+					}
+					valueObj.value = {$typical:search_order_title_component};
+				}
 			</function>
 
 		</objs>

@@ -274,6 +274,7 @@
 							</before-init>
 							<init-script>
 								<!-- 给当前行设上id，以便后面隐藏及显示时可以方便的找到 -->
+								{$parentScript}
 								if (eg_temp.rowType == "afterRow")
 								{
 									webObj.attr("id", "other_" + eg_temp.index);
@@ -286,10 +287,10 @@
 							</init-script>
 							<component name="td" type="td">
 								<!-- 将背景色设为灰色，这样可以和其他行区别较明显 -->
-								<component-param>css:{"background-color":"#EEEEEE"}</component-param>
+								<component-param>css:{"background-color":"#f8f8f8"}</component-param>
 								<before-init>
 									<!-- 当行状态为 数据行之后的(afterRow) 才显示此格 -->
-									checkResult = eg_temp.rowType == "afterRow" ;
+									checkResult = eg_temp.rowType == "afterRow";
 								</before-init>
 								<init-script>
 									<!-- eg_temp.columnCount 指当前表格的列数 -->

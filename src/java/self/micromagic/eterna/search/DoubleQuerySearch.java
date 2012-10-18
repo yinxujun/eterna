@@ -43,6 +43,8 @@ import self.micromagic.util.StringTool;
  *
  * needAssistCondition             是否需要辅助search的条件, 当assistSearchName为$same时默认值为false
  *                                 当assistSearchName为其它search的名称时默认值为true
+ *
+ * @author micromagic@sina.com
  */
 public class DoubleQuerySearch extends SearchAdapterImpl
 		implements SearchAdapter, SearchAdapterGenerator

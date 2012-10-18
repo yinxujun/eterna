@@ -1,5 +1,7 @@
 
-/** version: 1.5.6 */
+/**
+  * version: 1.5.6
+  */
 
 (function(window) {
 
@@ -24,6 +26,20 @@ window.ED_FN_CALLED = 0x30;
 window.ED_FNC_STACK = 0x40;
 window.ED_COM_CREATED = 0x20;
 
+var oldBodyWidth;
+function registerResizeEvent()
+{
+	oldBodyWidth = jQuery("body").width();
+	jQuery(window).resize(function (){
+		var bodyObj = jQuery("body");
+		if (Math.abs(bodyObj.width() - oldBodyWidth) > EG_EVENT_WIDTH_SENSITIVITY)
+		{
+			oldBodyWidth = bodyObj.width();
+			Eterna.fireWidthChange(bodyObj);
+		}
+	});
+}
+
 var jQueryInitCount = 0;
 function jQueryInit()
 {
@@ -35,6 +51,15 @@ function jQueryInit()
 	{
 		// 不使用深度序列化方式
 		jQuery.ajaxSettings.traditional = true;
+
+		if (document.readyState == "complete" || document.readyState == "loaded")
+		{
+			registerResizeEvent();
+		}
+		else
+		{
+			jQuery(registerResizeEvent);
+		}
 	}
 	else
 	{
@@ -46,6 +71,8 @@ function jQueryInit()
 	}
 }
 jQueryInit();
+
+
 
 // EE = ETERNA_EVENT
 var EE_SUB_WINDOW_CLOSE = "lock_close";
@@ -154,6 +181,11 @@ window.EG_DATA_TYPE_REST = "REST";
 window.EG_DATA_TYPE_ALL = "all";
 window.EG_DATA_TYPE_WEB = "web";
 window.EG_ORDER_SUFIX = ".order";
+window.EG_ORDER_TYPE = ".orderType";
+
+window.EG_EVENT_WIDTH_CHANGE = "widthChange";
+// 对宽度变化的灵敏度, 变化量多大时才会触发widthChange事件
+window.EG_EVENT_WIDTH_SENSITIVITY = 15;
 
 var EG_SCRIPT_STR_PREFIX_ARR = ["javascript:", "vbscript:"];
 var EG_JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
@@ -190,7 +222,8 @@ var EG_TEMP_NAMES = [
 	"dataName", "srcName", "index", "columnCount", "rowNum",
 	"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
 	"name", "caption", "valueObj", "param", "tempData",
-	"sysTemplateRoot", "sysOptions"
+	"extInfoRWD", "widthLevel", /* 自适应宽度调整时显示扩充信息的标识 及 当前的跨度等级 */
+	"sysTemplateRoot", "sysOptions",
 ];
 
 window.eg_temp = {};
@@ -243,14 +276,12 @@ function Eterna($E, eterna_debug, rootWebObj)
 		Eterna._initialized = true;
 		Eterna._oldDebug = eterna_debug;
 
-		Eterna.prototype.eternaVersion = ___ETERNA_VERSION;
-
 		Eterna.prototype.egTemp = function(temp)
 		{
 			var key;
 			if (temp != null)
 			{
-				for(key in eg_temp)
+				for (key in eg_temp)
 				{
 					eg_temp[key] = null;
 				}
@@ -311,11 +342,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 			return eg_temp.tempData;
 		}
 
-		Eterna.prototype.isArray = function(obj)
-		{
-			return jQuery.isArray(obj);
-		}
-
 		Eterna.prototype.changeEternaData = function(newData)
 		{
 			if (this.$E == newData)
@@ -331,40 +357,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 			for (var key in newData)
 			{
 				this.$E[key] = newData[key];
-			}
-		}
-
-		Eterna.prototype.createJSON = function()
-		{
-			return {};
-		}
-
-		Eterna.prototype.cloneJSON = function(obj)
-		{
-			if (typeof obj == "object")
-			{
-				if (this.isArray(obj))
-				{
-					var newObj = [];
-					for(var i = 0; i < obj.length; i++)
-					{
-						newObj[i] = this.cloneJSON(obj[i]);
-					}
-					return newObj;
-				}
-				else
-				{
-					var newObj = {};
-					for(var key in obj)
-					{
-						newObj[key] = this.cloneJSON(obj[key]);
-					}
-					return newObj;
-				}
-			}
-			else
-			{
-				return obj;
 			}
 		}
 
@@ -942,7 +934,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 				eventFunction.maskDiv.bind("mousedown", {move:0}, eventFunction);
 				theBody.css("overflow-x", "hidden");
 				theBody.css("overflow-y", "hidden");
-				if (!jQuery.support.boxModel || !jQuery.support.style)
+				if (!jQuery.support.boxModel || document.all)  // IE
 				{
 					eventFunction.maskDiv.css("filter", "alpha(opacity=0)");
 					eventFunction.maskDiv.css("background-color", "white");
@@ -1935,7 +1927,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 						{
 							if (theEvents[i].handler == eterna_specialEventHandler)
 							{
-								// 如果事件的handler就是特殊事件, 这取出它的事件列表
+								// 如果事件的handler就是特殊事件, 则取出它的事件列表
 								var tmpArr = theEvents[i].data.events;
 								for (var j = 0; j < tmpArr.length; j++)
 								{
@@ -3913,6 +3905,64 @@ function Eterna($E, eterna_debug, rootWebObj)
 }
 
 window.Eterna = Eterna;
+
+
+/**
+ * 一些全局的属性及方法.
+ */
+
+Eterna.prototype.eternaVersion = Eterna.eternaVersion = ___ETERNA_VERSION;
+
+Eterna.prototype.fireWidthChange = Eterna.fireWidthChange = function(rootObj)
+{
+	jQuery("*", rootObj).each(function (){
+		var theObj = jQuery(this);
+		var theEvents = theObj.data("events");
+		if (theEvents != null && theEvents[EG_EVENT_WIDTH_CHANGE] != null)
+		{
+			theObj.trigger(EG_EVENT_WIDTH_CHANGE);
+		}
+	});
+}
+
+Eterna.prototype.isArray = Eterna.isArray = function(obj)
+{
+	return jQuery.isArray(obj);
+}
+
+Eterna.prototype.createJSON = Eterna.createJSON = function()
+{
+	return {};
+}
+
+Eterna.prototype.cloneJSON = Eterna.cloneJSON = function(obj)
+{
+	if (typeof obj == "object")
+	{
+		if (Eterna.isArray(obj))
+		{
+			var newObj = [];
+			for(var i = 0; i < obj.length; i++)
+			{
+				newObj[i] = Eterna.cloneJSON(obj[i]);
+			}
+			return newObj;
+		}
+		else
+		{
+			var newObj = {};
+			for(var key in obj)
+			{
+				newObj[key] = Eterna.cloneJSON(obj[key]);
+			}
+			return newObj;
+		}
+	}
+	else
+	{
+		return obj;
+	}
+}
 
 
 // 检查框架的数据是否合法, 不完整的将会补充完整, 并且在数据结构上与老版本兼容

@@ -44,6 +44,9 @@ import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.MemoryChars;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class SearchAdapterImpl extends AbstractGenerator
       implements SearchAdapter, SearchAdapterGenerator
 {
@@ -730,7 +733,17 @@ public class SearchAdapterImpl extends AbstractGenerator
          String orderStr = data.getRequestParameter(this.getName() + SINGLE_ORDER_SUFIX);
          if (orderStr != null)
          {
-            query.setSingleOrder(orderStr);
+				int orderType = 0;
+				String orderTypeStr = data.getRequestParameter(this.getName() + SINGLE_ORDER_TYPE);
+				if (orderTypeStr != null)
+				{
+					try
+					{
+						orderType = Integer.parseInt(orderTypeStr);
+					}
+					catch (Exception ex) {}
+				}
+            query.setSingleOrder(orderStr, orderType);
          }
 			BooleanRef tmp = new BooleanRef();
 			singleOrederName = query.getSingleOrder(tmp);

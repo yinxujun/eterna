@@ -6,74 +6,6 @@
 	<factory>
 
 		<objs>
-			
-			<export name="index.export" path="${page.view}" viewName="index.view" />
-			<model name="index" modelExportName="index.export" transactionType="notNeed" />
-			<view name="index.view">
-				<component name="top" type="div" comParam="css:{height:'32px'}" />
-				<component name="1" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="s" type="span" comParam="text:'简单的页面样例：'" />
-					<component name="a" type="a" comParam="text:'一',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("first"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'二',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("second"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'三',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("third"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'四',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("forth"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'五',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("fifth"));</init-script>
-					</component>
-				</component>
-				<component name="2" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="s" type="span" comParam="text:'简单的数据库操作样例，对应表TestTable：'" />
-					<component name="a" type="a" comParam="text:'CRUD',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("exp"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'查询条件及分页',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("exp_search.model"));</init-script>
-					</component>
-				</component>
-				<component name="3" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'查询+多选+列表的复合标题样例，对应表my_table'">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("exp_mutiSelect.start"));</init-script>
-					</component>
-				</component>
-				<component name="4" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'excel导入样例，不导入数据库，仅显示excel中的数据'">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("importStart"));</init-script>
-					</component>
-				</component>
-				<component name="5" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="s" type="span" comParam="text:'第二个数据库操作样例，对应表my_table：'" />
-					<component name="a" type="a" comParam="text:'CRUD+年龄和出生日期的匹配校验',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("my.first.model"));</init-script>
-					</component>
-					<component name="a" type="a" comParam="text:'查询+分页+折叠表格',css:{'margin-left':'5px'}">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("search.model"));</init-script>
-					</component>
-				</component>
-				<component name="6" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'列表中单元格纵向合并的样例'">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("cm"));</init-script>
-					</component>
-				</component>
-				<component name="6" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'一个完整的CRUD操作的样例，对应表：t_student，t_sex，t_dept。名称查询条件会有补完提示，姓名及部门列可排序。'">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("list"));</init-script>
-					</component>
-				</component>
-				<component name="7" type="div" comParam="css:{'margin-top':'5px'}">
-					<component name="a" type="a" comParam="text:'代码表管理的样例，对应表：t_code1，t_code2。如何使用span_modifiable控件，及相似的管理内容编写。'">
-						<init-script>webObj.attr("href", {$ef:getHeadURL}("codeManage.index"));</init-script>
-					</component>
-				</component>
-			</view>
-
 
 			<view name="textList.view">
 				<replacement name="t" baseComponentName="text_list_view_template">
@@ -125,8 +57,8 @@
 				<search-execute searchName="list.search" queryResultName="listInfo" />
 			</model>
 			<view name="list.view">
-				<replacement name="search"
-					baseComponentName="search_component;toolbar,conditions,list">
+				<before-init>{$ef:rwd_widthLevel}([700, 390]);</before-init>
+				<replacement name="search" baseComponentName="search_component;toolbar,conditions,list">
 					<before-init>
 						eg_temp.dataName = "listInfo";
 						{$dataV:eg_temp.dataName + "_modelName"} = "list";
@@ -134,21 +66,82 @@
 					</before-init>
 					<replacement name="toolbar" baseComponentName="toolbar_component">
 						<before-init>
-							{$parentScript}
+							{$parentScript}							
+							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
+							if (eg_temp.widthLevel &gt; 2)
+							{
+								tmpData.verticalLayout = 1;
+							}
 							btns.push({name:'添加',img:'add.gif',model:'get',params:{type:'add'}});
 							btns.push({name:'导入',img:'input.gif',click:function(){alert("导入暂未实现!");}});
 							btns.push({name:'导出',img:'output.gif',click:function(){alert("导出暂未实现!");}});
 							btns.push({name:'反选',img:'select.gif',click:function(){alert("反选暂未实现!");}});
 						</before-init>
+						<events>
+							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
+						</events>
 					</replacement>
 					<table-form name="conditions" columns="10,23,10,23,10,24" baseName="search:list.search" dataName="searchManager">
+						<before-init>
+							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
+							if (eg_temp.widthLevel &lt; 2)
+							{
+								configData.columns = [10, 23, 10, 23, 10, 24];
+							}
+							else if (eg_temp.widthLevel &lt; 3)
+							{
+								configData.columns = [20, 30, 20, 30];
+							}
+							else
+							{
+								configData.columns = [40, 60];
+							}
+						</before-init>
+						<events>
+							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
+						</events>
 						<cells cellOrder="title">
 							<cell name="title" caption="学生信息查询" titleSize="-1" containerSize="0" titleParam="css:{'text-align':'left'}" />
 							<cell name="submit" titleSize="0" containerSize="-1" typicalComponentName="buttons" initParam="queryBtn:1" />
 						</cells>
 					</table-form>
 					<table-list name="list" baseName="query:list.query" dataName="listInfo">
-						<columns>
+						<before-init>
+							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
+						</before-init>
+						<events>
+							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
+						</events>
+						<!-- 这里使用为RWD定制的tr及td -->
+						<tr name="tableList_TR.RWD_TR">
+							<replacement name="td" baseComponentName="RWD_TD;extInfo">
+								<table-form name="extInfo" columns="10,30,10,50" baseName="query:list.query" dataName="listInfo">
+									<component-param>css:{width:"100%"}</component-param>
+									<before-init>
+										if (eg_temp.widthLevel &lt; 3)
+										{
+											configData.columns = [20, 30, 20, 30];
+										}
+										else
+										{
+											configData.columns = [40, 60];
+										}
+									</before-init>
+									<cells>
+										<cell name="$typical" needIndex="true">
+											<before-init>checkResult = {$ef:rwd_getCheckResult}();</before-init>
+										</cell>
+									</cells>
+								</table-form>
+							</replacement>							
+						</tr>
+						<columns columnOrder="opt0">
+							<column name="$typical">
+								<before-init>checkResult = {$ef:rwd_getCheckResult}();</before-init>
+							</column>
+							<column name="opt0" caption="*" srcName="id" typicalComponentName="RWD_EXT_OPT">
+								<before-init>checkResult = eg_temp.widthLevel &gt; 1;</before-init>
+							</column>
 							<column name="opt" caption="操作" srcName="id" typicalComponentName="common_list_operator" />
 						</columns>
 					</table-list>
@@ -165,15 +158,25 @@
 				<readers>
 					<reader name="id" type="int" />
 					<reader name="name" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$caption:name})" type="String" />
-					<reader name="spellName" type="String" />
+					<reader name="spellName" type="String">
+						<attribute name="initParam" value="needWidthLevel:2" />
+					</reader>
 					<reader name="sexName" type="String" />
 					<reader name="deptName" caption="[script]:{$ef:createSearchOrderTitle}(valueObj, {$caption:dept})" type="String">
-						<attribute name="orderName" value="dept" />
+						<attribute name="initParam" value="orderName:'dept',needWidthLevel:2" />
 					</reader>
-					<reader name="age" type="int" />
-					<reader name="comeDate" type="Date" />
-					<reader name="grade" type="int" />
-					<reader name="email" type="String" />
+					<reader name="age" type="int">
+						<attribute name="initParam" value="needWidthLevel:2" />
+					</reader>
+					<reader name="comeDate" type="Date">
+						<attribute name="initParam" value="needWidthLevel:1" />
+					</reader>
+					<reader name="grade" type="int">
+						<attribute name="initParam" value="needWidthLevel:1" />
+					</reader>
+					<reader name="email" type="String">
+						<attribute name="initParam" value="needWidthLevel:1" />
+					</reader>
 					<reader name="dept" type="String" visible="false" orderName="u.dept" />
 				</readers>
 			</query>
@@ -205,6 +208,7 @@
 				<trans-execute from="stack" to="data:studentInfo" opt="getFirstRow" />
 			</model>
 			<view name="detail.view">
+				<before-init>{$ef:rwd_widthLevel}([500]);</before-init>
 				<replacement name="form" baseComponentName="form_template">
 					<before-init>
 						{$parentScript}
@@ -228,6 +232,20 @@
 						}
 					</before-init>
 					<table-form name="form_body" columns="20,30,20,30" baseName="query:get.query" dataName="studentInfo">
+						<before-init>
+							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
+							if (eg_temp.widthLevel &lt; 2)
+							{
+								configData.columns = [20, 30, 20, 30];
+							}
+							else
+							{
+								configData.columns = [40, 60];
+							}
+						</before-init>
+						<events>
+							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
+						</events>
 						<cells cellOrder="title">
 							<cell name="title" caption="[script]:eg_temp.tempData.title" 
 								titleSize="-1" containerSize="0" titleParam="css:{'text-align':'left'}" />
@@ -341,7 +359,58 @@
 					<parameter name="id" type="int" />
 				</parameters>
 			</update>
-
+			
+			<!-- 为自适应网页设计定制的TR -->
+			<typical-replacement name="RWD_TR" baseComponentName="table-list.tr">
+				<before-init><![CDATA[
+					checkResult = eg_temp.rowType == "title" || eg_temp.rowType == "row" 
+							|| (eg_temp.rowType == "afterRow" && eg_temp.widthLevel > 1);
+					eg_temp.extInfoRWD = checkResult && eg_temp.rowType == "afterRow" 
+				]]></before-init>
+				<init-script>
+					{$parentScript}
+					if (eg_temp.rowType == "afterRow")
+					{
+						webObj.attr("id", "other_" + eg_temp.index);
+						webObj.hide();
+					}
+					else if (eg_temp.rowType == "row")
+					{
+						webObj.attr("id", "dataRow_" + eg_temp.index);
+					}
+				</init-script>				
+			</typical-replacement>
+			<!-- 为自适应网页设计定制的TD, 用于显示从列表中移除的列 -->
+			<typical-component name="RWD_TD" type="td">
+				<component-param>css:{"background-color":"#f8f8f8"}</component-param>
+				<before-init>
+					checkResult = eg_temp.rowType == "afterRow";
+				</before-init>
+				<init-script>
+					webObj.attr("colSpan", eg_temp.columnCount);
+				</init-script>
+				<component name="extInfo" type="none" />
+			</typical-component>
+			
+			<!-- 为自适应网页设计定制的操作按钮, 用于折叠及显示从列表中移除的列 -->
+			<typical-component name="RWD_EXT_OPT" type="span">
+				<component-param>text:"+",css:{cursor:"pointer"}</component-param>
+				<events>
+					<event name="click">
+						if (webObj.text() == "+")
+						{
+							webObj.text("-");
+							_eterna.getWebObj("other_" + eg_temp.index).show();
+						}
+						else
+						{
+							webObj.text("+");
+							_eterna.getWebObj("other_" + eg_temp.index).hide();
+						}
+					</event>
+				</events>
+			</typical-component>
+			
 		</objs>
 
 		<attributes>

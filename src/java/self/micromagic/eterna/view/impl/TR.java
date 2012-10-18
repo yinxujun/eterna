@@ -18,8 +18,8 @@ public class TR extends ComponentImpl
       implements Component, ComponentGenerator
 {
    public static final String DEFAULT_TABLELIST_TR_ATTRIBUTE = "default.table-list.tr";
-   public static final int TABLE_TAYE_FORM = 2;
-   public static final int TABLE_TAYE_LIST = 1;
+   public static final int TABLE_TYPE_FORM = 2;
+   public static final int TABLE_TYPE_LIST = 1;
 
    protected int tableType = 0;
    protected Component baseComponent;
@@ -48,7 +48,7 @@ public class TR extends ComponentImpl
       }
       super.initialize(factory, parent);
       String trName = this.baseComponentName != null ? this.baseComponentName :
-            this.tableType != TABLE_TAYE_LIST ? null : (String) factory.getAttribute(DEFAULT_TABLELIST_TR_ATTRIBUTE);
+            this.tableType != TABLE_TYPE_LIST ? null : (String) factory.getAttribute(DEFAULT_TABLELIST_TR_ATTRIBUTE);
       if (trName != null && trName.length() > 0)
       {
          this.baseComponent = factory.getTypicalComponent(trName);
@@ -90,7 +90,7 @@ public class TR extends ComponentImpl
          this.initScript = ViewTool.addParentScript(this.initScript, null);
       }
 
-      if (this.tableType == TABLE_TAYE_LIST && this.beforeInit == null)
+      if (this.tableType == TABLE_TYPE_LIST && this.beforeInit == null)
       {
          this.beforeInit = "checkResult=false;checkResult=(eg_temp.rowType==\"title\"||eg_temp.rowType==\"row\");";
       }
@@ -107,11 +107,11 @@ public class TR extends ComponentImpl
       int preNameLength = 12;
       if (name.startsWith(TableList.TR_NAME_PERFIX))
       {
-         this.tableType = TABLE_TAYE_LIST;
+         this.tableType = TABLE_TYPE_LIST;
       }
       else if (name.startsWith(TableForm.TR_NAME_PERFIX))
       {
-         this.tableType = TABLE_TAYE_FORM;
+         this.tableType = TABLE_TYPE_FORM;
       }
       else
       {

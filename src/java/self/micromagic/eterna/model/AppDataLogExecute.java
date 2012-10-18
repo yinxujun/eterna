@@ -34,6 +34,7 @@ import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.container.SessionCache;
 import self.micromagic.util.container.PreFetchIterator;
+import self.micromagic.util.container.ThreadCache;
 import self.micromagic.util.FormatTool;
 import self.micromagic.util.BooleanRef;
 
@@ -43,7 +44,8 @@ import self.micromagic.util.BooleanRef;
 public class AppDataLogExecute extends AbstractExecute
       implements Execute, Generator
 {
-   public String getExecuteType() throws ConfigurationException
+   public String getExecuteType()
+			throws ConfigurationException
    {
       return "appDataLog";
    }
@@ -58,6 +60,22 @@ public class AppDataLogExecute extends AbstractExecute
       return null;
    }
 
+	/**
+	 * 用于记录信息打印者的构造器.
+	 */
+	private static PrinterCreater creater = new PrinterCreater();
+
+	/**
+	 * 设置用于记录信息打印者的构造器.
+	 */
+	public static void setPrinterCreater(PrinterCreater c)
+	{
+		creater = c;
+	}
+
+	/**
+	 * 输出AppData对象中的信息.
+	 */
    public static void printAppData(AppData data)
    {
       if (AppData.getAppLogType() == 0)
@@ -66,7 +84,7 @@ public class AppDataLogExecute extends AbstractExecute
       }
       try
       {
-         new Printer().printAppData(data);
+         creater.createPrinter().printAppData(data);
       }
       catch (Throwable ex)
       {
@@ -74,11 +92,17 @@ public class AppDataLogExecute extends AbstractExecute
       }
    }
 
+	/**
+	 * 将对象中的信息添加到父节点中.
+	 *
+	 * @param parent   被添加信息的父节点
+	 * @param value    包含需要添加信息的对象
+	 */
    public static void printObject(Element parent, Object value)
    {
       try
       {
-         new Printer().printObject(parent, value);
+         creater.createPrinter().printObject(parent, value);
       }
       catch (Throwable ex)
       {
@@ -195,6 +219,33 @@ public class AppDataLogExecute extends AbstractExecute
 
    }
 
+	/**
+	 * 日志信息打印者放置在线程缓存中的标签名.
+	 */
+	private static final String PRINTER_CACHE_FLAG = "app.data.log.printer";
+
+   /**
+	 * 记录日志信息打印者的创建器.
+	 */
+	public static class PrinterCreater
+	{
+      public Printer createPrinter()
+		{
+			ThreadCache cache = ThreadCache.getInstance();
+			Printer p = (Printer) cache.getProperty(PRINTER_CACHE_FLAG);
+			if (p == null)
+			{
+				p = new Printer();
+				cache.setProperty(PRINTER_CACHE_FLAG, p);
+			}
+			return p;
+		}
+
+	}
+
+   /**
+	 * 记录日志信息的打印者.
+	 */
    public static class Printer
    {
       private ArrayList cStack = new ArrayList();
@@ -228,7 +279,7 @@ public class AppDataLogExecute extends AbstractExecute
          while (entrys.hasNext())
          {
             Map.Entry entry = (Map.Entry) entrys.next();
-            String key = (String) entry.getKey();
+            String key = String.valueOf(entry.getKey());
             Object value = entry.getValue();
             Element vNode = parent.addElement("value");
             vNode.addAttribute("key", key);
@@ -478,6 +529,16 @@ public class AppDataLogExecute extends AbstractExecute
                this.pop();
             }
          }
+			else if (value instanceof Map.Entry)
+			{
+				Map.Entry entry = (Map.Entry) value;
+            String tKey = String.valueOf(entry.getKey());
+            Object tValue = entry.getValue();
+            parent.addAttribute("type", "Entry");
+            Element vNode = parent.addElement("value");
+            vNode.addAttribute("key", tKey);
+            this.printObject(vNode, tValue);
+			}
          else if (value.getClass().isArray())
          {
             parent.addAttribute("type", "Array");

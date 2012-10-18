@@ -2558,11 +2558,15 @@
 				{$ef:addGlobalStyle}(flag, styleStr);
 			]]></function>
 			<function name="addGlobalStyle" param="flag, styleStr"><![CDATA[
-				if (eg_cache[flag])
+				if (eg_cache.styleFlags == null)
+				{
+					eg_cache.styleFlags = {};
+				}
+				if (eg_cache.styleFlags[flag])
 				{
 					return;
 				}
-				eg_cache[flag] = 1;
+				eg_cache.styleFlags[flag] = 1;
 				if (jQuery.support.style)
 				{
 					var styleObj = jQuery("<style type='text/css'></style>");
@@ -2571,7 +2575,7 @@
 				}
 				else
 				{
-					// 对于ie浏览器, 要做特殊处理
+					// 对于ie浏览器, 需要合并到第一个, 并且是设置到styleSheet.cssText属性中
 					var styleObj = null;
 					var oldStyle = "";
 					var sArr = document.getElementsByTagName("style");
@@ -2598,6 +2602,7 @@
 
 			<!--
 			列表单元格纵向合并需要的方法.
+			cm = cell merge
 			-->
 
 			<!-- 初始化列合并需要的信息 -->
@@ -2659,6 +2664,80 @@
 					tdObj.attr("rowSpan", (parseInt(spanCount) + 1) + "");
 				}
 			</function>
+
+
+			<!--
+			处理自适应网页设计需要的方法.
+			rwd = Responsive Web Design
+			-->
+
+			<!--
+			获取容器的宽度等级, 数字越小表示宽度越大, 1表示最大尺寸 2表示次大尺寸 ...
+			levels     表示每个宽度等级分隔的数组, 必需为从大到小
+			           如: [600, 300, 150], 则等级分布如下,
+			           600及以上为1  600～300为2  300～150为3  150以下为4
+			           当此参数不为空时, 表示初始化宽度等级列表
+			           当此参数为空时, 则根据已初始化的宽度等级列表获取容器的宽度等级
+			overWrite  是否要覆盖原来初始化的宽度等级列表, 默认值为false
+			-->
+			<function name="rwd_widthLevel" param="levels, overWrite"><![CDATA[
+				if (levels != null)
+				{
+					if ({$data:___widthLevels} == null || overWrite)
+					{
+						{$data:___widthLevels} = levels;
+					}
+				}
+				if (_eterna.rootWebObj == null || {$data:___widthLevels} == null)
+				{
+					return 1;
+				}
+				var levelArr = {$data:___widthLevels};
+				var nowWidth = _eterna.rootWebObj.width();
+				for (var i = 0; i < levelArr.length; i++)
+				{
+					if (nowWidth >= levelArr[i])
+					{
+						return i + 1;
+					}
+				}
+				return levelArr.length + 1;
+			]]></function>
+
+			<!--
+			检测宽度现在的宽度等级与原来的宽度等级是否一致, 不同的话则要重新布局.
+			theObj  需要重新布局的控件
+ 			-->
+			<function name="rwd_checkWidthLevel" param="theObj"><![CDATA[
+				var wLevel = {$ef:rwd_widthLevel}();
+				if (eg_temp.widthLevel != null && eg_temp.widthLevel != wLevel)
+				{
+					{$ef:triggerEvents}(theObj, "save");
+					_eterna.reloadWebObj(theObj);
+				}
+			]]></function>
+
+			<!-- 根据当前的宽度等级给出checkResult的值, 即是否需要生成控件 -->
+			<function name="rwd_getCheckResult"><![CDATA[
+				var checkResult = true;
+				if (eg_temp.param != null)
+				{
+					if (eg_temp.param.needWidthLevel != null
+							&& eg_temp.widthLevel > eg_temp.param.needWidthLevel)
+					{
+						checkResult = eg_temp.extInfoRWD;
+					}
+					else
+					{
+						checkResult = !eg_temp.extInfoRWD;
+					}
+				}
+				else if (eg_temp.extInfoRWD)
+				{
+					checkResult = false;
+				}
+				return checkResult;
+			]]></function>
 
 		</objs>
 	</factory>

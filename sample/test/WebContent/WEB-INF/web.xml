@@ -11,8 +11,8 @@
 		<init-param>
 			<param-name>initFiles</param-name>
 			<param-value>
-				cp:test/sample.xml;cp:test/test.xml;cp:test/my.xml;cp:test/exp.xml;
-				cp:test/excel.xml;cp:test/codeManage.xml;
+				cp:test/index.xml;cp:test/sample.xml;cp:test/test.xml;cp:test/my.xml;
+				cp:test/excel.xml;cp:test/codeManage.xml;cp:test/exp.xml;
 			</param-value>
 		</init-param>
 		<init-param>

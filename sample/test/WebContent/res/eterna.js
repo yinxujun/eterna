@@ -1,5 +1,7 @@
 
-/** version: 1.5.5 */
+/**
+  * version: 1.5.6
+  */
 
 (function(window) {
 
@@ -12,7 +14,7 @@ else
 	return;
 }
 
-var ___ETERNA_VERSION = "1.5.5";
+var ___ETERNA_VERSION = "1.5.6";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 window.ED_GET_VALUE = 0x1;
 window.ED_EXECUTE_SCRIPT = 0x2;
@@ -23,6 +25,20 @@ window.ED_HIGHER = 0x80;
 window.ED_FN_CALLED = 0x30;
 window.ED_FNC_STACK = 0x40;
 window.ED_COM_CREATED = 0x20;
+
+var oldBodyWidth;
+function registerResizeEvent()
+{
+	oldBodyWidth = jQuery("body").width();
+	jQuery(window).resize(function (){
+		var bodyObj = jQuery("body");
+		if (Math.abs(bodyObj.width() - oldBodyWidth) > EG_EVENT_WIDTH_SENSITIVITY)
+		{
+			oldBodyWidth = bodyObj.width();
+			Eterna.fireWidthChange(bodyObj);
+		}
+	});
+}
 
 var jQueryInitCount = 0;
 function jQueryInit()
@@ -35,6 +51,15 @@ function jQueryInit()
 	{
 		// 不使用深度序列化方式
 		jQuery.ajaxSettings.traditional = true;
+
+		if (document.readyState == "complete" || document.readyState == "loaded")
+		{
+			registerResizeEvent();
+		}
+		else
+		{
+			jQuery(registerResizeEvent);
+		}
 	}
 	else
 	{
@@ -46,6 +71,8 @@ function jQueryInit()
 	}
 }
 jQueryInit();
+
+
 
 // EE = ETERNA_EVENT
 var EE_SUB_WINDOW_CLOSE = "lock_close";
@@ -154,6 +181,11 @@ window.EG_DATA_TYPE_REST = "REST";
 window.EG_DATA_TYPE_ALL = "all";
 window.EG_DATA_TYPE_WEB = "web";
 window.EG_ORDER_SUFIX = ".order";
+window.EG_ORDER_TYPE = ".orderType";
+
+window.EG_EVENT_WIDTH_CHANGE = "widthChange";
+// 对宽度变化的灵敏度, 变化量多大时才会触发widthChange事件
+window.EG_EVENT_WIDTH_SENSITIVITY = 15;
 
 var EG_SCRIPT_STR_PREFIX_ARR = ["javascript:", "vbscript:"];
 var EG_JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
@@ -179,6 +211,8 @@ var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
 
 
+window.currentEterna = null;
+
 window.eg_cache = {
 	willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
 	eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false
@@ -188,7 +222,8 @@ var EG_TEMP_NAMES = [
 	"dataName", "srcName", "index", "columnCount", "rowNum",
 	"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
 	"name", "caption", "valueObj", "param", "tempData",
-	"sysTemplateRoot", "sysOptions"
+	"extInfoRWD", "widthLevel", /* 自适应宽度调整时显示扩充信息的标识 及 当前的跨度等级 */
+	"sysTemplateRoot", "sysOptions",
 ];
 
 window.eg_temp = {};
@@ -241,14 +276,12 @@ function Eterna($E, eterna_debug, rootWebObj)
 		Eterna._initialized = true;
 		Eterna._oldDebug = eterna_debug;
 
-		Eterna.prototype.eternaVersion = ___ETERNA_VERSION;
-
 		Eterna.prototype.egTemp = function(temp)
 		{
 			var key;
 			if (temp != null)
 			{
-				for(key in eg_temp)
+				for (key in eg_temp)
 				{
 					eg_temp[key] = null;
 				}
@@ -309,11 +342,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 			return eg_temp.tempData;
 		}
 
-		Eterna.prototype.isArray = function(obj)
-		{
-			return jQuery.isArray(obj);
-		}
-
 		Eterna.prototype.changeEternaData = function(newData)
 		{
 			if (this.$E == newData)
@@ -329,40 +357,6 @@ function Eterna($E, eterna_debug, rootWebObj)
 			for (var key in newData)
 			{
 				this.$E[key] = newData[key];
-			}
-		}
-
-		Eterna.prototype.createJSON = function()
-		{
-			return {};
-		}
-
-		Eterna.prototype.cloneJSON = function(obj)
-		{
-			if (typeof obj == "object")
-			{
-				if (this.isArray(obj))
-				{
-					var newObj = [];
-					for(var i = 0; i < obj.length; i++)
-					{
-						newObj[i] = this.cloneJSON(obj[i]);
-					}
-					return newObj;
-				}
-				else
-				{
-					var newObj = {};
-					for(var key in obj)
-					{
-						newObj[key] = this.cloneJSON(obj[key]);
-					}
-					return newObj;
-				}
-			}
-			else
-			{
-				return obj;
 			}
 		}
 
@@ -387,7 +381,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 					successFn.status = textStatus;
 					if (eterna_checkRemoteData(data))
 					{
-						successFn.data = eval("(" + eterna_dealRemoteData(data) + ")");
+						successFn.data = eval("(" + eterna_dealRemoteData(_eterna, data) + ")");
 					}
 					else
 					{
@@ -940,7 +934,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 				eventFunction.maskDiv.bind("mousedown", {move:0}, eventFunction);
 				theBody.css("overflow-x", "hidden");
 				theBody.css("overflow-y", "hidden");
-				if (!jQuery.support.boxModel || !jQuery.support.style)
+				if (!jQuery.support.boxModel || document.all)  // IE
 				{
 					eventFunction.maskDiv.css("filter", "alpha(opacity=0)");
 					eventFunction.maskDiv.css("background-color", "white");
@@ -1931,7 +1925,19 @@ function Eterna($E, eterna_debug, rootWebObj)
 						var newArr = [];
 						for (var i = 0; i < theEvents.length; i++)
 						{
-							newArr.push(theEvents[i]);
+							if (theEvents[i].handler == eterna_specialEventHandler)
+							{
+								// 如果事件的handler就是特殊事件, 则取出它的事件列表
+								var tmpArr = theEvents[i].data.events;
+								for (var j = 0; j < tmpArr.length; j++)
+								{
+									newArr.push(tmpArr[j]);
+								}
+							}
+							else
+							{
+								newArr.push(theEvents[i]);
+							}
 						}
 						theEvents = newArr;
 					}
@@ -3901,6 +3907,64 @@ function Eterna($E, eterna_debug, rootWebObj)
 window.Eterna = Eterna;
 
 
+/**
+ * 一些全局的属性及方法.
+ */
+
+Eterna.prototype.eternaVersion = Eterna.eternaVersion = ___ETERNA_VERSION;
+
+Eterna.prototype.fireWidthChange = Eterna.fireWidthChange = function(rootObj)
+{
+	jQuery("*", rootObj).each(function (){
+		var theObj = jQuery(this);
+		var theEvents = theObj.data("events");
+		if (theEvents != null && theEvents[EG_EVENT_WIDTH_CHANGE] != null)
+		{
+			theObj.trigger(EG_EVENT_WIDTH_CHANGE);
+		}
+	});
+}
+
+Eterna.prototype.isArray = Eterna.isArray = function(obj)
+{
+	return jQuery.isArray(obj);
+}
+
+Eterna.prototype.createJSON = Eterna.createJSON = function()
+{
+	return {};
+}
+
+Eterna.prototype.cloneJSON = Eterna.cloneJSON = function(obj)
+{
+	if (typeof obj == "object")
+	{
+		if (Eterna.isArray(obj))
+		{
+			var newObj = [];
+			for(var i = 0; i < obj.length; i++)
+			{
+				newObj[i] = Eterna.cloneJSON(obj[i]);
+			}
+			return newObj;
+		}
+		else
+		{
+			var newObj = {};
+			for(var key in obj)
+			{
+				newObj[key] = Eterna.cloneJSON(obj[key]);
+			}
+			return newObj;
+		}
+	}
+	else
+	{
+		return obj;
+	}
+}
+
+
 // 检查框架的数据是否合法, 不完整的将会补充完整, 并且在数据结构上与老版本兼容
 var EG_ED_COMPATIBLE_NAMES = {
 	G:"global", D:"records", V:"view", T:"typical", F:"eFns", R:"res"
@@ -3953,16 +4017,25 @@ function eterna_initEternaCache(_eterna, newData)
  */
 function eterna_initTextData(_eterna, textData)
 {
-	if (_eterna.rootWebObj != null)
+	var oldEterna = currentEterna;
+	currentEterna = _eterna;
+	try
 	{
-		_eterna.rootWebObj.html(textData);
-		var specialObjs = _eterna.queryWebObj("a, form");
-		for (var i = 0; i < specialObjs.size(); i++)
+		if (_eterna.rootWebObj != null)
 		{
-			var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
-			_eterna.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+			_eterna.rootWebObj.html(textData);
+			eterna_doInitObjs(_eterna.rootWebObj);
+			var specialObjs = _eterna.queryWebObj("a, form");
+			for (var i = 0; i < specialObjs.size(); i++)
+			{
+				var tmpConfig = {name:"$specail",type:EG_INHERIT_FLAG};
+				_eterna.changeSpecialObjEvent(tmpConfig, specialObjs.eq(i));
+			}
 		}
-		eterna_doInitObjs(_eterna.rootWebObj);
+	}
+	finally
+	{
+		currentEterna = oldEterna;
 	}
 }
 
@@ -4535,7 +4608,7 @@ function eterna_checkRemoteData(str)
 /**
  * 处理获得的远程数据, 去除字符串右边的空白字符, 存储html文本等.
  */
-function eterna_dealRemoteData(str)
+function eterna_dealRemoteData(_eterna, str)
 {
 	if (str == null)
 	{
@@ -4559,19 +4632,28 @@ function eterna_dealRemoteData(str)
 	{
 		if (index + EG_JSON_SPLIT_FLAG.length < str.length)
 		{
-			var tmpDiv = jQuery("<div/>");
-			tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
-			var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
-			if (dataDiv.size() == 0)
+			var oldEterna = currentEterna;
+			currentEterna = _eterna;
+			try
 			{
-				dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
-				dataDiv.hide();
-				jQuery("body").append(dataDiv);
+				var tmpDiv = jQuery("<div/>");
+				tmpDiv.html(str.substring(index + EG_JSON_SPLIT_FLAG.length));
+				var dataDiv = jQuery("#" + EG_HTML_DATA_DIV);
+				if (dataDiv.size() == 0)
+				{
+					dataDiv = jQuery("<div id=\"" + EG_HTML_DATA_DIV + "\"/>");
+					dataDiv.hide();
+					jQuery("body").append(dataDiv);
+				}
+				var tmpSubs = tmpDiv.children();
+				for (var i = 0; i < tmpSubs.size(); i++)
+				{
+					dataDiv.append(tmpSubs.eq(i));
+				}
 			}
-			var tmpSubs = tmpDiv.children();
-			for (var i = 0; i < tmpSubs.size(); i++)
+			finally
 			{
-				dataDiv.append(tmpSubs.eq(i));
+				currentEterna = oldEterna;
 			}
 		}
 		return str.substring(0, index);
@@ -4610,7 +4692,7 @@ window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
 			{
 				if (eterna_checkRemoteData(textData))
 				{
-					var str = eterna_dealRemoteData(textData);
+					var str = eterna_dealRemoteData(_eterna, textData);
 					var tmpData = eval("(" + str + ")");
 					_eterna.changeEternaData(tmpData);
 					eg_temp = {};
@@ -4639,7 +4721,7 @@ window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
 				{
 					if (eterna_checkRemoteData(textData))
 					{
-						var str = eterna_dealRemoteData(result);
+						var str = eterna_dealRemoteData(_eterna, result);
 						var tmpData = eval("(" + str + ")");
 						_eterna.changeEternaData(tmpData);
 						eg_temp = {};
@@ -4752,47 +4834,64 @@ window.ef_toScriptString = function(str)
 if (typeof eg_pageInitializedURL == "undefined")
 {
 	window.eg_pageInitializedURL = {};
-	window.ef_loadResource = function (jsResource, url, charset)
+}
+
+window.ef_loadResource = function (jsResource, url, charset)
+{
+	if (window.eg_pageInitializedURL[url])
 	{
-		if (window.eg_pageInitializedURL[url])
+		if (!jsResource || !jsResource.alwaysExecute)
 		{
 			return;
 		}
-		window.eg_pageInitializedURL[url] = 1;
-		if (typeof eg_resVersion != "undefined")
+	}
+	window.eg_pageInitializedURL[url] = 1;
+	if (typeof eg_resVersion != "undefined")
+	{
+		if (url.indexOf("?") == -1)
 		{
-			if (url.indexOf("?") == -1)
-			{
-				url += "?_v=" + eg_resVersion;
-			}
-			else
-			{
-				url += "&_v=" + eg_resVersion;
-			}
-		}
-		var resObj;
-		if (jsResource)
-		{
-			resObj = document.createElement("script");
-			resObj.type = "text/javascript";
-			resObj.async = true;
-			resObj.src = url;
+			url += "?_v=" + eg_resVersion;
 		}
 		else
 		{
-			resObj = document.createElement("link");
-			resObj.type = "text/css";
-			resObj.rel = "stylesheet";
-			resObj.href = url;
+			url += "&_v=" + eg_resVersion;
 		}
-		if (charset != null)
+	}
+	var resObj;
+	if (jsResource)
+	{
+		if (typeof jQuery != 'undefined' && jsResource.async != true)
 		{
-			resObj.charset = charset;
+			// 注: 除非返回数据里有编码格式头, 否则默认使用utf-8编码格式
+			var opt = {type:"GET",global:false,url:url,async:false,dataType:"script",cache:true};
+			if (typeof jsResource.cache != "undefined")
+			{
+				opt.cache = jsResource.cache;
+			}
+			jQuery.ajax(opt);
+			// 同步加载完成后直接退出, 不执行后面的代码
+			return;
 		}
-		var s = document.getElementsByTagName("script")[0];
-		s.parentNode.insertBefore(resObj, s);
-	};
+		resObj = document.createElement("script");
+		resObj.type = "text/javascript";
+		resObj.async = true;
+		resObj.src = url;
+	}
+	else
+	{
+		resObj = document.createElement("link");
+		resObj.type = "text/css";
+		resObj.rel = "stylesheet";
+		resObj.href = url;
+	}
+	if (charset != null)
+	{
+		resObj.charset = charset;
+	}
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(resObj, s);
 }
+
 window.ef_loadScript = function(flag, scriptPath, recall)
 {
 	if (window.eg_pageInitializedURL[scriptPath])
@@ -4834,7 +4933,7 @@ window.ef_loadScript = function(flag, scriptPath, recall)
 			if (recall != null) recall();
 		};
 	}
-};
+}
 
 /**
  * 格式化数字显示方式
