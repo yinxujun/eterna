@@ -482,8 +482,10 @@ public class ClassGenerator
       {
          // 如果出现异常, 这可能是jdk版本小于1.5, 使用getName方法来获取类名
          nameAccessor = new ClassNameAccessor();
-         if (!(ex instanceof UnsupportedClassVersionError || ex instanceof ClassNotFoundException))
+         if (!(ex instanceof UnsupportedClassVersionError || ex instanceof LinkageError
+					|| ex.getCause() instanceof UnsupportedClassVersionError))
          {
+				// 当不是版本相关的异常时, 才记录日志
             if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
             {
                CG.log.error("init name accessor error.", ex);
@@ -509,6 +511,10 @@ public class ClassGenerator
          if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
          {
             CG.log.error("AntCG init error.", ex);
+         }
+			else if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+         {
+            CG.log.warn("AntCG init error, message is [" + ex + "].");
          }
       }
       try

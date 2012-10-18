@@ -14,16 +14,27 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.view.DataPrinter;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface SearchAdapter
 {
    static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
    static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
 
    /**
-    * 设置单列排序的参数名. <p>
-    * 参数格式为: [searchName]/order。
+    * 设置单列排序的参数名后缀. <p>
+    * 参数格式为: [searchName].order
+	 * 值为需要排序的reader名称.
     */
    static final String SINGLE_ORDER_SUFIX = ".order";
+
+   /**
+    * 设置单列排序的类型. <p>
+    * 参数格式为: [searchName].orderType
+	 * 值可以分别为 0 自动切换升序及降序, 1 升序, -1 降序
+    */
+   static final String SINGLE_ORDER_TYPE = ".orderType";
 
    /**
     * 设置默认每页行数的属性名称. <p>

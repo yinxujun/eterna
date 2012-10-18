@@ -24,9 +24,11 @@ import self.micromagic.eterna.view.TableForm;
 import self.micromagic.eterna.view.TableFormGenerator;
 import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.ViewAdapterGenerator;
-import self.micromagic.util.container.UnmodifiableIterator;
 import self.micromagic.util.container.PreFetchIterator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class TableFormImpl extends AbstractTable
       implements TableForm, TableFormGenerator
 {

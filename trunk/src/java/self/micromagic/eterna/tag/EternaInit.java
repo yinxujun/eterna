@@ -133,10 +133,9 @@ public class EternaInit extends InitBaseTag
 		// 如果定义了jQuery
 		out.println("if (typeof jQuery != \"undefined\")");
 		out.println('{');
-		out.println("jQuery(document).ready(function(){");
-		out.println("eCheckInitFn();");
-		out.println("});");
+		out.println("jQuery(eCheckInitFn);");
 		out.println('}');
+		out.println("else");
 		out.println('{');
 		out.println("retryFind = true;");
 		// 如果未定义jQuery, 则延迟200毫秒后再尝试

@@ -25,11 +25,14 @@
 				}
 				代码样例：
 				btns.push({...});
+				另外, 如果需要进行纵向布局, 可以通过如下代码设置:
+				tmpData.verticalLayout = 1;
 			-->
 			<typical-component name="toolbar_component" type="div">
-				<component-param>className:"eterna_toolbar",attr:{align:"left"},css:{height:"23px","padding-top":"8px"}</component-param>
+				<component-param>className:"eterna_toolbar",attr:{align:"left"},css:{"padding-top":"8px"}</component-param>
 				<before-init>
-					var tmpData = _eterna.egTempData();
+					var tmpData = _eterna.egTempData(true);
+					tmpData.verticalLayout = 0;
 					if (tmpData.primitiveDataName == null)
 					{
 						tmpData.primitiveDataName = eg_temp.dataName;
@@ -39,10 +42,14 @@
 					{$dataV:eg_temp.dataName} = btns;
 				</before-init>
 				<component name="loop" type="loop">
-					<component name="span" type="div">
-						<component-param>className:"toolbutton",css:{height:"20px",cursor:"pointer",float:'left'}</component-param>
+					<component name="btn" type="div">
+						<component-param>className:"toolbutton",css:{height:"20px",cursor:"pointer"}</component-param>
 						<init-script>
 							webObj.data("btnConfig", {$dataV:eg_temp.dataName}[eg_temp.index]);
+							if (!eg_temp.tempData.verticalLayout)
+							{
+								webObj.css("float", "left");
+							}
 						</init-script>
 						<events>
 							<event name="click">
@@ -100,9 +107,12 @@
 							<component-param>text:"[script]:{$dataV:eg_temp.dataName}[eg_temp.index].name"</component-param>
 						</component>
 					</component>
-					<component name="span" type="div">
+					<component name="split" type="div">
 						<component-param>className:"LL",text:"|",css:{height:"20px",float:'left'}</component-param>
-						<before-init>checkResult = eg_temp.index &lt; {$dataV:eg_temp.dataName}.length - 1;</before-init>
+						<before-init><![CDATA[
+							checkResult = !eg_temp.tempData.verticalLayout 
+									&& eg_temp.index < {$dataV:eg_temp.dataName}.length - 1;
+						]]></before-init>
 					</component>
 				</component>
 				<component name="div" type="div" comParam="css:{clear:'both'}"/>

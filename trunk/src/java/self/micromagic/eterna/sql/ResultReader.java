@@ -9,6 +9,9 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.PermissionSet;
 import self.micromagic.eterna.share.EternaFactory;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ResultReader
 {
    /**

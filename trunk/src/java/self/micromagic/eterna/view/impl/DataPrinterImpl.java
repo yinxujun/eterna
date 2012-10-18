@@ -180,6 +180,17 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			this.print(out, (long[]) value);
 		}
+		else if (value instanceof Map.Entry)
+		{
+			Map.Entry entry = (Map.Entry) value;
+			Object tKey = entry.getKey();
+			Object tValue = entry.getValue();
+			out.write("{\"key\":");
+			this.print(out, tKey);
+			out.write(",\"value\":");
+			this.print(out, tValue);
+			out.write('}');
+		}
 		else if (value instanceof char[])
 		{
 			this.print(out, (char[]) value);
