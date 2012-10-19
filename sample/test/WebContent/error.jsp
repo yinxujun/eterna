@@ -8,7 +8,7 @@
 </head>
 <body>
 <%
-   AppData data = (AppData) request.getAttribute(WebApp.APPDATA_TAG);
+	AppData data = (AppData) request.getAttribute(WebApp.APPDATA_TAG);
 	if (data != null)
 	{
 		out.println("发生错误, 编号为：" + data.getAppId());
