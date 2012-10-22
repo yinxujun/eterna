@@ -20,6 +20,5 @@
 		out.println("错误的页面访问!");
 	}
 %>
-<%@ include file="/analyticsLink.jsp" %>
 </body>
 </html>

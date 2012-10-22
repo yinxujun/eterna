@@ -55,6 +55,11 @@ public abstract class ResultReaders
 	public static final String CHECK_INDEX_FLAG = "checkIndex";
 
 	/**
+	 * 在arrtibute中设置导出时使用的标题.
+	 */
+	public static final String PRINT_CAPTION = "print.caption";
+
+	/**
 	 * ResultReader默认的空属性集.
 	 */
 	private static final AttributeManager EMPTY_ATTRIBUTES = new AttributeManager();
@@ -115,6 +120,16 @@ public abstract class ResultReaders
 			if (tmpStr != null)
 			{
 				this.checkIndex = "true".equalsIgnoreCase(tmpStr);
+			}
+			// 检查有没有设置导出时使用的标题, 如果设置了则要尝试翻译
+			tmpStr = (String) this.getAttribute(PRINT_CAPTION);
+			if (tmpStr != null)
+			{
+				String pCaption = Tool.translateCaption(factory, tmpStr);
+				if (pCaption != null)
+				{
+					this.attributes.setAttribute(PRINT_CAPTION, pCaption);
+				}
 			}
       }
 

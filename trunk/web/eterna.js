@@ -222,7 +222,7 @@ var EG_TEMP_NAMES = [
 	"dataName", "srcName", "index", "columnCount", "rowNum",
 	"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
 	"name", "caption", "valueObj", "param", "tempData",
-	"extInfoRWD", "widthLevel", /* 自适应宽度调整时显示扩充信息的标识 及 当前的跨度等级 */
+	"extInfo", "widthLevel", /* 自适应宽度调整时显示扩充信息的标识 及 当前的宽度等级 */
 	"sysTemplateRoot", "sysOptions",
 ];
 
@@ -1012,7 +1012,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 			if (lock)
 			{
 				this.nowWindow = theWindow;
-				if (jQuery.isFunction(closeEvent))
+				if (this.isFunction(closeEvent))
 				{
 					jQuery(window).bind(EE_SUB_WINDOW_CLOSE, closeEvent);
 				}
@@ -1710,7 +1710,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 			var doLoop = false;
 			var type = configData.type;
 			var webObj = null;
-			if (configData.creater != null && jQuery.isFunction(configData.creater))
+			if (configData.creater != null && this.isFunction(configData.creater))
 			{
 				webObj = configData.creater(configData, parent.webObjList ? parent.realParent : parent);
 			}
@@ -3930,6 +3930,11 @@ Eterna.prototype.isArray = Eterna.isArray = function(obj)
 	return jQuery.isArray(obj);
 }
 
+Eterna.prototype.isFunction = Eterna.isFunction = function(obj)
+{
+	return jQuery.isFunction(obj);
+}
+
 Eterna.prototype.createJSON = Eterna.createJSON = function()
 {
 	return {};
@@ -3947,6 +3952,10 @@ Eterna.prototype.cloneJSON = Eterna.cloneJSON = function(obj)
 				newObj[i] = Eterna.cloneJSON(obj[i]);
 			}
 			return newObj;
+		}
+		else if (Eterna.isFunction(obj))
+		{
+			return obj;
 		}
 		else
 		{

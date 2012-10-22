@@ -89,7 +89,7 @@ public class ExportCSV extends AbstractExportExecute
       for (int i = 0; i < count; i++)
       {
          ResultReader reader = meta.getColumnReader(i + 1);
-         notPrint[i] = "true".equalsIgnoreCase((String) reader.getAttribute("print.notPrint"));
+         notPrint[i] = "true".equalsIgnoreCase((String) reader.getAttribute(PRINT_EXCLUDE));
          if (notPrint[i])
          {
             skipColumnCount++;
@@ -99,7 +99,12 @@ public class ExportCSV extends AbstractExportExecute
          {
             out.write(',');
          }
-         this.writeString(out, meta.getColumnCaption(i + 1));
+			String caption = (String) reader.getAttribute(PRINT_CAPTION);
+			if (caption == null)
+			{
+				caption = meta.getColumnCaption(i + 1);
+			}
+         this.writeString(out, caption);
       }
       while (ritr.hasMoreRow())
       {

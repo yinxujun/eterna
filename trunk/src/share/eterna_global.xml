@@ -2725,14 +2725,14 @@
 					if (eg_temp.param.needWidthLevel != null
 							&& eg_temp.widthLevel > eg_temp.param.needWidthLevel)
 					{
-						checkResult = eg_temp.extInfoRWD;
+						checkResult = eg_temp.extInfo;
 					}
 					else
 					{
-						checkResult = !eg_temp.extInfoRWD;
+						checkResult = !eg_temp.extInfo;
 					}
 				}
-				else if (eg_temp.extInfoRWD)
+				else if (eg_temp.extInfo)
 				{
 					checkResult = false;
 				}

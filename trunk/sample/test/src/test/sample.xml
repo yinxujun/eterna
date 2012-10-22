@@ -65,10 +65,10 @@
 						{$dataV:eg_temp.dataName + "_searchName"} = "list.search";
 					</before-init>
 					<replacement name="toolbar" baseComponentName="toolbar_component">
-						<before-init>
+						<before-init><![CDATA[
 							{$parentScript}							
 							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
-							if (eg_temp.widthLevel &gt; 2)
+							if (eg_temp.widthLevel > 2)
 							{
 								tmpData.verticalLayout = 1;
 							}
@@ -76,19 +76,19 @@
 							btns.push({name:'导入',img:'input.gif',click:function(){alert("导入暂未实现!");}});
 							btns.push({name:'导出',img:'output.gif',click:function(){alert("导出暂未实现!");}});
 							btns.push({name:'反选',img:'select.gif',click:function(){alert("反选暂未实现!");}});
-						</before-init>
+						]]></before-init>
 						<events>
 							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
 						</events>
 					</replacement>
 					<table-form name="conditions" columns="10,23,10,23,10,24" baseName="search:list.search" dataName="searchManager">
-						<before-init>
+						<before-init><![CDATA[
 							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
-							if (eg_temp.widthLevel &lt; 2)
+							if (eg_temp.widthLevel < 2)
 							{
 								configData.columns = [10, 23, 10, 23, 10, 24];
 							}
-							else if (eg_temp.widthLevel &lt; 3)
+							else if (eg_temp.widthLevel < 3)
 							{
 								configData.columns = [20, 30, 20, 30];
 							}
@@ -96,7 +96,7 @@
 							{
 								configData.columns = [40, 60];
 							}
-						</before-init>
+						]]></before-init>
 						<events>
 							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
 						</events>
@@ -117,8 +117,8 @@
 							<replacement name="td" baseComponentName="RWD_TD;extInfo">
 								<table-form name="extInfo" columns="10,30,10,50" baseName="query:list.query" dataName="listInfo">
 									<component-param>css:{width:"100%"}</component-param>
-									<before-init>
-										if (eg_temp.widthLevel &lt; 3)
+									<before-init><![CDATA[
+										if (eg_temp.widthLevel < 3)
 										{
 											configData.columns = [20, 30, 20, 30];
 										}
@@ -126,7 +126,7 @@
 										{
 											configData.columns = [40, 60];
 										}
-									</before-init>
+									]]></before-init>
 									<cells>
 										<cell name="$typical" needIndex="true">
 											<before-init>checkResult = {$ef:rwd_getCheckResult}();</before-init>
@@ -232,9 +232,9 @@
 						}
 					</before-init>
 					<table-form name="form_body" columns="20,30,20,30" baseName="query:get.query" dataName="studentInfo">
-						<before-init>
+						<before-init><![CDATA[
 							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
-							if (eg_temp.widthLevel &lt; 2)
+							if (eg_temp.widthLevel < 2)
 							{
 								configData.columns = [20, 30, 20, 30];
 							}
@@ -242,7 +242,7 @@
 							{
 								configData.columns = [40, 60];
 							}
-						</before-init>
+						]]></before-init>
 						<events>
 							<event name="widthChange">{$ef:rwd_checkWidthLevel}(webObj);</event>
 						</events>
@@ -365,7 +365,7 @@
 				<before-init><![CDATA[
 					checkResult = eg_temp.rowType == "title" || eg_temp.rowType == "row" 
 							|| (eg_temp.rowType == "afterRow" && eg_temp.widthLevel > 1);
-					eg_temp.extInfoRWD = checkResult && eg_temp.rowType == "afterRow" 
+					eg_temp.extInfo = checkResult && eg_temp.rowType == "afterRow" 
 				]]></before-init>
 				<init-script>
 					{$parentScript}
