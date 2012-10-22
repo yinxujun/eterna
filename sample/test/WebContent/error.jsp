@@ -1,7 +1,7 @@
 <%@ page session="false" contentType="text/html;charset=UTF-8" %><%@
     page import="self.micromagic.eterna.model.AppData,
                  self.micromagic.app.WebApp,
-					  self.micromagic.util.Utils"%><html>
+                 self.micromagic.util.Utils"%><html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 <meta http-equiv="pragma" content="no-cache"/>

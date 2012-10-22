@@ -1,196 +1,10 @@
 @charset "utf-8";
 /* css定义 */
 
-.eternaFrame .sbody { margin: 0px; background-color: #FFFFFF; scrollbar-face-color: #DBDBDB;
-scrollbar-highlight-color: #FFFFFF; scrollbar-shadow-color: #DBDBDB; scrollbar-
-3dlight-color: #DBDBDB; scrollbar-arrow-color:#A8A8A8; scrollbar-track-color:
-#D7D7D7; scrollbar-darkshadow-color: #A8A8A8; margin-left: 0px; margin-top: 0px;
-margin-right: 0px; margin-bottom: 0px;
-
-}
-
 .eternaFrame span, .eternaFrame a {
 	font-size: 12px;
 }
 
-.eternaFrame .sbodymenu{
-	margin-left: 0px;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-}
-.eternaFrame .p9 {
-	font-size: 12px;
-	line-height: 16pt;
-	color: #333333;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.eternaFrame .p9white {
-	font-size: 12px;
-	line-height: 16pt;
-	color: #FFFFFF;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.eternaFrame .p9red {
-	font-size: 12px;
-	line-height: 16pt;
-	color: #FF0000;
-	font-family: Arial, Helvetica, sans-serif;
-}
-.eternaFrame a.common:link {
-	font-size: 12px;
-	color: #000000;
-	text-decoration: none;
-}
-.eternaFrame a.common:visited {
-	font-size: 12px;
-	color: #000000;
-	text-decoration: none;
-}
-.eternaFrame a.common:hover {
-	font-size: 12px;
-	color: #FF6600;
-	text-decoration: underline;
-}
-.eternaFrame a.b2link:link {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-}
-
-.eternaFrame a.b2link:visited {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-}
-.eternaFrame a.b2link:hover {
-	font-size: 12px;
-	color: #FF6600;
-	text-decoration: underline;
-}
-.eternaFrame a.position:link {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-}
-.eternaFrame a.position:visited {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-}
-.eternaFrame a.position:hover {
-	font-size: 12px;
-	color: #FF6600;
-	text-decoration: underline;
-}
-.eternaFrame a.top:link {
-	font-size: 12px;
-	color: #80C0DF;
-	text-decoration: none;
-}
-.eternaFrame a.top:visited {
-	font-size: 12px;
-	color: #80C0DF;
-	text-decoration: none;
-}
-.eternaFrame a.top:hover {
-	font-size: 12px;
-	color: #FF6600;
-	text-decoration: underline;
-}
-.eternaFrame a.top2:link {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-	font-weight: bold;
-}
-.eternaFrame a.top2:visited {
-	font-size: 12px;
-	color: #003D98;
-	text-decoration: none;
-	font-weight: bold;
-}
-.eternaFrame a.top2:hover {
-	font-size: 12px;
-	color: #FF6600;
-	text-decoration: none;
-	font-weight: bold;
-}
-.eternaFrame a.button:link {
-	font-size: 12px;
-	color: #ffffff;
-	text-decoration: none;
-	top: 60px;
-}
-.eternaFrame a.button:visited {
-	font-size: 12px;
-	color: #ffffff;
-	text-decoration: none
-}
-.eternaFrame a.button:hover {
-	font-size: 12px;
-	color: #FF9900;
-	text-decoration: none;
-}
-.eternaFrame .stitbg {
-	background-image: url(images/tit_bg.gif);
-	background-repeat: no-repeat;
-	height: 36px;
-}
-.eternaFrame .nsdpopupzi {
-	font-size: 12pt;
-	font-weight: bold;
-	filter: DropShadow(Color=#C3C3C3, OffX=1, OffY=1);
-	color: #12006B;
-}
-.eternaFrame .nsdpopupzi2 {
-	font-size: 10pt;
-	font-weight: bold;
-	filter: DropShadow(Color=#C3C3C3, OffX=1, OffY=1);
-	color: #12006B;
-}
-.eternaFrame .stit1 {
-	font-size: 12pt;
-	font-weight: bold;
-	filter: DropShadow(Color=#C3C3C3, OffX=1, OffY=1);
-	color: #000000;
-	text-align: center;
-}
-.eternaFrame .stit {
-	font-size: 11pt;
-	line-height: 20pt;
-	font-weight: bold;
-	color: #0169C2;
-	font-family: "楷体_GB2312";
-	padding-left: 10px;
-	filter: DropShadow(Color=#B0C2CE, OffX=1, OffY=1, Positive=ture);
-}
-
-.eternaFrame .stit2 {
-	font-size: 10.5pt;
-	font-weight: bold;
-}
-.eternaFrame .tit3 {
-	font-size: 12pt;
-	line-height: 20pt;
-	font-weight: bold;
-}
-.eternaFrame .input {
-	font-size: 12px;
-	color: #63A6D6;
-	border: 1px solid #63A6D6;
-	background-color: #F5F5F5;
-}
-.eternaFrame .button {
-	background-image: url(images/button_bg.gif);
-	border: 1px solid #00539D;
-	padding: 2px 10px 0px;
-	font-size: 12px;
-	cursor: hand;
-	background-repeat: repeat-x;
-	height: 16px;
-	filter: DropShadow(Color=#4E4E4E, OffX=1, OffY=1);
-}
 .eternaFrame .td_fld_title
 {
 	text-align: right;
@@ -204,49 +18,6 @@ margin-right: 0px; margin-bottom: 0px;
 	background-color: #EEEEF9;
 }
 
-.eternaFrame .td_fld_title1
-{
-	text-align: left;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-	background-color: #EEEEF9;
-}
-
-.eternaFrame .td_fld_title_left
-{
-	background-color: #EEEEF9;
-}
-
-.eternaFrame .td_fld_title2
-{
-	text-align: right;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-	background-color: #FFB6D6;
-
-}
-
-.eternaFrame .td_fld
-{
-	align:right;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-}
 .eternaFrame .t_td {
 	border-right-width: 1px;
 	border-bottom-width: 1px;
@@ -256,39 +27,8 @@ margin-right: 0px; margin-bottom: 0px;
 	border-bottom-color: #63A6D6;
 	padding: 2px;
 }
-.eternaFrame .t_td  A	  { COLOR: #0000FF;  }
-
-.eternaFrame .t_td1 {
-	text-align:right;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-}
-
-.eternaFrame .t_td2 {
-	text-align:center;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-}
-
-.eternaFrame .t_td3 {
-	background-color:#FFB6D6;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
+.eternaFrame .t_td a {
+	color: #0000FF;
 }
 
 .eternaFrame .t_table {
@@ -303,42 +43,18 @@ margin-right: 0px; margin-bottom: 0px;
 	line-height: 16pt;
 }
 .eternaFrame .alternaterows {
-	background-color:#F0EFE8;
+	background-color: #F0EFE8;
 }
 .eternaFrame .rows {
-	background-color:white;
+	background-color: white;
 }
 .eternaFrame .hiliterows {
-	background-color:#CCCCCC;
-	color:white;
+	background-color: #CCCCCC;
+	color: white;
 }
 .eternaFrame .selectrows {
-	background-color:#999999;
-	color:white;
-}
-
-.eternaFrame .t_else_table {
-	border-top-width: 0px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-left-style: solid;
-	border-top-color: #63A6D6;
-	border-left-color: #63A6D6;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	line-height: 16pt;
-}
-
-.eternaFrame .t_table_combibe {
-	border-top-width: 0px;
-	border-left-width: 1px;
-	border-top-style: solid;
-	border-left-style: solid;
-	border-top-color: #63A6D6;
-	border-left-color: #63A6D6;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	line-height: 16pt;
+	background-color: #999999;
+	color: white;
 }
 
 .eternaFrame .t_head {
@@ -355,244 +71,14 @@ margin-right: 0px; margin-bottom: 0px;
 	border-left-color: #FFFFFF;
 	border-left-style: solid;
 }
-
-.eternaFrame .t_head  A	  { vertical-align:middle; COLOR: #000000; TEXT-DECORATION: none; }
-
-.eternaFrame .content {
-	font-size: 10.5pt;
-	line-height: 16pt;
-}
-.eternaFrame .l_b_bg {
-	background-image: url(images/l_b2_bg.gif);
-	height: 25px;
-}
-.eternaFrame .gradient_bg {
-	background-image: url(images/gradient_bg.gif);
-	background-repeat: repeat-x;
-}
-.eternaFrame .sposition {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	line-height: 24px;
-	color: 003D98;
-	height: 24px;
-	padding-left: 20px;
-	background-image: url(images/position_bg.gif);
-}
-.eternaFrame .sshadow {
-
-}
-.eternaFrame .sp9blue {
+.eternaFrame .t_head a {
+	vertical-align: middle;
 	color: #000000;
-	font-size: 12px;
-	line-height: 20pt;
+	text-decoration: none;
 }
-.eternaFrame .sp9blue_18 {
-	color: #63A6D6;
-	font-size: 12px;
-	line-height: 18pt;
-}
-.eternaFrame .remindTitle {
-	color: #003399;
-	font-size: 12px;
-	line-height: 16pt;
-	font-weight: bolder;
-}
-
-.eternaFrame .redTitle {
-	color: red;
-	font-size: 12px;
-	line-height: 16pt;
-	font-weight: bolder;
-}
-
-.eternaFrame .warnTitle {
-	color: #FF0000;
-	font-size: 12px;
-	font-weight: bolder;
-}
-.eternaFrame .sp9blue_field {
-	color: #63A6D6;
-	font-size: 12px;
-}
-.eternaFrame .t_gradient_bg {
-	background-image: url(images/t_gradient_bg.jpg);
-	background-repeat: repeat-x;
-}
-.eternaFrame .status_draft {
-	font-style: italic;
-	color: #828282;
-}
-.eternaFrame .status_send {
-	background-color: #EEEEEE;
-}
-.eternaFrame .status_nopass {
-	background-color: #FFEEEE;
-}
-.eternaFrame .status_pass {
-	background-color: #F0F9FF;
-}
-.eternaFrame .input_downline
-{
-	border-top:0px;
-	border-left:0px;
-	border-right:0px;
-	boder-bottom:1px solid black;
-}
-.eternaFrame .contentTable {  background-color: #000000; font-size: 12px}
-.eternaFrame .tableTitle {  background-color: #0870D3; color: #FFFFFF; font-size: medium}
-.eternaFrame .defaultBGColor{BACKGROUND-COLOR: #FFFFFF}
-
-.eternaFrame ul.TabBarLevel1 li{
-	float:left;
-	padding:0;
-	height:18px;
-	margin-right:1px;
-	margin-Left:0px;
-	left:0px;
-	background:url(images/tabbar_left.gif) no-repeat left top;
-}
-.eternaFrame ul.TabBarLevel1 li a{
-	display:block;
-	line-height:18px;
-	padding:0 10px;
-	color:#333;
-	background:url(images/tabbar_right.gif) no-repeat right top;
-	white-space: nowrap;
-}
-.eternaFrame ul.TabBarLevel1 li.Selected{
-	background:url(images/selecte_left.gif) no-repeat left top;
-}
-.eternaFrame ul.TabBarLevel1 li.Selected a{
-	background:url(images/selecte_right.gif) no-repeat right top;
-}
-
-.eternaFrame ul.TabBarLevel1 li a:link,.eternaFrame ul.TabBarLevel1 li a:visited{
-	color:#333;
-}
-.eternaFrame ul.TabBarLevel1 li a:hover,.eternaFrame ul.TabBarLevel1 li a:active{
-	color:#F30;
-	text-decoration:none;
-}
-.eternaFrame ul.TabBarLevel1 li.Selected a:link,.eternaFrame ul.TabBarLevel1 li.Selected a:visited{
-	color:#000;
-}
-.eternaFrame ul.TabBarLevel1 li.Selected a:hover,.eternaFrame ul.TabBarLevel1 li.Selected a:active{
-	color:#F30;
-	text-decoration:none;
-}
-.eternaFrame div .HackBox {
-  padding-top : 2px;
-  border-left: 2px solid #6697CD;
-  border-right: 2px solid #6697CD;
-  border-bottom: 2px solid #6697CD;
-}
-
-.eternaFrame .td_line1 {
-	background-color:#63A6D6 ;
-}
-
-.eternaFrame .inp{ border:1px solid #999; padding:0px 0 0 2px;height:23px; line-height:23px; font-size:14px; color:#666}
-.eternaFrame .inp.sffocus {	background:#fff; border:1px solid #f90; color:blue ; }
-
-.eternaFrame .t_head1 {
-	background-color:#ACCCF0;
-	height: 26px;
-	text-align: center;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	border-left-width: 1px;
-	border-left-color: #FFFFFF;
-	border-left-style: solid;
-
-}
-.eternaFrame .t_td_head {
-	text-align:center;
-	background-color:#A1CBFF;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	padding: 2px;
-}
-
-.eternaFrame .t_head2 {
-	background-color:#ACCCF0;
-	height: 26px;
-	text-align: left;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	border-left-width: 1px;
-	border-left-color: #FFFFFF;
-	border-left-style: solid;
-
-}
-
-.eternaFrame .t_head1  A	  { vertical-align:middle; COLOR: #000000; TEXT-DECORATION: none; }
-
-.eternaFrame .t_font_red {
-	vertical-align : center;
-	color: red;
-	font-size: 12pt;
-}
-
-.eternaFrame .t_font_green {
-	color:green;
-	font-size: 12pt;
-}
-
-.eternaFrame .t_font_white {
-	color:white;
-	font-size: 12pt;
-}
-.eternaFrame .td_field_required{
-	text-align: right;
-	border-right-width: 1px;
-	border-bottom-width: 1px;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-right-color: #63A6D6;
-	border-bottom-color: #63A6D6;
-	background-color: #F0F5f9;
-	padding: 0px;
-	text-align: right;
-	color: #d24F1F;
-}
-
-
-/* 工具条按钮 begin */
-.eternaFrame .default_toolbar span {
-	height:20px;
-	white-space:nowrap;
-}
-.eternaFrame .default_toolbutton {
-	padding-top:1px;
-	padding-left:4px;
-	padding-right:4px;
-}
-.eternaFrame .default_toolbutton_over {
-	background-color:#E9F2F8;
-	border:1px solid #336699;
-	padding-top:0px;
-	padding-left:3px;
-	padding-right:3px;
-}
-.eternaFrame .LL {
-	padding-left:1px;
-}
-/* 工具条按钮 end */
 
 /* 翻页的按钮 begin */
+
 .eternaFrame .buttonPrev {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
@@ -603,7 +89,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonNext {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -615,7 +101,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonLast {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -627,7 +113,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonFirst {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -639,7 +125,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonDisabledPrev {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -651,7 +137,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonDisabledNext {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -663,7 +149,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonDisabledLast {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -675,7 +161,7 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
 .eternaFrame .buttonDisabledFirst {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -687,7 +173,8 @@ margin-right: 0px; margin-bottom: 0px;
 	background-repeat: no-repeat;
 	background-color: transparent;
 	background-position: center center;
-	cursor:hand
+	cursor: hand
 }
+
 /* 翻页的按钮 end */
 
