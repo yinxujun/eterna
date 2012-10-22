@@ -333,7 +333,7 @@
 			<!-- 设置标题控件的方法 -->
 			<function name="createSearchOrderTitle" param="valueObj, caption">
 				valueObj.exists = 1;
-				if (eg_temp.extInfoRWD)
+				if (eg_temp.extInfo)
 				{
 					valueObj.value = caption;
 				}

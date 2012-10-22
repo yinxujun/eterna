@@ -116,16 +116,16 @@ public class ExportExcelExecute extends AbstractExportExecute
       for (int i = 0; i < count; i++)
       {
          ResultReader reader = meta.getColumnReader(i + 1);
-         notPrint[i] = "true".equalsIgnoreCase((String) reader.getAttribute("print.notPrint"));
+         notPrint[i] = "true".equalsIgnoreCase((String) reader.getAttribute(PRINT_EXCLUDE));
          if (notPrint[i])
          {
             skipColumnCount++;
             continue;
          }
-         String format = (String) reader.getAttribute("print.format");
+         String format = (String) reader.getAttribute(PRINT_FORMAT);
          if (format != null)
          {
-            String type = (String) reader.getAttribute("print.colType");
+            String type = (String) reader.getAttribute(PRINT_COLTYPE);
             formats[i] = this.createFormat(format, type, formatsMap, wcfNormal, normal);
             if ("number".equals(type))
             {
@@ -144,7 +144,7 @@ public class ExportExcelExecute extends AbstractExportExecute
          int width = -1;
          try
          {
-            String tempW = (String) reader.getAttribute("print.width");
+            String tempW = (String) reader.getAttribute(PRINT_WIDTH);
             if (tempW != null)
             {
                width = Integer.parseInt(tempW);
@@ -153,8 +153,12 @@ public class ExportExcelExecute extends AbstractExportExecute
          catch (Exception ex) {}
          if (width == -1) width = meta.getColumnWidth(i + 1);
          if (width != -1) sheet.setColumnView(i - skipColumnCount, width);
-         jxl.write.Label label = new jxl.write.Label(i - skipColumnCount, 0,
-               meta.getColumnCaption(i + 1), wcfTitle);
+			String caption = (String) reader.getAttribute(PRINT_CAPTION);
+			if (caption == null)
+			{
+				caption = meta.getColumnCaption(i + 1);
+			}
+         jxl.write.Label label = new jxl.write.Label(i - skipColumnCount, 0, caption, wcfTitle);
          sheet.addCell(label);
       }
       int rowIndex = 1;

@@ -13,6 +13,7 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.ResultReaderManager;
+import self.micromagic.eterna.sql.impl.ResultReaders;
 import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.util.Utils;
 
@@ -23,6 +24,33 @@ public abstract class AbstractExportExecute extends AbstractExecute
     * 标识是否是使用数据集中的指定值来作为文件名.
     */
    public static final String DATA_FILE_NAME_PREFIX = "$data.";
+
+	/**
+	 * 在arrtibute中设置导出时不包含的列.
+	 */
+	public static final String PRINT_EXCLUDE = "print.notPrint";
+
+	/**
+	 * 在arrtibute中设置导出时列的宽度.
+	 */
+	public static final String PRINT_WIDTH = "print.width";
+
+	/**
+	 * 在arrtibute中设置导出时使用的格式化方式.
+	 */
+	public static final String PRINT_FORMAT = "print.format";
+
+	/**
+	 * 在arrtibute中设置导出时对应列的类型, 只有在设置了
+	 * <code>PRINT_FORMAT</code>是才需要设置.
+	 */
+	public static final String PRINT_COLTYPE = "print.colType";
+
+	/**
+	 * 在arrtibute中设置导出时使用的标题.
+	 */
+	public static final String PRINT_CAPTION = ResultReaders.PRINT_CAPTION;
+
 
    public static final String DOWNLOAD_CONTENTTYPE = "download.contentType";
    public static final String DOWNLOAD_FILENAME = "download.fileName";
