@@ -1,6 +1,11 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.6==
+修复了对java.util.Iterator或java.util.Enumeration进行app日志记录时造成游标移到最后的bug。<br>
+增加了对自适应网页设计（Responsive Web Design）的处理。<br>
+可在reader节点中设置print.caption属性，用于控制导出时使用的标题。<br>
+----
 ==1.5.5==
 修复了eterna_global.xml中定义的list_operator控件，在需要确认时点击取消仍然继续执行的bug。<br>
 script代码中增加了{$caption:name}，用于获取标题的翻译值。<br>
