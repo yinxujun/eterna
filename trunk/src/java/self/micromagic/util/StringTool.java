@@ -439,7 +439,7 @@ public class StringTool
    }
 
    private static StringAppenderCreater stringBufferCreater = new StringTool$StringBufferCreater();
-   private static StringAppenderCreater stringAppendCreater = null;
+   private static StringAppenderCreater stringAppendCreater;
 
    private static StringAppenderCreater createStringBuilderCreater()
    {
