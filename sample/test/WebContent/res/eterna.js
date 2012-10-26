@@ -222,7 +222,7 @@ var EG_TEMP_NAMES = [
 	"dataName", "srcName", "index", "columnCount", "rowNum",
 	"rowType", /* row, title, beforeTable, afterTable, beforeTitle, afterTitle, beforeRow, afterRow */
 	"name", "caption", "valueObj", "param", "tempData",
-	"extInfo", "widthLevel", /* 自适应宽度调整时显示扩充信息的标识 及 当前的宽度等级 */
+	"extInfo", "widthLevel", "widthBlocks",/* 自适应宽度调整时显示扩充信息的标识 当前的宽度等级 宽度分割块 */
 	"sysTemplateRoot", "sysOptions",
 ];
 

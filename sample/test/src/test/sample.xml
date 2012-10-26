@@ -57,7 +57,10 @@
 				<search-execute searchName="list.search" queryResultName="listInfo" />
 			</model>
 			<view name="list.view">
-				<before-init>{$ef:rwd_widthLevel}([700, 390]);</before-init>
+				<before-init>
+					// 这里初始化页面中全局的宽度等级分隔
+					{$ef:rwd_widthLevel}([700, 390]);
+				</before-init>
 				<replacement name="search" baseComponentName="search_component;toolbar,conditions,list">
 					<before-init>
 						eg_temp.dataName = "listInfo";
@@ -66,9 +69,10 @@
 					</before-init>
 					<replacement name="toolbar" baseComponentName="toolbar_component">
 						<before-init><![CDATA[
-							{$parentScript}							
-							eg_temp.widthLevel = {$ef:rwd_widthLevel}();
-							if (eg_temp.widthLevel > 2)
+							{$parentScript}				
+							// 这里初始化页工具条专用的宽度等级分隔			
+							eg_temp.widthLevel = {$ef:rwd_widthLevel}([350]);
+							if (eg_temp.widthLevel > 1)
 							{
 								tmpData.verticalLayout = 1;
 							}

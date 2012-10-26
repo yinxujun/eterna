@@ -2673,26 +2673,22 @@
 
 			<!--
 			获取容器的宽度等级, 数字越小表示宽度越大, 1表示最大尺寸 2表示次大尺寸 ...
-			levels     表示每个宽度等级分隔的数组, 必需为从大到小
+			blocks     表示每个宽度等级的分隔值, 必需为从大到小, 类型为数组
 			           如: [600, 300, 150], 则等级分布如下,
 			           600及以上为1  600～300为2  300～150为3  150以下为4
-			           当此参数不为空时, 表示初始化宽度等级列表
-			           当此参数为空时, 则根据已初始化的宽度等级列表获取容器的宽度等级
-			overWrite  是否要覆盖原来初始化的宽度等级列表, 默认值为false
+			           当此参数不为空时, 表示需要初始化宽度等级分隔值到环境变量中
+			           当此参数为空时, 则仅根据已初始化的宽度等级分隔值获取容器的宽度等级
 			-->
-			<function name="rwd_widthLevel" param="levels, overWrite"><![CDATA[
-				if (levels != null)
+			<function name="rwd_widthLevel" param="blocks"><![CDATA[
+				if (blocks != null)
 				{
-					if ({$data:___widthLevels} == null || overWrite)
-					{
-						{$data:___widthLevels} = levels;
-					}
+					eg_temp.widthBlocks = blocks;
 				}
-				if (_eterna.rootWebObj == null || {$data:___widthLevels} == null)
+				if (_eterna.rootWebObj == null || eg_temp.widthBlocks == null)
 				{
 					return 1;
 				}
-				var levelArr = {$data:___widthLevels};
+				var levelArr = eg_temp.widthBlocks;
 				var nowWidth = _eterna.rootWebObj.width();
 				for (var i = 0; i < levelArr.length; i++)
 				{
