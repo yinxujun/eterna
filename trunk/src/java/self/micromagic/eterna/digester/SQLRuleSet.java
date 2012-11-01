@@ -29,6 +29,8 @@ import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
 
 /**
  * SQL模块初始化的规则集.
+ *
+ * @author micromagic@sina.com
  */
 public class SQLRuleSet extends RuleSetBase
 {
@@ -45,8 +47,9 @@ public class SQLRuleSet extends RuleSetBase
 
       //--------------------------------------------------------------------------------
       // 设置常量(constant)的读取规则
-      digester.addRule("eterna-config/factory/objs/constant",
-            new AttributeSetRule("addConstantValue", "name", "value", String.class));
+		AttributeSetRule constRule = new AttributeSetRule("addConstantValue", "name", "value", String.class);
+		constRule.setNeedResolve("resolve", true);
+      digester.addRule("eterna-config/factory/objs/constant", constRule);
 
 
       //--------------------------------------------------------------------------------

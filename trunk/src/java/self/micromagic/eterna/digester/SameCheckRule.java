@@ -9,6 +9,8 @@ import org.xml.sax.Attributes;
 /**
  * 检查父配置中的对象是否与子配置中相同的初始化规则.
  * 如果相同, 则不处理此对象, 通过设置MyRule.dealRule来控制.
+ *
+ * @author micromagic@sina.com
  */
 public class SameCheckRule extends MyRule
 {

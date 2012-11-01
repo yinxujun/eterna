@@ -11,6 +11,9 @@ import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ConditionBuilderGeneratorImpl extends AbstractGenerator
       implements ConditionBuilderGenerator
 {

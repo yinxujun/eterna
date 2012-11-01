@@ -7,6 +7,9 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.sql.QueryAdapter;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ColumnSetting
 {
    /**

@@ -23,6 +23,8 @@ import org.apache.commons.digester.Rule;
  * 通过构造一个匿名类, 实现createRule方法, 在此方法中生成一个真正需要的初始化
  * 规则. 因为每一个节点需要不同的初始化规则实例, 这个初始化规则就是处理在需要
  * 的地方生成新的实例.
+ *
+ * @author micromagic@sina.com
  */
 public abstract class StackRule extends Rule
 {

@@ -7,6 +7,8 @@ import self.micromagic.cg.ClassGenerator;
 
 /**
  * 设置对象属性的初始化规则.
+ *
+ * @author micromagic@sina.com
  */
 public class PropertySetRule extends MyRule
 {

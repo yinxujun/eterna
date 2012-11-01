@@ -4,6 +4,9 @@ package self.micromagic.eterna.search;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.digester.ConfigurationException;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ConditionPropertyGenerator extends Generator
 {
    void setName(String name) throws ConfigurationException;

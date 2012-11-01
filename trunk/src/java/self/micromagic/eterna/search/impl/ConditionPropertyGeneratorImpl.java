@@ -7,6 +7,9 @@ import self.micromagic.eterna.search.ConditionPropertyGenerator;
 import self.micromagic.eterna.share.AbstractGenerator;
 import self.micromagic.eterna.share.TypeManager;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class ConditionPropertyGeneratorImpl extends AbstractGenerator
       implements ConditionPropertyGenerator
 {

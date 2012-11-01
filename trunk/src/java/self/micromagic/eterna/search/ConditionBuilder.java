@@ -11,8 +11,7 @@ import self.micromagic.util.StringTool;
  * SQL语句条件的生成器. <p>
  * {@link self.micromagic.eterna.search.ConditionBuilder.Condition}将通过该生成器来生成SQL条件。
  *
- * @author  micromagic
- * @version 0.8, 2004-11-4
+ * @author  micromagic@sina.com
  */
 public interface ConditionBuilder
 {

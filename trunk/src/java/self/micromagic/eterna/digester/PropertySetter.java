@@ -13,6 +13,8 @@ import self.micromagic.util.Utility;
 
 /**
  * 各类属性的设置, 通过PropertySetRule来调用.
+ *
+ * @author micromagic@sina.com
  */
 public abstract class PropertySetter
 {
@@ -124,6 +126,8 @@ public abstract class PropertySetter
 
 /**
  * 单属性设置的公共类.
+ *
+ * @author micromagic@sina.com
  */
 abstract class SinglePropertySetter extends PropertySetter
 {
@@ -248,6 +252,8 @@ abstract class SinglePropertySetter extends PropertySetter
 
 /**
  * 根据设置的类名构造对象, 并将其设置属性.
+ *
+ * @author micromagic@sina.com
  */
 class ObjectPropertySetter extends SinglePropertySetter
 {
@@ -324,6 +330,8 @@ class ObjectPropertySetter extends SinglePropertySetter
 
 /**
  * 设置Generator生成的属性.
+ *
+ * @author micromagic@sina.com
  */
 class GeneratorPropertySetter extends ObjectPropertySetter
 {
@@ -375,6 +383,8 @@ class GeneratorPropertySetter extends ObjectPropertySetter
 
 /**
  * 设置从堆栈中获取的属性.
+ *
+ * @author micromagic@sina.com
  */
 class StackPropertySetter extends SinglePropertySetter
 {
@@ -415,6 +425,8 @@ class StackPropertySetter extends SinglePropertySetter
 
 /**
  * 设置String类型的属性.
+ *
+ * @author micromagic@sina.com
  */
 class StringPropertySetter extends SinglePropertySetter
 {
@@ -460,9 +472,15 @@ class StringPropertySetter extends SinglePropertySetter
 class BodyPropertySetter extends StringPropertySetter
 {
    private boolean trimLines = true;
-   private boolean noLine = false;
+   private boolean bodyTextTrimLines;
+
    private String noLineAttributeName = "noLine";
-   private boolean[] bodyTextSetting = new boolean[2];
+   private boolean noLine = false;
+   private boolean bodyTextNoLine;
+
+	private String needResolveAttributeName;
+	private boolean needResolve;
+	private boolean bodyTextNeedResolve;
 
    public BodyPropertySetter(String attributeName, String methodName)
    {
@@ -490,23 +508,34 @@ class BodyPropertySetter extends StringPropertySetter
       this.noLine = noLine;
    }
 
+	/**
+	 * 设置是否需要处理文本中"${...}"的动态属性.
+	 *
+	 * @param attributeName  设置是否需要处理的属性名
+	 * @param defaultValue   默认值, 如果未调用此方法, 此值为false
+	 */
+   public void setNeedResolve(String attributeName, boolean defaultValue)
+   {
+      this.needResolveAttributeName = attributeName;
+      this.needResolve = defaultValue;
+   }
+
    public Object prepareProperty(String namespace, String name, Attributes attributes)
          throws Exception
    {
       // 将bodyText的获取设置 置为初始值
-      this.bodyTextSetting[0] = this.trimLines;
-      this.bodyTextSetting[1] = this.noLine;
+      this.bodyTextTrimLines = this.trimLines;
+      this.bodyTextNoLine = this.noLine;
       String strValue = this.getValue(namespace, name, attributes);
-      if (strValue != null)
-      {
-         this.bodyTextSetting[0] = "true".equalsIgnoreCase(strValue);
-      }
+		this.bodyTextTrimLines = strValue != null ? "true".equalsIgnoreCase(strValue) : this.trimLines;
       strValue = attributes.getValue(this.noLineAttributeName);
-      if (strValue != null)
-      {
-         this.bodyTextSetting[1] = "true".equalsIgnoreCase(strValue);
-      }
-      return this.bodyTextSetting;
+		this.bodyTextNoLine = strValue != null ? "true".equalsIgnoreCase(strValue) : this.noLine;
+		if (this.needResolveAttributeName != null)
+		{
+			strValue = attributes.getValue(this.needResolveAttributeName);
+			this.bodyTextNeedResolve = strValue != null ? "true".equalsIgnoreCase(strValue) : this.needResolve;
+		}
+      return "";
    }
 
    public boolean requireBodyValue()
@@ -517,8 +546,9 @@ class BodyPropertySetter extends StringPropertySetter
    public Object prepareProperty(String namespace, String name, BodyText text)
          throws Exception
    {
-      String bodyStr = this.bodyTextSetting[0] ?
-            text.trimEveryLineSpace(this.bodyTextSetting[1]) : text.toString();
+      String bodyStr = this.bodyTextTrimLines ?
+            text.trimEveryLineSpace(this.bodyTextNoLine) : text.toString();
+      bodyStr = this.bodyTextNeedResolve ? Utility.resolveDynamicPropnames(bodyStr) : bodyStr;
       if (this.needIntern)
       {
          bodyStr = StringTool.intern(bodyStr, true);
@@ -531,6 +561,8 @@ class BodyPropertySetter extends StringPropertySetter
 
 /**
  * 设置boolean类型的属性.
+ *
+ * @author micromagic@sina.com
  */
 class BooleanPropertySetter extends SinglePropertySetter
 {
@@ -566,6 +598,8 @@ class BooleanPropertySetter extends SinglePropertySetter
 
 /**
  * 设置int类型的属性.
+ *
+ * @author micromagic@sina.com
  */
 class IntegerPropertySetter extends SinglePropertySetter
 {
@@ -619,6 +653,8 @@ class IntegerPropertySetter extends SinglePropertySetter
 
 /**
  * 不设置任何属性, 只调用一个无参的方法.
+ *
+ * @author micromagic@sina.com
  */
 class EmptyPropertySetter extends PropertySetter
 {

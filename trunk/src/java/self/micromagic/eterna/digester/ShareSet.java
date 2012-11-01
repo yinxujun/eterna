@@ -26,6 +26,8 @@ import self.micromagic.util.Utility;
 
 /**
  * 公共的初始化规则集.
+ *
+ * @author micromagic@sina.com
  */
 public class ShareSet extends RuleSetBase
 {

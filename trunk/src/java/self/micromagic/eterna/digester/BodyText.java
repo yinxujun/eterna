@@ -10,6 +10,8 @@ import self.micromagic.util.StringTool;
 
 /**
  * xml配置中的body文本对象
+ *
+ * @author micromagic@sina.com
  */
 public class BodyText
 {

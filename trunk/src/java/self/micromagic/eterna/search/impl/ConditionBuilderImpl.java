@@ -10,6 +10,9 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 class ConditionBuilderImpl
 		implements ConditionBuilder
 {

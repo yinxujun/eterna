@@ -8,6 +8,9 @@ import self.micromagic.eterna.security.PermissionSet;
 import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface ConditionProperty
 {
    void initialize(EternaFactory factory) throws ConfigurationException;

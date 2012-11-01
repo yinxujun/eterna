@@ -26,6 +26,11 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.UpdateAdapter;
 import self.micromagic.util.MemoryChars;
 
+/**
+ * 查询条件配置信息获取及保存的execute.
+ *
+ * @author micromagic@sina.com
+ */
 public class SearchExecute extends AbstractExecute
       implements Execute, Generator
 {

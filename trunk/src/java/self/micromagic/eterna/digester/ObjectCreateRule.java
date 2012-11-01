@@ -10,6 +10,8 @@ import self.micromagic.cg.ClassGenerator;
 /**
  * 生成一个类的实例的初始化规则.
  * 被生成的类必须有一个无参的构造函数.
+ *
+ * @author micromagic@sina.com
  */
 public class ObjectCreateRule extends MyRule
 {

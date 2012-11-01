@@ -6,6 +6,8 @@ import org.xml.sax.Attributes;
 
 /**
  * 抽象的初始化规则, 提供了公用的方法及是否可初始化的控制.
+ *
+ * @author micromagic@sina.com
  */
 public abstract class MyRule extends Rule
 {
