@@ -21,6 +21,8 @@ import self.micromagic.eterna.share.AbstractGenerator;
 
 /**
  * search模块初始化的规则集.
+ *
+ * @author micromagic@sina.com
  */
 public class SearchRuleSet extends RuleSetBase
 {

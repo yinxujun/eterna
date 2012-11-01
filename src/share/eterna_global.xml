@@ -171,48 +171,13 @@
 			]]></function>
 
 			<!-- 删除json对象中的某个属性 -->
-			<function name="deleteData_attr" param="data, name, objCreater">
+			<function name="deleteData_attr" param="data, name">
 				if (data == null)
 				{
 					return null;
 				}
-
-				var temp;
-				try
-				{
-					delete data[name];
-					temp = data;
-				}
-				catch (ex)
-				{
-					<![CDATA[
-					if (eterna_debug >= ED_HIGHER)
-					{
-						alert("delete JSON error:" + ex + "/" + ex.message);
-					}
-					]]>
-					if (objCreater != null)
-					{
-						<!--
-							这里是为了处理对象生成的问题，如果对象在本窗口生成并传给父窗口，
-							那本窗口关闭后，此对象就不能使用了，所以这种情况下，对象要在方法
-							外生成并传入。
-						-->
-						temp = objCreater.createJSON();
-					}
-					else
-					{
-						temp = {};
-					}
-					for(var key in data)
-					{
-						if (key != name)
-						{
-							temp[key] = data[key];
-						}
-					}
-				}
-				return temp;
+				delete data[name];
+				return data;
 			</function>
 
 			<!-- 解析map对象, 生成带分隔符的字符串放到指定对象中 -->

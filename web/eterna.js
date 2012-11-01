@@ -209,13 +209,13 @@ var EG_KEEP_BASE_OBJ = "keepBaseObj";
 var EG_OLD_BASE_OBJ = "oldBaseObj";
 var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
+var EG_BINDED_ETERNA = "binded.eterna";
 
-
-window.currentEterna = null;
 
 window.eg_cache = {
 	willInitObjs:[],staticInitFns:[],openedObjs:[],loadedScripts:{},serialId:1,
-	eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false
+	eternaCache:{},nextEternaId:1,logHistoryInAJAX:true,stopHashChangeEvent:false,
+	currentEterna:null
 };
 
 var EG_TEMP_NAMES = [
@@ -255,10 +255,17 @@ var eg_defaultWidth = 80;
 
 
 
-function Eterna($E, eterna_debug, rootWebObj)
+function Eterna($E, eterna_debug, rootWebObj, eternaId)
 {
 	$E = eterna_checkEternaData($E);
-	this.id = "E" + eg_cache.nextEternaId++ ;
+	if (typeof eternaId != "undefined")
+	{
+		this.id = eternaId;
+	}
+	else
+	{
+		this.id = "E" + eg_cache.nextEternaId++;
+	}
 	eg_cache.eternaCache[this.id] = this;
 	this.$E = $E;
 	this.eternaData = this.$E;
@@ -270,6 +277,7 @@ function Eterna($E, eterna_debug, rootWebObj)
 	this.nowWindow = null;
 	//this.rootWebObjOld_HTML = this.rootWebObj == null ? "" : this.rootWebObj.html();
 	eterna_initEternaCache(this, $E);
+	eterna_checkBinded(this);
 
 	if (typeof Eterna._initialized == 'undefined')
 	{
@@ -941,9 +949,28 @@ Eterna.prototype.getRemoteJSON = function(url, formObj, async, successFunction, 
 	}
 }
 
-Eterna.prototype.loadEterna = function(url, param, divObj, debug, recall, useAJAX)
+Eterna.prototype.loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 {
-	return ef_loadEterna(url, param, divObj, useAJAX, debug, recall);
+	return ef_loadEterna(url, param, parentObj, useAJAX, debug, recall);
+}
+
+Eterna.prototype.destroy = function(clearHTML, changeURL)
+{
+	if (this.rootWebObj != null)
+	{
+		if (clearHTML !== false)
+		{
+			this.rootWebObj.html("");
+		}
+		this.rootWebObj.removeData(EG_BINDED_ETERNA);
+	}
+	delete eg_cache.eternaCache[this.id];
+	if (eg_cache.logHistoryInAJAX && this.cache.useAJAX)
+	{
+		// 停止hash值变化的监控
+		eg_cache.stopHashChangeEvent = true;
+		eterna_hashCodeURL(this.id, changeURL != null ? changeURL : null);
+	}
 }
 
 Eterna.prototype.getRemoteText = function(url, param, completeFunction)
@@ -1072,6 +1099,7 @@ Eterna.prototype.serializeFormData = function(formObj)
  */
 Eterna.prototype.initPrepare = function(scatter)
 {
+	this.cache.initialized = 0;
 	if (this.cache[EG_ROOT_OBJ_ID_FLAG] != null)
 	{
 		var rootObjId = this.cache[EG_ROOT_OBJ_ID_FLAG];
@@ -1126,6 +1154,7 @@ Eterna.prototype.initPrepare = function(scatter)
 		}
 	}
 	var result = this.rootWebObj != null;
+	eterna_checkBinded(this);
 	if (result && scatter && this.rootWebObj.data(EG_SCATTER_FLAG))
 	{
 		if ((this.eterna_debug & ED_EXECUTE_SCRIPT) != 0)
@@ -1167,13 +1196,17 @@ Eterna.prototype.scatterInit = function()
 			{
 				this.executeScript(this.rootWebObj, this.$E, this.$E.init);
 			}
-			eterna_doInitObjs(this.rootWebObj);
 		}
 	}
 	catch (ex)
 	{
 		this.printException(ex);
 		throw ex;
+	}
+	finally
+	{
+		this.cache.initialized = 1;
+		eterna_doInitObjs(this.rootWebObj);
 	}
 	if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0)
 	{
@@ -1213,13 +1246,17 @@ Eterna.prototype.reInit = function()
 			{
 				this.executeScript(this.rootWebObj, this.$E, this.$E.init);
 			}
-			eterna_doInitObjs(this.rootWebObj);
 		}
 	}
 	catch (ex)
 	{
 		this.printException(ex);
 		throw ex;
+	}
+	finally
+	{
+		this.cache.initialized = 1;
+		eterna_doInitObjs(this.rootWebObj);
 	}
 	if ((this.eterna_debug & ED_SHOW_CREATED_HTML) != 0)
 	{
@@ -1517,9 +1554,9 @@ Eterna.prototype.showMessage = function(msg, theWindow)
 	{
 		winObj = theWindow;
 	}
-	if (winObj.document.all.msg != null)
+	if (winObj.document.getElementById("msg") != null)
 	{
-		winObj.document.all.msg.value += msg;
+		winObj.document.getElementById("msg").value += msg;
 	}
 	return winObj;
 }
@@ -4034,6 +4071,31 @@ function eterna_initEternaCache(_eterna, newData)
 			_eterna.cache[key] = cache[key];
 		}
 	}
+	if (_eterna.cache.initialized == null)
+	{
+		_eterna.cache.initialized = 1;
+	}
+}
+
+function eterna_checkBinded(_eterna)
+{
+	if (_eterna.rootWebObj != null)
+	{
+		var oldEterna = _eterna.rootWebObj.data(EG_BINDED_ETERNA);
+		if (oldEterna == null)
+		{
+			_eterna.rootWebObj.data(EG_BINDED_ETERNA, _eterna);
+		}
+		else if (oldEterna != _eterna)
+		{
+        	if ((_eterna.eterna_debug & ED_SHOW_OTHERS) != 0)
+			{
+				var id1 = _eterna.id;
+				var id2 = oldEterna.id;
+				alert("Tow eterna instance (" + id1 + ", " + id2 + ") binded same obj.");
+			}
+		}
+	}
 }
 
 /**
@@ -4041,8 +4103,8 @@ function eterna_initEternaCache(_eterna, newData)
  */
 function eterna_initTextData(_eterna, textData)
 {
-	var oldEterna = currentEterna;
-	currentEterna = _eterna;
+	var oldEterna = eg_cache.currentEterna;
+	eg_cache.currentEterna = _eterna;
 	try
 	{
 		if (_eterna.rootWebObj != null)
@@ -4059,7 +4121,7 @@ function eterna_initTextData(_eterna, textData)
 	}
 	finally
 	{
-		currentEterna = oldEterna;
+		eg_cache.currentEterna = oldEterna;
 	}
 }
 
@@ -4190,10 +4252,27 @@ function eterna_moveArrayValue(arr, fromIndex, toIndex)
 	arr[toIndex] = tmp;
 }
 
+function eterna_allEternaReady()
+{
+	for (var key in eg_cache.eternaCache)
+	{
+		var _eterna = eg_cache.eternaCache[key];
+		if (_eterna != null && !_eterna.cache.initialized)
+		{
+			return false;
+		}
+	}
+   return true;
+}
+
 // 触发所有等待初始化的对象的[EG_EVENT_WILL_INIT]事件
 // 然后执行所有的静态初始化方法
 window.eterna_doInitObjs = function(theObj)
 {
+	if (!eterna_allEternaReady())
+	{
+		return;
+	}
 	var objs = eg_cache.willInitObjs;
 	eg_cache.willInitObjs = [];
 	for (var i = 0; i < objs.length; i++)
@@ -4271,14 +4350,17 @@ function eterna_hashChange(event)
 	for (var key in eg_cache.eternaCache)
 	{
 		var _eterna = eg_cache.eternaCache[key];
-		var tmpURL = hObj[key];
-		if (tmpURL != null && _eterna.cache.currentURL != tmpURL)
+		if (_eterna != null)
 		{
-			_eterna.ajaxVisit(tmpURL, null, false);
-		}
-		else if (tmpURL == null && _eterna.cache.primitiveURL != _eterna.cache.currentURL)
-		{
-			_eterna.ajaxVisit(_eterna.cache.primitiveURL, null, false);
+			var tmpURL = hObj[key];
+			if (tmpURL != null && _eterna.cache.currentURL != tmpURL)
+			{
+				_eterna.ajaxVisit(tmpURL, null, false);
+			}
+			else if (tmpURL == null && _eterna.cache.primitiveURL != _eterna.cache.currentURL)
+			{
+				_eterna.ajaxVisit(_eterna.cache.primitiveURL, null, false);
+			}
 		}
 	}
 }
@@ -4288,7 +4370,7 @@ function eterna_hashChange(event)
  */
 function eterna_hashCodeURL(eternaId, url)
 {
-	if (url == null)
+	if (typeof url == "undefined")
 	{
 		var hObj = eterna_parseHashCodeURL();
 		return hObj[eternaId];
@@ -4320,7 +4402,7 @@ function eterna_parseHashCodeURL(obj)
 			var arr = hCode.substring(5).split("\n");
 			for (var i = 0; i < arr.length; i++)
 			{
-				var tmpI = arr[i].indexOf(',');
+				var tmpI = arr[i].indexOf('.');
 				obj[arr[i].substring(0, tmpI)] = arr[i].substring(tmpI + 1);
 			}
 		}
@@ -4328,12 +4410,22 @@ function eterna_parseHashCodeURL(obj)
 	}
 	else
 	{
+		var index = location.href.indexOf('#');
+		var emptyObj = true;
 		var str = "$EH:";
 		for (var key in obj)
 		{
-			str += "\n" + key + "," + obj[key];
+			var tmpURL = obj[key];
+			if (tmpURL != null)
+			{
+				str += "\n" + key + "." + tmpURL;
+				emptyObj = false;
+			}
 		}
-		location.href = "#" + encodeURIComponent(str);
+		if (!emptyObj || index != -1)
+		{
+			location.href = "#" + encodeURIComponent(str);
+		}
 		return str;
 	}
 }
@@ -4729,8 +4821,8 @@ function eterna_dealRemoteData(_eterna, str)
 	{
 		if (index + EG_JSON_SPLIT_FLAG.length < str.length)
 		{
-			var oldEterna = currentEterna;
-			currentEterna = _eterna;
+			var oldEterna = eg_cache.currentEterna;
+			eg_cache.currentEterna = _eterna;
 			try
 			{
 				var tmpDiv = jQuery("<div/>");
@@ -4750,7 +4842,7 @@ function eterna_dealRemoteData(_eterna, str)
 			}
 			finally
 			{
-				currentEterna = oldEterna;
+				eg_cache.currentEterna = oldEterna;
 			}
 		}
 		return str.substring(0, index);
@@ -4762,22 +4854,41 @@ function eterna_dealRemoteData(_eterna, str)
  * 动态载入一个Ererna对象.
  * url		  初始化此Ererna对象的url
  * param		请求url地址时需要传递的参数
- * parentObj  生成的界面所在的父节点
+ * parentObj  生成的界面所在的父节点, 必须是jQuery对象
  * useAJAX	 是否需要自动将请求转为ajax的方式
  * debug		调试信息的输出等级
  * recall	  如果需要异步加载, 要给出回调函数
  */
-window.ef_loadEterna = function(url, param, divObj, useAJAX, debug, recall)
+window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 {
+	var oldEterna = null;
+	if (parentObj != null)
+	{
+		// 如果父对象中已绑定了一个Eterna对象, 则要先将其清除
+    	var oldEterna = parentObj.data(EG_BINDED_ETERNA);
+    	if (oldEterna != null)
+    	{
+    		oldEterna.destroy(false, url);
+		}
+	}
 	var eterna_debug = debug;
 	var $E = {};
 	var eternaData = $E;
-	var _eterna = new Eterna($E, debug, divObj);
-	_eterna.cache.primitiveURL = url;
-	var tmpURL = eterna_hashCodeURL(_eterna.id);
-	if (tmpURL != null)
+	var _eterna;
+	if (oldEterna == null)
 	{
-		url = tmpURL;
+		_eterna = new Eterna($E, debug, parentObj);
+		_eterna.cache.primitiveURL = url;
+		var tmpURL = eterna_hashCodeURL(_eterna.id);
+		if (tmpURL != null)
+		{
+			url = tmpURL;
+		}
+	}
+	else
+	{
+		_eterna = new Eterna($E, debug, parentObj, oldEterna.id);
+		_eterna.cache.primitiveURL = oldEterna.cache.primitiveURL;
 	}
 	_eterna.changeLocation(url);
 	if (useAJAX !== false && useAJAX !== 0)

@@ -10,8 +10,7 @@ import self.micromagic.util.StringTool;
  * 当适配器<code>Adapter</code>相关的配置文件不正确，或不正确的
  * 使用适配器的时候就会抛出该异常.
  *
- * @author  micromagic
- * @version 1.0, 2002-10-12
+ * @author micromagic@sina.com
  */
 public class ConfigurationException extends EternaException
 {

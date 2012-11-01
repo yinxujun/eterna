@@ -5,9 +5,12 @@ import org.xml.sax.Attributes;
 import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.Utility;
 
 /**
  * 设置对象的属性值{key, value}对.
+ *
+ * @author micromagic@sina.com
  */
 public class AttributeSetRule extends MyRule
 {
@@ -40,6 +43,10 @@ public class AttributeSetRule extends MyRule
    private boolean trimLine = true;
    private boolean noLine = false;
 
+	private String needResolveAttributeName;
+	private boolean needResolve;
+	private boolean textNeedResolve;
+
    /**
     * 默认的构造函数. <p>
     * 默认调用的方法名为setAttribute
@@ -70,6 +77,18 @@ public class AttributeSetRule extends MyRule
       this.valueType = valueType;
    }
 
+	/**
+	 * 设置是否需要处理文本中"${...}"的动态属性.
+	 *
+	 * @param attributeName  设置是否需要处理的属性名
+	 * @param defaultValue   默认值, 如果未调用此方法, 此值为false
+	 */
+   public void setNeedResolve(String attributeName, boolean defaultValue)
+   {
+      this.needResolveAttributeName = attributeName;
+      this.needResolve = defaultValue;
+   }
+
    public void myBegin(String namespace, String name, Attributes attributes)
          throws Exception
    {
@@ -83,8 +102,13 @@ public class AttributeSetRule extends MyRule
       {
          throw new InvalidAttributesException("Not fount the attribute '" + this.attributeValueTag + "'.");
       }
+		if (this.needResolveAttributeName != null)
+		{
+			String tmp = attributes.getValue(this.needResolveAttributeName);
+			this.textNeedResolve = tmp == null ? this.needResolve : "true".equalsIgnoreCase(tmp);
+		}
       this.name = StringTool.intern(theName);
-      this.value = value;
+      this.value = this.textNeedResolve ? Utility.resolveDynamicPropnames(value) : value;
       this.bodyValue = null;
       this.object = this.digester.peek();
       this.useBodyText = false;
@@ -109,7 +133,8 @@ public class AttributeSetRule extends MyRule
    public void myBody(String namespace, String name, BodyText text)
          throws Exception
    {
-      this.bodyValue = this.trimLine ? text.trimEveryLineSpace(this.noLine) : text.toString();
+		String str = this.trimLine ? text.trimEveryLineSpace(this.noLine) : text.toString();
+      this.bodyValue = this.textNeedResolve ? Utility.resolveDynamicPropnames(str) : str;
    }
 
    public void myEnd(String namespace, String name) throws Exception

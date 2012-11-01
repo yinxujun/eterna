@@ -24,6 +24,8 @@ import self.micromagic.util.Utility;
 
 /**
  * model模块初始化的规则集.
+ *
+ * @author micromagic@sina.com
  */
 public class ModelRuleSet extends RuleSetBase
 {

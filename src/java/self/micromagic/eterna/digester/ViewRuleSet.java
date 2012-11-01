@@ -29,6 +29,8 @@ import self.micromagic.eterna.view.impl.ViewAdapterImpl;
 
 /**
  * view模块初始化的规则集.
+ *
+ * @author micromagic@sina.com
  */
 public class ViewRuleSet extends RuleSetBase
 {
@@ -122,6 +124,7 @@ public class ViewRuleSet extends RuleSetBase
       // Resource的文本(在xml的body中设置)
       setter = new BodyPropertySetter("trimLine", "setResourceText", false, true);
       ((BodyPropertySetter) setter).setNoLine("noLine", true);
+      ((BodyPropertySetter) setter).setNeedResolve("resolve", true);
       digester.addRule("eterna-config/factory/objs/resource",
             new PropertySetRule(setter, false));
 

@@ -9,6 +9,8 @@ import self.micromagic.util.StringTool;
  * 进行初始化情况记录的初始化规则.
  * 主要记录当前正在生成的是什么对象, 这样在发生异常时可以准确地报告
  * 哪个对象出错了.
+ *
+ * @author micromagic@sina.com
  */
 public class ObjectLogRule extends MyRule
 {

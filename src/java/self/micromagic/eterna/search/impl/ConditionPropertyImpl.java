@@ -16,6 +16,9 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreater;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 class ConditionPropertyImpl
 		implements ConditionProperty
 {

@@ -7,6 +7,8 @@ import self.micromagic.cg.ClassGenerator;
 
 /**
  * 注册一个工厂的初始化规则.
+ *
+ * @author micromagic@sina.com
  */
 public class FactoryRegisterRule extends ObjectCreateRule
 {

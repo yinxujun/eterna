@@ -193,6 +193,10 @@ public class SearchAdapterImpl extends AbstractGenerator
          this.columnSetting.initColumnSetting(this);
       }
 
+		/*
+		当conditionIndex为0时不设置条件, 无论是否设置了ConditionProperty
+		这样在多个search共同运作时便于定义一个公共的search让其它的search继承,
+		而这个search本身可能不会设置任何条件
       if (this.conditionIndex == 0)
       {
          if (this.getConditionPropertyCount() > 0)
@@ -200,6 +204,7 @@ public class SearchAdapterImpl extends AbstractGenerator
             throw new ConfigurationException("Can't set conditionIndex 0 in a search witch has conditionProperty.");
          }
       }
+		*/
 
 		String tmpStr = (String) this.getAttribute("needSynchronize");
 		if (tmpStr != null)

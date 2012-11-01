@@ -4,6 +4,9 @@ package self.micromagic.eterna.search;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.AdapterGenerator;
 
+/**
+ * @author micromagic@sina.com
+ */
 public interface SearchAdapterGenerator extends AdapterGenerator
 {
    public static final String NONE_QUERY_NAME = "$none";

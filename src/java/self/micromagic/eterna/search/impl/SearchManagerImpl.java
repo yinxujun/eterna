@@ -29,6 +29,9 @@ import self.micromagic.eterna.view.DataPrinter;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class SearchManagerImpl extends AbstractGenerator
       implements SearchManagerGenerator, SearchManager, DataPrinter.BeanPrinter
 {
