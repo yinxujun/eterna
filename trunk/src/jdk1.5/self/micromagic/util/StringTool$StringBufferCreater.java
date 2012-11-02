@@ -65,17 +65,17 @@ class StringTool$StringBufferCreater
 		return this;
 	}
 
-   public StringAppender append(CharSequence s)
-   {
-      this.buf.append(s);
-	   return this;
-   }
+	public StringAppender append(CharSequence s)
+	{
+		this.buf.append(s);
+		return this;
+	}
 
-   public StringAppender append(CharSequence s, int start, int end)
-   {
-      this.buf.append(s, start, end);
-	   return this;
-   }
+	public StringAppender append(CharSequence s, int start, int end)
+	{
+		this.buf.append(s, start, end);
+		return this;
+	}
 
 	public StringAppender append(int value)
 	{

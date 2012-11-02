@@ -7,11 +7,11 @@ package self.micromagic.cg;
  * @author micromagic.sina.com
  */
 class ClassGenerator$ClassCanonicalNameAccessor
-      implements ClassGenerator.NameAccessor
+		implements ClassGenerator.NameAccessor
 {
-   public String getName(Class c)
-   {
-      return c.getCanonicalName();
-   }
+	public String getName(Class c)
+	{
+		return c.getCanonicalName();
+	}
 
 }
