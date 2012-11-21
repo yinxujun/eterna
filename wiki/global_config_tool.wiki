@@ -104,5 +104,5 @@ columnName >= ?
 ===notLarge===
 构造一个判断是否小于等于的条件，构造的语句如下：
 {{{
-columnName >= ?
+columnName <= ?
 }}}
