@@ -4,7 +4,9 @@
 =全局配置文件=
 默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”,里面定义了一些常用的方法及控件。
 
-==invertSelect==
+==eterna_global中方法介绍==
+
+===invertSelect===
 {{{
 说明：
 对一组checkbox进行反选或全选操作。
@@ -23,7 +25,7 @@ selectAll：是否为全选模式，ture为全选，false（默认值）为反�
 {$ef:invertSelect}("tmp", _eterna.getWebObj("optTable"), true);
 }}}
 
-==checkSelected==
+===checkSelected===
 {{{
 说明：
 判断一组checkbox或radion中是否有选中。
@@ -48,7 +50,7 @@ if (objs != null)
 }
 }}}
 
-==triggerEvents==
+===triggerEvents===
 {{{
 说明：
 触发某个对象下的所有指定事件。
@@ -62,7 +64,7 @@ eventName：需要被触发的事件名称。
 {$ef:triggerEvents}(_eterna.getWebObj("checkboxDiv"), "click");
 }}}
 
-==checkForm==
+===checkForm===
 {{{
 说明：
 触发一个form对象中的所有控件的check事件，并返回校验是否通过。如果未通过且有出错信息，则会通过alert方法提示这些信息。
@@ -77,7 +79,7 @@ if ({$ef:checkForm}(_eterna.getWebObj("formId")))
 }
 }}}
 
-==getData_value==
+===getData_value===
 {{{
 说明：
 获取结果集中的值。
@@ -94,7 +96,7 @@ var v = {$ef:getData_value}("userInfo", "id");
 var v = {$ef:getData_value}("userList", "name", 0);
 }}}
 
-==findData_value==
+===findData_value===
 {{{
 说明：
 获取结果集中的值。此方法和getData_value效果相同，但这个方法的参数可动态选择，其他参数会取环境变量(eg_temp)中的值
@@ -116,7 +118,7 @@ var v = {$ef:findData_value}("id", eg_temp.index + 1);
 var v = {$ef:findData_value}("other", "name", 0);
 }}}
 
-==getData_row==
+===getData_row===
 {{{
 说明：
 将多行结果集中的某一行转换为单行结果集。
@@ -130,7 +132,7 @@ index：需要将第几条行的值(第一行为0 第二行为1 ...)转换为单
 var row = {$ef:getData_row}("userInfo", 0);
 }}}
 
-==findData_row==
+===findData_row===
 {{{
 说明：
 将多行结果集中的某一行转换为单行结果集。此方法和getData_row效果相同，但这个方法的参数可动态选择，其他参数会取环境变量(eg_temp)中的值
