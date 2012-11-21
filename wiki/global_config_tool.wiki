@@ -1,0 +1,108 @@
+#summary 全局配置中的工具对象介绍
+#labels Phase-Implementation
+
+=全局配置文件=
+默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”后面简称：eterna_share，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”后面简称：eterna_global,里面定义了一些常用的方法及控件。
+
+==eterna_share中的builder介绍==
+builder是为search在搜索时构造条件单元的工具。定义在condition-property节点中。使用方式如下：
+{{{
+<search name="searchName" queryName="queryName">
+   <condition-propertys>
+      <condition-property name="conditionName" colType="String" defaultBuilder="builderName"/>
+      ...
+   </condition-propertys>
+}}}
+上面代码中的`defaultBuilder="builderName"`部分就是设置条件项使用什么条件构造工具。
+
+===isNull===
+构造判断是否为空的条件，构造的语句如下：
+{{{
+columnName IS NULL
+}}}
+
+===notNull===
+构造判断是否不为空的条件，构造的语句如下：
+{{{
+columnName IS NOT NULL
+}}}
+
+===checkNull===
+根据传入的参数值构造判断是否为空或不为空的条件，构造的语句如下：
+{{{
+当传入的值为“1”时
+columnName IS NULL
+当传入的值不为“1”时
+columnName IS NOT NULL
+}}}
+
+===equal===
+构造一个判断相等的条件，构造的语句如下：
+{{{
+columnName = ?
+}}}
+
+===notEqual===
+构造一个判断不相等的条件，构造的语句如下：
+{{{
+columnName <> ?
+}}}
+
+===include===
+构造一个判断是否包含某个字符串的条件，构造的语句如下：
+{{{
+columnName LIKE %?%
+或，当传入的字符串有通配符时
+columnName LIKE %?% escape '\'
+如：参数值为“15%”，会被改为“15\%”
+}}}
+
+===beginWith===
+构造一个判断是否以某个字符串起始的条件，构造的语句如下：
+{{{
+columnName LIKE ?%
+或，当传入的字符串有通配符时
+columnName LIKE ?% escape '\'
+如：参数值为“15%”，会被改为“15\%”
+}}}
+
+===endWith===
+构造一个判断是否以某个字符串结束的条件，构造的语句如下：
+{{{
+columnName LIKE %?
+或，当传入的字符串有通配符时
+columnName LIKE %? escape '\'
+如：参数值为“15%”，会被改为“15\%”
+}}}
+
+===match===
+构造一个可输入统配符的字符串匹配判断条件，构造的语句如下：
+{{{
+columnName LIKE ? escape '\'
+当传入的字符串有通配符时不会进行修改
+如：参数值为“15%”，会被改为“15\%”
+}}}
+
+===large===
+构造一个判断是否大于的条件，构造的语句如下：
+{{{
+columnName > ?
+}}}
+
+===below===
+构造一个判断是否小于的条件，构造的语句如下：
+{{{
+columnName < ?
+}}}
+
+===notBelow===
+构造一个判断是否大于等于的条件，构造的语句如下：
+{{{
+columnName >= ?
+}}}
+
+===notLarge===
+构造一个判断是否小于等于的条件，构造的语句如下：
+{{{
+columnName >= ?
+}}}
