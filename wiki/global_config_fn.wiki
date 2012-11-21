@@ -2,7 +2,7 @@
 #labels Phase-Implementation
 
 =全局配置文件=
-默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”,里面定义了一些常用的方法及控件。
+默认的全局配置文件有两个，一个是“self/micromagic/eterna/share/eterna_share.xml”后面简称：eterna_share，里面定义了一些基本的功能对象；另一个是“eterna_global.xml”后面简称：eterna_global,里面定义了一些常用的方法及控件。
 
 ==eterna_global中方法介绍==
 
