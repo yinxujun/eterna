@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-一些代码表的操作语句, 以及一些常用的
-format, builder等
+一些代码表的操作语句
 -->
 <eterna-config>
    <factory>

@@ -196,7 +196,7 @@ public class PortletValueMap
          catch (Exception ex)
          {
             // 创建session时可能会出错, 比如已经提交了应答之后
-            if (AppData.getAppLogType() != 0)
+            if (AppData.getAppLogType() > 0)
             {
                AppData.log.warn("Error in create portlet session.", ex);
             }

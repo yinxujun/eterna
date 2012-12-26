@@ -31,140 +31,144 @@ public class CallQuery extends QueryAdapterImpl
 		return other;
 	}
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(factory);
-      ResultReaderManager rm = this.getReaderManager0(null);
-      List readerList = rm.getReaderList();
-      Iterator itr = readerList.iterator();
-      while (itr.hasNext())
-      {
-         ResultReader reader = (ResultReader) itr.next();
-         if (!reader.isUseColumnName())
-         {
-            throw new ConfigurationException("You can't use colIndex in reader for CallQuery.");
-         }
-         try
-         {
-            this.getParameter(reader.getColumnName());
-         }
-         catch (ConfigurationException ex)
-         {
-            throw new ConfigurationException("The reader[" + reader.getName()
-                  + "]'s colName must in parameters.");
-         }
-      }
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(factory);
+		ResultReaderManager rm = this.getReaderManager0(null);
+		List readerList = rm.getReaderList();
+		Iterator itr = readerList.iterator();
+		while (itr.hasNext())
+		{
+			ResultReader reader = (ResultReader) itr.next();
+			if (!reader.isUseColumnName())
+			{
+				throw new ConfigurationException("You can't use colIndex in reader for CallQuery.");
+			}
+			try
+			{
+				this.getParameter(reader.getColumnName());
+			}
+			catch (ConfigurationException ex)
+			{
+				throw new ConfigurationException("The reader[" + reader.getName()
+						+ "]'s colName must in parameters.");
+			}
+		}
+	}
 
 	public String getType()
 	{
 		return "call";
 	}
 
-   public ResultIterator executeQueryHoldConnection(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      throw new ConfigurationException("You can't use executeQueryHoldConnection in CallQuery.");
-   }
+	public ResultIterator executeQueryHoldConnection(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		throw new ConfigurationException("You can't use executeQueryHoldConnection in CallQuery.");
+	}
 
-   public ResultIterator executeQuery(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      long startTime = System.currentTimeMillis();
-      Statement stmt = null;
-      Throwable exception = null;
-      ResultIterator result = null;
-      try
-      {
-         CallableStatement call = conn.prepareCall(this.getPreparedSQL());
-         stmt = call;
+	public ResultIterator executeQuery(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		long startTime = System.currentTimeMillis();
+		Statement stmt = null;
+		Throwable exception = null;
+		ResultIterator result = null;
+		try
+		{
+			CallableStatement call = conn.prepareCall(this.getPreparedSQL());
+			stmt = call;
 
-         int[] indexs = new int[this.getParameterCount()];
-         this.getPreparerManager().prepareValues(new PreparedStatementWrapImpl(call), indexs);
-         ResultReaderManager rm = this.getReaderManager0(null);
-         List readerList = rm.getReaderList();
-         Iterator itr = readerList.iterator();
-         while (itr.hasNext())
-         {
-            ResultReader reader = (ResultReader) itr.next();
-            int index = indexs[this.getParameter(reader.getColumnName()).getIndex() - 1];
-            if (index != -1)
-            {
-               call.registerOutParameter(index, TypeManager.getSQLType(reader.getType()));
-            }
-         }
-         call.execute();
+			int[] indexs = new int[this.getParameterCount()];
+			this.getPreparerManager().prepareValues(new PreparedStatementWrapImpl(call), indexs);
+			ResultReaderManager rm = this.getReaderManager0(null);
+			List readerList = rm.getReaderList();
+			Iterator itr = readerList.iterator();
+			while (itr.hasNext())
+			{
+				ResultReader reader = (ResultReader) itr.next();
+				int index = indexs[this.getParameter(reader.getColumnName()).getIndex() - 1];
+				if (index != -1)
+				{
+					call.registerOutParameter(index, TypeManager.getSQLType(reader.getType()));
+				}
+			}
+			call.execute();
 
-         self.micromagic.util.CustomResultIterator critr
-               = new self.micromagic.util.CustomResultIterator(rm, this.getPermission0());
-         if (readerList.size() > 0)
-         {
-            Object[] values = new Object[readerList.size()];
-            itr = readerList.iterator();
-            for (int i = 0; i < values.length; i++)
-            {
-               ResultReader reader = (ResultReader) itr.next();
-               int index = indexs[this.getParameter(reader.getColumnName()).getIndex() - 1];
-               if (index != -1)
-               {
-                  values[i] = reader.readCall(call, index);
-               }
-            }
-            critr.createRow(values);
-         }
-         critr.finishCreateRow();
-         result = critr;
-         return critr;
-      }
-      catch (ConfigurationException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (SQLException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (RuntimeException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (Error ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      finally
-      {
-         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
-         {
-            if (result != null && AppData.getAppLogType() == 1)
-            {
-               Element nowNode = AppData.getCurrentData().getCurrentNode();
-               if (nowNode != null)
-               {
-                  AppDataLogExecute.printObject(nowNode.addElement("result"), result);
-               }
-            }
-         }
-         if (stmt != null)
-         {
-            stmt.close();
-         }
-      }
-   }
+			self.micromagic.util.CustomResultIterator critr
+					= new self.micromagic.util.CustomResultIterator(rm, this.getPermission0());
+			if (readerList.size() > 0)
+			{
+				Object[] values = new Object[readerList.size()];
+				itr = readerList.iterator();
+				for (int i = 0; i < values.length; i++)
+				{
+					ResultReader reader = (ResultReader) itr.next();
+					int index = indexs[this.getParameter(reader.getColumnName()).getIndex() - 1];
+					if (index != -1)
+					{
+						values[i] = reader.readCall(call, index);
+					}
+				}
+				critr.createRow(values);
+			}
+			critr.finishCreateRow();
+			result = critr;
+			return critr;
+		}
+		catch (ConfigurationException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (SQLException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (RuntimeException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (Error ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		finally
+		{
+			if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
+			{
+				if (result != null)
+				{
+					AppData data = AppData.getCurrentData();
+					if (data.getLogType() > 0)
+					{
+						Element nowNode = data.getCurrentNode();
+						if (nowNode != null)
+						{
+							AppDataLogExecute.printObject(nowNode.addElement("result"), result);
+						}
+					}
+				}
+			}
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+		}
+	}
 
-   public void execute(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      this.executeQuery(conn);
-   }
+	public void execute(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		this.executeQuery(conn);
+	}
 
 }
