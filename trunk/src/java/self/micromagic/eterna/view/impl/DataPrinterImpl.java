@@ -180,6 +180,10 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			this.print(out, (long[]) value);
 		}
+		else if (value instanceof byte[])
+		{
+			this.print(out, (byte[]) value);
+		}
 		else if (value instanceof Map.Entry)
 		{
 			Map.Entry entry = (Map.Entry) value;
@@ -198,10 +202,6 @@ public class DataPrinterImpl extends AbstractGenerator
 		else if (value instanceof float[])
 		{
 			this.print(out, (float[]) value);
-		}
-		else if (value instanceof byte[])
-		{
-			this.print(out, (byte[]) value);
 		}
 		else if (value instanceof short[])
 		{

@@ -31,6 +31,7 @@ public class BeanMap extends AbstractMap
    private ConverterManager converterManager;
    private boolean converterManagerCopied = false;
    private List entryList = null;
+	private boolean bean2Map;
 
    BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor)
    {
@@ -115,6 +116,22 @@ public class BeanMap extends AbstractMap
       return this.beanObj;
    }
 
+	/**
+	 * 获取对象时, 是否要将bean对象转换成map返回.
+	 */
+	public boolean isBean2Map()
+	{
+		return this.bean2Map;
+	}
+
+	/**
+	 * 设置获取对象时, 是否要将bean对象转换成map返回.
+	 */
+	public void setBean2Map(boolean bean2Map)
+	{
+		this.bean2Map = bean2Map;
+	}
+
    /**
     * 获取属性名称的前缀.
     */
@@ -141,6 +158,10 @@ public class BeanMap extends AbstractMap
       while (cdItr.hasNext())
       {
          CellDescriptor cd = (CellDescriptor) cdItr.next();
+			if (!cd.isValid())
+			{
+				continue;
+			}
          String pName = cd.getName();
          value = map.get(prefix.length() == 0 ? pName : prefix + pName);
          if (cd.writeProcesser != null)
@@ -188,6 +209,10 @@ public class BeanMap extends AbstractMap
       while (cdItr.hasNext())
       {
          CellDescriptor cd = (CellDescriptor) cdItr.next();
+			if (!cd.isValid())
+			{
+				continue;
+			}
          String pName = cd.getName();
          String name = prefix.length() == 0 ? pName : prefix + pName;
          try
@@ -244,7 +269,7 @@ public class BeanMap extends AbstractMap
          int[] indexs = this.parseArrayName(key.substring(0, index), refName);
          tmpName = refName.getString();
          CellDescriptor cd =  this.beanDescriptor.getCell(tmpName);
-         if (cd != null)
+         if (cd != null && cd.isValid())
          {
             if (cd.isBeanType())
             {
@@ -362,12 +387,20 @@ public class BeanMap extends AbstractMap
       StringRef refName = new StringRef();
       int[] indexs = this.parseArrayName(key, refName);
       CellDescriptor cd = this.beanDescriptor.getCell(refName.toString());
-      if (cd == null)
+      if (cd == null || !cd.isValid())
       {
          return null;
       }
       return new CellAccessInfo(this, cd, indexs);
    }
+
+	/**
+	 * 清空单元描述的缓存.
+	 */
+	public void clearCellCache()
+	{
+		this.entryList = null;
+	}
 
    /**
     * 解析名称中的数组信息. <p>
@@ -429,9 +462,10 @@ public class BeanMap extends AbstractMap
     */
    private synchronized List getEntryList(Class[] beanTypeStack)
    {
-      if (this.entryList != null)
+		List result = this.entryList;
+      if (result != null)
       {
-         return this.entryList;
+         return result;
       }
       if (beanTypeStack == null)
       {
@@ -443,14 +477,18 @@ public class BeanMap extends AbstractMap
          System.arraycopy(beanTypeStack, 0, types, 0, beanTypeStack.length);
          types[beanTypeStack.length] = this.getBeanType();
       }
-      List result = new LinkedList();
+      result = new LinkedList();
       Iterator cdItr = this.beanDescriptor.getCellIterator();
       while (cdItr.hasNext())
       {
          CellDescriptor cd = (CellDescriptor) cdItr.next();
+			if (!cd.isValid())
+			{
+				continue;
+			}
          String pName = cd.getName();
          BeanMap sub = null;
-         if (cd.isBeanType())
+         if (cd.isBeanType() && !this.bean2Map)
          {
             Object thisObj = this.getBean();
             String prefix = this.getPrefix();

@@ -93,6 +93,7 @@ public class AppData
    public ActionResponse actionResponse;
    public PortletConfig portletConfig;
    public ModelExport export;
+	private int logType = APP_LOG_TYPE;
 
    /**
     * view中使用的数据集对象
@@ -125,7 +126,7 @@ public class AppData
    }
 
    /**
-    * 设置app运行日志记录方式
+    * 设置app运行日志记录方式.
     */
    public static void setAppLogType(int type)
    {
@@ -133,11 +134,19 @@ public class AppData
    }
 
    /**
-    * 获取app运行日志记录方式
+    * 获取app运行日志记录方式.
     */
    public static int getAppLogType()
    {
       return APP_LOG_TYPE;
+   }
+
+   /**
+    * 获取当前app运行日志记录方式.
+    */
+   public int getLogType()
+   {
+      return this.logType;
    }
 
    /**
@@ -165,7 +174,7 @@ public class AppData
     */
    public Element getCurrentNode()
    {
-      if (APP_LOG_TYPE == 0)
+      if (this.logType == 0)
       {
          return null;
       }
@@ -181,7 +190,7 @@ public class AppData
     */
    public void addAppMessage(String msg)
    {
-      if (APP_LOG_TYPE == 0)
+      if (this.logType == 0)
       {
          // 如果日志处于关闭状态不做记录
          return;
@@ -197,7 +206,7 @@ public class AppData
     */
    public void addAppMessage(String msg, String type)
    {
-      if (APP_LOG_TYPE == 0)
+      if (this.logType == 0)
       {
          // 如果日志处于关闭状态不做记录
          return;
@@ -225,7 +234,7 @@ public class AppData
     */
    public Element beginNode(String nodeType, String nodeName, String nodeDescription)
    {
-      if (APP_LOG_TYPE == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
+      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
       {
          // 如果日志处于关闭状态且节点堆栈为空的状态才返回null不做记录
          return null;
@@ -264,7 +273,7 @@ public class AppData
     */
    public Element endNode(Throwable error, ModelExport export)
    {
-      if (APP_LOG_TYPE == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
+      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
       {
          // 如果日志处于关闭状态且节点堆栈为空的状态才返回null不做记录
          return null;
@@ -299,7 +308,7 @@ public class AppData
     */
    public Element endNode(Element node, Throwable error, ModelExport export)
    {
-      if (APP_LOG_TYPE == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
+      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
       {
          // 如果日志处于关闭状态且节点堆栈为空的状态才返回null不做记录
          return null;
@@ -410,6 +419,7 @@ public class AppData
          data = new AppData();
          cache.setProperty(CACHE_NAME, data);
       }
+		data.logType = APP_LOG_TYPE;
       return data;
    }
 
@@ -545,6 +555,8 @@ public class AppData
     * 来获取真正的客户端IP.
     *
     * @param agentNames   代理名称列表, 如果没有可以设为<code>null</code>
+	 *                     格式为: 头信息中的名称[:多个ip的分割符及顺序]
+	 *                     顺序的值设为A表示取第一个ip, 设为D表示去最后个ip
     * @return    客户端的IP地址
     */
    public String getRemoteAddr(String[] agentNames)
@@ -553,16 +565,34 @@ public class AppData
       if (request == null)
       {
          return null;
-      }
-      if (agentNames != null)
+      }if (agentNames != null)
       {
          for (int i = 0; i < agentNames.length; i++)
          {
-            String ip = request.getHeader(agentNames[i]);
+				String agentName = agentNames[i];
+				// 解析代理的名称中是否有分隔符及ip顺序的设置
+				int flag = agentName.indexOf(':');
+				char split = ';';
+				boolean desc = false;
+				if (flag != -1 && flag == agentName.length() - 3)
+				{
+					split = agentName.charAt(flag + 1);
+					desc = agentName.charAt(flag + 2) == 'D';
+					agentName = agentName.substring(0, flag);
+				}
+            String ip = request.getHeader(agentName);
             if (ip != null)
             {
-               int index = ip.indexOf(';');
-               return index == -1 ? ip : ip.substring(0, index);
+					if (desc)
+					{
+						int index = ip.lastIndexOf(split);
+						return index == -1 ? ip : ip.substring(index + 1).trim();
+					}
+					else
+					{
+						int index = ip.indexOf(split);
+						return index == -1 ? ip : ip.substring(0, index).trim();
+					}
             }
          }
       }

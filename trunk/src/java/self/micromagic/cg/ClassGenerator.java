@@ -145,7 +145,16 @@ public class ClassGenerator
     */
    public void addClassPath(Class pathClass)
    {
-      if (pathClass != null && !this.classPathCache.containsKey(pathClass.getClassLoader()))
+		if (pathClass == null)
+		{
+			return;
+		}
+		ClassLoader cl = pathClass.getClassLoader();
+		if (cl == null)
+		{
+			return;
+		}
+      if (!this.classPathCache.containsKey(cl))
       {
          this.classPathCache.put(pathClass.getClassLoader(), pathClass);
       }

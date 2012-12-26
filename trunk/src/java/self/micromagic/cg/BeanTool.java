@@ -172,9 +172,12 @@ public class BeanTool
    /**
     * 移除BeanMap的结构信息, 移除后再次使用时就能够重新构造结构信息.
     */
-   public static synchronized void removeBeanDescriptor(Class type)
+   public static void removeBeanDescriptor(Class type)
    {
-      beanDescriptorCache.removeProperty(type);
+		synchronized (beanDescriptorCache)
+		{
+      	beanDescriptorCache.removeProperty(type);
+		}
       //beanDescriptorCache.remove(type);
    }
 
@@ -193,11 +196,14 @@ public class BeanTool
       //BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
       if (bd == null)
       {
-         bd = getBeanDescriptor0(beanClass);
+			synchronized (beanDescriptorCache)
+			{
+         	bd = getBeanDescriptor0(beanClass);
+			}
       }
       return bd;
    }
-   private static synchronized BeanDescriptor getBeanDescriptor0(Class beanClass)
+   private static BeanDescriptor getBeanDescriptor0(Class beanClass)
    {
       BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.getProperty(beanClass);
       //BeanDescriptor bd = (BeanDescriptor) beanDescriptorCache.get(beanClass);
@@ -344,11 +350,14 @@ public class BeanTool
       Object obj = mapToBeanCache.getProperty(beanClass);
       if (obj == null)
       {
-         obj = getMapToBean0(beanClass);
+			synchronized (mapToBeanCache)
+			{
+         	obj = getMapToBean0(beanClass);
+			}
       }
       return (MapToBean) obj;
    }
-   private static synchronized MapToBean getMapToBean0(Class beanClass)
+   private static MapToBean getMapToBean0(Class beanClass)
    {
       Object obj = mapToBeanCache.getProperty(beanClass);
       if (obj == null)
@@ -792,27 +801,33 @@ public class BeanTool
    /**
     * 针对某个bean, 注册一个类型转换器.
     */
-   public static synchronized void registerConverter(Class beanClass, Class type, ValueConverter converter)
+   public static void registerConverter(Class beanClass, Class type, ValueConverter converter)
    {
-      BeanDescriptor bd = getBeanDescriptor(beanClass);
-      if (bd.getConverterManager() == converterManager)
-      {
-         bd.setConverterManager(converterManager.copy());
-      }
-      bd.getConverterManager().registerConverter(type, converter);
+		synchronized (converterManager)
+		{
+			BeanDescriptor bd = getBeanDescriptor(beanClass);
+			if (bd.getConverterManager() == converterManager)
+			{
+				bd.setConverterManager(converterManager.copy());
+			}
+			bd.getConverterManager().registerConverter(type, converter);
+		}
    }
 
    /**
     * 针对某个bean, 注册一个类型转换时使用的<code>PropertyEditor</code>.
     */
-   public static synchronized void registerPropertyEditor(Class beanClass, Class type, PropertyEditor pe)
+   public static void registerPropertyEditor(Class beanClass, Class type, PropertyEditor pe)
    {
-      BeanDescriptor bd = getBeanDescriptor(beanClass);
-      if (bd.getConverterManager() == converterManager)
-      {
-         bd.setConverterManager(converterManager.copy());
-      }
-      bd.getConverterManager().registerPropertyEditor(type, pe);
+		synchronized (converterManager)
+		{
+			BeanDescriptor bd = getBeanDescriptor(beanClass);
+			if (bd.getConverterManager() == converterManager)
+			{
+				bd.setConverterManager(converterManager.copy());
+			}
+			bd.getConverterManager().registerPropertyEditor(type, pe);
+		}
    }
 
    static final ConverterManager converterManager = new ConverterManager();
@@ -831,6 +846,17 @@ public class BeanTool
    public static void registerPropertyEditor(Class type, PropertyEditor pe)
    {
       converterManager.registerPropertyEditor(type, pe);
+   }
+
+   /**
+    * 根据转换器的索引值获取对应的转换器.
+    *
+    * @param type  转换目标的类型
+    */
+   public static ValueConverter getConverter(Class type)
+   {
+		int index = converterManager.getConverterIndex(type);
+      return index == -1 ? null : converterManager.getConverter(index);
    }
 
    /**
@@ -924,23 +950,26 @@ public class BeanTool
       {
          return beanType.booleanValue();
       }
-      if (beanCheckers.size() > 0)
-      {
-         Iterator itr = beanCheckers.iterator();
-         while (itr.hasNext())
-         {
-            BeanChecker bc = (BeanChecker) itr.next();
-            if (bc.check(type) == BeanChecker.CHECK_RESULT_YES)
-            {
-               beanClassNameCheckMap.put(className, Boolean.TRUE);
-               return true;
-            }
-            else if (bc.check(type) == BeanChecker.CHECK_RESULT_NO)
-            {
-               return false;
-            }
-         }
-      }
+		synchronized (beanCheckers)
+		{
+			if (beanCheckers.size() > 0)
+			{
+				Iterator itr = beanCheckers.iterator();
+				while (itr.hasNext())
+				{
+					BeanChecker bc = (BeanChecker) itr.next();
+					if (bc.check(type) == BeanChecker.CHECK_RESULT_YES)
+					{
+						beanClassNameCheckMap.put(className, Boolean.TRUE);
+						return true;
+					}
+					else if (bc.check(type) == BeanChecker.CHECK_RESULT_NO)
+					{
+						return false;
+					}
+				}
+			}
+		}
       if (CG_USE_DEFAULT_BEAN_CHECKER)
       {
          if (defaultBeanChecker.check(type) == BeanChecker.CHECK_RESULT_YES)
@@ -962,20 +991,26 @@ public class BeanTool
    /**
     * 注册一般bean的检测器.
     */
-   public static synchronized void registerBeanChecker(BeanChecker bc)
+   public static void registerBeanChecker(BeanChecker bc)
    {
-      if (!beanCheckers.contains(bc))
-      {
-         beanCheckers.add(bc);
-      }
+		synchronized (beanCheckers)
+		{
+			if (!beanCheckers.contains(bc))
+			{
+				beanCheckers.add(bc);
+			}
+		}
    }
 
    /**
     * 去除一个bean的检测器.
     */
-   public static synchronized void removeBeanChecker(BeanChecker bc)
+   public static void removeBeanChecker(BeanChecker bc)
    {
-      beanCheckers.remove(bc);
+		synchronized (beanCheckers)
+		{
+      	beanCheckers.remove(bc);
+		}
    }
 
    /**
@@ -1051,6 +1086,7 @@ public class BeanTool
       registerConverter(MemoryChars.class, readerConverter);
       registerConverter(BigInteger.class, bigIntegerConverter);
       registerConverter(BigDecimal.class, decimalConverter);
+      registerConverter(Map.class, new MapConverter());
 
       primitiveWrapClass.put("boolean", "Boolean");
       primitiveWrapClass.put("char", "Character");

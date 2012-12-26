@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.IntegerRef;
 
 /**
  * 生成对bean属性设置的属性单元处理者.
@@ -36,9 +36,9 @@ class BeanPropertyWriteProcesser
       this.paramCache.put("fieldName", f.getName());
       String[] resNames = new String[] {
          "beanMap.primitiveFieldSet", "convertTypeFieldSet",
-         "beanMap.beanTypeFieldSet", "otherTypeFieldSet"
+         "beanMap.beanTypeFieldSet", "otherTypeFieldSet", "beanMap.arrayTypeFieldSet"
       };
-      return this.getProcesserCode(type, f.getName(), wrapName, resNames);
+      return this.getProcesserCode(type, f.getName(), wrapName, resNames, cg);
    }
 
    public String getMethodCode(BeanMethodInfo m, Class type, String wrapName, int processerType,
@@ -52,12 +52,13 @@ class BeanPropertyWriteProcesser
       this.paramCache.put("methodName", m.method.getName());
       String[] resNames = new String[] {
          "beanMap.primitiveMethodSet", "convertTypeMethodSet",
-         "beanMap.beanTypeMethodSet", "otherTypeMethodSet"
+         "beanMap.beanTypeMethodSet", "otherTypeMethodSet", "beanMap.arrayTypeMethodSet"
       };
-      return this.getProcesserCode(type, m.name, wrapName, resNames);
+      return this.getProcesserCode(type, m.name, wrapName, resNames, cg);
    }
 
-   protected String getProcesserCode(Class type, String pName, String wrapName, String[] resNames)
+   protected String getProcesserCode(Class type, String pName, String wrapName, String[] resNames,
+         ClassGenerator cg)
    {
       StringAppender sa = StringTool.createStringAppender(128);
       if (wrapName != null)
@@ -75,11 +76,23 @@ class BeanPropertyWriteProcesser
             this.paramCache.put("className", ClassGenerator.getClassName(type));
             BeanTool.codeRes.printRes(resNames[1], this.paramCache, 1, sa).appendln();
          }
-         else if (Tool.isBean(type))
+         else if (BeanTool.checkBean(type))
          {
             this.paramCache.put("className", ClassGenerator.getClassName(type));
+            this.paramCache.put("tempItemName", "_tmpItem");
+            BeanTool.codeRes.printRes("beanMap.convertBeanType", this.paramCache, 1, sa).appendln();
             BeanTool.codeRes.printRes(resNames[2], this.paramCache, 1, sa).appendln();
          }
+			else if (type.isArray())
+			{
+      		IntegerRef level = new IntegerRef();
+				Class eType = ClassGenerator.getArrayElementType(type, level);
+				this.paramCache.put("className", ClassGenerator.getClassName(type));
+				this.paramCache.put("cellClass", ClassGenerator.getClassName(eType));
+				this.paramCache.put("arrayLevel", level);
+				this.paramCache.put("beanMapName", this.beanMapName);
+				BeanTool.codeRes.printRes(resNames[4], this.paramCache, 1, sa).appendln();
+			}
          else
          {
             this.paramCache.put("className", ClassGenerator.getClassName(type));

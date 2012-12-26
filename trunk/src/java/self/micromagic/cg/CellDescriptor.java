@@ -9,10 +9,11 @@ package self.micromagic.cg;
 public class CellDescriptor
 {
    private String name;
-   private boolean readOldValue = false;
-   private boolean beanType = false;
-   private boolean arrayType = false;
-   private boolean arrayBeanType = false;
+   private boolean readOldValue;
+   private boolean beanType;
+   private boolean arrayType;
+   private boolean arrayBeanType;
+	private boolean valid = true;
 
    BeanPropertyReader readProcesser;  // BeanPropertyReader
    BeanPropertyWriter writeProcesser; // BeanPropertyWriter
@@ -104,7 +105,7 @@ public class CellDescriptor
     */
    public boolean isArrayBeanType()
    {
-      return arrayBeanType;
+      return this.arrayBeanType;
    }
 
    /**
@@ -189,4 +190,19 @@ public class CellDescriptor
       this.writeProcesser = writeProcesser;
    }
 
+   /**
+    * 判断属性单元是否有效.
+    */
+   public boolean isValid()
+   {
+      return this.valid;
+   }
+
+   /**
+    * 设置属性单元是否有效.
+    */
+   public void setValid(boolean valid)
+   {
+      this.valid = valid;
+   }
 }

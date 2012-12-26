@@ -4,7 +4,6 @@ package self.micromagic.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -17,13 +16,9 @@ import java.util.logging.StreamHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogConfigurationException;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
 import self.micromagic.cg.ClassGenerator;
-import self.micromagic.eterna.model.AppData;
 import self.micromagic.util.container.SynHashMap;
+import self.micromagic.util.logging.MemoryLogger;
 
 /**
  * 配置说明:
@@ -60,164 +55,20 @@ public class Jdk14Factory extends LogFactory
 
    public static final String EXCEPTION_LOG_PROPERTY = "self.micromagic.eterna.exception.logType";
    protected static int EXCEPTION_LOG_TYPE = 0;
+	private static MemoryLogger memoryLogger = MemoryLogger.getInstance();
 
-   private static Document logDocument = null;
-   private static Element logNodes = null;
+	/**
+	 * 设置使用的MemoryLogger的名称.
+	 */
+	public static void setMemoryLogger(String name)
+	{
+      memoryLogger = MemoryLogger.getInstance(name);
+	}
 
-   private static void checkNodeInit()
-   {
-      if (logDocument == null)
-      {
-         logDocument = DocumentHelper.createDocument();
-         Element root = logDocument.addElement("eterna");
-         logNodes = root.addElement("logs");
-      }
-
-      if (logNodes.elements().size() > 2048)
-      {
-         // 当节点过多时, 清除最先添加的几个节点
-         Iterator itr = logNodes.elementIterator();
-         try
-         {
-            for (int i = 0; i < 1536; i++)
-            {
-               itr.next();
-               itr.remove();
-            }
-         }
-         catch (Exception ex)
-         {
-            // 当去除节点出错时, 则清空日志
-            logDocument = null;
-            checkNodeInit();
-         }
-      }
-   }
-
-   private static synchronized void addException(String msg, Throwable ex, boolean isCause, String level,
-         String className, String methodName, String fileName, int lineNumber, Element logNode)
-   {
-      if (!isCause)
-      {
-         logNode.addAttribute("level", level);
-         logNode.addAttribute("class", className);
-         logNode.addAttribute("method", methodName);
-         if (fileName != null)
-         {
-            logNode.addAttribute("fileName", fileName);
-         }
-         if (lineNumber != -1)
-         {
-            logNode.addAttribute("lineNumber", String.valueOf(lineNumber));
-         }
-         logNode.addAttribute("message", msg);
-      }
-      logNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
-      logNode.addAttribute("exClass", ClassGenerator.getClassName(ex.getClass()));
-      logNode.addAttribute("exMessage", ex.getMessage());
-      Element stacks = logNode.addElement("stacks");
-      StackTraceElement[] trace = ex.getStackTrace();
-      for (int i = 0; i < trace.length; i++)
-      {
-         Element stack = stacks.addElement("stack");
-         stack.setText(trace[i].toString());
-      }
-   }
-
-   private static synchronized void addException(String msg, Throwable ex, boolean isCause, String level,
-         String className, String methodName, String fileName, int lineNumber)
-   {
-      checkNodeInit();
-      Element expNode;
-      if (isCause)
-      {
-         expNode = logNodes.addElement("cause_by");
-      }
-      else
-      {
-         expNode = logNodes.addElement("exception");
-      }
-      addException(msg, ex, isCause, level, className, methodName, fileName, lineNumber, expNode);
-
-      if (AppData.getAppLogType() == 1)
-      {
-         Element nowNode = AppData.getCurrentData().getCurrentNode();
-         if (nowNode != null)
-         {
-            if (isCause)
-            {
-               expNode = nowNode.addElement("cause_by");
-            }
-            else
-            {
-               expNode = nowNode.addElement("exception");
-            }
-            addException(msg, ex, isCause, level, className, methodName, fileName, lineNumber, expNode);
-         }
-      }
-
-      if (ex.getCause() != null)
-      {
-         addException(null, ex.getCause(), true, null, null, null, null, -1);
-      }
-   }
-
-   private static synchronized void addMessage(String msg, String level, String className, String methodName,
-         String fileName, int lineNumber)
-   {
-      checkNodeInit();
-      Element expNode = logNodes.addElement("message");
-      expNode.addAttribute("level", level);
-      expNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
-      expNode.addAttribute("class", className);
-      expNode.addAttribute("method", methodName);
-      if (fileName != null)
-      {
-         expNode.addAttribute("fileName", fileName);
-      }
-      if (lineNumber != -1)
-      {
-         expNode.addAttribute("lineNumber", String.valueOf(lineNumber));
-      }
-      expNode.addAttribute("message", msg);
-      if (AppData.getAppLogType() == 1)
-      {
-         Element nowNode = AppData.getCurrentData().getCurrentNode();
-         if (nowNode != null)
-         {
-            expNode = nowNode.addElement("message");
-            expNode.addAttribute("level", level);
-            expNode.addAttribute("time", FormatTool.formatDatetime(new java.util.Date(System.currentTimeMillis())));
-            expNode.addAttribute("class", className);
-            expNode.addAttribute("method", methodName);
-            if (fileName != null)
-            {
-               expNode.addAttribute("fileName", fileName);
-            }
-            if (lineNumber != -1)
-            {
-               expNode.addAttribute("lineNumber", String.valueOf(lineNumber));
-            }
-            expNode.addAttribute("message", msg);
-         }
-      }
-   }
-
-   public static synchronized void printException(Writer out, boolean clear)
+   public static void printException(Writer out, boolean clear)
          throws IOException
    {
-      if (logDocument == null)
-      {
-         return;
-      }
-      XMLWriter writer = new XMLWriter(out);
-      writer.write(logDocument);
-      writer.flush();
-      if (clear)
-      {
-         logDocument = null;
-         logNodes = null;
-      }
+		memoryLogger.printLog(out, clear);
    }
 
    static
@@ -627,9 +478,9 @@ public class Jdk14Factory extends LogFactory
             // 获取 在哪个方法中记录日志
             Throwable dummyException = new Throwable();
             StackTraceElement locations[] = dummyException.getStackTrace();
-            String cname = "unknown";
-            String method = "unknown";
-            String fileName = null;
+            String cname = "unknow";
+            String method = "unknow";
+            String fileName = "unknow";
             int lineNumber = -1;
             int local = -1;
             if (locations != null && locations.length > 2)
@@ -655,21 +506,18 @@ public class Jdk14Factory extends LogFactory
                fileName = caller.getFileName();
                lineNumber = caller.getLineNumber();
             }
-
+				if (EXCEPTION_LOG_TYPE > 0)
+				{
+					memoryLogger.setLogValid(true);
+					memoryLogger.addLog(msg, ex, level.getName(), Thread.currentThread().getName(),
+							cname, method, fileName, lineNumber == -1 ? "unknow" : String.valueOf(lineNumber));
+				}
             if (ex == null)
             {
-               if (EXCEPTION_LOG_TYPE > 0)
-               {
-                  addMessage(msg, level.getName(), cname, method, fileName, lineNumber);
-               }
-               logger.logp(level, cname, method, msg);
-            }
+					logger.logp(level, cname, method, msg);
+				}
             else
             {
-               if (EXCEPTION_LOG_TYPE > 0)
-               {
-                  addException(msg, ex, false, level.getName(), cname, method, fileName, lineNumber);
-               }
                logger.logp(level, cname, method, msg, ex);
             }
          }

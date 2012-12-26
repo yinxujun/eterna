@@ -210,20 +210,6 @@ public class EternaFactoryImpl extends AbstractFactory
             }
          }
 
-         // 初始化, userManager
-         if (this.userManager != null)
-         {
-            ObjectLogRule.setObjName("userManager");
-            this.userManager.initUserManager(this);
-         }
-
-         // 初始化, special-sql-log
-         if (this.specialLog != null)
-         {
-            ObjectLogRule.setObjName("specialLog");
-            this.specialLog.initSpecialLog(this);
-         }
-
          String dName = (String) super.getAttribute(ValuePreparerCreater.DEFAULT_VPC_ATTRIBUTE);
          if (dName != null)
          {
@@ -308,6 +294,20 @@ public class EternaFactoryImpl extends AbstractFactory
          {
             this.queryManager.initialize(null);
             this.updateManager.initialize(null);
+         }
+
+         // 初始化, userManager
+         if (this.userManager != null)
+         {
+            ObjectLogRule.setObjName("userManager");
+            this.userManager.initUserManager(this);
+         }
+
+         // 初始化, special-sql-log
+         if (this.specialLog != null)
+         {
+            ObjectLogRule.setObjName("specialLog");
+            this.specialLog.initSpecialLog(this);
          }
 
          // 初始化, ConditionBuilder

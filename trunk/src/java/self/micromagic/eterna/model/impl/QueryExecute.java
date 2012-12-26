@@ -135,7 +135,7 @@ public class QueryExecute extends SQLExecute
          }
       }
 
-      if (AppData.getAppLogType() != 0)
+      if (data.getLogType() > 0)
       {
          Element nowNode = data.getCurrentNode();
          nowNode.addAttribute("queryName", query.getName());

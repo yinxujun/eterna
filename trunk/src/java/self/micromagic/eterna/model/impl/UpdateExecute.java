@@ -80,7 +80,7 @@ public class UpdateExecute extends SQLExecute
          }
       }
 
-      if (AppData.getAppLogType() != 0)
+      if (data.getLogType() > 0)
       {
          Element nowNode = data.getCurrentNode();
          nowNode.addAttribute("updateName", update.getName());

@@ -220,7 +220,7 @@ public class TransExecute extends AbstractExecute
       }
       Element nowNode = null;
       Element vToNode = null;
-      if (AppData.getAppLogType() != 0)
+      if (data.getLogType() > 0)
       {
          nowNode = data.getCurrentNode();
       }

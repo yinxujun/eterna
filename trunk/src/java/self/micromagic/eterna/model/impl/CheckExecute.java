@@ -133,7 +133,7 @@ public class CheckExecute extends AbstractExecute
          Object obj1 = this.obj1Index != -1 ? data.caches[this.obj1Index] : null;
          Object obj2 = this.obj2Index != -1 ? data.caches[this.obj2Index] : null;
          checkResult = this.checkOpt.check(obj1, obj2);
-         if (AppData.getAppLogType() != 0)
+         if (data.getLogType() > 0)
          {
             Element nowNode = data.getCurrentNode();
 				if (nowNode != null)

@@ -162,9 +162,10 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
       if ((logType & SQL_LOG_TYPE_SAVE) != 0)
       {
          theLog = FactoryManager.createLogNode(sql.getType());
-         if (AppData.getAppLogType() == 1)
-         {
-            Element nowNode = AppData.getCurrentData().getCurrentNode();
+			AppData data = AppData.getCurrentData();
+			if (data.getLogType() > 0)
+			{
+				Element nowNode = data.getCurrentNode();
             if (nowNode != null)
             {
                logSQL(sql, usedTime, exception, nowNode.addElement(sql.getType()));

@@ -13,11 +13,16 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public class UtilDateConverter extends ObjectConverter
 {
-   private DateFormat dateFormat;
+   private DateFormat[] dateFormats;
 
    public void setDateFormat(DateFormat dateFormat)
    {
-      this.dateFormat = dateFormat;
+      this.dateFormats = new DateFormat[]{dateFormat};
+   }
+
+   public void setDateFormats(DateFormat[] dateFormats)
+   {
+      this.dateFormats = dateFormats;
    }
 
    public int getConvertType(StringRef typeName)
@@ -44,10 +49,15 @@ public class UtilDateConverter extends ObjectConverter
 
    public java.util.Date convertToDate(Object value)
    {
-      return this.convertToDate(value, this.dateFormat);
+      return this.convertToDate(value, this.dateFormats);
    }
 
    public java.util.Date convertToDate(Object value, DateFormat format)
+   {
+		return this.convertToDate(value, new DateFormat[]{format});
+	}
+
+   public java.util.Date convertToDate(Object value, DateFormat[] formats)
    {
       if (value == null)
       {
@@ -63,26 +73,31 @@ public class UtilDateConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         return this.convertToDate((String) value, format);
+         return this.convertToDate((String) value, formats);
       }
       if (value instanceof String[])
       {
          String str = RequestParameterMap.getFirstParam(value);
-         return this.convertToDate(str, format);
+         return this.convertToDate(str, formats);
       }
       if (value instanceof ObjectRef)
       {
-         return this.convertToDate(((ObjectRef) value).getObject(), format);
+         return this.convertToDate(((ObjectRef) value).getObject(), formats);
       }
       throw new ClassCastException(getCastErrorMessage(value, "UtilDate"));
    }
 
    public java.util.Date convertToDate(String value)
    {
-      return this.convertToDate(value, this.dateFormat);
-   }
+      return this.convertToDate(value, this.dateFormats);
+	}
 
    public java.util.Date convertToDate(String value, DateFormat format)
+   {
+      return this.convertToDate(value, new DateFormat[]{format});
+	}
+
+   public java.util.Date convertToDate(String value, DateFormat[] formats)
    {
       if (value == null)
       {
@@ -90,7 +105,7 @@ public class UtilDateConverter extends ObjectConverter
       }
       try
       {
-         if (format == null)
+         if (formats == null)
          {
             try
             {
@@ -103,7 +118,14 @@ public class UtilDateConverter extends ObjectConverter
          }
          else
          {
-            return format.parse(value);
+				for (int i = 0; i < formats.length; i++)
+				{
+					try
+					{
+            		return formats[i].parse(value);
+					}
+					catch (Throwable ex) {}
+				}
          }
       }
       catch (ParseException ex) {}

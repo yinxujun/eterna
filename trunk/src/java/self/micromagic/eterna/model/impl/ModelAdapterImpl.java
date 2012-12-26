@@ -162,9 +162,8 @@ public class ModelAdapterImpl extends AbstractGenerator
          caches = new Object[data.caches.length];
          System.arraycopy(data.caches, 0, caches, 0, caches.length);
       }
-      boolean needLogApp = AppData.getAppLogType() != 0;
 		Element beginNode = null;
-      if (needLogApp)
+      if (data.getLogType() > 0)
       {
          beginNode = data.beginNode("model", this.getName(), null);
       }
@@ -188,7 +187,7 @@ public class ModelAdapterImpl extends AbstractGenerator
                }
             }
          }
-         return this.doModelExt(data, conn, needLogApp, errorRef);
+         return this.doModelExt(data, conn, beginNode != null, errorRef);
       }
       finally
       {
@@ -198,7 +197,7 @@ public class ModelAdapterImpl extends AbstractGenerator
             data.position |= AppData.POSITION_MODEL;
             data.position ^= AppData.POSITION_MODEL;
          }
-         if (needLogApp)
+         if (beginNode != null)
          {
             data.endNode(beginNode, (Throwable) errorRef.getObject(), data.export);
          }
