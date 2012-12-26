@@ -86,26 +86,27 @@ class BeanPropertyReadProcesser
    protected StringAppender appendArrayProcesserCode(String pName, Class type, StringAppender sa,
          String[] resNames, ClassGenerator cg)
    {
-      BeanTool.codeRes.printRes(resNames[2], this.paramCache, 1, sa).appendln();
       IntegerRef level = new IntegerRef();
       Class eType = ClassGenerator.getArrayElementType(type, level);
-      String tmpWrapName = null;
-      String tmpResName = "arrayTypeOtherGet";
-      if (eType.isPrimitive())
-      {
-         tmpWrapName = BeanTool.getPrimitiveWrapClassName(ClassGenerator.getClassName(eType));
-         this.paramCache.put("wrapName", tmpWrapName);
-      }
-      String[] imports = new String[]{
-         ClassGenerator.getPackageString(eType),
-         ClassGenerator.getPackageString(BeanTool.class)
-      };
       StringAppender arrVL1 = StringTool.createStringAppender();
       for (int i = 0; i < level.value; i++)
       {
          arrVL1.append("[]");
       }
       String arrVLStr1 = arrVL1.toString();
+		this.paramCache.put("arrayLevel", level);
+      BeanTool.codeRes.printRes(resNames[2], this.paramCache, 1, sa).appendln();
+		String tmpWrapName = null;
+      String tmpResName = "arrayTypeOtherGet";
+		if (eType.isPrimitive())
+		{
+         tmpWrapName = BeanTool.getPrimitiveWrapClassName(ClassGenerator.getClassName(eType));
+         this.paramCache.put("wrapName", tmpWrapName);
+		}
+      String[] imports = new String[]{
+         ClassGenerator.getPackageString(eType),
+         ClassGenerator.getPackageString(BeanTool.class)
+      };
       String fnName = "public Object getBeanValue(CellDescriptor cd, int[] indexs, Object arrObj, "
             + "String prefix, BeanMap beanMap)";
       String beginCode = StringTool.createStringAppender().append(fnName).appendln()

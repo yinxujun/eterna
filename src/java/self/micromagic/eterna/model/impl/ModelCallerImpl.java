@@ -111,9 +111,8 @@ public class ModelCallerImpl
          data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN, preConn);
       }
 
-      boolean needLogApp = AppData.getAppLogType() != 0;
 		Element beginNode = null;
-      if (needLogApp)
+      if (data.getLogType() > 0)
       {
          beginNode = data.beginNode("call", data.modelName, null);
          AppDataLogExecute.printAppData(data);
@@ -133,7 +132,7 @@ public class ModelCallerImpl
       }
       finally
       {
-         if (needLogApp)
+         if (beginNode != null)
          {
             try
             {

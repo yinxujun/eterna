@@ -13,296 +13,312 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 class ValueContainerMapEntrySet extends AbstractSet
-      implements Set
+		implements Set
 {
-   private ValueContainerMap vcm;
-   private ValueContainer vContainer;
-   private Map entryMap = null;
+	private ValueContainerMap vcm;
+	private ValueContainer vContainer;
+	private Map entryMap = null;
+	private boolean keepEntry = true;
 
-   public ValueContainerMapEntrySet(ValueContainerMap vcm, ValueContainer vContainer)
-   {
-      if (vContainer == null)
-      {
-         throw new NullPointerException();
-      }
-      this.vcm = vcm;
-      this.vContainer = vContainer;
-   }
+	public ValueContainerMapEntrySet(ValueContainerMap vcm, ValueContainer vContainer)
+	{
+		if (vContainer == null)
+		{
+			throw new NullPointerException();
+		}
+		this.vcm = vcm;
+		this.vContainer = vContainer;
+	}
 
-   public boolean isEntryInitialized()
-   {
-      return this.entryMap != null;
-   }
+	private Map initEntryMap()
+	{
+		Map result = this.entryMap;
+		if (result != null)
+		{
+			return result;
+		}
+		result = new HashMap();
+		MapEntry entry;
+		Enumeration e = this.vContainer.getKeys();
+		while (e.hasMoreElements())
+		{
+			entry = new MapEntry(e.nextElement());
+			result.put(entry.getKey(), entry);
+		}
+		if (this.keepEntry)
+		{
+			this.entryMap = result;
+		}
+		return result;
+	}
 
-   private synchronized void initEntryMap()
-   {
-      if (this.entryMap == null)
-      {
-         this.entryMap = new HashMap();
-         MapEntry entry;
-         Enumeration e = this.vContainer.getKeys();
-         while (e.hasMoreElements())
-         {
-            entry = new MapEntry(e.nextElement());
-            this.entryMap.put(entry.getKey(), entry);
-         }
-      }
-   }
+	/**
+	 * 判断entry列表是否被初始化了.
+	 */
+	public boolean isEntryInitialized()
+	{
+		return this.entryMap != null;
+	}
 
-   /**
-    * 判断entry列表是否被初始化了.
-    */
-   public boolean isEntryMapInitialized()
-   {
-      return this.entryMap != null;
-   }
+	/**
+	 * 是否需要保存entry列表.
+	 */
+	public boolean isKeepEntry()
+	{
+		return this.keepEntry;
+	}
 
-   /**
-    * 判断entry列表是否被初始化了.
-    */
-   public boolean containsKey(Object key)
-   {
-      if (this.entryMap == null)
-      {
-         return this.vcm.get(key) != null;
-      }
-      else
-      {
-         return this.entryMap.containsKey(key);
-      }
-   }
+	/**
+	 * 设置是否需要保存entry列表.
+	 * 如果不保存, 将在每次使用时生成新的entry列表.
+	 */
+	public void setKeepEntry(boolean keepEntry)
+	{
+		this.keepEntry = keepEntry;
+	}
 
-   public int size()
-   {
-      if (this.entryMap == null)
-      {
-         this.initEntryMap();
-      }
-      return this.entryMap.size();
-   }
+	/**
+	 * 判断是否包含指定的键值.
+	 */
+	public boolean containsKey(Object key)
+	{
+		Map tmpMap = null;
+		if ((tmpMap = this.entryMap) == null)
+		{
+			return this.vcm.get(key) != null;
+		}
+		else
+		{
+			return tmpMap.containsKey(key);
+		}
+	}
 
-   public boolean contains(Object o)
-   {
-      if (o != null && (o instanceof Map.Entry))
-      {
-         Map.Entry entry = (Map.Entry) o;
-         if (this.entryMap != null)
-         {
-            Object value = this.entryMap.get(entry.getKey());
-            if (value != null)
-            {
-               return Utility.objectEquals(
-                     ((Map.Entry) value).getValue(), entry.getValue());
-            }
-         }
-         else
-         {
-            Object value = this.vContainer.getValue(entry.getKey());
-            return Utility.objectEquals(value, entry.getValue());
-         }
-      }
-      return false;
-   }
+	public int size()
+	{
+		return this.initEntryMap().size();
+	}
 
-   public Iterator iterator()
-   {
-      if (this.entryMap == null)
-      {
-         this.initEntryMap();
-      }
-      return new MapEntrySetIterator(this.entryMap.values().iterator());
-   }
+	public boolean contains(Object o)
+	{
+		if (o != null && (o instanceof Map.Entry))
+		{
+			Map.Entry entry = (Map.Entry) o;
+			Map tmpMap = null;
+			if ((tmpMap = this.entryMap) != null)
+			{
+				Object value = tmpMap.get(entry.getKey());
+				if (value != null)
+				{
+					return Utility.objectEquals(
+							((Map.Entry) value).getValue(), entry.getValue());
+				}
+			}
+			else
+			{
+				Object value = this.vContainer.getValue(entry.getKey());
+				return Utility.objectEquals(value, entry.getValue());
+			}
+		}
+		return false;
+	}
 
-   public boolean add(Object o)
-   {
-      if (o != null && (o instanceof Map.Entry))
-      {
-         Map.Entry entry = (Map.Entry) o;
-         this.vContainer.setValue(entry.getKey(), entry.getValue());
-         return this.addEntry(entry) == null;
-      }
-      return false;
-   }
+	public Iterator iterator()
+	{
+		return new MapEntrySetIterator(this.initEntryMap().values().iterator());
+	}
 
-   protected synchronized Object addEntry(Map.Entry entry)
-   {
-      if (this.entryMap != null)
-      {
-         return this.entryMap.put(entry.getKey(), entry);
-      }
-      return null;
-   }
+	public boolean add(Object o)
+	{
+		if (o != null && (o instanceof Map.Entry))
+		{
+			Map.Entry entry = (Map.Entry) o;
+			this.vContainer.setValue(entry.getKey(), entry.getValue());
+			return this.addEntry(entry) == null;
+		}
+		return false;
+	}
 
-   public boolean remove(Object o)
-   {
-      if (o != null && (o instanceof Map.Entry))
-      {
-         Map.Entry entry = (Map.Entry) o;
-         this.vContainer.removeValue(entry.getKey());
-         return this.removeEntry(entry) != null;
-      }
-      return false;
-   }
+	protected Object addEntry(Map.Entry entry)
+	{
+		Map tmpMap;
+		if ((tmpMap = this.entryMap) != null)
+		{
+			return tmpMap.put(entry.getKey(), entry);
+		}
+		return null;
+	}
 
-   protected synchronized Object removeEntry(Map.Entry entry)
-   {
-      if (this.entryMap != null)
-      {
-         return this.entryMap.remove(entry.getKey());
-      }
-      return entry;
-   }
+	public boolean remove(Object o)
+	{
+		if (o != null && (o instanceof Map.Entry))
+		{
+			Map.Entry entry = (Map.Entry) o;
+			this.vContainer.removeValue(entry.getKey());
+			return this.removeEntry(entry) != null;
+		}
+		return false;
+	}
 
-   private void removeByIterator(Map.Entry entry)
-   {
-      this.vContainer.removeValue(entry.getKey());
-   }
+	protected Object removeEntry(Map.Entry entry)
+	{
+		Map tmpMap = null;
+		if ((tmpMap = this.entryMap) != null)
+		{
+			return tmpMap.remove(entry.getKey());
+		}
+		return entry;
+	}
 
-   public synchronized Object addValue(Object key, Object value)
-   {
-      Object oldValue = null;
-      if (this.vcm.isLoadOldValue())
-      {
-         oldValue = this.vContainer.getValue(key);
-      }
-      if (this.isEntryMapInitialized())
-      {
-         MapEntry entry = new MapEntry(key, value);
-         this.add(entry);
-      }
-      else
-      {
-         this.vContainer.setValue(key, value);
-      }
-      return oldValue;
-   }
+	private void removeByIterator(Map.Entry entry)
+	{
+		this.vContainer.removeValue(entry.getKey());
+	}
 
-   public synchronized Object removeValue(Object key)
-   {
-      Object oldValue = null;
-      if (this.vcm.isLoadOldValue())
-      {
-         oldValue = this.vContainer.getValue(key);
-      }
-      if (this.isEntryMapInitialized())
-      {
-         Map.Entry entry = new MapEntry(key);
-         this.remove(entry);
-      }
-      else
-      {
-         this.vContainer.removeValue(key);
-      }
-      return oldValue;
-   }
+	public Object addValue(Object key, Object value)
+	{
+		Object oldValue = null;
+		if (this.vcm.isLoadOldValue())
+		{
+			oldValue = this.vContainer.getValue(key);
+		}
+		if (this.isEntryInitialized())
+		{
+			MapEntry entry = new MapEntry(key, value);
+			this.add(entry);
+		}
+		else
+		{
+			this.vContainer.setValue(key, value);
+		}
+		return oldValue;
+	}
 
-   private class MapEntrySetIterator
-         implements Iterator
-   {
-      private Iterator itr;
-      private MapEntry current = null;
+	public Object removeValue(Object key)
+	{
+		Object oldValue = null;
+		if (this.vcm.isLoadOldValue())
+		{
+			oldValue = this.vContainer.getValue(key);
+		}
+		if (this.isEntryInitialized())
+		{
+			Map.Entry entry = new MapEntry(key);
+			this.remove(entry);
+		}
+		else
+		{
+			this.vContainer.removeValue(key);
+		}
+		return oldValue;
+	}
 
-      public MapEntrySetIterator(Iterator itr)
-      {
-         this.itr = itr;
-      }
+	private class MapEntrySetIterator
+			implements Iterator
+	{
+		private Iterator itr;
+		private MapEntry current = null;
 
-      public boolean hasNext()
-      {
-         return this.itr.hasNext();
-      }
+		public MapEntrySetIterator(Iterator itr)
+		{
+			this.itr = itr;
+		}
 
-      public Object next()
-      {
-         this.current = (MapEntry) this.itr.next();
-         return this.current;
-      }
+		public boolean hasNext()
+		{
+			return this.itr.hasNext();
+		}
 
-      public void remove()
-      {
-         if (this.current == null)
-         {
-            throw new IllegalStateException();
-         }
-         ValueContainerMapEntrySet.this.removeByIterator(this.current);
-         this.current = null;
-         this.itr.remove();
-      }
+		public Object next()
+		{
+			this.current = (MapEntry) this.itr.next();
+			return this.current;
+		}
 
-   }
+		public void remove()
+		{
+			if (this.current == null)
+			{
+				throw new IllegalStateException();
+			}
+			ValueContainerMapEntrySet.this.removeByIterator(this.current);
+			this.current = null;
+			this.itr.remove();
+		}
 
-   private class MapEntry
-         implements Map.Entry
-   {
-      private Object key;
-      private Object value = null;
+	}
 
-      private String toStringValue = null;
+	private class MapEntry
+			implements Map.Entry
+	{
+		private Object key;
+		private Object value = null;
 
-      public MapEntry(Object key)
-      {
-         this.key = key;
-      }
+		private String toStringValue = null;
 
-      public MapEntry(Object key, Object value)
-      {
-         this(key);
-         this.value = value;
-      }
+		public MapEntry(Object key)
+		{
+			this.key = key;
+		}
 
-      public Object getKey()
-      {
-         return this.key;
-      }
+		public MapEntry(Object key, Object value)
+		{
+			this(key);
+			this.value = value;
+		}
 
-      public Object getValue()
-      {
-         if (this.value == null)
-         {
-            this.value = ValueContainerMapEntrySet.this.vContainer.getValue(this.key);
-         }
-         return this.value;
-      }
+		public Object getKey()
+		{
+			return this.key;
+		}
 
-      public Object setValue(Object value)
-      {
-         Object oldValue = this.getValue();
-         this.value = value;
-         ValueContainerMapEntrySet.this.vContainer.setValue(this.key, value);
-         return oldValue;
-      }
+		public Object getValue()
+		{
+			if (this.value == null)
+			{
+				this.value = ValueContainerMapEntrySet.this.vContainer.getValue(this.key);
+			}
+			return this.value;
+		}
 
-      public int hashCode()
-      {
-         Object key = this.getKey();
-         Object value = this.getValue();
-         return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
-      }
+		public Object setValue(Object value)
+		{
+			Object oldValue = this.getValue();
+			this.value = value;
+			ValueContainerMapEntrySet.this.vContainer.setValue(this.key, value);
+			return oldValue;
+		}
 
-      public boolean equals(Object obj)
-      {
-         if (obj instanceof Map.Entry)
-         {
-            Object otherKey = ((Map.Entry) obj).getKey();
-            Object otherValue = ((Map.Entry) obj).getValue();
-            return Utility.objectEquals(this.key, otherKey)
-                  && Utility.objectEquals(this.value, otherValue);
-         }
-         return false;
-      }
+		public int hashCode()
+		{
+			Object key = this.getKey();
+			Object value = this.getValue();
+			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+		}
 
-      public String toString()
-      {
-         if (this.toStringValue == null)
-         {
-            StringAppender buf = StringTool.createStringAppender(32);
-            buf.append("Entry[key:").append(this.key)
-                  .append(",value:").append(this.value).append(']');
-            this.toStringValue = buf.toString();
-         }
-         return this.toStringValue;
-      }
+		public boolean equals(Object obj)
+		{
+			if (obj instanceof Map.Entry)
+			{
+				Object otherKey = ((Map.Entry) obj).getKey();
+				Object otherValue = ((Map.Entry) obj).getValue();
+				return Utility.objectEquals(this.key, otherKey)
+						&& Utility.objectEquals(this.value, otherValue);
+			}
+			return false;
+		}
 
-   }
+		public String toString()
+		{
+			if (this.toStringValue == null)
+			{
+				StringAppender buf = StringTool.createStringAppender(32);
+				buf.append("Entry[key:").append(this.key)
+						.append(",value:").append(this.value).append(']');
+				this.toStringValue = buf.toString();
+			}
+			return this.toStringValue;
+		}
+
+	}
 
 }

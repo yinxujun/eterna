@@ -184,7 +184,7 @@ public class SearchExecute extends AbstractExecute
       EternaFactory f = this.getModelAdapter().getFactory();
       if (searchName != null)
       {
-         if (AppData.getAppLogType() != 0)
+         if (data.getLogType() > 0)
          {
             Element nowNode = data.getCurrentNode();
             nowNode.addAttribute("searchName", searchName);

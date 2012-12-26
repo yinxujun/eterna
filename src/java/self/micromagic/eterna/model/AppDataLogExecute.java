@@ -53,10 +53,7 @@ public class AppDataLogExecute extends AbstractExecute
    public ModelExport execute(AppData data, Connection conn)
          throws ConfigurationException, SQLException, IOException
    {
-      if (AppData.getAppLogType() != 0)
-      {
-         printAppData(data);
-      }
+		printAppData(data);
       return null;
    }
 
@@ -78,7 +75,7 @@ public class AppDataLogExecute extends AbstractExecute
 	 */
    public static void printAppData(AppData data)
    {
-      if (AppData.getAppLogType() == 0)
+      if (data.getLogType() == 0)
       {
          return;
       }

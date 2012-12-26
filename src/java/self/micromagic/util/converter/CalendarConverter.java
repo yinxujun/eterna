@@ -14,11 +14,16 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public class CalendarConverter extends ObjectConverter
 {
-   private DateFormat dateFormat;
+   private DateFormat[] dateFormats;
 
    public void setDateFormat(DateFormat dateFormat)
    {
-      this.dateFormat = dateFormat;
+      this.dateFormats = new DateFormat[]{dateFormat};
+   }
+
+   public void setDateFormats(DateFormat[] dateFormats)
+   {
+      this.dateFormats = dateFormats;
    }
 
    public int getConvertType(StringRef typeName)
@@ -45,10 +50,15 @@ public class CalendarConverter extends ObjectConverter
 
    public Calendar convertToCalendar(Object value)
    {
-      return this.convertToCalendar(value, this.dateFormat);
+      return this.convertToCalendar(value, this.dateFormats);
    }
 
    public Calendar convertToCalendar(Object value, DateFormat format)
+   {
+      return this.convertToCalendar(value, new DateFormat[]{format});
+	}
+
+   public Calendar convertToCalendar(Object value, DateFormat[] formats)
    {
       if (value == null)
       {
@@ -72,26 +82,31 @@ public class CalendarConverter extends ObjectConverter
       }
       if (value instanceof String)
       {
-         return this.convertToCalendar((String) value, format);
+         return this.convertToCalendar((String) value, formats);
       }
       if (value instanceof String[])
       {
          String str = RequestParameterMap.getFirstParam(value);
-         return this.convertToCalendar(str, format);
+         return this.convertToCalendar(str, formats);
       }
       if (value instanceof ObjectRef)
       {
-         return this.convertToCalendar(((ObjectRef) value).getObject(), format);
+         return this.convertToCalendar(((ObjectRef) value).getObject(), formats);
       }
       throw new ClassCastException(getCastErrorMessage(value, "Calendar"));
    }
 
    public Calendar convertToCalendar(String value)
    {
-      return this.convertToCalendar(value, this.dateFormat);
+      return this.convertToCalendar(value, this.dateFormats);
    }
 
    public Calendar convertToCalendar(String value, DateFormat format)
+   {
+      return this.convertToCalendar(value, new DateFormat[]{format});
+	}
+
+   public Calendar convertToCalendar(String value, DateFormat[] formats)
    {
       if (value == null)
       {
@@ -99,7 +114,7 @@ public class CalendarConverter extends ObjectConverter
       }
       try
       {
-         if (format == null)
+         if (formats == null)
          {
             Calendar c = Calendar.getInstance();
             try
@@ -115,8 +130,15 @@ public class CalendarConverter extends ObjectConverter
          else
          {
             Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(format.parse(value).getTime());
-            return c;
+				for (int i = 0; i < formats.length; i++)
+				{
+					try
+					{
+						c.setTimeInMillis(formats[i].parse(value).getTime());
+						return c;
+					}
+					catch (Throwable ex) {}
+				}
          }
       }
       catch (ParseException ex) {}

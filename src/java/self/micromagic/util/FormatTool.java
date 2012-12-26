@@ -50,15 +50,15 @@ public class FormatTool
     */
    public static String formatDatetime(Object datetime)
    {
-      return datetimeFormat.format(datetime);
+      return datetime == null ? "" : datetimeFormat.format(datetime);
    }
 
    /**
     * 格式化输出某个日期
     */
-   public static String formatDate(Object datetime)
+   public static String formatDate(Object date)
    {
-      return dateFormat.format(datetime);
+      return date == null ? "" : dateFormat.format(date);
    }
 
    /**
@@ -66,7 +66,7 @@ public class FormatTool
     */
    public static String formatTime(Object time)
    {
-      return timeFormat.format(time);
+      return time == null ? "" : timeFormat.format(time);
    }
 
    /**
@@ -75,7 +75,7 @@ public class FormatTool
    public static Date parseDatetime(String str)
          throws ParseException
    {
-      return datetimeFormat.parse(str);
+      return str == null ? null : datetimeFormat.parse(str);
    }
 
    /**
@@ -84,7 +84,7 @@ public class FormatTool
    public static Date parseDate(String str)
          throws ParseException
    {
-      return dateFormat.parse(str);
+      return str == null ? null : dateFormat.parse(str);
    }
 
    /**
@@ -93,7 +93,7 @@ public class FormatTool
    public static Date parseTime(String str)
          throws ParseException
    {
-      return timeFormat.parse(str);
+      return str == null ? null : timeFormat.parse(str);
    }
 
 }

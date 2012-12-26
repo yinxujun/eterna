@@ -44,7 +44,7 @@ public class ClassKeyCache
    /**
     * 设置一个属性.
     *
-    * @param c         作为为键值的<code>Class</code>
+    * @param c         作为键值的<code>Class</code>
     * @param property  要设置的属性值
     */
    public void setProperty(Class c, Object property)
@@ -57,9 +57,24 @@ public class ClassKeyCache
    }
 
    /**
+    * 设置一个属性.
+    *
+    * @param cl        作为键值的<code>ClassLoader</code>
+    * @param property  要设置的属性值
+    */
+   public void setProperty(ClassLoader cl, Object property)
+   {
+      CacheCell ccm = this.getCacheCell(cl);
+      if (ccm != null)
+      {
+         ccm.put(null, property);
+      }
+   }
+
+   /**
     * 获取一个属性的值.
     *
-    * @param c     作为为键值的<code>Class</code>
+    * @param c     作为键值的<code>Class</code>
     */
    public Object getProperty(Class c)
    {
@@ -72,9 +87,24 @@ public class ClassKeyCache
    }
 
    /**
+    * 获取一个属性的值.
+    *
+    * @param cl     作为键值的<code>ClassLoader</code>
+    */
+   public Object getProperty(ClassLoader cl)
+   {
+      CacheCell ccm = this.getCacheCell(cl);
+      if (ccm != null)
+      {
+         return ccm.get(null);
+      }
+      return null;
+   }
+
+   /**
     * 移除一个属性.
     *
-    * @param c     作为为键值的<code>Class</code>
+    * @param c     作为键值的<code>Class</code>
     */
    public void removeProperty(Class c)
    {
@@ -82,6 +112,20 @@ public class ClassKeyCache
       if (ccm != null)
       {
          ccm.remove(c);
+      }
+   }
+
+   /**
+    * 移除一个属性.
+    *
+    * @param cl     作为键值的<code>ClassLoader</code>
+    */
+   public void removeProperty(ClassLoader cl)
+   {
+      CacheCell ccm = this.getCacheCell(cl);
+      if (ccm != null)
+      {
+         ccm.remove(null);
       }
    }
 
@@ -111,7 +155,7 @@ public class ClassKeyCache
    /**
     * 获取缓存单元.
     *
-    * @param c     作为为键值的<code>Class</code>
+    * @param c     作为键值的<code>Class</code>
     */
    private CacheCell getCacheCell(Class c)
    {
@@ -120,6 +164,16 @@ public class ClassKeyCache
          return null;
       }
       ClassLoader cl = c.getClassLoader();
+		return this.getCacheCell(cl);
+   }
+
+   /**
+    * 获取缓存单元.
+    *
+    * @param cl     作为缓存单元的标识<code>ClassLoader</code>
+    */
+   private CacheCell getCacheCell(ClassLoader cl)
+   {
       CacheCell cc = (CacheCell) this.caches.get(cl);
       if (cc == null)
       {

@@ -73,7 +73,7 @@ public class Utility
    /**
     * 在处理文本的动态属性时, 是否要显示处理失败的信息
     */
-   private static boolean SHOW_RDP_FAIL = false;
+   static boolean SHOW_RDP_FAIL = false;
 
    private static PropertiesManager propertiesManager = new PropertiesManager();
    private static URL properties_URL;
@@ -434,11 +434,10 @@ public class Utility
    public static void copyStream(InputStream in, OutputStream out, byte[] buf)
          throws IOException
    {
-      int readCount = in.read(buf);
-      while (readCount > 0)
+      int readCount;
+      while ((readCount = in.read(buf)) >= 0)
       {
          out.write(buf, 0, readCount);
-         readCount = in.read(buf);
       }
    }
 
@@ -493,23 +492,14 @@ public class Utility
       {
          throw new IllegalArgumentException("Error limit:" + limit);
       }
-      if (limit == 0)
-      {
-         return 0;
-      }
       int allCount = 0;
-      int leftCount = limit;
-      int readCount = in.read(buf);
-      while (readCount > 0)
+      int left = limit;
+      int rCount;
+      while (left > 0 && (rCount = in.read(buf, 0, buf.length > left ? left : buf.length)) >= 0)
       {
-         out.write(buf, 0, readCount);
-         allCount += readCount;
-         leftCount -= readCount;
-         if (allCount >= limit)
-         {
-            break;
-         }
-         readCount = in.read(buf, 0, buf.length > leftCount ? leftCount : buf.length);
+         out.write(buf, 0, rCount);
+         allCount += rCount;
+         left -= rCount;
       }
       return allCount;
    }
@@ -557,11 +547,10 @@ public class Utility
    public static void copyChars(Reader in, Writer out, char[] buf)
          throws IOException
    {
-      int readCount = in.read(buf);
-      while (readCount > 0)
+      int readCount;
+      while ((readCount = in.read(buf)) >= 0)
       {
          out.write(buf, 0, readCount);
-         readCount = in.read(buf);
       }
    }
 
@@ -616,23 +605,14 @@ public class Utility
       {
          throw new IllegalArgumentException("Error limit:" + limit);
       }
-      if (limit == 0)
-      {
-         return 0;
-      }
       int allCount = 0;
-      int leftCount = limit;
-      int readCount = in.read(buf);
-      while (readCount > 0)
+      int left = limit;
+      int rCount;
+      while (left > 0 && (rCount = in.read(buf, 0, buf.length > left ? left : buf.length)) >= 0)
       {
-         out.write(buf, 0, readCount);
-         allCount += readCount;
-         leftCount -= readCount;
-         if (allCount >= limit)
-         {
-            break;
-         }
-         readCount = in.read(buf, 0, buf.length > leftCount ? leftCount : buf.length);
+         out.write(buf, 0, rCount);
+         allCount += rCount;
+         left -= rCount;
       }
       return allCount;
    }
@@ -747,28 +727,17 @@ public class Utility
       }
    }
 
-
-	/**
-    * 动态属性名称的前缀: "${"
-    */
-	public static final String DYNAMIC_PROPNAME_PREFIX = "${";
-	/**
-    * 动态属性名称的后缀:: "}"
-    */
-	public static final String DYNAMIC_PROPNAME_SUFFIX = "}";
-
    /**
 	 * 处理文本中"${...}"的动态属性, 将他们替换成配置文件
     * (micromagic_config.properties 或 System.property)中的对应值.
     *
 	 * @param text      要处理的文本
 	 * @return 处理完的文本
-	 * @see #DYNAMIC_PROPNAME_PREFIX
-	 * @see #DYNAMIC_PROPNAME_SUFFIX
+	 * @see PropertiesManager#resolveDynamicPropnames(String)
 	 */
 	public static String resolveDynamicPropnames(String text)
    {
-      return resolveDynamicPropnames(text, null, false);
+		return propertiesManager.resolveDynamicPropnames(text, null, false);
    }
 
    /**
@@ -778,12 +747,11 @@ public class Utility
 	 * @param text      要处理的文本
 	 * @param bindRes   绑定的资源, 会先在bindRes寻找对应的值
 	 * @return 处理完的文本
-	 * @see #DYNAMIC_PROPNAME_PREFIX
-	 * @see #DYNAMIC_PROPNAME_SUFFIX
+	 * @see PropertiesManager#resolveDynamicPropnames(String, Map)
 	 */
 	public static String resolveDynamicPropnames(String text, Map bindRes)
    {
-      return resolveDynamicPropnames(text, bindRes, false);
+		return propertiesManager.resolveDynamicPropnames(text, bindRes, false);
    }
 
    /**
@@ -796,89 +764,11 @@ public class Utility
     *                  <code>false</code>时, 如果绑定的资源中不存在对应的值会再到
     *                  micromagic_config.properties 或 System.property中寻找
 	 * @return 处理完的文本
-	 * @see #DYNAMIC_PROPNAME_PREFIX
-	 * @see #DYNAMIC_PROPNAME_SUFFIX
+	 * @see PropertiesManager#resolveDynamicPropnames(String, Map, boolean)
 	 */
 	public static String resolveDynamicPropnames(String text, Map bindRes, boolean onlyRes)
    {
-      if (text == null)
-      {
-         return text;
-      }
-      int startIndex = text.indexOf(DYNAMIC_PROPNAME_PREFIX);
-      if (startIndex == -1)
-      {
-         return text;
-      }
-
-      String tempStr = text;
-      StringAppender result = StringTool.createStringAppender(text.length() + 32);
-      while (startIndex != -1)
-      {
-         result.append(tempStr.substring(0, startIndex));
-         int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + DYNAMIC_PROPNAME_PREFIX.length());
-         if (endIndex != -1)
-         {
-            String dName = tempStr.substring(startIndex + DYNAMIC_PROPNAME_PREFIX.length(), endIndex);
-            try
-            {
-               String pValue = null;
-               if (bindRes != null)
-               {
-                  Object obj = bindRes.get(dName);
-                  if (obj != null)
-                  {
-                     pValue = String.valueOf(obj);
-                  }
-               }
-               if (!onlyRes)
-               {
-                  if (pValue == null)
-                  {
-                     // 如果bindRes为null或其中不存在, 则到micromagic_config.properties中查找
-                     pValue = getProperty(dName);
-                  }
-                  if (pValue == null)
-                  {
-                     // 如果micromagic_config.properties中不存在, 则到系统属性中查找
-                     pValue = System.getProperty(dName);
-                  }
-               }
-               if (pValue != null)
-               {
-                  result.append(resolveDynamicPropnames(pValue, bindRes));
-               }
-               else
-               {
-                  result.append(tempStr.substring(startIndex, endIndex + 1));
-                  if (SHOW_RDP_FAIL)
-                  {
-                     Utility.createLog("util").warn("Could not resolve dynamic name '" + dName
-                           + "' in [" + text + "] as config property.");
-                  }
-               }
-            }
-            catch (Throwable ex)
-            {
-               if (SHOW_RDP_FAIL)
-               {
-                  String msg = "Could not resolve dynamic name '" + dName
-                        + "' in [" + text + "] as config property.";
-                  Utility.createLog("util").warn(msg, ex);
-               }
-            }
-            tempStr = tempStr.substring(endIndex + DYNAMIC_PROPNAME_SUFFIX.length());
-            startIndex = tempStr.indexOf(DYNAMIC_PROPNAME_PREFIX);
-         }
-         else
-         {
-            tempStr = tempStr.substring(startIndex);
-            startIndex = -1;
-         }
-      }
-      result.append(tempStr);
-
-      return result.toString();
+		return propertiesManager.resolveDynamicPropnames(text, bindRes, onlyRes);
    }
 
 }

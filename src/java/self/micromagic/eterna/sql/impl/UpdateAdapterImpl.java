@@ -134,13 +134,17 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
       {
          if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
          {
-            if (result != -1 && AppData.getAppLogType() == 1)
+            if (result != -1)
             {
-               Element nowNode = AppData.getCurrentData().getCurrentNode();
-               if (nowNode != null)
-               {
-                  AppDataLogExecute.printObject(nowNode.addElement("result"), new Integer(result));
-               }
+					AppData data = AppData.getCurrentData();
+					if (data.getLogType() > 0)
+					{
+						Element nowNode = data.getCurrentNode();
+						if (nowNode != null)
+						{
+							AppDataLogExecute.printObject(nowNode.addElement("result"), new Integer(result));
+						}
+					}
             }
          }
          if (stmt != null)

@@ -43,7 +43,6 @@ public class PropertiesManager
     */
    public static final String PARENT_PROPERTIES = "self.micromagic.parent.properties";
 
-
 	/**
 	 * 配置文件名.
 	 * 注: 配置文件都必须在classpath下.
@@ -175,6 +174,27 @@ public class PropertiesManager
    {
       return this.properties.getProperty(key, defaultValue);
    }
+
+	/**
+	 * 获取对文本内容处理过的属性值.
+	 *
+	 * @param key          属性所在的键值
+	 */
+	public String getResolvedProperty(String key)
+	{
+		return this.resolveDynamicPropnames(this.getProperty(key));
+	}
+
+	/**
+	 * 获取对文本内容处理过的属性值.
+	 *
+	 * @param key          属性所在的键值
+	 * @param defaultValue 此键值下没属性时将返回此默认值
+	 */
+	public String getResolvedProperty(String key, String defaultValue)
+	{
+		return this.resolveDynamicPropnames(this.getProperty(key, defaultValue));
+	}
 
 	/**
 	 * 设置属性值.
@@ -395,6 +415,135 @@ public class PropertiesManager
             }
          }
       }
+   }
+
+
+
+	/**
+    * 动态属性名称的前缀: "${"
+    */
+	private static final String DYNAMIC_PROPNAME_PREFIX = "${";
+	/**
+    * 动态属性名称的后缀:: "}"
+    */
+	private static final String DYNAMIC_PROPNAME_SUFFIX = "}";
+
+   /**
+	 * 处理文本中"${...}"的动态属性, 将他们替换成配置文件
+    * (本配置对象 或 System.property)中的对应值.
+    *
+	 * @param text      要处理的文本
+	 * @return 处理完的文本
+	 */
+	public String resolveDynamicPropnames(String text)
+   {
+      return this.resolveDynamicPropnames(text, null, false);
+   }
+
+   /**
+	 * 处理文本中"${...}"的动态属性, 将他们替换成配置文件
+    * (bindRes 或 本配置对象 或 System.property)中的对应值.
+    *
+	 * @param text      要处理的文本
+	 * @param bindRes   绑定的资源, 会先在bindRes寻找对应的值
+	 * @return 处理完的文本
+	 */
+	public String resolveDynamicPropnames(String text, Map bindRes)
+   {
+      return this.resolveDynamicPropnames(text, bindRes, false);
+   }
+
+   /**
+	 * 处理文本中"${...}"的动态属性, 将他们替换成配置文件
+    * (bindRes 或 本配置对象 或 System.property)中的对应值.
+    *
+	 * @param text      要处理的文本
+	 * @param bindRes   绑定的资源, 会先在bindRes寻找对应的值
+	 * @param onlyRes   设置为<code>true</code>时, 只对绑定的资源进行处理, 设置为
+    *                  <code>false</code>时, 如果绑定的资源中不存在对应的值会再到
+    *                  本配置对象 或 System.property中寻找
+	 * @return 处理完的文本
+	 */
+	public String resolveDynamicPropnames(String text, Map bindRes, boolean onlyRes)
+   {
+      if (text == null)
+      {
+         return text;
+      }
+      int startIndex = text.indexOf(DYNAMIC_PROPNAME_PREFIX);
+      if (startIndex == -1)
+      {
+         return text;
+      }
+
+      String tempStr = text;
+      StringAppender result = StringTool.createStringAppender(text.length() + 32);
+      while (startIndex != -1)
+      {
+         result.append(tempStr.substring(0, startIndex));
+         int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + DYNAMIC_PROPNAME_PREFIX.length());
+         if (endIndex != -1)
+         {
+            String dName = tempStr.substring(startIndex + DYNAMIC_PROPNAME_PREFIX.length(), endIndex);
+            try
+            {
+               String pValue = null;
+               if (bindRes != null)
+               {
+                  Object obj = bindRes.get(dName);
+                  if (obj != null)
+                  {
+                     pValue = String.valueOf(obj);
+                  }
+               }
+               if (!onlyRes)
+               {
+                  if (pValue == null)
+                  {
+                     // 如果bindRes为null或其中不存在, 则到micromagic_config.properties中查找
+                     pValue = this.getProperty(dName);
+                  }
+                  if (pValue == null)
+                  {
+                     // 如果micromagic_config.properties中不存在, 则到系统属性中查找
+                     pValue = System.getProperty(dName);
+                  }
+               }
+               if (pValue != null)
+               {
+                  result.append(resolveDynamicPropnames(pValue, bindRes));
+               }
+               else
+               {
+                  result.append(tempStr.substring(startIndex, endIndex + 1));
+                  if (Utility.SHOW_RDP_FAIL)
+                  {
+                     Utility.createLog("util").warn("Could not resolve dynamic name '" + dName
+                           + "' in [" + text + "] as config property.");
+                  }
+               }
+            }
+            catch (Throwable ex)
+            {
+               if (Utility.SHOW_RDP_FAIL)
+               {
+                  String msg = "Could not resolve dynamic name '" + dName
+                        + "' in [" + text + "] as config property.";
+                  Utility.createLog("util").warn(msg, ex);
+               }
+            }
+            tempStr = tempStr.substring(endIndex + DYNAMIC_PROPNAME_SUFFIX.length());
+            startIndex = tempStr.indexOf(DYNAMIC_PROPNAME_PREFIX);
+         }
+         else
+         {
+            tempStr = tempStr.substring(startIndex);
+            startIndex = -1;
+         }
+      }
+      result.append(tempStr);
+
+      return result.toString();
    }
 
 	/**

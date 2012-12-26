@@ -5,6 +5,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
@@ -52,13 +53,25 @@ class DefaultBeanChecker
       }
       try
       {
-         BeanInfo info = Introspector.getBeanInfo(beanClass, Object.class);
-         PropertyDescriptor[] arr = info.getPropertyDescriptors();
-         // 不存在属性信息的类不是bean
+			BeanMethodInfo[] arr = BeanMethodInfo.getBeanMethods(beanClass);
+         // 不存在属性信息的类或公共属性的不是bean
          if (arr == null || arr.length == 0)
          {
-            BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-            return CHECK_RESULT_NO;
+				boolean hasPublicField = false;
+				Field[] fields = beanClass.getFields();
+				for (int i = 0; i < fields.length; i++)
+				{
+					if (!Modifier.isStatic(fields[i].getModifiers()))
+					{
+						hasPublicField = true;
+						break;
+					}
+				}
+				if (!hasPublicField)
+				{
+					BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+					return CHECK_RESULT_NO;
+				}
          }
          // 不存在无参的构造函数的类不是bean
          if (beanClass.getConstructor(new Class[0]) == null)
