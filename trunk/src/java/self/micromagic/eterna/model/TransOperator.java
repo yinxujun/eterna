@@ -5,6 +5,6 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface TransOperator
 {
-   Object change(Object value) throws ConfigurationException;
+	Object change(Object value) throws ConfigurationException;
 
 }

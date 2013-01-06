@@ -12,677 +12,677 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * ¸÷ÀàÊôĞÔµÄÉèÖÃ, Í¨¹ıPropertySetRuleÀ´µ÷ÓÃ.
+ * å„ç±»å±æ€§çš„è®¾ç½®, é€šè¿‡PropertySetRuleæ¥è°ƒç”¨.
  *
  * @author micromagic@sina.com
  */
 public abstract class PropertySetter
 {
-   protected static final Log log = FactoryManager.log;
+	protected static final Log log = FactoryManager.log;
 
-   protected Digester digester;
+	protected Digester digester;
 
-   protected String methodName;
-   protected int objectIndex = 0;
+	protected String methodName;
+	protected int objectIndex = 0;
 
-   /**
-    * @param methodName     ÉèÖÃÊôĞÔµ÷ÓÃµÄ·½·¨
-    */
-   public PropertySetter(String methodName)
-   {
-      this.methodName = methodName;
-   }
+	/**
+	 * @param methodName     è®¾ç½®å±æ€§è°ƒç”¨çš„æ–¹æ³•
+	 */
+	public PropertySetter(String methodName)
+	{
+		this.methodName = methodName;
+	}
 
-   /**
-    * @param methodName     ÉèÖÃÊôĞÔµ÷ÓÃµÄ·½·¨
-    * @param objectIndex    ±»ÉèÖÃÊôĞÔ¶ÔÏóÔÚ¶ÑÕ»ÖĞµÄË÷ÒıÖµ
-    */
-   public PropertySetter(String methodName, int objectIndex)
-   {
-      this.methodName = methodName;
-      this.objectIndex = objectIndex;
-   }
+	/**
+	 * @param methodName     è®¾ç½®å±æ€§è°ƒç”¨çš„æ–¹æ³•
+	 * @param objectIndex    è¢«è®¾ç½®å±æ€§å¯¹è±¡åœ¨å †æ ˆä¸­çš„ç´¢å¼•å€¼
+	 */
+	public PropertySetter(String methodName, int objectIndex)
+	{
+		this.methodName = methodName;
+		this.objectIndex = objectIndex;
+	}
 
-   /**
-    * ÉèÖÃËùÊôµÄ½âÎöÆ÷.
-    */
-   public void setDigester(Digester digester)
-   {
-      this.digester = digester;
-   }
+	/**
+	 * è®¾ç½®æ‰€å±çš„è§£æå™¨.
+	 */
+	public void setDigester(Digester digester)
+	{
+		this.digester = digester;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔ¶ÔÏóÔÚ¶ÑÕ»ÖĞµÄË÷ÒıÖµ.
-    */
-   public void setObjectIndex(int index)
-   {
-      this.objectIndex = index;
-   }
+	/**
+	 * è®¾ç½®å±æ€§å¯¹è±¡åœ¨å †æ ˆä¸­çš„ç´¢å¼•å€¼.
+	 */
+	public void setObjectIndex(int index)
+	{
+		this.objectIndex = index;
+	}
 
-   /**
-    * ÉèÖÃµÄÊôĞÔÊÇ·ñ±ØĞë´æÔÚ.
-    */
-   public abstract boolean isMustExist();
+	/**
+	 * è®¾ç½®çš„å±æ€§æ˜¯å¦å¿…é¡»å­˜åœ¨.
+	 */
+	public abstract boolean isMustExist();
 
-   /**
-    * ×¼±¸ÉèÖÃµÄÊôĞÔ.
-    *
-    * @param namespace      xmlÅäÖÃÎÄ¼şµÄÃüÃû¿Õ¼ä
-    * @param name           µ±Ç°xmlÔªËØµÄÃû³Æ
-    * @param attributes     µ±Ç°xmlÔªËØµÄÊôĞÔ¼¯
-    * @return               ×¼±¸ºÃµÄÊôĞÔ¶ÔÏó
-    */
-   public abstract Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception;
+	/**
+	 * å‡†å¤‡è®¾ç½®çš„å±æ€§.
+	 *
+	 * @param namespace      xmlé…ç½®æ–‡ä»¶çš„å‘½åç©ºé—´
+	 * @param name           å½“å‰xmlå…ƒç´ çš„åç§°
+	 * @param attributes     å½“å‰xmlå…ƒç´ çš„å±æ€§é›†
+	 * @return               å‡†å¤‡å¥½çš„å±æ€§å¯¹è±¡
+	 */
+	public abstract Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception;
 
-   /**
-    * ¸ù¾İÎÄ±¾ÄÚÈİ×¼±¸ÉèÖÃµÄÊôĞÔ.
-    *
-    * @param namespace      xmlÅäÖÃÎÄ¼şµÄÃüÃû¿Õ¼ä
-    * @param name           µ±Ç°xmlÔªËØµÄÃû³Æ
-    * @param text           µ±Ç°xmlÔªËØµÄÎÄ±¾¶ÔÏó
-    * @return               ×¼±¸ºÃµÄÊôĞÔ¶ÔÏó
-    */
-   public Object prepareProperty(String namespace, String name, BodyText text)
-         throws Exception
-   {
-      return null;
-   }
+	/**
+	 * æ ¹æ®æ–‡æœ¬å†…å®¹å‡†å¤‡è®¾ç½®çš„å±æ€§.
+	 *
+	 * @param namespace      xmlé…ç½®æ–‡ä»¶çš„å‘½åç©ºé—´
+	 * @param name           å½“å‰xmlå…ƒç´ çš„åç§°
+	 * @param text           å½“å‰xmlå…ƒç´ çš„æ–‡æœ¬å¯¹è±¡
+	 * @return               å‡†å¤‡å¥½çš„å±æ€§å¯¹è±¡
+	 */
+	public Object prepareProperty(String namespace, String name, BodyText text)
+			throws Exception
+	{
+		return null;
+	}
 
-   /**
-    * ÊÇ·ñĞèÒªxmlÔªËØµÄÎÄ±¾ÄÚÈİ.
-    */
-   public boolean requireBodyValue()
-   {
-      return false;
-   }
+	/**
+	 * æ˜¯å¦éœ€è¦xmlå…ƒç´ çš„æ–‡æœ¬å†…å®¹.
+	 */
+	public boolean requireBodyValue()
+	{
+		return false;
+	}
 
-   /**
-    * ½«×¼±¸ºÃµÄÊôĞÔÉèÖÃµ½¶ÔÏóÖĞ.
-    */
-   public abstract void setProperty()
-         throws Exception;
+	/**
+	 * å°†å‡†å¤‡å¥½çš„å±æ€§è®¾ç½®åˆ°å¯¹è±¡ä¸­.
+	 */
+	public abstract void setProperty()
+			throws Exception;
 
-   /**
-    * ×¼±¸ÊôĞÔ²¢½«ÆäÉèÖÃµ½¶ÔÏóÖĞ. <p>
-    * Æäµ÷ÓÃµÄ´úÂëÈçÏÂ:
-    * <blockquote><pre>
-    * this.prepareProperty(namespace, name, attributes);
-    * this.setProperty();
-    * </pre></blockquote>
-    *
-    * @param namespace      xmlÅäÖÃÎÄ¼şµÄÃüÃû¿Õ¼ä
-    * @param name           µ±Ç°xmlÔªËØµÄÃû³Æ
-    * @param attributes     µ±Ç°xmlÔªËØµÄÊôĞÔ¼¯
-    */
-   public void setProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      this.prepareProperty(namespace, name, attributes);
-      this.setProperty();
-   }
+	/**
+	 * å‡†å¤‡å±æ€§å¹¶å°†å…¶è®¾ç½®åˆ°å¯¹è±¡ä¸­. <p>
+	 * å…¶è°ƒç”¨çš„ä»£ç å¦‚ä¸‹:
+	 * <blockquote><pre>
+	 * this.prepareProperty(namespace, name, attributes);
+	 * this.setProperty();
+	 * </pre></blockquote>
+	 *
+	 * @param namespace      xmlé…ç½®æ–‡ä»¶çš„å‘½åç©ºé—´
+	 * @param name           å½“å‰xmlå…ƒç´ çš„åç§°
+	 * @param attributes     å½“å‰xmlå…ƒç´ çš„å±æ€§é›†
+	 */
+	public void setProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		this.prepareProperty(namespace, name, attributes);
+		this.setProperty();
+	}
 
 }
 
 /**
- * µ¥ÊôĞÔÉèÖÃµÄ¹«¹²Àà.
+ * å•å±æ€§è®¾ç½®çš„å…¬å…±ç±».
  *
  * @author micromagic@sina.com
  */
 abstract class SinglePropertySetter extends PropertySetter
 {
-   public static final Class[] STRING_TYPE = new Class[]{String.class};
-   public static final Class[] INTEGER_TYPE = new Class[]{int.class};
-   public static final Class[] BOOLEAN_TYPE = new Class[]{boolean.class};
+	public static final Class[] STRING_TYPE = new Class[]{String.class};
+	public static final Class[] INTEGER_TYPE = new Class[]{int.class};
+	public static final Class[] BOOLEAN_TYPE = new Class[]{boolean.class};
 
-   protected String attributeName;
-   protected String defaultValue;
-   protected boolean mustExist;
+	protected String attributeName;
+	protected String defaultValue;
+	protected boolean mustExist;
 
-   protected Object[] value;
-   protected Class[] type;
+	protected Object[] value;
+	protected Class[] type;
 
-   /**
-    * ÊÇ·ñÒª¶Ô»ñÈ¡µÄ×Ö·û´®½øĞĞintern´¦Àí. <p>
-    * ¶ÔÒ»Ğ©Æµ·±³öÏÖµÄ×Ö·û´íintern´¦Àíºó¿ÉÒÔ½ÚÊ¡ÄÚ´æÊ¹ÓÃµÄ¿Õ¼ä¡£
-    */
-   boolean needIntern = true;
+	/**
+	 * æ˜¯å¦è¦å¯¹è·å–çš„å­—ç¬¦ä¸²è¿›è¡Œinternå¤„ç†. <p>
+	 * å¯¹ä¸€äº›é¢‘ç¹å‡ºç°çš„å­—ç¬¦é”™internå¤„ç†åå¯ä»¥èŠ‚çœå†…å­˜ä½¿ç”¨çš„ç©ºé—´ã€‚
+	 */
+	boolean needIntern = true;
 
-   /**
-    * @param attributeName   ´ÓxmlÊôĞÔ¼¯ÖĞ»ñÈ¡ÖµµÄÃû³Æ
-    * @param methodName      ÉèÖÃÊôĞÔµ÷ÓÃµÄ·½·¨
-    * @param mustExist       xmlÊôĞÔ¼¯ÖĞÊÇ·ñ±ØĞë´æÔÚĞèÒªµÄÖµ
-    */
-   public SinglePropertySetter(String attributeName, String methodName, boolean mustExist)
-   {
-      super(methodName);
-      this.attributeName = attributeName;
-      this.mustExist = mustExist;
-   }
+	/**
+	 * @param attributeName   ä»xmlå±æ€§é›†ä¸­è·å–å€¼çš„åç§°
+	 * @param methodName      è®¾ç½®å±æ€§è°ƒç”¨çš„æ–¹æ³•
+	 * @param mustExist       xmlå±æ€§é›†ä¸­æ˜¯å¦å¿…é¡»å­˜åœ¨éœ€è¦çš„å€¼
+	 */
+	public SinglePropertySetter(String attributeName, String methodName, boolean mustExist)
+	{
+		super(methodName);
+		this.attributeName = attributeName;
+		this.mustExist = mustExist;
+	}
 
-   /**
-    * @param attributeName   ´ÓxmlÊôĞÔ¼¯ÖĞ»ñÈ¡ÖµµÄÃû³Æ
-    * @param methodName      ÉèÖÃÊôĞÔµ÷ÓÃµÄ·½·¨
-    * @param defaultValue    xmlÊôĞÔ¼¯ÖĞ²»´æÔÚÔÚĞèÒªµÄÖµÊÇÊ¹ÓÃµÄÄ¬ÈÏÖµ
-    */
-   public SinglePropertySetter(String attributeName, String methodName, String defaultValue)
-   {
-      super(methodName);
-      this.attributeName = attributeName;
-      this.defaultValue = defaultValue;
-      this.mustExist = false;
-   }
+	/**
+	 * @param attributeName   ä»xmlå±æ€§é›†ä¸­è·å–å€¼çš„åç§°
+	 * @param methodName      è®¾ç½®å±æ€§è°ƒç”¨çš„æ–¹æ³•
+	 * @param defaultValue    xmlå±æ€§é›†ä¸­ä¸å­˜åœ¨åœ¨éœ€è¦çš„å€¼æ˜¯ä½¿ç”¨çš„é»˜è®¤å€¼
+	 */
+	public SinglePropertySetter(String attributeName, String methodName, String defaultValue)
+	{
+		super(methodName);
+		this.attributeName = attributeName;
+		this.defaultValue = defaultValue;
+		this.mustExist = false;
+	}
 
-   /**
-    * ÊÇ·ñÒª¶Ô»ñÈ¡µÄ×Ö·û´®½øĞĞintern´¦Àí.
-    */
-   public boolean isNeedIntern()
-   {
-      return this.needIntern;
-   }
+	/**
+	 * æ˜¯å¦è¦å¯¹è·å–çš„å­—ç¬¦ä¸²è¿›è¡Œinternå¤„ç†.
+	 */
+	public boolean isNeedIntern()
+	{
+		return this.needIntern;
+	}
 
-   /**
-    * ÉèÖÃÊÇ·ñÒª¶Ô»ñÈ¡µÄ×Ö·û´®½øĞĞintern´¦Àí.
-    */
-   public void setNeedIntern(boolean needIntern)
-   {
-      this.needIntern = needIntern;
-   }
+	/**
+	 * è®¾ç½®æ˜¯å¦è¦å¯¹è·å–çš„å­—ç¬¦ä¸²è¿›è¡Œinternå¤„ç†.
+	 */
+	public void setNeedIntern(boolean needIntern)
+	{
+		this.needIntern = needIntern;
+	}
 
-   /**
-    * ÉèÖÃµÄÊôĞÔÊÇ·ñ±ØĞë´æÔÚ.
-    */
-   public boolean isMustExist()
-   {
-      return this.mustExist;
-   }
+	/**
+	 * è®¾ç½®çš„å±æ€§æ˜¯å¦å¿…é¡»å­˜åœ¨.
+	 */
+	public boolean isMustExist()
+	{
+		return this.mustExist;
+	}
 
-   /**
-    * ´ÓxmlÊôĞÔ¼¯ÖĞ»ñÈ¡Öµ.
-    *
-    * @param namespace      xmlÅäÖÃÎÄ¼şµÄÃüÃû¿Õ¼ä
-    * @param name           µ±Ç°xmlÔªËØµÄÃû³Æ
-    * @param attributes     µ±Ç°xmlÔªËØµÄÊôĞÔ¼¯
-    */
-   protected String getValue(String namespace, String name, Attributes attributes)
-         throws InvalidAttributesException
-   {
-      if (this.attributeName == null)
-      {
-         return this.mustExist ? null : this.defaultValue;
-      }
-      String value = attributes.getValue(this.attributeName);
-      if (value == null)
-      {
-         if (this.isMustExist())
-         {
-            throw new InvalidAttributesException("Not fount the attribute '"
-                  + this.attributeName + "' in " + name + ".");
-         }
-         return this.needIntern ? StringTool.intern(this.defaultValue) : this.defaultValue;
-      }
-      return this.needIntern ? StringTool.intern(value) : value;
-   }
+	/**
+	 * ä»xmlå±æ€§é›†ä¸­è·å–å€¼.
+	 *
+	 * @param namespace      xmlé…ç½®æ–‡ä»¶çš„å‘½åç©ºé—´
+	 * @param name           å½“å‰xmlå…ƒç´ çš„åç§°
+	 * @param attributes     å½“å‰xmlå…ƒç´ çš„å±æ€§é›†
+	 */
+	protected String getValue(String namespace, String name, Attributes attributes)
+			throws InvalidAttributesException
+	{
+		if (this.attributeName == null)
+		{
+			return this.mustExist ? null : this.defaultValue;
+		}
+		String value = attributes.getValue(this.attributeName);
+		if (value == null)
+		{
+			if (this.isMustExist())
+			{
+				throw new InvalidAttributesException("Not fount the attribute '"
+						+ this.attributeName + "' in " + name + ".");
+			}
+			return this.needIntern ? StringTool.intern(this.defaultValue) : this.defaultValue;
+		}
+		return this.needIntern ? StringTool.intern(value) : value;
+	}
 
-   /**
-    * ½«×¼±¸ºÃµÄÊôĞÔÉèÖÃµ½¶ÔÏóÖĞ.
-    */
-   public void setProperty()
-         throws Exception
-   {
-      if (this.value == null)
-      {
-         return;
-      }
-      Object obj = this.digester.peek(this.objectIndex);
-      try
-      {
-         Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
-      }
-      catch (Exception ex)
-      {
-         log.error("Method invoke error. method:" + this.methodName + "  param:"
-               + Arrays.asList(this.type) + "  obj:" + (obj == null ? null : obj.getClass())
-               + "  value:" + Arrays.asList(this.value));
-         throw ex;
-      }
-   }
+	/**
+	 * å°†å‡†å¤‡å¥½çš„å±æ€§è®¾ç½®åˆ°å¯¹è±¡ä¸­.
+	 */
+	public void setProperty()
+			throws Exception
+	{
+		if (this.value == null)
+		{
+			return;
+		}
+		Object obj = this.digester.peek(this.objectIndex);
+		try
+		{
+			Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
+		}
+		catch (Exception ex)
+		{
+			log.error("Method invoke error. method:" + this.methodName + "  param:"
+					+ Arrays.asList(this.type) + "  obj:" + (obj == null ? null : obj.getClass())
+					+ "  value:" + Arrays.asList(this.value));
+			throw ex;
+		}
+	}
 
 }
 
 /**
- * ¸ù¾İÉèÖÃµÄÀàÃû¹¹Ôì¶ÔÏó, ²¢½«ÆäÉèÖÃÊôĞÔ.
+ * æ ¹æ®è®¾ç½®çš„ç±»åæ„é€ å¯¹è±¡, å¹¶å°†å…¶è®¾ç½®å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class ObjectPropertySetter extends SinglePropertySetter
 {
-   protected Class classType;
-   protected Object theObject;
-   protected boolean objectClassMustExist = true;
+	protected Class classType;
+	protected Object theObject;
+	protected boolean objectClassMustExist = true;
 
-   public ObjectPropertySetter(String attributeName, String methodName,
-         String className, Class classType)
-   {
-      super(attributeName, methodName, className);
-      this.objectClassMustExist = className == null;
-      this.classType = classType;
-      this.type = new Class[]{this.classType};
-   }
+	public ObjectPropertySetter(String attributeName, String methodName,
+			String className, Class classType)
+	{
+		super(attributeName, methodName, className);
+		this.objectClassMustExist = className == null;
+		this.classType = classType;
+		this.type = new Class[]{this.classType};
+	}
 
-   /**
-    * ´ÓxmlÊôĞÔ¼¯ÖĞ(»òÄ¬ÈÏÖµ)»ñÈ¡ÀàÃû²¢Éú³É¶ÔÏó.
-    */
-   protected void setMyObject(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String cName = ObjectCreateRule.getClassName(
-            this.attributeName, this.defaultValue, attributes);
-      if (cName == null)
-      {
-         throw new InvalidAttributesException("Not fount the attribute '"
-               + this.attributeName + "' in " + name + ".");
-      }
+	/**
+	 * ä»xmlå±æ€§é›†ä¸­(æˆ–é»˜è®¤å€¼)è·å–ç±»åå¹¶ç”Ÿæˆå¯¹è±¡.
+	 */
+	protected void setMyObject(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String cName = ObjectCreateRule.getClassName(
+				this.attributeName, this.defaultValue, attributes);
+		if (cName == null)
+		{
+			throw new InvalidAttributesException("Not fount the attribute '"
+					+ this.attributeName + "' in " + name + ".");
+		}
 
-      this.digester.getLogger().debug("New " + cName);
-      this.theObject = ObjectCreateRule.createObject(cName, this.objectClassMustExist);
-   }
+		this.digester.getLogger().debug("New " + cName);
+		this.theObject = ObjectCreateRule.createObject(cName, this.objectClassMustExist);
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      this.setMyObject(namespace, name, attributes);
-      ObjectCreateRule.checkType(this.classType, this.theObject);
-      return this.theObject;
-   }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		this.setMyObject(namespace, name, attributes);
+		ObjectCreateRule.checkType(this.classType, this.theObject);
+		return this.theObject;
+	}
 
-   /**
-    * ÉèÖÃvalueÊôĞÔ, ÔÚsetProperty·½·¨ÖĞ»áµ÷ÓÃ´Ë·½·¨Éú³ÉÉèÖÃµÄÖµ.
-    */
-   protected void setMyValue()
-         throws Exception
-   {
-      this.value = new Object[]{this.theObject};
-   }
+	/**
+	 * è®¾ç½®valueå±æ€§, åœ¨setPropertyæ–¹æ³•ä¸­ä¼šè°ƒç”¨æ­¤æ–¹æ³•ç”Ÿæˆè®¾ç½®çš„å€¼.
+	 */
+	protected void setMyValue()
+			throws Exception
+	{
+		this.value = new Object[]{this.theObject};
+	}
 
-   public void setProperty()
-         throws Exception
-   {
-      if (this.theObject == null)
-      {
-         return;
-      }
-      Object obj = this.digester.peek(this.objectIndex);
-      this.setMyValue();
-      try
-      {
-         Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
-      }
-      catch (Exception ex)
-      {
-         log.error("Method invoke error. method:" + this.methodName + "  param:"
-               + Arrays.asList(this.type) + "  obj:" + obj.getClass()
-               + "  value:" + Arrays.asList(this.value));
-         throw ex;
-      }
-   }
+	public void setProperty()
+			throws Exception
+	{
+		if (this.theObject == null)
+		{
+			return;
+		}
+		Object obj = this.digester.peek(this.objectIndex);
+		this.setMyValue();
+		try
+		{
+			Tool.invokeExactMethod(obj, this.methodName, this.value, this.type);
+		}
+		catch (Exception ex)
+		{
+			log.error("Method invoke error. method:" + this.methodName + "  param:"
+					+ Arrays.asList(this.type) + "  obj:" + obj.getClass()
+					+ "  value:" + Arrays.asList(this.value));
+			throw ex;
+		}
+	}
 }
 
 /**
- * ÉèÖÃGeneratorÉú³ÉµÄÊôĞÔ.
+ * è®¾ç½®Generatorç”Ÿæˆçš„å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class GeneratorPropertySetter extends ObjectPropertySetter
 {
-   protected Generator generator;
-   protected boolean withName;
+	protected Generator generator;
+	protected boolean withName;
 
-   public GeneratorPropertySetter(String attributeName, String methodName,
-         String className, Class classType)
-   {
-      this(attributeName, methodName, className, classType, false);
-   }
+	public GeneratorPropertySetter(String attributeName, String methodName,
+			String className, Class classType)
+	{
+		this(attributeName, methodName, className, classType, false);
+	}
 
-   public GeneratorPropertySetter(String attributeName, String methodName,
-         String className, Class classType, boolean withName)
-   {
-      super(attributeName, methodName, className, classType);
-      if (withName)
-      {
-         // withName ÎªfalseµÄÇé¿ö, ÔÚ¸¸ÀàÖĞÉèÖÃ¹ıÁË.
-         this.type = new Class[]{String.class, this.classType};
-      }
-      this.withName = withName;
-   }
+	public GeneratorPropertySetter(String attributeName, String methodName,
+			String className, Class classType, boolean withName)
+	{
+		super(attributeName, methodName, className, classType);
+		if (withName)
+		{
+			// withName ä¸ºfalseçš„æƒ…å†µ, åœ¨çˆ¶ç±»ä¸­è®¾ç½®è¿‡äº†.
+			this.type = new Class[]{String.class, this.classType};
+		}
+		this.withName = withName;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      this.setMyObject(namespace, name, attributes);
-      ObjectCreateRule.checkType(Generator.class, this.theObject);
-      this.generator = (Generator) this.theObject;
-      return this.generator;
-   }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		this.setMyObject(namespace, name, attributes);
+		ObjectCreateRule.checkType(Generator.class, this.theObject);
+		this.generator = (Generator) this.theObject;
+		return this.generator;
+	}
 
-   protected void setMyValue()
-         throws Exception
-   {
-      this.generator.setFactory(FactoryManager.getCurrentFactory());
-      if (this.withName)
-      {
-         this.value = new Object[]{this.generator.getName(), this.generator.create()};
-      }
-      else
-      {
-         this.value = new Object[]{this.generator.create()};
-      }
-   }
+	protected void setMyValue()
+			throws Exception
+	{
+		this.generator.setFactory(FactoryManager.getCurrentFactory());
+		if (this.withName)
+		{
+			this.value = new Object[]{this.generator.getName(), this.generator.create()};
+		}
+		else
+		{
+			this.value = new Object[]{this.generator.create()};
+		}
+	}
 
 }
 
 /**
- * ÉèÖÃ´Ó¶ÑÕ»ÖĞ»ñÈ¡µÄÊôĞÔ.
+ * è®¾ç½®ä»å †æ ˆä¸­è·å–çš„å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class StackPropertySetter extends SinglePropertySetter
 {
-   protected Class classType;
-   protected int stackObjectIndex = 0;
+	protected Class classType;
+	protected int stackObjectIndex = 0;
 
-   public StackPropertySetter(String methodName, Class classType, int objectIndex)
-   {
-      super(null, methodName, true);
-      this.objectIndex = objectIndex;
-      this.classType = classType;
-      this.type = new Class[]{this.classType};
-   }
+	public StackPropertySetter(String methodName, Class classType, int objectIndex)
+	{
+		super(null, methodName, true);
+		this.objectIndex = objectIndex;
+		this.classType = classType;
+		this.type = new Class[]{this.classType};
+	}
 
-   public StackPropertySetter(String methodName, Class classType,
-         int objectIndex, int stackIndex)
-   {
-      super(null, methodName, true);
-      this.objectIndex = objectIndex;
-      this.stackObjectIndex = stackIndex;
-      this.classType = classType;
-      this.type = new Class[]{this.classType};
-   }
+	public StackPropertySetter(String methodName, Class classType,
+			int objectIndex, int stackIndex)
+	{
+		super(null, methodName, true);
+		this.objectIndex = objectIndex;
+		this.stackObjectIndex = stackIndex;
+		this.classType = classType;
+		this.type = new Class[]{this.classType};
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      Object obj = this.digester.peek(this.stackObjectIndex);
-      if (obj instanceof Generator)
-      {
-         ((Generator) obj).setFactory(FactoryManager.getCurrentFactory());
-      }
-      this.value = new Object[]{obj};
-      return obj;
-   }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		Object obj = this.digester.peek(this.stackObjectIndex);
+		if (obj instanceof Generator)
+		{
+			((Generator) obj).setFactory(FactoryManager.getCurrentFactory());
+		}
+		this.value = new Object[]{obj};
+		return obj;
+	}
 
 }
 
 /**
- * ÉèÖÃStringÀàĞÍµÄÊôĞÔ.
+ * è®¾ç½®Stringç±»å‹çš„å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class StringPropertySetter extends SinglePropertySetter
 {
-   public StringPropertySetter(String attributeName, String methodName, boolean mustExist)
-   {
-      super(attributeName, methodName, mustExist);
-      this.type = STRING_TYPE;
-   }
+	public StringPropertySetter(String attributeName, String methodName, boolean mustExist)
+	{
+		super(attributeName, methodName, mustExist);
+		this.type = STRING_TYPE;
+	}
 
-   public StringPropertySetter(String attributeName, String methodName, boolean mustExist,
-         boolean needIntern)
-   {
-      super(attributeName, methodName, mustExist);
-      this.type = STRING_TYPE;
-      this.needIntern = needIntern;
-   }
+	public StringPropertySetter(String attributeName, String methodName, boolean mustExist,
+			boolean needIntern)
+	{
+		super(attributeName, methodName, mustExist);
+		this.type = STRING_TYPE;
+		this.needIntern = needIntern;
+	}
 
-   public StringPropertySetter(String attributeName, String methodName, String defaultValue)
-   {
-      super(attributeName, methodName, defaultValue);
-      this.type = STRING_TYPE;
-   }
+	public StringPropertySetter(String attributeName, String methodName, String defaultValue)
+	{
+		super(attributeName, methodName, defaultValue);
+		this.type = STRING_TYPE;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String strValue = this.getValue(namespace, name, attributes);
-      if (strValue == null)
-      {
-         this.value = null;
-         return null;
-      }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String strValue = this.getValue(namespace, name, attributes);
+		if (strValue == null)
+		{
+			this.value = null;
+			return null;
+		}
 
-      this.value = new Object[]{strValue};
-      return strValue;
-   }
+		this.value = new Object[]{strValue};
+		return strValue;
+	}
 
 }
 
 /**
- * ÉèÖÃ´ÓbodyÖĞ»ñÈ¡µÄStringÀàĞÍµÄÊôĞÔ.
+ * è®¾ç½®ä»bodyä¸­è·å–çš„Stringç±»å‹çš„å±æ€§.
  */
 class BodyPropertySetter extends StringPropertySetter
 {
-   private boolean trimLines = true;
-   private boolean bodyTextTrimLines;
+	private boolean trimLines = true;
+	private boolean bodyTextTrimLines;
 
-   private String noLineAttributeName = "noLine";
-   private boolean noLine = false;
-   private boolean bodyTextNoLine;
+	private String noLineAttributeName = "noLine";
+	private boolean noLine = false;
+	private boolean bodyTextNoLine;
 
 	private String needResolveAttributeName;
 	private boolean needResolve;
 	private boolean bodyTextNeedResolve;
 
-   public BodyPropertySetter(String attributeName, String methodName)
-   {
-      super(attributeName, methodName, false);
-      this.needIntern = false;
-   }
+	public BodyPropertySetter(String attributeName, String methodName)
+	{
+		super(attributeName, methodName, false);
+		this.needIntern = false;
+	}
 
-   public BodyPropertySetter(String attributeName, String methodName, boolean trimLines)
-   {
-      super(attributeName, methodName, false);
-      this.trimLines = trimLines;
-      this.needIntern = false;
-   }
+	public BodyPropertySetter(String attributeName, String methodName, boolean trimLines)
+	{
+		super(attributeName, methodName, false);
+		this.trimLines = trimLines;
+		this.needIntern = false;
+	}
 
-   public BodyPropertySetter(String attributeName, String methodName, boolean trimLines,
-         boolean needIntern)
-   {
-      this(attributeName, methodName, trimLines);
-      this.needIntern = needIntern;
-   }
+	public BodyPropertySetter(String attributeName, String methodName, boolean trimLines,
+			boolean needIntern)
+	{
+		this(attributeName, methodName, trimLines);
+		this.needIntern = needIntern;
+	}
 
-   public void setNoLine(String attributeName, boolean noLine)
-   {
-      this.noLineAttributeName = attributeName;
-      this.noLine = noLine;
-   }
+	public void setNoLine(String attributeName, boolean noLine)
+	{
+		this.noLineAttributeName = attributeName;
+		this.noLine = noLine;
+	}
 
 	/**
-	 * ÉèÖÃÊÇ·ñĞèÒª´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ.
+	 * è®¾ç½®æ˜¯å¦éœ€è¦å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§.
 	 *
-	 * @param attributeName  ÉèÖÃÊÇ·ñĞèÒª´¦ÀíµÄÊôĞÔÃû
-	 * @param defaultValue   Ä¬ÈÏÖµ, Èç¹ûÎ´µ÷ÓÃ´Ë·½·¨, ´ËÖµÎªfalse
+	 * @param attributeName  è®¾ç½®æ˜¯å¦éœ€è¦å¤„ç†çš„å±æ€§å
+	 * @param defaultValue   é»˜è®¤å€¼, å¦‚æœæœªè°ƒç”¨æ­¤æ–¹æ³•, æ­¤å€¼ä¸ºfalse
 	 */
-   public void setNeedResolve(String attributeName, boolean defaultValue)
-   {
-      this.needResolveAttributeName = attributeName;
-      this.needResolve = defaultValue;
-   }
+	public void setNeedResolve(String attributeName, boolean defaultValue)
+	{
+		this.needResolveAttributeName = attributeName;
+		this.needResolve = defaultValue;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      // ½«bodyTextµÄ»ñÈ¡ÉèÖÃ ÖÃÎª³õÊ¼Öµ
-      this.bodyTextTrimLines = this.trimLines;
-      this.bodyTextNoLine = this.noLine;
-      String strValue = this.getValue(namespace, name, attributes);
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		// å°†bodyTextçš„è·å–è®¾ç½® ç½®ä¸ºåˆå§‹å€¼
+		this.bodyTextTrimLines = this.trimLines;
+		this.bodyTextNoLine = this.noLine;
+		String strValue = this.getValue(namespace, name, attributes);
 		this.bodyTextTrimLines = strValue != null ? "true".equalsIgnoreCase(strValue) : this.trimLines;
-      strValue = attributes.getValue(this.noLineAttributeName);
+		strValue = attributes.getValue(this.noLineAttributeName);
 		this.bodyTextNoLine = strValue != null ? "true".equalsIgnoreCase(strValue) : this.noLine;
 		if (this.needResolveAttributeName != null)
 		{
 			strValue = attributes.getValue(this.needResolveAttributeName);
 			this.bodyTextNeedResolve = strValue != null ? "true".equalsIgnoreCase(strValue) : this.needResolve;
 		}
-      return "";
-   }
+		return "";
+	}
 
-   public boolean requireBodyValue()
-   {
-      return true;
-   }
+	public boolean requireBodyValue()
+	{
+		return true;
+	}
 
-   public Object prepareProperty(String namespace, String name, BodyText text)
-         throws Exception
-   {
-      String bodyStr = this.bodyTextTrimLines ?
-            text.trimEveryLineSpace(this.bodyTextNoLine) : text.toString();
-      bodyStr = this.bodyTextNeedResolve ? Utility.resolveDynamicPropnames(bodyStr) : bodyStr;
-      if (this.needIntern)
-      {
-         bodyStr = StringTool.intern(bodyStr, true);
-      }
-      this.value = new Object[]{bodyStr};
-      return this.value;
-   }
+	public Object prepareProperty(String namespace, String name, BodyText text)
+			throws Exception
+	{
+		String bodyStr = this.bodyTextTrimLines ?
+				text.trimEveryLineSpace(this.bodyTextNoLine) : text.toString();
+		bodyStr = this.bodyTextNeedResolve ? Utility.resolveDynamicPropnames(bodyStr) : bodyStr;
+		if (this.needIntern)
+		{
+			bodyStr = StringTool.intern(bodyStr, true);
+		}
+		this.value = new Object[]{bodyStr};
+		return this.value;
+	}
 
 }
 
 /**
- * ÉèÖÃbooleanÀàĞÍµÄÊôĞÔ.
+ * è®¾ç½®booleanç±»å‹çš„å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class BooleanPropertySetter extends SinglePropertySetter
 {
-   public BooleanPropertySetter(String attributeName, String methodName, boolean mustExist)
-   {
-      super(attributeName, methodName, mustExist);
-      this.type = BOOLEAN_TYPE;
-      this.needIntern = false;
-   }
+	public BooleanPropertySetter(String attributeName, String methodName, boolean mustExist)
+	{
+		super(attributeName, methodName, mustExist);
+		this.type = BOOLEAN_TYPE;
+		this.needIntern = false;
+	}
 
-   public BooleanPropertySetter(String attributeName, String methodName, String defaultValue)
-   {
-      super(attributeName, methodName, defaultValue);
-      this.type = BOOLEAN_TYPE;
-      this.needIntern = false;
-   }
+	public BooleanPropertySetter(String attributeName, String methodName, String defaultValue)
+	{
+		super(attributeName, methodName, defaultValue);
+		this.type = BOOLEAN_TYPE;
+		this.needIntern = false;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String strValue = this.getValue(namespace, name, attributes);
-      if (strValue == null)
-      {
-         this.value = null;
-         return null;
-      }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String strValue = this.getValue(namespace, name, attributes);
+		if (strValue == null)
+		{
+			this.value = null;
+			return null;
+		}
 
-      this.value = new Object[]{"true".equalsIgnoreCase(strValue) ? Boolean.TRUE : Boolean.FALSE};
-      return this.value[0];
-   }
+		this.value = new Object[]{"true".equalsIgnoreCase(strValue) ? Boolean.TRUE : Boolean.FALSE};
+		return this.value[0];
+	}
 
 }
 
 /**
- * ÉèÖÃintÀàĞÍµÄÊôĞÔ.
+ * è®¾ç½®intç±»å‹çš„å±æ€§.
  *
  * @author micromagic@sina.com
  */
 class IntegerPropertySetter extends SinglePropertySetter
 {
-   public IntegerPropertySetter(String attributeName, String methodName, boolean mustExist)
-   {
-      super(attributeName, methodName, mustExist);
-      this.type = INTEGER_TYPE;
-      this.needIntern = false;
-   }
+	public IntegerPropertySetter(String attributeName, String methodName, boolean mustExist)
+	{
+		super(attributeName, methodName, mustExist);
+		this.type = INTEGER_TYPE;
+		this.needIntern = false;
+	}
 
-   public IntegerPropertySetter(String attributeName, String methodName, String defaultValue)
-   {
-      super(attributeName, methodName, defaultValue);
-      this.type = INTEGER_TYPE;
-      this.needIntern = false;
-   }
+	public IntegerPropertySetter(String attributeName, String methodName, String defaultValue)
+	{
+		super(attributeName, methodName, defaultValue);
+		this.type = INTEGER_TYPE;
+		this.needIntern = false;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String strValue = this.getValue(namespace, name, attributes);
-      if (strValue == null)
-      {
-         this.value = null;
-         return null;
-      }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String strValue = this.getValue(namespace, name, attributes);
+		if (strValue == null)
+		{
+			this.value = null;
+			return null;
+		}
 
-      int intValue;
-      try
-      {
-         if (strValue.length() > 2 && "0x".equalsIgnoreCase(strValue.substring(0, 2)))
-         {
-            // Èç¹ûÓĞ16½øÖÆµÄÆğÊ¼±ê¼Ç£¬Ôò½øĞĞ16½øÖÆ×ª»»
-            intValue = Integer.parseInt(strValue.substring(2), 16);
-         }
-         else
-         {
-            intValue = Integer.parseInt(strValue);
-         }
-      }
-      catch (NumberFormatException ex)
-      {
-         throw new ConfigurationException(ex.getMessage()
-               + "(name:" + name + ", attribute:" + this.attributeName + ")");
-      }
-      this.value = new Object[]{Utility.createInteger(intValue)};
-      return this.value[0];
-   }
+		int intValue;
+		try
+		{
+			if (strValue.length() > 2 && "0x".equalsIgnoreCase(strValue.substring(0, 2)))
+			{
+				// å¦‚æœæœ‰16è¿›åˆ¶çš„èµ·å§‹æ ‡è®°ï¼Œåˆ™è¿›è¡Œ16è¿›åˆ¶è½¬æ¢
+				intValue = Integer.parseInt(strValue.substring(2), 16);
+			}
+			else
+			{
+				intValue = Integer.parseInt(strValue);
+			}
+		}
+		catch (NumberFormatException ex)
+		{
+			throw new ConfigurationException(ex.getMessage()
+					+ "(name:" + name + ", attribute:" + this.attributeName + ")");
+		}
+		this.value = new Object[]{Utility.createInteger(intValue)};
+		return this.value[0];
+	}
 
 }
 
 /**
- * ²»ÉèÖÃÈÎºÎÊôĞÔ, Ö»µ÷ÓÃÒ»¸öÎŞ²ÎµÄ·½·¨.
+ * ä¸è®¾ç½®ä»»ä½•å±æ€§, åªè°ƒç”¨ä¸€ä¸ªæ— å‚çš„æ–¹æ³•.
  *
  * @author micromagic@sina.com
  */
 class EmptyPropertySetter extends PropertySetter
 {
-   public static final Class[] EMPTY_TYPE = new Class[0];
-   public static final Object[] EMPTY_VALUE = new Object[0];
+	public static final Class[] EMPTY_TYPE = new Class[0];
+	public static final Object[] EMPTY_VALUE = new Object[0];
 
-   public EmptyPropertySetter(String methodName)
-   {
-      super(methodName);
-   }
+	public EmptyPropertySetter(String methodName)
+	{
+		super(methodName);
+	}
 
-   public boolean isMustExist()
-   {
-      return false;
-   }
+	public boolean isMustExist()
+	{
+		return false;
+	}
 
-   public Object prepareProperty(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      return null;
-   }
+	public Object prepareProperty(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		return null;
+	}
 
-   public void setProperty()
-         throws Exception
-   {
-      Object obj = this.digester.peek(this.objectIndex);
-      Tool.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
-   }
+	public void setProperty()
+			throws Exception
+	{
+		Object obj = this.digester.peek(this.objectIndex);
+		Tool.invokeExactMethod(obj, this.methodName, EMPTY_VALUE, EMPTY_TYPE);
+	}
 
 }
 

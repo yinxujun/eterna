@@ -9,159 +9,159 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.share.EternaFactory;
 
 /**
- * Öµ×¼±¸Æ÷µÄ´´½¨ÕßµÄ¹¹ÔìÕß.
- * ÓÃÓÚÉú³ÉÒ»¸öÖµ×¼±¸Æ÷µÄ´´½¨Õß, ¶øÖµ×¼±¸Æ÷µÄ´´½¨Õß¿É²úÉúÒ»¸öÖµ×¼±¸Æ÷.
+ * å€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€…çš„æ„é€ è€….
+ * ç”¨äºç”Ÿæˆä¸€ä¸ªå€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€…, è€Œå€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€…å¯äº§ç”Ÿä¸€ä¸ªå€¼å‡†å¤‡å™¨.
  */
 public interface ValuePreparerCreaterGenerator extends Generator
 {
-   /**
-    * ³õÊ¼»¯´Ë¹¹ÔìÕß.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æ­¤æ„é€ è€….
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Éú³É´Ë¹¹ÔìÕßµÄ¹¤³§.
-    */
-   EternaFactory getFactory() throws ConfigurationException;
+	/**
+	 * è·å–ç”Ÿæˆæ­¤æ„é€ è€…çš„å·¥å‚.
+	 */
+	EternaFactory getFactory() throws ConfigurationException;
 
-   /**
-    * ÊÇ·ñÒª½«¿Õ×Ö·û´®±äÎªnull.
-    */
-   boolean isEmptyStringToNull();
+	/**
+	 * æ˜¯å¦è¦å°†ç©ºå­—ç¬¦ä¸²å˜ä¸ºnull.
+	 */
+	boolean isEmptyStringToNull();
 
-   /**
-    * ¸ù¾İtypeÀàĞÍÉú³ÉÏà¹ØµÄÖµ×¼±¸Æ÷µÄ´´½¨Õß.
-    *
-    * @return   Öµ×¼±¸Æ÷µÄ´´½¨Õß
-    */
-   ValuePreparerCreater createValuePreparerCreater(int pureType) throws ConfigurationException;
+	/**
+	 * æ ¹æ®typeç±»å‹ç”Ÿæˆç›¸å…³çš„å€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€….
+	 *
+	 * @return   å€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€…
+	 */
+	ValuePreparerCreater createValuePreparerCreater(int pureType) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸önullÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param type    ÔÚ<code>java.sql.Types</code>ÖĞ¶¨ÒåµÄSQLĞÍ
-    */
-   ValuePreparer createNullPreparer(int index, int type) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªnullç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param type    åœ¨<code>java.sql.Types</code>ä¸­å®šä¹‰çš„SQLå‹
+	 */
+	ValuePreparer createNullPreparer(int index, int type) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öbooleanÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createBooleanPreparer(int index, boolean v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªbooleanç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createBooleanPreparer(int index, boolean v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öbyteÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createBytePreparer(int index, byte v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªbyteç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createBytePreparer(int index, byte v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öbyteÊı×éÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createBytesPreparer(int index, byte[] v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªbyteæ•°ç»„ç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createBytesPreparer(int index, byte[] v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öshortÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createShortPreparer(int index, short v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªshortç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createShortPreparer(int index, short v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öintÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createIntPreparer(int index, int v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªintç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createIntPreparer(int index, int v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸ölongÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createLongPreparer(int index, long v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªlongç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createLongPreparer(int index, long v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öfloatÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createFloatPreparer(int index, float v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªfloatç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createFloatPreparer(int index, float v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸ödoubleÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createDoublePreparer(int index, double v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªdoubleç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createDoublePreparer(int index, double v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öStringÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createStringPreparer(int index, String v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªStringç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createStringPreparer(int index, String v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öStreamÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createStreamPreparer(int index, InputStream v, int length) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªStreamç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createStreamPreparer(int index, InputStream v, int length) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öReaderÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createReaderPreparer(int index, Reader v, int length) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªReaderç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createReaderPreparer(int index, Reader v, int length) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öDateÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createDatePreparer(int index, java.sql.Date v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªDateç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createDatePreparer(int index, java.sql.Date v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öTimeÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createTimePreparer(int index, java.sql.Time v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªTimeç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createTimePreparer(int index, java.sql.Time v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öTimestampÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createTimestampPreparer(int index, java.sql.Timestamp v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªTimestampç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createTimestampPreparer(int index, java.sql.Timestamp v) throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öObjectÀàĞÍµÄÖµ×¼±¸Æ÷.
-    *
-    * @param index   ¶ÔÓ¦²ÎÊıµÄÏà¶ÔË÷ÒıÖµ
-    * @param v       Öµ
-    */
-   ValuePreparer createObjectPreparer(int index, Object v) throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªObjectç±»å‹çš„å€¼å‡†å¤‡å™¨.
+	 *
+	 * @param index   å¯¹åº”å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼
+	 * @param v       å€¼
+	 */
+	ValuePreparer createObjectPreparer(int index, Object v) throws ConfigurationException;
 
 }

@@ -4,18 +4,18 @@ package self.micromagic.eterna.tag;
 import self.micromagic.eterna.digester.FactoryManager;
 
 /**
- * ¹¤³§ÊµÀıµÄ²éÑ¯Õß.
+ * å·¥å‚å®ä¾‹çš„æŸ¥è¯¢è€….
  *
  * @author micromagic@sina.com
  */
 public interface InstanceFinder
 {
-   /**
-    * ¸ù¾İ¸ø³öµÄÃû³Æ²éÕÒÒ»¸ö¹¤³§µÄÊµÀı.
-    *
-    * @param name   ½«Í¨¹ı´ËÃû³Æ²éÕÒ¹¤³§ÊµÀı
-    * @return  ²éµ½µÄ¹¤³§ÊµÀı, »ò<code>null</code>Ã»ÓĞ²éµ½
-    */
-   FactoryManager.Instance findInstance(String name);
+	/**
+	 * æ ¹æ®ç»™å‡ºçš„åç§°æŸ¥æ‰¾ä¸€ä¸ªå·¥å‚çš„å®ä¾‹.
+	 *
+	 * @param name   å°†é€šè¿‡æ­¤åç§°æŸ¥æ‰¾å·¥å‚å®ä¾‹
+	 * @return  æŸ¥åˆ°çš„å·¥å‚å®ä¾‹, æˆ–<code>null</code>æ²¡æœ‰æŸ¥åˆ°
+	 */
+	FactoryManager.Instance findInstance(String name);
 
 }

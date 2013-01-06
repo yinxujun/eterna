@@ -19,230 +19,230 @@ import self.micromagic.eterna.view.DataPrinter;
  */
 public interface SearchAdapter
 {
-   static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
-   static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
-
-   /**
-    * ÉèÖÃµ¥ÁĞÅÅĞòµÄ²ÎÊıÃûºó×º. <p>
-    * ²ÎÊı¸ñÊ½Îª: [searchName].order
-	 * ÖµÎªĞèÒªÅÅĞòµÄreaderÃû³Æ.
-    */
-   static final String SINGLE_ORDER_SUFIX = ".order";
-
-   /**
-    * ÉèÖÃµ¥ÁĞÅÅĞòµÄÀàĞÍ. <p>
-    * ²ÎÊı¸ñÊ½Îª: [searchName].orderType
-	 * Öµ¿ÉÒÔ·Ö±ğÎª 0 ×Ô¶¯ÇĞ»»ÉıĞò¼°½µĞò, 1 ÉıĞò, -1 ½µĞò
-    */
-   static final String SINGLE_ORDER_TYPE = ".orderType";
-
-   /**
-    * ÉèÖÃÄ¬ÈÏÃ¿Ò³ĞĞÊıµÄÊôĞÔÃû³Æ. <p>
-    * ¿ÉÔÚÅäÖÃÖĞ°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * <search>
-    *    <attributes>
-    *       <attribute name="SearchAdapter.Attribute.pageSize" value="10"/>
-    *    </attributes>
-    * </search>
-    */
-   static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
-
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒªÇ¿ÖÆ¶ÁÈ¡ÁĞÉèÖÃ. <p>
-    * ÓÉÓÚÁĞÉèÖÃµÄĞÅÏ¢»á×ö»º´æ, ËùÒÔĞèÒªÇ¿ÖÆ¶ÁÈ¡ÁĞÉèÖÃĞÅÏ¢µÄ»°, Ôò¿É
-    * ÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchAdapter.FORCE_LOAD_COLUMN_SETTING, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.FORCE_LOAD_COLUMN_SETTING);
-    *
-    * ×¢: Ê¹ÓÃ´Ë±êÖ¾Ç¿ÖÆ¶ÁÈ¡µÄÁĞÉèÖÃ²»»á±»»º´æ, Ò²¾ÍÊÇËµÏÂ´ÎÇ¿ÖÆ¶ÁÈ¡±íÊ¾Î´
-    *     ÉèÖÃµÄ»°, ¶ÁÈ¡µÄÁĞÉèÖÃÈÔÈ»ÊÇÇ°Ò»´Î»º´æµÄÖµ
-    */
-   static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
-
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒª¶ÁÈ¡ËùÓĞµÄ¼ÇÂ¼. <p>
-    * ÓÉÓÚ²éÑ¯Ä£¿éÖĞÉèÖÃÁË·ÖÒ³¹¦ÄÜ, Èç¹ûĞèÒª¶ÁÈ¡ËùÓĞ¼ÇÂ¼µÄ»°, Ôò¿É
-    * ÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchAdapter.READ_ALL_ROW, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.READ_ALL_ROW);
-    */
-   static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
-
-   /**
-    * ÓÃÓÚ±êÖ¾¶ÁÈ¡µÄ¼ÇÂ¼Êı. <p>
-    * ÓÉÓÚ²éÑ¯Ä£¿éÖĞÉèÖÃÁË·ÖÒ³¹¦ÄÜ, ÔÚÅäÖÃÖĞÉèÖÃÁË¶ÁÈ¡µÄ¼ÇÂ¼Êı, Èç¹ûĞèÒª
-    * ÉèÖÃ¶ÁÈ¡µÄÆğÊ¼¼ÇÂ¼ºÍ¶ÁÈ¡µÄ¼ÇÂ¼Êı£¬Ôò¿ÉÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchAdapter.READ_ROW_START_AND_COUNT, new StartAndCount(start, count));
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.READ_ROW_START_AND_COUNT);
-    */
-   static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
-
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒª¶ÁÈ¡ËùÓĞµÄ¼ÇÂ¼. <p>
-    * ÓÉÓÚ²éÑ¯Ä£¿éÖĞÉèÖÃÁË·ÖÒ³¹¦ÄÜ, ËùÒÔ¶ÁÈ¡µÄÊı¾İÄÚÈİ»áÏÖÈ¡³öÀ´. µ«ÊÇ, ¶ÔÓÚ
-    * ´óÁ¿µÄÊı¾İµÄ»°, ²ÉÓÃÏÖÈ¡³öÀ´µÄ·½Ê½»áÕ¼ÓÃ´óÁ¿µÄÄÚ´æ, ËùÒÔ¿ÉÒÔ²ÉÓÃ±£³Ö
-    * Á¬½ÓµÄ·½Ê½, ĞèÒªÉèÖÃµÄ»°¿ÉÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchAdapter.HOLD_CONNECTION, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.HOLD_CONNECTION);
-    */
-   static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
-
-   String getName() throws ConfigurationException;
-
-   EternaFactory getFactory() throws ConfigurationException;
-
-   Object getAttribute(String name) throws ConfigurationException;
-
-   String[] getAttributeNames() throws ConfigurationException;
-
-   String getOtherSearchManagerName() throws ConfigurationException;
+	static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
+	static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
 
 	/**
-	 * »ñÈ¡ÆäËü¸¨ÖúÉèÖÃÌõ¼ş¼°²ÎÊıµÄsearch, ÓÃÓÚ·Ö²¼Ê½Ìõ¼ş²éÑ¯µÄÊ±ºòÊ¹ÓÃ.
+	 * è®¾ç½®å•åˆ—æ’åºçš„å‚æ•°ååç¼€. <p>
+	 * å‚æ•°æ ¼å¼ä¸º: [searchName].order
+	 * å€¼ä¸ºéœ€è¦æ’åºçš„readeråç§°.
+	 */
+	static final String SINGLE_ORDER_SUFIX = ".order";
+
+	/**
+	 * è®¾ç½®å•åˆ—æ’åºçš„ç±»å‹. <p>
+	 * å‚æ•°æ ¼å¼ä¸º: [searchName].orderType
+	 * å€¼å¯ä»¥åˆ†åˆ«ä¸º 0 è‡ªåŠ¨åˆ‡æ¢å‡åºåŠé™åº, 1 å‡åº, -1 é™åº
+	 */
+	static final String SINGLE_ORDER_TYPE = ".orderType";
+
+	/**
+	 * è®¾ç½®é»˜è®¤æ¯é¡µè¡Œæ•°çš„å±æ€§åç§°. <p>
+	 * å¯åœ¨é…ç½®ä¸­æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * <search>
+	 *    <attributes>
+	 *       <attribute name="SearchAdapter.Attribute.pageSize" value="10"/>
+	 *    </attributes>
+	 * </search>
+	 */
+	static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
+
+	/**
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦å¼ºåˆ¶è¯»å–åˆ—è®¾ç½®. <p>
+	 * ç”±äºåˆ—è®¾ç½®çš„ä¿¡æ¯ä¼šåšç¼“å­˜, æ‰€ä»¥éœ€è¦å¼ºåˆ¶è¯»å–åˆ—è®¾ç½®ä¿¡æ¯çš„è¯, åˆ™å¯
+	 * åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchAdapter.FORCE_LOAD_COLUMN_SETTING, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.FORCE_LOAD_COLUMN_SETTING);
+	 *
+	 * æ³¨: ä½¿ç”¨æ­¤æ ‡å¿—å¼ºåˆ¶è¯»å–çš„åˆ—è®¾ç½®ä¸ä¼šè¢«ç¼“å­˜, ä¹Ÿå°±æ˜¯è¯´ä¸‹æ¬¡å¼ºåˆ¶è¯»å–è¡¨ç¤ºæœª
+	 *     è®¾ç½®çš„è¯, è¯»å–çš„åˆ—è®¾ç½®ä»ç„¶æ˜¯å‰ä¸€æ¬¡ç¼“å­˜çš„å€¼
+	 */
+	static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
+
+	/**
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦è¯»å–æ‰€æœ‰çš„è®°å½•. <p>
+	 * ç”±äºæŸ¥è¯¢æ¨¡å—ä¸­è®¾ç½®äº†åˆ†é¡µåŠŸèƒ½, å¦‚æœéœ€è¦è¯»å–æ‰€æœ‰è®°å½•çš„è¯, åˆ™å¯
+	 * åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchAdapter.READ_ALL_ROW, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.READ_ALL_ROW);
+	 */
+	static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
+
+	/**
+	 * ç”¨äºæ ‡å¿—è¯»å–çš„è®°å½•æ•°. <p>
+	 * ç”±äºæŸ¥è¯¢æ¨¡å—ä¸­è®¾ç½®äº†åˆ†é¡µåŠŸèƒ½, åœ¨é…ç½®ä¸­è®¾ç½®äº†è¯»å–çš„è®°å½•æ•°, å¦‚æœéœ€è¦
+	 * è®¾ç½®è¯»å–çš„èµ·å§‹è®°å½•å’Œè¯»å–çš„è®°å½•æ•°ï¼Œåˆ™å¯åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchAdapter.READ_ROW_START_AND_COUNT, new StartAndCount(start, count));
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.READ_ROW_START_AND_COUNT);
+	 */
+	static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
+
+	/**
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦è¯»å–æ‰€æœ‰çš„è®°å½•. <p>
+	 * ç”±äºæŸ¥è¯¢æ¨¡å—ä¸­è®¾ç½®äº†åˆ†é¡µåŠŸèƒ½, æ‰€ä»¥è¯»å–çš„æ•°æ®å†…å®¹ä¼šç°å–å‡ºæ¥. ä½†æ˜¯, å¯¹äº
+	 * å¤§é‡çš„æ•°æ®çš„è¯, é‡‡ç”¨ç°å–å‡ºæ¥çš„æ–¹å¼ä¼šå ç”¨å¤§é‡çš„å†…å­˜, æ‰€ä»¥å¯ä»¥é‡‡ç”¨ä¿æŒ
+	 * è¿æ¥çš„æ–¹å¼, éœ€è¦è®¾ç½®çš„è¯å¯åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchAdapter.HOLD_CONNECTION, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.HOLD_CONNECTION);
+	 */
+	static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
+
+	String getName() throws ConfigurationException;
+
+	EternaFactory getFactory() throws ConfigurationException;
+
+	Object getAttribute(String name) throws ConfigurationException;
+
+	String[] getAttributeNames() throws ConfigurationException;
+
+	String getOtherSearchManagerName() throws ConfigurationException;
+
+	/**
+	 * è·å–å…¶å®ƒè¾…åŠ©è®¾ç½®æ¡ä»¶åŠå‚æ•°çš„search, ç”¨äºåˆ†å¸ƒå¼æ¡ä»¶æŸ¥è¯¢çš„æ—¶å€™ä½¿ç”¨.
 	 */
 	SearchAdapter[] getOtherSearchs() throws ConfigurationException;
 
-   String getConditionPropertyOrderWithOther() throws ConfigurationException;
-
-   /**
-    * »ñµÃ¹ØÓÚÕâ¸ö²éÑ¯µÄÏà¹ØÌõ¼şËµÃ÷µÄXMLÎÄµµ.
-    */
-   Reader getConditionDocument(Permission permission) throws ConfigurationException;
-
-   /**
-    * ÊÇ·ñÊÇÌØÊâµÄÌõ¼ş, ĞèÒªÖØĞÂ¹¹ÔìÌõ¼ş×ÓÓï¾ä..
-    */
-   boolean isSpecialCondition() throws ConfigurationException;
-
-   /**
-    * ÅĞ¶ÏÊÇ·ñĞèÒªÔÚÌõ¼şÍâÃæ´øÉÏÀ¨ºÅ"(", ")".
-    */
-   boolean isNeedWrap() throws ConfigurationException;
-
-   /**
-    * »ñµÃColumnSettingµÄÀàĞÍ, ÓÃÓÚÇø·Ö¶ÁÈ¡ÄÄ¸öColumnSetting.
-    */
-   String getColumnSettingType() throws ConfigurationException;
-
-   /**
-    * »ñµÃÉèÖÃµÄColumnSetting, SearchAdapter½«ÓÃËüÀ´ÉèÖÃ²éÑ¯µÄÁĞ.
-    */
-   ColumnSetting getColumnSetting() throws ConfigurationException;
-
-   /**
-    * »ñµÃ°ó¶¨µÄ²ÎÊıÉèÖÃÆ÷<code>ParameterSetting</code>.
-    *
-    * @return  Èç¹ûÎ´°ó¶¨Ôò·µ»Ønull, Èç¹ûÒÑ°ó¶¨Ôò·µ»Ø²ÎÊıÉèÖÃÆ÷
-    */
-   ParameterSetting getParameterSetting() throws ConfigurationException;
-
-   String getParentConditionPropretyName() throws ConfigurationException;
-
-   String getConditionPropertyOrder() throws ConfigurationException;
-
-   int getConditionPropertyCount() throws ConfigurationException;
-
-   ConditionProperty getConditionProperty(int colId) throws ConfigurationException;
-
-   ConditionProperty getConditionProperty(String name) throws ConfigurationException;
-
-   int getConditionIndex() throws ConfigurationException;
-
-   int getPageSize() throws ConfigurationException;
-
-   String getSearchManagerName() throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öSearchManager.
-    *
-    * @param data   Êı¾İ, ÀïÃæ°üº¬ÁËrequestµÄparameter, requestµÄattribute,
-    *               sessionµÄattritute
-    */
-   SearchManager getSearchManager(AppData data) throws ConfigurationException;
-
-   /**
-    * Ö´ĞĞ²éÑ¯, ²¢»ñµÃ½á¹û.
-    *
-    * @param data   Êı¾İ, ÀïÃæ°üº¬ÁËrequestµÄparameter, requestµÄattribute,
-    *               sessionµÄattritute
-	 * @param conn   Êı¾İ¿âÁ¬½Ó
-    */
-   Result doSearch(AppData data, Connection conn) throws ConfigurationException, SQLException;
+	String getConditionPropertyOrderWithOther() throws ConfigurationException;
 
 	/**
-	 * ËÑË÷µÄ½á¹û.
+	 * è·å¾—å…³äºè¿™ä¸ªæŸ¥è¯¢çš„ç›¸å…³æ¡ä»¶è¯´æ˜çš„XMLæ–‡æ¡£.
 	 */
-   static final class Result
+	Reader getConditionDocument(Permission permission) throws ConfigurationException;
+
+	/**
+	 * æ˜¯å¦æ˜¯ç‰¹æ®Šçš„æ¡ä»¶, éœ€è¦é‡æ–°æ„é€ æ¡ä»¶å­è¯­å¥..
+	 */
+	boolean isSpecialCondition() throws ConfigurationException;
+
+	/**
+	 * åˆ¤æ–­æ˜¯å¦éœ€è¦åœ¨æ¡ä»¶å¤–é¢å¸¦ä¸Šæ‹¬å·"(", ")".
+	 */
+	boolean isNeedWrap() throws ConfigurationException;
+
+	/**
+	 * è·å¾—ColumnSettingçš„ç±»å‹, ç”¨äºåŒºåˆ†è¯»å–å“ªä¸ªColumnSetting.
+	 */
+	String getColumnSettingType() throws ConfigurationException;
+
+	/**
+	 * è·å¾—è®¾ç½®çš„ColumnSetting, SearchAdapterå°†ç”¨å®ƒæ¥è®¾ç½®æŸ¥è¯¢çš„åˆ—.
+	 */
+	ColumnSetting getColumnSetting() throws ConfigurationException;
+
+	/**
+	 * è·å¾—ç»‘å®šçš„å‚æ•°è®¾ç½®å™¨<code>ParameterSetting</code>.
+	 *
+	 * @return  å¦‚æœæœªç»‘å®šåˆ™è¿”å›null, å¦‚æœå·²ç»‘å®šåˆ™è¿”å›å‚æ•°è®¾ç½®å™¨
+	 */
+	ParameterSetting getParameterSetting() throws ConfigurationException;
+
+	String getParentConditionPropretyName() throws ConfigurationException;
+
+	String getConditionPropertyOrder() throws ConfigurationException;
+
+	int getConditionPropertyCount() throws ConfigurationException;
+
+	ConditionProperty getConditionProperty(int colId) throws ConfigurationException;
+
+	ConditionProperty getConditionProperty(String name) throws ConfigurationException;
+
+	int getConditionIndex() throws ConfigurationException;
+
+	int getPageSize() throws ConfigurationException;
+
+	String getSearchManagerName() throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªSearchManager.
+	 *
+	 * @param data   æ•°æ®, é‡Œé¢åŒ…å«äº†requestçš„parameter, requestçš„attribute,
+	 *               sessionçš„attritute
+	 */
+	SearchManager getSearchManager(AppData data) throws ConfigurationException;
+
+	/**
+	 * æ‰§è¡ŒæŸ¥è¯¢, å¹¶è·å¾—ç»“æœ.
+	 *
+	 * @param data   æ•°æ®, é‡Œé¢åŒ…å«äº†requestçš„parameter, requestçš„attribute,
+	 *               sessionçš„attritute
+	 * @param conn   æ•°æ®åº“è¿æ¥
+	 */
+	Result doSearch(AppData data, Connection conn) throws ConfigurationException, SQLException;
+
+	/**
+	 * æœç´¢çš„ç»“æœ.
+	 */
+	static final class Result
 			implements DataPrinter.BeanPrinter
-   {
+	{
 		/**
-		 * ·ÖÒ³µÄ³ß´ç.
+		 * åˆ†é¡µçš„å°ºå¯¸.
 		 */
-      public final int pageSize;
+		public final int pageSize;
 
 		/**
-		 * µ±Ç°µÄÒ³Êı.
-		 * ´Ó0¿ªÊ¼, µÚÒ»Ò³Îª0 µÚ¶şÒ³Îª1 ...
+		 * å½“å‰çš„é¡µæ•°.
+		 * ä»0å¼€å§‹, ç¬¬ä¸€é¡µä¸º0 ç¬¬äºŒé¡µä¸º1 ...
 		 */
-      public final int pageNum;
+		public final int pageNum;
 
 		/**
-		 * Ê¹ÓÃµÄsearch¶ÔÏóµÄÃû³Æ.
+		 * ä½¿ç”¨çš„searchå¯¹è±¡çš„åç§°.
 		 */
-      public final String searchName;
+		public final String searchName;
 
 		/**
-		 * Ê¹ÓÃµÄquery¶ÔÏóµÄÃû³Æ.
+		 * ä½¿ç”¨çš„queryå¯¹è±¡çš„åç§°.
 		 */
-      public final String queryName;
+		public final String queryName;
 
 		/**
-		 * ËÑË÷µÄ½á¹û¼¯.
+		 * æœç´¢çš„ç»“æœé›†.
 		 */
-      public final ResultIterator queryResult;
+		public final ResultIterator queryResult;
 
 		/**
-		 * ËÑË÷Í³¼ÆµÄ½á¹û¼¯.
+		 * æœç´¢ç»Ÿè®¡çš„ç»“æœé›†.
 		 */
-      public final ResultIterator searchCount;
+		public final ResultIterator searchCount;
 
 		/**
-		 * ÉèÖÃµÄµ¥ÁĞÅÅĞòµÄreaderÃû³Æ.
+		 * è®¾ç½®çš„å•åˆ—æ’åºçš„readeråç§°.
 		 */
-      public final String singleOrderName;
+		public final String singleOrderName;
 
 		/**
-		 * µ¥ÁĞÅÅĞòÊÇ·ñÎª½µĞò.
+		 * å•åˆ—æ’åºæ˜¯å¦ä¸ºé™åº.
 		 */
-      public final boolean singleOrderDesc;
+		public final boolean singleOrderDesc;
 
-      public Result(String searchName, String queryName, ResultIterator queryResult, ResultIterator searchCount,
-            int pageSize, int pageNum, String singleOrderName, boolean singleOrderDesc)
-      {
-         this.pageSize = pageSize;
-         this.pageNum = pageNum;
-         this.searchName = searchName;
-         this.queryName = queryName;
-         this.queryResult = queryResult;
-         this.searchCount = searchCount;
-         this.singleOrderName = singleOrderName;
-         this.singleOrderDesc = singleOrderDesc;
-      }
+		public Result(String searchName, String queryName, ResultIterator queryResult, ResultIterator searchCount,
+				int pageSize, int pageNum, String singleOrderName, boolean singleOrderDesc)
+		{
+			this.pageSize = pageSize;
+			this.pageNum = pageNum;
+			this.searchName = searchName;
+			this.queryName = queryName;
+			this.queryResult = queryResult;
+			this.searchCount = searchCount;
+			this.singleOrderName = singleOrderName;
+			this.singleOrderDesc = singleOrderDesc;
+		}
 
 		public Result(Result old, String queryName, ResultIterator queryResult)
 		{
-         this.pageSize = old.pageSize;
-         this.pageNum = old.pageNum;
-         this.searchName = old.searchName;
-         this.queryName = queryName;
-         this.queryResult = queryResult;
-         this.searchCount = old.searchCount;
-         this.singleOrderName = old.singleOrderName;
-         this.singleOrderDesc = old.singleOrderDesc;
+			this.pageSize = old.pageSize;
+			this.pageNum = old.pageNum;
+			this.searchName = old.searchName;
+			this.queryName = queryName;
+			this.queryResult = queryResult;
+			this.searchCount = old.searchCount;
+			this.singleOrderName = old.singleOrderName;
+			this.singleOrderDesc = old.singleOrderDesc;
 		}
 
 		public void print(DataPrinter p, Writer out, Object bean)
@@ -273,29 +273,29 @@ public interface SearchAdapter
 			}
 		}
 
-   }
+	}
 
 	/**
-	 * ²éÑ¯µÄÆğÊ¼Öµ¼°»ñÈ¡µÄ¼ÇÂ¼Êı.
+	 * æŸ¥è¯¢çš„èµ·å§‹å€¼åŠè·å–çš„è®°å½•æ•°.
 	 */
-   static final class StartAndCount
-   {
+	static final class StartAndCount
+	{
 		/**
-		 * ²éÑ¯µÄÆğÊ¼Öµ.
+		 * æŸ¥è¯¢çš„èµ·å§‹å€¼.
 		 */
-      public final int start;
+		public final int start;
 
 		/**
-		 * »ñÈ¡µÄ¼ÇÂ¼Êı.
+		 * è·å–çš„è®°å½•æ•°.
 		 */
-      public final int count;
+		public final int count;
 
-      public StartAndCount(int start, int count)
-      {
-         this.start = start;
-         this.count = count;
-      }
+		public StartAndCount(int start, int count)
+		{
+			this.start = start;
+			this.count = count;
+		}
 
-   }
+	}
 
 }

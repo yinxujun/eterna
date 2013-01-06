@@ -13,14 +13,15 @@ import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.sql.UpdateAdapter;
 import self.micromagic.eterna.sql.UpdateAdapterGenerator;
 import self.micromagic.eterna.sql.SQLAdapter;
+import self.micromagic.util.logging.TimeLogger;
 
 public class UpdateAdapterImpl extends SQLAdapterImpl
-      implements UpdateAdapter, UpdateAdapterGenerator
+		implements UpdateAdapter, UpdateAdapterGenerator
 {
-   public String getType()
-   {
-      return SQL_TYPE_UPDATE;
-   }
+	public String getType()
+	{
+		return SQL_TYPE_UPDATE;
+	}
 
 	public SQLAdapter createSQLAdapter()
 			throws ConfigurationException
@@ -28,114 +29,114 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
 		return this.createUpdateAdapter();
 	}
 
-   public UpdateAdapter createUpdateAdapter()
-         throws ConfigurationException
-   {
+	public UpdateAdapter createUpdateAdapter()
+			throws ConfigurationException
+	{
 		UpdateAdapterImpl other = new UpdateAdapterImpl();
 		this.copy(other);
 		return other;
-   }
+	}
 
-   public void execute(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      long startTime = System.currentTimeMillis();
-      Statement stmt = null;
-      Throwable exception = null;
-      try
-      {
-         if (this.hasActiveParam())
-         {
-            PreparedStatement temp = conn.prepareStatement(this.getPreparedSQL());
-            stmt = temp;
-            this.prepareValues(temp);
-            temp.execute();
-         }
-         else
-         {
-            stmt = conn.createStatement();
-            stmt.execute(this.getPreparedSQL());
-         }
-      }
-      catch (ConfigurationException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (SQLException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (RuntimeException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (Error ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      finally
-      {
-         this.logSQL(System.currentTimeMillis() - startTime, exception, conn);
-         if (stmt != null)
-         {
-            stmt.close();
-         }
-      }
-   }
+	public void execute(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		long startTime = TimeLogger.getTime();
+		Statement stmt = null;
+		Throwable exception = null;
+		try
+		{
+			if (this.hasActiveParam())
+			{
+				PreparedStatement temp = conn.prepareStatement(this.getPreparedSQL());
+				stmt = temp;
+				this.prepareValues(temp);
+				temp.execute();
+			}
+			else
+			{
+				stmt = conn.createStatement();
+				stmt.execute(this.getPreparedSQL());
+			}
+		}
+		catch (ConfigurationException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (SQLException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (RuntimeException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (Error ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		finally
+		{
+			this.logSQL(this, TimeLogger.getTime() - startTime, exception, conn);
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+		}
+	}
 
-   public int executeUpdate(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      long startTime = System.currentTimeMillis();
-      Statement stmt = null;
-      Throwable exception = null;
-      int result = -1;
-      try
-      {
-         if (this.hasActiveParam())
-         {
-            PreparedStatement temp = conn.prepareStatement(this.getPreparedSQL());
-            stmt = temp;
-            this.prepareValues(temp);
-            result = temp.executeUpdate();
-         }
-         else
-         {
-            stmt = conn.createStatement();
-            result = stmt.executeUpdate(this.getPreparedSQL());
-         }
-         return result;
-      }
-      catch (ConfigurationException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (SQLException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (RuntimeException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (Error ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      finally
-      {
-         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
-         {
-            if (result != -1)
-            {
+	public int executeUpdate(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		long startTime = TimeLogger.getTime();
+		Statement stmt = null;
+		Throwable exception = null;
+		int result = -1;
+		try
+		{
+			if (this.hasActiveParam())
+			{
+				PreparedStatement temp = conn.prepareStatement(this.getPreparedSQL());
+				stmt = temp;
+				this.prepareValues(temp);
+				result = temp.executeUpdate();
+			}
+			else
+			{
+				stmt = conn.createStatement();
+				result = stmt.executeUpdate(this.getPreparedSQL());
+			}
+			return result;
+		}
+		catch (ConfigurationException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (SQLException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (RuntimeException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (Error ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		finally
+		{
+			if (this.logSQL(this, TimeLogger.getTime() - startTime, exception, conn))
+			{
+				if (result != -1)
+				{
 					AppData data = AppData.getCurrentData();
 					if (data.getLogType() > 0)
 					{
@@ -145,13 +146,13 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
 							AppDataLogExecute.printObject(nowNode.addElement("result"), new Integer(result));
 						}
 					}
-            }
-         }
-         if (stmt != null)
-         {
-            stmt.close();
-         }
-      }
-   }
+				}
+			}
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+		}
+	}
 
 }

@@ -7,64 +7,64 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * ²ÎÊı×é, ¶à¸ö²ÎÊıµÄ×éºÏ
+ * å‚æ•°ç»„, å¤šä¸ªå‚æ•°çš„ç»„åˆ
  */
 public interface SQLParameterGroup
 {
-   /**
-    * ÔÚreaderµÄarrtibuteÖĞÉèÖÃVPCÊ¹ÓÃµÄÃû³Æ.
-    */
-   public static final String READER_VPC_FLAG = "vpcName";
+	/**
+	 * åœ¨readerçš„arrtibuteä¸­è®¾ç½®VPCä½¿ç”¨çš„åç§°.
+	 */
+	public static final String READER_VPC_FLAG = "vpcName";
 
-   /**
-    * ÔÚreaderµÄarrtibuteÖĞÉèÖÃcolumnNameÊ¹ÓÃµÄÃû³Æ.
-    */
-   public static final String READER_COLNAME_FLAG = "columnName";
+	/**
+	 * åœ¨readerçš„arrtibuteä¸­è®¾ç½®columnNameä½¿ç”¨çš„åç§°.
+	 */
+	public static final String READER_COLNAME_FLAG = "columnName";
 
-   /**
-    * ignoreListÁĞ±íÖĞ, ¼ÓÉÏ´Ë±ê¼ÇÃû±íÊ¾ºöÂÔ²ÎÊı×éÖĞÍ¬ÃûµÄ²ÎÊı
-    */
-   public static final String IGNORE_SAME_NAME = "$ignoreSame";
+	/**
+	 * ignoreListåˆ—è¡¨ä¸­, åŠ ä¸Šæ­¤æ ‡è®°åè¡¨ç¤ºå¿½ç•¥å‚æ•°ç»„ä¸­åŒåçš„å‚æ•°
+	 */
+	public static final String IGNORE_SAME_NAME = "$ignoreSame";
 
-   /**
-    * ³õÊ¼»¯±¾SQLParameterGroup¶ÔÏó, ÏµÍ³»áÔÚ³õÊ¼»¯Ê±µ÷ÓÃ´Ë·½·¨. <p>
-    * ¸Ã·½·¨µÄÖ÷Òª×÷ÓÃÊÇ³õÊ¼»¯Ã¿¸öSQLParameter¶ÔÏó, ²¢¸ù¾İ¸¸¶ÔÏóÀ´×é³É×Ô¼º
-    * ×Ô¼ºµÄreaderÁĞ±í.
-    *
-    * @param factory  EternaFactoryµÄÊµÀı, ¿ÉÒÔ´ÓÖĞ»ñµÃ¸¸¶ÔÏó
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æœ¬SQLParameterGroupå¯¹è±¡, ç³»ç»Ÿä¼šåœ¨åˆå§‹åŒ–æ—¶è°ƒç”¨æ­¤æ–¹æ³•. <p>
+	 * è¯¥æ–¹æ³•çš„ä¸»è¦ä½œç”¨æ˜¯åˆå§‹åŒ–æ¯ä¸ªSQLParameterå¯¹è±¡, å¹¶æ ¹æ®çˆ¶å¯¹è±¡æ¥ç»„æˆè‡ªå·±
+	 * è‡ªå·±çš„readeråˆ—è¡¨.
+	 *
+	 * @param factory  EternaFactoryçš„å®ä¾‹, å¯ä»¥ä»ä¸­è·å¾—çˆ¶å¯¹è±¡
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ±¾SQLParameterGroupµÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æœ¬SQLParameterGroupçš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾SQLParameterGroupµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLParameterGroupçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡SQLParameterGeneratorÁĞ±íµÄµü´úÆ÷.
-    */
-   Iterator getParameterGeneratorIterator() throws ConfigurationException;
+	/**
+	 * è·å–SQLParameterGeneratoråˆ—è¡¨çš„è¿­ä»£å™¨.
+	 */
+	Iterator getParameterGeneratorIterator() throws ConfigurationException;
 
-   /**
-    * Ìí¼ÓÒ»¸ö²ÎÊı. <p>
-    *
-    * @param paramGenerator     ²ÎÊı¹¹ÔìÆ÷.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void addParameter(SQLParameterGenerator paramGenerator) throws ConfigurationException;
+	/**
+	 * æ·»åŠ ä¸€ä¸ªå‚æ•°. <p>
+	 *
+	 * @param paramGenerator     å‚æ•°æ„é€ å™¨.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void addParameter(SQLParameterGenerator paramGenerator) throws ConfigurationException;
 
-   /**
-    * Ìí¼ÓÒ»¸ö²ÎÊı×é. <p>
-    *
-    * @param groupName     ²ÎÊı×éÃû³Æ.
-    * @param ignoreList    ºöÂÔµÄ²ÎÊıÁĞ±í.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void addParameterRef(String groupName, String ignoreList) throws ConfigurationException;
+	/**
+	 * æ·»åŠ ä¸€ä¸ªå‚æ•°ç»„. <p>
+	 *
+	 * @param groupName     å‚æ•°ç»„åç§°.
+	 * @param ignoreList    å¿½ç•¥çš„å‚æ•°åˆ—è¡¨.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void addParameterRef(String groupName, String ignoreList) throws ConfigurationException;
 
 }

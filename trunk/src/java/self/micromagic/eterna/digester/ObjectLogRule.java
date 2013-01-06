@@ -6,70 +6,70 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * ½øĞĞ³õÊ¼»¯Çé¿ö¼ÇÂ¼µÄ³õÊ¼»¯¹æÔò.
- * Ö÷Òª¼ÇÂ¼µ±Ç°ÕıÔÚÉú³ÉµÄÊÇÊ²Ã´¶ÔÏó, ÕâÑùÔÚ·¢ÉúÒì³£Ê±¿ÉÒÔ×¼È·µØ±¨¸æ
- * ÄÄ¸ö¶ÔÏó³ö´íÁË.
+ * è¿›è¡Œåˆå§‹åŒ–æƒ…å†µè®°å½•çš„åˆå§‹åŒ–è§„åˆ™.
+ * ä¸»è¦è®°å½•å½“å‰æ­£åœ¨ç”Ÿæˆçš„æ˜¯ä»€ä¹ˆå¯¹è±¡, è¿™æ ·åœ¨å‘ç”Ÿå¼‚å¸¸æ—¶å¯ä»¥å‡†ç¡®åœ°æŠ¥å‘Š
+ * å“ªä¸ªå¯¹è±¡å‡ºé”™äº†.
  *
  * @author micromagic@sina.com
  */
 public class ObjectLogRule extends MyRule
 {
-   private String attributeName;
-   private String objType;
+	private String attributeName;
+	private String objType;
 
-   /**
-    * @param attributeName   ÅäÖÃÖĞÖ¸¶¨¶ÔÏóÃû³ÆµÄÊôĞÔ
-    * @param objType         ¶ÔÏóÀàĞÍ
-    */
-   public ObjectLogRule(String attributeName, String objType)
-   {
-      this.attributeName = attributeName;
-      this.objType = objType;
-   }
+	/**
+	 * @param attributeName   é…ç½®ä¸­æŒ‡å®šå¯¹è±¡åç§°çš„å±æ€§
+	 * @param objType         å¯¹è±¡ç±»å‹
+	 */
+	public ObjectLogRule(String attributeName, String objType)
+	{
+		this.attributeName = attributeName;
+		this.objType = objType;
+	}
 
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String theName = attributes.getValue(this.attributeName);
-      if (theName == null)
-      {
-         theName = "null";
-      }
-      StringAppender temp = StringTool.createStringAppender(
-            this.objType.length() + theName.length() + 2);
-      temp.append(this.objType).append('[').append(theName).append(']');
-      ConfigurationException.objName = temp.toString();
-   }
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String theName = attributes.getValue(this.attributeName);
+		if (theName == null)
+		{
+			theName = "null";
+		}
+		StringAppender temp = StringTool.createStringAppender(
+				this.objType.length() + theName.length() + 2);
+		temp.append(this.objType).append('[').append(theName).append(']');
+		ConfigurationException.objName = temp.toString();
+	}
 
-   /**
-    * ÉèÖÃµ±Ç°ÕıÔÚ³õÊ¼»¯µÄÅäÖÃ.
-    */
-   public static void setConfigName(String name)
-   {
-      ConfigurationException.config = name;
-   }
+	/**
+	 * è®¾ç½®å½“å‰æ­£åœ¨åˆå§‹åŒ–çš„é…ç½®.
+	 */
+	public static void setConfigName(String name)
+	{
+		ConfigurationException.config = name;
+	}
 
-   /**
-    * ÉèÖÃµ±Ç°ÕıÔÚ³õÊ¼»¯µÄ¶ÔÏóÃû³Æ.
-    */
-   public static void setObjName(String name)
-   {
-      ConfigurationException.objName = name;
-   }
+	/**
+	 * è®¾ç½®å½“å‰æ­£åœ¨åˆå§‹åŒ–çš„å¯¹è±¡åç§°.
+	 */
+	public static void setObjName(String name)
+	{
+		ConfigurationException.objName = name;
+	}
 
-   /**
-    * ÉèÖÃµ±Ç°ÕıÔÚ³õÊ¼»¯µÄ¶ÔÏóµÄÀàĞÍ¼°Ãû³Æ.
-    */
-   public static void setObjName(String type, String name)
-   {
-      if (name == null)
-      {
-         setObjName(type);
-      }
-      StringAppender temp = StringTool.createStringAppender(
-            type.length() + name.length() + 2);
-      temp.append(type).append('[').append(name).append(']');
-      ConfigurationException.objName = temp.toString();
-   }
+	/**
+	 * è®¾ç½®å½“å‰æ­£åœ¨åˆå§‹åŒ–çš„å¯¹è±¡çš„ç±»å‹åŠåç§°.
+	 */
+	public static void setObjName(String type, String name)
+	{
+		if (name == null)
+		{
+			setObjName(type);
+		}
+		StringAppender temp = StringTool.createStringAppender(
+				type.length() + name.length() + 2);
+		temp.append(type).append('[').append(name).append(']');
+		ConfigurationException.objName = temp.toString();
+	}
 
 }

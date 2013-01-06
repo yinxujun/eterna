@@ -6,70 +6,70 @@ import self.micromagic.eterna.share.Factory;
 import self.micromagic.cg.ClassGenerator;
 
 /**
- * ×¢²áÒ»¸ö¹¤³§µÄ³õÊ¼»¯¹æÔò.
+ * æ³¨å†Œä¸€ä¸ªå·¥å‚çš„åˆå§‹åŒ–è§„åˆ™.
  *
  * @author micromagic@sina.com
  */
 public class FactoryRegisterRule extends ObjectCreateRule
 {
-   protected String registerName = null;
+	protected String registerName = null;
 
-   /**
-    * @param className        ¹¤³§µÄÊµÏÖÀà, Èç¹ûÅäÖÃÖĞÃ»ÓĞÖ¸¶¨»á½«´Ë×÷ÎªÄ¬ÈÏÖµ
-    * @param attributeName    ÅäÖÃÖĞÄÄ¸öÊôĞÔÃûÖ¸¶¨¹¤³§µÄÊµÏÖÀà
-    * @param classType        ¹¤³§ÊµÏÖµÄ½Ó¿ÚÀà
-    * @param registerName     ×¢²á´Ë¹¤³§µÄ·ÖÀàÃû
-    */
-   public FactoryRegisterRule(String className, String attributeName, Class classType,
-         String registerName)
-   {
-      super(className, attributeName, classType);
-      this.registerName = registerName;
-   }
+	/**
+	 * @param className        å·¥å‚çš„å®ç°ç±», å¦‚æœé…ç½®ä¸­æ²¡æœ‰æŒ‡å®šä¼šå°†æ­¤ä½œä¸ºé»˜è®¤å€¼
+	 * @param attributeName    é…ç½®ä¸­å“ªä¸ªå±æ€§åæŒ‡å®šå·¥å‚çš„å®ç°ç±»
+	 * @param classType        å·¥å‚å®ç°çš„æ¥å£ç±»
+	 * @param registerName     æ³¨å†Œæ­¤å·¥å‚çš„åˆ†ç±»å
+	 */
+	public FactoryRegisterRule(String className, String attributeName, Class classType,
+			String registerName)
+	{
+		super(className, attributeName, classType);
+		this.registerName = registerName;
+	}
 
-   /**
-    * @param className        ¹¤³§µÄÊµÏÖÀà, Èç¹ûÅäÖÃÖĞÃ»ÓĞÖ¸¶¨»á½«´Ë×÷ÎªÄ¬ÈÏÖµ
-    * @param attributeName    ÅäÖÃÖĞÄÄ¸öÊôĞÔÃûÖ¸¶¨¹¤³§µÄÊµÏÖÀà
-    * @param classType        ¹¤³§ÊµÏÖµÄ½Ó¿ÚÀà
-    */
-   public FactoryRegisterRule(String className, String attributeName, Class classType)
-   {
-      this(className, attributeName, classType, null);
-   }
+	/**
+	 * @param className        å·¥å‚çš„å®ç°ç±», å¦‚æœé…ç½®ä¸­æ²¡æœ‰æŒ‡å®šä¼šå°†æ­¤ä½œä¸ºé»˜è®¤å€¼
+	 * @param attributeName    é…ç½®ä¸­å“ªä¸ªå±æ€§åæŒ‡å®šå·¥å‚çš„å®ç°ç±»
+	 * @param classType        å·¥å‚å®ç°çš„æ¥å£ç±»
+	 */
+	public FactoryRegisterRule(String className, String attributeName, Class classType)
+	{
+		this(className, attributeName, classType, null);
+	}
 
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String realClassName = ObjectCreateRule.getClassName(
-            this.attributeName, this.className, attributes);
-      this.digester.getLogger().debug("New " + realClassName);
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String realClassName = ObjectCreateRule.getClassName(
+				this.attributeName, this.className, attributes);
+		this.digester.getLogger().debug("New " + realClassName);
 
-      Factory instance = null;
-      boolean register = false;
-      if (this.registerName != null)
-      {
-         try
-         {
-            instance = FactoryManager.getFactory(this.registerName, realClassName);
-         }
-         catch (Exception ex) {}
-      }
-      if (instance == null)
-      {
-         register = true;
-         instance = (Factory) ObjectCreateRule.createObject(realClassName);
-      }
-      if (this.classType != null && !this.classType.isInstance(instance))
-      {
-         throw new InvalidAttributesException(realClassName + " is not instance of "
-               + ClassGenerator.getClassName(this.classType));
-      }
-      this.digester.push(instance);
+		Factory instance = null;
+		boolean register = false;
+		if (this.registerName != null)
+		{
+			try
+			{
+				instance = FactoryManager.getFactory(this.registerName, realClassName);
+			}
+			catch (Exception ex) {}
+		}
+		if (instance == null)
+		{
+			register = true;
+			instance = (Factory) ObjectCreateRule.createObject(realClassName);
+		}
+		if (this.classType != null && !this.classType.isInstance(instance))
+		{
+			throw new InvalidAttributesException(realClassName + " is not instance of "
+					+ ClassGenerator.getClassName(this.classType));
+		}
+		this.digester.push(instance);
 
-      if (this.registerName != null && register)
-      {
-         FactoryManager.addFactory(this.registerName, instance);
-      }
-   }
+		if (this.registerName != null && register)
+		{
+			FactoryManager.addFactory(this.registerName, instance);
+		}
+	}
 
 }

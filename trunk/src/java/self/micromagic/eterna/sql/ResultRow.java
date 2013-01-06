@@ -7,632 +7,632 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface ResultRow
 {
-   /**
-    * »ñµÃµ±Ç°µÄResultRowËùÔÚµÄResultIterator.
-    */
-   ResultIterator getResultIterator() throws SQLException, ConfigurationException;
+	/**
+	 * è·å¾—å½“å‰çš„ResultRowæ‰€åœ¨çš„ResultIterator.
+	 */
+	ResultIterator getResultIterator() throws SQLException, ConfigurationException;
 
-   /**
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÈ¡³ö¸ñÊ½»¯ºóÖ¸¶¨µÄÁĞ.
-    *
-    * @param columnIndex  ²ÎÊıµÄË÷ÒıÖµ, µÚÒ»¸öÊÇ1, µÚ¶ş¸öÊÇ2, ....
-    * @return ¸ñÊ½»¯ºóµÄÊı¾İ.
-    *
-    * @exception SQLException ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   String getFormated(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­å–å‡ºæ ¼å¼åŒ–åæŒ‡å®šçš„åˆ—.
+	 *
+	 * @param columnIndex  å‚æ•°çš„ç´¢å¼•å€¼, ç¬¬ä¸€ä¸ªæ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ....
+	 * @return æ ¼å¼åŒ–åçš„æ•°æ®.
+	 *
+	 * @exception SQLException å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	String getFormated(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÈ¡³ö¸ñÊ½»¯ºóÖ¸¶¨µÄÁĞ.
-    *
-    * @param columnName  ²ÎÊıµÄÃû³Æ.
-    * @return ¸ñÊ½»¯ºóµÄÊı¾İ.
-    *
-    * @exception SQLException ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   String getFormated(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­å–å‡ºæ ¼å¼åŒ–åæŒ‡å®šçš„åˆ—.
+	 *
+	 * @param columnName  å‚æ•°çš„åç§°.
+	 * @return æ ¼å¼åŒ–åçš„æ•°æ®.
+	 *
+	 * @exception SQLException å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	String getFormated(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Reports whether
-    * the last column read had a value of SQL <code>NULL</code>.
-    * ±¨¸æ×îºóÒ»´Î¶ÁÈ¡µÄÁĞÖµÊÇ·ñÎªSQLµÄ<code>NULL</code>.
-    * Note that you must first call one of the getter methods
-    * on a column to try to read its value and then call
-    * the method <code>wasNull</code> to see if the value read was
-    * SQL <code>NULL</code>.
-    *
-    * @return <code>true</code> if the last column value read was SQL
-    *         <code>NULL</code> and <code>false</code> otherwise
-    *         µ±×îºóÒ»´Î¶ÁÈ¡µÄÁĞÖµÊÇSQLµÄ<code>NULL</code>Ê±Ôò·µ»Ø
-    *         <code>true</code>·ñÔò·µ»Ø<code>false</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   boolean wasNull() throws SQLException, ConfigurationException;
+	/**
+	 * Reports whether
+	 * the last column read had a value of SQL <code>NULL</code>.
+	 * æŠ¥å‘Šæœ€åä¸€æ¬¡è¯»å–çš„åˆ—å€¼æ˜¯å¦ä¸ºSQLçš„<code>NULL</code>.
+	 * Note that you must first call one of the getter methods
+	 * on a column to try to read its value and then call
+	 * the method <code>wasNull</code> to see if the value read was
+	 * SQL <code>NULL</code>.
+	 *
+	 * @return <code>true</code> if the last column value read was SQL
+	 *         <code>NULL</code> and <code>false</code> otherwise
+	 *         å½“æœ€åä¸€æ¬¡è¯»å–çš„åˆ—å€¼æ˜¯SQLçš„<code>NULL</code>æ—¶åˆ™è¿”å›
+	 *         <code>true</code>å¦åˆ™è¿”å›<code>false</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	boolean wasNull() throws SQLException, ConfigurationException;
 
-   //======================================================================
-   // Methods for accessing results by column index
-   //======================================================================
+	//======================================================================
+	// Methods for accessing results by column index
+	//======================================================================
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>String</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>String</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   String getString(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>String</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>String</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	String getString(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>boolean</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>boolean</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>false</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>false</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   boolean getBoolean(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>boolean</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>boolean</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>false</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>false</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	boolean getBoolean(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>byte</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>byte</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   byte getByte(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>byte</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>byte</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	byte getByte(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>short</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>short</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   short getShort(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>short</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>short</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	short getShort(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * an <code>int</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>int</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   int getInt(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * an <code>int</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>int</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	int getInt(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>long</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>long</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   long getLong(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>long</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>long</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	long getLong(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>float</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>float</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   float getFloat(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>float</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>float</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	float getFloat(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>double</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>double</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   double getDouble(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>double</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>double</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	double getDouble(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>byte</code> array in the Java programming language.
-    * The bytes represent the raw values returned by the driver.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>byte</code>Êı×éµÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   byte[] getBytes(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>byte</code> array in the Java programming language.
+	 * The bytes represent the raw values returned by the driver.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>byte</code>æ•°ç»„çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	byte[] getBytes(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Date</code> object in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Date</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Date getDate(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Date</code> object in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Date</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Date getDate(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Time</code> object in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Time</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Time getTime(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Time</code> object in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Time</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Time getTime(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Timestamp</code> object in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Timestamp</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    *                    <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Timestamp getTimestamp(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Timestamp</code> object in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Timestamp</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 *                    <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Timestamp getTimestamp(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as a binary stream of
-    * uninterpreted bytes. The value can then be read in chunks from the
-    * stream. This method is particularly
-    * suitable for retrieving large <code>LONGVARBINARY</code> values.
-    *
-    * <P><B>Note:</B> All the data in the returned stream must be
-    * read prior to getting the value of any other column. The next
-    * call to a getter method implicitly closes the stream.  Also, a
-    * stream may return <code>0</code> when the method
-    * <code>InputStream.available</code>
-    * is called whether there is data available or not.
-    *
-    * @param columnIndex the first column is 1, the second is 2, ...
-    * @return a Java input stream that delivers the database column value
-    *         as a stream of uninterpreted bytes;
-    *         if the value is SQL <code>NULL</code>, the value returned is
-    *         <code>null</code>
-    * @exception SQLException if a database access error occurs
-    *
-    */
-   java.io.InputStream getBinaryStream(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as a binary stream of
+	 * uninterpreted bytes. The value can then be read in chunks from the
+	 * stream. This method is particularly
+	 * suitable for retrieving large <code>LONGVARBINARY</code> values.
+	 *
+	 * <P><B>Note:</B> All the data in the returned stream must be
+	 * read prior to getting the value of any other column. The next
+	 * call to a getter method implicitly closes the stream.  Also, a
+	 * stream may return <code>0</code> when the method
+	 * <code>InputStream.available</code>
+	 * is called whether there is data available or not.
+	 *
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 * @return a Java input stream that delivers the database column value
+	 *         as a stream of uninterpreted bytes;
+	 *         if the value is SQL <code>NULL</code>, the value returned is
+	 *         <code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *
+	 */
+	java.io.InputStream getBinaryStream(int columnIndex) throws SQLException, ConfigurationException;
 
-   //======================================================================
-   // Methods for accessing results by column name
-   //======================================================================
+	//======================================================================
+	// Methods for accessing results by column name
+	//======================================================================
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>String</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>String</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   String getString(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>String</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>String</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	String getString(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>boolean</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>boolean</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>false</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>false</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   boolean getBoolean(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>boolean</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>boolean</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>false</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>false</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	boolean getBoolean(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>byte</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>byte</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   byte getByte(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>byte</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>byte</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	byte getByte(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>short</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>short</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   short getShort(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>short</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>short</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	short getShort(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * an <code>int</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>int</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   int getInt(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * an <code>int</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>int</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	int getInt(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>long</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>long</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   long getLong(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>long</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>long</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	long getLong(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>float</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>float</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   float getFloat(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>float</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>float</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	float getFloat(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>double</code> in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>double</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>0</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>0</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   double getDouble(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>double</code> in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>double</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>0</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>0</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	double getDouble(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>byte</code> array in the Java programming language.
-    * The bytes represent the raw values returned by the driver.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>byte</code>µÄÊı×éĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   byte[] getBytes(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>byte</code> array in the Java programming language.
+	 * The bytes represent the raw values returned by the driver.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>byte</code>çš„æ•°ç»„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	byte[] getBytes(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Date</code> object in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Date</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Date getDate(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Date</code> object in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Date</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Date getDate(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Time</code> object in the Java programming language.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Time</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Time getTime(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Time</code> object in the Java programming language.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Time</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Time getTime(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as
-    * a <code>java.sql.Timestamp</code> object.
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>java.sql.Timestamp</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName the SQL name of the column
-    *                   <p>Õâ¸öÁĞµÄSQLÃû³Æ
-    * @return the column value; if the value is SQL <code>NULL</code>, the
-    * value returned is <code>null</code>
-    *         <p>Õâ¸öÁĞµÄÖµ; Èç¹ûÕâ¸öÖµÊÇSQLµÄ<code>NULL</code>, Ôò·µ»ØÖµ
-    * ÊÇ<code>null</code>
-    * @exception SQLException if a database access error occurs
-    *                         <p>¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   java.sql.Timestamp getTimestamp(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as
+	 * a <code>java.sql.Timestamp</code> object.
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>java.sql.Timestamp</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName the SQL name of the column
+	 *                   <p>è¿™ä¸ªåˆ—çš„SQLåç§°
+	 * @return the column value; if the value is SQL <code>NULL</code>, the
+	 * value returned is <code>null</code>
+	 *         <p>è¿™ä¸ªåˆ—çš„å€¼; å¦‚æœè¿™ä¸ªå€¼æ˜¯SQLçš„<code>NULL</code>, åˆ™è¿”å›å€¼
+	 * æ˜¯<code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 *                         <p>å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	java.sql.Timestamp getTimestamp(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as a stream of uninterpreted
-    * <code>byte</code>s.
-    * The value can then be read in chunks from the
-    * stream. This method is particularly
-    * suitable for retrieving large <code>LONGVARBINARY</code>
-    * values.
-    *
-    * <P><B>Note:</B> All the data in the returned stream must be
-    * read prior to getting the value of any other column. The next
-    * call to a getter method implicitly closes the stream. Also, a
-    * stream may return <code>0</code> when the method <code>available</code>
-    * is called whether there is data available or not.
-    *
-    * @param columnName the SQL name of the column
-    * @return a Java input stream that delivers the database column value
-    * as a stream of uninterpreted bytes;
-    * if the value is SQL <code>NULL</code>, the result is <code>null</code>
-    * @exception SQLException if a database access error occurs
-    */
-   java.io.InputStream getBinaryStream(String columnName) throws SQLException, ConfigurationException;
-
-
-   //=====================================================================
-   // Advanced features:
-   //=====================================================================
-
-   /**
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>Object</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnIndex ¸ÃÁĞ¶ÔÓ¦readerµÄË÷ÒıÖµ, µÚÒ»¸öÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @return  ³ÖÓĞ¸ÃÁĞÖµµÄ<code>java.lang.Object</code>
-    * @exception SQLException  ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   Object getObject(int columnIndex) throws SQLException, ConfigurationException;
-
-   /**
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>Object</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName  Õâ¸öÁĞ¶ÔÓ¦readerµÄÃû³Æ
-    * @return  ³ÖÓĞ¸ÃÁĞÖµµÄ<code>java.lang.Object</code>
-    * @exception SQLException   ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   Object getObject(String columnName) throws SQLException, ConfigurationException;
-
-   /**
-    * ÔÚµ±Ç°ĞĞ<code>ResultRow</code>¶ÔÏóÖĞÒÔ<code>Object</code>µÄĞÎÊ½
-    * È¡³öÖ¸¶¨ÁĞµÄÖµ.
-    *
-    * @param columnName  Õâ¸öÁĞ¶ÔÓ¦readerµÄÃû³Æ
-    * @param notThrow    ÉèÎª<code>true<code>Ê±, µ±¶ÔÓ¦Ãû³ÆµÄreader²»´æÔÚÊ±
-    *                    ²»»áÅ×³öÒì³£, ¶øÖ»ÊÇ·µ»Ønull
-    * @return  ³ÖÓĞ¸ÃÁĞÖµµÄ<code>java.lang.Object</code>,
-    *          »ònull(µ±¶ÔÓ¦Ãû³ÆµÄreader²»´æÔÚÊ±)
-    * @exception SQLException   ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   Object getObject(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
-
-   //----------------------------------------------------------------
-
-   /**
-    * ÔÚ<code>ResultRow</code>ÖĞ½«ÁĞÃûÓ³ÉäÎªÁĞµÄË÷ÒıÖµ.
-    *
-    * @param columnName  ¸ÃÁĞµÄÃû³Æ
-    * @return    Ëù¸øÁĞÃûµÄË÷ÒıÖµ
-    * @exception SQLException  ¼ÙÈç<code>ResultRow</code>¶ÔÏóÖĞ²»´æÔÚ¸ÃÁĞÃû»ò
-    *                          ·ÃÎÊÊı¾İ¿âÊ±·¢Éú´íÎó
-    */
-   int findColumn(String columnName) throws SQLException, ConfigurationException;
-
-   /**
-    * ÔÚ<code>ResultRow</code>ÖĞ½«ÁĞÃûÓ³ÉäÎªÁĞµÄË÷ÒıÖµ.
-    *
-    * @param columnName  ¸ÃÁĞµÄÃû³Æ
-    * @param notThrow    ÉèÎª<code>true<code>Ê±, µ±¶ÔÓ¦Ãû³ÆµÄreader²»´æÔÚÊ±
-    *                    ²»»áÅ×³öÒì³£, ¶øÖ»ÊÇ·µ»Ø-1
-    * @return    Ëù¸øÁĞÃûµÄË÷ÒıÖµ, »ò-1(µ±²»´æÔÚ¸ÃÁĞÃûÊ±)
-    * @exception SQLException  ¼ÙÈç<code>ResultRow</code>¶ÔÏóÖĞ²»´æÔÚ¸ÃÁĞÃû»ò
-    *                          ·ÃÎÊÊı¾İ¿âÊ±·¢Éú´íÎó
-    */
-   int findColumn(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as a stream of uninterpreted
+	 * <code>byte</code>s.
+	 * The value can then be read in chunks from the
+	 * stream. This method is particularly
+	 * suitable for retrieving large <code>LONGVARBINARY</code>
+	 * values.
+	 *
+	 * <P><B>Note:</B> All the data in the returned stream must be
+	 * read prior to getting the value of any other column. The next
+	 * call to a getter method implicitly closes the stream. Also, a
+	 * stream may return <code>0</code> when the method <code>available</code>
+	 * is called whether there is data available or not.
+	 *
+	 * @param columnName the SQL name of the column
+	 * @return a Java input stream that delivers the database column value
+	 * as a stream of uninterpreted bytes;
+	 * if the value is SQL <code>NULL</code>, the result is <code>null</code>
+	 * @exception SQLException if a database access error occurs
+	 */
+	java.io.InputStream getBinaryStream(String columnName) throws SQLException, ConfigurationException;
 
 
-   //--------------------------JDBC 2.0-----------------------------------
+	//=====================================================================
+	// Advanced features:
+	//=====================================================================
 
-   //---------------------------------------------------------------------
-   // Getters and Setters
-   //---------------------------------------------------------------------
+	/**
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>Object</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnIndex è¯¥åˆ—å¯¹åº”readerçš„ç´¢å¼•å€¼, ç¬¬ä¸€ä¸ªæ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @return  æŒæœ‰è¯¥åˆ—å€¼çš„<code>java.lang.Object</code>
+	 * @exception SQLException  å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	Object getObject(int columnIndex) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as a
-    * <code>java.io.Reader</code> object.
-    * @return a <code>java.io.Reader</code> object that contains the column
-    * value; if the value is SQL <code>NULL</code>, the value returned is
-    * <code>null</code> in the Java programming language.
-    * @param columnIndex the first column is 1, the second is 2, ...
-    * @exception SQLException if a database access error occurs
-    * @since 1.2
-    */
-   java.io.Reader getCharacterStream(int columnIndex) throws SQLException, ConfigurationException;
+	/**
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>Object</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName  è¿™ä¸ªåˆ—å¯¹åº”readerçš„åç§°
+	 * @return  æŒæœ‰è¯¥åˆ—å€¼çš„<code>java.lang.Object</code>
+	 * @exception SQLException   å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	Object getObject(String columnName) throws SQLException, ConfigurationException;
 
-   /**
-    * Retrieves the value of the designated column in the current row
-    * of this <code>ResultSet</code> object as a
-    * <code>java.io.Reader</code> object.
-    *
-    * @param columnName the name of the column
-    * @return a <code>java.io.Reader</code> object that contains the column
-    * value; if the value is SQL <code>NULL</code>, the value returned is
-    * <code>null</code> in the Java programming language
-    * @exception SQLException if a database access error occurs
-    * @since 1.2
-    */
-   java.io.Reader getCharacterStream(String columnName) throws SQLException, ConfigurationException;
+	/**
+	 * åœ¨å½“å‰è¡Œ<code>ResultRow</code>å¯¹è±¡ä¸­ä»¥<code>Object</code>çš„å½¢å¼
+	 * å–å‡ºæŒ‡å®šåˆ—çš„å€¼.
+	 *
+	 * @param columnName  è¿™ä¸ªåˆ—å¯¹åº”readerçš„åç§°
+	 * @param notThrow    è®¾ä¸º<code>true<code>æ—¶, å½“å¯¹åº”åç§°çš„readerä¸å­˜åœ¨æ—¶
+	 *                    ä¸ä¼šæŠ›å‡ºå¼‚å¸¸, è€Œåªæ˜¯è¿”å›null
+	 * @return  æŒæœ‰è¯¥åˆ—å€¼çš„<code>java.lang.Object</code>,
+	 *          æˆ–null(å½“å¯¹åº”åç§°çš„readerä¸å­˜åœ¨æ—¶)
+	 * @exception SQLException   å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	Object getObject(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
+
+	//----------------------------------------------------------------
+
+	/**
+	 * åœ¨<code>ResultRow</code>ä¸­å°†åˆ—åæ˜ å°„ä¸ºåˆ—çš„ç´¢å¼•å€¼.
+	 *
+	 * @param columnName  è¯¥åˆ—çš„åç§°
+	 * @return    æ‰€ç»™åˆ—åçš„ç´¢å¼•å€¼
+	 * @exception SQLException  å‡å¦‚<code>ResultRow</code>å¯¹è±¡ä¸­ä¸å­˜åœ¨è¯¥åˆ—åæˆ–
+	 *                          è®¿é—®æ•°æ®åº“æ—¶å‘ç”Ÿé”™è¯¯
+	 */
+	int findColumn(String columnName) throws SQLException, ConfigurationException;
+
+	/**
+	 * åœ¨<code>ResultRow</code>ä¸­å°†åˆ—åæ˜ å°„ä¸ºåˆ—çš„ç´¢å¼•å€¼.
+	 *
+	 * @param columnName  è¯¥åˆ—çš„åç§°
+	 * @param notThrow    è®¾ä¸º<code>true<code>æ—¶, å½“å¯¹åº”åç§°çš„readerä¸å­˜åœ¨æ—¶
+	 *                    ä¸ä¼šæŠ›å‡ºå¼‚å¸¸, è€Œåªæ˜¯è¿”å›-1
+	 * @return    æ‰€ç»™åˆ—åçš„ç´¢å¼•å€¼, æˆ–-1(å½“ä¸å­˜åœ¨è¯¥åˆ—åæ—¶)
+	 * @exception SQLException  å‡å¦‚<code>ResultRow</code>å¯¹è±¡ä¸­ä¸å­˜åœ¨è¯¥åˆ—åæˆ–
+	 *                          è®¿é—®æ•°æ®åº“æ—¶å‘ç”Ÿé”™è¯¯
+	 */
+	int findColumn(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
+
+
+	//--------------------------JDBC 2.0-----------------------------------
+
+	//---------------------------------------------------------------------
+	// Getters and Setters
+	//---------------------------------------------------------------------
+
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as a
+	 * <code>java.io.Reader</code> object.
+	 * @return a <code>java.io.Reader</code> object that contains the column
+	 * value; if the value is SQL <code>NULL</code>, the value returned is
+	 * <code>null</code> in the Java programming language.
+	 * @param columnIndex the first column is 1, the second is 2, ...
+	 * @exception SQLException if a database access error occurs
+	 * @since 1.2
+	 */
+	java.io.Reader getCharacterStream(int columnIndex) throws SQLException, ConfigurationException;
+
+	/**
+	 * Retrieves the value of the designated column in the current row
+	 * of this <code>ResultSet</code> object as a
+	 * <code>java.io.Reader</code> object.
+	 *
+	 * @param columnName the name of the column
+	 * @return a <code>java.io.Reader</code> object that contains the column
+	 * value; if the value is SQL <code>NULL</code>, the value returned is
+	 * <code>null</code> in the Java programming language
+	 * @exception SQLException if a database access error occurs
+	 * @since 1.2
+	 */
+	java.io.Reader getCharacterStream(String columnName) throws SQLException, ConfigurationException;
 
 }

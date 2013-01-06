@@ -23,70 +23,70 @@ import self.micromagic.util.Utils;
 import self.micromagic.util.container.SynHashMap;
 
 /**
- * ¸ù¾İ´«ÈëµÄ²ÎÊıqueryNameÖ´ĞĞÏàÓ¦µÄquery, ±»Ö´ĞĞµÄquery±ØĞë
- * ÊÇÃ»ÓĞ²ÎÊıµÄ.
+ * æ ¹æ®ä¼ å…¥çš„å‚æ•°queryNameæ‰§è¡Œç›¸åº”çš„query, è¢«æ‰§è¡Œçš„queryå¿…é¡»
+ * æ˜¯æ²¡æœ‰å‚æ•°çš„.
  *
- * ¿ÉÉèÖÃµÄÊôĞÔÁĞ±í
+ * å¯è®¾ç½®çš„å±æ€§åˆ—è¡¨
  *
- * queryNameTag    ´Ó²ÎÊıÖĞ»ñÈ¡queryÃû³ÆµÄ²ÎÊıÃû, Ä¬ÈÏÖµÎª"queryName"
+ * queryNameTag    ä»å‚æ•°ä¸­è·å–queryåç§°çš„å‚æ•°å, é»˜è®¤å€¼ä¸º"queryName"
  *
- * queryName       Ö±½ÓÉèÖÃqueryµÄÃû³Æ, Èç¹ûÉèÖÃÁË´Ë²ÎÊı, ½«ºöÂÔqueryNameTag
+ * queryName       ç›´æ¥è®¾ç½®queryçš„åç§°, å¦‚æœè®¾ç½®äº†æ­¤å‚æ•°, å°†å¿½ç•¥queryNameTag
  *
- * cacheName       ²éÑ¯½á¹û»º´æcacheµÄÃû³Æ, ¿ÉÒÔÔÚ¶à¸öÊµÀıÖĞ¹²ÏíÍ¬Ò»¸ö»º´æ,
- *                 Ä¬ÈÏÖµÎª: cache
+ * cacheName       æŸ¥è¯¢ç»“æœç¼“å­˜cacheçš„åç§°, å¯ä»¥åœ¨å¤šä¸ªå®ä¾‹ä¸­å…±äº«åŒä¸€ä¸ªç¼“å­˜,
+ *                 é»˜è®¤å€¼ä¸º: cache
  *
  *
- * ¿ÉÔÚ¶ÔÓ¦µÄqueryÖĞÉèÖÃµÄÊôĞÔ
+ * å¯åœ¨å¯¹åº”çš„queryä¸­è®¾ç½®çš„å±æ€§
  *
- * cacheMinute    ²éÑ¯½á¹û»º´æµÄ·ÖÖÓÊı, -1±íÊ¾ÓÀ¾Ã»º´æ, 0±íÊ¾²»»º´æ, Ä¬ÈÏÖµÎª0
+ * cacheMinute    æŸ¥è¯¢ç»“æœç¼“å­˜çš„åˆ†é’Ÿæ•°, -1è¡¨ç¤ºæ°¸ä¹…ç¼“å­˜, 0è¡¨ç¤ºä¸ç¼“å­˜, é»˜è®¤å€¼ä¸º0
  */
 public class NoParamQueryExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   public static final String CACHE_TIME_TAG = "cacheMinute";
+	public static final String CACHE_TIME_TAG = "cacheMinute";
 
 	/**
-	 * cacheMapµÄ»º´æ.
+	 * cacheMapçš„ç¼“å­˜.
 	 */
 	private static final Map caches = new HashMap();
 
 	/**
-	 * Ä¬ÈÏµÄ»º´æÃû³Æ.
+	 * é»˜è®¤çš„ç¼“å­˜åç§°.
 	 */
 	private static final String DEFAULT_CACHE_NAME = "cache";
 
-   protected Map cacheMap;
+	protected Map cacheMap;
 
-   protected String queryNameTag = "queryName";
-   protected String queryName = null;
-   protected String dataSourceName;
-   protected EternaFactory factory;
+	protected String queryNameTag = "queryName";
+	protected String queryName = null;
+	protected String dataSourceName;
+	protected EternaFactory factory;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      this.factory = model.getFactory();
-      this.dataSourceName = model.getDataSourceName();
-      String tmp = (String) this.getAttribute("queryNameTag");
-      if (tmp != null)
-      {
-         this.queryNameTag = tmp;
-      }
-      tmp = (String) this.getAttribute("queryName");
-      if (tmp != null)
-      {
-         this.queryName = tmp;
-      }
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		this.factory = model.getFactory();
+		this.dataSourceName = model.getDataSourceName();
+		String tmp = (String) this.getAttribute("queryNameTag");
+		if (tmp != null)
+		{
+			this.queryNameTag = tmp;
+		}
+		tmp = (String) this.getAttribute("queryName");
+		if (tmp != null)
+		{
+			this.queryName = tmp;
+		}
 
-      String cacheName = (String) this.getAttribute("cacheName");
-      if (cacheName == null)
-      {
-         cacheName = DEFAULT_CACHE_NAME;
-      }
+		String cacheName = (String) this.getAttribute("cacheName");
+		if (cacheName == null)
+		{
+			cacheName = DEFAULT_CACHE_NAME;
+		}
 		synchronized (caches)
 		{
 			this.cacheMap = (Map) caches.get(cacheName);
@@ -96,31 +96,31 @@ public class NoParamQueryExecute extends AbstractExecute
 				caches.put(cacheName, this.cacheMap);
 			}
 		}
-   }
+	}
 
-   public String getExecuteType()
+	public String getExecuteType()
 			throws ConfigurationException
-   {
-      return "noParamQuery";
-   }
+	{
+		return "noParamQuery";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      String name = this.queryName != null ? this.queryName
-            : data.getRequestParameter(this.queryNameTag);
-      QueryAdapter query = factory.createQueryAdapter(name);
-      String tmp = (String) query.getAttribute(CACHE_TIME_TAG);
-      if (tmp != null)
-      {
-         int minute = Utils.parseInt(tmp);
-         if (minute == 0)
-         {
-            data.dataMap.put(name, this.queryCodes(query, conn));
-         }
-         else
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		String name = this.queryName != null ? this.queryName
+				: data.getRequestParameter(this.queryNameTag);
+		QueryAdapter query = factory.createQueryAdapter(name);
+		String tmp = (String) query.getAttribute(CACHE_TIME_TAG);
+		if (tmp != null)
+		{
+			int minute = Utils.parseInt(tmp);
+			if (minute == 0)
 			{
-         	CacheContainer cc = (CacheContainer) this.cacheMap.get(name);
+				data.dataMap.put(name, this.queryCodes(query, conn));
+			}
+			else
+			{
+				CacheContainer cc = (CacheContainer) this.cacheMap.get(name);
 				long now = System.currentTimeMillis();
 				if (cc != null && (minute == -1 || now < cc.expiredTime))
 				{
@@ -134,75 +134,75 @@ public class NoParamQueryExecute extends AbstractExecute
 					data.dataMap.put(name, cc.getQueryResult());
 				}
 			}
-      }
-      else
-      {
-         data.dataMap.put(name, this.queryCodes(query, conn));
-      }
-      return null;
-   }
+		}
+		else
+		{
+			data.dataMap.put(name, this.queryCodes(query, conn));
+		}
+		return null;
+	}
 
-   protected ResultIterator queryCodes(QueryAdapter query, Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      Connection myConn = conn;
-      try
-      {
-         if (conn == null)
-         {
-            DataSource ds;
-            if (this.dataSourceName == null)
-            {
-               ds = this.factory.getDataSourceManager().getDefaultDataSource();
-            }
-            else
-            {
-               ds = this.factory.getDataSourceManager().getDataSource(this.dataSourceName);
-            }
-            myConn = ds.getConnection();
-            myConn.setAutoCommit(true);
-         }
-         return query.executeQuery(myConn);
-      }
-      finally
-      {
-         if (conn == null && myConn != null)
-         {
-            myConn.close();
-         }
-      }
-   }
+	protected ResultIterator queryCodes(QueryAdapter query, Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		Connection myConn = conn;
+		try
+		{
+			if (conn == null)
+			{
+				DataSource ds;
+				if (this.dataSourceName == null)
+				{
+					ds = this.factory.getDataSourceManager().getDefaultDataSource();
+				}
+				else
+				{
+					ds = this.factory.getDataSourceManager().getDataSource(this.dataSourceName);
+				}
+				myConn = ds.getConnection();
+				myConn.setAutoCommit(true);
+			}
+			return query.executeQuery(myConn);
+		}
+		finally
+		{
+			if (conn == null && myConn != null)
+			{
+				myConn.close();
+			}
+		}
+	}
 
 	/**
-	 * ²éÑ¯½á¹û»º´æµÄÈİÆ÷.
+	 * æŸ¥è¯¢ç»“æœç¼“å­˜çš„å®¹å™¨.
 	 */
-   static class CacheContainer
-   {
+	static class CacheContainer
+	{
 		/**
-		 * ²éÑ¯µÄ½á¹û.
+		 * æŸ¥è¯¢çš„ç»“æœ.
 		 */
-      private ResultIterator queryResult;
-
-		/**
-		 * »º´æµÄ¹ıÆÚÊ±¼ä.
-		 */
-      public final long expiredTime;
-
-      public CacheContainer(ResultIterator queryResult, long expiredTime)
-      {
-         this.queryResult = queryResult;
-         this.expiredTime = expiredTime;
-      }
+		private ResultIterator queryResult;
 
 		/**
-		 * »ñÈ¡»º´æµÄ²éÑ¯½á¹û, »á½«½á¹û¼¯¸´ÖÆºó·µ»Ø.
+		 * ç¼“å­˜çš„è¿‡æœŸæ—¶é—´.
 		 */
-      public ResultIterator getQueryResult()
-            throws ConfigurationException
-      {
-         return this.queryResult.copy();
-      }
+		public final long expiredTime;
 
-   }
+		public CacheContainer(ResultIterator queryResult, long expiredTime)
+		{
+			this.queryResult = queryResult;
+			this.expiredTime = expiredTime;
+		}
+
+		/**
+		 * è·å–ç¼“å­˜çš„æŸ¥è¯¢ç»“æœ, ä¼šå°†ç»“æœé›†å¤åˆ¶åè¿”å›.
+		 */
+		public ResultIterator getQueryResult()
+				throws ConfigurationException
+		{
+			return this.queryResult.copy();
+		}
+
+	}
 
 }

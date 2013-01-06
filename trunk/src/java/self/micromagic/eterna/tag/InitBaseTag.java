@@ -14,103 +14,103 @@ import self.micromagic.eterna.digester.ConfigurationException;
  */
 public class InitBaseTag extends TagSupport
 {
-   /**
-    * ÔÚ_eterna.cacheÖÐ´æ·ÅÇø·Ö¶à¸öÍ¬Ãû¿Ø¼þÊ±Ê¹ÓÃµÄºó×ºµÄÃû³Æ.
-    */
-   public static final String SUFFIX_ID_FLAG = "eSuffixId";
+	/**
+	 * åœ¨_eterna.cacheä¸­å­˜æ”¾åŒºåˆ†å¤šä¸ªåŒåæŽ§ä»¶æ—¶ä½¿ç”¨çš„åŽç¼€çš„åç§°.
+	 */
+	public static final String SUFFIX_ID_FLAG = "eSuffixId";
 
-   /**
-    * ÔÚ_eterna.cacheÖÐ´æ·Å¸ù¿Ø¼þµÄÃû³Æ.
-    */
-   public static final String ROOT_OBJ_ID_FLAG = "eRootObjId";
+	/**
+	 * åœ¨_eterna.cacheä¸­å­˜æ”¾æ ¹æŽ§ä»¶çš„åç§°.
+	 */
+	public static final String ROOT_OBJ_ID_FLAG = "eRootObjId";
 
-   /**
-    * ÔÚ_eterna.cacheÖÐ´æ·ÅÄ£°å¸ù¿Ø¼þ±ê¼ÇµÄÃû³Æ.
-    */
-   public static final String SCATTER_FLAG = "scatterFlag";
+	/**
+	 * åœ¨_eterna.cacheä¸­å­˜æ”¾æ¨¡æ¿æ ¹æŽ§ä»¶æ ‡è®°çš„åç§°.
+	 */
+	public static final String SCATTER_FLAG = "scatterFlag";
 
 
-   private String parentElement;
-   private String suffixId;
-   private boolean useAJAX;
-   private String scatterFlag;
+	private String parentElement;
+	private String suffixId;
+	private boolean useAJAX;
+	private String scatterFlag;
 
-   protected Map getCacheMap(ViewAdapter view)
-         throws ConfigurationException
-   {
-      Map cache = new HashMap();
-      if (this.suffixId != null)
-      {
-         cache.put(SUFFIX_ID_FLAG, this.suffixId);
-      }
-      if (this.parentElement != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG, this.parentElement);
-      }
-      if (this.scatterFlag != null)
-      {
-         cache.put(SCATTER_FLAG, this.scatterFlag);
-      }
-      String width = view.getWidth();
-      String height = view.getHeight();
-      if (width != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG + ".width", width);
-      }
-      if (height != null)
-      {
-         cache.put(ROOT_OBJ_ID_FLAG + ".height", height);
-      }
-      return cache.size() > 0 ? cache : null;
-   }
+	protected Map getCacheMap(ViewAdapter view)
+			throws ConfigurationException
+	{
+		Map cache = new HashMap();
+		if (this.suffixId != null)
+		{
+			cache.put(SUFFIX_ID_FLAG, this.suffixId);
+		}
+		if (this.parentElement != null)
+		{
+			cache.put(ROOT_OBJ_ID_FLAG, this.parentElement);
+		}
+		if (this.scatterFlag != null)
+		{
+			cache.put(SCATTER_FLAG, this.scatterFlag);
+		}
+		String width = view.getWidth();
+		String height = view.getHeight();
+		if (width != null)
+		{
+			cache.put(ROOT_OBJ_ID_FLAG + ".width", width);
+		}
+		if (height != null)
+		{
+			cache.put(ROOT_OBJ_ID_FLAG + ".height", height);
+		}
+		return cache.size() > 0 ? cache : null;
+	}
 
-   public void release()
-   {
-      this.parentElement = null;
-      this.suffixId = null;
-      this.useAJAX = false;
-      this.scatterFlag = null;
-      super.release();
-   }
+	public void release()
+	{
+		this.parentElement = null;
+		this.suffixId = null;
+		this.useAJAX = false;
+		this.scatterFlag = null;
+		super.release();
+	}
 
-   public String getParentElement()
-   {
-      return this.parentElement;
-   }
+	public String getParentElement()
+	{
+		return this.parentElement;
+	}
 
-   public void setParentElement(String parentElement)
-   {
-      this.parentElement = parentElement;
-   }
+	public void setParentElement(String parentElement)
+	{
+		this.parentElement = parentElement;
+	}
 
-   public String getSuffixId()
-   {
-      return this.suffixId;
-   }
+	public String getSuffixId()
+	{
+		return this.suffixId;
+	}
 
-   public void setSuffixId(String suffixId)
-   {
-      this.suffixId = suffixId;
-   }
+	public void setSuffixId(String suffixId)
+	{
+		this.suffixId = suffixId;
+	}
 
-   public boolean isUseAJAX()
-   {
-      return this.useAJAX;
-   }
+	public boolean isUseAJAX()
+	{
+		return this.useAJAX;
+	}
 
-   public void setUseAJAX(boolean useAJAX)
-   {
-      this.useAJAX = useAJAX;
-   }
+	public void setUseAJAX(boolean useAJAX)
+	{
+		this.useAJAX = useAJAX;
+	}
 
-   public String getScatterFlag()
-   {
-      return this.scatterFlag;
-   }
+	public String getScatterFlag()
+	{
+		return this.scatterFlag;
+	}
 
-   public void setScatterFlag(String scatterFlag)
-   {
-      this.scatterFlag = scatterFlag;
-   }
+	public void setScatterFlag(String scatterFlag)
+	{
+		this.scatterFlag = scatterFlag;
+	}
 
 }

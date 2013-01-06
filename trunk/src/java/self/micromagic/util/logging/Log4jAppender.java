@@ -11,7 +11,7 @@ import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.OptionHandler;
 
 /**
- * ÔÚlog4jÖĞµ÷ÓÃMemoryLogger½øĞĞÈÕÖ¾¼ÇÂ¼.
+ * åœ¨log4jä¸­è°ƒç”¨MemoryLoggerè¿›è¡Œæ—¥å¿—è®°å½•.
  */
 public class Log4jAppender
 		implements Appender, OptionHandler
@@ -34,11 +34,11 @@ public class Log4jAppender
 	}
 
 	/**
-	 * ÉèÖÃÊ¹ÓÃµÄMemoryLoggerµÄÃû³Æ.
+	 * è®¾ç½®ä½¿ç”¨çš„MemoryLoggerçš„åç§°.
 	 */
 	public void setMemoryLogger(String name)
 	{
-      this.log = MemoryLogger.getInstance(name);
+		this.log = MemoryLogger.getInstance(name);
 	}
 
 	public void doAppend(LoggingEvent event)

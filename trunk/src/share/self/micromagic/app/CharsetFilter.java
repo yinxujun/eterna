@@ -13,37 +13,37 @@ import javax.servlet.ServletResponse;
 import self.micromagic.util.Utility;
 
 /**
- * ÉèÖÃ±àÂë¸ñÊ½¼°ÄÚÈİÀàĞÍµÄ¹ıÂËÆ÷.
+ * è®¾ç½®ç¼–ç æ ¼å¼åŠå†…å®¹ç±»å‹çš„è¿‡æ»¤å™¨.
  *
- * ¿ÉÉèÖÃµÄ²ÎÊıÈçÏÂ:
+ * å¯è®¾ç½®çš„å‚æ•°å¦‚ä¸‹:
  *
- * charset            Ê¹ÓÃµÄ×Ö·û¼¯, Ä¬ÈÏÖµÎª: UTF-8
+ * charset            ä½¿ç”¨çš„å­—ç¬¦é›†, é»˜è®¤å€¼ä¸º: UTF-8
  *
- * contentType        Êä³öµÄÄÚÈİÀàĞÍ, Ä¬ÈÏÖµÎª: text/html
+ * contentType        è¾“å‡ºçš„å†…å®¹ç±»å‹, é»˜è®¤å€¼ä¸º: text/html
  *
- * forceSet           µ±ÒÑ¾­ÉèÖÃ¹ı±àÂë¸ñÊ½Ê±, ÊÇ·ñ»¹Òª¼ÌĞøÉèÖÃ
- *                    Ä¬ÈÏÖµÎª: false
+ * forceSet           å½“å·²ç»è®¾ç½®è¿‡ç¼–ç æ ¼å¼æ—¶, æ˜¯å¦è¿˜è¦ç»§ç»­è®¾ç½®
+ *                    é»˜è®¤å€¼ä¸º: false
  *
  */
 public class CharsetFilter
-      implements Filter, WebApp
+		implements Filter, WebApp
 {
-   private String charset = "UTF-8";
+	private String charset = "UTF-8";
 	private String contentType = "text/html";
-   private boolean forceSet = false;
+	private boolean forceSet = false;
 
-   public void init(FilterConfig filterConfig)
-         throws ServletException
-   {
-      String temp = filterConfig.getInitParameter("charset");
-      if (temp != null)
-      {
-         this.charset = temp;
-      }
-      else
-      {
+	public void init(FilterConfig filterConfig)
+			throws ServletException
+	{
+		String temp = filterConfig.getInitParameter("charset");
+		if (temp != null)
+		{
+			this.charset = temp;
+		}
+		else
+		{
 			this.charset = getConfigCharset(this.charset);
-      }
+		}
 		temp = filterConfig.getInitParameter("contentType");
 		if (temp != null)
 		{
@@ -54,14 +54,14 @@ public class CharsetFilter
 		{
 			this.forceSet = temp.equalsIgnoreCase("true");
 		}
-   }
+	}
 
-   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-         throws IOException, ServletException
-   {
-      if (this.forceSet || request.getCharacterEncoding() == null)
-      {
-         request.setCharacterEncoding(this.charset);
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException
+	{
+		if (this.forceSet || request.getCharacterEncoding() == null)
+		{
+			request.setCharacterEncoding(this.charset);
 			if (this.contentType.startsWith("text/"))
 			{
 				response.setContentType(this.contentType + ";charset=" + this.charset);
@@ -70,22 +70,22 @@ public class CharsetFilter
 			{
 				response.setContentType(this.contentType);
 			}
-      }
-      chain.doFilter(request, response);
-   }
+		}
+		chain.doFilter(request, response);
+	}
 
-   public void destroy()
-   {
-   }
+	public void destroy()
+	{
+	}
 
 	/**
-	 * ´ÓÅäÖÃÖĞ»ñÈ¡±àÂë¸ñÊ½.
+	 * ä»é…ç½®ä¸­è·å–ç¼–ç æ ¼å¼.
 	 *
-	 * @param defaultValue  µ±ÅäÖÃÖĞ²»´æÔÚ±àÂë¸ñÊ½ÉèÖÃÊ±, Ê¹ÓÃ´ËÄ¬ÈÏÖµ
+	 * @param defaultValue  å½“é…ç½®ä¸­ä¸å­˜åœ¨ç¼–ç æ ¼å¼è®¾ç½®æ—¶, ä½¿ç”¨æ­¤é»˜è®¤å€¼
 	 */
 	public static String getConfigCharset(String defaultValue)
 	{
-      String charset = Utility.getProperty(Utility.CHARSET_TAG);
+		String charset = Utility.getProperty(Utility.CHARSET_TAG);
 		return charset == null ? defaultValue : charset;
 	}
 

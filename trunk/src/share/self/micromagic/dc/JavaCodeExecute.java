@@ -14,130 +14,133 @@ import self.micromagic.util.StringTool;
 import self.micromagic.cg.ClassGenerator;
 
 /**
- * ¶¯Ì¬±àÒëjava´úÂëÀ´¹¹ÔìÒ»¸öÖ´ĞĞÆ÷.
+ * åŠ¨æ€ç¼–è¯‘javaä»£ç æ¥æ„é€ ä¸€ä¸ªæ‰§è¡Œå™¨.
  *
- * ĞèÉèÖÃµÄÊôĞÔ
- * code                  Ö´ĞĞµÄjava´úÂë                                                           2Ñ¡1
- * attrCode              ´ÓfactoryµÄÊôĞÔÖĞ»ñÈ¡Ö´ĞĞµÄjava´úÂë                                      2Ñ¡1
+ * éœ€è®¾ç½®çš„å±æ€§
+ * code                  æ‰§è¡Œçš„javaä»£ç                                                            2é€‰1
+ * attrCode              ä»factoryçš„å±æ€§ä¸­è·å–æ‰§è¡Œçš„javaä»£ç                                       2é€‰1
  *
- * imports               ĞèÒªÒıÈëµÄ°ü, Èç£ºjava.lang, Ö»Ğè¸ø³ö°üÂ·¾¶, ÒÔ","·Ö¸ô                   ¿ÉÑ¡
- * extends               ¼Ì³ĞµÄÀà                                                                 ¿ÉÑ¡
- * throwCompileError     ÊÇ·ñĞèÒª½«±àÒëµÄ´íÎóÅ×³ö, Å×³ö´íÎó»á´ò¶Ï³õÊ¼»¯µÄÖ´ĞĞ                     Ä¬ÈÏÎªfalse
+ * imports               éœ€è¦å¼•å…¥çš„åŒ…, å¦‚ï¼šjava.lang, åªéœ€ç»™å‡ºåŒ…è·¯å¾„, ä»¥","åˆ†éš”                   å¯é€‰
+ * extends               ç»§æ‰¿çš„ç±»                                                                 å¯é€‰
+ * throwCompileError     æ˜¯å¦éœ€è¦å°†ç¼–è¯‘çš„é”™è¯¯æŠ›å‡º, æŠ›å‡ºé”™è¯¯ä¼šæ‰“æ–­åˆå§‹åŒ–çš„æ‰§è¡Œ                     é»˜è®¤ä¸ºfalse
  *
  * otherParams
- * Ô¤±àÒë´¦ÀíÌõ¼şÉú³É´úÂëµÄ²ÎÊı, Ãû³ÆĞèÒªÓë´úÂëÖĞµÄ²ÎÊıÃû³ÆÆ¥Åä, ÖµÎª²ÎÊıÃû¶ÔÓ¦µÄ´úÂë
+ * é¢„ç¼–è¯‘å¤„ç†æ¡ä»¶ç”Ÿæˆä»£ç çš„å‚æ•°, åç§°éœ€è¦ä¸ä»£ç ä¸­çš„å‚æ•°åç§°åŒ¹é…, å€¼ä¸ºå‚æ•°åå¯¹åº”çš„ä»£ç 
+ *
+ *
+ * @author micromagic@sina.com
  */
 public class JavaCodeExecute extends BaseExecute
 {
-   private ExecuteCode executeCode;
+	private ExecuteCode executeCode;
 
-   protected void plusInit()
-         throws ConfigurationException
-   {
-      this.executeType = "javaCode";
-      String code = CodeClassTool.getCode(this, this.factory, "code", "attrCode");
-      try
-      {
-         Class codeClass = this.createCodeClass(code);
-         this.executeCode = (ExecuteCode) codeClass.newInstance();
-         this.executeCode.setGenerator(this, this.factory);
-         this.executeType = "javaCode:" + ClassGenerator.getClassName(this.executeCode.getClass());
-      }
-      catch (Exception ex)
-      {
-         if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
-         {
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            throw new ConfigurationException(ex);
-         }
-         else
-         {
-            String pos = "model:[" + this.getModelAdapter().getName() + "], execute:["
-                  + this.getName() + "]";
-            CodeClassTool.logCodeError(code, pos, ex);
-         }
-      }
-   }
+	protected void plusInit()
+			throws ConfigurationException
+	{
+		this.executeType = "javaCode";
+		String code = CodeClassTool.getCode(this, this.factory, "code", "attrCode");
+		try
+		{
+			Class codeClass = this.createCodeClass(code);
+			this.executeCode = (ExecuteCode) codeClass.newInstance();
+			this.executeCode.setGenerator(this, this.factory);
+			this.executeType = "javaCode:" + ClassGenerator.getClassName(this.executeCode.getClass());
+		}
+		catch (Exception ex)
+		{
+			if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
+			{
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				throw new ConfigurationException(ex);
+			}
+			else
+			{
+				String pos = "model:[" + this.getModelAdapter().getName() + "], execute:["
+						+ this.getName() + "]";
+				CodeClassTool.logCodeError(code, pos, ex);
+			}
+		}
+	}
 
-   private Class createCodeClass(String code)
-         throws Exception
-   {
-      String extendsStr = (String) this.getAttribute("extends");
-      Class extendsClass = ExecuteCodeImpl.class;
-      if (extendsStr != null)
-      {
-         extendsClass = Class.forName(extendsStr);
-      }
-      String methodHead = "public Object invoke(AppData data, Connection conn)\n      throws Exception";
-      String[] iArr = null;
-      String imports = (String) this.getAttribute("imports");
-      if (imports != null)
-      {
-         iArr = StringTool.separateString(imports, ",", true);
-      }
-      return CodeClassTool.createJavaCodeClass(extendsClass, ExecuteCode.class, methodHead, code, iArr);
-   }
+	private Class createCodeClass(String code)
+			throws Exception
+	{
+		String extendsStr = (String) this.getAttribute("extends");
+		Class extendsClass = ExecuteCodeImpl.class;
+		if (extendsStr != null)
+		{
+			extendsClass = Class.forName(extendsStr);
+		}
+		String methodHead = "public Object invoke(AppData data, Connection conn)\n      throws Exception";
+		String[] iArr = null;
+		String imports = (String) this.getAttribute("imports");
+		if (imports != null)
+		{
+			iArr = StringTool.separateString(imports, ",", true);
+		}
+		return CodeClassTool.createJavaCodeClass(extendsClass, ExecuteCode.class, methodHead, code, iArr);
+	}
 
-   protected ModelExport dealProcess(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException, InnerExport
-   {
-      if (this.executeCode == null)
-      {
-         return null;
-      }
-      try
-      {
-         Object obj = this.executeCode.invoke(data, conn);
-         if (obj instanceof ModelExport)
-         {
-            return (ModelExport) obj;
-         }
-         return null;
-      }
-      catch (Exception ex)
-      {
-         if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         if (ex instanceof SQLException)
-         {
-            throw (SQLException) ex;
-         }
-         if (ex instanceof IOException)
-         {
-            throw (IOException) ex;
-         }
-         if (ex instanceof InnerExport)
-         {
-            throw (InnerExport) ex;
-         }
-         throw new ConfigurationException(ex);
-      }
-   }
+	protected ModelExport dealProcess(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException, InnerExport
+	{
+		if (this.executeCode == null)
+		{
+			return null;
+		}
+		try
+		{
+			Object obj = this.executeCode.invoke(data, conn);
+			if (obj instanceof ModelExport)
+			{
+				return (ModelExport) obj;
+			}
+			return null;
+		}
+		catch (Exception ex)
+		{
+			if (ex instanceof ConfigurationException)
+			{
+				throw (ConfigurationException) ex;
+			}
+			if (ex instanceof SQLException)
+			{
+				throw (SQLException) ex;
+			}
+			if (ex instanceof IOException)
+			{
+				throw (IOException) ex;
+			}
+			if (ex instanceof InnerExport)
+			{
+				throw (InnerExport) ex;
+			}
+			throw new ConfigurationException(ex);
+		}
+	}
 
-   public interface ExecuteCode
-   {
-      public void setGenerator(JavaCodeExecute generator, EternaFactory factory);
+	public interface ExecuteCode
+	{
+		public void setGenerator(JavaCodeExecute generator, EternaFactory factory);
 
-      public Object invoke(AppData data, Connection conn) throws Exception;
+		public Object invoke(AppData data, Connection conn) throws Exception;
 
-   }
+	}
 
-   public static abstract class ExecuteCodeImpl extends BaseExecute
-         implements ExecuteCode
-   {
-      protected JavaCodeExecute generator;
+	public static abstract class ExecuteCodeImpl extends BaseExecute
+			implements ExecuteCode
+	{
+		protected JavaCodeExecute generator;
 
-      public void setGenerator(JavaCodeExecute generator, EternaFactory factory)
-      {
-         this.factory = factory;
-         this.generator = generator;
-      }
+		public void setGenerator(JavaCodeExecute generator, EternaFactory factory)
+		{
+			this.factory = factory;
+			this.generator = generator;
+		}
 
-   }
+	}
 
 }

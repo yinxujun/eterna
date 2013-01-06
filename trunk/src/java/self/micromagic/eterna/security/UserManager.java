@@ -10,57 +10,57 @@ import self.micromagic.util.Utility;
 
 public interface UserManager
 {
-   public static final Log log = Utility.createLog("user");
-   public static final String ETERNA_USER = "self.micromagic.eterna.user";
+	public static final Log log = Utility.createLog("user");
+	public static final String ETERNA_USER = "self.micromagic.eterna.user";
 
-   /**
-    * ³õÊ¼»¯Õâ¸öUserManager.
-    */
-   void initUserManager(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–è¿™ä¸ªUserManager.
+	 */
+	void initUserManager(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñµÃ¹¹Ôì´ËUserManagerµÄ¹¤³§.
-    */
-   EternaFactory getFactory() throws ConfigurationException;
+	/**
+	 * è·å¾—æ„é€ æ­¤UserManagerçš„å·¥å‚.
+	 */
+	EternaFactory getFactory() throws ConfigurationException;
 
-   /**
-    * ÊÇ·ñ´æÔÚÈ¨ÏŞµÄ±àºÅ. <p>
-    * ÊÇ·ñ¿É½«È¨ÏŞÃû³Æ×ª»»³ÉÊı×Ö±àºÅ.
-    */
-   boolean hasPermissionId();
+	/**
+	 * æ˜¯å¦å­˜åœ¨æƒé™çš„ç¼–å·. <p>
+	 * æ˜¯å¦å¯å°†æƒé™åç§°è½¬æ¢æˆæ•°å­—ç¼–å·.
+	 */
+	boolean hasPermissionId();
 
-   /**
-    * ½«È¨ÏŞÃû³Æ×ª»»³ÉÊı×Ö±àºÅ. <p>
-    * Èç¹ûÎŞ·¨×ª»», »òÊÇ²»´æÔÚµÄÃû³Æ, Ôò·µ»Ø-1.
-    */
-   int getPermissionId(String permissionName);
+	/**
+	 * å°†æƒé™åç§°è½¬æ¢æˆæ•°å­—ç¼–å·. <p>
+	 * å¦‚æœæ— æ³•è½¬æ¢, æˆ–æ˜¯ä¸å­˜åœ¨çš„åç§°, åˆ™è¿”å›-1.
+	 */
+	int getPermissionId(String permissionName);
 
-   /**
-    * »ñµÃµ±Ç°µÄUser¶ÔÏó.
-    */
-   User getUser(AppData data);
+	/**
+	 * è·å¾—å½“å‰çš„Userå¯¹è±¡.
+	 */
+	User getUser(AppData data);
 
-   /**
-    * »ñµÃµ±Ç°µÇÈëÓÃ»§µÄid.
-    */
-   String getLoginId(AppData data);
+	/**
+	 * è·å¾—å½“å‰ç™»å…¥ç”¨æˆ·çš„id.
+	 */
+	String getLoginId(AppData data);
 
-   /**
-    * ´¦ÀíÓÃ»§µÄµÇÈë, ²¢·µ»ØµÇÈëµÄUser¶ÔÏó.
-    *
-    * @param userId     ÓÃ»§µÄid
-    * @param password   ÃÜÂë
-    * @param msg        µÇÈëÊ§°ÜµÄ·µ»ØĞÅÏ¢.
-    * @return    Èç¹ûµÇÈëÊ§°ÜµÄ»°, Ôò·µ»Ønull, ·ñÔò·µ»ØUser¶ÔÏó.
-    */
-   User login(AppData data, String userId, String password, StringRef msg);
+	/**
+	 * å¤„ç†ç”¨æˆ·çš„ç™»å…¥, å¹¶è¿”å›ç™»å…¥çš„Userå¯¹è±¡.
+	 *
+	 * @param userId     ç”¨æˆ·çš„id
+	 * @param password   å¯†ç 
+	 * @param msg        ç™»å…¥å¤±è´¥çš„è¿”å›ä¿¡æ¯.
+	 * @return    å¦‚æœç™»å…¥å¤±è´¥çš„è¯, åˆ™è¿”å›null, å¦åˆ™è¿”å›Userå¯¹è±¡.
+	 */
+	User login(AppData data, String userId, String password, StringRef msg);
 
-   /**
-    * ×¢ÏúÓÃ»§µÄµÇÈë.
-    *
-    * @param userId   ÓÃ»§µÄid
-    */
-   void logout(AppData data, String userId);
+	/**
+	 * æ³¨é”€ç”¨æˆ·çš„ç™»å…¥.
+	 *
+	 * @param userId   ç”¨æˆ·çš„id
+	 */
+	void logout(AppData data, String userId);
 
 }
 

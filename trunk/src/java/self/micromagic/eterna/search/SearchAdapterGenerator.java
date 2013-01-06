@@ -9,75 +9,75 @@ import self.micromagic.eterna.share.AdapterGenerator;
  */
 public interface SearchAdapterGenerator extends AdapterGenerator
 {
-   public static final String NONE_QUERY_NAME = "$none";
+	public static final String NONE_QUERY_NAME = "$none";
 
-   void setName(String name) throws ConfigurationException;
+	void setName(String name) throws ConfigurationException;
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   SearchAdapter createSearchAdapter() throws ConfigurationException;
+	SearchAdapter createSearchAdapter() throws ConfigurationException;
 
-   void setQueryName(String queryName) throws ConfigurationException;
+	void setQueryName(String queryName) throws ConfigurationException;
 
-   /**
-    * »ñµÃ±¾searchÊ¹ÓÃµÄqueryµÄÃû³Æ.
-    */
-   String getQueryName() throws ConfigurationException;
+	/**
+	 * è·å¾—æœ¬searchä½¿ç”¨çš„queryçš„åç§°.
+	 */
+	String getQueryName() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÒ»¸öÒ³Ãæ¿ÉÒÔÏÔÊ¾µÄ¼ÇÂ¼ÌõÊı.
-    */
-   void setPageSize(int pageSize);
+	/**
+	 * è®¾ç½®ä¸€ä¸ªé¡µé¢å¯ä»¥æ˜¾ç¤ºçš„è®°å½•æ¡æ•°.
+	 */
+	void setPageSize(int pageSize);
 
-   /**
-    * ÉèÖÃÊÇ·ñÊÇÌØÊâµÄÌõ¼ş, ĞèÒªÖØĞÂ¹¹ÔìµÄÌõ¼ş×ÓÓï¾ä.
-    */
-   void setSpecialCondition(boolean special) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¯å¦æ˜¯ç‰¹æ®Šçš„æ¡ä»¶, éœ€è¦é‡æ–°æ„é€ çš„æ¡ä»¶å­è¯­å¥.
+	 */
+	void setSpecialCondition(boolean special) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¼ÆËã×Ü¼ÇÂ¼ÊıµÄ·½Ê½. <p>
-    * ·Ö±ğÎªauto, count, none. Ä¬ÈÏÖµÎª: auto.
-    * ÁíÍâ, »¹¿ÉÒÔ°´search:[searchName],[readerName]µÄ¸ñÊ½ÉèÖÃÓÃÓÚ¼ÆËã×Ü¼ÇÂ¼ÊıµÄsearch.
-    */
-   void setCountType(String countType) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è®¡ç®—æ€»è®°å½•æ•°çš„æ–¹å¼. <p>
+	 * åˆ†åˆ«ä¸ºauto, count, none. é»˜è®¤å€¼ä¸º: auto.
+	 * å¦å¤–, è¿˜å¯ä»¥æŒ‰search:[searchName],[readerName]çš„æ ¼å¼è®¾ç½®ç”¨äºè®¡ç®—æ€»è®°å½•æ•°çš„search.
+	 */
+	void setCountType(String countType) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÊÇ·ñĞèÒªÔÚÌõ¼şÍâÃæ´øÉÏÀ¨ºÅ"(", ")".
-    */
-   void setNeedWrap(boolean needWrap) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¯å¦éœ€è¦åœ¨æ¡ä»¶å¤–é¢å¸¦ä¸Šæ‹¬å·"(", ")".
+	 */
+	void setNeedWrap(boolean needWrap) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÔÚSessionÖĞ´æ·ÅSearchManagerµÄÃû³Æ.
-    */
-   void setSearchManagerName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®åœ¨Sessionä¸­å­˜æ”¾SearchManagerçš„åç§°.
+	 */
+	void setSearchManagerName(String name) throws ConfigurationException;
 
-   void setConditionIndex(int index) throws ConfigurationException;
+	void setConditionIndex(int index) throws ConfigurationException;
 
-   void setOtherSearchManagerName(String otherName) throws ConfigurationException;
+	void setOtherSearchManagerName(String otherName) throws ConfigurationException;
 
-   void setConditionPropertyOrderWithOther(String order) throws ConfigurationException;
+	void setConditionPropertyOrderWithOther(String order) throws ConfigurationException;
 
-   void setParentConditionPropretyName(String parentName) throws ConfigurationException;
+	void setParentConditionPropretyName(String parentName) throws ConfigurationException;
 
-   void setConditionPropertyOrder(String order) throws ConfigurationException;
+	void setConditionPropertyOrder(String order) throws ConfigurationException;
 
-   void clearConditionPropertys() throws ConfigurationException;
+	void clearConditionPropertys() throws ConfigurationException;
 
-   void addConditionProperty(ConditionProperty cp) throws ConfigurationException;
+	void addConditionProperty(ConditionProperty cp) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÒ»¸öColumnSettingµÄÀàĞÍ, ÓÃÓÚÇø·Ö¶ÁÈ¡ÄÄ¸öColumnSetting.
-    */
-   void setColumnSettingType(String type) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ä¸€ä¸ªColumnSettingçš„ç±»å‹, ç”¨äºåŒºåˆ†è¯»å–å“ªä¸ªColumnSetting.
+	 */
+	void setColumnSettingType(String type) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÒ»¸öColumnSetting, SearchAdapter½«ÓÃËüÀ´ÉèÖÃ²éÑ¯µÄÁĞ.
-    */
-   void setColumnSetting(ColumnSetting setting) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ä¸€ä¸ªColumnSetting, SearchAdapterå°†ç”¨å®ƒæ¥è®¾ç½®æŸ¥è¯¢çš„åˆ—.
+	 */
+	void setColumnSetting(ColumnSetting setting) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÒ»¸öParameterSetting, SearchAdapter½«ÓÃËüÀ´ÉèÖÃ²éÑ¯²ÎÊı.
-    */
-   void setParameterSetting(ParameterSetting setting)  throws ConfigurationException;
+	/**
+	 * è®¾ç½®ä¸€ä¸ªParameterSetting, SearchAdapterå°†ç”¨å®ƒæ¥è®¾ç½®æŸ¥è¯¢å‚æ•°.
+	 */
+	void setParameterSetting(ParameterSetting setting)  throws ConfigurationException;
 
 }

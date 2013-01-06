@@ -12,60 +12,60 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 class BytePreparer extends AbstractValuePreparer
 {
-   private byte value;
+	private byte value;
 
-   public BytePreparer(ValuePreparerCreater vpc, byte value)
-   {
-      super(vpc);
-      this.value = value;
-   }
+	public BytePreparer(ValuePreparerCreater vpc, byte value)
+	{
+		super(vpc);
+		this.value = value;
+	}
 
-   public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
-         throws SQLException
-   {
-      stmtWrap.setByte(this.getName(), index, this.value);
-   }
+	public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
+			throws SQLException
+	{
+		stmtWrap.setByte(this.getName(), index, this.value);
+	}
 
-   static class Creater extends AbstractCreater
-   {
-      IntegerConverter convert = new IntegerConverter();
-      NumberFormat format = null;
+	static class Creater extends AbstractCreater
+	{
+		IntegerConverter convert = new IntegerConverter();
+		NumberFormat format = null;
 
-      public Creater(ValuePreparerCreaterGenerator vpcg)
-      {
-         super(vpcg);
-      }
+		public Creater(ValuePreparerCreaterGenerator vpcg)
+		{
+			super(vpcg);
+		}
 
-      public void setFormat(String formatStr)
-      {
-         this.format = new DecimalFormat(formatStr);
-      }
+		public void setFormat(String formatStr)
+		{
+			this.format = new DecimalFormat(formatStr);
+		}
 
-      public ValuePreparer createPreparer(Object value)
-            throws ConfigurationException
-      {
-         if (value == null)
-         {
-            return this.vpcg.createNullPreparer(0, Types.TINYINT);
-         }
-         return new BytePreparer(this, (byte) this.convert.convertToInt(value, this.format));
-      }
+		public ValuePreparer createPreparer(Object value)
+				throws ConfigurationException
+		{
+			if (value == null)
+			{
+				return this.vpcg.createNullPreparer(0, Types.TINYINT);
+			}
+			return new BytePreparer(this, (byte) this.convert.convertToInt(value, this.format));
+		}
 
-      public ValuePreparer createPreparer(String value)
-            throws ConfigurationException
-      {
-         if (value == null)
-         {
-            return this.vpcg.createNullPreparer(0, Types.TINYINT);
-         }
-         return new BytePreparer(this, (byte) this.convert.convertToInt(value, this.format));
-      }
+		public ValuePreparer createPreparer(String value)
+				throws ConfigurationException
+		{
+			if (value == null)
+			{
+				return this.vpcg.createNullPreparer(0, Types.TINYINT);
+			}
+			return new BytePreparer(this, (byte) this.convert.convertToInt(value, this.format));
+		}
 
-      public ValuePreparer createPreparer(byte value)
-      {
-         return new BytePreparer(this, value);
-      }
+		public ValuePreparer createPreparer(byte value)
+		{
+			return new BytePreparer(this, value);
+		}
 
-   }
+	}
 
 }

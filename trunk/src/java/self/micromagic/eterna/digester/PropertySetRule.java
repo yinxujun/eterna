@@ -6,122 +6,122 @@ import org.xml.sax.Attributes;
 import self.micromagic.cg.ClassGenerator;
 
 /**
- * ÉèÖÃ¶ÔÏóÊôĞÔµÄ³õÊ¼»¯¹æÔò.
+ * è®¾ç½®å¯¹è±¡å±æ€§çš„åˆå§‹åŒ–è§„åˆ™.
  *
  * @author micromagic@sina.com
  */
 public class PropertySetRule extends MyRule
 {
-   protected PropertySetter[] setters;
-   protected PropertySetter singleSetter;
-   protected boolean pushStack = true;
+	protected PropertySetter[] setters;
+	protected PropertySetter singleSetter;
+	protected boolean pushStack = true;
 
-   /**
-    * @param setters     ĞèÒªÉèÖÃµÄ¶à¸öÊôĞÔ
-    * @param pushStack   ÊÇ·ñĞèÒª½«ÉèÖÃµÄÖµÑ¹Èë¶ÑÕ»ÖĞ, Ä¬ÈÏÎªtrue
-    */
-   public PropertySetRule(PropertySetter[] setters, boolean pushStack)
-   {
-      this.setters = setters;
-      this.pushStack = pushStack;
-      if (this.setters.length == 1)
-      {
-         this.singleSetter = this.setters[0];
-      }
-   }
+	/**
+	 * @param setters     éœ€è¦è®¾ç½®çš„å¤šä¸ªå±æ€§
+	 * @param pushStack   æ˜¯å¦éœ€è¦å°†è®¾ç½®çš„å€¼å‹å…¥å †æ ˆä¸­, é»˜è®¤ä¸ºtrue
+	 */
+	public PropertySetRule(PropertySetter[] setters, boolean pushStack)
+	{
+		this.setters = setters;
+		this.pushStack = pushStack;
+		if (this.setters.length == 1)
+		{
+			this.singleSetter = this.setters[0];
+		}
+	}
 
-   /**
-    * @param setter      ĞèÒªÉèÖÃµÄÊôĞÔ
-    * @param pushStack   ÊÇ·ñĞèÒª½«ÉèÖÃµÄÖµÑ¹Èë¶ÑÕ»ÖĞ, Ä¬ÈÏÎªtrue
-    */
-   public PropertySetRule(PropertySetter setter, boolean pushStack)
-   {
-      this(new PropertySetter[]{setter}, pushStack);
-   }
+	/**
+	 * @param setter      éœ€è¦è®¾ç½®çš„å±æ€§
+	 * @param pushStack   æ˜¯å¦éœ€è¦å°†è®¾ç½®çš„å€¼å‹å…¥å †æ ˆä¸­, é»˜è®¤ä¸ºtrue
+	 */
+	public PropertySetRule(PropertySetter setter, boolean pushStack)
+	{
+		this(new PropertySetter[]{setter}, pushStack);
+	}
 
-   /**
-    * @param setter      ĞèÒªÉèÖÃµÄÊôĞÔ
-    */
-   public PropertySetRule(PropertySetter setter)
-   {
-      this(new PropertySetter[]{setter}, true);
-   }
+	/**
+	 * @param setter      éœ€è¦è®¾ç½®çš„å±æ€§
+	 */
+	public PropertySetRule(PropertySetter setter)
+	{
+		this(new PropertySetter[]{setter}, true);
+	}
 
-   /**
-    * @param attributeName   ÅäÖÃÖĞ»ñÈ¡ÖµµÄÊôĞÔ
-    * @param methodName      ÉèÖÃÊôĞÔÖµµÄ·½·¨
-    * @param mustExist       xmlÊôĞÔ¼¯ÖĞÊÇ·ñ±ØĞë´æÔÚĞèÒªµÄÖµ
-    * @param pushStack       ÊÇ·ñĞèÒª½«ÉèÖÃµÄÖµÑ¹Èë¶ÑÕ»ÖĞ, Ä¬ÈÏÎªtrue
-    */
-   public PropertySetRule(String attributeName, String methodName,
-         boolean mustExist, boolean pushStack)
-   {
-      this(new StringPropertySetter(attributeName, methodName, mustExist),
-            pushStack);
-   }
+	/**
+	 * @param attributeName   é…ç½®ä¸­è·å–å€¼çš„å±æ€§
+	 * @param methodName      è®¾ç½®å±æ€§å€¼çš„æ–¹æ³•
+	 * @param mustExist       xmlå±æ€§é›†ä¸­æ˜¯å¦å¿…é¡»å­˜åœ¨éœ€è¦çš„å€¼
+	 * @param pushStack       æ˜¯å¦éœ€è¦å°†è®¾ç½®çš„å€¼å‹å…¥å †æ ˆä¸­, é»˜è®¤ä¸ºtrue
+	 */
+	public PropertySetRule(String attributeName, String methodName,
+			boolean mustExist, boolean pushStack)
+	{
+		this(new StringPropertySetter(attributeName, methodName, mustExist),
+				pushStack);
+	}
 
-   public void setDigester(Digester digester)
-   {
-      super.setDigester(digester);
-      for (int i = 0; i < setters.length; i++)
-      {
-         this.setters[i].setDigester(digester);
-      }
-      if (this.singleSetter != null)
-      {
-         this.useBodyText = this.singleSetter.requireBodyValue();
-      }
-   }
+	public void setDigester(Digester digester)
+	{
+		super.setDigester(digester);
+		for (int i = 0; i < setters.length; i++)
+		{
+			this.setters[i].setDigester(digester);
+		}
+		if (this.singleSetter != null)
+		{
+			this.useBodyText = this.singleSetter.requireBodyValue();
+		}
+	}
 
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      Object obj;
-      if (this.singleSetter != null)
-      {
-         obj = this.singleSetter.prepareProperty(namespace, name, attributes);
-      }
-      else
-      {
-         Object[] array = new Object[this.setters.length];
-         for (int i = 0; i < setters.length; i++)
-         {
-            array[i] = this.setters[i].prepareProperty(namespace, name, attributes);
-         }
-         obj = array;
-      }
-      if (this.pushStack)
-      {
-         this.digester.push(obj);
-      }
-   }
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		Object obj;
+		if (this.singleSetter != null)
+		{
+			obj = this.singleSetter.prepareProperty(namespace, name, attributes);
+		}
+		else
+		{
+			Object[] array = new Object[this.setters.length];
+			for (int i = 0; i < setters.length; i++)
+			{
+				array[i] = this.setters[i].prepareProperty(namespace, name, attributes);
+			}
+			obj = array;
+		}
+		if (this.pushStack)
+		{
+			this.digester.push(obj);
+		}
+	}
 
-   public void myBody(String namespace, String name, BodyText text)
-         throws Exception
-   {
-      if (this.singleSetter != null)
-      {
-         Object obj = this.singleSetter.prepareProperty(namespace, name, text);
-         if (this.pushStack)
-         {
-            this.digester.pop();
-            this.digester.push(obj);
-         }
-      }
-   }
+	public void myBody(String namespace, String name, BodyText text)
+			throws Exception
+	{
+		if (this.singleSetter != null)
+		{
+			Object obj = this.singleSetter.prepareProperty(namespace, name, text);
+			if (this.pushStack)
+			{
+				this.digester.pop();
+				this.digester.push(obj);
+			}
+		}
+	}
 
-   public void myEnd(String namespace, String name)
-         throws Exception
-   {
-      if (this.pushStack)
-      {
-         Object top = this.digester.pop();
-         this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
-      }
-      for (int i = 0; i < setters.length; i++)
-      {
-         this.setters[i].setProperty();
-      }
-   }
+	public void myEnd(String namespace, String name)
+			throws Exception
+	{
+		if (this.pushStack)
+		{
+			Object top = this.digester.pop();
+			this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
+		}
+		for (int i = 0; i < setters.length; i++)
+		{
+			this.setters[i].setProperty();
+		}
+	}
 
 }

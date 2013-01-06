@@ -16,60 +16,60 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.CodeItemManager;
 
 public class CodeItemExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   private String codeName;
-   private boolean useCName = false;
-   private String valueName;
+	private String codeName;
+	private boolean useCName = false;
+	private String valueName;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      this.codeName = (String) this.getAttribute("codeName");
-      if (this.codeName == null)
-      {
-         this.codeName = this.getName();
-      }
-      String tmpBool = (String) this.getAttribute("useCName");
-      if (tmpBool != null)
-      {
-         this.useCName = "true".equalsIgnoreCase(tmpBool);
-      }
-      this.valueName = (String) this.getAttribute("valueName");
-   }
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		this.codeName = (String) this.getAttribute("codeName");
+		if (this.codeName == null)
+		{
+			this.codeName = this.getName();
+		}
+		String tmpBool = (String) this.getAttribute("useCName");
+		if (tmpBool != null)
+		{
+			this.useCName = "true".equalsIgnoreCase(tmpBool);
+		}
+		this.valueName = (String) this.getAttribute("valueName");
+	}
 
-   public String getExecuteType() throws ConfigurationException
-   {
-      return "codeItem";
-   }
+	public String getExecuteType() throws ConfigurationException
+	{
+		return "codeItem";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      List item;
-      if (this.useCName)
-      {
-         CodeItemManager.CodeItemProperty cp = CodeItemManager.getPropertyByCName(this.codeName);
-         item = CodeItemManager.getCodeItems(conn, cp);
-      }
-      else
-      {
-         item = CodeItemManager.getCodeItems(conn, this.codeName);
-      }
-      if (this.valueName != null)
-      {
-         data.dataMap.put(this.valueName, item);
-      }
-      else
-      {
-         data.push(item);
-      }
-      return null;
-   }
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		List item;
+		if (this.useCName)
+		{
+			CodeItemManager.CodeItemProperty cp = CodeItemManager.getPropertyByCName(this.codeName);
+			item = CodeItemManager.getCodeItems(conn, cp);
+		}
+		else
+		{
+			item = CodeItemManager.getCodeItems(conn, this.codeName);
+		}
+		if (this.valueName != null)
+		{
+			data.dataMap.put(this.valueName, item);
+		}
+		else
+		{
+			data.push(item);
+		}
+		return null;
+	}
 
 }

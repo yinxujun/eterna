@@ -20,7 +20,13 @@ import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.impl.QueryAdapterImpl;
 import self.micromagic.eterna.sql.preparer.PreparedStatementWrapImpl;
+import self.micromagic.util.logging.TimeLogger;
 
+/**
+ * 使用CallableStatement执行带有返回的过程.
+ *
+ * @author micromagic@sina.com
+ */
 public class CallQuery extends QueryAdapterImpl
 {
 	public QueryAdapter createQueryAdapter()
@@ -75,7 +81,7 @@ public class CallQuery extends QueryAdapterImpl
 	public ResultIterator executeQuery(Connection conn)
 			throws ConfigurationException, SQLException
 	{
-		long startTime = System.currentTimeMillis();
+		long startTime = TimeLogger.getTime();
 		Statement stmt = null;
 		Throwable exception = null;
 		ResultIterator result = null;
@@ -143,7 +149,7 @@ public class CallQuery extends QueryAdapterImpl
 		}
 		finally
 		{
-			if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
+			if (this.logSQL(this, TimeLogger.getTime() - startTime, exception, conn))
 			{
 				if (result != null)
 				{

@@ -2,17 +2,17 @@
 package self.micromagic.grammer;
 
 /**
- * ×Ö·û¼ì²éÆ÷½Ó¿Ú.
+ * å­—ç¬¦æ£€æŸ¥å™¨æ¥å£.
  */
 public interface Checker
 {
-   /**
-    * ¶ÔÒ»¸ö×Ö·û½øĞĞ¼ì²é.
-    *
-    * @param pd  ½âÎöÆ÷Êı¾İ.
-    * @return    Èç¹û¼ì²é½á¹ûÎªºÏ·¨, Ôò·µ»Øtrue..
-    * @throws GrammerException     ¼ì²éÖĞ·¢ÉúÓï·¨´íÎó.
-    */
-   boolean verify(ParserData pd) throws GrammerException;
+	/**
+	 * å¯¹ä¸€ä¸ªå­—ç¬¦è¿›è¡Œæ£€æŸ¥.
+	 *
+	 * @param pd  è§£æå™¨æ•°æ®.
+	 * @return    å¦‚æœæ£€æŸ¥ç»“æœä¸ºåˆæ³•, åˆ™è¿”å›true..
+	 * @throws GrammerException     æ£€æŸ¥ä¸­å‘ç”Ÿè¯­æ³•é”™è¯¯.
+	 */
+	boolean verify(ParserData pd) throws GrammerException;
 
 }

@@ -5,90 +5,90 @@ import org.apache.commons.digester.Rule;
 import org.xml.sax.Attributes;
 
 /**
- * ³éÏóµÄ³õÊ¼»¯¹æÔò, Ìá¹©ÁË¹«ÓÃµÄ·½·¨¼°ÊÇ·ñ¿É³õÊ¼»¯µÄ¿ØÖÆ.
+ * æŠ½è±¡çš„åˆå§‹åŒ–è§„åˆ™, æä¾›äº†å…¬ç”¨çš„æ–¹æ³•åŠæ˜¯å¦å¯åˆå§‹åŒ–çš„æ§åˆ¶.
  *
  * @author micromagic@sina.com
  */
 public abstract class MyRule extends Rule
 {
-   /**
-    * ÊÇ·ñ¿ÉÖ´ĞĞ³õÊ¼»¯.
-    * ÕâÊÇ¸ö¾²Ì¬Á¿, ÓÉÓÚ³õÊ¼»¯Ê±Ö»ÄÜÔÚÒ»¸öÏß³ÌÖĞ½øĞĞ, ËùÒÔÕâÀï²»»áÓĞ¶àÏß³ÌµÄÎÊÌâ.
-    */
-   static boolean dealRule = true;
+	/**
+	 * æ˜¯å¦å¯æ‰§è¡Œåˆå§‹åŒ–.
+	 * è¿™æ˜¯ä¸ªé™æ€é‡, ç”±äºåˆå§‹åŒ–æ—¶åªèƒ½åœ¨ä¸€ä¸ªçº¿ç¨‹ä¸­è¿›è¡Œ, æ‰€ä»¥è¿™é‡Œä¸ä¼šæœ‰å¤šçº¿ç¨‹çš„é—®é¢˜.
+	 */
+	static boolean dealRule = true;
 
-   /**
-    * ÊÇ·ñÊ¹ÓÃbodyÎÄ±¾µÄÊı¾İ.
-    */
-   protected boolean useBodyText = false;
+	/**
+	 * æ˜¯å¦ä½¿ç”¨bodyæ–‡æœ¬çš„æ•°æ®.
+	 */
+	protected boolean useBodyText = false;
 
-   public MyRule()
-   {
-   }
+	public MyRule()
+	{
+	}
 
-   /**
-    * ¼Ì³Ğ¸¸ÀàµÄ´¦ÀíbodyÎÄ±¾.
-    * »áÅĞ¶ÏÊÇ·ñ¿ÉÖ´ĞĞ¼°ÊÇ·ñÊ¹ÓÃbodyÎÄ±¾, Í¨¹ıµÄ»°²Åµ÷ÓÃmyBody.
-    */
-   public void body(String namespace, String name, String text)
-         throws Exception
-   {
-      if (dealRule && this.useBodyText)
-      {
-         BodyText temp = new BodyText();
-         temp.append(text.toCharArray(), 0, text.length());
-         this.myBody(namespace, name, temp);
-      }
-   }
+	/**
+	 * ç»§æ‰¿çˆ¶ç±»çš„å¤„ç†bodyæ–‡æœ¬.
+	 * ä¼šåˆ¤æ–­æ˜¯å¦å¯æ‰§è¡ŒåŠæ˜¯å¦ä½¿ç”¨bodyæ–‡æœ¬, é€šè¿‡çš„è¯æ‰è°ƒç”¨myBody.
+	 */
+	public void body(String namespace, String name, String text)
+			throws Exception
+	{
+		if (dealRule && this.useBodyText)
+		{
+			BodyText temp = new BodyText();
+			temp.append(text.toCharArray(), 0, text.length());
+			this.myBody(namespace, name, temp);
+		}
+	}
 
-   /**
-    * Êµ¼Ê´¦ÀíbodyÎÄ±¾µÄ·½·¨, ¼Ì³ĞÀàĞèÖØĞ´´Ë·½·¨ÊµÏÖÕæÕıµÄ´¦Àí.
-    */
-   public void myBody(String namespace, String name, BodyText text)
-         throws Exception
-   {
-   }
+	/**
+	 * å®é™…å¤„ç†bodyæ–‡æœ¬çš„æ–¹æ³•, ç»§æ‰¿ç±»éœ€é‡å†™æ­¤æ–¹æ³•å®ç°çœŸæ­£çš„å¤„ç†.
+	 */
+	public void myBody(String namespace, String name, BodyText text)
+			throws Exception
+	{
+	}
 
-   /**
-    * ¼Ì³Ğ¸¸ÀàµÄ´¦Àí½Úµã¿ªÊ¼.
-    * »áÅĞ¶ÏÊÇ·ñ¿ÉÖ´ĞĞ, Í¨¹ıµÄ»°²Åµ÷ÓÃmyBegin.
-    */
-   public void begin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      if (dealRule)
-      {
-         this.myBegin(namespace, name, attributes);
-      }
-   }
+	/**
+	 * ç»§æ‰¿çˆ¶ç±»çš„å¤„ç†èŠ‚ç‚¹å¼€å§‹.
+	 * ä¼šåˆ¤æ–­æ˜¯å¦å¯æ‰§è¡Œ, é€šè¿‡çš„è¯æ‰è°ƒç”¨myBegin.
+	 */
+	public void begin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		if (dealRule)
+		{
+			this.myBegin(namespace, name, attributes);
+		}
+	}
 
-   /**
-    * Êµ¼Ê´¦Àí½Úµã¿ªÊ¼µÄ·½·¨, ¼Ì³ĞÀàĞèÖØĞ´´Ë·½·¨ÊµÏÖÕæÕıµÄ´¦Àí.
-    */
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-   }
+	/**
+	 * å®é™…å¤„ç†èŠ‚ç‚¹å¼€å§‹çš„æ–¹æ³•, ç»§æ‰¿ç±»éœ€é‡å†™æ­¤æ–¹æ³•å®ç°çœŸæ­£çš„å¤„ç†.
+	 */
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+	}
 
-   /**
-    * ¼Ì³Ğ¸¸ÀàµÄ´¦Àí½Úµã½áÊø.
-    * »áÅĞ¶ÏÊÇ·ñ¿ÉÖ´ĞĞ, Í¨¹ıµÄ»°²Åµ÷ÓÃmyEnd.
-    */
-   public void end(String namespace, String name)
-         throws Exception
-   {
-      if (dealRule)
-      {
-         this.myEnd(namespace, name);
-      }
-   }
+	/**
+	 * ç»§æ‰¿çˆ¶ç±»çš„å¤„ç†èŠ‚ç‚¹ç»“æŸ.
+	 * ä¼šåˆ¤æ–­æ˜¯å¦å¯æ‰§è¡Œ, é€šè¿‡çš„è¯æ‰è°ƒç”¨myEnd.
+	 */
+	public void end(String namespace, String name)
+			throws Exception
+	{
+		if (dealRule)
+		{
+			this.myEnd(namespace, name);
+		}
+	}
 
-   /**
-    * Êµ¼Ê´¦Àí½Úµã½áÊøµÄ·½·¨, ¼Ì³ĞÀàĞèÖØĞ´´Ë·½·¨ÊµÏÖÕæÕıµÄ´¦Àí.
-    */
-   public void myEnd(String namespace, String name)
-         throws Exception
-   {
-   }
+	/**
+	 * å®é™…å¤„ç†èŠ‚ç‚¹ç»“æŸçš„æ–¹æ³•, ç»§æ‰¿ç±»éœ€é‡å†™æ­¤æ–¹æ³•å®ç°çœŸæ­£çš„å¤„ç†.
+	 */
+	public void myEnd(String namespace, String name)
+			throws Exception
+	{
+	}
 
 }

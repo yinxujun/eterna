@@ -29,57 +29,57 @@ import self.micromagic.util.StringTool;
  * @author micromagic@sina.com
  */
 public class ReplacementImpl extends ComponentImpl
-      implements Replacement, ReplacementGenerator
+		implements Replacement, ReplacementGenerator
 {
-   protected boolean ignoreGlobalSetted = false;
-   protected String baseComponentName;
-   protected Component baseComponent;
+	protected boolean ignoreGlobalSetted = false;
+	protected String baseComponentName;
+	protected Component baseComponent;
 
 	/**
-	 * µÃÖ±½ÓÆ¥Åä¿Ø¼şµÄÓ³Éä±í.
+	 * å¾—ç›´æ¥åŒ¹é…æ§ä»¶çš„æ˜ å°„è¡¨.
 	 */
-   protected Map directMatchMap;
+	protected Map directMatchMap;
 
 	/**
-	 * ÊÇ·ñÖ±½ÓÒıÓÃbaseComponent.
+	 * æ˜¯å¦ç›´æ¥å¼•ç”¨baseComponent.
 	 */
-   protected boolean linkTypical = true;
+	protected boolean linkTypical = true;
 
 	/**
-	 * ÊÇ·ñ¼ì²éĞèÒªÖ±½ÓÒıÓÃbaseComponent.
+	 * æ˜¯å¦æ£€æŸ¥éœ€è¦ç›´æ¥å¼•ç”¨baseComponent.
 	 */
-   protected boolean checkLinkTypical;
+	protected boolean checkLinkTypical;
 
 	/**
-	 * ÊÇ·ñ¶¨ÒåÁËÌØÊâµÄÊÂ¼ş.
+	 * æ˜¯å¦å®šä¹‰äº†ç‰¹æ®Šçš„äº‹ä»¶.
 	 */
-   protected boolean hasSpecialEvent;
+	protected boolean hasSpecialEvent;
 
 	/**
-	 * ÊÇ·ñÊÇ¸öÍâ¸²µÄReplacement.
+	 * æ˜¯å¦æ˜¯ä¸ªå¤–è¦†çš„Replacement.
 	 */
 	protected boolean wrap;
 
 	/**
-	 * »ù´¡¿Ø¼şÊÇ·ñÎªReplacement.
+	 * åŸºç¡€æ§ä»¶æ˜¯å¦ä¸ºReplacement.
 	 */
 	protected boolean baseReplacement;
 
-   private ViewAdapterGenerator.ModifiableViewRes viewRes;
-   private List replacedList;
+	private ViewAdapterGenerator.ModifiableViewRes viewRes;
+	private List replacedList;
 
-   public void initialize(EternaFactory factory, Component parent)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(factory, parent);
-      boolean topReplace = true;
+	public void initialize(EternaFactory factory, Component parent)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(factory, parent);
+		boolean topReplace = true;
 		String tmpComName = this.baseComponentName;
-      if (tmpComName != null)
-      {
+		if (tmpComName != null)
+		{
 			this.baseComponent = this.findBaseComponent(tmpComName, factory);
 			if (this.directMatchMap != null)
 			{
@@ -103,235 +103,235 @@ public class ReplacementImpl extends ComponentImpl
 					}
 				}
 			}
-      }
-      else
-      {
-         if (parent == null || !(parent instanceof Replacement))
-         {
-            throw new ConfigurationException("Top replacement must set base component.");
-         }
-         topReplace = false;
-         this.directMatchMap = ((Replacement) parent).getDirectMatchMap();
-      }
-      if (topReplace)
-      {
-         this.initReplace(factory, this.baseComponent, null);
-      }
-   }
+		}
+		else
+		{
+			if (parent == null || !(parent instanceof Replacement))
+			{
+				throw new ConfigurationException("Top replacement must set base component.");
+			}
+			topReplace = false;
+			this.directMatchMap = ((Replacement) parent).getDirectMatchMap();
+		}
+		if (topReplace)
+		{
+			this.initReplace(factory, this.baseComponent, null);
+		}
+	}
 
-   public void initReplace(EternaFactory factory, Component base, Replacement parent)
-         throws ConfigurationException
-   {
-      if (base != null)
-      {
-         this.initBase(factory, base);
-      }
-      else
-      {
-         // parent²»Îªnull, ±íÊ¾ÕâÊÇÒ»¸öÕ¼Î»½Úµã, ÏÈÒª½«Õâ¸öÕ¼Î»½ÚµãÌæ»»µ½ÏàÓ¦Î»ÖÃ
-         parent.replaceComponent(factory, this);
-      }
+	public void initReplace(EternaFactory factory, Component base, Replacement parent)
+			throws ConfigurationException
+	{
+		if (base != null)
+		{
+			this.initBase(factory, base);
+		}
+		else
+		{
+			// parentä¸ä¸ºnull, è¡¨ç¤ºè¿™æ˜¯ä¸€ä¸ªå ä½èŠ‚ç‚¹, å…ˆè¦å°†è¿™ä¸ªå ä½èŠ‚ç‚¹æ›¿æ¢åˆ°ç›¸åº”ä½ç½®
+			parent.replaceComponent(factory, this);
+		}
 		if (this.baseReplacement)
 		{
-			// µ±baseÎªÒ»¸öReplacementÊ±
+			// å½“baseä¸ºä¸€ä¸ªReplacementæ—¶
 			if (this.linkTypical)
 			{
-            // Èç¹ûÊÇÖ±½ÓÒıÓÃbaseComponent, Çå¿ÕreplacedList
+				// å¦‚æœæ˜¯ç›´æ¥å¼•ç”¨baseComponent, æ¸…ç©ºreplacedList
 				this.replacedList = null;
 			}
 			return;
 		}
 
-      if (!this.linkTypical || this.checkLinkTypical)
-      {
-         // Ìæ»»ĞèÒªÌæ»»µÄComponent
-         Iterator subComponentItr = this.componentList.iterator();
-         while (subComponentItr.hasNext())
-         {
-            Component sub = (Component) subComponentItr.next();
-            if (sub instanceof Replacement)
-            {
-               Replacement myReplace = (Replacement) sub;
-               if (myReplace.getBaseComponent() == null)
-               {
-                  myReplace.initReplace(factory, null, this);
-               }
-               else
-               {
-                  this.replaceComponent(factory, sub);
-               }
-            }
-            else
-            {
-               this.replaceComponent(factory, sub);
-            }
-         }
+		if (!this.linkTypical || this.checkLinkTypical)
+		{
+			// æ›¿æ¢éœ€è¦æ›¿æ¢çš„Component
+			Iterator subComponentItr = this.componentList.iterator();
+			while (subComponentItr.hasNext())
+			{
+				Component sub = (Component) subComponentItr.next();
+				if (sub instanceof Replacement)
+				{
+					Replacement myReplace = (Replacement) sub;
+					if (myReplace.getBaseComponent() == null)
+					{
+						myReplace.initReplace(factory, null, this);
+					}
+					else
+					{
+						this.replaceComponent(factory, sub);
+					}
+				}
+				else
+				{
+					this.replaceComponent(factory, sub);
+				}
+			}
 
-         // ½«ÆäËüµÄ½ÚµãÌæ»»³Éreplacement
-         this.dealAutoWrap(factory);
-      }
-   }
+			// å°†å…¶å®ƒçš„èŠ‚ç‚¹æ›¿æ¢æˆreplacement
+			this.dealAutoWrap(factory);
+		}
+	}
 
-   public void initBase(EternaFactory factory, Component base)
-         throws ConfigurationException
-   {
-      if (this.baseComponent == null)
-      {
+	public void initBase(EternaFactory factory, Component base)
+			throws ConfigurationException
+	{
+		if (this.baseComponent == null)
+		{
 			if (this.isReplacement(base))
 			{
-				// baseÎªÒ»¸öReplacementÊ±, ĞèÒª±êÊ¶³öÀ´
-            this.baseReplacement = true;
+				// baseä¸ºä¸€ä¸ªReplacementæ—¶, éœ€è¦æ ‡è¯†å‡ºæ¥
+				this.baseReplacement = true;
 			}
 			else
 			{
 				this.wrap = true;
 			}
-         this.baseComponent = this.unWrapReplacement(base);
-      }
+			this.baseComponent = this.unWrapReplacement(base);
+		}
 
-      this.hasSpecialEvent = this.eventList.size() > 0;
+		this.hasSpecialEvent = this.eventList.size() > 0;
 		this.linkTypical = this.componentParam == null && this.beforeInit == null
 				&& this.initScript == null && this.componentList.size() == 0
-            && !this.ignoreGlobalSetted;
-      this.checkLinkTypical = this.linkTypical && this.directMatchMap != null;
+				&& !this.ignoreGlobalSetted;
+		this.checkLinkTypical = this.linkTypical && this.directMatchMap != null;
 
-      base = this.getPrimaryComponent(this.baseComponent, null);
-      if ((!this.linkTypical || this.checkLinkTypical) && this.replacedList == null)
-      {
-         Iterator itr = base.getSubComponents();
-         this.replacedList = new LinkedList();
-         while (itr.hasNext())
-         {
-            this.replacedList.add(itr.next());
-         }
-      }
+		base = this.getPrimaryComponent(this.baseComponent, null);
+		if ((!this.linkTypical || this.checkLinkTypical) && this.replacedList == null)
+		{
+			Iterator itr = base.getSubComponents();
+			this.replacedList = new LinkedList();
+			while (itr.hasNext())
+			{
+				this.replacedList.add(itr.next());
+			}
+		}
 		if (this.linkTypical)
 		{
-         this.ignoreGlobalParam = base.isIgnoreGlobalParam();
+			this.ignoreGlobalParam = base.isIgnoreGlobalParam();
 			return;
 		}
 
-      if (this.componentParam == null)
-      {
-         this.componentParam = base.getComponentParam();
-      }
-      if (!this.ignoreGlobalSetted)
-      {
-         this.ignoreGlobalParam = base.isIgnoreGlobalParam();
-      }
+		if (this.componentParam == null)
+		{
+			this.componentParam = base.getComponentParam();
+		}
+		if (!this.ignoreGlobalSetted)
+		{
+			this.ignoreGlobalParam = base.isIgnoreGlobalParam();
+		}
 
-      String parentScript = base.getBeforeInit();
-      this.beforeInit = ViewTool.addParentScript(this.beforeInit, parentScript);
+		String parentScript = base.getBeforeInit();
+		this.beforeInit = ViewTool.addParentScript(this.beforeInit, parentScript);
 
-      parentScript = base.getInitScript();
-      this.initScript = ViewTool.addParentScript(this.initScript, parentScript);
-   }
+		parentScript = base.getInitScript();
+		this.initScript = ViewTool.addParentScript(this.initScript, parentScript);
+	}
 
-   public void replaceComponent(EternaFactory factory, Component newReplace)
-         throws ConfigurationException
-   {
-      ListIterator itr = this.replacedList.listIterator();
-      while (itr.hasNext())
-      {
-         Component com = (Component) itr.next();
-         if (com.getParent() != this && com.getName().equals(newReplace.getName()))
-         {
-            // Èç¹ûparent²»Îª±¾¿Ø¼ş, ÇÒÃû³ÆÏàÍ¬±íÊ¾ÊÇĞèÒªÌæ»»µÄ
-            if (newReplace instanceof Replacement)
-            {
-               Replacement myReplace = (Replacement) newReplace;
-               if (myReplace.getBaseComponent() == null)
-               {
-                  myReplace.initBase(factory, com);
-               }
-               itr.set(newReplace);
-            }
-            else
-            {
-               itr.set(newReplace);
-            }
-            break;
-         }
-      }
-   }
+	public void replaceComponent(EternaFactory factory, Component newReplace)
+			throws ConfigurationException
+	{
+		ListIterator itr = this.replacedList.listIterator();
+		while (itr.hasNext())
+		{
+			Component com = (Component) itr.next();
+			if (com.getParent() != this && com.getName().equals(newReplace.getName()))
+			{
+				// å¦‚æœparentä¸ä¸ºæœ¬æ§ä»¶, ä¸”åç§°ç›¸åŒè¡¨ç¤ºæ˜¯éœ€è¦æ›¿æ¢çš„
+				if (newReplace instanceof Replacement)
+				{
+					Replacement myReplace = (Replacement) newReplace;
+					if (myReplace.getBaseComponent() == null)
+					{
+						myReplace.initBase(factory, com);
+					}
+					itr.set(newReplace);
+				}
+				else
+				{
+					itr.set(newReplace);
+				}
+				break;
+			}
+		}
+	}
 
-   public Map getDirectMatchMap()
-   {
-      return this.directMatchMap;
-   }
+	public Map getDirectMatchMap()
+	{
+		return this.directMatchMap;
+	}
 
 	public Component getBaseComponent()
 	{
 		return this.baseComponent;
 	}
 
-   /**
-    * ¶ÔÊ£Óà½Úµã×Ô¶¯´ò°ü
-    */
-   private void dealAutoWrap(EternaFactory factory)
-         throws ConfigurationException
-   {
-      // ½«ÆäËüµÄ½ÚµãÌæ»»µô
-      ListIterator itr = this.replacedList.listIterator();
-      while (itr.hasNext())
-      {
-         Component sub = (Component) itr.next();
-         String name = sub.getName();
-         if (sub.getParent() != this)
-         {
-            if (this.directMatchMap != null)
-            {
-               // ¸ù¾İÖ±½ÓÌæ»»½ÚµãÀ´Ìæ»»
-               ReplacementInfo rInfo = (ReplacementInfo) this.directMatchMap.get(name);
-               if (rInfo != null && rInfo.base != null && rInfo.canReplace())
-               {
-                  boolean replaced = false;
-                  if (rInfo.base instanceof Replacement)
-                  {
-                     Replacement myReplace = (Replacement) rInfo.base;
-                     if (myReplace.getBaseComponent() == null)
-                     {
+	/**
+	 * å¯¹å‰©ä½™èŠ‚ç‚¹è‡ªåŠ¨æ‰“åŒ…
+	 */
+	private void dealAutoWrap(EternaFactory factory)
+			throws ConfigurationException
+	{
+		// å°†å…¶å®ƒçš„èŠ‚ç‚¹æ›¿æ¢æ‰
+		ListIterator itr = this.replacedList.listIterator();
+		while (itr.hasNext())
+		{
+			Component sub = (Component) itr.next();
+			String name = sub.getName();
+			if (sub.getParent() != this)
+			{
+				if (this.directMatchMap != null)
+				{
+					// æ ¹æ®ç›´æ¥æ›¿æ¢èŠ‚ç‚¹æ¥æ›¿æ¢
+					ReplacementInfo rInfo = (ReplacementInfo) this.directMatchMap.get(name);
+					if (rInfo != null && rInfo.base != null && rInfo.canReplace())
+					{
+						boolean replaced = false;
+						if (rInfo.base instanceof Replacement)
+						{
+							Replacement myReplace = (Replacement) rInfo.base;
+							if (myReplace.getBaseComponent() == null)
+							{
 								myReplace.initReplace(factory, sub, null);
-                        itr.set(myReplace);
-                        replaced = true;
-                     }
-                  }
-                  if (!replaced)
-                  {
-                     ReplacementImpl ri = new ReplacementImpl();
-                     ri.setName(name);
-                     ri.initialize(factory, this);
+								itr.set(myReplace);
+								replaced = true;
+							}
+						}
+						if (!replaced)
+						{
+							ReplacementImpl ri = new ReplacementImpl();
+							ri.setName(name);
+							ri.initialize(factory, this);
 							ri.initBase(factory, rInfo.base);
 							if (ri.linkTypical)
 							{
 								ri.replacedList = null;
 							}
-                     itr.set(ri);
-                  }
-                  // ÓĞ½ÚµãÌæ»», ĞèÒª½«linkTypicalÉèÎªfalse
+							itr.set(ri);
+						}
+						// æœ‰èŠ‚ç‚¹æ›¿æ¢, éœ€è¦å°†linkTypicalè®¾ä¸ºfalse
 						this.changeLinkTypical();
-                  continue;
-               }
-            }
-            ReplacementImpl ri = new ReplacementImpl();
-            ri.setName(name);
-            ri.initialize(factory, this);
+						continue;
+					}
+				}
+				ReplacementImpl ri = new ReplacementImpl();
+				ri.setName(name);
+				ri.initialize(factory, this);
 				ri.initReplace(factory, sub, null);
-            itr.set(ri);
-         }
-      }
+				itr.set(ri);
+			}
+		}
 
 		if (this.linkTypical)
 		{
-			// linkTypicalÎªtrue, ËµÃ÷ÎŞ½ÚµãÌæ»», Çå¿ÕreplacedList
+			// linkTypicalä¸ºtrue, è¯´æ˜æ— èŠ‚ç‚¹æ›¿æ¢, æ¸…ç©ºreplacedList
 			this.replacedList = null;
 		}
 		else
 		{
-			// linkTypicalÎªfalse, ËµÃ÷ÓĞ½ÚµãÌæ»», ĞèÒª¸´ÖÆBaseComponentµÄÊôĞÔ
+			// linkTypicalä¸ºfalse, è¯´æ˜æœ‰èŠ‚ç‚¹æ›¿æ¢, éœ€è¦å¤åˆ¶BaseComponentçš„å±æ€§
 			if (this.getParent() instanceof ReplacementImpl)
 			{
-				// ÓĞ½ÚµãÌæ»», ÇÒ¸¸½ÚµãÎªReplacementImpl, Ôò½«¸¸½ÚµãµÄlinkTypicalÉèÎªfalse
+				// æœ‰èŠ‚ç‚¹æ›¿æ¢, ä¸”çˆ¶èŠ‚ç‚¹ä¸ºReplacementImpl, åˆ™å°†çˆ¶èŠ‚ç‚¹çš„linkTypicalè®¾ä¸ºfalse
 				ReplacementImpl pri = (ReplacementImpl) this.getParent();
 				if (pri.linkTypical)
 				{
@@ -339,34 +339,34 @@ public class ReplacementImpl extends ComponentImpl
 				}
 			}
 		}
-   }
-
-   /**
-    * ½â¿ªautoWrap(×Ô¶¯°ü¹üµÄ)¿Ø¼ş, ¶ÔÓÚtypical-replacement»áÅöµ½ÒÑ¾­´ò°üµÄ
-    */
-   private Component unWrapReplacement(Component com)
-   {
-      while (com instanceof ReplacementImpl)
-      {
-         ReplacementImpl tmp = (ReplacementImpl) com;
-         if (!tmp.linkTypical || tmp.hasSpecialEvent || tmp.getBaseComponent() == null)
-         {
-            break;
-         }
-         com = tmp.getBaseComponent();
-      }
-      return com;
-   }
+	}
 
 	/**
-	 * ¼ì²éÒ»¸ö¿Ø¼şÊÇ·ñÎªReplacement.
-	 * ¶ÔÓÚÖ±½ÓÍâ¸²µÄ¿Ø¼ş, ĞèÒª½â°üºóÔÙÅĞ¶Ï.
+	 * è§£å¼€autoWrap(è‡ªåŠ¨åŒ…è£¹çš„)æ§ä»¶, å¯¹äºtypical-replacementä¼šç¢°åˆ°å·²ç»æ‰“åŒ…çš„
+	 */
+	private Component unWrapReplacement(Component com)
+	{
+		while (com instanceof ReplacementImpl)
+		{
+			ReplacementImpl tmp = (ReplacementImpl) com;
+			if (!tmp.linkTypical || tmp.hasSpecialEvent || tmp.getBaseComponent() == null)
+			{
+				break;
+			}
+			com = tmp.getBaseComponent();
+		}
+		return com;
+	}
+
+	/**
+	 * æ£€æŸ¥ä¸€ä¸ªæ§ä»¶æ˜¯å¦ä¸ºReplacement.
+	 * å¯¹äºç›´æ¥å¤–è¦†çš„æ§ä»¶, éœ€è¦è§£åŒ…åå†åˆ¤æ–­.
 	 */
 	private boolean isReplacement(Component com)
 	{
 		while (com instanceof ReplacementImpl)
 		{
-         ReplacementImpl tmp = (ReplacementImpl) com;
+			ReplacementImpl tmp = (ReplacementImpl) com;
 			if (!tmp.wrap)
 			{
 				return true;
@@ -377,7 +377,7 @@ public class ReplacementImpl extends ComponentImpl
 	}
 
 	/**
-	 * µ±Ö±½ÓÒıÓÃbaseComponentÊ±, ½«Æä×ª»»Îª·ÇÖ±½ÓÒıÓÃ, ²¢³õÊ¼»¯±äÁ¿.
+	 * å½“ç›´æ¥å¼•ç”¨baseComponentæ—¶, å°†å…¶è½¬æ¢ä¸ºéç›´æ¥å¼•ç”¨, å¹¶åˆå§‹åŒ–å˜é‡.
 	 */
 	private void changeLinkTypical()
 			throws ConfigurationException
@@ -392,83 +392,83 @@ public class ReplacementImpl extends ComponentImpl
 		}
 	}
 
-   /**
-    * »ñµÃÔ­Ê¼µÄ¿Ø¼ş£¬Èç¹û¸øÁËeventList²ÎÊı£¬Ò²»á°ÑeventÌí¼Ó½øÈ¥
-    */
-   private Component getPrimaryComponent(Component com, List eventList)
-   {
-      while (com instanceof ReplacementImpl)
-      {
-         ReplacementImpl tmp = (ReplacementImpl) com;
-         if (!tmp.linkTypical || tmp.getBaseComponent() == null)
-         {
-            break;
-         }
-         if (eventList != null && tmp.hasSpecialEvent)
-         {
-            ListIterator litr = tmp.eventList.listIterator(tmp.eventList.size());
-            while (litr.hasPrevious())
-            {
-               eventList.add(0, litr.previous());
-            }
-         }
-         com = tmp.getBaseComponent();
-      }
-      return com;
-   }
+	/**
+	 * è·å¾—åŸå§‹çš„æ§ä»¶ï¼Œå¦‚æœç»™äº†eventListå‚æ•°ï¼Œä¹Ÿä¼šæŠŠeventæ·»åŠ è¿›å»
+	 */
+	private Component getPrimaryComponent(Component com, List eventList)
+	{
+		while (com instanceof ReplacementImpl)
+		{
+			ReplacementImpl tmp = (ReplacementImpl) com;
+			if (!tmp.linkTypical || tmp.getBaseComponent() == null)
+			{
+				break;
+			}
+			if (eventList != null && tmp.hasSpecialEvent)
+			{
+				ListIterator litr = tmp.eventList.listIterator(tmp.eventList.size());
+				while (litr.hasPrevious())
+				{
+					eventList.add(0, litr.previous());
+				}
+			}
+			com = tmp.getBaseComponent();
+		}
+		return com;
+	}
 
-   public void printBody(Writer out, AppData data, ViewAdapter view)
-         throws IOException, ConfigurationException
-   {
-      super.printBody(out, data, view);
-   }
+	public void printBody(Writer out, AppData data, ViewAdapter view)
+			throws IOException, ConfigurationException
+	{
+		super.printBody(out, data, view);
+	}
 
-   public void printSpecialBody(Writer out, AppData data, ViewAdapter view)
-         throws IOException, ConfigurationException
-   {
-      if (this.linkTypical)
-      {
-         String idName = ViewTool.createTypicalComponentName(data, this.baseComponent);
-         out.write(",typicalComponent:\"");
-         this.stringCoder.toJsonString(out, idName);
-         out.write('"');
-      }
-      else if (this.baseComponent != null)
-      {
-         this.getPrimaryComponent(this.baseComponent, null).printSpecialBody(out, data, view);
-      }
-   }
+	public void printSpecialBody(Writer out, AppData data, ViewAdapter view)
+			throws IOException, ConfigurationException
+	{
+		if (this.linkTypical)
+		{
+			String idName = ViewTool.createTypicalComponentName(data, this.baseComponent);
+			out.write(",typicalComponent:\"");
+			this.stringCoder.toJsonString(out, idName);
+			out.write('"');
+		}
+		else if (this.baseComponent != null)
+		{
+			this.getPrimaryComponent(this.baseComponent, null).printSpecialBody(out, data, view);
+		}
+	}
 
-   public void setBaseComponentName(String name)
-         throws ConfigurationException
-   {
-      this.baseComponentName = name;
-      if (name != null)
-      {
-         int index = name.indexOf(';');
-         if (index == -1)
-         {
-            return;
-         }
-         this.baseComponentName = name.substring(0, index);
-         String temp = name.substring(index + 1);
-         List tmpList = new LinkedList();
+	public void setBaseComponentName(String name)
+			throws ConfigurationException
+	{
+		this.baseComponentName = name;
+		if (name != null)
+		{
+			int index = name.indexOf(';');
+			if (index == -1)
+			{
+				return;
+			}
+			this.baseComponentName = name.substring(0, index);
+			String temp = name.substring(index + 1);
+			List tmpList = new LinkedList();
 			String[] names = StringTool.separateString(temp, ",", true);
 			for (int i = 0; i < names.length; i++)
-         {
-            if (names[i].length() == 0)
-            {
-               continue;
-            }
-            tmpList.add(names[i]);
-         }
-         if (tmpList.size() > 0)
-         {
-            this.directMatchMap = new HashMap();
-            Iterator itr = tmpList.iterator();
-            while (itr.hasNext())
-            {
-               String tmpName = (String) itr.next();
+			{
+				if (names[i].length() == 0)
+				{
+					continue;
+				}
+				tmpList.add(names[i]);
+			}
+			if (tmpList.size() > 0)
+			{
+				this.directMatchMap = new HashMap();
+				Iterator itr = tmpList.iterator();
+				while (itr.hasNext())
+				{
+					String tmpName = (String) itr.next();
 					int tmpI = tmpName.indexOf(':');
 					ReplacementInfo rInfo;
 					int tmpIndex = -1;
@@ -482,61 +482,61 @@ public class ReplacementImpl extends ComponentImpl
 						rInfo = new ReplacementInfo(tmpName.substring(0, tmpI),tmpIndex);
 					}
 					rInfo = (ReplacementInfo) this.directMatchMap.put(rInfo.name, rInfo);
-               if (rInfo != null && rInfo.addIndex(tmpIndex))
-               {
-                  throw new ConfigurationException("The name \"" + tmpName
-                        + "\" appeared more than once in config:[" + name + "].");
-               }
-            }
-         }
-      }
-   }
+					if (rInfo != null && rInfo.addIndex(tmpIndex))
+					{
+						throw new ConfigurationException("The name \"" + tmpName
+								+ "\" appeared more than once in config:[" + name + "].");
+					}
+				}
+			}
+		}
+	}
 
-   public void setIgnoreGlobalParam(boolean ignore)
-         throws ConfigurationException
-   {
-      this.ignoreGlobalSetted = true;
-      super.setIgnoreGlobalParam(ignore);
-   }
+	public void setIgnoreGlobalParam(boolean ignore)
+			throws ConfigurationException
+	{
+		this.ignoreGlobalSetted = true;
+		super.setIgnoreGlobalParam(ignore);
+	}
 
-   public String getType()
-         throws ConfigurationException
-   {
-      if (!this.linkTypical && this.baseComponent != null)
-      {
-         return this.getPrimaryComponent(this.baseComponent, null).getType();
-      }
-      return "replacement";
-   }
+	public String getType()
+			throws ConfigurationException
+	{
+		if (!this.linkTypical && this.baseComponent != null)
+		{
+			return this.getPrimaryComponent(this.baseComponent, null).getType();
+		}
+		return "replacement";
+	}
 
-   public void setType(String type) {}
+	public void setType(String type) {}
 
-   public Iterator getSubComponents()
-   {
-      if (this.replacedList == null)
-      {
-         return UnmodifiableIterator.EMPTY_ITERATOR;
-      }
-      return new PreFetchIterator(this.replacedList.iterator(), false);
-   }
+	public Iterator getSubComponents()
+	{
+		if (this.replacedList == null)
+		{
+			return UnmodifiableIterator.EMPTY_ITERATOR;
+		}
+		return new PreFetchIterator(this.replacedList.iterator(), false);
+	}
 
-   public Iterator getEvents()
-         throws ConfigurationException
-   {
-      if (this.baseComponent == null || this.linkTypical)
-      {
-         return super.getEvents();
-      }
-      List tmp = new LinkedList();
-      Component tmpCom = this.getPrimaryComponent(this.baseComponent, tmp);
-      Iterator tmpItr = new MultiIterator(tmpCom.getEvents(), tmp.iterator());
-      return new MultiIterator(tmpItr, super.getEvents());
-   }
+	public Iterator getEvents()
+			throws ConfigurationException
+	{
+		if (this.baseComponent == null || this.linkTypical)
+		{
+			return super.getEvents();
+		}
+		List tmp = new LinkedList();
+		Component tmpCom = this.getPrimaryComponent(this.baseComponent, tmp);
+		Iterator tmpItr = new MultiIterator(tmpCom.getEvents(), tmp.iterator());
+		return new MultiIterator(tmpItr, super.getEvents());
+	}
 
 	/**
-	 * ¸ù¾İÃû³Æ±í´ïÊ½, ²éÕÒ»ù´¡¿Ø¼ş¶ÔÏó.
+	 * æ ¹æ®åç§°è¡¨è¾¾å¼, æŸ¥æ‰¾åŸºç¡€æ§ä»¶å¯¹è±¡.
 	 *
-	 * @param nameExp  Òª²éÕÒ¿Ø¼şµÄÃû³Æ±í´ïÊ½
+	 * @param nameExp  è¦æŸ¥æ‰¾æ§ä»¶çš„åç§°è¡¨è¾¾å¼
 	 */
 	protected Component findBaseComponent(String nameExp, EternaFactory factory)
 			throws ConfigurationException
@@ -579,12 +579,12 @@ public class ReplacementImpl extends ComponentImpl
 				throw new ConfigurationException("The Typical Component [" + nameExp + "] not found.");
 			}
 		}
-		// ÕâÀïÒªÏÈ¶ÔbaseComponent³õÊ¼»¯, ÒòÎªºóÃæĞèÒª³õÊ¼»¯ºÃµÄbaseComponent
-		// Òò´ËÒªÇóComponentµÄ³õÊ¼»¯·½·¨ÒªÓĞÒÑ³õÊ¼»¯±ê¼Ç, ÅĞ¶ÏÊÇ·ñĞèÒªÖ´ĞĞ³õÊ¼»¯
+		// è¿™é‡Œè¦å…ˆå¯¹baseComponentåˆå§‹åŒ–, å› ä¸ºåé¢éœ€è¦åˆå§‹åŒ–å¥½çš„baseComponent
+		// å› æ­¤è¦æ±‚Componentçš„åˆå§‹åŒ–æ–¹æ³•è¦æœ‰å·²åˆå§‹åŒ–æ ‡è®°, åˆ¤æ–­æ˜¯å¦éœ€è¦æ‰§è¡Œåˆå§‹åŒ–
 		tmpCom.initialize(factory, null);
 		if (subName.getString() != null && subName.getString().length() > 0)
 		{
-      	tmpCom = this.findSubComponent(tmpCom, subName.getString(), subIndex.value, new IntegerRef());
+			tmpCom = this.findSubComponent(tmpCom, subName.getString(), subIndex.value, new IntegerRef());
 			if (tmpCom == null)
 			{
 				throw new ConfigurationException("The Typical Component [" + nameExp + "] not found.");
@@ -594,24 +594,24 @@ public class ReplacementImpl extends ComponentImpl
 	}
 
 	/**
-	 * ¸ù¾İÃû³Æ¼°Ë÷ÒıÖµ²éÕÒÒ»¸ö×Ó¿Ø¼ş¶ÔÏó.
+	 * æ ¹æ®åç§°åŠç´¢å¼•å€¼æŸ¥æ‰¾ä¸€ä¸ªå­æ§ä»¶å¯¹è±¡.
 	 */
 	private Component findSubComponent(Component root, String name, int index, IntegerRef nowIndex)
 			throws ConfigurationException
 	{
-      Iterator itr = root.getSubComponents();
-      while (itr.hasNext())
-      {
-         Component sub = (Component) itr.next();
+		Iterator itr = root.getSubComponents();
+		while (itr.hasNext())
+		{
+			Component sub = (Component) itr.next();
 			if (!this.isReplacement(sub))
 			{
-				// µ±²»ÊÇÒ»¸öReplacement¿Ø¼ş(¼´·ÇÍâ¸²¿Ø¼ş), ĞèÒª½â°ü
+				// å½“ä¸æ˜¯ä¸€ä¸ªReplacementæ§ä»¶(å³éå¤–è¦†æ§ä»¶), éœ€è¦è§£åŒ…
 				sub = this.unWrapReplacement(sub);
 			}
-         if (name.equals(sub.getName()))
+			if (name.equals(sub.getName()))
 			{
 				nowIndex.value++;
-            if (nowIndex.value == index)
+				if (nowIndex.value == index)
 				{
 					return this.unWrapReplacement(sub);
 				}
@@ -621,12 +621,12 @@ public class ReplacementImpl extends ComponentImpl
 			{
 				return tmp;
 			}
-      }
+		}
 		return null;
 	}
 
 	/**
-	 * ½âÎö»ù´¡¿Ø¼şµÄÃû³Æ.
+	 * è§£æåŸºç¡€æ§ä»¶çš„åç§°.
 	 */
 	private String parseBaseName(String baseName, StringRef subName, IntegerRef subIndex)
 	{
@@ -647,19 +647,19 @@ public class ReplacementImpl extends ComponentImpl
 		return names[0];
 	}
 
-   protected ViewAdapterGenerator.ModifiableViewRes getModifiableViewRes()
-         throws ConfigurationException
-   {
-      if (this.viewRes == null)
-      {
-         this.viewRes = super.getModifiableViewRes();
-         if (this.baseComponent != null)
-         {
-            this.viewRes.addAll(this.baseComponent.getViewRes());
-         }
-      }
-      return this.viewRes;
-   }
+	protected ViewAdapterGenerator.ModifiableViewRes getModifiableViewRes()
+			throws ConfigurationException
+	{
+		if (this.viewRes == null)
+		{
+			this.viewRes = super.getModifiableViewRes();
+			if (this.baseComponent != null)
+			{
+				this.viewRes.addAll(this.baseComponent.getViewRes());
+			}
+		}
+		return this.viewRes;
+	}
 
 	protected static class ReplacementInfo
 	{
@@ -700,7 +700,7 @@ public class ReplacementImpl extends ComponentImpl
 			return true;
 		}
 
-      public boolean canReplace()
+		public boolean canReplace()
 		{
 			this.appearenCount++;
 			return this.indexs == null || this.hasIndex(this.appearenCount);

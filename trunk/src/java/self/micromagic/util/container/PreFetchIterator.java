@@ -8,19 +8,19 @@ import java.util.List;
 import self.micromagic.util.BooleanRef;
 
 /**
- * ¿ÉÔ¤È¡µÄµü´úÆ÷.
+ * å¯é¢„å–çš„è¿­ä»£å™¨.
  *
  * @author micromagic@sina.com
  */
 public class PreFetchIterator
 		implements Iterator
 {
-   private List preFetchList;
-   private Iterator itr;
-   private boolean modifiable;
+	private List preFetchList;
+	private Iterator itr;
+	private boolean modifiable;
 
 	/**
-	 * Í¨¹ýÒ»¸öIterator´´½¨PreFetchIterator.
+	 * é€šè¿‡ä¸€ä¸ªIteratoråˆ›å»ºPreFetchIterator.
 	 */
 	public PreFetchIterator(Iterator itr)
 	{
@@ -29,9 +29,9 @@ public class PreFetchIterator
 	}
 
 	/**
-	 * Í¨¹ýÒ»¸öIterator´´½¨PreFetchIterator.
+	 * é€šè¿‡ä¸€ä¸ªIteratoråˆ›å»ºPreFetchIterator.
 	 *
-	 * @param modifiable  ´´½¨µÄPreFetchIteratorÊÇ·ñ¿ÉÐÞ¸Ä
+	 * @param modifiable  åˆ›å»ºçš„PreFetchIteratoræ˜¯å¦å¯ä¿®æ”¹
 	 */
 	public PreFetchIterator(Iterator itr, boolean modifiable)
 	{
@@ -40,10 +40,10 @@ public class PreFetchIterator
 	}
 
 	/**
-	 * Ô¤È¡µü´úÆ÷ÖÐµÄ¶ÔÏó, Èç¹ûÃ»ÓÐÔò·µ»Ønull.
-    *
-    * @param index    ÒªÔ¤È¡Ö®ºóµÄµÚ¼¸¸ö¶ÔÏó, 1ÎªµÚÒ»¸ö 2ÎªµÚ¶þ¸ö
-	 * @param hasValue ³ö²Î, ±íÊ¾ÊÇ·ñ´æÔÚÔ¤È¡µÄ¶ÔÏó
+	 * é¢„å–è¿­ä»£å™¨ä¸­çš„å¯¹è±¡, å¦‚æžœæ²¡æœ‰åˆ™è¿”å›žnull.
+	 *
+	 * @param index    è¦é¢„å–ä¹‹åŽçš„ç¬¬å‡ ä¸ªå¯¹è±¡, 1ä¸ºç¬¬ä¸€ä¸ª 2ä¸ºç¬¬äºŒä¸ª
+	 * @param hasValue å‡ºå‚, è¡¨ç¤ºæ˜¯å¦å­˜åœ¨é¢„å–çš„å¯¹è±¡
 	 */
 	public Object prefetch(int index, BooleanRef hasValue)
 	{
@@ -51,49 +51,49 @@ public class PreFetchIterator
 		{
 			hasValue.value = true;
 		}
-      if (this.preFetchList != null && this.preFetchList.size() >= index)
-      {
-         return this.preFetchList.get(index - 1);
-      }
-      if (this.preFetchList == null)
-      {
-         this.preFetchList = new LinkedList();
-      }
-      for (int i = this.preFetchList.size(); i < index; i++)
-      {
-         if (this.itr.hasNext())
-         {
-            this.preFetchList.add(this.itr.next());
-         }
-         else
-         {
+		if (this.preFetchList != null && this.preFetchList.size() >= index)
+		{
+			return this.preFetchList.get(index - 1);
+		}
+		if (this.preFetchList == null)
+		{
+			this.preFetchList = new LinkedList();
+		}
+		for (int i = this.preFetchList.size(); i < index; i++)
+		{
+			if (this.itr.hasNext())
+			{
+				this.preFetchList.add(this.itr.next());
+			}
+			else
+			{
 				if (hasValue != null)
 				{
 					hasValue.value = false;
 				}
-            return null;
-         }
-      }
-      return this.preFetchList.get(index - 1);
+				return null;
+			}
+		}
+		return this.preFetchList.get(index - 1);
 	}
 
-   public boolean hasNext()
-   {
-      if (this.preFetchList != null && this.preFetchList.size() > 0)
-      {
-         return true;
-      }
-      return this.itr.hasNext();
-   }
+	public boolean hasNext()
+	{
+		if (this.preFetchList != null && this.preFetchList.size() > 0)
+		{
+			return true;
+		}
+		return this.itr.hasNext();
+	}
 
-   public Object next()
-   {
-      if (this.preFetchList != null && this.preFetchList.size() > 0)
-      {
-         return this.preFetchList.remove(0);
-      }
-      return this.itr.next();
-   }
+	public Object next()
+	{
+		if (this.preFetchList != null && this.preFetchList.size() > 0)
+		{
+			return this.preFetchList.remove(0);
+		}
+		return this.itr.next();
+	}
 
 	public void remove()
 	{

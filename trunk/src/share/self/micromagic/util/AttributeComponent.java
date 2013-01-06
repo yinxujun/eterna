@@ -17,191 +17,191 @@ import self.micromagic.eterna.view.ViewAdapter;
 import self.micromagic.eterna.view.impl.ComponentImpl;
 
 /**
- * Í¨¹ıfactoryÖĞattributeµÄÖµÀ´Éú³ÉÕâ¸öcomponent. <p>
- * componentµÄÀàĞÍ±ØĞëÉèÎªnone, ±ØĞëÔÚcomponentÖĞÉèÖÃÃû³ÆÎªattrNameµÄÊôĞÔ,
- * ¸ÃÖµÎªËùÊ¹ÓÃµÄfactoryÖĞattributeµÄÃû³Æ.
- * ×Ócomponent½«»áÌæ»»swapIdÏàÍ¬µÄ×Ó½Úµã.
+ * é€šè¿‡factoryä¸­attributeçš„å€¼æ¥ç”Ÿæˆè¿™ä¸ªcomponent. <p>
+ * componentçš„ç±»å‹å¿…é¡»è®¾ä¸ºnone, å¿…é¡»åœ¨componentä¸­è®¾ç½®åç§°ä¸ºattrNameçš„å±æ€§,
+ * è¯¥å€¼ä¸ºæ‰€ä½¿ç”¨çš„factoryä¸­attributeçš„åç§°.
+ * å­componentå°†ä¼šæ›¿æ¢swapIdç›¸åŒçš„å­èŠ‚ç‚¹.
  */
 public final class AttributeComponent extends ComponentImpl
-      implements Component, ComponentGenerator
+		implements Component, ComponentGenerator
 {
-   public static final String FACTORY_ATTRIBUTE_NAME = "attrName";
-   public static final String FILE_SOURCE_NAME = "htmlSource";
-   public static final String FILE_ROOT_ATTRIBUTE_NAME = "htmlSource.root";
+	public static final String FACTORY_ATTRIBUTE_NAME = "attrName";
+	public static final String FILE_SOURCE_NAME = "htmlSource";
+	public static final String FILE_ROOT_ATTRIBUTE_NAME = "htmlSource.root";
 
-   private String bodyHTML;
-   private String swapFlag;
-   private String charset = "UTF-8";
+	private String bodyHTML;
+	private String swapFlag;
+	private String charset = "UTF-8";
 
-   public AttributeComponent()
-   {
-      this.type = NORMAL_TYPE_DIV;
-   }
+	public AttributeComponent()
+	{
+		this.type = NORMAL_TYPE_DIV;
+	}
 
-   public void initialize(EternaFactory factory, Component parent)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(factory, parent);
+	public void initialize(EternaFactory factory, Component parent)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(factory, parent);
 
-      if (NORMAL_TYPE_DIV.equals(this.type))
-      {
-         this.initbodyHTML();
-      }
-      boolean autoSet = true;
-      String autoSetStr = (String) this.getAttribute("autoSet");
-      if (autoSetStr != null)
-      {
-         autoSet = "true".equalsIgnoreCase(autoSetStr);
-      }
-      this.swapFlag = (String) this.getAttribute("swapFlag");
+		if (NORMAL_TYPE_DIV.equals(this.type))
+		{
+			this.initbodyHTML();
+		}
+		boolean autoSet = true;
+		String autoSetStr = (String) this.getAttribute("autoSet");
+		if (autoSetStr != null)
+		{
+			autoSet = "true".equalsIgnoreCase(autoSetStr);
+		}
+		this.swapFlag = (String) this.getAttribute("swapFlag");
 
-      if (autoSet)
-      {
-         StringAppender buf = StringTool.createStringAppender();
-         buf.appendln().append("if (objConfig.bodyString != null)").appendln().append('{').appendln()
-               .append("webObj.html(objConfig.bodyString);").appendln().append('}').appendln();
-         if (this.swapFlag == null)
-         {
-            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();
-         }
-         else
-         {
-            buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig, \"").append(this.swapFlag)
-                  .append("\");").appendln();
-         }
-         String myScript = buf.toString();
-         if (this.initScript != null)
-         {
-            this.initScript = this.initScript + myScript;
-         }
-         else
-         {
-            this.initScript = myScript;
-         }
-      }
-   }
+		if (autoSet)
+		{
+			StringAppender buf = StringTool.createStringAppender();
+			buf.appendln().append("if (objConfig.bodyString != null)").appendln().append('{').appendln()
+					.append("webObj.html(objConfig.bodyString);").appendln().append('}').appendln();
+			if (this.swapFlag == null)
+			{
+				buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig);").appendln();
+			}
+			else
+			{
+				buf.append("{$ef:swapAttributeComponentSubs}(webObj, objConfig, \"").append(this.swapFlag)
+						.append("\");").appendln();
+			}
+			String myScript = buf.toString();
+			if (this.initScript != null)
+			{
+				this.initScript = this.initScript + myScript;
+			}
+			else
+			{
+				this.initScript = myScript;
+			}
+		}
+	}
 
-   private void initbodyHTML()
-         throws ConfigurationException
-   {
-      String tmp;
-      Map bindRes = null;
-      tmp = (String) this.getAttribute("bindRes");
-      if (tmp != null)
-      {
-         bindRes = StringTool.string2Map(tmp, ",", ':');
-      }
+	private void initbodyHTML()
+			throws ConfigurationException
+	{
+		String tmp;
+		Map bindRes = null;
+		tmp = (String) this.getAttribute("bindRes");
+		if (tmp != null)
+		{
+			bindRes = StringTool.string2Map(tmp, ",", ':');
+		}
 
-      tmp = (String) this.getAttribute(FACTORY_ATTRIBUTE_NAME);
-      if (tmp == null)
-      {
-         tmp = (String) this.getAttribute(FILE_SOURCE_NAME);
-         if (tmp == null)
-         {
-            throw new ConfigurationException("Must set attribute [" + FACTORY_ATTRIBUTE_NAME
-                  + "] or [" + FILE_SOURCE_NAME + "] in AttributeComponent.");
-         }
-         String fileRoot = (String) factory.getAttribute(FILE_ROOT_ATTRIBUTE_NAME);
-         if (fileRoot == null)
-         {
-            fileRoot = ".";
-         }
-         else
-         {
-            fileRoot = Utility.resolveDynamicPropnames(fileRoot);
-         }
-         File htmlFile = new File(fileRoot, tmp);
-         if (!htmlFile.isFile())
-         {
-            throw new ConfigurationException("Not found html source [" + htmlFile.getPath() + "].");
-         }
-         tmp = (String) this.getAttribute("charset");
-         if (tmp != null)
-         {
-            this.charset = tmp;
-         }
-         try
-         {
-            int size = (int) htmlFile.length();
-            StringTool.StringAppenderWriter sw = new StringTool.StringAppenderWriter(size);
-            FileInputStream fis = new FileInputStream(htmlFile);
-            InputStreamReader isr = new InputStreamReader(fis, this.charset);
-            Utility.copyChars(isr, sw);
-            isr.close();
-            fis.close();
-            String htmlStr = sw.toString();
-            if (htmlStr.length() < size)
-            {
-               // ÒòÎªbodyHTMLÊÇÒª³¤ÆÚ±£´æµÄ, ËùÒÔÓĞ¶àÓà×Ö·ûµÄ»°¾ÍÖØĞÂÉú³ÉÒ»¸ö×Ö·û´®
-               this.bodyHTML = new String(htmlStr);
-            }
-            else
-            {
-               this.bodyHTML = htmlStr;
-            }
-         }
-         catch (IOException ex)
-         {
-            throw new ConfigurationException(ex);
-         }
-      }
-      else
-      {
-         this.bodyHTML = (String) factory.getAttribute(tmp);
-         if (this.bodyHTML == null)
-         {
-            throw new ConfigurationException("Not found attribute [" + tmp + "] in factory.");
-         }
-      }
-      this.bodyHTML = Utility.resolveDynamicPropnames(this.bodyHTML, bindRes);
-   }
+		tmp = (String) this.getAttribute(FACTORY_ATTRIBUTE_NAME);
+		if (tmp == null)
+		{
+			tmp = (String) this.getAttribute(FILE_SOURCE_NAME);
+			if (tmp == null)
+			{
+				throw new ConfigurationException("Must set attribute [" + FACTORY_ATTRIBUTE_NAME
+						+ "] or [" + FILE_SOURCE_NAME + "] in AttributeComponent.");
+			}
+			String fileRoot = (String) factory.getAttribute(FILE_ROOT_ATTRIBUTE_NAME);
+			if (fileRoot == null)
+			{
+				fileRoot = ".";
+			}
+			else
+			{
+				fileRoot = Utility.resolveDynamicPropnames(fileRoot);
+			}
+			File htmlFile = new File(fileRoot, tmp);
+			if (!htmlFile.isFile())
+			{
+				throw new ConfigurationException("Not found html source [" + htmlFile.getPath() + "].");
+			}
+			tmp = (String) this.getAttribute("charset");
+			if (tmp != null)
+			{
+				this.charset = tmp;
+			}
+			try
+			{
+				int size = (int) htmlFile.length();
+				StringTool.StringAppenderWriter sw = new StringTool.StringAppenderWriter(size);
+				FileInputStream fis = new FileInputStream(htmlFile);
+				InputStreamReader isr = new InputStreamReader(fis, this.charset);
+				Utility.copyChars(isr, sw);
+				isr.close();
+				fis.close();
+				String htmlStr = sw.toString();
+				if (htmlStr.length() < size)
+				{
+					// å› ä¸ºbodyHTMLæ˜¯è¦é•¿æœŸä¿å­˜çš„, æ‰€ä»¥æœ‰å¤šä½™å­—ç¬¦çš„è¯å°±é‡æ–°ç”Ÿæˆä¸€ä¸ªå­—ç¬¦ä¸²
+					this.bodyHTML = new String(htmlStr);
+				}
+				else
+				{
+					this.bodyHTML = htmlStr;
+				}
+			}
+			catch (IOException ex)
+			{
+				throw new ConfigurationException(ex);
+			}
+		}
+		else
+		{
+			this.bodyHTML = (String) factory.getAttribute(tmp);
+			if (this.bodyHTML == null)
+			{
+				throw new ConfigurationException("Not found attribute [" + tmp + "] in factory.");
+			}
+		}
+		this.bodyHTML = Utility.resolveDynamicPropnames(this.bodyHTML, bindRes);
+	}
 
-   public void setType(String type)
-         throws ConfigurationException
-   {
-      if (NORMAL_TYPE_DIV.equals(type) || SPECIAL_TYPE_INHERIT.equals(type))
-      {
-         this.type = type;
-      }
-      else
-      {
-         throw new ConfigurationException("Must set type as [" + NORMAL_TYPE_DIV + "] or ["
-               + SPECIAL_TYPE_INHERIT + "] in AttributeComponent.");
-      }
-   }
+	public void setType(String type)
+			throws ConfigurationException
+	{
+		if (NORMAL_TYPE_DIV.equals(type) || SPECIAL_TYPE_INHERIT.equals(type))
+		{
+			this.type = type;
+		}
+		else
+		{
+			throw new ConfigurationException("Must set type as [" + NORMAL_TYPE_DIV + "] or ["
+					+ SPECIAL_TYPE_INHERIT + "] in AttributeComponent.");
+		}
+	}
 
-   public void printSpecialBody(Writer out, AppData data, ViewAdapter view)
-         throws IOException, ConfigurationException
-   {
-      super.printSpecialBody(out, data, view);
-      out.write(',');
-      out.write(NO_SUB_FLAG);
-      out.write(":1");
-      if (!StringTool.isEmpty(this.bodyHTML))
-      {
-         out.write(",bodyString:\"");
-         this.stringCoder.toJsonStringWithoutCheck(out, this.bodyHTML);
-         out.write('"');
-      }
-      if (SPECIAL_TYPE_INHERIT.equals(this.type))
-      {
-         out.write(',');
-         out.write(INHERIT_GLOBAL_SEARCH);
-         out.write(":{gSearch:1");
-         if (this.swapFlag != null)
-         {
-            out.write(',');
-            out.write(FLAG_TAG);
-            out.write(":\"");
-            this.stringCoder.toJsonStringWithoutCheck(out, this.swapFlag);
-            out.write('"');
-         }
-         out.write('}');
-      }
-   }
+	public void printSpecialBody(Writer out, AppData data, ViewAdapter view)
+			throws IOException, ConfigurationException
+	{
+		super.printSpecialBody(out, data, view);
+		out.write(',');
+		out.write(NO_SUB_FLAG);
+		out.write(":1");
+		if (!StringTool.isEmpty(this.bodyHTML))
+		{
+			out.write(",bodyString:\"");
+			this.stringCoder.toJsonStringWithoutCheck(out, this.bodyHTML);
+			out.write('"');
+		}
+		if (SPECIAL_TYPE_INHERIT.equals(this.type))
+		{
+			out.write(',');
+			out.write(INHERIT_GLOBAL_SEARCH);
+			out.write(":{gSearch:1");
+			if (this.swapFlag != null)
+			{
+				out.write(',');
+				out.write(FLAG_TAG);
+				out.write(":\"");
+				this.stringCoder.toJsonStringWithoutCheck(out, this.swapFlag);
+				out.write('"');
+			}
+			out.write('}');
+		}
+	}
 
 }

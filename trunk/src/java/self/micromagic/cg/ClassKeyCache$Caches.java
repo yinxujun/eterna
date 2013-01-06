@@ -6,10 +6,12 @@ import java.util.Map;
 import self.micromagic.util.container.SynHashMap;
 
 /**
- * ĞèÒª¶¨ÒåÔÚ<code>ClassLoader</code>ÖĞ, ´æ·Å»º´æÊı¾İµÄÀà.
+ * éœ€è¦å®šä¹‰åœ¨<code>ClassLoader</code>ä¸­, å­˜æ”¾ç¼“å­˜æ•°æ®çš„ç±».
+ *
+ * @author micromagic@sina.com
  */
 public class ClassKeyCache$Caches
 {
-   public static Map caches = new SynHashMap(8, SynHashMap.WEAK);
+	public static Map caches = new SynHashMap(8, SynHashMap.WEAK);
 
 }

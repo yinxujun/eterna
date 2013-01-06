@@ -26,1213 +26,1213 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public class Utils
 {
-   public static char[] CODE16 = {
-      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-      'A', 'B', 'C', 'D', 'E', 'F'
-   };
+	public static char[] CODE16 = {
+		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+		'A', 'B', 'C', 'D', 'E', 'F'
+	};
 
-   public static String TOTAL_RECORD_TAG = "self.total.record";
-   public static String PAGE_COUNT_TAG = "self.page.count";
-   public static String PRE_PAGE_TAG = "self.pre.page";
-   public static String NEXT_PAGE_TAG = "self.next.page";
+	public static String TOTAL_RECORD_TAG = "self.total.record";
+	public static String PAGE_COUNT_TAG = "self.page.count";
+	public static String PRE_PAGE_TAG = "self.pre.page";
+	public static String NEXT_PAGE_TAG = "self.next.page";
 
-   public static final String SERVER_ROOT_TAG = "self.server.root";
+	public static final String SERVER_ROOT_TAG = "self.server.root";
 
-   public static int parseInt(String str)
-   {
-      return parseInt(str, 0);
-   }
+	public static int parseInt(String str)
+	{
+		return parseInt(str, 0);
+	}
 
-   public static int parseInt(String str, int defaultValue)
-   {
-      try
-      {
-         return Integer.parseInt(str);
-      }
-      catch (Exception ex)
-      {
-         return defaultValue;
-      }
-   }
+	public static int parseInt(String str, int defaultValue)
+	{
+		try
+		{
+			return Integer.parseInt(str);
+		}
+		catch (Exception ex)
+		{
+			return defaultValue;
+		}
+	}
 
-   public static double parseDouble(String str)
-   {
-      return parseDouble(str, 0.0);
-   }
+	public static double parseDouble(String str)
+	{
+		return parseDouble(str, 0.0);
+	}
 
-   public static double parseDouble(String str, double defaultValue)
-   {
-      try
-      {
-         return Double.parseDouble(str);
-      }
-      catch (Exception ex)
-      {
-         return defaultValue;
-      }
-   }
+	public static double parseDouble(String str, double defaultValue)
+	{
+		try
+		{
+			return Double.parseDouble(str);
+		}
+		catch (Exception ex)
+		{
+			return defaultValue;
+		}
+	}
 
-   public static void setListPageAttributes(String listURL, SearchManager.Attributes attributes,
-         SearchAdapter.Result result, HttpServletRequest request)
-         throws SQLException, ConfigurationException
-   {
-      String root = request.getContextPath();
-      int totalRecord = result.queryResult.getRealRecordCount();
-      int pageCount;
-      if ((totalRecord % result.pageSize) == 0)
-      {
-         pageCount = totalRecord / result.pageSize;
-      }
-      else
-      {
-         pageCount = totalRecord / result.pageSize + 1;
-      }
-      request.setAttribute(TOTAL_RECORD_TAG, totalRecord + "");
-      request.setAttribute(PAGE_COUNT_TAG, pageCount + "");
+	public static void setListPageAttributes(String listURL, SearchManager.Attributes attributes,
+			SearchAdapter.Result result, HttpServletRequest request)
+			throws SQLException, ConfigurationException
+	{
+		String root = request.getContextPath();
+		int totalRecord = result.queryResult.getRealRecordCount();
+		int pageCount;
+		if ((totalRecord % result.pageSize) == 0)
+		{
+			pageCount = totalRecord / result.pageSize;
+		}
+		else
+		{
+			pageCount = totalRecord / result.pageSize + 1;
+		}
+		request.setAttribute(TOTAL_RECORD_TAG, totalRecord + "");
+		request.setAttribute(PAGE_COUNT_TAG, pageCount + "");
 
-      String prePageHref, nextPageFref;
-      int prePage = (result.pageNum - 1) > pageCount ? (pageCount - 1) : result.pageNum - 1;
-      if (result.pageNum > 0)
-      {
-         StringAppender temp = StringTool.createStringAppender(256);
-         temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
-               .append('=').append(prePage).append("\">ÉÏÒ»Ò³</a>");
-         prePageHref = temp.toString();
-      }
-      else
-      {
-         prePageHref = "<a>ÉÏÒ»Ò³</a>";
-      }
-      if (result.queryResult.isHasMoreRecord())
-      {
-         StringAppender temp = StringTool.createStringAppender(256);
-         temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
-               .append('=').append(result.pageNum + 1).append("\">ÏÂÒ»Ò³</a>");
-         nextPageFref = temp.toString();
-      }
-      else
-      {
-         nextPageFref = "<a>ÏÂÒ»Ò³</a>";
-      }
-      request.setAttribute(PRE_PAGE_TAG, prePageHref);
-      request.setAttribute(NEXT_PAGE_TAG, nextPageFref);
-   }
+		String prePageHref, nextPageFref;
+		int prePage = (result.pageNum - 1) > pageCount ? (pageCount - 1) : result.pageNum - 1;
+		if (result.pageNum > 0)
+		{
+			StringAppender temp = StringTool.createStringAppender(256);
+			temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
+					.append('=').append(prePage).append("\">ä¸Šä¸€é¡µ</a>");
+			prePageHref = temp.toString();
+		}
+		else
+		{
+			prePageHref = "<a>ä¸Šä¸€é¡µ</a>";
+		}
+		if (result.queryResult.isHasMoreRecord())
+		{
+			StringAppender temp = StringTool.createStringAppender(256);
+			temp.append("<a href=\"").append(root).append(listURL).append(attributes.pageNumTag)
+					.append('=').append(result.pageNum + 1).append("\">ä¸‹ä¸€é¡µ</a>");
+			nextPageFref = temp.toString();
+		}
+		else
+		{
+			nextPageFref = "<a>ä¸‹ä¸€é¡µ</a>";
+		}
+		request.setAttribute(PRE_PAGE_TAG, prePageHref);
+		request.setAttribute(NEXT_PAGE_TAG, nextPageFref);
+	}
 
-   public static String getServerRoot(HttpServletRequest request)
-   {
-      HttpSession session = request.getSession();
-      String serverRoot = (String) session.getAttribute(SERVER_ROOT_TAG);
-      if (serverRoot == null)
-      {
-         serverRoot = request.getScheme() + "://" + request.getServerName()
-               + ":" + request.getServerPort();
-         session.setAttribute(SERVER_ROOT_TAG, serverRoot);
-      }
-      return serverRoot;
-   }
+	public static String getServerRoot(HttpServletRequest request)
+	{
+		HttpSession session = request.getSession();
+		String serverRoot = (String) session.getAttribute(SERVER_ROOT_TAG);
+		if (serverRoot == null)
+		{
+			serverRoot = request.getScheme() + "://" + request.getServerName()
+					+ ":" + request.getServerPort();
+			session.setAttribute(SERVER_ROOT_TAG, serverRoot);
+		}
+		return serverRoot;
+	}
 
-   public static String getThisPageHref(HttpServletRequest request)
-   {
-      String href;
-      String queryStr = request.getQueryString();
-      if (queryStr != null)
-      {
-         href = request.getRequestURL().append('?')
-               .append(request.getQueryString()).toString();
-      }
-      else
-      {
-         href = request.getRequestURL().toString();
-      }
-      return href;
-   }
+	public static String getThisPageHref(HttpServletRequest request)
+	{
+		String href;
+		String queryStr = request.getQueryString();
+		if (queryStr != null)
+		{
+			href = request.getRequestURL().append('?')
+					.append(request.getQueryString()).toString();
+		}
+		else
+		{
+			href = request.getRequestURL().toString();
+		}
+		return href;
+	}
 
-   /**
-    * Éú³ÉÓÃÓÚÊ÷ĞÍÑ¡ÔñµÄscript, ·½·¨Ãû³ÆÎªdoTreeSelect<p>
-    * ×¢: valueÈç¹ûÊÇ×Ö·û´®ÇëÔÚÍâÃæ¼ÓÉÏË«ÒıºÅ<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    function doTreeSelect()
-    *    {
-    *       var sName = [value];
-    *       showModalDialog("[root]/eterna/tree.jsp?treeName=[treeName]&selectedName=" + sName,
-    *             new Array(window, [returnMethod]), "dialogWidth:380px;dialogHeight:460px;center:yes;status:no;help:no");
-    *    }
-    * </pre></blockquote>
-    * ´ËÍâ, Èç¹ûwithScriptTagÎªtrue, Ôò´úÂë¶ÎÇ°ºó»¹»á¼ÓÉÏ<script language="javascript">ºÍ</script>
-    */
-   public static void printTreeSelectScript(JspWriter out, String root, String treeName,
-         String value, String returnMethod, boolean withScriptTag)
-         throws IOException
-   {
-      if (withScriptTag)
-      {
-         out.println("<script language=\"javascript\">");
-      }
+	/**
+	 * ç”Ÿæˆç”¨äºæ ‘å‹é€‰æ‹©çš„script, æ–¹æ³•åç§°ä¸ºdoTreeSelect<p>
+	 * æ³¨: valueå¦‚æœæ˜¯å­—ç¬¦ä¸²è¯·åœ¨å¤–é¢åŠ ä¸ŠåŒå¼•å·<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    function doTreeSelect()
+	 *    {
+	 *       var sName = [value];
+	 *       showModalDialog("[root]/eterna/tree.jsp?treeName=[treeName]&selectedName=" + sName,
+	 *             new Array(window, [returnMethod]), "dialogWidth:380px;dialogHeight:460px;center:yes;status:no;help:no");
+	 *    }
+	 * </pre></blockquote>
+	 * æ­¤å¤–, å¦‚æœwithScriptTagä¸ºtrue, åˆ™ä»£ç æ®µå‰åè¿˜ä¼šåŠ ä¸Š<script language="javascript">å’Œ</script>
+	 */
+	public static void printTreeSelectScript(JspWriter out, String root, String treeName,
+			String value, String returnMethod, boolean withScriptTag)
+			throws IOException
+	{
+		if (withScriptTag)
+		{
+			out.println("<script language=\"javascript\">");
+		}
 
-      out.println("function doTreeSelect()");
-      out.println('{');
-      out.print("   var sName = ");
-      out.print(value);
-      out.println(';');
+		out.println("function doTreeSelect()");
+		out.println('{');
+		out.print("   var sName = ");
+		out.print(value);
+		out.println(';');
 
-      out.print("   showModalDialog(\"");
-      out.print(root);
-      out.print("/eterna/tree.jsp?treeName=");
-      out.print(treeName);
-      out.println("&selectedName=\" + sName,");
+		out.print("   showModalDialog(\"");
+		out.print(root);
+		out.print("/eterna/tree.jsp?treeName=");
+		out.print(treeName);
+		out.println("&selectedName=\" + sName,");
 
-      out.print("         new Array(window, ");
-      out.print(returnMethod);
-      out.println("), \"dialogWidth:380px;dialogHeight:460px;center:yes;status:no;help:no\");");
-      out.println('}');
+		out.print("         new Array(window, ");
+		out.print(returnMethod);
+		out.println("), \"dialogWidth:380px;dialogHeight:460px;center:yes;status:no;help:no\");");
+		out.println('}');
 
-      if (withScriptTag)
-      {
-         out.println("</script>");
-      }
-   }
+		if (withScriptTag)
+		{
+			out.println("</script>");
+		}
+	}
 
-   /**
-    * Éú³ÉÓÃÓÚ²éÑ¯µÄjavascript´úÂë, ·½·¨Ãû³ÆÎªdoSearch<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    function doSearch()
-    *    {
-    *       var queryXML = document.[formName].[attributes.querySettingTag];
-    *       queryXML.value = "";
-    *       showModalDialog("[root]/eterna/query.jsp?searchName==[searchName]",
-    *             new Array(window, queryXML), "dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no");
-    *       if (queryXML.value != "")
-    *       {
-    *          document.[formName].submit();
-    *       }
-    *    }
-    * </pre></blockquote>
-    * ´ËÍâ, Èç¹ûwithScriptTagÎªtrue, Ôò´úÂë¶ÎÇ°ºó»¹»á¼ÓÉÏ<script language="javascript">ºÍ</script>
-    */
-   public static void printQueryScript(JspWriter out, SearchManager.Attributes attributes,
-         String root, String searchName, String formName, boolean withScriptTag)
-         throws IOException
-   {
-      if (withScriptTag)
-      {
-         out.println("<script language=\"javascript\">");
-      }
+	/**
+	 * ç”Ÿæˆç”¨äºæŸ¥è¯¢çš„javascriptä»£ç , æ–¹æ³•åç§°ä¸ºdoSearch<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    function doSearch()
+	 *    {
+	 *       var queryXML = document.[formName].[attributes.querySettingTag];
+	 *       queryXML.value = "";
+	 *       showModalDialog("[root]/eterna/query.jsp?searchName==[searchName]",
+	 *             new Array(window, queryXML), "dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no");
+	 *       if (queryXML.value != "")
+	 *       {
+	 *          document.[formName].submit();
+	 *       }
+	 *    }
+	 * </pre></blockquote>
+	 * æ­¤å¤–, å¦‚æœwithScriptTagä¸ºtrue, åˆ™ä»£ç æ®µå‰åè¿˜ä¼šåŠ ä¸Š<script language="javascript">å’Œ</script>
+	 */
+	public static void printQueryScript(JspWriter out, SearchManager.Attributes attributes,
+			String root, String searchName, String formName, boolean withScriptTag)
+			throws IOException
+	{
+		if (withScriptTag)
+		{
+			out.println("<script language=\"javascript\">");
+		}
 
-      out.println("function doSearch()");
-      out.println('{');
-      out.print("   var queryXML = document.");
-      out.print(formName);
-      out.print('.');
-      out.print(attributes.querySettingTag);
-      out.println(';');
-      out.println("   queryXML.value = \"\";");
+		out.println("function doSearch()");
+		out.println('{');
+		out.print("   var queryXML = document.");
+		out.print(formName);
+		out.print('.');
+		out.print(attributes.querySettingTag);
+		out.println(';');
+		out.println("   queryXML.value = \"\";");
 
-      out.print("   showModalDialog(\"");
-      out.print(root);
-      out.print("/eterna/query.jsp?searchName=");
-      out.print(searchName);
-      out.println("\",");
-      out.println("         new Array(window, queryXML), \"dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no\");");
+		out.print("   showModalDialog(\"");
+		out.print(root);
+		out.print("/eterna/query.jsp?searchName=");
+		out.print(searchName);
+		out.println("\",");
+		out.println("         new Array(window, queryXML), \"dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no\");");
 
-      out.println("   if (queryXML.value != \"\")");
-      out.println("   {");
-      out.print("      document.");
-      out.print(formName);
-      out.println(".submit();");
-      out.println("   }");
-      out.println('}');
+		out.println("   if (queryXML.value != \"\")");
+		out.println("   {");
+		out.print("      document.");
+		out.print(formName);
+		out.println(".submit();");
+		out.println("   }");
+		out.println('}');
 
-      if (withScriptTag)
-      {
-         out.println("</script>");
-      }
-   }
+		if (withScriptTag)
+		{
+			out.println("</script>");
+		}
+	}
 
-   /**
-    * Éú³ÉÓÃÓÚÌø×ªÖÁÄ³Ò³µÄjavascript´úÂë, ·½·¨Ãû³ÆÎªdoPageJump<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    function doPageJump()
-    *    {
-    *       var queryXML = document.[formName].[attributes.querySettingTag];
-    *       queryXML.value = "";
-    *       showModalDialog("[root]/eterna/query.jsp?searchName==[searchName]",
-    *             new Array(window, queryXML), "dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no");
-    *       if (queryXML.value != "")
-    *       {
-    *          document.queryForm.submit();
-    *       }
-    *    }
-    * </pre></blockquote>
-    * ´ËÍâ, Èç¹ûwithScriptTagÎªtrue, Ôò´úÂë¶ÎÇ°ºó»¹»á¼ÓÉÏ<script language="javascript">ºÍ</script>
-    */
-   public static void printPageJumpScript(JspWriter out, SearchManager.Attributes attributes,
-         String root, String searchName, String formName, boolean withScriptTag)
-         throws IOException
-   {
-      if (withScriptTag)
-      {
-         out.println("<script language=\"javascript\">");
-      }
+	/**
+	 * ç”Ÿæˆç”¨äºè·³è½¬è‡³æŸé¡µçš„javascriptä»£ç , æ–¹æ³•åç§°ä¸ºdoPageJump<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    function doPageJump()
+	 *    {
+	 *       var queryXML = document.[formName].[attributes.querySettingTag];
+	 *       queryXML.value = "";
+	 *       showModalDialog("[root]/eterna/query.jsp?searchName==[searchName]",
+	 *             new Array(window, queryXML), "dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no");
+	 *       if (queryXML.value != "")
+	 *       {
+	 *          document.queryForm.submit();
+	 *       }
+	 *    }
+	 * </pre></blockquote>
+	 * æ­¤å¤–, å¦‚æœwithScriptTagä¸ºtrue, åˆ™ä»£ç æ®µå‰åè¿˜ä¼šåŠ ä¸Š<script language="javascript">å’Œ</script>
+	 */
+	public static void printPageJumpScript(JspWriter out, SearchManager.Attributes attributes,
+			String root, String searchName, String formName, boolean withScriptTag)
+			throws IOException
+	{
+		if (withScriptTag)
+		{
+			out.println("<script language=\"javascript\">");
+		}
 
-      out.println("function doSearch()");
-      out.println('{');
-      out.print("   var queryXML = document.");
-      out.print(formName);
-      out.print('.');
-      out.print(attributes.querySettingTag);
-      out.println(';');
-      out.println("   queryXML.value = \"\";");
+		out.println("function doSearch()");
+		out.println('{');
+		out.print("   var queryXML = document.");
+		out.print(formName);
+		out.print('.');
+		out.print(attributes.querySettingTag);
+		out.println(';');
+		out.println("   queryXML.value = \"\";");
 
-      out.print("   showModalDialog(\"");
-      out.print(root);
-      out.print("/eterna/query.jsp?searchName=");
-      out.print(searchName);
-      out.println("\",");
-      out.println("         new Array(window, queryXML), \"dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no\");");
+		out.print("   showModalDialog(\"");
+		out.print(root);
+		out.print("/eterna/query.jsp?searchName=");
+		out.print(searchName);
+		out.println("\",");
+		out.println("         new Array(window, queryXML), \"dialogWidth:520px;dialogHeight:420px;center:yes;status:no;help:no\");");
 
-      out.println("   if (queryXML.value != \"\")");
-      out.println("   {");
-      out.println("      document.queryForm.submit();");
-      out.println("   }");
-      out.println('}');
+		out.println("   if (queryXML.value != \"\")");
+		out.println("   {");
+		out.println("      document.queryForm.submit();");
+		out.println("   }");
+		out.println('}');
 
-      if (withScriptTag)
-      {
-         out.println("</script>");
-      }
-   }
+		if (withScriptTag)
+		{
+			out.println("</script>");
+		}
+	}
 
-   /**
-    * Éú³ÉÓÃÓÚ²éÑ¯form<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    <form name="[formName]" method="post" action="[root]+[queryUrl]">
-    *       <input type="hidden" name="[attributes.querySettingTag]" value="">
-    *       <input type="hidden" name="[attributes.queryTypeTag]" value="[attributes.queryTypeReset]">
-    *       <input type="hidden" name="[attributes.pageNumTag]" value="0">
-    *    </form>
-    * </pre></blockquote>
-    *
-    * @param withFormEnd   ÊÇ·ñÒªÌí¼ÓformµÄ½áÊø±êÇ©&lt;/form&gt;
-    */
-   public static void printQueryForm(JspWriter out, SearchManager.Attributes attributes,
-         String root, String formName, String queryUrl, boolean withFormEnd)
-         throws IOException
-   {
-      out.print("<form name=\"");
-      out.print(formName);
-      out.print("\" method=\"post\" action=\"");
-      out.print(root);
-      out.print(queryUrl);
-      out.println("\">");
+	/**
+	 * ç”Ÿæˆç”¨äºæŸ¥è¯¢form<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    <form name="[formName]" method="post" action="[root]+[queryUrl]">
+	 *       <input type="hidden" name="[attributes.querySettingTag]" value="">
+	 *       <input type="hidden" name="[attributes.queryTypeTag]" value="[attributes.queryTypeReset]">
+	 *       <input type="hidden" name="[attributes.pageNumTag]" value="0">
+	 *    </form>
+	 * </pre></blockquote>
+	 *
+	 * @param withFormEnd   æ˜¯å¦è¦æ·»åŠ formçš„ç»“æŸæ ‡ç­¾&lt;/form&gt;
+	 */
+	public static void printQueryForm(JspWriter out, SearchManager.Attributes attributes,
+			String root, String formName, String queryUrl, boolean withFormEnd)
+			throws IOException
+	{
+		out.print("<form name=\"");
+		out.print(formName);
+		out.print("\" method=\"post\" action=\"");
+		out.print(root);
+		out.print(queryUrl);
+		out.println("\">");
 
-      out.print("   <input type=\"hidden\" name=\"");
-      out.print(attributes.querySettingTag);
-      out.println("\" value=\"\">");
-      out.print("   <input type=\"hidden\" name=\"");
-      out.print(attributes.queryTypeTag);
-      out.print("\" value=\"");
-      out.print(attributes.queryTypeReset);
-      out.println("\">");
-      out.print("   <input type=\"hidden\" name=\"");
-      out.print(attributes.pageNumTag);
-      out.println("\" value=\"0\">");
+		out.print("   <input type=\"hidden\" name=\"");
+		out.print(attributes.querySettingTag);
+		out.println("\" value=\"\">");
+		out.print("   <input type=\"hidden\" name=\"");
+		out.print(attributes.queryTypeTag);
+		out.print("\" value=\"");
+		out.print(attributes.queryTypeReset);
+		out.println("\">");
+		out.print("   <input type=\"hidden\" name=\"");
+		out.print(attributes.pageNumTag);
+		out.println("\" value=\"0\">");
 
-      if (withFormEnd)
-      {
-         out.println("</form>");
-      }
-   }
+		if (withFormEnd)
+		{
+			out.println("</form>");
+		}
+	}
 
-   /**
-    * Éú³ÉÓÃÓÚ²éÑ¯form<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    <form name="[formName]" method="post" action="[root]+[queryUrl]">
-    *       <input type="hidden" name="[attributes.querySettingTag]" value="">
-    *       <input type="hidden" name="[attributes.queryTypeTag]" value="[attributes.queryTypeReset]">
-    *       <input type="hidden" name="[attributes.pageNumTag]" value="0">
-    *    </form>
-    * </pre></blockquote>
-    */
-   public static void printQueryForm(JspWriter out, SearchManager.Attributes attributes,
-         String root, String formName, String queryUrl)
-         throws IOException
-   {
-      printQueryForm(out, attributes, root, formName, queryUrl, true);
-   }
+	/**
+	 * ç”Ÿæˆç”¨äºæŸ¥è¯¢form<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    <form name="[formName]" method="post" action="[root]+[queryUrl]">
+	 *       <input type="hidden" name="[attributes.querySettingTag]" value="">
+	 *       <input type="hidden" name="[attributes.queryTypeTag]" value="[attributes.queryTypeReset]">
+	 *       <input type="hidden" name="[attributes.pageNumTag]" value="0">
+	 *    </form>
+	 * </pre></blockquote>
+	 */
+	public static void printQueryForm(JspWriter out, SearchManager.Attributes attributes,
+			String root, String formName, String queryUrl)
+			throws IOException
+	{
+		printQueryForm(out, attributes, root, formName, queryUrl, true);
+	}
 
 
-   /**
-    * Éú³Éselect¿Ø¼şµÄÒ»×éoption<p>
-    */
-   public static void printOptions(JspWriter out, List rows, String indentSpace)
-         throws IOException, SQLException, ConfigurationException
-   {
-      printOptions(out, rows, indentSpace, "codeId", "codeValue");
-   }
+	/**
+	 * ç”Ÿæˆselectæ§ä»¶çš„ä¸€ç»„option<p>
+	 */
+	public static void printOptions(JspWriter out, List rows, String indentSpace)
+			throws IOException, SQLException, ConfigurationException
+	{
+		printOptions(out, rows, indentSpace, "codeId", "codeValue");
+	}
 
-   /**
-    * Éú³Éselect¿Ø¼şµÄÒ»×éoption<p>
-    */
-   public static void printOptions(JspWriter out, List rows, String indentSpace,
-         String colNameCodeId, String colNameCodeValue)
-         throws IOException, SQLException, ConfigurationException
-   {
-      Iterator itr = rows.iterator();
-      while (itr.hasNext())
-      {
-         ResultRow row = (ResultRow) itr.next();
-         printOption(out, row, indentSpace, colNameCodeId, colNameCodeValue);
-      }
-   }
+	/**
+	 * ç”Ÿæˆselectæ§ä»¶çš„ä¸€ç»„option<p>
+	 */
+	public static void printOptions(JspWriter out, List rows, String indentSpace,
+			String colNameCodeId, String colNameCodeValue)
+			throws IOException, SQLException, ConfigurationException
+	{
+		Iterator itr = rows.iterator();
+		while (itr.hasNext())
+		{
+			ResultRow row = (ResultRow) itr.next();
+			printOption(out, row, indentSpace, colNameCodeId, colNameCodeValue);
+		}
+	}
 
-   /**
-    * Éú³Éselect¿Ø¼şµÄoption<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    <option value="[codeId]">[codeValue]</option>
-    * </pre></blockquote>
-    */
-   public static void printOption(JspWriter out, ResultRow row, String indentSpace)
-         throws IOException, SQLException, ConfigurationException
-   {
-      printOption(out, row, indentSpace, "codeId", "codeValue");
-   }
+	/**
+	 * ç”Ÿæˆselectæ§ä»¶çš„option<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    <option value="[codeId]">[codeValue]</option>
+	 * </pre></blockquote>
+	 */
+	public static void printOption(JspWriter out, ResultRow row, String indentSpace)
+			throws IOException, SQLException, ConfigurationException
+	{
+		printOption(out, row, indentSpace, "codeId", "codeValue");
+	}
 
-   /**
-    * Éú³Éselect¿Ø¼şµÄoption<p>
-    * ´úÂëÊ¾Àı:
-    * <p><blockquote><pre>
-    *    <option value="[codeId]">[codeValue]</option>
-    * </pre></blockquote>
-    */
-   public static void printOption(JspWriter out, ResultRow row, String indentSpace,
-         String colNameCodeId, String colNameCodeValue)
-         throws IOException, SQLException, ConfigurationException
-   {
-      out.print(indentSpace);
-      out.print("<option value=\"");
-      out.print(Utils.getResult(row, colNameCodeId, false));
-      out.print("\">");
-      out.print(Utils.getResult(row, colNameCodeValue, true));
-      out.println("</option>");
-   }
+	/**
+	 * ç”Ÿæˆselectæ§ä»¶çš„option<p>
+	 * ä»£ç ç¤ºä¾‹:
+	 * <p><blockquote><pre>
+	 *    <option value="[codeId]">[codeValue]</option>
+	 * </pre></blockquote>
+	 */
+	public static void printOption(JspWriter out, ResultRow row, String indentSpace,
+			String colNameCodeId, String colNameCodeValue)
+			throws IOException, SQLException, ConfigurationException
+	{
+		out.print(indentSpace);
+		out.print("<option value=\"");
+		out.print(Utils.getResult(row, colNameCodeId, false));
+		out.print("\">");
+		out.print(Utils.getResult(row, colNameCodeValue, true));
+		out.println("</option>");
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»Îª¿É·ÅÈëË«ÒıºÅÄÚ¸³ÖµµÄ×Ö·û´®.
-    * Í¬Ê±»á½«Ğ¡ÓÚ¿Õ¸ñµÄ´úÂë(²»°üÀ¨:\r,\n,\t), ×ª»»Îª¿Õ¸ñ.
-    */
-   public static String dealString2EditCode(String str)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      StringAppender temp = null;
-      int modifyCount = 0;
-      for (int i = 0; i < str.length(); i++)
-      {
-         char c = str.charAt(i);
-         String appendStr = null;
-         if (c < ' ')
-         {
-            if (c == '\r')
-            {
-               appendStr = "\\r";
-            }
-            else if (c == '\n')
-            {
-               appendStr = "\\n";
-            }
-            else if (c == '\t')
-            {
-               appendStr = "\\t";
-            }
-            else
-            {
-               appendStr = " ";
-            }
-            modifyCount++;
-         }
-         else if (c == '"')
-         {
-            appendStr = "\\\"";
-            modifyCount++;
-         }
-         else if (c == '\'')
-         {
-            appendStr = "\\'";
-            modifyCount++;
-         }
-         else if (c == '\\')
-         {
-            appendStr = "\\\\";
-            modifyCount++;
-         }
-         else if (c == '<')
-         {
-            appendStr = "\\074";  // 074 = 0x3C = '<'
-            modifyCount++;
-         }
-         if (modifyCount == 1)
-         {
-            temp = StringTool.createStringAppender(str.length() + 16);
-            temp.append(str.substring(0, i));
-            //ÕâÀï½«modifyCountµÄ¸öÊıÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌĞø½øÈëÕâ¸ö³õÊ¼»¯
-            modifyCount++;
-         }
-         if (modifyCount > 0)
-         {
-            if (appendStr == null)
-            {
-               temp.append(c);
-            }
-            else
-            {
-               temp.append(appendStr);
-            }
-         }
-      }
-      return temp == null ? str : temp.toString();
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºå¯æ”¾å…¥åŒå¼•å·å†…èµ‹å€¼çš„å­—ç¬¦ä¸².
+	 * åŒæ—¶ä¼šå°†å°äºç©ºæ ¼çš„ä»£ç (ä¸åŒ…æ‹¬:\r,\n,\t), è½¬æ¢ä¸ºç©ºæ ¼.
+	 */
+	public static String dealString2EditCode(String str)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			String appendStr = null;
+			if (c < ' ')
+			{
+				if (c == '\r')
+				{
+					appendStr = "\\r";
+				}
+				else if (c == '\n')
+				{
+					appendStr = "\\n";
+				}
+				else if (c == '\t')
+				{
+					appendStr = "\\t";
+				}
+				else
+				{
+					appendStr = " ";
+				}
+				modifyCount++;
+			}
+			else if (c == '"')
+			{
+				appendStr = "\\\"";
+				modifyCount++;
+			}
+			else if (c == '\'')
+			{
+				appendStr = "\\'";
+				modifyCount++;
+			}
+			else if (c == '\\')
+			{
+				appendStr = "\\\\";
+				modifyCount++;
+			}
+			else if (c == '<')
+			{
+				appendStr = "\\074";  // 074 = 0x3C = '<'
+				modifyCount++;
+			}
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16);
+				temp.append(str.substring(0, i));
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢åŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append(c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªHTML¸ñÊ½µÄ´úÂë, ²¢Ö±½ÓÊä³ö.
-    * ÕâÖÖ·½·¨ÊÊºÏ´¦Àí±È½Ï³¤µÄ×Ö·û´®
-    */
-   public static void dealString2HTML(String str, Writer out)
-         throws IOException
-   {
-      dealString2HTML(str, out, false);
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºHTMLæ ¼å¼çš„ä»£ç , å¹¶ç›´æ¥è¾“å‡º.
+	 * è¿™ç§æ–¹æ³•é€‚åˆå¤„ç†æ¯”è¾ƒé•¿çš„å­—ç¬¦ä¸²
+	 */
+	public static void dealString2HTML(String str, Writer out)
+			throws IOException
+	{
+		dealString2HTML(str, out, false);
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªHTML¸ñÊ½µÄ´úÂë, ²¢Ö±½ÓÊä³ö.
-    * ÕâÖÖ·½·¨ÊÊºÏ´¦Àí±È½Ï³¤µÄ×Ö·û´®
-    *
-    * @param dealNewLine  ÊÇ·ñÒª½«»»ĞĞ"\n"´¦Àí³É"<br>"
-    */
-   public static void dealString2HTML(String str, Writer out, boolean dealNewLine)
-         throws IOException
-   {
-      if (str == null)
-      {
-         return;
-      }
-      boolean preSpace = true;
-      for (int i = 0; i < str.length(); i++)
-      {
-         char c = str.charAt(i);
-         switch (c)
-         {
-            case '<':
-               out.write("&lt;");
-               break;
-            case '>':
-               out.write("&gt;");
-               break;
-            case '&':
-               out.write("&amp;");
-               break;
-            case '"':
-               out.write("&quot;");
-               break;
-            case '\'':
-               out.write("&#39;");
-               break;
-            case '\n':
-               if (dealNewLine)
-               {
-                  out.write("\n<br>");
-                  preSpace = true;
-               }
-               else
-               {
-                  out.write('\n');
-               }
-               break;
-            case ' ':
-               if (dealNewLine)
-               {
-                  if (preSpace)
-                  {
-                     out.write("&nbsp;");
-                     preSpace = false;
-                  }
-                  else
-                  {
-                     out.write(' ');
-                     preSpace = true;
-                  }
-               }
-               else
-               {
-                  out.write(' ');
-               }
-               break;
-            default:
-               out.write(c);
-         }
-         if (c > ' ')
-         {
-            preSpace = false;
-         }
-      }
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºHTMLæ ¼å¼çš„ä»£ç , å¹¶ç›´æ¥è¾“å‡º.
+	 * è¿™ç§æ–¹æ³•é€‚åˆå¤„ç†æ¯”è¾ƒé•¿çš„å­—ç¬¦ä¸²
+	 *
+	 * @param dealNewLine  æ˜¯å¦è¦å°†æ¢è¡Œ"\n"å¤„ç†æˆ"<br>"
+	 */
+	public static void dealString2HTML(String str, Writer out, boolean dealNewLine)
+			throws IOException
+	{
+		if (str == null)
+		{
+			return;
+		}
+		boolean preSpace = true;
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			switch (c)
+			{
+				case '<':
+					out.write("&lt;");
+					break;
+				case '>':
+					out.write("&gt;");
+					break;
+				case '&':
+					out.write("&amp;");
+					break;
+				case '"':
+					out.write("&quot;");
+					break;
+				case '\'':
+					out.write("&#39;");
+					break;
+				case '\n':
+					if (dealNewLine)
+					{
+						out.write("\n<br>");
+						preSpace = true;
+					}
+					else
+					{
+						out.write('\n');
+					}
+					break;
+				case ' ':
+					if (dealNewLine)
+					{
+						if (preSpace)
+						{
+							out.write("&nbsp;");
+							preSpace = false;
+						}
+						else
+						{
+							out.write(' ');
+							preSpace = true;
+						}
+					}
+					else
+					{
+						out.write(' ');
+					}
+					break;
+				default:
+					out.write(c);
+			}
+			if (c > ' ')
+			{
+				preSpace = false;
+			}
+		}
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªHTML¸ñÊ½µÄ´úÂë.
-    */
-   public static String dealString2HTML(String str)
-   {
-      return dealString2HTML(str, false);
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºHTMLæ ¼å¼çš„ä»£ç .
+	 */
+	public static String dealString2HTML(String str)
+	{
+		return dealString2HTML(str, false);
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªHTML¸ñÊ½µÄ´úÂë.
-    *
-    * @param dealNewLine  ÊÇ·ñÒª½«»»ĞĞ"\n"´¦Àí³É"<br>"
-    */
-   public static String dealString2HTML(String str, boolean dealNewLine)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      StringAppender temp = null;
-      int modifyCount = 0;
-      boolean preSpace = true;
-      for (int i = 0; i < str.length(); i++)
-      {
-         char c = str.charAt(i);
-         String appendStr = null;
-         switch (c)
-         {
-            case '<':
-               appendStr = "&lt;";
-               modifyCount++;
-               break;
-            case '>':
-               appendStr = "&gt;";
-               modifyCount++;
-               break;
-            case '&':
-               appendStr = "&amp;";
-               modifyCount++;
-               break;
-            case '"':
-               appendStr = "&quot;";
-               modifyCount++;
-               break;
-            case '\'':
-               appendStr = "&#39;";
-               modifyCount++;
-               break;
-            case '\n':
-               if (dealNewLine)
-               {
-                  appendStr = "\n<br>";
-                  modifyCount++;
-                  preSpace = true;
-               }
-               break;
-            case ' ':
-               if (dealNewLine)
-               {
-                  if (preSpace)
-                  {
-                     appendStr = "&nbsp;";
-                     modifyCount++;
-                     preSpace = false;
-                  }
-                  else
-                  {
-                     preSpace = true;
-                  }
-               }
-               break;
-         }
-         if (c > ' ')
-         {
-            preSpace = false;
-         }
-         if (modifyCount == 1)
-         {
-            temp = StringTool.createStringAppender(str.length() + 16);
-            temp.append(str.substring(0, i));
-            //ÕâÀï½«modifyCountµÄ¸öÊıÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌĞø½øÈëÕâ¸ö³õÊ¼»¯
-            modifyCount++;
-         }
-         if (modifyCount > 0)
-         {
-            if (appendStr == null)
-            {
-               temp.append(c);
-            }
-            else
-            {
-               temp.append(appendStr);
-            }
-         }
-      }
-      return temp == null ? str : temp.toString();
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºHTMLæ ¼å¼çš„ä»£ç .
+	 *
+	 * @param dealNewLine  æ˜¯å¦è¦å°†æ¢è¡Œ"\n"å¤„ç†æˆ"<br>"
+	 */
+	public static String dealString2HTML(String str, boolean dealNewLine)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
+		boolean preSpace = true;
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			String appendStr = null;
+			switch (c)
+			{
+				case '<':
+					appendStr = "&lt;";
+					modifyCount++;
+					break;
+				case '>':
+					appendStr = "&gt;";
+					modifyCount++;
+					break;
+				case '&':
+					appendStr = "&amp;";
+					modifyCount++;
+					break;
+				case '"':
+					appendStr = "&quot;";
+					modifyCount++;
+					break;
+				case '\'':
+					appendStr = "&#39;";
+					modifyCount++;
+					break;
+				case '\n':
+					if (dealNewLine)
+					{
+						appendStr = "\n<br>";
+						modifyCount++;
+						preSpace = true;
+					}
+					break;
+				case ' ':
+					if (dealNewLine)
+					{
+						if (preSpace)
+						{
+							appendStr = "&nbsp;";
+							modifyCount++;
+							preSpace = false;
+						}
+						else
+						{
+							preSpace = true;
+						}
+					}
+					break;
+			}
+			if (c > ' ')
+			{
+				preSpace = false;
+			}
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16);
+				temp.append(str.substring(0, i));
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢åŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append(c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªURL¸ñÊ½µÄ´úÂë.
-    */
-   public static String dealString2URL(String str)
-   {
-      return dealString2URL(str, null);
-   }
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºURLæ ¼å¼çš„ä»£ç .
+	 */
+	public static String dealString2URL(String str)
+	{
+		return dealString2URL(str, null);
+	}
 
-   /**
-    * ´¦Àí×Ö·û´®, ½«Æä×ª»»ÎªURL¸ñÊ½µÄ´úÂë.
-    */
-   public static String dealString2URL(String str, String charsetName)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      StringAppender temp = null;
-      int modifyCount = 0;
-      for (int i = 0; i < str.length(); i++)
-      {
-         int c = (int) str.charAt(i);
-         String appendStr = null;
-         if (charsetName != null && c >= 128)
-         {
-            try
-            {
-               byte[] bytes = null;
-               /*
-                * If this character represents the start of a Unicode
-                * surrogate pair, then pass in two characters. It's not
-                * clear what should be done if a bytes reserved in the
-                * surrogate pairs range occurs outside of a legal
-                * surrogate pair. For now, just treat it as if it were
-                * any other character.
-                */
-               if (c >= 0xD800 && c <= 0xDBFF)
-               {
-                  if ((i + 1) < str.length())
-                  {
-                     int d = (int) str.charAt(i + 1);
-                     if (d >= 0xDC00 && d <= 0xDFFF)
-                     {
-               			StringAppender tmpBuf = StringTool.createStringAppender(2)
+	/**
+	 * å¤„ç†å­—ç¬¦ä¸², å°†å…¶è½¬æ¢ä¸ºURLæ ¼å¼çš„ä»£ç .
+	 */
+	public static String dealString2URL(String str, String charsetName)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
+		for (int i = 0; i < str.length(); i++)
+		{
+			int c = (int) str.charAt(i);
+			String appendStr = null;
+			if (charsetName != null && c >= 128)
+			{
+				try
+				{
+					byte[] bytes = null;
+					/*
+					 * If this character represents the start of a Unicode
+					 * surrogate pair, then pass in two characters. It's not
+					 * clear what should be done if a bytes reserved in the
+					 * surrogate pairs range occurs outside of a legal
+					 * surrogate pair. For now, just treat it as if it were
+					 * any other character.
+					 */
+					if (c >= 0xD800 && c <= 0xDBFF)
+					{
+						if ((i + 1) < str.length())
+						{
+							int d = (int) str.charAt(i + 1);
+							if (d >= 0xDC00 && d <= 0xDFFF)
+							{
+								StringAppender tmpBuf = StringTool.createStringAppender(2)
 										.append((char) c).append((char) d);
-                        bytes = tmpBuf.toString().getBytes(charsetName);
-                        i++;
-                     }
-                  }
-                  if (bytes == null)
-                  {
-                     bytes = String.valueOf((char) c).getBytes(charsetName);
-                  }
-               }
-               else
-               {
-                  bytes = String.valueOf((char) c).getBytes(charsetName);
-               }
-               StringAppender tAS = StringTool.createStringAppender(bytes.length * 3);
-               for (int index = 0; index < bytes.length; index++)
-               {
-                  tAS.append('%');
-                  int tbyte = bytes[index] & 0xff;
-                  if (tbyte < 16)
-                  {
-                     tAS.append('0');
-                  }
-                  else
-                  {
-                     tAS.append(CODE16[tbyte >> 4]);
-                  }
-                  tAS.append(CODE16[tbyte & 0xf]);
-               }
-               appendStr = tAS.toString();
-               modifyCount++;
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-               throw new RuntimeException(ex);
-            }
-         }
-         else
-         {
-            if (c == ' ')
-            {
-               appendStr = "+";
-               modifyCount++;
-            }
-            else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z')
-                  && c != '.' && c != '-' && c != '_' && c != '*')
-            {
-               char[] tAS = new char[3];
-               tAS[0] = '%';
-               if (c < 16)
-               {
-                  tAS[1] = '0';
-               }
-               else
-               {
-                  tAS[1] = CODE16[(c >> 4) & 0xf];
-               }
-               tAS[2] = CODE16[c & 0xf];
-               appendStr = new String(tAS);
-               modifyCount++;
-            }
-         }
-         if (modifyCount == 1)
-         {
-            temp = StringTool.createStringAppender(str.length() + 16);
-            temp.append(str.substring(0, i));
-            //ÕâÀï½«modifyCountµÄ¸öÊıÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌĞø½øÈëÕâ¸ö³õÊ¼»¯
-            modifyCount++;
-         }
-         if (modifyCount > 0)
-         {
-            if (appendStr == null)
-            {
-               temp.append((char) c);
-            }
-            else
-            {
-               temp.append(appendStr);
-            }
-         }
-      }
-      return temp == null ? str : temp.toString();
-   }
+								bytes = tmpBuf.toString().getBytes(charsetName);
+								i++;
+							}
+						}
+						if (bytes == null)
+						{
+							bytes = String.valueOf((char) c).getBytes(charsetName);
+						}
+					}
+					else
+					{
+						bytes = String.valueOf((char) c).getBytes(charsetName);
+					}
+					StringAppender tAS = StringTool.createStringAppender(bytes.length * 3);
+					for (int index = 0; index < bytes.length; index++)
+					{
+						tAS.append('%');
+						int tbyte = bytes[index] & 0xff;
+						if (tbyte < 16)
+						{
+							tAS.append('0');
+						}
+						else
+						{
+							tAS.append(CODE16[tbyte >> 4]);
+						}
+						tAS.append(CODE16[tbyte & 0xf]);
+					}
+					appendStr = tAS.toString();
+					modifyCount++;
+				}
+				catch (UnsupportedEncodingException ex)
+				{
+					throw new RuntimeException(ex);
+				}
+			}
+			else
+			{
+				if (c == ' ')
+				{
+					appendStr = "+";
+					modifyCount++;
+				}
+				else if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z')
+						&& c != '.' && c != '-' && c != '_' && c != '*')
+				{
+					char[] tAS = new char[3];
+					tAS[0] = '%';
+					if (c < 16)
+					{
+						tAS[1] = '0';
+					}
+					else
+					{
+						tAS[1] = CODE16[(c >> 4) & 0xf];
+					}
+					tAS[2] = CODE16[c & 0xf];
+					appendStr = new String(tAS);
+					modifyCount++;
+				}
+			}
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16);
+				temp.append(str.substring(0, i));
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢åŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append((char) c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
 
-   /**
-    * »ñÈ¡Ä³ÔÂµÄÆğÊ¼ÈÕÆÚ×Ö·û´®, ÓÃÓÚ°´ÈÕÆÚ²éÑ¯.
-    *
-    * @param offset   Àë±¾ÔÂµÄÆ«ÒÆÔÂÊı, ÏòÇ°Îª¸º
-    */
-   public static String getMonthFirstDayString(int offset)
-   {
-      return getMonthDayString(offset, 1);
-   }
+	/**
+	 * è·å–æŸæœˆçš„èµ·å§‹æ—¥æœŸå­—ç¬¦ä¸², ç”¨äºæŒ‰æ—¥æœŸæŸ¥è¯¢.
+	 *
+	 * @param offset   ç¦»æœ¬æœˆçš„åç§»æœˆæ•°, å‘å‰ä¸ºè´Ÿ
+	 */
+	public static String getMonthFirstDayString(int offset)
+	{
+		return getMonthDayString(offset, 1);
+	}
 
-   /**
-    * »ñÈ¡Ä³ÔÂµÄÆğÊ¼ÈÕÆÚ×Ö·û´®, ÓÃÓÚ°´ÈÕÆÚ²éÑ¯.
-    *
-    * @param offset   Àë±¾ÔÂµÄÆ«ÒÆÔÂÊı, ÏòÇ°Îª¸º
-    * @param monthDay   Ö¸¶¨µÄÄ³ÔÂÈÕÆÚ, ±ØĞëÔÚ1ºÍ25Ö®¼ä
-    */
-   public static String getMonthDayString(int offset, int monthDay)
-   {
-      if (monthDay < 1 || monthDay > 25)
-      {
-         monthDay = 1;
-      }
-      Calendar c = Calendar.getInstance();
-      int year = c.get(Calendar.YEAR);
-      int month = c.get(Calendar.MONTH);
-      month += offset;
-      if (month < 0)
-      {
-         int offYear = (-month) / 12 + 1;
-         year -= offYear;
-         month += 12 * offYear;
-      }
-      else if (month >= 12)
-      {
-         int offYear = month / 12;
-         year += offYear;
-         month -= 12 * offYear;
-      }
-      StringAppender date = StringTool.createStringAppender(10);
-      return date.append(year).append('-').append(month + 1).append('-')
-            .append(monthDay).toString();
-   }
+	/**
+	 * è·å–æŸæœˆçš„èµ·å§‹æ—¥æœŸå­—ç¬¦ä¸², ç”¨äºæŒ‰æ—¥æœŸæŸ¥è¯¢.
+	 *
+	 * @param offset   ç¦»æœ¬æœˆçš„åç§»æœˆæ•°, å‘å‰ä¸ºè´Ÿ
+	 * @param monthDay   æŒ‡å®šçš„æŸæœˆæ—¥æœŸ, å¿…é¡»åœ¨1å’Œ25ä¹‹é—´
+	 */
+	public static String getMonthDayString(int offset, int monthDay)
+	{
+		if (monthDay < 1 || monthDay > 25)
+		{
+			monthDay = 1;
+		}
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		month += offset;
+		if (month < 0)
+		{
+			int offYear = (-month) / 12 + 1;
+			year -= offYear;
+			month += 12 * offYear;
+		}
+		else if (month >= 12)
+		{
+			int offYear = month / 12;
+			year += offYear;
+			month -= 12 * offYear;
+		}
+		StringAppender date = StringTool.createStringAppender(10);
+		return date.append(year).append('-').append(month + 1).append('-')
+				.append(monthDay).toString();
+	}
 
-   /**
-    * »ñÈ¡Ä³ÔÂµÄÆğÊ¼ÈÕÆÚ, ÓÃÓÚ°´ÈÕÆÚ²éÑ¯.
-    *
-    * @param offset   Àë±¾ÔÂµÄÆ«ÒÆÔÂÊı, ÏòÇ°Îª¸º
-    */
-   public static Date getMonthFirstDay(int offset)
-   {
-      return getMonthDay(offset, 1);
-   }
+	/**
+	 * è·å–æŸæœˆçš„èµ·å§‹æ—¥æœŸ, ç”¨äºæŒ‰æ—¥æœŸæŸ¥è¯¢.
+	 *
+	 * @param offset   ç¦»æœ¬æœˆçš„åç§»æœˆæ•°, å‘å‰ä¸ºè´Ÿ
+	 */
+	public static Date getMonthFirstDay(int offset)
+	{
+		return getMonthDay(offset, 1);
+	}
 
-   /**
-    * »ñÈ¡Ä³ÔÂµÄÖ¸¶¨ÈÕÆÚ, ÓÃÓÚ°´ÈÕÆÚ²éÑ¯.
-    *
-    * @param offset     Àë±¾ÔÂµÄÆ«ÒÆÔÂÊı, ÏòÇ°Îª¸º
-    * @param monthDay   Ö¸¶¨µÄÄ³ÔÂÈÕÆÚ, ±ØĞëÔÚ1ºÍ25Ö®¼ä
-    */
-   public static Date getMonthDay(int offset, int monthDay)
-   {
-      if (monthDay < 1 || monthDay > 25)
-      {
-         monthDay = 1;
-      }
-      Calendar c = Calendar.getInstance();
-      int year = c.get(Calendar.YEAR);
-      int month = c.get(Calendar.MONTH);
-      month += offset;
-      if (month < 0)
-      {
-         int offYear = (-month) / 12 + 1;
-         year -= offYear;
-         month += 12 * offYear;
-      }
-      else if (month >= 12)
-      {
-         int offYear = month / 12;
-         year += offYear;
-         month -= 12 * offYear;
-      }
-      c.set(year, month, monthDay, 0, 0, 0);
-      c.set(Calendar.MILLISECOND, 0);
-      return new Date(c.getTimeInMillis());
-   }
+	/**
+	 * è·å–æŸæœˆçš„æŒ‡å®šæ—¥æœŸ, ç”¨äºæŒ‰æ—¥æœŸæŸ¥è¯¢.
+	 *
+	 * @param offset     ç¦»æœ¬æœˆçš„åç§»æœˆæ•°, å‘å‰ä¸ºè´Ÿ
+	 * @param monthDay   æŒ‡å®šçš„æŸæœˆæ—¥æœŸ, å¿…é¡»åœ¨1å’Œ25ä¹‹é—´
+	 */
+	public static Date getMonthDay(int offset, int monthDay)
+	{
+		if (monthDay < 1 || monthDay > 25)
+		{
+			monthDay = 1;
+		}
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		month += offset;
+		if (month < 0)
+		{
+			int offYear = (-month) / 12 + 1;
+			year -= offYear;
+			month += 12 * offYear;
+		}
+		else if (month >= 12)
+		{
+			int offYear = month / 12;
+			year += offYear;
+			month -= 12 * offYear;
+		}
+		c.set(year, month, monthDay, 0, 0, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		return new Date(c.getTimeInMillis());
+	}
 
-   /**
-    * ¿ØÖÆÒ»¸ö×Ö·û´®µÄ³¤¶È, Ó¢ÎÄ×ÖÄ¸(0x20~0x7f)Ëã°ë¸ö³¤¶È.
-    * Èç¹û×Ö·û´®µÄ³¤¶È³¬³ö, ÔòÖ»Êä³ö³¤¶ÈÄÚµÄ×Ö·û´®, ²¢ÔÚ×îºóÌíÉÏ"...".
-    */
-   public static String formatLength(String str, int length)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      if (str.length() < length)
-      {
-         return str;
-      }
+	/**
+	 * æ§åˆ¶ä¸€ä¸ªå­—ç¬¦ä¸²çš„é•¿åº¦, è‹±æ–‡å­—æ¯(0x20~0x7f)ç®—åŠä¸ªé•¿åº¦.
+	 * å¦‚æœå­—ç¬¦ä¸²çš„é•¿åº¦è¶…å‡º, åˆ™åªè¾“å‡ºé•¿åº¦å†…çš„å­—ç¬¦ä¸², å¹¶åœ¨æœ€åæ·»ä¸Š"...".
+	 */
+	public static String formatLength(String str, int length)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		if (str.length() < length)
+		{
+			return str;
+		}
 
-      int countLimit = length * 2;
-      int count = 0;
-      int preCount = 0;
-      for (int i = 0; i < str.length(); i++)
-      {
-         preCount = count;
-         char c = str.charAt(i);
-         if (c >= 0x20 && c < 0x7f)
-         {
-            count++;
-         }
-         else
-         {
-            count += 2;
-         }
-         if (count > countLimit)
-         {
-            int end = i - 1;
-            c = str.charAt(i - 1);
-            if (c >= 0x20 && c < 0x7f && preCount == countLimit)
-            {
-               end--;
-            }
-            return str.substring(0, end) + "...";
-         }
-      }
-      return str;
-   }
+		int countLimit = length * 2;
+		int count = 0;
+		int preCount = 0;
+		for (int i = 0; i < str.length(); i++)
+		{
+			preCount = count;
+			char c = str.charAt(i);
+			if (c >= 0x20 && c < 0x7f)
+			{
+				count++;
+			}
+			else
+			{
+				count += 2;
+			}
+			if (count > countLimit)
+			{
+				int end = i - 1;
+				c = str.charAt(i - 1);
+				if (c >= 0x20 && c < 0x7f && preCount == countLimit)
+				{
+					end--;
+				}
+				return str.substring(0, end) + "...";
+			}
+		}
+		return str;
+	}
 
-   /**
-    * ½âÎö¶¯Ì¬±í¸ñ´«µİ¹ıÀ´µÄĞĞÊı¾İ¡£
-    * ·µ»ØÒ»¸öList£¬½âÎö³öÀ´µÄ×Ö·û´®¶¼·ÅÔÚÀïÃæ¡£
-    */
-   public static List parseDynamicTableValue(String str)
-   {
-      return separateString(str, '\t');
-   }
+	/**
+	 * è§£æåŠ¨æ€è¡¨æ ¼ä¼ é€’è¿‡æ¥çš„è¡Œæ•°æ®ã€‚
+	 * è¿”å›ä¸€ä¸ªListï¼Œè§£æå‡ºæ¥çš„å­—ç¬¦ä¸²éƒ½æ”¾åœ¨é‡Œé¢ã€‚
+	 */
+	public static List parseDynamicTableValue(String str)
+	{
+		return separateString(str, '\t');
+	}
 
-   /**
-    * ¸ù¾İ·Ö¸ô·û"separate"À´·Ö¸ôÒ»¸ö×Ö·û´®"str".
-    * ·µ»ØÒ»¸öList£¬·Ö¸ô³öÀ´µÄ×Ö·û´®¶¼·ÅÔÚÀïÃæ¡£
-    */
-   public static List separateString(String str, char separate)
-   {
-      if (str == null)
-      {
-         return null;
-      }
-      int count = str.length();
-      if (count == 0)
-      {
-         return Collections.EMPTY_LIST;
-      }
+	/**
+	 * æ ¹æ®åˆ†éš”ç¬¦"separate"æ¥åˆ†éš”ä¸€ä¸ªå­—ç¬¦ä¸²"str".
+	 * è¿”å›ä¸€ä¸ªListï¼Œåˆ†éš”å‡ºæ¥çš„å­—ç¬¦ä¸²éƒ½æ”¾åœ¨é‡Œé¢ã€‚
+	 */
+	public static List separateString(String str, char separate)
+	{
+		if (str == null)
+		{
+			return null;
+		}
+		int count = str.length();
+		if (count == 0)
+		{
+			return Collections.EMPTY_LIST;
+		}
 
-      List list = new ArrayList();
-      int i = 0;
-      int begin = 0;
-      while (i < count)
-      {
-         if (str.charAt(i) == separate)
-         {
-            list.add(str.substring(begin, i));
-            begin = ++i;
-         }
-         else
-         {
-            i++;
-         }
-      }
-      list.add(str.substring(begin, i));
-      return list;
-      /*
-      Ô­À´¾ÉµÄÊµÏÖ
-      String strSep = separate + "";
-      StringTokenizer token = new StringTokenizer(str, strSep, true);
-      ArrayList list = new ArrayList();
-      String nowValue = "";
-      while (token.hasMoreTokens())
-      {
-         String temp = token.nextToken();
-         if (temp.equals(strSep))
-         {
-            list.add(nowValue);
-            nowValue = "";
-         }
-         else
-         {
-            nowValue = temp;
-         }
-      }
-      list.add(nowValue);
-      return list;
-      */
-   }
+		List list = new ArrayList();
+		int i = 0;
+		int begin = 0;
+		while (i < count)
+		{
+			if (str.charAt(i) == separate)
+			{
+				list.add(str.substring(begin, i));
+				begin = ++i;
+			}
+			else
+			{
+				i++;
+			}
+		}
+		list.add(str.substring(begin, i));
+		return list;
+		/*
+		åŸæ¥æ—§çš„å®ç°
+		String strSep = separate + "";
+		StringTokenizer token = new StringTokenizer(str, strSep, true);
+		ArrayList list = new ArrayList();
+		String nowValue = "";
+		while (token.hasMoreTokens())
+		{
+			String temp = token.nextToken();
+			if (temp.equals(strSep))
+			{
+				list.add(nowValue);
+				nowValue = "";
+			}
+			else
+			{
+				nowValue = temp;
+			}
+		}
+		list.add(nowValue);
+		return list;
+		*/
+	}
 
-   /**
-    * ½«Ò»¸ö×Ö·û´®Êı×é"arr"ÓÃÒ»¸ö¸ø¶¨µÄ×Ö·û´®"linkChar"Á´½ÓÆğÀ´¡£
-    * ×¢: ·µ»ØÖµµÄ×îºó°üÀ¨Ò»¸öÁ¬½Ó×Ö·û´®¡£
-    */
-   public static String linkStringArray(String[] arr, String linkChar)
-   {
-      if (arr == null)
-      {
-         return null;
-      }
-      StringAppender buf = StringTool.createStringAppender(
-            linkChar.length() * arr.length + arr.length * 8);
-      for (int i = 0; i < arr.length; i++)
-      {
-         buf.append(arr[i]);
-         buf.append(linkChar);
-      }
-      return buf.toString();
-   }
+	/**
+	 * å°†ä¸€ä¸ªå­—ç¬¦ä¸²æ•°ç»„"arr"ç”¨ä¸€ä¸ªç»™å®šçš„å­—ç¬¦ä¸²"linkChar"é“¾æ¥èµ·æ¥ã€‚
+	 * æ³¨: è¿”å›å€¼çš„æœ€ååŒ…æ‹¬ä¸€ä¸ªè¿æ¥å­—ç¬¦ä¸²ã€‚
+	 */
+	public static String linkStringArray(String[] arr, String linkChar)
+	{
+		if (arr == null)
+		{
+			return null;
+		}
+		StringAppender buf = StringTool.createStringAppender(
+				linkChar.length() * arr.length + arr.length * 8);
+		for (int i = 0; i < arr.length; i++)
+		{
+			buf.append(arr[i]);
+			buf.append(linkChar);
+		}
+		return buf.toString();
+	}
 
-   /**
-    * ·Ö½âÑ¡ÏîÖĞµÄÊı¾İ£¬¸ñÊ½Îª£ºÃ¿Ìõ¼ÇÂ¼ÓÃ¡°;¡±·Ö¸î£¬Ã¿ÁĞÓÃ¡°,¡±·Ö¸î¡£
-    * ·µ»ØÒ»¸öList£¬Ã¿Ìõ¼ÇÂ¼×÷ÎªÒ»¸öStringÊı×é´æ·ÅÔÚListÖĞ¡£
-    */
-   public static List parseSelection(String selectionStr)
-   {
-      StringTokenizer token = new StringTokenizer(selectionStr, ";");
-      ArrayList list = new ArrayList();
-      while (token.hasMoreTokens())
-      {
-         String tempStr = token.nextToken();
-         StringTokenizer subToken = new StringTokenizer(tempStr, ",");
-         String[] record = new String[subToken.countTokens()];
-         for (int i = 0; i < record.length; i++)
-         {
-            record[i] = subToken.nextToken();
-         }
-         list.add(record);
-      }
-      return list;
-   }
+	/**
+	 * åˆ†è§£é€‰é¡¹ä¸­çš„æ•°æ®ï¼Œæ ¼å¼ä¸ºï¼šæ¯æ¡è®°å½•ç”¨â€œ;â€åˆ†å‰²ï¼Œæ¯åˆ—ç”¨â€œ,â€åˆ†å‰²ã€‚
+	 * è¿”å›ä¸€ä¸ªListï¼Œæ¯æ¡è®°å½•ä½œä¸ºä¸€ä¸ªStringæ•°ç»„å­˜æ”¾åœ¨Listä¸­ã€‚
+	 */
+	public static List parseSelection(String selectionStr)
+	{
+		StringTokenizer token = new StringTokenizer(selectionStr, ";");
+		ArrayList list = new ArrayList();
+		while (token.hasMoreTokens())
+		{
+			String tempStr = token.nextToken();
+			StringTokenizer subToken = new StringTokenizer(tempStr, ",");
+			String[] record = new String[subToken.countTokens()];
+			for (int i = 0; i < record.length; i++)
+			{
+				record[i] = subToken.nextToken();
+			}
+			list.add(record);
+		}
+		return list;
+	}
 
-   /**
-    * ½«Ò»¸öIterator×ª»»ÎªList¡£
-    */
-   public static List iterator2List(Iterator itr)
-   {
-      LinkedList list = new LinkedList();
-      while (itr.hasNext())
-      {
-         list.add(itr.next());
-      }
-      return list;
-   }
+	/**
+	 * å°†ä¸€ä¸ªIteratorè½¬æ¢ä¸ºListã€‚
+	 */
+	public static List iterator2List(Iterator itr)
+	{
+		LinkedList list = new LinkedList();
+		while (itr.hasNext())
+		{
+			list.add(itr.next());
+		}
+		return list;
+	}
 
-   /**
-    * ´¦ÀíÎªnullµÄ¶ÔÏóµÄ×Ö·û´®×ª»»
-    */
-   public static String dealNull(Object str)
-   {
-      return str == null ? "" : str.toString();
-   }
+	/**
+	 * å¤„ç†ä¸ºnullçš„å¯¹è±¡çš„å­—ç¬¦ä¸²è½¬æ¢
+	 */
+	public static String dealNull(Object str)
+	{
+		return str == null ? "" : str.toString();
+	}
 
-   /**
-    * ¸ù¾İname¶ÁÈ¡rowÖĞµÄÊı¾İ, ²¢½«null×÷Îª¿ÕµÄ×Ö·û´®.
-    * Èç¹ûrowÎªnull, ÔòÖ±½Ó·µ»Ø¿Õ×Ö·û´®.
-    *
-    * @param toHTML   ÊÇ·ñÒª´¦ÀíHTMLµÄ×Ö·û
-    */
-   public static String getResult(ResultRow row, String name, boolean toHTML)
-         throws SQLException, ConfigurationException
-   {
-      if (row == null)
-      {
-         return "";
-      }
-      String str = row.getFormated(name);
-      return str == null ? "" : toHTML ? Utils.dealString2HTML(str) : str;
-   }
+	/**
+	 * æ ¹æ®nameè¯»å–rowä¸­çš„æ•°æ®, å¹¶å°†nullä½œä¸ºç©ºçš„å­—ç¬¦ä¸².
+	 * å¦‚æœrowä¸ºnull, åˆ™ç›´æ¥è¿”å›ç©ºå­—ç¬¦ä¸².
+	 *
+	 * @param toHTML   æ˜¯å¦è¦å¤„ç†HTMLçš„å­—ç¬¦
+	 */
+	public static String getResult(ResultRow row, String name, boolean toHTML)
+			throws SQLException, ConfigurationException
+	{
+		if (row == null)
+		{
+			return "";
+		}
+		String str = row.getFormated(name);
+		return str == null ? "" : toHTML ? Utils.dealString2HTML(str) : str;
+	}
 
-   public static abstract class Print
-   {
-      public void print(String name)
-            throws SQLException, IOException, ConfigurationException
-      {
-         this.print(name, true);
-      }
+	public static abstract class Print
+	{
+		public void print(String name)
+				throws SQLException, IOException, ConfigurationException
+		{
+			this.print(name, true);
+		}
 
-      public void print(String name, String defaultVale)
-            throws SQLException, IOException, ConfigurationException
-      {
-         this.print(name, true, defaultVale);
-      }
+		public void print(String name, String defaultVale)
+				throws SQLException, IOException, ConfigurationException
+		{
+			this.print(name, true, defaultVale);
+		}
 
-      public void print(String name, boolean toHTML)
-            throws SQLException, IOException, ConfigurationException
-      {
-         this.print(name, toHTML, null);
-      }
+		public void print(String name, boolean toHTML)
+				throws SQLException, IOException, ConfigurationException
+		{
+			this.print(name, toHTML, null);
+		}
 
-      public abstract void print(String name, boolean toHTML, String defaultVale)
-            throws SQLException, IOException, ConfigurationException;
-   }
+		public abstract void print(String name, boolean toHTML, String defaultVale)
+				throws SQLException, IOException, ConfigurationException;
+	}
 
-   public static class ResultPrint extends Print
-   {
-      private Writer out;
-      private ResultRow row;
+	public static class ResultPrint extends Print
+	{
+		private Writer out;
+		private ResultRow row;
 
-      public ResultPrint(Writer out, Object obj)
-            throws SQLException, ConfigurationException
-      {
-         this.out = out;
-         this.row = null;
-         if (obj != null)
-         {
-            if (obj instanceof ResultRow)
-            {
-               this.row = (ResultRow) obj;
-            }
-            else if (obj instanceof ResultIterator)
-            {
-               ResultIterator ritr = (ResultIterator) obj;
-               if (ritr.hasMoreRow())
-               {
-                  this.row = ritr.nextRow();
-               }
-            }
-         }
-      }
+		public ResultPrint(Writer out, Object obj)
+				throws SQLException, ConfigurationException
+		{
+			this.out = out;
+			this.row = null;
+			if (obj != null)
+			{
+				if (obj instanceof ResultRow)
+				{
+					this.row = (ResultRow) obj;
+				}
+				else if (obj instanceof ResultIterator)
+				{
+					ResultIterator ritr = (ResultIterator) obj;
+					if (ritr.hasMoreRow())
+					{
+						this.row = ritr.nextRow();
+					}
+				}
+			}
+		}
 
-      public ResultPrint(Writer out, ResultRow row)
-      {
-         this.out = out;
-         this.row = row;
-      }
+		public ResultPrint(Writer out, ResultRow row)
+		{
+			this.out = out;
+			this.row = row;
+		}
 
-      public void print(String name, boolean toHTML, String defaultVale)
-            throws SQLException, IOException, ConfigurationException
-      {
-         if (this.row == null)
-         {
-            if (defaultVale != null)
-            {
-               this.out.write(defaultVale);
-            }
-            return;
-         }
-         if (toHTML)
-         {
-            Utils.dealString2HTML(this.row.getFormated(name), this.out, true);
-         }
-         else
-         {
-            this.out.write(this.row.getFormated(name));
-         }
-      }
+		public void print(String name, boolean toHTML, String defaultVale)
+				throws SQLException, IOException, ConfigurationException
+		{
+			if (this.row == null)
+			{
+				if (defaultVale != null)
+				{
+					this.out.write(defaultVale);
+				}
+				return;
+			}
+			if (toHTML)
+			{
+				Utils.dealString2HTML(this.row.getFormated(name), this.out, true);
+			}
+			else
+			{
+				this.out.write(this.row.getFormated(name));
+			}
+		}
 
-   }
+	}
 
-   public static class ConditionPrint extends Print
-   {
-      private Writer out;
-      private SearchManager searchManager;
+	public static class ConditionPrint extends Print
+	{
+		private Writer out;
+		private SearchManager searchManager;
 
-      public ConditionPrint(Writer out, Object searchManager)
-      {
-         this.out = out;
-         if (searchManager instanceof SearchManager)
-         {
-            this.searchManager = (SearchManager) searchManager;
-         }
-      }
+		public ConditionPrint(Writer out, Object searchManager)
+		{
+			this.out = out;
+			if (searchManager instanceof SearchManager)
+			{
+				this.searchManager = (SearchManager) searchManager;
+			}
+		}
 
-      public ConditionPrint(Writer out, SearchManager searchManager)
-      {
-         this.out = out;
-         this.searchManager = searchManager;
-      }
+		public ConditionPrint(Writer out, SearchManager searchManager)
+		{
+			this.out = out;
+			this.searchManager = searchManager;
+		}
 
-      public void print(String name, boolean toHTML, String defaultVale)
-            throws SQLException, IOException
-      {
-         if (this.searchManager == null)
-         {
-            if (defaultVale != null)
-            {
-               this.out.write(defaultVale);
-            }
-            return;
-         }
-         SearchManager.Condition condition = this.searchManager.getCondition(name);
-         if (condition == null || condition.value == null)
-         {
-            return;
-         }
-         if (toHTML)
-         {
-            Utils.dealString2HTML(condition.value, this.out, true);
-         }
-         else
-         {
-            this.out.write(condition.value);
-         }
-      }
+		public void print(String name, boolean toHTML, String defaultVale)
+				throws SQLException, IOException
+		{
+			if (this.searchManager == null)
+			{
+				if (defaultVale != null)
+				{
+					this.out.write(defaultVale);
+				}
+				return;
+			}
+			SearchManager.Condition condition = this.searchManager.getCondition(name);
+			if (condition == null || condition.value == null)
+			{
+				return;
+			}
+			if (toHTML)
+			{
+				Utils.dealString2HTML(condition.value, this.out, true);
+			}
+			else
+			{
+				this.out.write(condition.value);
+			}
+		}
 
-   }
+	}
 
-   public static void main(String[] args)
-         throws Exception
-   {
-      /*
-      System.out.println(dealString2HTML("<a>"));
-      System.out.println(Utility.getProperty("self.micromagic.logger.level", "INFO"));
-      Log log = Utility.createLog("test");
-      System.out.println(Level.parse(Utility.getProperty("self.micromagic.logger.level", "INFO")));
-      System.out.println(((Jdk14Logger) log).getLogger().getLevel());
-      System.out.println(log.isDebugEnabled());
-      System.out.println(log.isInfoEnabled());
-      java.lang.reflect.Field f = String.class.getDeclaredField("value");
-      f.setAccessible(true);
-      String str = "123";
-      char[] buf = (char[]) f.get(str);
-      System.out.println(str);
-      buf[0] = 'd';
-      System.out.println(str);
-      */
-   }
+	public static void main(String[] args)
+			throws Exception
+	{
+		/*
+		System.out.println(dealString2HTML("<a>"));
+		System.out.println(Utility.getProperty("self.micromagic.logger.level", "INFO"));
+		Log log = Utility.createLog("test");
+		System.out.println(Level.parse(Utility.getProperty("self.micromagic.logger.level", "INFO")));
+		System.out.println(((Jdk14Logger) log).getLogger().getLevel());
+		System.out.println(log.isDebugEnabled());
+		System.out.println(log.isInfoEnabled());
+		java.lang.reflect.Field f = String.class.getDeclaredField("value");
+		f.setAccessible(true);
+		String str = "123";
+		char[] buf = (char[]) f.get(str);
+		System.out.println(str);
+		buf[0] = 'd';
+		System.out.println(str);
+		*/
+	}
 
 }

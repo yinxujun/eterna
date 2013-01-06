@@ -7,87 +7,87 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * µ±ÊÊÅäÆ÷<code>Adapter</code>Ïà¹ØµÄÅäÖÃÎÄ¼ş²»ÕıÈ·£¬»ò²»ÕıÈ·µÄ
- * Ê¹ÓÃÊÊÅäÆ÷µÄÊ±ºò¾Í»áÅ×³ö¸ÃÒì³£.
+ * å½“é€‚é…å™¨<code>Adapter</code>ç›¸å…³çš„é…ç½®æ–‡ä»¶ä¸æ­£ç¡®ï¼Œæˆ–ä¸æ­£ç¡®çš„
+ * ä½¿ç”¨é€‚é…å™¨çš„æ—¶å€™å°±ä¼šæŠ›å‡ºè¯¥å¼‚å¸¸.
  *
  * @author micromagic@sina.com
  */
 public class ConfigurationException extends EternaException
 {
-   static String IN_INITIALIZE = "eterna.in_initialize";
+	static String IN_INITIALIZE = "eterna.in_initialize";
 
-   /**
-    * ÔÚ½âÎöxmlÊ±ÉèÖÃÕıÔÚ½âÎöµÄÎÄ¼ş
-    */
-   static String config = null;
+	/**
+	 * åœ¨è§£æxmlæ—¶è®¾ç½®æ­£åœ¨è§£æçš„æ–‡ä»¶
+	 */
+	static String config = null;
 
-   /**
-    * ÔÚ½âÎöxmlÊ±ÉèÖÃÕıÔÚ½âÎöµÄ¶ÔÏóÃû
-    */
-   static String objName = null;
+	/**
+	 * åœ¨è§£æxmlæ—¶è®¾ç½®æ­£åœ¨è§£æçš„å¯¹è±¡å
+	 */
+	static String objName = null;
 
-   /**
-    * ¹¹ÔìÒ»¸ö<code>ConfigurationException</code>.
-    */
-   public ConfigurationException()
-   {
-      super();
-   }
+	/**
+	 * æ„é€ ä¸€ä¸ª<code>ConfigurationException</code>.
+	 */
+	public ConfigurationException()
+	{
+		super();
+	}
 
-   /**
-    * Í¨¹ı²ÎÊı<code>message</code>À´¹¹ÔìÒ»¸ö<code>ConfigurationException</code>.
-    *
-    * @param message   ³ö´íĞÅÏ¢
-    */
-   public ConfigurationException(String message)
-   {
-      super(message);
-   }
+	/**
+	 * é€šè¿‡å‚æ•°<code>message</code>æ¥æ„é€ ä¸€ä¸ª<code>ConfigurationException</code>.
+	 *
+	 * @param message   å‡ºé”™ä¿¡æ¯
+	 */
+	public ConfigurationException(String message)
+	{
+		super(message);
+	}
 
-   /**
-    * Í¨¹ıÍ¨¹ıÒ»¸öÅ×³öµÄ¶ÔÏóÀ´¹¹ÔìÒ»¸ö<code>ConfigurationException</code>.
-    *
-    * @param origin    Òì³£»ò´íÎó
-    */
-   public ConfigurationException(Throwable origin)
-   {
-      super(origin);
-   }
+	/**
+	 * é€šè¿‡é€šè¿‡ä¸€ä¸ªæŠ›å‡ºçš„å¯¹è±¡æ¥æ„é€ ä¸€ä¸ª<code>ConfigurationException</code>.
+	 *
+	 * @param origin    å¼‚å¸¸æˆ–é”™è¯¯
+	 */
+	public ConfigurationException(Throwable origin)
+	{
+		super(origin);
+	}
 
-   /**
-    * Í¨¹ı²ÎÊı<code>message</code>ºÍÒ»¸öÅ×³öµÄ¶ÔÏóÀ´¹¹ÔìÒ»¸ö<code>ConfigurationException</code>.
-    *
-    * @param message   ³ö´íĞÅÏ¢
-    * @param origin    Òì³£»ò´íÎó
-    */
-   public ConfigurationException(String message, Throwable origin)
-   {
-      super(message, origin);
-   }
+	/**
+	 * é€šè¿‡å‚æ•°<code>message</code>å’Œä¸€ä¸ªæŠ›å‡ºçš„å¯¹è±¡æ¥æ„é€ ä¸€ä¸ª<code>ConfigurationException</code>.
+	 *
+	 * @param message   å‡ºé”™ä¿¡æ¯
+	 * @param origin    å¼‚å¸¸æˆ–é”™è¯¯
+	 */
+	public ConfigurationException(String message, Throwable origin)
+	{
+		super(message, origin);
+	}
 
-   public String getMessage()
-   {
-      String msg = super.getMessage();
-      msg = msg == null ? "" : msg;
-      if (config == null && objName == null)
-      {
-         return msg;
-      }
-      if ("1".equals(ThreadCache.getInstance().getProperty(IN_INITIALIZE)))
-      {
-         StringAppender temp = StringTool.createStringAppender(msg.length());
-         if (config != null)
-         {
-            temp.append("Config:").append(config).append("; ");
-         }
-         if (objName != null)
-         {
-            temp.append("Object:").append(objName).append("; ");
-         }
-         temp.append("Message:").append(msg);
-         return temp.toString();
-      }
-      return msg;
-   }
+	public String getMessage()
+	{
+		String msg = super.getMessage();
+		msg = msg == null ? "" : msg;
+		if (config == null && objName == null)
+		{
+			return msg;
+		}
+		if ("1".equals(ThreadCache.getInstance().getProperty(IN_INITIALIZE)))
+		{
+			StringAppender temp = StringTool.createStringAppender(msg.length());
+			if (config != null)
+			{
+				temp.append("Config:").append(config).append("; ");
+			}
+			if (objName != null)
+			{
+				temp.append("Object:").append(objName).append("; ");
+			}
+			temp.append("Message:").append(msg);
+			return temp.toString();
+		}
+		return msg;
+	}
 
 }

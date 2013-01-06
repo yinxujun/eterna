@@ -3,61 +3,61 @@ package self.micromagic.coder;
 
 public interface Coder
 {
-   /**
-    * ³¤¶ÈÎª0µÄ×Ö½ÚÊı×é, ÔÚ±àÂë½âÂëÊ±ĞèÒªµÄ»°¿ÉÒÔÊ¹ÓÃ.
-    */
-   public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+	/**
+	 * é•¿åº¦ä¸º0çš„å­—èŠ‚æ•°ç»„, åœ¨ç¼–ç è§£ç æ—¶éœ€è¦çš„è¯å¯ä»¥ä½¿ç”¨.
+	 */
+	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
-   /**
-    * ÒÔ×ÔÉíÎª¸±±¾, Éú³ÉÒ»¸öĞÂµÄ<code>Coder</code>. <p>
-    * ¸Ã¸±±¾µÄ×´Ì¬ÎªÔ­<code>Coder</code>³õÊ¼»¯ºóµÄ×´Ì¬.
-    */
-   public Coder createNew();
+	/**
+	 * ä»¥è‡ªèº«ä¸ºå‰¯æœ¬, ç”Ÿæˆä¸€ä¸ªæ–°çš„<code>Coder</code>. <p>
+	 * è¯¥å‰¯æœ¬çš„çŠ¶æ€ä¸ºåŸ<code>Coder</code>åˆå§‹åŒ–åçš„çŠ¶æ€.
+	 */
+	public Coder createNew();
 
-   /**
-    * ÓÃÓÚÇå³ı¶à´Î±àÂë»ò½âÂëÊ±, ²úÉúµÄÖĞ¼äÊı¾İ, Ê¹Æä»Ö¸´µ½³õÊ¼
-    * ×´Ì¬.
-    */
-   public void clear();
+	/**
+	 * ç”¨äºæ¸…é™¤å¤šæ¬¡ç¼–ç æˆ–è§£ç æ—¶, äº§ç”Ÿçš„ä¸­é—´æ•°æ®, ä½¿å…¶æ¢å¤åˆ°åˆå§‹
+	 * çŠ¶æ€.
+	 */
+	public void clear();
 
-   /**
-    * ¶ÔÒ»×é×Ö½Ú½øĞĞ±àÂë. <p>
-    *
-    * @param buf   ĞèÒª±àÂëµÄ×Ö½Ú
-    * @return      ±àÂëºóµÄ×Ö½Ú
-    */
-   public byte[] encode(byte[] buf);
+	/**
+	 * å¯¹ä¸€ç»„å­—èŠ‚è¿›è¡Œç¼–ç . <p>
+	 *
+	 * @param buf   éœ€è¦ç¼–ç çš„å­—èŠ‚
+	 * @return      ç¼–ç åçš„å­—èŠ‚
+	 */
+	public byte[] encode(byte[] buf);
 
-   /**
-    * ¶ÔÒ»×é×Ö½Ú½øĞĞ½âÂë. <p>
-    *
-    * @param buf   ĞèÒª½âÂëµÄ×Ö½Ú
-    * @return      ½âÂëºóµÄ×Ö½Ú
-    */
-   public byte[] decode(byte[] buf);
+	/**
+	 * å¯¹ä¸€ç»„å­—èŠ‚è¿›è¡Œè§£ç . <p>
+	 *
+	 * @param buf   éœ€è¦è§£ç çš„å­—èŠ‚
+	 * @return      è§£ç åçš„å­—èŠ‚
+	 */
+	public byte[] decode(byte[] buf);
 
-   /**
-    * ¶ÔÒ»×é×Ö½Ú½øĞĞ±àÂë. <p>
-    * ¿ÉÒÔ½«×Ö½Ú·ÖÎª¶à´Î½øĞĞ±àÂë, Ç°¼¸´Î±àÂëÊ±½«²ÎÊı<code>over</code>
-    * ÉèÎª<code>false</code>£¬×îºóÒ»´ÎÊ±½«²ÎÊı<code>over</code>ÉèÎª
-    * <code>true</code>.
-    *
-    * @param buf   ĞèÒª±àÂëµÄ×Ö½Ú
-    * @param over  ÊÇ·ñÊÇ×îºóÒ»Åú×Ö½Ú
-    * @return      ±àÂëºóµÄ×Ö½Ú
-    */
-   public byte[] encode(byte[] buf, boolean over);
+	/**
+	 * å¯¹ä¸€ç»„å­—èŠ‚è¿›è¡Œç¼–ç . <p>
+	 * å¯ä»¥å°†å­—èŠ‚åˆ†ä¸ºå¤šæ¬¡è¿›è¡Œç¼–ç , å‰å‡ æ¬¡ç¼–ç æ—¶å°†å‚æ•°<code>over</code>
+	 * è®¾ä¸º<code>false</code>ï¼Œæœ€åä¸€æ¬¡æ—¶å°†å‚æ•°<code>over</code>è®¾ä¸º
+	 * <code>true</code>.
+	 *
+	 * @param buf   éœ€è¦ç¼–ç çš„å­—èŠ‚
+	 * @param over  æ˜¯å¦æ˜¯æœ€åä¸€æ‰¹å­—èŠ‚
+	 * @return      ç¼–ç åçš„å­—èŠ‚
+	 */
+	public byte[] encode(byte[] buf, boolean over);
 
-   /**
-    * ¶ÔÒ»×é×Ö½Ú½øĞĞ½âÂë. <p>
-    * ¿ÉÒÔ½«×Ö½Ú·ÖÎª¶à´Î½øĞĞ½âÂë, Ç°¼¸´Î½âÂëÊ±½«²ÎÊı<code>over</code>
-    * ÉèÎª<code>false</code>£¬×îºóÒ»´ÎÊ±½«²ÎÊı<code>over</code>ÉèÎª
-    * <code>true</code>.
-    *
-    * @param buf   ĞèÒª½âÂëµÄ×Ö½Ú
-    * @param over  ÊÇ·ñÊÇ×îºóÒ»Åú×Ö½Ú
-    * @return      ½âÂëºóµÄ×Ö½Ú
-    */
-   public byte[] decode(byte[] buf, boolean over);
+	/**
+	 * å¯¹ä¸€ç»„å­—èŠ‚è¿›è¡Œè§£ç . <p>
+	 * å¯ä»¥å°†å­—èŠ‚åˆ†ä¸ºå¤šæ¬¡è¿›è¡Œè§£ç , å‰å‡ æ¬¡è§£ç æ—¶å°†å‚æ•°<code>over</code>
+	 * è®¾ä¸º<code>false</code>ï¼Œæœ€åä¸€æ¬¡æ—¶å°†å‚æ•°<code>over</code>è®¾ä¸º
+	 * <code>true</code>.
+	 *
+	 * @param buf   éœ€è¦è§£ç çš„å­—èŠ‚
+	 * @param over  æ˜¯å¦æ˜¯æœ€åä¸€æ‰¹å­—èŠ‚
+	 * @return      è§£ç åçš„å­—èŠ‚
+	 */
+	public byte[] decode(byte[] buf, boolean over);
 
 }

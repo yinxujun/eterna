@@ -28,121 +28,121 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 public class UploadExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   private String charset = "UTF-8";
-   private String storeNames;
-   private Set namesSet = new HashSet();
+	private String charset = "UTF-8";
+	private String storeNames;
+	private Set namesSet = new HashSet();
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      this.storeNames = (String) this.getAttribute("storeNames");
-      if (this.storeNames == null)
-      {
-         this.storeNames = this.getName();
-      }
-      StringTokenizer st = new StringTokenizer(this.storeNames, ",");
-      while (st.hasMoreTokens())
-      {
-         String tmp = st.nextToken().trim();
-         this.namesSet.add(tmp);
-      }
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		this.storeNames = (String) this.getAttribute("storeNames");
+		if (this.storeNames == null)
+		{
+			this.storeNames = this.getName();
+		}
+		StringTokenizer st = new StringTokenizer(this.storeNames, ",");
+		while (st.hasMoreTokens())
+		{
+			String tmp = st.nextToken().trim();
+			this.namesSet.add(tmp);
+		}
 
-      String temp = (String) this.getAttribute("charset");
-      if (temp != null)
-      {
-         this.charset = temp;
-      }
-      else
-      {
-         temp = Utility.getProperty(Utility.CHARSET_TAG);
-         if (temp != null && !temp.equals(this.charset))
-         {
-            this.charset = temp;
-         }
-      }
-   }
+		String temp = (String) this.getAttribute("charset");
+		if (temp != null)
+		{
+			this.charset = temp;
+		}
+		else
+		{
+			temp = Utility.getProperty(Utility.CHARSET_TAG);
+			if (temp != null && !temp.equals(this.charset))
+			{
+				this.charset = temp;
+			}
+		}
+	}
 
-   public String getExecuteType() throws ConfigurationException
-   {
-      return "upload";
-   }
+	public String getExecuteType() throws ConfigurationException
+	{
+		return "upload";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      try
-      {
-         FileItemFactory factory = new DiskFileItemFactory();
-         List items = null;
-         if (data.getHttpServletRequest() != null)
-         {
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setHeaderEncoding(this.charset);
-            items = upload.parseRequest(data.getHttpServletRequest());
-         }
-         else if (data.actionRequest != null)
-         {
-            PortletFileUpload upload = new PortletFileUpload(factory);
-            upload.setHeaderEncoding(this.charset);
-            items = upload.parseRequest(data.actionRequest);
-         }
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		try
+		{
+			FileItemFactory factory = new DiskFileItemFactory();
+			List items = null;
+			if (data.getHttpServletRequest() != null)
+			{
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				upload.setHeaderEncoding(this.charset);
+				items = upload.parseRequest(data.getHttpServletRequest());
+			}
+			else if (data.actionRequest != null)
+			{
+				PortletFileUpload upload = new PortletFileUpload(factory);
+				upload.setHeaderEncoding(this.charset);
+				items = upload.parseRequest(data.actionRequest);
+			}
 
-         Map result = new HashMap();
-         if (items != null)
-         {
-            Iterator iter = items.iterator();
-            while (iter.hasNext())
-            {
-               FileItem item = (FileItem) iter.next();
-               if (this.namesSet.contains(item.getFieldName()))
-               {
-                  Object oldValue = result.get(item.getFieldName());
-                  Object nowValue;
-                  if (item.isFormField())
-                  {
-                     nowValue = item.getString(this.charset);
-                  }
-                  else
-                  {
-                     nowValue = item;
-                  }
-                  if (oldValue != null)
-                  {
-                     if (oldValue instanceof Object[])
-                     {
-                        Object[] oldArr = (String[]) oldValue;
-                        Object[] newArr = new String[oldArr.length + 1];
-                        System.arraycopy(oldArr, 0, newArr, 0, oldArr.length);
-                        newArr[oldArr.length] = nowValue;
-                        result.put(item.getFieldName(), newArr);
-                     }
-                     else
-                     {
-                        result.put(item.getFieldName(), new Object[]{oldValue, nowValue});
-                     }
-                  }
-                  else
-                  {
-                     result.put(item.getFieldName(), nowValue);
-                  }
-               }
-            }
-         }
-         data.push(result);
-      }
-      catch (FileUploadException ex)
-      {
-         log.error("Upload error.", ex);
-         throw new ConfigurationException(ex);
-      }
-      return null;
-   }
+			Map result = new HashMap();
+			if (items != null)
+			{
+				Iterator iter = items.iterator();
+				while (iter.hasNext())
+				{
+					FileItem item = (FileItem) iter.next();
+					if (this.namesSet.contains(item.getFieldName()))
+					{
+						Object oldValue = result.get(item.getFieldName());
+						Object nowValue;
+						if (item.isFormField())
+						{
+							nowValue = item.getString(this.charset);
+						}
+						else
+						{
+							nowValue = item;
+						}
+						if (oldValue != null)
+						{
+							if (oldValue instanceof Object[])
+							{
+								Object[] oldArr = (String[]) oldValue;
+								Object[] newArr = new String[oldArr.length + 1];
+								System.arraycopy(oldArr, 0, newArr, 0, oldArr.length);
+								newArr[oldArr.length] = nowValue;
+								result.put(item.getFieldName(), newArr);
+							}
+							else
+							{
+								result.put(item.getFieldName(), new Object[]{oldValue, nowValue});
+							}
+						}
+						else
+						{
+							result.put(item.getFieldName(), nowValue);
+						}
+					}
+				}
+			}
+			data.push(result);
+		}
+		catch (FileUploadException ex)
+		{
+			log.error("Upload error.", ex);
+			throw new ConfigurationException(ex);
+		}
+		return null;
+	}
 
 }

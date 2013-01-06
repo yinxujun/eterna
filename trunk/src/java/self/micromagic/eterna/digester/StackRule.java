@@ -7,9 +7,9 @@ import org.xml.sax.Attributes;
 import org.apache.commons.digester.Rule;
 
 /**
- * ĞèÒª½â¾ö¶à¸ö½ÚµãÊ¹ÓÃÍ¬Ò»¸ö³õÊ¼»¯¹æÔòÔì³É³åÍ»µÄÎÊÌâ£¬¿ÉÒÔÊ¹ÓÃÕâ¸ö³õÊ¼»¯¹æÔò. <p>
+ * éœ€è¦è§£å†³å¤šä¸ªèŠ‚ç‚¹ä½¿ç”¨åŒä¸€ä¸ªåˆå§‹åŒ–è§„åˆ™é€ æˆå†²çªçš„é—®é¢˜ï¼Œå¯ä»¥ä½¿ç”¨è¿™ä¸ªåˆå§‹åŒ–è§„åˆ™. <p>
  *
- * Ê¹ÓÃ´Ë¹æÔòµÄÑùÀı´úÂëÈçÏÂ:
+ * ä½¿ç”¨æ­¤è§„åˆ™çš„æ ·ä¾‹ä»£ç å¦‚ä¸‹:
  * <blockquote><pre>
  * new StackRule() {
  *    public Rule createRule() throws Exception
@@ -20,97 +20,97 @@ import org.apache.commons.digester.Rule;
  *    }
  * };
  * </pre></blockquote>
- * Í¨¹ı¹¹ÔìÒ»¸öÄäÃûÀà, ÊµÏÖcreateRule·½·¨, ÔÚ´Ë·½·¨ÖĞÉú³ÉÒ»¸öÕæÕıĞèÒªµÄ³õÊ¼»¯
- * ¹æÔò. ÒòÎªÃ¿Ò»¸ö½ÚµãĞèÒª²»Í¬µÄ³õÊ¼»¯¹æÔòÊµÀı, Õâ¸ö³õÊ¼»¯¹æÔò¾ÍÊÇ´¦ÀíÔÚĞèÒª
- * µÄµØ·½Éú³ÉĞÂµÄÊµÀı.
+ * é€šè¿‡æ„é€ ä¸€ä¸ªåŒ¿åç±», å®ç°createRuleæ–¹æ³•, åœ¨æ­¤æ–¹æ³•ä¸­ç”Ÿæˆä¸€ä¸ªçœŸæ­£éœ€è¦çš„åˆå§‹åŒ–
+ * è§„åˆ™. å› ä¸ºæ¯ä¸€ä¸ªèŠ‚ç‚¹éœ€è¦ä¸åŒçš„åˆå§‹åŒ–è§„åˆ™å®ä¾‹, è¿™ä¸ªåˆå§‹åŒ–è§„åˆ™å°±æ˜¯å¤„ç†åœ¨éœ€è¦
+ * çš„åœ°æ–¹ç”Ÿæˆæ–°çš„å®ä¾‹.
  *
  * @author micromagic@sina.com
  */
 public abstract class StackRule extends Rule
 {
-   static final String[] VIEW_ROOT_PATHS = {
-      "eterna-config/factory/objs/view",
-      "eterna-config/factory/objs/typical-replacement",
-      "eterna-config/factory/objs/typical-component",
-   };
-   static final String[] ALL_ROOT_PATHS = VIEW_ROOT_PATHS;
+	static final String[] VIEW_ROOT_PATHS = {
+		"eterna-config/factory/objs/view",
+		"eterna-config/factory/objs/typical-replacement",
+		"eterna-config/factory/objs/typical-component",
+	};
+	static final String[] ALL_ROOT_PATHS = VIEW_ROOT_PATHS;
 
-   private int stackIndex = 0;
-   private ArrayList stack = new ArrayList();
+	private int stackIndex = 0;
+	private ArrayList stack = new ArrayList();
 
-   /**
-    * ¼ì²éµ±Ç°½ÚµãµÄÂ·¾¶ÊÇ·ñ·ûºÏ´Ë³õÊ¼»¯¹æÔò.
-    *
-    * @param path      ±»¼ì²éµÄÂ·¾¶
-    * @param paths     ·ûºÏÌõ¼şµÄÂ·¾¶¼¯
-    */
-   static boolean checkRoot(String path, String[] paths)
-   {
-      for (int i = 0; i < paths.length; i++)
-      {
-         if (path.startsWith(paths[i]))
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+	/**
+	 * æ£€æŸ¥å½“å‰èŠ‚ç‚¹çš„è·¯å¾„æ˜¯å¦ç¬¦åˆæ­¤åˆå§‹åŒ–è§„åˆ™.
+	 *
+	 * @param path      è¢«æ£€æŸ¥çš„è·¯å¾„
+	 * @param paths     ç¬¦åˆæ¡ä»¶çš„è·¯å¾„é›†
+	 */
+	static boolean checkRoot(String path, String[] paths)
+	{
+		for (int i = 0; i < paths.length; i++)
+		{
+			if (path.startsWith(paths[i]))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
-   /**
-    * Éú³ÉĞèÒªµÄ³õÊ¼»¯¹æÔòµÄÊµÀı, ÊµÏÖµÄ·½·¨±ØĞëÒª¹¹ÔìÒ»¸öĞÂµÄ³õÊ¼»¯¹æÔò,
-    * ·ñÔò¾Í»á·¢ËÍ³åÍ».
-    */
-   public abstract Rule createRule() throws Exception;
+	/**
+	 * ç”Ÿæˆéœ€è¦çš„åˆå§‹åŒ–è§„åˆ™çš„å®ä¾‹, å®ç°çš„æ–¹æ³•å¿…é¡»è¦æ„é€ ä¸€ä¸ªæ–°çš„åˆå§‹åŒ–è§„åˆ™,
+	 * å¦åˆ™å°±ä¼šå‘é€å†²çª.
+	 */
+	public abstract Rule createRule() throws Exception;
 
-   private Rule getRule(int stackIndex)
-         throws Exception
-   {
-      if (this.stack.size() == stackIndex)
-      {
-         Rule rule = this.createRule();
-         rule.setDigester(this.getDigester());
-         rule.setNamespaceURI(this.getNamespaceURI());
-         this.stack.add(rule);
-      }
-      return (Rule) this.stack.get(stackIndex);
-   }
+	private Rule getRule(int stackIndex)
+			throws Exception
+	{
+		if (this.stack.size() == stackIndex)
+		{
+			Rule rule = this.createRule();
+			rule.setDigester(this.getDigester());
+			rule.setNamespaceURI(this.getNamespaceURI());
+			this.stack.add(rule);
+		}
+		return (Rule) this.stack.get(stackIndex);
+	}
 
-   public void begin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
-      {
-         this.digester.getLogger().error("Error component path:" + this.digester.getMatch() + ".");
-         return;
-      }
-      this.stackIndex++;
-      this.getRule(this.stackIndex - 1).begin(namespace, name, attributes);
-   }
+	public void begin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
+		{
+			this.digester.getLogger().error("Error component path:" + this.digester.getMatch() + ".");
+			return;
+		}
+		this.stackIndex++;
+		this.getRule(this.stackIndex - 1).begin(namespace, name, attributes);
+	}
 
-   public void body(String namespace, String name, String text)
-         throws Exception
-   {
-      if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
-      {
-         return;
-      }
-      this.getRule(this.stackIndex - 1).body(namespace, name, text);
-   }
+	public void body(String namespace, String name, String text)
+			throws Exception
+	{
+		if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
+		{
+			return;
+		}
+		this.getRule(this.stackIndex - 1).body(namespace, name, text);
+	}
 
-   public void end(String namespace, String name)
-         throws Exception
-   {
-      if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
-      {
-         return;
-      }
-      this.stackIndex--;
-      this.getRule(this.stackIndex).end(namespace, name);
-   }
+	public void end(String namespace, String name)
+			throws Exception
+	{
+		if (!checkRoot(this.digester.getMatch(), ALL_ROOT_PATHS))
+		{
+			return;
+		}
+		this.stackIndex--;
+		this.getRule(this.stackIndex).end(namespace, name);
+	}
 
-   public void finish() throws Exception
-   {
-      this.getRule(0).finish();
-   }
+	public void finish() throws Exception
+	{
+		this.getRule(0).finish();
+	}
 
 }

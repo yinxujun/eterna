@@ -15,81 +15,81 @@ import self.micromagic.util.StringTool;
  * @author micromagic@sina.com
  */
 public class ConditionBuilderGeneratorImpl extends AbstractGenerator
-      implements ConditionBuilderGenerator
+		implements ConditionBuilderGenerator
 {
-   // ÕâÀïÔÙ¶¨ÒåÒ»±ß, ·ÀÖ¹ConditionBuilder½Ó¿ÚÖĞ¶¨ÒåµÄ±»ĞŞ¸Ä
-   private static final String[] OPERATOR_NAMES = {
-      "isNull", "notNull", "checkNull",
-      "equal", "notEqual", "large", "below", "notLarge", "notBelow",
-      "beginWith", "endWith", "include", "match"
-   };
+	// è¿™é‡Œå†å®šä¹‰ä¸€è¾¹, é˜²æ­¢ConditionBuilderæ¥å£ä¸­å®šä¹‰çš„è¢«ä¿®æ”¹
+	private static final String[] OPERATOR_NAMES = {
+		"isNull", "notNull", "checkNull",
+		"equal", "notEqual", "large", "below", "notLarge", "notBelow",
+		"beginWith", "endWith", "include", "match"
+	};
 
-   private static Map builderMap = new HashMap();
+	private static Map builderMap = new HashMap();
 
-   private String caption;
-   private String operator;
+	private String caption;
+	private String operator;
 
-   static
-   {
-      int index = 0;
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NULL", -1));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NOT NULL", -1));
-      builderMap.put(OPERATOR_NAMES[index++],
+	static
+	{
+		int index = 0;
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NULL", -1));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("IS NOT NULL", -1));
+		builderMap.put(OPERATOR_NAMES[index++],
 				new ConditionBuilderImpl(ConditionBuilderImpl.CHECK_OPT_TAG, -1));
 
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("=", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<>", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(">", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<=", 0));
-      builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(">=", 0));
-      builderMap.put(OPERATOR_NAMES[index++],
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("=", 0));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<>", 0));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(">", 0));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<", 0));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl("<=", 0));
+		builderMap.put(OPERATOR_NAMES[index++], new ConditionBuilderImpl(">=", 0));
+		builderMap.put(OPERATOR_NAMES[index++],
 				new ConditionBuilderImpl(ConditionBuilderImpl.LIKE_OPT_TAG, 1));
-      builderMap.put(OPERATOR_NAMES[index++],
+		builderMap.put(OPERATOR_NAMES[index++],
 				new ConditionBuilderImpl(ConditionBuilderImpl.LIKE_OPT_TAG, 2));
-      builderMap.put(OPERATOR_NAMES[index++],
+		builderMap.put(OPERATOR_NAMES[index++],
 				new ConditionBuilderImpl(ConditionBuilderImpl.LIKE_OPT_TAG, 3));
-      builderMap.put(OPERATOR_NAMES[index++],
+		builderMap.put(OPERATOR_NAMES[index++],
 				new ConditionBuilderImpl(ConditionBuilderImpl.LIKE_OPT_TAG, 0));
-   }
+	}
 
-   public void setCaption(String caption)
-   {
-      this.caption = caption;
-   }
+	public void setCaption(String caption)
+	{
+		this.caption = caption;
+	}
 
-   public void setOperator(String operator)
-   {
-      this.operator = operator;
-   }
+	public void setOperator(String operator)
+	{
+		this.operator = operator;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createConditionBuilder();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createConditionBuilder();
+	}
 
-   public ConditionBuilder createConditionBuilder()
-         throws ConfigurationException
-   {
-      ConditionBuilderImpl cb = (ConditionBuilderImpl) builderMap.get(this.operator);
-      if (cb == null)
-      {
-         cb = new ConditionBuilderImpl("=", 0);
-      }
-      else
-      {
-         cb = cb.copy();
-      }
-      cb.name = this.name;
-      cb.caption = this.caption == null ? this.name : this.caption;
-      return cb;
-   }
+	public ConditionBuilder createConditionBuilder()
+			throws ConfigurationException
+	{
+		ConditionBuilderImpl cb = (ConditionBuilderImpl) builderMap.get(this.operator);
+		if (cb == null)
+		{
+			cb = new ConditionBuilderImpl("=", 0);
+		}
+		else
+		{
+			cb = cb.copy();
+		}
+		cb.name = this.name;
+		cb.caption = this.caption == null ? this.name : this.caption;
+		return cb;
+	}
 
 	/**
-	 * ´¦ÀíÆ¥Åä²éÑ¯µÄ×Ö·û´®ÖĞĞèÒª×ªÒåµÄ×Ö·û. <p>
-	 * Èç¹ûÃ»ÓĞĞèÒª×ªÒåµÄ×Ö·û´®, »áÖ±½Ó·µ»ØÔ­×Ö·û´®, Òò´Ë¿ÉÒÔ
-	 * ÓÃ<code>newStr == oldStr</code>ÅĞ¶ÏÊÇ·ñÓĞ´¦Àí.
+	 * å¤„ç†åŒ¹é…æŸ¥è¯¢çš„å­—ç¬¦ä¸²ä¸­éœ€è¦è½¬ä¹‰çš„å­—ç¬¦. <p>
+	 * å¦‚æœæ²¡æœ‰éœ€è¦è½¬ä¹‰çš„å­—ç¬¦ä¸², ä¼šç›´æ¥è¿”å›åŸå­—ç¬¦ä¸², å› æ­¤å¯ä»¥
+	 * ç”¨<code>newStr == oldStr</code>åˆ¤æ–­æ˜¯å¦æœ‰å¤„ç†.
 	 */
 	public static String dealEscapeString(String str)
 	{
@@ -112,7 +112,7 @@ public class ConditionBuilderGeneratorImpl extends AbstractGenerator
 			{
 				temp = StringTool.createStringAppender(str.length() + 16)
 						.append(str.substring(0, i));
-				//ÕâÀï½«modifyCountµÄ¸öÊıÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌĞø½øÈëÕâ¸ö³õÊ¼»¯
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢åŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
 				modifyCount++;
 			}
 			if (modifyCount > 0)

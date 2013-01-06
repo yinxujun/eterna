@@ -13,397 +13,397 @@ import self.micromagic.util.StringTool;
 
 public class PreparerManager
 {
-   public static final ValuePreparer IGNORE_PREPARER = new IgnorePreparer();
+	public static final ValuePreparer IGNORE_PREPARER = new IgnorePreparer();
 
-   private SQLAdapter sqlAdapter;
-   private ValuePreparer[] preparers;
-   private SQLParameter[] parameterArray = null;
-   private PreparerManagerList[] insertedPM = null;
+	private SQLAdapter sqlAdapter;
+	private ValuePreparer[] preparers;
+	private SQLParameter[] parameterArray = null;
+	private PreparerManagerList[] insertedPM = null;
 
-   /**
-    * ¹¹ÔìÒ»¸öPreparerManager, ĞèÒªÖ¸¶¨preparersµÄ¸öÊı
-    */
-   public PreparerManager(int count)
-   {
-      this.preparers = new ValuePreparer[count];
-   }
+	/**
+	 * æ„é€ ä¸€ä¸ªPreparerManager, éœ€è¦æŒ‡å®špreparersçš„ä¸ªæ•°
+	 */
+	public PreparerManager(int count)
+	{
+		this.preparers = new ValuePreparer[count];
+	}
 
-   /**
-    * Í¨¹ıÖ¸¶¨SQLParameterÊı×éÀ´¹¹ÔìÒ»¸öPreparerManager
-    */
-   public PreparerManager(SQLAdapter sqlAdapter, SQLParameter[] parameterArray)
-   {
-      this(parameterArray.length);
-      this.parameterArray = parameterArray;
-      this.sqlAdapter = sqlAdapter;
-   }
+	/**
+	 * é€šè¿‡æŒ‡å®šSQLParameteræ•°ç»„æ¥æ„é€ ä¸€ä¸ªPreparerManager
+	 */
+	public PreparerManager(SQLAdapter sqlAdapter, SQLParameter[] parameterArray)
+	{
+		this(parameterArray.length);
+		this.parameterArray = parameterArray;
+		this.sqlAdapter = sqlAdapter;
+	}
 
-   /**
-    * »ñÈ¡preparersµÄ¸öÊı
-    */
-   public int getCount()
-   {
-      return this.preparers.length;
-   }
+	/**
+	 * è·å–preparersçš„ä¸ªæ•°
+	 */
+	public int getCount()
+	{
+		return this.preparers.length;
+	}
 
-   /**
-    * »ñÈ¡Î´ÉèÖÃ³É"ºöÂÔ"µÄ²ÎÊı¸öÊı
-    */
-   public int getParamCount()
-   {
-      int count = 0;
-      for (int i = 0; i < this.preparers.length; i++)
-      {
-         if (this.preparers[i] != IGNORE_PREPARER)
-         {
-            count++;
-         }
-      }
-      if (this.insertedPM != null)
-      {
-         PreparerManagerList tpml;
-         for (int i = 0; i < this.insertedPM.length; i++)
-         {
-            if (this.insertedPM[i] != null)
-            {
-               tpml = this.insertedPM[i];
-               do
-               {
-                  count += tpml.preparerManager.getParamCount();
-                  tpml = tpml.next;
-               } while (tpml != null);
-            }
-         }
-      }
-      return count;
-   }
+	/**
+	 * è·å–æœªè®¾ç½®æˆ"å¿½ç•¥"çš„å‚æ•°ä¸ªæ•°
+	 */
+	public int getParamCount()
+	{
+		int count = 0;
+		for (int i = 0; i < this.preparers.length; i++)
+		{
+			if (this.preparers[i] != IGNORE_PREPARER)
+			{
+				count++;
+			}
+		}
+		if (this.insertedPM != null)
+		{
+			PreparerManagerList tpml;
+			for (int i = 0; i < this.insertedPM.length; i++)
+			{
+				if (this.insertedPM[i] != null)
+				{
+					tpml = this.insertedPM[i];
+					do
+					{
+						count += tpml.preparerManager.getParamCount();
+						tpml = tpml.next;
+					} while (tpml != null);
+				}
+			}
+		}
+		return count;
+	}
 
-   /**
-    * ÅĞ¶ÏÊÇ·ñÓĞÎ´"ºöÂÔ"µÄ²ÎÊı
-    */
-   public boolean hasActiveParam()
-   {
-      for (int i = 0; i < this.preparers.length; i++)
-      {
-         if (this.preparers[i] != IGNORE_PREPARER)
-         {
-            return true;
-         }
-      }
-      if (this.insertedPM != null)
-      {
-         PreparerManagerList tpml;
-         for (int i = 0; i < this.insertedPM.length; i++)
-         {
-            if (this.insertedPM[i] != null)
-            {
-               tpml = this.insertedPM[i];
-               do
-               {
-                  if (tpml.preparerManager.hasActiveParam())
-                  {
-                     return true;
-                  }
-                  tpml = tpml.next;
-               } while (tpml != null);
-            }
-         }
-      }
-      return false;
-   }
+	/**
+	 * åˆ¤æ–­æ˜¯å¦æœ‰æœª"å¿½ç•¥"çš„å‚æ•°
+	 */
+	public boolean hasActiveParam()
+	{
+		for (int i = 0; i < this.preparers.length; i++)
+		{
+			if (this.preparers[i] != IGNORE_PREPARER)
+			{
+				return true;
+			}
+		}
+		if (this.insertedPM != null)
+		{
+			PreparerManagerList tpml;
+			for (int i = 0; i < this.insertedPM.length; i++)
+			{
+				if (this.insertedPM[i] != null)
+				{
+					tpml = this.insertedPM[i];
+					do
+					{
+						if (tpml.preparerManager.hasActiveParam())
+						{
+							return true;
+						}
+						tpml = tpml.next;
+					} while (tpml != null);
+				}
+			}
+		}
+		return false;
+	}
 
-   /**
-    * ÉèÖÃÒ»¸öpreparer
-    */
-   public void setValuePreparer(ValuePreparer preparer)
-         throws ConfigurationException
-   {
-      try
-      {
-         this.preparers[preparer.getRelativeIndex() - 1] = preparer;
-      }
-      catch (Exception ex)
-      {
-         throw new ConfigurationException(
-               "Invalid parameter index:" + (preparer.getRelativeIndex()) + ".");
-      }
-   }
+	/**
+	 * è®¾ç½®ä¸€ä¸ªpreparer
+	 */
+	public void setValuePreparer(ValuePreparer preparer)
+			throws ConfigurationException
+	{
+		try
+		{
+			this.preparers[preparer.getRelativeIndex() - 1] = preparer;
+		}
+		catch (Exception ex)
+		{
+			throw new ConfigurationException(
+					"Invalid parameter index:" + (preparer.getRelativeIndex()) + ".");
+		}
+	}
 
-   /**
-    * ½«Ä³¸öpreparerÉèÖÃÎªºöÂÔµÄ²ÎÊı
-    */
-   public void setIgnore(int index)
-         throws ConfigurationException
-   {
-      try
-      {
-         this.preparers[index - 1] = IGNORE_PREPARER;
-      }
-      catch (Exception ex)
-      {
-         throw new ConfigurationException(
-               "Invalid parameter index:" + (index) + ".");
-      }
-   }
+	/**
+	 * å°†æŸä¸ªpreparerè®¾ç½®ä¸ºå¿½ç•¥çš„å‚æ•°
+	 */
+	public void setIgnore(int index)
+			throws ConfigurationException
+	{
+		try
+		{
+			this.preparers[index - 1] = IGNORE_PREPARER;
+		}
+		catch (Exception ex)
+		{
+			throw new ConfigurationException(
+					"Invalid parameter index:" + (index) + ".");
+		}
+	}
 
-   /**
-    * ÔÚÖĞ¼ä²åÈëÒ»¸öPreparerManager
-    *
-    * @param pm             Òª²åÈëµÄPreparerManager
-    * @param index          ²åÈëµÄ²ÎÊıÎ»ÖÃ
-    * @param subPartIndex   ²åÈëµÄ×ÓsqlÎ»ÖÃ
-    */
-   public void inserPreparerManager(PreparerManager pm, int index, int subPartIndex)
-   {
-      if (pm == null && this.insertedPM == null)
-      {
-         // µ±ÉèÖÃµÄPreparerManagerÎªnull, ÇÒinsertedPMÎ´³õÊ¼»¯Ê±,
-         // Ôò²»×÷ÈÎºÎ²Ù×÷
-         return;
-      }
-      if (index < 0 || index > this.preparers.length)
-      {
-         StringAppender buf = StringTool.createStringAppender(18);
-         buf.append("[index:").append(index).append(" size:")
-               .append(this.preparers.length + 1).append(']');
-         throw new IndexOutOfBoundsException(buf.toString());
-      }
-      if (this.insertedPM == null)
-      {
-         this.insertedPM = new PreparerManagerList[this.preparers.length + 1];
-      }
-      this.insertedPM[index] = this.modifyPreparerManagerList(
-            this.insertedPM[index], pm, subPartIndex);
-   }
+	/**
+	 * åœ¨ä¸­é—´æ’å…¥ä¸€ä¸ªPreparerManager
+	 *
+	 * @param pm             è¦æ’å…¥çš„PreparerManager
+	 * @param index          æ’å…¥çš„å‚æ•°ä½ç½®
+	 * @param subPartIndex   æ’å…¥çš„å­sqlä½ç½®
+	 */
+	public void inserPreparerManager(PreparerManager pm, int index, int subPartIndex)
+	{
+		if (pm == null && this.insertedPM == null)
+		{
+			// å½“è®¾ç½®çš„PreparerManagerä¸ºnull, ä¸”insertedPMæœªåˆå§‹åŒ–æ—¶,
+			// åˆ™ä¸ä½œä»»ä½•æ“ä½œ
+			return;
+		}
+		if (index < 0 || index > this.preparers.length)
+		{
+			StringAppender buf = StringTool.createStringAppender(18);
+			buf.append("[index:").append(index).append(" size:")
+					.append(this.preparers.length + 1).append(']');
+			throw new IndexOutOfBoundsException(buf.toString());
+		}
+		if (this.insertedPM == null)
+		{
+			this.insertedPM = new PreparerManagerList[this.preparers.length + 1];
+		}
+		this.insertedPM[index] = this.modifyPreparerManagerList(
+				this.insertedPM[index], pm, subPartIndex);
+	}
 
-   private PreparerManagerList modifyPreparerManagerList(PreparerManagerList pml,
-         PreparerManager pm, int subPartIndex)
-   {
-      if (pml == null)
-      {
-         // Èç¹ûpmlÎª¿Õ, pm²»Îª¿Õ, ÔòĞÂ½¨Ò»¸öpml
-         if (pm != null)
-         {
-            return new PreparerManagerList(subPartIndex, pm);
-         }
-      }
-      else
-      {
-         PreparerManagerList prepml = pml;
-         PreparerManagerList nowpml = pml;
-         boolean found = false;
-         do
-         {
-            if (nowpml.subPartIndex == subPartIndex)
-            {
-               found = true;
-               break;
-            }
-            else if (nowpml.subPartIndex > subPartIndex)
-            {
-               break;
-            }
-            prepml = nowpml;
-            nowpml = nowpml.next;
-         } while (nowpml != null);
+	private PreparerManagerList modifyPreparerManagerList(PreparerManagerList pml,
+			PreparerManager pm, int subPartIndex)
+	{
+		if (pml == null)
+		{
+			// å¦‚æœpmlä¸ºç©º, pmä¸ä¸ºç©º, åˆ™æ–°å»ºä¸€ä¸ªpml
+			if (pm != null)
+			{
+				return new PreparerManagerList(subPartIndex, pm);
+			}
+		}
+		else
+		{
+			PreparerManagerList prepml = pml;
+			PreparerManagerList nowpml = pml;
+			boolean found = false;
+			do
+			{
+				if (nowpml.subPartIndex == subPartIndex)
+				{
+					found = true;
+					break;
+				}
+				else if (nowpml.subPartIndex > subPartIndex)
+				{
+					break;
+				}
+				prepml = nowpml;
+				nowpml = nowpml.next;
+			} while (nowpml != null);
 
-         if (found)
-         {
-            // Èç¹ûÕÒµ½ÁËpml
-            if (pm == null)
-            {
-               // ÇÒpmÎª¿Õ, ÔòÒªÉ¾³ıÕâ¸öpml
-               if (prepml == nowpml)
-               {
-                  // prepml == nowpml ÔòËµÃ÷ÊÇÍ·Ò»¸ö
-                  return nowpml.next;
-               }
-               else
-               {
-                  prepml.next = nowpml.next;
-               }
-            }
-            else
-            {
-               nowpml.preparerManager = pm;
-            }
-         }
-         else if (pm != null)
-         {
-            // Èç¹ûÕÒÎ´µ½ÁËpml, ÇÒpm²»Îª¿Õ
-            if (prepml == nowpml)
-            {
-               // prepml == nowpml ÔòËµÃ÷ÊÇÍ·Ò»¸ö
-               prepml = new PreparerManagerList(subPartIndex, pm);
-               prepml.next = nowpml;
-               return prepml;
-            }
-            else
-            {
-               prepml.next = new PreparerManagerList(subPartIndex, pm);
-               prepml.next.next = nowpml;
-            }
-         }
-      }
-      return pml;
-   }
+			if (found)
+			{
+				// å¦‚æœæ‰¾åˆ°äº†pml
+				if (pm == null)
+				{
+					// ä¸”pmä¸ºç©º, åˆ™è¦åˆ é™¤è¿™ä¸ªpml
+					if (prepml == nowpml)
+					{
+						// prepml == nowpml åˆ™è¯´æ˜æ˜¯å¤´ä¸€ä¸ª
+						return nowpml.next;
+					}
+					else
+					{
+						prepml.next = nowpml.next;
+					}
+				}
+				else
+				{
+					nowpml.preparerManager = pm;
+				}
+			}
+			else if (pm != null)
+			{
+				// å¦‚æœæ‰¾æœªåˆ°äº†pml, ä¸”pmä¸ä¸ºç©º
+				if (prepml == nowpml)
+				{
+					// prepml == nowpml åˆ™è¯´æ˜æ˜¯å¤´ä¸€ä¸ª
+					prepml = new PreparerManagerList(subPartIndex, pm);
+					prepml.next = nowpml;
+					return prepml;
+				}
+				else
+				{
+					prepml.next = new PreparerManagerList(subPartIndex, pm);
+					prepml.next.next = nowpml;
+				}
+			}
+		}
+		return pml;
+	}
 
-   /**
-    * ½«ËùÓĞµÄpreparer²ÎÊıÉèÖÃµ½PreparedStatementÖĞ
-    */
-   public void prepareValues(PreparedStatementWrap stmtWrap)
-         throws ConfigurationException, SQLException
-   {
-      this.prepareValues(stmtWrap, 1, null);
-   }
+	/**
+	 * å°†æ‰€æœ‰çš„preparerå‚æ•°è®¾ç½®åˆ°PreparedStatementä¸­
+	 */
+	public void prepareValues(PreparedStatementWrap stmtWrap)
+			throws ConfigurationException, SQLException
+	{
+		this.prepareValues(stmtWrap, 1, null);
+	}
 
-   /**
-    * ½«ËùÓĞµÄpreparer²ÎÊıÉèÖÃµ½PreparedStatementÖĞ
-    * ²¢ÇÒ»á½«¶ÔÅäÖÃµÄ²ÎÊıÉèÖÃµÄË÷ÒıÖµ·Åµ½paramIndexsÖĞ
-    */
-   public void prepareValues(PreparedStatementWrap stmtWrap, int[] paramIndexs)
-         throws ConfigurationException, SQLException
-   {
-      if (paramIndexs != null)
-      {
-         if (paramIndexs.length < this.preparers.length)
-         {
-            paramIndexs = null;
-         }
-         else
-         {
-            Arrays.fill(paramIndexs, -1);
-         }
-      }
-      this.prepareValues(stmtWrap, 1, paramIndexs);
-   }
+	/**
+	 * å°†æ‰€æœ‰çš„preparerå‚æ•°è®¾ç½®åˆ°PreparedStatementä¸­
+	 * å¹¶ä¸”ä¼šå°†å¯¹é…ç½®çš„å‚æ•°è®¾ç½®çš„ç´¢å¼•å€¼æ”¾åˆ°paramIndexsä¸­
+	 */
+	public void prepareValues(PreparedStatementWrap stmtWrap, int[] paramIndexs)
+			throws ConfigurationException, SQLException
+	{
+		if (paramIndexs != null)
+		{
+			if (paramIndexs.length < this.preparers.length)
+			{
+				paramIndexs = null;
+			}
+			else
+			{
+				Arrays.fill(paramIndexs, -1);
+			}
+		}
+		this.prepareValues(stmtWrap, 1, paramIndexs);
+	}
 
-   /**
-    * ½«ËùÓĞµÄpreparer²ÎÊıÉèÖÃµ½PreparedStatementÖĞ
-    *
-    * @return Êµ¼ÊÉèÖÃµÄ²ÎÊı¸öÊı
-    */
-   private int prepareValues(PreparedStatementWrap stmtWrap, int startIndex, int[] paramIndexs)
-         throws ConfigurationException, SQLException
-   {
-      int realIndex = startIndex;
-      int settedCount = 0;
-      PreparerManagerList tpml;
-      for (int i = 0; i < this.preparers.length; i++)
-      {
-         if (this.insertedPM != null)
-         {
-            if (this.insertedPM[i] != null)
-            {
-               tpml = this.insertedPM[i];
-               do
-               {
-                  int count = tpml.preparerManager.prepareValues(stmtWrap, realIndex, null);
-                  realIndex += count;
-                  settedCount += count;
-                  tpml = tpml.next;
-               } while (tpml != null);
-            }
-         }
-         if (this.preparers[i] == null)
-         {
-            StringAppender buf = StringTool.createStringAppender(52);
-            if (this.sqlAdapter != null)
-            {
-               buf.append("In").append(this.sqlAdapter.getType()).append(" [")
-                     .append(this.sqlAdapter.getName()).append(']');
-               buf.append(", the parameter");
-            }
-            else
-            {
-               buf.append("The parameter");
-            }
-            if (this.parameterArray != null)
-            {
-               buf.append(" [").append(this.parameterArray[i].getName()).append(']');
-            }
-            buf.append(" not setted. real:").append(realIndex);
-            buf.append(" relative:").append(i + 1).append('.');
-            throw new ConfigurationException(buf.toString());
-         }
-         else
-         {
-            if (this.preparers[i] != IGNORE_PREPARER)
-            {
-               this.preparers[i].setValueToStatement(realIndex, stmtWrap);
-               if (paramIndexs != null)
-               {
-                  paramIndexs[i] = realIndex;
-               }
-               realIndex++;
-               settedCount++;
-            }
-         }
-      }
-      if (this.insertedPM != null)
-      {
-         if (this.insertedPM[this.preparers.length] != null)
-         {
-            tpml = this.insertedPM[this.preparers.length];
-            do
-            {
-               int count = tpml.preparerManager.prepareValues(stmtWrap, realIndex, null);
-               realIndex += count;
-               settedCount += count;
-               tpml = tpml.next;
-            } while (tpml != null);
-         }
-      }
-      return settedCount;
-   }
+	/**
+	 * å°†æ‰€æœ‰çš„preparerå‚æ•°è®¾ç½®åˆ°PreparedStatementä¸­
+	 *
+	 * @return å®é™…è®¾ç½®çš„å‚æ•°ä¸ªæ•°
+	 */
+	private int prepareValues(PreparedStatementWrap stmtWrap, int startIndex, int[] paramIndexs)
+			throws ConfigurationException, SQLException
+	{
+		int realIndex = startIndex;
+		int settedCount = 0;
+		PreparerManagerList tpml;
+		for (int i = 0; i < this.preparers.length; i++)
+		{
+			if (this.insertedPM != null)
+			{
+				if (this.insertedPM[i] != null)
+				{
+					tpml = this.insertedPM[i];
+					do
+					{
+						int count = tpml.preparerManager.prepareValues(stmtWrap, realIndex, null);
+						realIndex += count;
+						settedCount += count;
+						tpml = tpml.next;
+					} while (tpml != null);
+				}
+			}
+			if (this.preparers[i] == null)
+			{
+				StringAppender buf = StringTool.createStringAppender(52);
+				if (this.sqlAdapter != null)
+				{
+					buf.append("In").append(this.sqlAdapter.getType()).append(" [")
+							.append(this.sqlAdapter.getName()).append(']');
+					buf.append(", the parameter");
+				}
+				else
+				{
+					buf.append("The parameter");
+				}
+				if (this.parameterArray != null)
+				{
+					buf.append(" [").append(this.parameterArray[i].getName()).append(']');
+				}
+				buf.append(" not setted. real:").append(realIndex);
+				buf.append(" relative:").append(i + 1).append('.');
+				throw new ConfigurationException(buf.toString());
+			}
+			else
+			{
+				if (this.preparers[i] != IGNORE_PREPARER)
+				{
+					this.preparers[i].setValueToStatement(realIndex, stmtWrap);
+					if (paramIndexs != null)
+					{
+						paramIndexs[i] = realIndex;
+					}
+					realIndex++;
+					settedCount++;
+				}
+			}
+		}
+		if (this.insertedPM != null)
+		{
+			if (this.insertedPM[this.preparers.length] != null)
+			{
+				tpml = this.insertedPM[this.preparers.length];
+				do
+				{
+					int count = tpml.preparerManager.prepareValues(stmtWrap, realIndex, null);
+					realIndex += count;
+					settedCount += count;
+					tpml = tpml.next;
+				} while (tpml != null);
+			}
+		}
+		return settedCount;
+	}
 
-   private static class PreparerManagerList
-   {
-      public int subPartIndex;
-      public PreparerManager preparerManager;
-      public PreparerManagerList next;
+	private static class PreparerManagerList
+	{
+		public int subPartIndex;
+		public PreparerManager preparerManager;
+		public PreparerManagerList next;
 
-      public PreparerManagerList(int subPartIndex, PreparerManager preparerManager)
-      {
-         this.subPartIndex = subPartIndex;
-         this.preparerManager = preparerManager;
-         this.next = null;
-      }
+		public PreparerManagerList(int subPartIndex, PreparerManager preparerManager)
+		{
+			this.subPartIndex = subPartIndex;
+			this.preparerManager = preparerManager;
+			this.next = null;
+		}
 
-   }
+	}
 
-   private static class IgnorePreparer
-         implements ValuePreparer
-   {
-      public ValuePreparerCreater getCreater()
-            throws ConfigurationException
-      {
-         return null;
-      }
+	private static class IgnorePreparer
+			implements ValuePreparer
+	{
+		public ValuePreparerCreater getCreater()
+				throws ConfigurationException
+		{
+			return null;
+		}
 
-      public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
-            throws SQLException
-      {
-      }
+		public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
+				throws SQLException
+		{
+		}
 
-      public void setName(String name)
-      {
-      }
+		public void setName(String name)
+		{
+		}
 
-      public String getName()
-      {
-         return null;
-      }
+		public String getName()
+		{
+			return null;
+		}
 
-      public void setRelativeIndex(int index)
-      {
-      }
+		public void setRelativeIndex(int index)
+		{
+		}
 
-      public int getRelativeIndex()
-      {
-         return 0;
-      }
+		public int getRelativeIndex()
+		{
+			return 0;
+		}
 
-   }
+	}
 
 }

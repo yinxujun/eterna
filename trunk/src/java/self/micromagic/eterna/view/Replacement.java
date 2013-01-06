@@ -9,53 +9,53 @@ import self.micromagic.eterna.share.EternaFactory;
 public interface Replacement extends Component
 {
 	/**
-	 * ÒıÓÃ¸¸¿Ø¼şÖĞµÄ½Å±¾µÄ±í´ïÊ½.
+	 * å¼•ç”¨çˆ¶æ§ä»¶ä¸­çš„è„šæœ¬çš„è¡¨è¾¾å¼.
 	 */
-   public static final String PARENT_SCRIPT = "{$parentScript}";
+	public static final String PARENT_SCRIPT = "{$parentScript}";
 
 	/**
-	 * ³õÊ¼»¯Ìæ»». <p>
-	 * µ±base²ÎÊı²»ÎªnullÊ±, ÏÈÍ¨¹ıbase½øĞĞ³õÊ¼»¯, ¼´µ÷ÓÃ<code>initBase</code>. ´ËÊ±½«ºöÂÔparent
-	 * ²ÎÊı.
-	 * Èç¹ûbase²ÎÊıÎªnullÊ±(parent²»¿ÉÎªnull), ÔòĞèÒªÏÈ½«±¾½ÚµãÌæ»»µ½parentµÄ×Ó½ÚµãÖĞ. È»ºó½«±¾
-	 * <code>Replacement</code>ÖĞµÄ×Ó½ÚµãÌæ»»µ½<code>baseComponent</code>µÄ×Ó½ÚµãÖĞ.
-	 * ×¢:
-	 * µ±base²»ÊÇReplacementµÄÊµÀıÊ±, ²Å¶Ô<code>baseComponent</code>µÄ×Ó½Úµã½øĞĞÌæ»».
+	 * åˆå§‹åŒ–æ›¿æ¢. <p>
+	 * å½“baseå‚æ•°ä¸ä¸ºnullæ—¶, å…ˆé€šè¿‡baseè¿›è¡Œåˆå§‹åŒ–, å³è°ƒç”¨<code>initBase</code>. æ­¤æ—¶å°†å¿½ç•¥parent
+	 * å‚æ•°.
+	 * å¦‚æœbaseå‚æ•°ä¸ºnullæ—¶(parentä¸å¯ä¸ºnull), åˆ™éœ€è¦å…ˆå°†æœ¬èŠ‚ç‚¹æ›¿æ¢åˆ°parentçš„å­èŠ‚ç‚¹ä¸­. ç„¶åå°†æœ¬
+	 * <code>Replacement</code>ä¸­çš„å­èŠ‚ç‚¹æ›¿æ¢åˆ°<code>baseComponent</code>çš„å­èŠ‚ç‚¹ä¸­.
+	 * æ³¨:
+	 * å½“baseä¸æ˜¯Replacementçš„å®ä¾‹æ—¶, æ‰å¯¹<code>baseComponent</code>çš„å­èŠ‚ç‚¹è¿›è¡Œæ›¿æ¢.
 	 *
-	 * @param factory     ±¾¿Ø¼şËùÔÚµÄfactory
-	 * @param base        ÓÃÓÚ¶Ô±¾¿Ø¼ş½øĞĞ³õÊ¼»¯µÄ<code>baseComponent</code>
-	 * @param parent      ĞèÒªÔÚ´Ë¶ÔÏóÖĞÑ°ÕÒ¿ÉÌæ»»³É±¾¿Ø¼şµÄ½Úµã
+	 * @param factory     æœ¬æ§ä»¶æ‰€åœ¨çš„factory
+	 * @param base        ç”¨äºå¯¹æœ¬æ§ä»¶è¿›è¡Œåˆå§‹åŒ–çš„<code>baseComponent</code>
+	 * @param parent      éœ€è¦åœ¨æ­¤å¯¹è±¡ä¸­å¯»æ‰¾å¯æ›¿æ¢æˆæœ¬æ§ä»¶çš„èŠ‚ç‚¹
 	 * @see #initBase
 	 */
-   void initReplace(EternaFactory factory, Component base, Replacement parent)
+	void initReplace(EternaFactory factory, Component base, Replacement parent)
 			throws ConfigurationException;
 
 	/**
-	 * Í¨¹ı<code>baseComponent</code>½øĞĞ³õÊ¼»¯.
+	 * é€šè¿‡<code>baseComponent</code>è¿›è¡Œåˆå§‹åŒ–.
 	 *
-	 * @param factory   ±¾¿Ø¼şËùÔÚµÄfactory
-	 * @param base      ÓÃÓÚ¶Ô±¾¿Ø¼ş½øĞĞ³õÊ¼»¯µÄ<code>baseComponent</code>
+	 * @param factory   æœ¬æ§ä»¶æ‰€åœ¨çš„factory
+	 * @param base      ç”¨äºå¯¹æœ¬æ§ä»¶è¿›è¡Œåˆå§‹åŒ–çš„<code>baseComponent</code>
 	 */
-   void initBase(EternaFactory factory, Component base) throws ConfigurationException;
+	void initBase(EternaFactory factory, Component base) throws ConfigurationException;
 
 	/**
-	 * ½«¿Ø¼şÌæ»»µ½<code>baseComponent</code>µÄ×Ó½ÚµãÖĞ.
+	 * å°†æ§ä»¶æ›¿æ¢åˆ°<code>baseComponent</code>çš„å­èŠ‚ç‚¹ä¸­.
 	 *
-	 * @param factory       ±¾¿Ø¼şËùÔÚµÄfactory
-	 * @param newReplace    ĞèÒªÌæ»»µÄ¿Ø¼ş, Æä»áÌæ»»<code>baseComponent</code>×Ó½ÚµãÖĞµÄ
-	 *                      Í¬Ãû¿Ø¼ş
+	 * @param factory       æœ¬æ§ä»¶æ‰€åœ¨çš„factory
+	 * @param newReplace    éœ€è¦æ›¿æ¢çš„æ§ä»¶, å…¶ä¼šæ›¿æ¢<code>baseComponent</code>å­èŠ‚ç‚¹ä¸­çš„
+	 *                      åŒåæ§ä»¶
 	 */
-   void replaceComponent(EternaFactory factory, Component newReplace) throws ConfigurationException;
-
-   /**
-    * »ñµÃÖ±½ÓÆ¥Åä¿Ø¼şµÄÓ³Éä±í.
-	 * ¿Ø¼şÓ³Éä±íÊÇÓÃ»§Ìæ»»<code>baseComponent</code>ÖĞÈÎÒâ²ã´ÎÏÂµÄÍ¬Ãû½Úµã.
-    */
-   Map getDirectMatchMap() throws ConfigurationException;
+	void replaceComponent(EternaFactory factory, Component newReplace) throws ConfigurationException;
 
 	/**
-	 * »ñÈ¡µ±Ç°¿Ø¼şµÄ<code>baseComponent</code>.
+	 * è·å¾—ç›´æ¥åŒ¹é…æ§ä»¶çš„æ˜ å°„è¡¨.
+	 * æ§ä»¶æ˜ å°„è¡¨æ˜¯ç”¨æˆ·æ›¿æ¢<code>baseComponent</code>ä¸­ä»»æ„å±‚æ¬¡ä¸‹çš„åŒåèŠ‚ç‚¹.
 	 */
-   Component getBaseComponent() throws ConfigurationException;
+	Map getDirectMatchMap() throws ConfigurationException;
+
+	/**
+	 * è·å–å½“å‰æ§ä»¶çš„<code>baseComponent</code>.
+	 */
+	Component getBaseComponent() throws ConfigurationException;
 
 }

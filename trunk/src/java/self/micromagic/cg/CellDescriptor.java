@@ -1,208 +1,208 @@
 
 package self.micromagic.cg;
 
-
-
 /**
- * beanÊôĞÔµ¥ÔªµÄÃèÊöÀà.
+ * beanå±æ€§å•å…ƒçš„æè¿°ç±».
+ *
+ * @author micromagic@sina.com
  */
 public class CellDescriptor
 {
-   private String name;
-   private boolean readOldValue;
-   private boolean beanType;
-   private boolean arrayType;
-   private boolean arrayBeanType;
+	private String name;
+	private boolean readOldValue;
+	private boolean beanType;
+	private boolean arrayType;
+	private boolean arrayBeanType;
 	private boolean valid = true;
 
-   BeanPropertyReader readProcesser;  // BeanPropertyReader
-   BeanPropertyWriter writeProcesser; // BeanPropertyWriter
+	BeanPropertyReader readProcesser;  // BeanPropertyReader
+	BeanPropertyWriter writeProcesser; // BeanPropertyWriter
 
-   private Class cellType;
-   private Class arrayElementType;
+	private Class cellType;
+	private Class arrayElementType;
 
-   /**
-    * »ñÈ¡ÊôĞÔµÄÃû³Æ.
-    */
-   public String getName()
-   {
-      return name;
-   }
+	/**
+	 * è·å–å±æ€§çš„åç§°.
+	 */
+	public String getName()
+	{
+		return name;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔµÄÃû³Æ.
-    */
-   void setName(String name)
-   {
-      this.name = name;
-   }
+	/**
+	 * è®¾ç½®å±æ€§çš„åç§°.
+	 */
+	void setName(String name)
+	{
+		this.name = name;
+	}
 
-   /**
-    * »ñÈ¡Ğ´ÊôĞÔÊ±ÊÇ·ñÒª¶ÁÈ¡Ô­À´µÄÖµ.
-    */
-   public boolean isReadOldValue()
-   {
-      return readOldValue;
-   }
+	/**
+	 * è·å–å†™å±æ€§æ—¶æ˜¯å¦è¦è¯»å–åŸæ¥çš„å€¼.
+	 */
+	public boolean isReadOldValue()
+	{
+		return readOldValue;
+	}
 
-   /**
-    * ÉèÖÃĞ´ÊôĞÔÊ±ÊÇ·ñÒª¶ÁÈ¡Ô­À´µÄÖµ.
-    */
-   public void setReadOldValue(boolean readOldValue)
-   {
-      this.readOldValue = readOldValue;
-   }
+	/**
+	 * è®¾ç½®å†™å±æ€§æ—¶æ˜¯å¦è¦è¯»å–åŸæ¥çš„å€¼.
+	 */
+	public void setReadOldValue(boolean readOldValue)
+	{
+		this.readOldValue = readOldValue;
+	}
 
-   /**
-    * »ñÈ¡ÊôĞÔµ¥ÔªµÄÀàĞÍ.
-    */
-   public Class getCellType()
-   {
-      return this.cellType;
-   }
+	/**
+	 * è·å–å±æ€§å•å…ƒçš„ç±»å‹.
+	 */
+	public Class getCellType()
+	{
+		return this.cellType;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔµ¥ÔªµÄÀàĞÍ.
-    */
-   public void setCellType(Class cellType)
-   {
-      this.cellType = cellType;
-   }
+	/**
+	 * è®¾ç½®å±æ€§å•å…ƒçš„ç±»å‹.
+	 */
+	public void setCellType(Class cellType)
+	{
+		this.cellType = cellType;
+	}
 
-   /**
-    * »ñÈ¡ÊôĞÔµ¥ÔªµÄÀàĞÍÊÇ·ñÊÇÒ»¸öÊı×é.
-    */
-   public boolean isArrayType()
-   {
-      return arrayType;
-   }
+	/**
+	 * è·å–å±æ€§å•å…ƒçš„ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªæ•°ç»„.
+	 */
+	public boolean isArrayType()
+	{
+		return arrayType;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔµ¥ÔªµÄÀàĞÍÊÇ·ñÊÇÒ»¸öÊı×é.
-    */
-   public void setArrayType(boolean arrayType)
-   {
-      this.arrayType = arrayType;
-      if (arrayType)
-      {
-         this.setReadOldValue(true);
-         Class tmpClass = ClassGenerator.getArrayElementType(this.getCellType(), null);
-         this.setArrayElementType(tmpClass);
-         if (BeanTool.checkBean(tmpClass))
-         {
-            this.setArrayBeanType(true);
-         }
-      }
-      else
-      {
-         this.arrayBeanType = false;
-         this.arrayElementType = null;
-      }
-   }
+	/**
+	 * è®¾ç½®å±æ€§å•å…ƒçš„ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªæ•°ç»„.
+	 */
+	public void setArrayType(boolean arrayType)
+	{
+		this.arrayType = arrayType;
+		if (arrayType)
+		{
+			this.setReadOldValue(true);
+			Class tmpClass = ClassGenerator.getArrayElementType(this.getCellType(), null);
+			this.setArrayElementType(tmpClass);
+			if (BeanTool.checkBean(tmpClass))
+			{
+				this.setArrayBeanType(true);
+			}
+		}
+		else
+		{
+			this.arrayBeanType = false;
+			this.arrayElementType = null;
+		}
+	}
 
-   /**
-    * Èç¹ûÊôĞÔµ¥ÔªÊÇÒ»¸öÊı×é, »ñÈ¡¸ÃÊı×éµÄÔªËØÀàĞÍÊÇ·ñÊÇÒ»¸öbean.
-    */
-   public boolean isArrayBeanType()
-   {
-      return this.arrayBeanType;
-   }
+	/**
+	 * å¦‚æœå±æ€§å•å…ƒæ˜¯ä¸€ä¸ªæ•°ç»„, è·å–è¯¥æ•°ç»„çš„å…ƒç´ ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªbean.
+	 */
+	public boolean isArrayBeanType()
+	{
+		return this.arrayBeanType;
+	}
 
-   /**
-    * Èç¹ûÊôĞÔµ¥ÔªÊÇÒ»¸öÊı×é, ÉèÖÃ¸ÃÊı×éµÄÔªËØÀàĞÍÊÇ·ñÊÇÒ»¸öbean.
-    */
-   public void setArrayBeanType(boolean arrayBeanType)
-   {
-      if (this.isArrayType())
-      {
-         this.arrayBeanType = arrayBeanType;
-      }
-   }
+	/**
+	 * å¦‚æœå±æ€§å•å…ƒæ˜¯ä¸€ä¸ªæ•°ç»„, è®¾ç½®è¯¥æ•°ç»„çš„å…ƒç´ ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªbean.
+	 */
+	public void setArrayBeanType(boolean arrayBeanType)
+	{
+		if (this.isArrayType())
+		{
+			this.arrayBeanType = arrayBeanType;
+		}
+	}
 
-   /**
-    * Èç¹ûÊôĞÔµ¥ÔªÊÇÒ»¸öÊı×é, »ñÈ¡¸ÃÊı×éµÄÔªËØÀàĞÍ.
-    */
-   public Class getArrayElementType()
-   {
-      return this.arrayElementType;
-   }
+	/**
+	 * å¦‚æœå±æ€§å•å…ƒæ˜¯ä¸€ä¸ªæ•°ç»„, è·å–è¯¥æ•°ç»„çš„å…ƒç´ ç±»å‹.
+	 */
+	public Class getArrayElementType()
+	{
+		return this.arrayElementType;
+	}
 
-   /**
-    * Èç¹ûÊôĞÔµ¥ÔªÊÇÒ»¸öÊı×é, ÉèÖÃ¸ÃÊı×éµÄÔªËØÀàĞÍ.
-    */
-   public void setArrayElementType(Class arrayElementType)
-   {
-      if (this.isArrayType())
-      {
-         this.arrayElementType = arrayElementType;
-      }
-   }
+	/**
+	 * å¦‚æœå±æ€§å•å…ƒæ˜¯ä¸€ä¸ªæ•°ç»„, è®¾ç½®è¯¥æ•°ç»„çš„å…ƒç´ ç±»å‹.
+	 */
+	public void setArrayElementType(Class arrayElementType)
+	{
+		if (this.isArrayType())
+		{
+			this.arrayElementType = arrayElementType;
+		}
+	}
 
-   /**
-    * »ñÈ¡ÊôĞÔµ¥ÔªµÄÀàĞÍÊÇ·ñÊÇÒ»¸öbean.
-    */
-   public boolean isBeanType()
-   {
-      return this.beanType;
-   }
+	/**
+	 * è·å–å±æ€§å•å…ƒçš„ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªbean.
+	 */
+	public boolean isBeanType()
+	{
+		return this.beanType;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔµ¥ÔªµÄÀàĞÍÊÇ·ñÊÇÒ»¸öbean.
-    */
-   public void setBeanType(boolean beanType)
-   {
-      if (beanType)
-      {
-         this.setReadOldValue(true);
-      }
-      this.beanType = beanType;
-   }
+	/**
+	 * è®¾ç½®å±æ€§å•å…ƒçš„ç±»å‹æ˜¯å¦æ˜¯ä¸€ä¸ªbean.
+	 */
+	public void setBeanType(boolean beanType)
+	{
+		if (beanType)
+		{
+			this.setReadOldValue(true);
+		}
+		this.beanType = beanType;
+	}
 
-   /**
-    * »ñÈ¡¶ÔbeanÊôĞÔµÄ¶Á´¦ÀíÕß.
-    */
-   public BeanPropertyReader getReadProcesser()
-   {
-      return this.readProcesser;
-   }
+	/**
+	 * è·å–å¯¹beanå±æ€§çš„è¯»å¤„ç†è€….
+	 */
+	public BeanPropertyReader getReadProcesser()
+	{
+		return this.readProcesser;
+	}
 
-   /**
-    * ÉèÖÃ¶ÔbeanÊôĞÔµÄ¶Á´¦ÀíÕß.
-    */
-   public void setReadProcesser(BeanPropertyReader readProcesser)
-   {
-      this.readProcesser = readProcesser;
-   }
+	/**
+	 * è®¾ç½®å¯¹beanå±æ€§çš„è¯»å¤„ç†è€….
+	 */
+	public void setReadProcesser(BeanPropertyReader readProcesser)
+	{
+		this.readProcesser = readProcesser;
+	}
 
-   /**
-    * »ñÈ¡¶ÔbeanÊôĞÔµÄĞ´´¦ÀíÕß.
-    */
-   public BeanPropertyWriter getWriteProcesser()
-   {
-      return this.writeProcesser;
-   }
+	/**
+	 * è·å–å¯¹beanå±æ€§çš„å†™å¤„ç†è€….
+	 */
+	public BeanPropertyWriter getWriteProcesser()
+	{
+		return this.writeProcesser;
+	}
 
-   /**
-    * ÉèÖÃ¶ÔbeanÊôĞÔµÄĞ´´¦ÀíÕß.
-    */
-   public void setWriteProcesser(BeanPropertyWriter writeProcesser)
-   {
-      this.writeProcesser = writeProcesser;
-   }
+	/**
+	 * è®¾ç½®å¯¹beanå±æ€§çš„å†™å¤„ç†è€….
+	 */
+	public void setWriteProcesser(BeanPropertyWriter writeProcesser)
+	{
+		this.writeProcesser = writeProcesser;
+	}
 
-   /**
-    * ÅĞ¶ÏÊôĞÔµ¥ÔªÊÇ·ñÓĞĞ§.
-    */
-   public boolean isValid()
-   {
-      return this.valid;
-   }
+	/**
+	 * åˆ¤æ–­å±æ€§å•å…ƒæ˜¯å¦æœ‰æ•ˆ.
+	 */
+	public boolean isValid()
+	{
+		return this.valid;
+	}
 
-   /**
-    * ÉèÖÃÊôĞÔµ¥ÔªÊÇ·ñÓĞĞ§.
-    */
-   public void setValid(boolean valid)
-   {
-      this.valid = valid;
-   }
+	/**
+	 * è®¾ç½®å±æ€§å•å…ƒæ˜¯å¦æœ‰æ•ˆ.
+	 */
+	public void setValid(boolean valid)
+	{
+		this.valid = valid;
+	}
 }

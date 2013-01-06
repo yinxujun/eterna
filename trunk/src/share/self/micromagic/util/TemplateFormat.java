@@ -12,7 +12,7 @@ import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
 
 /**
- * Ôö¼ÓÒ»¸öformatµÄÀı×Ó£º
+ * å¢åŠ ä¸€ä¸ªformatçš„ä¾‹å­ï¼š
  * <format name="link.format" type="String" generator="self.micromagic.util.TemplateFormat"/>
  *    <pattern> <![CDATA[
  *       <a href="/ky/projectManager.dow?projectId=[v]&action=load">[v]</a>
@@ -20,115 +20,115 @@ import self.micromagic.eterna.sql.ResultRow;
  * </format>
  */
 public class TemplateFormat extends AbstractGenerator
-      implements ResultFormat, ResultFormatGenerator
+		implements ResultFormat, ResultFormatGenerator
 {
-   public static final String DEFAULT_INSERT_VALUE_TAG = "[v]";
+	public static final String DEFAULT_INSERT_VALUE_TAG = "[v]";
 
-   protected String pattern;
-   protected String[] patterns;
-   protected boolean htmlFilter = true;
+	protected String pattern;
+	protected String[] patterns;
+	protected boolean htmlFilter = true;
 
-   /**
-    * ½øĞĞ¸ñÊ½»¯Êä³öĞèÒªµÄÈ¨ÏŞ, Èç¹ûÃ»ÓĞÈ¨ÏŞ, Ôò²»¸ñÊ½»¯, Ö±½ÓÊä³ö
-    */
-   protected String needPermission = null;
+	/**
+	 * è¿›è¡Œæ ¼å¼åŒ–è¾“å‡ºéœ€è¦çš„æƒé™, å¦‚æœæ²¡æœ‰æƒé™, åˆ™ä¸æ ¼å¼åŒ–, ç›´æ¥è¾“å‡º
+	 */
+	protected String needPermission = null;
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+	}
 
-   public String format(Object obj, Permission permission)
-         throws ConfigurationException
-   {
-      if (this.needPermission != null && permission != null)
-      {
-         if (!permission.hasPermission(this.needPermission))
-         {
-            return obj == null ? "" :
-                  this.htmlFilter ? Utils.dealString2HTML(obj.toString(), true) : obj.toString();
-         }
-      }
-      String temp = obj == null ? "" :
-            this.htmlFilter ? Utils.dealString2HTML(obj.toString(), true) : obj.toString();
-      int count = this.pattern.length() + (this.patterns.length - 1) * temp.length();
-      StringAppender buf = StringTool.createStringAppender(count);
-      for (int i = 0; i < this.patterns.length; i++)
-      {
-         if (i > 0)
-         {
-            buf.append(temp);
-         }
-         buf.append(this.patterns[i]);
-      }
-      return buf.toString();
-   }
+	public String format(Object obj, Permission permission)
+			throws ConfigurationException
+	{
+		if (this.needPermission != null && permission != null)
+		{
+			if (!permission.hasPermission(this.needPermission))
+			{
+				return obj == null ? "" :
+						this.htmlFilter ? Utils.dealString2HTML(obj.toString(), true) : obj.toString();
+			}
+		}
+		String temp = obj == null ? "" :
+				this.htmlFilter ? Utils.dealString2HTML(obj.toString(), true) : obj.toString();
+		int count = this.pattern.length() + (this.patterns.length - 1) * temp.length();
+		StringAppender buf = StringTool.createStringAppender(count);
+		for (int i = 0; i < this.patterns.length; i++)
+		{
+			if (i > 0)
+			{
+				buf.append(temp);
+			}
+			buf.append(this.patterns[i]);
+		}
+		return buf.toString();
+	}
 
-   public String format(Object obj, ResultRow row, Permission permission)
-         throws ConfigurationException
-   {
-      return this.format(obj, permission);
-   }
+	public String format(Object obj, ResultRow row, Permission permission)
+			throws ConfigurationException
+	{
+		return this.format(obj, permission);
+	}
 
-   protected void parseTemplate()
-   {
-      if (this.pattern == null)
-      {
-         this.pattern = "";
-         this.patterns = StringTool.EMPTY_STRING_ARRAY;
-      }
-      String valueTag = (String) this.getAttribute("insert_value_tag");
-      valueTag = valueTag == null ? DEFAULT_INSERT_VALUE_TAG : valueTag;
-      this.needPermission = (String) this.getAttribute("format_permission");
-      String filter = (String) this.getAttribute("html_filter");
-      if (filter != null)
-      {
-         this.htmlFilter = "true".equalsIgnoreCase(filter);
-      }
-      filter = (String) this.getAttribute("root_format");
-      ArrayList temp = new ArrayList();
-      int vtLength = valueTag.length();
-      String str = this.pattern;
-      int index = str.indexOf(valueTag);
-      while (index != -1)
-      {
-         temp.add(str.substring(0, index));
-         str = str.substring(index + vtLength);
-         index = str.indexOf(valueTag);
-      }
-      temp.add(str);
-      this.patterns = (String[]) temp.toArray(new String[temp.size()]);
-   }
+	protected void parseTemplate()
+	{
+		if (this.pattern == null)
+		{
+			this.pattern = "";
+			this.patterns = StringTool.EMPTY_STRING_ARRAY;
+		}
+		String valueTag = (String) this.getAttribute("insert_value_tag");
+		valueTag = valueTag == null ? DEFAULT_INSERT_VALUE_TAG : valueTag;
+		this.needPermission = (String) this.getAttribute("format_permission");
+		String filter = (String) this.getAttribute("html_filter");
+		if (filter != null)
+		{
+			this.htmlFilter = "true".equalsIgnoreCase(filter);
+		}
+		filter = (String) this.getAttribute("root_format");
+		ArrayList temp = new ArrayList();
+		int vtLength = valueTag.length();
+		String str = this.pattern;
+		int index = str.indexOf(valueTag);
+		while (index != -1)
+		{
+			temp.add(str.substring(0, index));
+			str = str.substring(index + vtLength);
+			index = str.indexOf(valueTag);
+		}
+		temp.add(str);
+		this.patterns = (String[]) temp.toArray(new String[temp.size()]);
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createFormat();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createFormat();
+	}
 
-   public void setType(String type)
-   {
-   }
+	public void setType(String type)
+	{
+	}
 
-   public void setPattern(String pattern)
-   {
-      this.pattern = pattern;
-   }
+	public void setPattern(String pattern)
+	{
+		this.pattern = pattern;
+	}
 
-   public ResultFormat createFormat()
-   {
-      this.parseTemplate();
-      return this;
-   }
+	public ResultFormat createFormat()
+	{
+		this.parseTemplate();
+		return this;
+	}
 
-   public static void main(String[] args)
-         throws ConfigurationException
-   {
-      TemplateFormat t = new TemplateFormat();
-      t.setPattern("s[v]dfdfds[v]df[v]");
-      t.parseTemplate();
-      System.out.println(java.util.Arrays.asList(t.patterns));
-      System.out.println(t.format("--", null));
-   }
+	public static void main(String[] args)
+			throws ConfigurationException
+	{
+		TemplateFormat t = new TemplateFormat();
+		t.setPattern("s[v]dfdfds[v]df[v]");
+		t.parseTemplate();
+		System.out.println(java.util.Arrays.asList(t.patterns));
+		System.out.println(t.format("--", null));
+	}
 
 }

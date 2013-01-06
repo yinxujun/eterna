@@ -14,7 +14,7 @@ public class MapConverter extends ObjectConverter
 	private char kvDelimiter = '=';
 
 	/**
-	 * »ñÈ¡×Ö·û´®ÖĞÃ¿¸öÔªËØµÄ·Ö¸î·û.
+	 * è·å–å­—ç¬¦ä¸²ä¸­æ¯ä¸ªå…ƒç´ çš„åˆ†å‰²ç¬¦.
 	 */
 	public String getItemDelimiter()
 	{
@@ -22,7 +22,7 @@ public class MapConverter extends ObjectConverter
 	}
 
 	/**
-	 * ÉèÖÃ×Ö·û´®ÖĞÃ¿¸öÔªËØµÄ·Ö¸î·û.
+	 * è®¾ç½®å­—ç¬¦ä¸²ä¸­æ¯ä¸ªå…ƒç´ çš„åˆ†å‰²ç¬¦.
 	 */
 	public void setItemDelimiter(String itemDelimiter)
 	{
@@ -30,7 +30,7 @@ public class MapConverter extends ObjectConverter
 	}
 
 	/**
-	 * »ñÈ¡×Ö·û´®ÖĞ¼üºÍÖµµÄ·Ö¸î·û.
+	 * è·å–å­—ç¬¦ä¸²ä¸­é”®å’Œå€¼çš„åˆ†å‰²ç¬¦.
 	 */
 	public char getKvDelimiter()
 	{
@@ -38,7 +38,7 @@ public class MapConverter extends ObjectConverter
 	}
 
 	/**
-	 * ÉèÖÃ×Ö·û´®ÖĞ¼üºÍÖµµÄ·Ö¸î·û.
+	 * è®¾ç½®å­—ç¬¦ä¸²ä¸­é”®å’Œå€¼çš„åˆ†å‰²ç¬¦.
 	 */
 	public void setKvDelimiter(char kvDelimiter)
 	{
@@ -46,92 +46,92 @@ public class MapConverter extends ObjectConverter
 	}
 
 
-   public Map convertToMap(Object value)
-   {
-      if (value == null)
-      {
-         return null;
-      }
-      if (value instanceof Map)
-      {
-         return (Map) value;
-      }
-      if (value instanceof String)
-      {
-         return StringTool.string2Map((String) value, this.itemDelimiter, this.kvDelimiter,
+	public Map convertToMap(Object value)
+	{
+		if (value == null)
+		{
+			return null;
+		}
+		if (value instanceof Map)
+		{
+			return (Map) value;
+		}
+		if (value instanceof String)
+		{
+			return StringTool.string2Map((String) value, this.itemDelimiter, this.kvDelimiter,
 					true, false, null, null);
-      }
-      if (value instanceof ObjectRef)
-      {
-         return this.convertToMap(((ObjectRef) value).getObject());
-      }
+		}
+		if (value instanceof ObjectRef)
+		{
+			return this.convertToMap(((ObjectRef) value).getObject());
+		}
 		if (BeanTool.checkBean(value.getClass()))
 		{
 			BeanMap map = BeanTool.getBeanMap(value);
 			map.setBean2Map(true);
 			return map;
 		}
-      throw new ClassCastException(getCastErrorMessage(value, "Map"));
-   }
+		throw new ClassCastException(getCastErrorMessage(value, "Map"));
+	}
 
-   public Map convertToMap(String value)
-   {
-      if (value == null)
-      {
-         return null;
-      }
+	public Map convertToMap(String value)
+	{
+		if (value == null)
+		{
+			return null;
+		}
 		return StringTool.string2Map(value, this.itemDelimiter, this.kvDelimiter,
 				true, false, null, null);
-   }
+	}
 
-   public Object convert(Object value)
-   {
-      if (value instanceof Map)
-      {
-         return (Map) value;
-      }
-      try
-      {
-         return this.convertToMap(value);
-      }
-      catch (Exception ex)
-      {
-         if (this.needThrow)
-         {
-            if (ex instanceof RuntimeException)
-            {
-               throw (RuntimeException) ex;
-            }
-            throw new ClassCastException(getCastErrorMessage(value, "Map"));
-         }
-         else
-         {
-            return null;
-         }
-      }
-   }
+	public Object convert(Object value)
+	{
+		if (value instanceof Map)
+		{
+			return (Map) value;
+		}
+		try
+		{
+			return this.convertToMap(value);
+		}
+		catch (Exception ex)
+		{
+			if (this.needThrow)
+			{
+				if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				throw new ClassCastException(getCastErrorMessage(value, "Map"));
+			}
+			else
+			{
+				return null;
+			}
+		}
+	}
 
-   public Object convert(String value)
-   {
-      try
-      {
-         return this.convertToMap(value);
-      }
-      catch (Exception ex)
-      {
-         if (this.needThrow)
-         {
-            if (ex instanceof RuntimeException)
-            {
-               throw (RuntimeException) ex;
-            }
-            throw new ClassCastException(getCastErrorMessage(value, "Map"));
-         }
-         else
-         {
-            return null;
-         }
-      }
-   }
+	public Object convert(String value)
+	{
+		try
+		{
+			return this.convertToMap(value);
+		}
+		catch (Exception ex)
+		{
+			if (this.needThrow)
+			{
+				if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				throw new ClassCastException(getCastErrorMessage(value, "Map"));
+			}
+			else
+			{
+				return null;
+			}
+		}
+	}
 
 }

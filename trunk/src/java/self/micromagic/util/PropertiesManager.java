@@ -26,52 +26,52 @@ import self.micromagic.util.converter.ConverterFinder;
 import self.micromagic.cg.ClassGenerator;
 
 /**
- * ÅäÖÃÊôĞÔµÄ¹ÜÀíÆ÷.
+ * é…ç½®å±æ€§çš„ç®¡ç†å™¨.
  *
  * @author micromagic@sina.com
  */
 public class PropertiesManager
 {
-   /**
-    * Ä¬ÈÏµÄÅäÖÃÎÄ¼şÃû.
-	 * ×¢: ÅäÖÃÎÄ¼ş¶¼±ØĞëÔÚclasspathÏÂ.
-    */
-   public static final String PROPERTIES_NAME = "micromagic_config.properties";
-
-   /**
-    * ´æ·Å¸¸ÅäÖÃÎÄ¼şÃûµÄÊôĞÔ.
-    */
-   public static final String PARENT_PROPERTIES = "self.micromagic.parent.properties";
+	/**
+	 * é»˜è®¤çš„é…ç½®æ–‡ä»¶å.
+	 * æ³¨: é…ç½®æ–‡ä»¶éƒ½å¿…é¡»åœ¨classpathä¸‹.
+	 */
+	public static final String PROPERTIES_NAME = "micromagic_config.properties";
 
 	/**
-	 * ÅäÖÃÎÄ¼şÃû.
-	 * ×¢: ÅäÖÃÎÄ¼ş¶¼±ØĞëÔÚclasspathÏÂ.
+	 * å­˜æ”¾çˆ¶é…ç½®æ–‡ä»¶åçš„å±æ€§.
+	 */
+	public static final String PARENT_PROPERTIES = "self.micromagic.parent.properties";
+
+	/**
+	 * é…ç½®æ–‡ä»¶å.
+	 * æ³¨: é…ç½®æ–‡ä»¶éƒ½å¿…é¡»åœ¨classpathä¸‹.
 	 */
 	private String propName;
 
 	/**
-	 * ¶ÁÈ¡ÅäÖÃÎÄ¼şËùÊ¹ÓÃµÄ<code>ClassLoader</code>.
+	 * è¯»å–é…ç½®æ–‡ä»¶æ‰€ä½¿ç”¨çš„<code>ClassLoader</code>.
 	 */
 	private ClassLoader classLoader;
 
 	/**
-	 * µ±Ç°Ëù¶ÁÈ¡µÄÅäÖÃÊôĞÔ.
+	 * å½“å‰æ‰€è¯»å–çš„é…ç½®å±æ€§.
 	 */
 	private Properties properties = new Properties();
 
 	/**
-	 * ÊôĞÔ±ä»¯¼àÌıÕßÁĞ±í.
+	 * å±æ€§å˜åŒ–ç›‘å¬è€…åˆ—è¡¨.
 	 */
-   private List plList = new LinkedList();
+	private List plList = new LinkedList();
 
 	/**
-	 * ÅäÖÃÊôĞÔµÄ¹ÜÀíÆ÷ÖĞ, Ä¬ÈÏµÄÊôĞÔ±ä»¯¼àÌıÕß.
+	 * é…ç½®å±æ€§çš„ç®¡ç†å™¨ä¸­, é»˜è®¤çš„å±æ€§å˜åŒ–ç›‘å¬è€….
 	 */
-   private DefaultPropertyListener defaultPL = new DefaultPropertyListener();
+	private DefaultPropertyListener defaultPL = new DefaultPropertyListener();
 
 	/**
-	 * Ä¬ÈÏµÄ¹¹Ôìº¯Êı.
-	 * Ä¬ÈÏµÄÅäÖÃÎÄ¼şÃû¼°±¾ÀàµÄ<code>ClassLoader</code>.
+	 * é»˜è®¤çš„æ„é€ å‡½æ•°.
+	 * é»˜è®¤çš„é…ç½®æ–‡ä»¶ååŠæœ¬ç±»çš„<code>ClassLoader</code>.
 	 */
 	public PropertiesManager()
 	{
@@ -79,11 +79,11 @@ public class PropertiesManager
 	}
 
 	/**
-	 * ¹¹ÔìÒ»¸öÅäÖÃÊôĞÔµÄ¹ÜÀíÆ÷.
+	 * æ„é€ ä¸€ä¸ªé…ç½®å±æ€§çš„ç®¡ç†å™¨.
 	 *
-	 * @param propName      ÅäÖÃÎÄ¼şÃû, ±ØĞëÔÚclasspathÏÂ, Ğè¸ø³öµÄÊÇclasspathÂ·¾¶
-	 *                      Èç: com/xxx.properties
-	 * @param classLoader   ¶ÁÈ¡ÅäÖÃÎÄ¼şËùÊ¹ÓÃµÄ<code>ClassLoader</code>
+	 * @param propName      é…ç½®æ–‡ä»¶å, å¿…é¡»åœ¨classpathä¸‹, éœ€ç»™å‡ºçš„æ˜¯classpathè·¯å¾„
+	 *                      å¦‚: com/xxx.properties
+	 * @param classLoader   è¯»å–é…ç½®æ–‡ä»¶æ‰€ä½¿ç”¨çš„<code>ClassLoader</code>
 	 */
 	public PropertiesManager(String propName, ClassLoader classLoader)
 	{
@@ -93,23 +93,23 @@ public class PropertiesManager
 		this.reload();
 	}
 
-   /**
-    * (ÖØĞÂ)ÔØÈëÅäÖÃ.
-    */
-   public void reload()
-   {
+	/**
+	 * (é‡æ–°)è½½å…¥é…ç½®.
+	 */
+	public void reload()
+	{
 		this.reload(null);
 	}
 
-   /**
-    * (ÖØĞÂ)ÔØÈëÅäÖÃ.
-    *
-    * @param msg   ³ö²Î, ÔØÈëÅäÖÃÊ±µÄ³ö´íĞÅÏ¢
-    */
-   public void reload(StringRef msg)
-   {
-      try
-      {
+	/**
+	 * (é‡æ–°)è½½å…¥é…ç½®.
+	 *
+	 * @param msg   å‡ºå‚, è½½å…¥é…ç½®æ—¶çš„å‡ºé”™ä¿¡æ¯
+	 */
+	public void reload(StringRef msg)
+	{
+		try
+		{
 			URL url = this.classLoader.getResource(this.propName);
 			if (url == null)
 			{
@@ -119,66 +119,66 @@ public class PropertiesManager
 				}
 				return;
 			}
-         Properties temp = new Properties();
+			Properties temp = new Properties();
 			InputStream inStream = url.openStream();
 			temp.load(inStream);
 			inStream.close();
 			this.loadParentProperties(temp);
-         Iterator itr = temp.entrySet().iterator();
-         while (itr.hasNext())
-         {
-            Map.Entry entry = (Map.Entry) itr.next();
-            this.setProperty((String) entry.getKey(), (String) entry.getValue());
-         }
-         // ÉèÖÃ±»É¾³ıµÄÊôĞÔ
-         Enumeration e = this.properties.propertyNames();
-         while (e.hasMoreElements())
-         {
-            String name = (String) e.nextElement();
-            if (temp.getProperty(name) == null)
-            {
-               this.setProperty(name, null);
-            }
-         }
-         // ÓÉÓÚÉÏÃæÒÑ¾­ÉèÖÃÁËÊôĞÔ ËùÒÔ²»ÓÃ¶Ôproperties¸³Öµ;
-      }
-      catch (Throwable ex)
-      {
-         System.err.println(FormatTool.getCurrentDatetimeString()
-               + ": Error when reload properties.");
-         ex.printStackTrace(System.err);
-         if (msg != null)
-         {
-            msg.setString("Reload properties error:" + ex.getMessage());
-         }
-      }
-   }
+			Iterator itr = temp.entrySet().iterator();
+			while (itr.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) itr.next();
+				this.setProperty((String) entry.getKey(), (String) entry.getValue());
+			}
+			// è®¾ç½®è¢«åˆ é™¤çš„å±æ€§
+			Enumeration e = this.properties.propertyNames();
+			while (e.hasMoreElements())
+			{
+				String name = (String) e.nextElement();
+				if (temp.getProperty(name) == null)
+				{
+					this.setProperty(name, null);
+				}
+			}
+			// ç”±äºä¸Šé¢å·²ç»è®¾ç½®äº†å±æ€§ æ‰€ä»¥ä¸ç”¨å¯¹propertiesèµ‹å€¼;
+		}
+		catch (Throwable ex)
+		{
+			System.err.println(FormatTool.getCurrentDatetimeString()
+					+ ": Error when reload properties.");
+			ex.printStackTrace(System.err);
+			if (msg != null)
+			{
+				msg.setString("Reload properties error:" + ex.getMessage());
+			}
+		}
+	}
 
 	/**
-	 * »ñÈ¡ÊôĞÔÖµ.
+	 * è·å–å±æ€§å€¼.
 	 *
-	 * @param key  ÊôĞÔËùÔÚµÄ¼üÖµ
+	 * @param key  å±æ€§æ‰€åœ¨çš„é”®å€¼
 	 */
-   public String getProperty(String key)
-   {
-      return this.properties.getProperty(key);
-   }
+	public String getProperty(String key)
+	{
+		return this.properties.getProperty(key);
+	}
 
 	/**
-	 * »ñÈ¡ÊôĞÔÖµ.
+	 * è·å–å±æ€§å€¼.
 	 *
-	 * @param key          ÊôĞÔËùÔÚµÄ¼üÖµ
-	 * @param defaultValue ´Ë¼üÖµÏÂÃ»ÊôĞÔÊ±½«·µ»Ø´ËÄ¬ÈÏÖµ
+	 * @param key          å±æ€§æ‰€åœ¨çš„é”®å€¼
+	 * @param defaultValue æ­¤é”®å€¼ä¸‹æ²¡å±æ€§æ—¶å°†è¿”å›æ­¤é»˜è®¤å€¼
 	 */
-   public String getProperty(String key, String defaultValue)
-   {
-      return this.properties.getProperty(key, defaultValue);
-   }
+	public String getProperty(String key, String defaultValue)
+	{
+		return this.properties.getProperty(key, defaultValue);
+	}
 
 	/**
-	 * »ñÈ¡¶ÔÎÄ±¾ÄÚÈİ´¦Àí¹ıµÄÊôĞÔÖµ.
+	 * è·å–å¯¹æ–‡æœ¬å†…å®¹å¤„ç†è¿‡çš„å±æ€§å€¼.
 	 *
-	 * @param key          ÊôĞÔËùÔÚµÄ¼üÖµ
+	 * @param key          å±æ€§æ‰€åœ¨çš„é”®å€¼
 	 */
 	public String getResolvedProperty(String key)
 	{
@@ -186,10 +186,10 @@ public class PropertiesManager
 	}
 
 	/**
-	 * »ñÈ¡¶ÔÎÄ±¾ÄÚÈİ´¦Àí¹ıµÄÊôĞÔÖµ.
+	 * è·å–å¯¹æ–‡æœ¬å†…å®¹å¤„ç†è¿‡çš„å±æ€§å€¼.
 	 *
-	 * @param key          ÊôĞÔËùÔÚµÄ¼üÖµ
-	 * @param defaultValue ´Ë¼üÖµÏÂÃ»ÊôĞÔÊ±½«·µ»Ø´ËÄ¬ÈÏÖµ
+	 * @param key          å±æ€§æ‰€åœ¨çš„é”®å€¼
+	 * @param defaultValue æ­¤é”®å€¼ä¸‹æ²¡å±æ€§æ—¶å°†è¿”å›æ­¤é»˜è®¤å€¼
 	 */
 	public String getResolvedProperty(String key, String defaultValue)
 	{
@@ -197,26 +197,26 @@ public class PropertiesManager
 	}
 
 	/**
-	 * ÉèÖÃÊôĞÔÖµ.
+	 * è®¾ç½®å±æ€§å€¼.
 	 *
-	 * @param key    ÊôĞÔËùÔÚµÄ¼üÖµ
-	 * @param value  ĞèÒªÉèÖÃµÄÖµ
+	 * @param key    å±æ€§æ‰€åœ¨çš„é”®å€¼
+	 * @param value  éœ€è¦è®¾ç½®çš„å€¼
 	 */
-   public void setProperty(String key, String value)
-   {
-      String oldValue = this.properties.getProperty(key);
-      // ÅĞ¶ÏĞÂµÄÖµºÍÔ­ÖµÊÇ·ñÏàµÈ
-      if (oldValue != null)
-      {
-         if (oldValue.equals(value))
-         {
-            return;
-         }
-      }
-      else if (value == null)
-      {
-         return;
-      }
+	public void setProperty(String key, String value)
+	{
+		String oldValue = this.properties.getProperty(key);
+		// åˆ¤æ–­æ–°çš„å€¼å’ŒåŸå€¼æ˜¯å¦ç›¸ç­‰
+		if (oldValue != null)
+		{
+			if (oldValue.equals(value))
+			{
+				return;
+			}
+		}
+		else if (value == null)
+		{
+			return;
+		}
 
 		if (value == null)
 		{
@@ -224,56 +224,56 @@ public class PropertiesManager
 		}
 		else
 		{
-      	this.properties.setProperty(key, value);
+			this.properties.setProperty(key, value);
 		}
-      Iterator itr = this.plList.iterator();
-      while (itr.hasNext())
-      {
-         ((PropertyListener) itr.next()).propertyChanged(key, oldValue, value);
-      }
-   }
+		Iterator itr = this.plList.iterator();
+		while (itr.hasNext())
+		{
+			((PropertyListener) itr.next()).propertyChanged(key, oldValue, value);
+		}
+	}
 
 	/**
-	 * ÒÆ³ıÊôĞÔÖµ.
+	 * ç§»é™¤å±æ€§å€¼.
 	 *
-	 * @param key    ÊôĞÔËùÔÚµÄ¼üÖµ
+	 * @param key    å±æ€§æ‰€åœ¨çš„é”®å€¼
 	 */
-   public void removeProperty(String key)
-   {
+	public void removeProperty(String key)
+	{
 		this.properties.setProperty(key, null);
 	}
 
-   /**
-    * ÅäÖÃ¼à¿ØÕßÌí¼ÓÍêºó, ÅĞ¶Ï²¢´¦ÀíÊÇ·ñÒª½«ÅäÖÃÖĞµÄÖµÉèÖÃµ½Ä¿±êÖĞ.
-    */
-   private void dealChangeProperty(String key, String defaultValue, PropertyManager pm)
-   {
-      String temp = this.getProperty(key);
-      boolean setted = false;
-      if (temp == null && defaultValue != null)
-      {
-         temp = defaultValue;
-         this.setProperty(key, defaultValue);
-         setted = true;
-      }
-      try
-      {
-         if (temp != null && !setted)
-         {
-            // Èç¹û´æÔÚÒªÉèÖÃµÄÖµ, ÇÒÎ´ÉèÖÃ¹ıÖµ, ÔòÒª½«ÖµÉèÖÃµ½±»¼à¿ØµÄÊôĞÔÖĞ
-            pm.changeProperty(temp);
-         }
-      }
-      catch (Throwable ex) {}
-   }
+	/**
+	 * é…ç½®ç›‘æ§è€…æ·»åŠ å®Œå, åˆ¤æ–­å¹¶å¤„ç†æ˜¯å¦è¦å°†é…ç½®ä¸­çš„å€¼è®¾ç½®åˆ°ç›®æ ‡ä¸­.
+	 */
+	private void dealChangeProperty(String key, String defaultValue, PropertyManager pm)
+	{
+		String temp = this.getProperty(key);
+		boolean setted = false;
+		if (temp == null && defaultValue != null)
+		{
+			temp = defaultValue;
+			this.setProperty(key, defaultValue);
+			setted = true;
+		}
+		try
+		{
+			if (temp != null && !setted)
+			{
+				// å¦‚æœå­˜åœ¨è¦è®¾ç½®çš„å€¼, ä¸”æœªè®¾ç½®è¿‡å€¼, åˆ™è¦å°†å€¼è®¾ç½®åˆ°è¢«ç›‘æ§çš„å±æ€§ä¸­
+				pm.changeProperty(temp);
+			}
+		}
+		catch (Throwable ex) {}
+	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öÅäÖÃ¼à¿ØÕß, µ±ÅäÖÃµÄÖµ¸Ä±äÊ±, Ëü»á×Ô¶¯¸üĞÂÖ¸¶¨ÀàµÄ¾²Ì¬ÊôĞÔ³ÉÔ±, ¸ÃÊôĞÔ
-	 * µÄÀàĞÍ¿ÉÒÔÊÇ: <code>String</code>, <code>int</code>»ò<code>boolean</code>.
+	 * æ·»åŠ ä¸€ä¸ªé…ç½®ç›‘æ§è€…, å½“é…ç½®çš„å€¼æ”¹å˜æ—¶, å®ƒä¼šè‡ªåŠ¨æ›´æ–°æŒ‡å®šç±»çš„é™æ€å±æ€§æˆå‘˜, è¯¥å±æ€§
+	 * çš„ç±»å‹å¯ä»¥æ˜¯: <code>String</code>, <code>int</code>æˆ–<code>boolean</code>.
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»ĞŞ¸ÄµÄÊôĞÔËùÔÚµÄÀà
-	 * @param fieldName      ĞèÒª±»ĞŞ¸ÄµÄ¾²Ì¬ÊôĞÔÃû³Æ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«ä¿®æ”¹çš„å±æ€§æ‰€åœ¨çš„ç±»
+	 * @param fieldName      éœ€è¦è¢«ä¿®æ”¹çš„é™æ€å±æ€§åç§°
 	 */
 	public void addFieldPropertyManager(String key, Class theClass, String fieldName)
 			throws NoSuchFieldException
@@ -282,13 +282,13 @@ public class PropertiesManager
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öÅäÖÃ¼à¿ØÕß, µ±ÅäÖÃµÄÖµ¸Ä±äÊ±, Ëü»á×Ô¶¯¸üĞÂÖ¸¶¨ÀàµÄ¾²Ì¬ÊôĞÔ³ÉÔ±, ¸ÃÊôĞÔ
-	 * µÄÀàĞÍ¿ÉÒÔÊÇ: <code>String</code>, <code>int</code>»ò<code>boolean</code>.
+	 * æ·»åŠ ä¸€ä¸ªé…ç½®ç›‘æ§è€…, å½“é…ç½®çš„å€¼æ”¹å˜æ—¶, å®ƒä¼šè‡ªåŠ¨æ›´æ–°æŒ‡å®šç±»çš„é™æ€å±æ€§æˆå‘˜, è¯¥å±æ€§
+	 * çš„ç±»å‹å¯ä»¥æ˜¯: <code>String</code>, <code>int</code>æˆ–<code>boolean</code>.
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»ĞŞ¸ÄµÄÊôĞÔËùÔÚµÄÀà
-	 * @param fieldName      ĞèÒª±»ĞŞ¸ÄµÄ¾²Ì¬ÊôĞÔÃû³Æ
-	 * @param defaultValue   µ±ÅäÖÃÖĞ²»´æÔÚÖ¸¶¨µÄ¼üÖµÊ±Ê¹ÓÃµÄÄ¬ÈÏÖµ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«ä¿®æ”¹çš„å±æ€§æ‰€åœ¨çš„ç±»
+	 * @param fieldName      éœ€è¦è¢«ä¿®æ”¹çš„é™æ€å±æ€§åç§°
+	 * @param defaultValue   å½“é…ç½®ä¸­ä¸å­˜åœ¨æŒ‡å®šçš„é”®å€¼æ—¶ä½¿ç”¨çš„é»˜è®¤å€¼
 	 */
 	public void addFieldPropertyManager(String key, Class theClass, String fieldName,
 			String defaultValue)
@@ -301,11 +301,11 @@ public class PropertiesManager
 	}
 
 	/**
-	 * ÒÆ³ıÒ»¸öÅäÖÃ¼à¿ØÕß.
+	 * ç§»é™¤ä¸€ä¸ªé…ç½®ç›‘æ§è€….
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»ĞŞ¸ÄµÄÊôĞÔËùÔÚµÄÀà
-	 * @param fieldName      ĞèÒª±»ĞŞ¸ÄµÄ¾²Ì¬ÊôĞÔÃû³Æ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«ä¿®æ”¹çš„å±æ€§æ‰€åœ¨çš„ç±»
+	 * @param fieldName      éœ€è¦è¢«ä¿®æ”¹çš„é™æ€å±æ€§åç§°
 	 */
 	public void removeFieldPropertyManager(String key, Class theClass, String fieldName)
 			throws NoSuchFieldException
@@ -316,12 +316,12 @@ public class PropertiesManager
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öÅäÖÃ¼à¿ØÕß, µ±ÅäÖÃµÄÖµ¸Ä±äÊ±, Ëü»á×Ô¶¯µ÷ÓÃÖ¸¶¨ÀàµÄ¾²Ì¬·½·¨,
-	 * ´Ë·½·¨±ØĞëÊÇÖ»ÓĞÒ»¸ö<code>String</code>ÀàĞÍµÄ²ÎÊı.
+	 * æ·»åŠ ä¸€ä¸ªé…ç½®ç›‘æ§è€…, å½“é…ç½®çš„å€¼æ”¹å˜æ—¶, å®ƒä¼šè‡ªåŠ¨è°ƒç”¨æŒ‡å®šç±»çš„é™æ€æ–¹æ³•,
+	 * æ­¤æ–¹æ³•å¿…é¡»æ˜¯åªæœ‰ä¸€ä¸ª<code>String</code>ç±»å‹çš„å‚æ•°.
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»µ÷ÓÃµÄ·½·¨ËùÔÚµÄÀà
-	 * @param methodName     ĞèÒª±»µ÷ÓÃµÄ¾²Ì¬·½·¨Ãû³Æ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«è°ƒç”¨çš„æ–¹æ³•æ‰€åœ¨çš„ç±»
+	 * @param methodName     éœ€è¦è¢«è°ƒç”¨çš„é™æ€æ–¹æ³•åç§°
 	 */
 	public void addMethodPropertyManager(String key, Class theClass, String methodName)
 			throws NoSuchMethodException
@@ -330,13 +330,13 @@ public class PropertiesManager
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öÅäÖÃ¼à¿ØÕß, µ±ÅäÖÃµÄÖµ¸Ä±äÊ±, Ëü»á×Ô¶¯µ÷ÓÃÖ¸¶¨ÀàµÄ¾²Ì¬·½·¨,
-	 * ´Ë·½·¨±ØĞëÊÇÖ»ÓĞÒ»¸ö<code>String</code>ÀàĞÍµÄ²ÎÊı.
+	 * æ·»åŠ ä¸€ä¸ªé…ç½®ç›‘æ§è€…, å½“é…ç½®çš„å€¼æ”¹å˜æ—¶, å®ƒä¼šè‡ªåŠ¨è°ƒç”¨æŒ‡å®šç±»çš„é™æ€æ–¹æ³•,
+	 * æ­¤æ–¹æ³•å¿…é¡»æ˜¯åªæœ‰ä¸€ä¸ª<code>String</code>ç±»å‹çš„å‚æ•°.
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»µ÷ÓÃµÄ·½·¨ËùÔÚµÄÀà
-	 * @param methodName     ĞèÒª±»µ÷ÓÃµÄ¾²Ì¬·½·¨Ãû³Æ
-	 * @param defaultValue   µ±ÅäÖÃÖĞ²»´æÔÚÖ¸¶¨µÄ¼üÖµÊ±Ê¹ÓÃµÄÄ¬ÈÏÖµ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«è°ƒç”¨çš„æ–¹æ³•æ‰€åœ¨çš„ç±»
+	 * @param methodName     éœ€è¦è¢«è°ƒç”¨çš„é™æ€æ–¹æ³•åç§°
+	 * @param defaultValue   å½“é…ç½®ä¸­ä¸å­˜åœ¨æŒ‡å®šçš„é”®å€¼æ—¶ä½¿ç”¨çš„é»˜è®¤å€¼
 	 */
 	public void addMethodPropertyManager(String key, Class theClass, String methodName,
 			String defaultValue)
@@ -349,11 +349,11 @@ public class PropertiesManager
 	}
 
 	/**
-	 * ÒÆ³ıÒ»¸öÅäÖÃ¼à¿ØÕß.
+	 * ç§»é™¤ä¸€ä¸ªé…ç½®ç›‘æ§è€….
 	 *
-	 * @param key            ÅäÖÃµÄ¼üÖµ
-	 * @param theClass       ±»µ÷ÓÃµÄ·½·¨ËùÔÚµÄÀà
-	 * @param methodName     ĞèÒª±»µ÷ÓÃµÄ¾²Ì¬·½·¨Ãû³Æ
+	 * @param key            é…ç½®çš„é”®å€¼
+	 * @param theClass       è¢«è°ƒç”¨çš„æ–¹æ³•æ‰€åœ¨çš„ç±»
+	 * @param methodName     éœ€è¦è¢«è°ƒç”¨çš„é™æ€æ–¹æ³•åç§°
 	 */
 	public void removeMethodPropertyManager(String key, Class theClass, String methodName)
 			throws NoSuchMethodException
@@ -363,207 +363,207 @@ public class PropertiesManager
 		this.defaultPL.removePropertyManager(key, pm);
 	}
 
-   /**
-    * Ìí¼ÓÒ»¸öÅäÖÃ±ä»¯µÄ¼àÌıÕß.
-    */
-   public synchronized void addPropertyListener(PropertyListener l)
-   {
-      if (!this.plList.contains(l))
-      {
-         this.plList.add(l);
-      }
-   }
+	/**
+	 * æ·»åŠ ä¸€ä¸ªé…ç½®å˜åŒ–çš„ç›‘å¬è€….
+	 */
+	public synchronized void addPropertyListener(PropertyListener l)
+	{
+		if (!this.plList.contains(l))
+		{
+			this.plList.add(l);
+		}
+	}
 
-   /**
-    * ÒÆ³ıÒ»¸öÅäÖÃ±ä»¯µÄ¼àÌıÕß.
-    */
-   public synchronized void removePropertyListener(PropertyListener l)
-   {
-      this.plList.remove(l);
-   }
+	/**
+	 * ç§»é™¤ä¸€ä¸ªé…ç½®å˜åŒ–çš„ç›‘å¬è€….
+	 */
+	public synchronized void removePropertyListener(PropertyListener l)
+	{
+		this.plList.remove(l);
+	}
 
-   /**
-    * ÔØÈë¸¸ÅäÖÃ
-    */
-   private void loadParentProperties(Properties props)
-         throws IOException
-   {
-      String pName = props.getProperty(PARENT_PROPERTIES);
-      if (pName == null)
-      {
-         return;
-      }
-      URL url = this.classLoader.getResource(pName);
-      if (url == null)
-      {
-         return;
-      }
-      InputStream is = url.openStream();
-      if (is != null)
-      {
-         Properties tmpProps = new Properties();
-         tmpProps.load(is);
-         is.close();
-         this.loadParentProperties(tmpProps);
-         Iterator itr = tmpProps.entrySet().iterator();
-         while (itr.hasNext())
-         {
-            Map.Entry entry = (Map.Entry) itr.next();
-            if (!props.containsKey(entry.getKey()))
-            {
-               props.put(entry.getKey(), entry.getValue());
-            }
-         }
-      }
-   }
+	/**
+	 * è½½å…¥çˆ¶é…ç½®
+	 */
+	private void loadParentProperties(Properties props)
+			throws IOException
+	{
+		String pName = props.getProperty(PARENT_PROPERTIES);
+		if (pName == null)
+		{
+			return;
+		}
+		URL url = this.classLoader.getResource(pName);
+		if (url == null)
+		{
+			return;
+		}
+		InputStream is = url.openStream();
+		if (is != null)
+		{
+			Properties tmpProps = new Properties();
+			tmpProps.load(is);
+			is.close();
+			this.loadParentProperties(tmpProps);
+			Iterator itr = tmpProps.entrySet().iterator();
+			while (itr.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) itr.next();
+				if (!props.containsKey(entry.getKey()))
+				{
+					props.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+	}
 
 
 
 	/**
-    * ¶¯Ì¬ÊôĞÔÃû³ÆµÄÇ°×º: "${"
-    */
+	 * åŠ¨æ€å±æ€§åç§°çš„å‰ç¼€: "${"
+	 */
 	private static final String DYNAMIC_PROPNAME_PREFIX = "${";
 	/**
-    * ¶¯Ì¬ÊôĞÔÃû³ÆµÄºó×º:: "}"
-    */
+	 * åŠ¨æ€å±æ€§åç§°çš„åç¼€:: "}"
+	 */
 	private static final String DYNAMIC_PROPNAME_SUFFIX = "}";
 
-   /**
-	 * ´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ, ½«ËûÃÇÌæ»»³ÉÅäÖÃÎÄ¼ş
-    * (±¾ÅäÖÃ¶ÔÏó »ò System.property)ÖĞµÄ¶ÔÓ¦Öµ.
-    *
-	 * @param text      Òª´¦ÀíµÄÎÄ±¾
-	 * @return ´¦ÀíÍêµÄÎÄ±¾
+	/**
+	 * å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§, å°†ä»–ä»¬æ›¿æ¢æˆé…ç½®æ–‡ä»¶
+	 * (æœ¬é…ç½®å¯¹è±¡ æˆ– System.property)ä¸­çš„å¯¹åº”å€¼.
+	 *
+	 * @param text      è¦å¤„ç†çš„æ–‡æœ¬
+	 * @return å¤„ç†å®Œçš„æ–‡æœ¬
 	 */
 	public String resolveDynamicPropnames(String text)
-   {
-      return this.resolveDynamicPropnames(text, null, false);
-   }
-
-   /**
-	 * ´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ, ½«ËûÃÇÌæ»»³ÉÅäÖÃÎÄ¼ş
-    * (bindRes »ò ±¾ÅäÖÃ¶ÔÏó »ò System.property)ÖĞµÄ¶ÔÓ¦Öµ.
-    *
-	 * @param text      Òª´¦ÀíµÄÎÄ±¾
-	 * @param bindRes   °ó¶¨µÄ×ÊÔ´, »áÏÈÔÚbindResÑ°ÕÒ¶ÔÓ¦µÄÖµ
-	 * @return ´¦ÀíÍêµÄÎÄ±¾
-	 */
-	public String resolveDynamicPropnames(String text, Map bindRes)
-   {
-      return this.resolveDynamicPropnames(text, bindRes, false);
-   }
-
-   /**
-	 * ´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ, ½«ËûÃÇÌæ»»³ÉÅäÖÃÎÄ¼ş
-    * (bindRes »ò ±¾ÅäÖÃ¶ÔÏó »ò System.property)ÖĞµÄ¶ÔÓ¦Öµ.
-    *
-	 * @param text      Òª´¦ÀíµÄÎÄ±¾
-	 * @param bindRes   °ó¶¨µÄ×ÊÔ´, »áÏÈÔÚbindResÑ°ÕÒ¶ÔÓ¦µÄÖµ
-	 * @param onlyRes   ÉèÖÃÎª<code>true</code>Ê±, Ö»¶Ô°ó¶¨µÄ×ÊÔ´½øĞĞ´¦Àí, ÉèÖÃÎª
-    *                  <code>false</code>Ê±, Èç¹û°ó¶¨µÄ×ÊÔ´ÖĞ²»´æÔÚ¶ÔÓ¦µÄÖµ»áÔÙµ½
-    *                  ±¾ÅäÖÃ¶ÔÏó »ò System.propertyÖĞÑ°ÕÒ
-	 * @return ´¦ÀíÍêµÄÎÄ±¾
-	 */
-	public String resolveDynamicPropnames(String text, Map bindRes, boolean onlyRes)
-   {
-      if (text == null)
-      {
-         return text;
-      }
-      int startIndex = text.indexOf(DYNAMIC_PROPNAME_PREFIX);
-      if (startIndex == -1)
-      {
-         return text;
-      }
-
-      String tempStr = text;
-      StringAppender result = StringTool.createStringAppender(text.length() + 32);
-      while (startIndex != -1)
-      {
-         result.append(tempStr.substring(0, startIndex));
-         int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + DYNAMIC_PROPNAME_PREFIX.length());
-         if (endIndex != -1)
-         {
-            String dName = tempStr.substring(startIndex + DYNAMIC_PROPNAME_PREFIX.length(), endIndex);
-            try
-            {
-               String pValue = null;
-               if (bindRes != null)
-               {
-                  Object obj = bindRes.get(dName);
-                  if (obj != null)
-                  {
-                     pValue = String.valueOf(obj);
-                  }
-               }
-               if (!onlyRes)
-               {
-                  if (pValue == null)
-                  {
-                     // Èç¹ûbindResÎªnull»òÆäÖĞ²»´æÔÚ, Ôòµ½micromagic_config.propertiesÖĞ²éÕÒ
-                     pValue = this.getProperty(dName);
-                  }
-                  if (pValue == null)
-                  {
-                     // Èç¹ûmicromagic_config.propertiesÖĞ²»´æÔÚ, Ôòµ½ÏµÍ³ÊôĞÔÖĞ²éÕÒ
-                     pValue = System.getProperty(dName);
-                  }
-               }
-               if (pValue != null)
-               {
-                  result.append(resolveDynamicPropnames(pValue, bindRes));
-               }
-               else
-               {
-                  result.append(tempStr.substring(startIndex, endIndex + 1));
-                  if (Utility.SHOW_RDP_FAIL)
-                  {
-                     Utility.createLog("util").warn("Could not resolve dynamic name '" + dName
-                           + "' in [" + text + "] as config property.");
-                  }
-               }
-            }
-            catch (Throwable ex)
-            {
-               if (Utility.SHOW_RDP_FAIL)
-               {
-                  String msg = "Could not resolve dynamic name '" + dName
-                        + "' in [" + text + "] as config property.";
-                  Utility.createLog("util").warn(msg, ex);
-               }
-            }
-            tempStr = tempStr.substring(endIndex + DYNAMIC_PROPNAME_SUFFIX.length());
-            startIndex = tempStr.indexOf(DYNAMIC_PROPNAME_PREFIX);
-         }
-         else
-         {
-            tempStr = tempStr.substring(startIndex);
-            startIndex = -1;
-         }
-      }
-      result.append(tempStr);
-
-      return result.toString();
-   }
+	{
+		return this.resolveDynamicPropnames(text, null, false);
+	}
 
 	/**
-	 * ÅäÖÃ±ä»¯µÄ¼àÌıÕß.
+	 * å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§, å°†ä»–ä»¬æ›¿æ¢æˆé…ç½®æ–‡ä»¶
+	 * (bindRes æˆ– æœ¬é…ç½®å¯¹è±¡ æˆ– System.property)ä¸­çš„å¯¹åº”å€¼.
+	 *
+	 * @param text      è¦å¤„ç†çš„æ–‡æœ¬
+	 * @param bindRes   ç»‘å®šçš„èµ„æº, ä¼šå…ˆåœ¨bindReså¯»æ‰¾å¯¹åº”çš„å€¼
+	 * @return å¤„ç†å®Œçš„æ–‡æœ¬
+	 */
+	public String resolveDynamicPropnames(String text, Map bindRes)
+	{
+		return this.resolveDynamicPropnames(text, bindRes, false);
+	}
+
+	/**
+	 * å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§, å°†ä»–ä»¬æ›¿æ¢æˆé…ç½®æ–‡ä»¶
+	 * (bindRes æˆ– æœ¬é…ç½®å¯¹è±¡ æˆ– System.property)ä¸­çš„å¯¹åº”å€¼.
+	 *
+	 * @param text      è¦å¤„ç†çš„æ–‡æœ¬
+	 * @param bindRes   ç»‘å®šçš„èµ„æº, ä¼šå…ˆåœ¨bindReså¯»æ‰¾å¯¹åº”çš„å€¼
+	 * @param onlyRes   è®¾ç½®ä¸º<code>true</code>æ—¶, åªå¯¹ç»‘å®šçš„èµ„æºè¿›è¡Œå¤„ç†, è®¾ç½®ä¸º
+	 *                  <code>false</code>æ—¶, å¦‚æœç»‘å®šçš„èµ„æºä¸­ä¸å­˜åœ¨å¯¹åº”çš„å€¼ä¼šå†åˆ°
+	 *                  æœ¬é…ç½®å¯¹è±¡ æˆ– System.propertyä¸­å¯»æ‰¾
+	 * @return å¤„ç†å®Œçš„æ–‡æœ¬
+	 */
+	public String resolveDynamicPropnames(String text, Map bindRes, boolean onlyRes)
+	{
+		if (text == null)
+		{
+			return text;
+		}
+		int startIndex = text.indexOf(DYNAMIC_PROPNAME_PREFIX);
+		if (startIndex == -1)
+		{
+			return text;
+		}
+
+		String tempStr = text;
+		StringAppender result = StringTool.createStringAppender(text.length() + 32);
+		while (startIndex != -1)
+		{
+			result.append(tempStr.substring(0, startIndex));
+			int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + DYNAMIC_PROPNAME_PREFIX.length());
+			if (endIndex != -1)
+			{
+				String dName = tempStr.substring(startIndex + DYNAMIC_PROPNAME_PREFIX.length(), endIndex);
+				try
+				{
+					String pValue = null;
+					if (bindRes != null)
+					{
+						Object obj = bindRes.get(dName);
+						if (obj != null)
+						{
+							pValue = String.valueOf(obj);
+						}
+					}
+					if (!onlyRes)
+					{
+						if (pValue == null)
+						{
+							// å¦‚æœbindResä¸ºnullæˆ–å…¶ä¸­ä¸å­˜åœ¨, åˆ™åˆ°micromagic_config.propertiesä¸­æŸ¥æ‰¾
+							pValue = this.getProperty(dName);
+						}
+						if (pValue == null)
+						{
+							// å¦‚æœmicromagic_config.propertiesä¸­ä¸å­˜åœ¨, åˆ™åˆ°ç³»ç»Ÿå±æ€§ä¸­æŸ¥æ‰¾
+							pValue = System.getProperty(dName);
+						}
+					}
+					if (pValue != null)
+					{
+						result.append(resolveDynamicPropnames(pValue, bindRes));
+					}
+					else
+					{
+						result.append(tempStr.substring(startIndex, endIndex + 1));
+						if (Utility.SHOW_RDP_FAIL)
+						{
+							Utility.createLog("util").warn("Could not resolve dynamic name '" + dName
+									+ "' in [" + text + "] as config property.");
+						}
+					}
+				}
+				catch (Throwable ex)
+				{
+					if (Utility.SHOW_RDP_FAIL)
+					{
+						String msg = "Could not resolve dynamic name '" + dName
+								+ "' in [" + text + "] as config property.";
+						Utility.createLog("util").warn(msg, ex);
+					}
+				}
+				tempStr = tempStr.substring(endIndex + DYNAMIC_PROPNAME_SUFFIX.length());
+				startIndex = tempStr.indexOf(DYNAMIC_PROPNAME_PREFIX);
+			}
+			else
+			{
+				tempStr = tempStr.substring(startIndex);
+				startIndex = -1;
+			}
+		}
+		result.append(tempStr);
+
+		return result.toString();
+	}
+
+	/**
+	 * é…ç½®å˜åŒ–çš„ç›‘å¬è€….
 	 */
 	public interface PropertyListener extends EventListener
 	{
 		/**
-		 * µ±Ä³¸öÅäÖÃÖµ·¢ÉúÁË¸Ä±äÊ±, »áµ÷ÓÃ´Ë·½·¨.
+		 * å½“æŸä¸ªé…ç½®å€¼å‘ç”Ÿäº†æ”¹å˜æ—¶, ä¼šè°ƒç”¨æ­¤æ–¹æ³•.
 		 *
-		 * @param key       ·¢Éú¸Ä±äµÄÅäÖÃµÄ¼üÖµ
-		 * @param oldValue  ¸Ä±äÇ°ÅäÖÃµÄÔ­Ê¼Öµ
-		 * @param newValue  ¸Ä±äºóÅäÖÃµÄÖµ
+		 * @param key       å‘ç”Ÿæ”¹å˜çš„é…ç½®çš„é”®å€¼
+		 * @param oldValue  æ”¹å˜å‰é…ç½®çš„åŸå§‹å€¼
+		 * @param newValue  æ”¹å˜åé…ç½®çš„å€¼
 		 */
 		public void propertyChanged(String key, String oldValue, String newValue);
 
 	}
 
 	/**
-	 * Ä¬ÈÏµÄÅäÖÃ±ä»¯¼àÌıÕß.
+	 * é»˜è®¤çš„é…ç½®å˜åŒ–ç›‘å¬è€….
 	 */
 	private static class DefaultPropertyListener
 			implements PropertyListener
@@ -624,7 +624,7 @@ public class PropertiesManager
 
 		public void propertyChanged(String key, String oldValue, String newValue)
 		{
-			// ÅĞ¶ÏĞÂµÄÖµºÍÔ­ÖµÊÇ·ñÏàµÈ
+			// åˆ¤æ–­æ–°çš„å€¼å’ŒåŸå€¼æ˜¯å¦ç›¸ç­‰
 			if (oldValue != null)
 			{
 				if (oldValue.equals(newValue))
@@ -660,7 +660,7 @@ public class PropertiesManager
 	}
 
 	/**
-	 * µ¥¸öÊôĞÔµÄ¹ÜÀíÆ÷, ¸øÄ¬ÈÏµÄÅäÖÃ±ä»¯¼àÌıÕßÊ¹ÓÃ.
+	 * å•ä¸ªå±æ€§çš„ç®¡ç†å™¨, ç»™é»˜è®¤çš„é…ç½®å˜åŒ–ç›‘å¬è€…ä½¿ç”¨.
 	 */
 	private static class PropertyManager
 	{
@@ -676,37 +676,37 @@ public class PropertiesManager
 		}
 
 		/**
-		 * ÓÃÓÚÇå³şweak·½Ê½µÄÒıÓÃ¶ÓÁĞ.
+		 * ç”¨äºæ¸…æ¥šweakæ–¹å¼çš„å¼•ç”¨é˜Ÿåˆ—.
 		 */
 		private final ReferenceQueue queue = new ReferenceQueue();
 
 		/**
-		 * ¶ÔÓ¦ÊôĞÔµÄ¼üÖµ.
+		 * å¯¹åº”å±æ€§çš„é”®å€¼.
 		 */
 		private String key;
 
 		/**
-		 * ÕâÀïÊ¹ÓÃ<code>WeakReference</code>À´ÒıÓÃ¶ÔÓ¦µÄÀà, ²¢ÔÚÆäÊÍ·ÅÊ±É¾³ı±¾ÊôĞÔ¹ÜÀíÕß.
+		 * è¿™é‡Œä½¿ç”¨<code>WeakReference</code>æ¥å¼•ç”¨å¯¹åº”çš„ç±», å¹¶åœ¨å…¶é‡Šæ”¾æ—¶åˆ é™¤æœ¬å±æ€§ç®¡ç†è€….
 		 */
 		private WeakReference baseClass;
 
 		/**
-		 * ÕâÀïÊ¹ÓÃ<code>WeakReference</code>À´ÒıÓÃ¶ÔÓ¦µÄ³ÉÔ±, ÕâÑù²»»áÓ°ÏìÀàµÄÕı³£ÊÍ·Å.
+		 * è¿™é‡Œä½¿ç”¨<code>WeakReference</code>æ¥å¼•ç”¨å¯¹åº”çš„æˆå‘˜, è¿™æ ·ä¸ä¼šå½±å“ç±»çš„æ­£å¸¸é‡Šæ”¾.
 		 */
 		private WeakReference optMember;
 
 		/**
-		 * Òª²Ù×÷µÄ³ÉÔ±Ãû³Æ.
+		 * è¦æ“ä½œçš„æˆå‘˜åç§°.
 		 */
 		private String optMemberName;
 
 		/**
-		 * ±êÊ¶ÊÇ·ñÊÇÊôĞÔ³ÉÔ±, <code>true</code>±íÊ¾ÊôĞÔ³ÉÔ±, <code>false</code>±íÊ¾·½·¨³ÉÔ±.
+		 * æ ‡è¯†æ˜¯å¦æ˜¯å±æ€§æˆå‘˜, <code>true</code>è¡¨ç¤ºå±æ€§æˆå‘˜, <code>false</code>è¡¨ç¤ºæ–¹æ³•æˆå‘˜.
 		 */
 		private boolean fieldMember;
 
 		/**
-		 * ¸ÃÅäÖÃ¹ÜÀíÆ÷ËùÔÚµÄlistener.
+		 * è¯¥é…ç½®ç®¡ç†å™¨æ‰€åœ¨çš„listener.
 		 */
 		private DefaultPropertyListener listener;
 
@@ -731,7 +731,7 @@ public class PropertiesManager
 		}
 
 		/**
-		 * ¹¹ÔìÒ»¸ö´¥·¢·½·¨µ÷ÓÃµÄÅäÖÃ¹ÜÀíÆ÷.
+		 * æ„é€ ä¸€ä¸ªè§¦å‘æ–¹æ³•è°ƒç”¨çš„é…ç½®ç®¡ç†å™¨.
 		 */
 		PropertyManager(String key, Class theClass, Method theMethod, DefaultPropertyListener listener)
 		{
@@ -739,7 +739,7 @@ public class PropertiesManager
 		}
 
 		/**
-		 * ¹¹ÔìÒ»¸ö´¥·¢ÊôĞÔÖµĞŞ¸ÄµÄÅäÖÃ¹ÜÀíÆ÷.
+		 * æ„é€ ä¸€ä¸ªè§¦å‘å±æ€§å€¼ä¿®æ”¹çš„é…ç½®ç®¡ç†å™¨.
 		 */
 		PropertyManager(String key, Class theClass, Field theField, DefaultPropertyListener listener)
 		{
@@ -780,7 +780,7 @@ public class PropertiesManager
 		{
 			expunge();
 			Member member = this.getOptMember();
-			// Èç¹û²Ù×÷µÄ³ÉÔ±Îªnull, Ôò²»Ö´ĞĞ±ä¸ü.
+			// å¦‚æœæ“ä½œçš„æˆå‘˜ä¸ºnull, åˆ™ä¸æ‰§è¡Œå˜æ›´.
 			if (member == null)
 			{
 				return;
@@ -830,7 +830,7 @@ public class PropertiesManager
 		}
 
 		/**
-		 * Çå³ı¹ıÆÚµÄÊôĞÔ¹ÜÀíÕß.
+		 * æ¸…é™¤è¿‡æœŸçš„å±æ€§ç®¡ç†è€….
 		 */
 		private void expunge()
 		{

@@ -6,47 +6,47 @@ import self.micromagic.eterna.share.AdapterGenerator;
 
 public interface ViewAdapterGenerator extends AdapterGenerator
 {
-   void setName(String name) throws ConfigurationException;
+	void setName(String name) throws ConfigurationException;
 
-   void setDataPrinterName(String dpName) throws ConfigurationException;
+	void setDataPrinterName(String dpName) throws ConfigurationException;
 
-   void setDefaultDataType(String type) throws ConfigurationException;
+	void setDefaultDataType(String type) throws ConfigurationException;
 
-   void setDynamicViewRes(String res) throws ConfigurationException;
+	void setDynamicViewRes(String res) throws ConfigurationException;
 
-   void addComponent(Component com) throws ConfigurationException;
+	void addComponent(Component com) throws ConfigurationException;
 
-   void deleteComponent(Component com) throws ConfigurationException;
+	void deleteComponent(Component com) throws ConfigurationException;
 
-   void clearComponents() throws ConfigurationException;
+	void clearComponents() throws ConfigurationException;
 
-   void setDebug(int debug) throws ConfigurationException;
+	void setDebug(int debug) throws ConfigurationException;
 
-   void setWidth(String width) throws ConfigurationException;
+	void setWidth(String width) throws ConfigurationException;
 
-   void setHeight(String height) throws ConfigurationException;
+	void setHeight(String height) throws ConfigurationException;
 
-   void setBeforeInit(String condition) throws ConfigurationException;
+	void setBeforeInit(String condition) throws ConfigurationException;
 
-   void setInitScript(String body) throws ConfigurationException;
+	void setInitScript(String body) throws ConfigurationException;
 
-   ViewAdapter createViewAdapter() throws ConfigurationException;
+	ViewAdapter createViewAdapter() throws ConfigurationException;
 
-   interface ModifiableViewRes extends ViewAdapter.ViewRes
-   {
-      /**
-       * ÃÌº”“ª∏ˆ∑Ω∑®.
-       *
-       * @return  ÃÌº”µƒ∑Ω∑®√˚≥∆, ∑Ω∑®√˚≥∆ø…ƒ‹ª·∏˘æ›µ±«∞ª∑æ≥”–À˘±‰ªØ.
-       */
-      public String addFunction(Function fn) throws ConfigurationException;
+	interface ModifiableViewRes extends ViewAdapter.ViewRes
+	{
+		/**
+		 * Ê∑ªÂä†‰∏Ä‰∏™ÊñπÊ≥ï.
+		 *
+		 * @return  Ê∑ªÂä†ÁöÑÊñπÊ≥ïÂêçÁß∞, ÊñπÊ≥ïÂêçÁß∞ÂèØËÉΩ‰ºöÊ†πÊçÆÂΩìÂâçÁéØÂ¢ÉÊúâÊâÄÂèòÂåñ.
+		 */
+		public String addFunction(Function fn) throws ConfigurationException;
 
-      public void addTypicalComponentNames(String name) throws ConfigurationException;
+		public void addTypicalComponentNames(String name) throws ConfigurationException;
 
-      public void addResourceNames(String name) throws ConfigurationException;
+		public void addResourceNames(String name) throws ConfigurationException;
 
-      public void addAll(ViewAdapter.ViewRes res) throws ConfigurationException;
+		public void addAll(ViewAdapter.ViewRes res) throws ConfigurationException;
 
-   }
+	}
 
 }

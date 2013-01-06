@@ -31,92 +31,93 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.logging.TimeLogger;
 
 /**
  * @author micromagic@sina.com
  */
 public abstract class AbstractQueryAdapter extends SQLAdapterImpl
-      implements QueryAdapter, QueryAdapterGenerator
+		implements QueryAdapter, QueryAdapterGenerator
 {
-   private String readerOrder;
-   private List tempResultReaders;
-   private Set otherReaderManagerSet;
-   private Map tempNameToIndexMap;
-   private ResultReaderManager readerManager;
-   private boolean readerManagerSetted;
-   private String readerManagerName;
+	private String readerOrder;
+	private List tempResultReaders;
+	private Set otherReaderManagerSet;
+	private Map tempNameToIndexMap;
+	private ResultReaderManager readerManager;
+	private boolean readerManagerSetted;
+	private String readerManagerName;
 
-   protected Permission permission;
-   private int orderIndex = -1;
-   private boolean forwardOnly = true;
-   private String[] orderStrs;
-   private String[] orderNames;
+	protected Permission permission;
+	private int orderIndex = -1;
+	private boolean forwardOnly = true;
+	private String[] orderStrs;
+	private String[] orderNames;
 
-   private int startRow = 1;
-   private int maxRows = -1;
-   private int totalCount = TOTAL_COUNT_NONE;
-   private TotalCountExt totalCountExt;
-   private QueryAdapter countQuery;
+	private int startRow = 1;
+	private int maxRows = -1;
+	private int totalCount = TOTAL_COUNT_NONE;
+	private TotalCountExt totalCountExt;
+	private QueryAdapter countQuery;
 	private QueryHelper queryHelper;
 
 	/**
-	 * »ñÈ¡²éÑ¯¸¨Öú¹¤¾ßÊ±, ÊÇ·ñÒª¼ì²éÊı¾İ¿âµÄÃû³Æ.
+	 * è·å–æŸ¥è¯¢è¾…åŠ©å·¥å…·æ—¶, æ˜¯å¦è¦æ£€æŸ¥æ•°æ®åº“çš„åç§°.
 	 */
 	private boolean checkDatabaseName = true;
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(factory);
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(factory);
 		/*
-      Iterator itr = this.tempResultReaders.iterator();
-      while (itr.hasNext())
-      {
-         ((ResultReader) itr.next()).initialize(this.getFactory());
-      }
-		// ÕâÀï²»ĞèÒª³õÊ¼»¯reader, ÔÚcreateTempReaderManagerÖĞ»áÍ¨¹ı
-		// ResultReaderManagerImpl¶ÔÆä³õÊ¼»¯
+		Iterator itr = this.tempResultReaders.iterator();
+		while (itr.hasNext())
+		{
+			((ResultReader) itr.next()).initialize(this.getFactory());
+		}
+		// è¿™é‡Œä¸éœ€è¦åˆå§‹åŒ–reader, åœ¨createTempReaderManagerä¸­ä¼šé€šè¿‡
+		// ResultReaderManagerImplå¯¹å…¶åˆå§‹åŒ–
 		*/
-      this.readerManager = this.createTempReaderManager();
-      this.tempResultReaders = null;
-      this.tempNameToIndexMap = null;
-      String tmp = (String) this.getAttribute(OTHER_READER_MANAGER_SET_FLAG);
-      if (tmp != null)
-      {
-         String[] tmpArr = StringTool.separateString(tmp, ",", true);
-         if (tmpArr.length > 0)
-         {
-            this.otherReaderManagerSet = new HashSet();
-            for (int i = 0; i < tmpArr.length; i++)
-            {
-               this.otherReaderManagerSet.add(tmpArr[i]);
-            }
-         }
-      }
+		this.readerManager = this.createTempReaderManager();
+		this.tempResultReaders = null;
+		this.tempNameToIndexMap = null;
+		String tmp = (String) this.getAttribute(OTHER_READER_MANAGER_SET_FLAG);
+		if (tmp != null)
+		{
+			String[] tmpArr = StringTool.separateString(tmp, ",", true);
+			if (tmpArr.length > 0)
+			{
+				this.otherReaderManagerSet = new HashSet();
+				for (int i = 0; i < tmpArr.length; i++)
+				{
+					this.otherReaderManagerSet.add(tmpArr[i]);
+				}
+			}
+		}
 
 		tmp = (String) this.getAttribute(CHECK_DATABASE_NAME_FLAG);
 		if (tmp != null)
 		{
 			this.checkDatabaseName = "true".equalsIgnoreCase(tmp);
 		}
-   }
+	}
 
-   public String getType()
-   {
-      return SQL_TYPE_QUERY;
-   }
+	public String getType()
+	{
+		return SQL_TYPE_QUERY;
+	}
 
-   private ResultReaderManager createTempReaderManager()
-         throws ConfigurationException
-   {
-      ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
-      temp.setName("<query>/" + this.getName());
-      temp.setParentName(this.readerManagerName);
-      temp.setReaderOrder(this.readerOrder);
+	private ResultReaderManager createTempReaderManager()
+			throws ConfigurationException
+	{
+		ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
+		temp.setName("<query>/" + this.getName());
+		temp.setParentName(this.readerManagerName);
+		temp.setReaderOrder(this.readerOrder);
 		boolean hasCheckIndexFlag = false;
 		if (this.tempResultReaders != null)
 		{
@@ -139,23 +140,23 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 				temp.addReader(r);
 			}
 		}
-      temp.initialize(this.getFactory());
-      if (temp.getReaderCount() > 0)
-      {
-			// µ±ÉèÖÃÁËbaseReaderManagerÇÒÃ»ÓĞcheckIndexµÄÉèÖÃÊ±, ¸´ÖÆµÄÄ¬ÈÏÖµÎªtrue
+		temp.initialize(this.getFactory());
+		if (temp.getReaderCount() > 0)
+		{
+			// å½“è®¾ç½®äº†baseReaderManagerä¸”æ²¡æœ‰checkIndexçš„è®¾ç½®æ—¶, å¤åˆ¶çš„é»˜è®¤å€¼ä¸ºtrue
 			boolean needCopy = this.readerManager != null && !hasCheckIndexFlag;
 			String needCopyStr = (String) this.getAttribute(COPY_READERS_FLAG);
-			// µ±ÉèÖÃÁËcopyReadersÊ±, Ê¹ÓÃÉèÖÃµÄÖµ
+			// å½“è®¾ç½®äº†copyReadersæ—¶, ä½¿ç”¨è®¾ç½®çš„å€¼
 			if (needCopyStr != null)
 			{
 				needCopy = "true".equalsIgnoreCase(needCopyStr);
 			}
-         if (needCopy)
+			if (needCopy)
 			{
 				ResultReaderManagerImpl allReaders = new ResultReaderManagerImpl();
-      		allReaders.setName("<query>/" + this.getName());
-				// ÕâÀïÏÈÖ´ĞĞ³õÊ¼»¯, ÒòÎª½«ÒªÌí¼ÓµÄreader¶¼ÒÑ±»³õÊ¼»¯¹ıÁË
-            allReaders.initialize(this.getFactory());
+				allReaders.setName("<query>/" + this.getName());
+				// è¿™é‡Œå…ˆæ‰§è¡Œåˆå§‹åŒ–, å› ä¸ºå°†è¦æ·»åŠ çš„readeréƒ½å·²è¢«åˆå§‹åŒ–è¿‡äº†
+				allReaders.initialize(this.getFactory());
 				Iterator itr = temp.getReaderList().iterator();
 				while (itr.hasNext())
 				{
@@ -165,7 +166,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 						ResultReaders.ObjectReader tmpR = ((ResultReaders.ObjectReader) r);
 						if (!tmpR.isCheckIndex() && !tmpR.isUseColumnIndex())
 						{
-							// Èç¹ûcheckIndexÊôĞÔÎªfalse, Ôò¸´ÖÆºó½«ÆäÉèÎªtrue
+							// å¦‚æœcheckIndexå±æ€§ä¸ºfalse, åˆ™å¤åˆ¶åå°†å…¶è®¾ä¸ºtrue
 							tmpR = tmpR.copy();
 							tmpR.setCheckIndex(true);
 							r = tmpR;
@@ -176,82 +177,82 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 				temp = allReaders;
 			}
 			temp.lock();
-      }
-      return temp;
-   }
+		}
+		return temp;
+	}
 
-   public String getReaderOrder()
-   {
-      return this.readerOrder;
-   }
+	public String getReaderOrder()
+	{
+		return this.readerOrder;
+	}
 
-   public void setReaderOrder(String readerOrder)
-   {
-      this.readerOrder = readerOrder;
-   }
+	public void setReaderOrder(String readerOrder)
+	{
+		this.readerOrder = readerOrder;
+	}
 
-   public ResultReaderManager getReaderManager()
-         throws ConfigurationException
-   {
-      if (this.readerManagerSetted)
-      {
-         // Èç¹ûÒÑÉèÖÃ¹ıreaderManager, Ôò¾Í²»ĞèÒªÔÙ¸´ÖÆÒ»·İÁË, ÒòÎªÒÑ¾­¸´ÖÆ¹ıÁË.
-         return this.readerManager;
-      }
-      return this.readerManager.copy(null);
-   }
+	public ResultReaderManager getReaderManager()
+			throws ConfigurationException
+	{
+		if (this.readerManagerSetted)
+		{
+			// å¦‚æœå·²è®¾ç½®è¿‡readerManager, åˆ™å°±ä¸éœ€è¦å†å¤åˆ¶ä¸€ä»½äº†, å› ä¸ºå·²ç»å¤åˆ¶è¿‡äº†.
+			return this.readerManager;
+		}
+		return this.readerManager.copy(null);
+	}
 
-   public void setReaderManager(ResultReaderManager readerManager)
-         throws ConfigurationException
-   {
-      if (this.readerManager != readerManager)
-      {
-         String name1 = readerManager.getName();
-         String name2 = this.readerManager.getName();
-         if (!name1.equals(name2))
-         {
-            if (this.otherReaderManagerSet != null)
-            {
-               if (!this.otherReaderManagerSet.contains(name1))
-               {
-                  throw new ConfigurationException(
-                        "The setted readerManager name [" + name1 + "],  not same [" + name2
-                        + "] in query[" + this.getName() + "], or in " + OTHER_READER_MANAGER_SET_FLAG
-                        + " " + this.otherReaderManagerSet + ".");
-               }
-            }
-            else
-            {
-               throw new ConfigurationException(
-                     "The setted readerManager name [" + name1 + "],  not same [" + name2
-                     + "] in query[" + this.getName() + "].");
-            }
-         }
-         this.readerManager = readerManager;
-         this.readerManagerSetted = true;
-         /*
-            ÕâÀï²»ĞèÒª²»ĞèÒªËøÉÏ, ÒòÎªÔÚResultMetaDataImplÖĞ, »áÅĞ¶ÏResultReaderManager
-				Î´ËøÉÏµÄ»°, »áÖØĞÂ¹¹ÔìÒ»¸ö¡°Ãû³Æ-Ë÷ÒıÖµ¡±µÄ¶ÔÓ¦±í
-         */
-      }
-      if (this.orderIndex != -1)
-      {
-         String orderStr = this.readerManager.getOrderByString();
-         if (this.orderStrs != null)
-         {
-            orderStr = StringTool.linkStringArr(this.orderStrs, ", ") + ", " + orderStr;
-         }
-         if (log.isDebugEnabled())
-         {
-            log.debug("Set order at(" + this.orderIndex + "):" + orderStr);
-         }
-         this.setSubSQL(this.orderIndex, orderStr);
-      }
-   }
+	public void setReaderManager(ResultReaderManager readerManager)
+			throws ConfigurationException
+	{
+		if (this.readerManager != readerManager)
+		{
+			String name1 = readerManager.getName();
+			String name2 = this.readerManager.getName();
+			if (!name1.equals(name2))
+			{
+				if (this.otherReaderManagerSet != null)
+				{
+					if (!this.otherReaderManagerSet.contains(name1))
+					{
+						throw new ConfigurationException(
+								"The setted readerManager name [" + name1 + "],  not same [" + name2
+								+ "] in query[" + this.getName() + "], or in " + OTHER_READER_MANAGER_SET_FLAG
+								+ " " + this.otherReaderManagerSet + ".");
+					}
+				}
+				else
+				{
+					throw new ConfigurationException(
+							"The setted readerManager name [" + name1 + "],  not same [" + name2
+							+ "] in query[" + this.getName() + "].");
+				}
+			}
+			this.readerManager = readerManager;
+			this.readerManagerSetted = true;
+			/*
+				è¿™é‡Œä¸éœ€è¦ä¸éœ€è¦é”ä¸Š, å› ä¸ºåœ¨ResultMetaDataImplä¸­, ä¼šåˆ¤æ–­ResultReaderManager
+				æœªé”ä¸Šçš„è¯, ä¼šé‡æ–°æ„é€ ä¸€ä¸ªâ€œåç§°-ç´¢å¼•å€¼â€çš„å¯¹åº”è¡¨
+			*/
+		}
+		if (this.orderIndex != -1)
+		{
+			String orderStr = this.readerManager.getOrderByString();
+			if (this.orderStrs != null)
+			{
+				orderStr = StringTool.linkStringArr(this.orderStrs, ", ") + ", " + orderStr;
+			}
+			if (log.isDebugEnabled())
+			{
+				log.debug("Set order at(" + this.orderIndex + "):" + orderStr);
+			}
+			this.setSubSQL(this.orderIndex, orderStr);
+		}
+	}
 
-   public void addResultReader(ResultReader reader)
-         throws ConfigurationException
-   {
+	public void addResultReader(ResultReader reader)
+			throws ConfigurationException
+	{
 		if (this.initialized)
 		{
 			throw new ConfigurationException(
@@ -262,15 +263,15 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			this.tempNameToIndexMap = new HashMap();
 			this.tempResultReaders = new ArrayList();
 		}
-      if (this.tempNameToIndexMap.containsKey(reader.getName()))
-      {
-         throw new ConfigurationException(
-               "Duplicate [ResultReader] name:" + reader.getName()
-               + ", in query[" + this.getName() + "].");
-      }
-      this.tempResultReaders.add(reader);
-      this.tempNameToIndexMap.put(reader.getName(), new Integer(this.tempResultReaders.size()));
-   }
+		if (this.tempNameToIndexMap.containsKey(reader.getName()))
+		{
+			throw new ConfigurationException(
+					"Duplicate [ResultReader] name:" + reader.getName()
+					+ ", in query[" + this.getName() + "].");
+		}
+		this.tempResultReaders.add(reader);
+		this.tempNameToIndexMap.put(reader.getName(), new Integer(this.tempResultReaders.size()));
+	}
 
 	protected void copy(SQLAdapter copyObj)
 	{
@@ -285,15 +286,15 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		other.forwardOnly = this.forwardOnly;
 		other.checkDatabaseName = this.checkDatabaseName;
 		other.orderIndex = this.orderIndex;
-      if (other.orderIndex != -1)
-      {
-         // Èç¹ûÉèÖÃÁËorderIndex, ÏÈÖÃÉÏÄ¬ÈÏµÄÖµ
-         try
-         {
-            other.setSubSQL(other.orderIndex, "");
-         }
-         catch (ConfigurationException ex) {}
-      }
+		if (other.orderIndex != -1)
+		{
+			// å¦‚æœè®¾ç½®äº†orderIndex, å…ˆç½®ä¸Šé»˜è®¤çš„å€¼
+			try
+			{
+				other.setSubSQL(other.orderIndex, "");
+			}
+			catch (ConfigurationException ex) {}
+		}
 	}
 
 	public SQLAdapter createSQLAdapter()
@@ -302,43 +303,43 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		return this.createQueryAdapter();
 	}
 
-   public void setOrderIndex(int orderIndex)
-   {
-      this.orderIndex = orderIndex;
-   }
+	public void setOrderIndex(int orderIndex)
+	{
+		this.orderIndex = orderIndex;
+	}
 
-   protected int getOrderIndex()
-   {
-      return this.orderIndex;
-   }
+	protected int getOrderIndex()
+	{
+		return this.orderIndex;
+	}
 
-   public boolean canOrder()
-   {
-      return this.orderIndex != -1;
-   }
+	public boolean canOrder()
+	{
+		return this.orderIndex != -1;
+	}
 
-   public void setForwardOnly(boolean forwardOnly)
-   {
-      this.forwardOnly = forwardOnly;
-   }
+	public void setForwardOnly(boolean forwardOnly)
+	{
+		this.forwardOnly = forwardOnly;
+	}
 
-   public boolean isForwardOnly()
-   {
-      return this.forwardOnly;
-   }
+	public boolean isForwardOnly()
+	{
+		return this.forwardOnly;
+	}
 
-   protected Permission getPermission0()
-   {
-      return this.permission;
-   }
+	protected Permission getPermission0()
+	{
+		return this.permission;
+	}
 
-   public void setPermission(Permission permission)
-   {
-      this.permission = permission;
-   }
+	public void setPermission(Permission permission)
+	{
+		this.permission = permission;
+	}
 
 	/**
-	 * »ñÈ¡Ò»¸ö²éÑ¯¸¨Öú¹¤¾ß.
+	 * è·å–ä¸€ä¸ªæŸ¥è¯¢è¾…åŠ©å·¥å…·.
 	 */
 	protected QueryHelper getQueryHelper(Connection conn)
 			throws SQLException
@@ -361,192 +362,192 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		return super.getPreparedSQL();
 	}
 
-   public void setReaderManagerName(String name)
-   {
-      this.readerManagerName = name;
-   }
+	public void setReaderManagerName(String name)
+	{
+		this.readerManagerName = name;
+	}
 
-   public void setSingleOrder(String readerName)
-         throws ConfigurationException
-   {
-      if (this.orderIndex != -1)
-      {
-         this.setSingleOrder(readerName, 0);
-      }
-   }
+	public void setSingleOrder(String readerName)
+			throws ConfigurationException
+	{
+		if (this.orderIndex != -1)
+		{
+			this.setSingleOrder(readerName, 0);
+		}
+	}
 
-   public void setSingleOrder(String readerName, int orderType)
-         throws ConfigurationException
-   {
-      if (this.orderIndex != -1)
-      {
-         ResultReader reader = this.readerManager.getReader(readerName);
-         if (reader == null)
-         {
-            log.error("Single order, not found the reader: [" + readerName
-                  + "] in query[" + this.getName() + "].");
-            return;
-         }
-         String orderStr = reader.getOrderName();
-         if (orderType == 0)
-         {
-            if (this.orderStrs != null && orderStr.equals(this.orderStrs[0]))
-            {
-               orderStr = orderStr + " DESC";
-               this.orderNames = new String[]{readerName + "D"};
-            }
-            else
-            {
-               this.orderNames = new String[]{readerName + "A"};
-            }
-         }
-         else
-         {
-            orderStr = orderType < 0 ? orderStr + " DESC" : orderStr;
-            this.orderNames = orderType < 0 ?
-                  new String[]{readerName + "D"} : new String[]{readerName + "A"};
-         }
-         this.orderStrs = new String[]{orderStr};
-         String settingOrder = this.readerManager.getOrderByString();
-         if (settingOrder != null && settingOrder.length() > 0)
-         {
-            orderStr = orderStr + ", " + settingOrder;
-         }
-         if (log.isDebugEnabled())
-         {
-            log.debug("Set order at(" + this.orderIndex + "):" + orderStr);
-         }
-         this.setSubSQL(this.orderIndex, orderStr);
-      }
-   }
+	public void setSingleOrder(String readerName, int orderType)
+			throws ConfigurationException
+	{
+		if (this.orderIndex != -1)
+		{
+			ResultReader reader = this.readerManager.getReader(readerName);
+			if (reader == null)
+			{
+				log.error("Single order, not found the reader: [" + readerName
+						+ "] in query[" + this.getName() + "].");
+				return;
+			}
+			String orderStr = reader.getOrderName();
+			if (orderType == 0)
+			{
+				if (this.orderStrs != null && orderStr.equals(this.orderStrs[0]))
+				{
+					orderStr = orderStr + " DESC";
+					this.orderNames = new String[]{readerName + "D"};
+				}
+				else
+				{
+					this.orderNames = new String[]{readerName + "A"};
+				}
+			}
+			else
+			{
+				orderStr = orderType < 0 ? orderStr + " DESC" : orderStr;
+				this.orderNames = orderType < 0 ?
+						new String[]{readerName + "D"} : new String[]{readerName + "A"};
+			}
+			this.orderStrs = new String[]{orderStr};
+			String settingOrder = this.readerManager.getOrderByString();
+			if (settingOrder != null && settingOrder.length() > 0)
+			{
+				orderStr = orderStr + ", " + settingOrder;
+			}
+			if (log.isDebugEnabled())
+			{
+				log.debug("Set order at(" + this.orderIndex + "):" + orderStr);
+			}
+			this.setSubSQL(this.orderIndex, orderStr);
+		}
+	}
 
-   public String getSingleOrder(BooleanRef desc)
-   {
-      if (this.orderNames == null)
-      {
-         return null;
-      }
-      int index = this.orderNames[0].length() - 1;
-      if (desc != null)
-      {
-         desc.value = this.orderNames[0].charAt(index) == 'D';
-      }
-      return this.orderNames[0].substring(0, index);
-   }
+	public String getSingleOrder(BooleanRef desc)
+	{
+		if (this.orderNames == null)
+		{
+			return null;
+		}
+		int index = this.orderNames[0].length() - 1;
+		if (desc != null)
+		{
+			desc.value = this.orderNames[0].charAt(index) == 'D';
+		}
+		return this.orderNames[0].substring(0, index);
+	}
 
-   public void setMultipleOrder(String[] orderNames)
-         throws ConfigurationException
-   {
-      if (orderNames == null || orderNames.length == 0)
-      {
-         this.orderNames = null;
-         this.orderStrs = null;
-      }
-      if (this.orderIndex != -1)
-      {
-         this.orderNames = new String[orderNames.length];
-         this.orderStrs = new String[orderNames.length];
-         for (int i = 0; i < orderNames.length; i++)
-         {
-            String readerName = orderNames[i].substring(0, orderNames[i].length() - 1);
-            char orderType = orderNames[i].charAt(orderNames[i].length() - 1);
-            ResultReader reader = this.readerManager.getReader(readerName);
-            if (reader == null)
-            {
-               log.error("Multiple order, not found the reader: [" + readerName
-                     + "] in query[" + this.getName() + "].");
-               return;
-            }
-            String orderStr = reader.getOrderName();
-            orderStr = orderType == 'D' ? orderStr + " DESC" : orderStr;
-            this.orderNames[i] = orderNames[i];
-            this.orderStrs[i] = orderStr;
-         }
+	public void setMultipleOrder(String[] orderNames)
+			throws ConfigurationException
+	{
+		if (orderNames == null || orderNames.length == 0)
+		{
+			this.orderNames = null;
+			this.orderStrs = null;
+		}
+		if (this.orderIndex != -1)
+		{
+			this.orderNames = new String[orderNames.length];
+			this.orderStrs = new String[orderNames.length];
+			for (int i = 0; i < orderNames.length; i++)
+			{
+				String readerName = orderNames[i].substring(0, orderNames[i].length() - 1);
+				char orderType = orderNames[i].charAt(orderNames[i].length() - 1);
+				ResultReader reader = this.readerManager.getReader(readerName);
+				if (reader == null)
+				{
+					log.error("Multiple order, not found the reader: [" + readerName
+							+ "] in query[" + this.getName() + "].");
+					return;
+				}
+				String orderStr = reader.getOrderName();
+				orderStr = orderType == 'D' ? orderStr + " DESC" : orderStr;
+				this.orderNames[i] = orderNames[i];
+				this.orderStrs[i] = orderStr;
+			}
 
-         String realOrderStr = StringTool.linkStringArr(this.orderStrs, ", ");
-         String settingOrder = this.readerManager.getOrderByString();
-         if (settingOrder != null && settingOrder.length() > 0)
-         {
-            realOrderStr = realOrderStr + ", " + settingOrder;
-         }
-         if (log.isDebugEnabled())
-         {
-            log.debug("Set order at(" + this.orderIndex + "):" + realOrderStr);
-         }
-         this.setSubSQL(this.orderIndex, realOrderStr);
-      }
-   }
+			String realOrderStr = StringTool.linkStringArr(this.orderStrs, ", ");
+			String settingOrder = this.readerManager.getOrderByString();
+			if (settingOrder != null && settingOrder.length() > 0)
+			{
+				realOrderStr = realOrderStr + ", " + settingOrder;
+			}
+			if (log.isDebugEnabled())
+			{
+				log.debug("Set order at(" + this.orderIndex + "):" + realOrderStr);
+			}
+			this.setSubSQL(this.orderIndex, realOrderStr);
+		}
+	}
 
-   /**
-    * @param rs   Èç¹û²ÎÊırs²»Îª¿Õ, ÔòÒªÅĞ¶ÏreaderManagerÖĞµÄreader¸öÊı
-    *             ÊÇ·ñÎª0, Îª0µÄ»°¾ÍÒª¸ù¾İrs¸øreaderManager³õÊ¼»¯Ä¬ÈÏµÄÁĞ
-    */
-   protected ResultReaderManager getReaderManager0(ResultSet rs)
-   {
-      if (rs == null)
-      {
-         return this.readerManager;
-      }
-      try
-      {
-         if (this.readerManager.getReaderCount() == 0)
-         {
-            this.readerManager.setColNameSensitive(false);
-            this.initDefaultResultReaders(rs);
-         }
-      }
-      catch (Exception ex)
-      {
-         log.warn("Init default ResultReaders error.", ex);
-      }
-      return this.readerManager;
-   }
+	/**
+	 * @param rs   å¦‚æœå‚æ•°rsä¸ä¸ºç©º, åˆ™è¦åˆ¤æ–­readerManagerä¸­çš„readerä¸ªæ•°
+	 *             æ˜¯å¦ä¸º0, ä¸º0çš„è¯å°±è¦æ ¹æ®rsç»™readerManageråˆå§‹åŒ–é»˜è®¤çš„åˆ—
+	 */
+	protected ResultReaderManager getReaderManager0(ResultSet rs)
+	{
+		if (rs == null)
+		{
+			return this.readerManager;
+		}
+		try
+		{
+			if (this.readerManager.getReaderCount() == 0)
+			{
+				this.readerManager.setColNameSensitive(false);
+				this.initDefaultResultReaders(rs);
+			}
+		}
+		catch (Exception ex)
+		{
+			log.warn("Init default ResultReaders error.", ex);
+		}
+		return this.readerManager;
+	}
 
-   public int getStartRow()
-   {
-      return this.startRow;
-   }
+	public int getStartRow()
+	{
+		return this.startRow;
+	}
 
-   /**
-    * ÉèÖÃ´ÓµÚ¼¸Ìõ¼ÇÂ¼¿ªÊ¼È¡Öµ£¨´Ó1¿ªÊ¼¼ÆÊı£©
-    */
-   public void setStartRow(int startRow)
-   {
-      this.startRow = startRow < 1 ? 1 : startRow;
-   }
+	/**
+	 * è®¾ç½®ä»ç¬¬å‡ æ¡è®°å½•å¼€å§‹å–å€¼ï¼ˆä»1å¼€å§‹è®¡æ•°ï¼‰
+	 */
+	public void setStartRow(int startRow)
+	{
+		this.startRow = startRow < 1 ? 1 : startRow;
+	}
 
-   public int getMaxRows()
-   {
-      return this.maxRows;
-   }
+	public int getMaxRows()
+	{
+		return this.maxRows;
+	}
 
-   /**
-    * ÉèÖÃÈ¡³ö¼¸Ìõ¼ÇÂ¼£¬-1±íÊ¾È¡ÍêÎªÖ¹
-    */
-   public void setMaxRows(int maxRows)
-   {
-      this.maxRows = maxRows < -1 ? -1 : maxRows;
-   }
+	/**
+	 * è®¾ç½®å–å‡ºå‡ æ¡è®°å½•ï¼Œ-1è¡¨ç¤ºå–å®Œä¸ºæ­¢
+	 */
+	public void setMaxRows(int maxRows)
+	{
+		this.maxRows = maxRows < -1 ? -1 : maxRows;
+	}
 
-   public int getTotalCount()
-   {
-      return this.totalCount;
-   }
+	public int getTotalCount()
+	{
+		return this.totalCount;
+	}
 
-   public void setTotalCount(int totalCount)
-         throws ConfigurationException
-   {
+	public void setTotalCount(int totalCount)
+			throws ConfigurationException
+	{
 		this.setTotalCount(totalCount, null);
-   }
+	}
 
 	public void setTotalCount(int totalCount, TotalCountExt ext)
 			throws ConfigurationException
 	{
-      if (this.totalCount < -3)
-      {
-         throw new ConfigurationException("Error total count:" + totalCount + ".");
-      }
-      this.totalCount = totalCount;
+		if (this.totalCount < -3)
+		{
+			throw new ConfigurationException("Error total count:" + totalCount + ".");
+		}
+		this.totalCount = totalCount;
 		this.totalCountExt = ext;
 	}
 
@@ -555,56 +556,56 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		return this.totalCountExt;
 	}
 
-   public void execute(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      this.executeQuery(conn);
-   }
+	public void execute(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		this.executeQuery(conn);
+	}
 
-   public ResultIterator executeQuery(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      long startTime = System.currentTimeMillis();
+	public ResultIterator executeQuery(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		long startTime = TimeLogger.getTime();
 		QueryHelper qh = this.getQueryHelper(conn);
-      Statement stmt = null;
-      ResultSet rs = null;
-      Throwable exception = null;
-      ResultIterator result = null;
-      try
-      {
-         if (this.hasActiveParam())
-         {
-            PreparedStatement temp;
-            if (this.isForwardOnly())
-            {
-               temp = conn.prepareStatement(this.getPreparedSQL());
-            }
-            else
-            {
-               temp = conn.prepareStatement(this.getPreparedSQL(),
-                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            }
-            stmt = temp;
-            this.prepareValues(temp);
-            rs = temp.executeQuery();
-         }
-         else
-         {
-            if (this.isForwardOnly())
-            {
-               stmt = conn.createStatement();
-            }
-            else
-            {
-               stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY);
-            }
-            rs = stmt.executeQuery(this.getPreparedSQL());
-         }
+		Statement stmt = null;
+		ResultSet rs = null;
+		Throwable exception = null;
+		ResultIterator result = null;
+		try
+		{
+			if (this.hasActiveParam())
+			{
+				PreparedStatement temp;
+				if (this.isForwardOnly())
+				{
+					temp = conn.prepareStatement(this.getPreparedSQL());
+				}
+				else
+				{
+					temp = conn.prepareStatement(this.getPreparedSQL(),
+							ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				}
+				stmt = temp;
+				this.prepareValues(temp);
+				rs = temp.executeQuery();
+			}
+			else
+			{
+				if (this.isForwardOnly())
+				{
+					stmt = conn.createStatement();
+				}
+				else
+				{
+					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+							ResultSet.CONCUR_READ_ONLY);
+				}
+				rs = stmt.executeQuery(this.getPreparedSQL());
+			}
 			ResultReaderManager readerManager = this.getReaderManager0(rs);
-      	List readerList = readerManager.getReaderList(this.getPermission0());
+			List readerList = readerManager.getReaderList(this.getPermission0());
 			List tmpList = qh.readResults(rs, readerList);
-         ResultIteratorImpl ritr = new ResultIteratorImpl(readerManager, readerList, this);
+			ResultIteratorImpl ritr = new ResultIteratorImpl(readerManager, readerList, this);
 			ListIterator litr = tmpList.listIterator();
 			while (litr.hasNext())
 			{
@@ -616,49 +617,49 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ritr.recordCount = qh.getRecordCount();
 			ritr.realRecordCountAvailable = qh.isRealRecordCountAvailable();
 			ritr.hasMoreRecord = qh.isHasMoreRecord();
-         if (qh.needCount())
-         {
-            rs.close();
-            stmt.close();
-            rs = null;
-            stmt = null;
-            if (this.countQuery == null)
-            {
-               this.countQuery = new CountQueryAdapter(this);
-            }
-            int count = this.countQuery.executeQuery(conn).nextRow().getInt(1);
-            ritr.realRecordCount = count;
-            ritr.realRecordCountAvailable = true;
-         }
-         result = ritr;
-         return ritr;
-      }
-      catch (ConfigurationException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (SQLException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (RuntimeException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (Error ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      finally
-      {
-         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
-         {
-            if (result != null)
-            {
+			if (qh.needCount())
+			{
+				rs.close();
+				stmt.close();
+				rs = null;
+				stmt = null;
+				if (this.countQuery == null)
+				{
+					this.countQuery = new CountQueryAdapter(this);
+				}
+				int count = this.countQuery.executeQuery(conn).nextRow().getInt(1);
+				ritr.realRecordCount = count;
+				ritr.realRecordCountAvailable = true;
+			}
+			result = ritr;
+			return ritr;
+		}
+		catch (ConfigurationException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (SQLException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (RuntimeException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (Error ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		finally
+		{
+			if (this.logSQL(this, TimeLogger.getTime() - startTime, exception, conn))
+			{
+				if (result != null)
+				{
 					AppData data = AppData.getCurrentData();
 					if (data.getLogType() > 0)
 					{
@@ -668,131 +669,131 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 							AppDataLogExecute.printObject(nowNode.addElement("result"), result);
 						}
 					}
-            }
-         }
-         if (rs != null)
-         {
-            rs.close();
-         }
-         if (stmt != null)
-         {
-            stmt.close();
-         }
-      }
-   }
+				}
+			}
+			if (rs != null)
+			{
+				rs.close();
+			}
+			if (stmt != null)
+			{
+				stmt.close();
+			}
+		}
+	}
 
-   private void initDefaultResultReaders(ResultSet rs)
-         throws ConfigurationException, SQLException
-   {
-      Map temp = new HashMap();
-      ResultSetMetaData meta = rs.getMetaData();
-      int count = meta.getColumnCount();
-      for (int i = 0; i < count; i++)
-      {
-         String colname = meta.getColumnName(i + 1);
-         String name = colname;
-         if (temp.get(name) != null)
-         {
-				// µ±´æÔÚÖØ¸´µÄÁĞÃûÊ±, ºóÃæµÄÁĞ¼ÓÉÏË÷ÒıºÅ
-            name = colname + "+" + (i + 1);
-         }
-         temp.put(name, colname);
-         ResultReaders.ObjectReader reader = new ResultReaders.ObjectReader(name);
-         reader.setColumnIndex(i + 1);
-         this.readerManager.addReader(reader);
-      }
-   }
-
-   protected static Object[] getResults(QueryAdapter query, List readerList, ResultSet rs)
-         throws ConfigurationException, SQLException
-   {
-      int count = readerList.size();
-      Iterator itr = readerList.iterator();
-      Object[] values = new Object[count];
-      ResultReader reader = null;
-      try
-      {
-         for (int i = 0; i < count; i++)
-         {
-            reader = (ResultReader) itr.next();
-            values[i] = reader.readResult(rs);
-         }
-      }
-      catch (Throwable ex)
-      {
-         if (reader != null)
-         {
-            log.error("Error when read result, reader [" + reader.getName()
-                  + "], query [" + query.getName() + "].");
-         }
-         if (ex instanceof SQLException)
-         {
-            throw (SQLException) ex;
-         }
-         else if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         else if (ex instanceof RuntimeException)
-         {
-            throw (RuntimeException) ex;
-         }
-         else
-         {
-            throw new ConfigurationException(ex);
-         }
-      }
-      return values;
-   }
-
-   protected abstract ResultRow readResults(ResultReaderManager readerManager, Object[] row,
-			ResultIterator resultIterator)
-         throws ConfigurationException, SQLException;
-
-   private static class ResultIteratorImpl extends AbstractResultIterator
-         implements ResultIterator
-   {
-      private int realRecordCount;
-      private int recordCount;
-      private boolean realRecordCountAvailable;
-      private boolean hasMoreRecord;
-
-      public ResultIteratorImpl(ResultReaderManager readarManager, List readerList, QueryAdapter query)
+	private void initDefaultResultReaders(ResultSet rs)
+			throws ConfigurationException, SQLException
+	{
+		Map temp = new HashMap();
+		ResultSetMetaData meta = rs.getMetaData();
+		int count = meta.getColumnCount();
+		for (int i = 0; i < count; i++)
 		{
-         super(readerList);
+			String colname = meta.getColumnName(i + 1);
+			String name = colname;
+			if (temp.get(name) != null)
+			{
+				// å½“å­˜åœ¨é‡å¤çš„åˆ—åæ—¶, åé¢çš„åˆ—åŠ ä¸Šç´¢å¼•å·
+				name = colname + "+" + (i + 1);
+			}
+			temp.put(name, colname);
+			ResultReaders.ObjectReader reader = new ResultReaders.ObjectReader(name);
+			reader.setColumnIndex(i + 1);
+			this.readerManager.addReader(reader);
+		}
+	}
+
+	protected static Object[] getResults(QueryAdapter query, List readerList, ResultSet rs)
+			throws ConfigurationException, SQLException
+	{
+		int count = readerList.size();
+		Iterator itr = readerList.iterator();
+		Object[] values = new Object[count];
+		ResultReader reader = null;
+		try
+		{
+			for (int i = 0; i < count; i++)
+			{
+				reader = (ResultReader) itr.next();
+				values[i] = reader.readResult(rs);
+			}
+		}
+		catch (Throwable ex)
+		{
+			if (reader != null)
+			{
+				log.error("Error when read result, reader [" + reader.getName()
+						+ "], query [" + query.getName() + "].");
+			}
+			if (ex instanceof SQLException)
+			{
+				throw (SQLException) ex;
+			}
+			else if (ex instanceof ConfigurationException)
+			{
+				throw (ConfigurationException) ex;
+			}
+			else if (ex instanceof RuntimeException)
+			{
+				throw (RuntimeException) ex;
+			}
+			else
+			{
+				throw new ConfigurationException(ex);
+			}
+		}
+		return values;
+	}
+
+	protected abstract ResultRow readResults(ResultReaderManager readerManager, Object[] row,
+			ResultIterator resultIterator)
+			throws ConfigurationException, SQLException;
+
+	private static class ResultIteratorImpl extends AbstractResultIterator
+			implements ResultIterator
+	{
+		private int realRecordCount;
+		private int recordCount;
+		private boolean realRecordCountAvailable;
+		private boolean hasMoreRecord;
+
+		public ResultIteratorImpl(ResultReaderManager readarManager, List readerList, QueryAdapter query)
+		{
+			super(readerList);
 			this.readerManager = readarManager;
 			this.query = query;
-      }
+		}
 
 		private ResultIteratorImpl()
 		{
 		}
 
-      public void setResult(List result)
-      {
-         this.result = result;
-         this.resultItr = this.result.iterator();
-      }
+		public void setResult(List result)
+		{
+			this.result = result;
+			this.resultItr = this.result.iterator();
+		}
 
-      public int getRealRecordCount()
-      {
-         return this.realRecordCount;
-      }
+		public int getRealRecordCount()
+		{
+			return this.realRecordCount;
+		}
 
-      public int getRecordCount()
-      {
-         return this.recordCount;
-      }
+		public int getRecordCount()
+		{
+			return this.recordCount;
+		}
 
-      public boolean isRealRecordCountAvailable()
-      {
-         return this.realRecordCountAvailable;
-      }
+		public boolean isRealRecordCountAvailable()
+		{
+			return this.realRecordCountAvailable;
+		}
 
-      public boolean isHasMoreRecord()
-      {
-         return this.hasMoreRecord;
-      }
+		public boolean isHasMoreRecord()
+		{
+			return this.hasMoreRecord;
+		}
 
 		public ResultIterator copy()
 				throws ConfigurationException
@@ -813,129 +814,129 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ritr.hasMoreRecord = this.hasMoreRecord;
 		}
 
-   }
+	}
 
 }
 
 /*
-   private ResultIteratorImpl executeQuery(ResultSet rs)
-         throws ConfigurationException, SQLException
-   {
-      int start = this.startRow - 1;
-      int recordCount = 0;
-      int realRecordCount = 0;
-      boolean realRecordCountAvailable = false;
-      boolean hasMoreRecord = false;
-      boolean hasRecord = true;
-      boolean isForwardOnly = rs.getType() == ResultSet.TYPE_FORWARD_ONLY;
-      List readerList = this.getReaderManager0(rs).getReaderList(this.getPermission0());
+	private ResultIteratorImpl executeQuery(ResultSet rs)
+			throws ConfigurationException, SQLException
+	{
+		int start = this.startRow - 1;
+		int recordCount = 0;
+		int realRecordCount = 0;
+		boolean realRecordCountAvailable = false;
+		boolean hasMoreRecord = false;
+		boolean hasRecord = true;
+		boolean isForwardOnly = rs.getType() == ResultSet.TYPE_FORWARD_ONLY;
+		List readerList = this.getReaderManager0(rs).getReaderList(this.getPermission0());
 
-      if (start > 0)
-      {
-         if (!isForwardOnly)
-         {
-            hasRecord = rs.absolute(start);
-         }
-         else
-         {
-            for (; recordCount < start && hasRecord; recordCount++, hasRecord = rs.next());
-         }
-      }
-      ArrayList result;
-      ResultIteratorImpl ritr;
-      if (!hasRecord)
-      {
-         recordCount--;
-         realRecordCountAvailable = true;
-         hasMoreRecord = false;
-         result = new ArrayList(0);
-         ritr = new ResultIteratorImpl(readerList);
-      }
-      else
-      {
-         result = new ArrayList(this.maxRows == -1 ? 32 : this.maxRows);
-         ritr = new ResultIteratorImpl(readerList);
-         if (this.maxRows == -1)
-         {
-            while (rs.next())
-            {
-               recordCount++;
-               result.add(this.readResults(readerList, rs, ritr));
-            }
-            realRecordCount = recordCount;
-            realRecordCountAvailable = true;
-            hasMoreRecord = false;
-         }
-         else
-         {
-            int i = 0;
-            for (; i < this.maxRows && (hasMoreRecord = rs.next()); i++)
-            {
-               recordCount++;
-               result.add(this.readResults(readerList, rs, ritr));
-            }
-            // ÕâÃ´ÅĞ¶ÏÊÇ·ÀÖ¹Ä³Ğ©jdbcÔÚµÚÒ»´ÎnextÎªfalseºó, ºóÃæµÄnextÓÖ±ä»Øtrue
-            if (hasMoreRecord && (hasMoreRecord = rs.next()))
-            {
-               recordCount++;
-               realRecordCountAvailable = false;
-            }
-            else
-            {
-               realRecordCountAvailable = true;
-            }
-         }
-      }
-      if (this.totalCount == TOTAL_COUNT_AUTO)
-      {
-         if (!isForwardOnly)
-         {
-            realRecordCountAvailable = rs.last();
-            realRecordCount = rs.getRow();
-         }
-         else
-         {
-            if (hasMoreRecord)
-            {
-               for (; rs.next(); recordCount++);
-            }
-            realRecordCount = recordCount;
-         }
+		if (start > 0)
+		{
+			if (!isForwardOnly)
+			{
+				hasRecord = rs.absolute(start);
+			}
+			else
+			{
+				for (; recordCount < start && hasRecord; recordCount++, hasRecord = rs.next());
+			}
+		}
+		ArrayList result;
+		ResultIteratorImpl ritr;
+		if (!hasRecord)
+		{
+			recordCount--;
 			realRecordCountAvailable = true;
-      }
-      else if (this.totalCount == TOTAL_COUNT_NONE)
-      {
-         realRecordCount = recordCount;
-      }
-      else if (this.totalCount == TOTAL_COUNT_COUNT)
-      {
-         if (!realRecordCountAvailable)
-         {
-            ritr.needCount = true;
-         }
-         else
-         {
-            realRecordCount = recordCount;
-         }
-      }
-      else if (this.totalCount >= 0)
-      {
-         if (!realRecordCountAvailable)
-         {
-            realRecordCount = this.totalCount;
-            realRecordCountAvailable = true;
-         }
-         else
-         {
-            realRecordCount = recordCount;
-         }
-      }
+			hasMoreRecord = false;
+			result = new ArrayList(0);
+			ritr = new ResultIteratorImpl(readerList);
+		}
+		else
+		{
+			result = new ArrayList(this.maxRows == -1 ? 32 : this.maxRows);
+			ritr = new ResultIteratorImpl(readerList);
+			if (this.maxRows == -1)
+			{
+				while (rs.next())
+				{
+					recordCount++;
+					result.add(this.readResults(readerList, rs, ritr));
+				}
+				realRecordCount = recordCount;
+				realRecordCountAvailable = true;
+				hasMoreRecord = false;
+			}
+			else
+			{
+				int i = 0;
+				for (; i < this.maxRows && (hasMoreRecord = rs.next()); i++)
+				{
+					recordCount++;
+					result.add(this.readResults(readerList, rs, ritr));
+				}
+				// è¿™ä¹ˆåˆ¤æ–­æ˜¯é˜²æ­¢æŸäº›jdbcåœ¨ç¬¬ä¸€æ¬¡nextä¸ºfalseå, åé¢çš„nextåˆå˜å›true
+				if (hasMoreRecord && (hasMoreRecord = rs.next()))
+				{
+					recordCount++;
+					realRecordCountAvailable = false;
+				}
+				else
+				{
+					realRecordCountAvailable = true;
+				}
+			}
+		}
+		if (this.totalCount == TOTAL_COUNT_AUTO)
+		{
+			if (!isForwardOnly)
+			{
+				realRecordCountAvailable = rs.last();
+				realRecordCount = rs.getRow();
+			}
+			else
+			{
+				if (hasMoreRecord)
+				{
+					for (; rs.next(); recordCount++);
+				}
+				realRecordCount = recordCount;
+			}
+			realRecordCountAvailable = true;
+		}
+		else if (this.totalCount == TOTAL_COUNT_NONE)
+		{
+			realRecordCount = recordCount;
+		}
+		else if (this.totalCount == TOTAL_COUNT_COUNT)
+		{
+			if (!realRecordCountAvailable)
+			{
+				ritr.needCount = true;
+			}
+			else
+			{
+				realRecordCount = recordCount;
+			}
+		}
+		else if (this.totalCount >= 0)
+		{
+			if (!realRecordCountAvailable)
+			{
+				realRecordCount = this.totalCount;
+				realRecordCountAvailable = true;
+			}
+			else
+			{
+				realRecordCount = recordCount;
+			}
+		}
 
-      ritr.setResult(result);
-      ritr.realRecordCount = realRecordCount;
-      ritr.recordCount = result.size();
-      ritr.realRecordCountAvailable = realRecordCountAvailable;
-      ritr.hasMoreRecord = hasMoreRecord;
-      return ritr;
-   }
+		ritr.setResult(result);
+		ritr.realRecordCount = realRecordCount;
+		ritr.recordCount = result.size();
+		ritr.realRecordCountAvailable = realRecordCountAvailable;
+		ritr.hasMoreRecord = hasMoreRecord;
+		return ritr;
+	}
 */

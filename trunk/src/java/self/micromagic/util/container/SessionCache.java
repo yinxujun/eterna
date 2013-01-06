@@ -10,222 +10,222 @@ import java.io.IOException;
 import javax.servlet.http.HttpSession;
 
 /**
- * ¹ÜÀísessionÖĞµÄÊôĞÔ. <p>
- * ÆäÖ÷Òª×÷ÓÃ¾ÍÊÇ½«´æÈëµÄ¶ÔÏó°ü×°³É<code>Property</code>, µ±ĞèÒªĞòÁĞ»¯Ê±,
- * »á¼ì²é±»°ü×°µÄ¶ÔÏóÊÇ·ñ¿ÉĞòÁĞ»¯, Èç¹ûÊÇÎŞ·¨±»ĞòÁĞ»¯µÄ¶ÔÏó, Ôò²»»á¶ÔÆä½ø
- * ĞĞĞòÁĞ»¯, ÔÚ·´ĞòÁĞ»¯Ê±½«Æä×÷Îªnull.
+ * ç®¡ç†sessionä¸­çš„å±æ€§. <p>
+ * å…¶ä¸»è¦ä½œç”¨å°±æ˜¯å°†å­˜å…¥çš„å¯¹è±¡åŒ…è£…æˆ<code>Property</code>, å½“éœ€è¦åºåˆ—åŒ–æ—¶,
+ * ä¼šæ£€æŸ¥è¢«åŒ…è£…çš„å¯¹è±¡æ˜¯å¦å¯åºåˆ—åŒ–, å¦‚æœæ˜¯æ— æ³•è¢«åºåˆ—åŒ–çš„å¯¹è±¡, åˆ™ä¸ä¼šå¯¹å…¶è¿›
+ * è¡Œåºåˆ—åŒ–, åœ¨ååºåˆ—åŒ–æ—¶å°†å…¶ä½œä¸ºnull.
  *
  * @author micromagic@sina.com
  */
 public class SessionCache
 {
-   private static SessionCache cache = new SessionCache();
-   private static int globalVersion = 0;
+	private static SessionCache cache = new SessionCache();
+	private static int globalVersion = 0;
 
-   private SessionCache()
-   {
-   }
+	private SessionCache()
+	{
+	}
 
-   /**
-    * »ñµÃÒ»¸öSessionCacheµÄÊµÀı.
-    */
-   public static SessionCache getInstance()
-   {
-      return cache;
-   }
+	/**
+	 * è·å¾—ä¸€ä¸ªSessionCacheçš„å®ä¾‹.
+	 */
+	public static SessionCache getInstance()
+	{
+		return cache;
+	}
 
-   /**
-    * ÏòsessionÖĞÉèÖÃÊôĞÔ.
-    * Èç¹ûÊÇportlet, ¿ÉÒÔÍ¨¹ı´Ë·½·¨ÉèÖÃsessionµÄÊôĞÔ.
-    *
-    * @param saMap      ±»×ª»»³ÉmapµÄsession
-    * @param name       ÒªÉèÖÃµÄÊôĞÔµÄÃû³Æ
-    * @param property   ÒªÉèÖÃµÄÊôĞÔÖµ
-    * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
-    */
-   public void setProperty(Map saMap, String name, Object property)
-   {
-      saMap.put(name, new PropertyImpl(globalVersion, property));
-   }
+	/**
+	 * å‘sessionä¸­è®¾ç½®å±æ€§.
+	 * å¦‚æœæ˜¯portlet, å¯ä»¥é€šè¿‡æ­¤æ–¹æ³•è®¾ç½®sessionçš„å±æ€§.
+	 *
+	 * @param saMap      è¢«è½¬æ¢æˆmapçš„session
+	 * @param name       è¦è®¾ç½®çš„å±æ€§çš„åç§°
+	 * @param property   è¦è®¾ç½®çš„å±æ€§å€¼
+	 * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
+	 */
+	public void setProperty(Map saMap, String name, Object property)
+	{
+		saMap.put(name, new PropertyImpl(globalVersion, property));
+	}
 
-   /**
-    * ÏòsessionÖĞÉèÖÃÊôĞÔ.
-    *
-    * @param session    ±»²Ù×÷µÄsession¶ÔÏó
-    * @param name       ÒªÉèÖÃµÄÊôĞÔµÄÃû³Æ
-    * @param property   ÒªÉèÖÃµÄÊôĞÔÖµ
-    */
-   public void setProperty(HttpSession session, String name, Object property)
-   {
-      session.setAttribute(name, new PropertyImpl(globalVersion, property));
-   }
+	/**
+	 * å‘sessionä¸­è®¾ç½®å±æ€§.
+	 *
+	 * @param session    è¢«æ“ä½œçš„sessionå¯¹è±¡
+	 * @param name       è¦è®¾ç½®çš„å±æ€§çš„åç§°
+	 * @param property   è¦è®¾ç½®çš„å±æ€§å€¼
+	 */
+	public void setProperty(HttpSession session, String name, Object property)
+	{
+		session.setAttribute(name, new PropertyImpl(globalVersion, property));
+	}
 
-   /**
-    * ´ÓsessionÖĞ»ñÈ¡ÊôĞÔÖµ.
-    * Èç¹ûÊÇportlet, ¿ÉÒÔÍ¨¹ı´Ë·½·¨»ñÈ¡sessionµÄÊôĞÔ.
-    *
-    * @param saMap      ±»×ª»»³ÉmapµÄsession
-    * @param name       Òª»ñÈ¡µÄÊôĞÔµÄÃû³Æ
-    * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
-    */
-   public Object getProperty(Map saMap, String name)
-   {
-      Object obj = saMap.get(name);
-      if (obj != null && obj instanceof Property)
-      {
-         Property p = (Property) obj;
-         if (p.getPropertyVersion() == globalVersion)
-         {
-            return ((Property) obj).getValue();
-         }
-         else
-         {
-            saMap.remove(name);
-            return null;
-         }
-      }
-      return obj;
-   }
+	/**
+	 * ä»sessionä¸­è·å–å±æ€§å€¼.
+	 * å¦‚æœæ˜¯portlet, å¯ä»¥é€šè¿‡æ­¤æ–¹æ³•è·å–sessionçš„å±æ€§.
+	 *
+	 * @param saMap      è¢«è½¬æ¢æˆmapçš„session
+	 * @param name       è¦è·å–çš„å±æ€§çš„åç§°
+	 * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
+	 */
+	public Object getProperty(Map saMap, String name)
+	{
+		Object obj = saMap.get(name);
+		if (obj != null && obj instanceof Property)
+		{
+			Property p = (Property) obj;
+			if (p.getPropertyVersion() == globalVersion)
+			{
+				return ((Property) obj).getValue();
+			}
+			else
+			{
+				saMap.remove(name);
+				return null;
+			}
+		}
+		return obj;
+	}
 
-   /**
-    * ´ÓsessionÖĞ»ñÈ¡ÊôĞÔÖµ.
-    *
-    * @param session    ±»²Ù×÷µÄsession¶ÔÏó
-    * @param name       Òª»ñÈ¡µÄÊôĞÔµÄÃû³Æ
-    */
-   public Object getProperty(HttpSession session, String name)
-   {
-      Object obj = session.getAttribute(name);
-      if (obj != null && obj instanceof Property)
-      {
-         Property p = (Property) obj;
-         if (p.getPropertyVersion() == globalVersion)
-         {
-            return ((Property) obj).getValue();
-         }
-         else
-         {
-            session.removeAttribute(name);
-            return null;
-         }
-      }
-      return obj;
-   }
+	/**
+	 * ä»sessionä¸­è·å–å±æ€§å€¼.
+	 *
+	 * @param session    è¢«æ“ä½œçš„sessionå¯¹è±¡
+	 * @param name       è¦è·å–çš„å±æ€§çš„åç§°
+	 */
+	public Object getProperty(HttpSession session, String name)
+	{
+		Object obj = session.getAttribute(name);
+		if (obj != null && obj instanceof Property)
+		{
+			Property p = (Property) obj;
+			if (p.getPropertyVersion() == globalVersion)
+			{
+				return ((Property) obj).getValue();
+			}
+			else
+			{
+				session.removeAttribute(name);
+				return null;
+			}
+		}
+		return obj;
+	}
 
-   /**
-    * ´ÓsessionÖĞÒÆ³ıÒ»¸öÊôĞÔ.
-    * Èç¹ûÊÇportlet, ¿ÉÒÔÍ¨¹ı´Ë·½·¨ÒÆ³ısessionµÄÊôĞÔ.
-    *
-    * @param saMap      ±»×ª»»³ÉmapµÄsession
-    * @param name       ÒªÒÆ³ıµÄÊôĞÔµÄÃû³Æ
-    * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
-    */
-   public void removeProperty(Map saMap, String name)
-   {
-      saMap.remove(name);
-   }
+	/**
+	 * ä»sessionä¸­ç§»é™¤ä¸€ä¸ªå±æ€§.
+	 * å¦‚æœæ˜¯portlet, å¯ä»¥é€šè¿‡æ­¤æ–¹æ³•ç§»é™¤sessionçš„å±æ€§.
+	 *
+	 * @param saMap      è¢«è½¬æ¢æˆmapçš„session
+	 * @param name       è¦ç§»é™¤çš„å±æ€§çš„åç§°
+	 * @see ValueContainerMap#createSessionAttributeMap(javax.servlet.http.HttpServletRequest)
+	 */
+	public void removeProperty(Map saMap, String name)
+	{
+		saMap.remove(name);
+	}
 
-   /**
-    * ´ÓsessionÖĞÒÆ³ıÒ»¸öÊôĞÔ.
-    *
-    * @param session    ±»²Ù×÷µÄsession¶ÔÏó
-    * @param name       ÒªÒÆ³ıµÄÊôĞÔµÄÃû³Æ
-    */
-   public void removeProperty(HttpSession session, String name)
-   {
-      session.removeAttribute(name);
-   }
+	/**
+	 * ä»sessionä¸­ç§»é™¤ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param session    è¢«æ“ä½œçš„sessionå¯¹è±¡
+	 * @param name       è¦ç§»é™¤çš„å±æ€§çš„åç§°
+	 */
+	public void removeProperty(HttpSession session, String name)
+	{
+		session.removeAttribute(name);
+	}
 
-   /**
-    * Çå¿ÕËùÓĞsessionÖĞµÄÊôĞÔÖµ.
-    */
-   public static void clearAllPropertys()
-   {
-      globalVersion++;
-   }
+	/**
+	 * æ¸…ç©ºæ‰€æœ‰sessionä¸­çš„å±æ€§å€¼.
+	 */
+	public static void clearAllPropertys()
+	{
+		globalVersion++;
+	}
 
-   /**
-    * Í¨¹ıSessionCache´æ·Åµ½sessionÖĞµÄ¶ÔÏó.
-    */
-   public interface Property
-   {
-      /**
-       * »ñÈ¡ÊôĞÔµÄÔ­Ê¼Öµ.
-       */
-      Object getValue();
+	/**
+	 * é€šè¿‡SessionCacheå­˜æ”¾åˆ°sessionä¸­çš„å¯¹è±¡.
+	 */
+	public interface Property
+	{
+		/**
+		 * è·å–å±æ€§çš„åŸå§‹å€¼.
+		 */
+		Object getValue();
 
-      /**
-       * »ñÈ¡ÊôĞÔµÄ°æ±¾ºÅ.
-       */
-      int getPropertyVersion();
+		/**
+		 * è·å–å±æ€§çš„ç‰ˆæœ¬å·.
+		 */
+		int getPropertyVersion();
 
-   }
+	}
 
-   private static class PropertyImpl
-         implements Property, Serializable
-   {
-      private int propertyVersion;
-      private transient Object value;
+	private static class PropertyImpl
+			implements Property, Serializable
+	{
+		private int propertyVersion;
+		private transient Object value;
 
-      public PropertyImpl(int propertyVersion, Object value)
-      {
-         this.propertyVersion = propertyVersion;
-         this.value = value;
-      }
+		public PropertyImpl(int propertyVersion, Object value)
+		{
+			this.propertyVersion = propertyVersion;
+			this.value = value;
+		}
 
-      public int getPropertyVersion()
-      {
-         return this.propertyVersion;
-      }
+		public int getPropertyVersion()
+		{
+			return this.propertyVersion;
+		}
 
-      public Object getValue()
-      {
-         return this.value;
-      }
+		public Object getValue()
+		{
+			return this.value;
+		}
 
-      private void writeObject(java.io.ObjectOutputStream s)
-            throws IOException
-      {
-	      s.defaultWriteObject();
-         if (value != null && value instanceof Serializable)
-         {
-            Iterator itr = null;
-            if (value instanceof Map)
-            {
-               itr = ((Map) value).values().iterator();
-            }
-            else if (value instanceof Collection)
-            {
-               itr = ((Collection) value).iterator();
-            }
-            if (itr != null)
-            {
-               while (itr.hasNext())
-               {
-                  if (!(itr.next() instanceof Serializable))
-                  {
-                     s.writeBoolean(false);
-                     return;
-                  }
-               }
-            }
-            s.writeBoolean(true);
-            s.writeObject(this.value);
-         }
-         else
-         {
-            s.writeBoolean(false);
-         }
-      }
+		private void writeObject(java.io.ObjectOutputStream s)
+				throws IOException
+		{
+			s.defaultWriteObject();
+			if (value != null && value instanceof Serializable)
+			{
+				Iterator itr = null;
+				if (value instanceof Map)
+				{
+					itr = ((Map) value).values().iterator();
+				}
+				else if (value instanceof Collection)
+				{
+					itr = ((Collection) value).iterator();
+				}
+				if (itr != null)
+				{
+					while (itr.hasNext())
+					{
+						if (!(itr.next() instanceof Serializable))
+						{
+							s.writeBoolean(false);
+							return;
+						}
+					}
+				}
+				s.writeBoolean(true);
+				s.writeObject(this.value);
+			}
+			else
+			{
+				s.writeBoolean(false);
+			}
+		}
 
-      private void readObject(java.io.ObjectInputStream s)
-            throws IOException, ClassNotFoundException
-      {
-         s.defaultReadObject();
-         boolean canSerialize = s.readBoolean();
-         this.value = canSerialize ? s.readObject() : null;
-      }
+		private void readObject(java.io.ObjectInputStream s)
+				throws IOException, ClassNotFoundException
+		{
+			s.defaultReadObject();
+			boolean canSerialize = s.readBoolean();
+			this.value = canSerialize ? s.readObject() : null;
+		}
 
-   }
+	}
 
 }

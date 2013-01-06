@@ -27,321 +27,321 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.StringAppender;
 
 /**
- *  ”Õºƒ£øÈ÷––Ë“™”√µΩµƒ“ª–©π´π≤∑Ω∑®.
+ * ËßÜÂõæÊ®°Âùó‰∏≠ÈúÄË¶ÅÁî®Âà∞ÁöÑ‰∏Ä‰∫õÂÖ¨ÂÖ±ÊñπÊ≥ï.
  *
  * @author micromagic@sina.com
  */
 public class ViewTool
 {
-   public static final Log log = Tool.log;
+	public static final Log log = Tool.log;
 
-   public static final int GRAMMER_TYPE_NONE = 0;
-   public static final int GRAMMER_TYPE_JSON = 1;
-   public static final int GRAMMER_TYPE_EXPRESSION = 2;
+	public static final int GRAMMER_TYPE_NONE = 0;
+	public static final int GRAMMER_TYPE_JSON = 1;
+	public static final int GRAMMER_TYPE_EXPRESSION = 2;
 
-   private static final String[] PLUS_NAMES = {
-      "ef", "$E.F", "eternaFunction", "$E.F",
-      "typical", "$E.T", "res", "$E.R",
-      "data", "$E.D", "dataV", "$E.D", "tmpData", "D", "tmpDataV", "D",
-      "efV", "$E.F", "typicalV", "$E.T", "resV", "$E.R",
-      "global", "$E.G", "globalV", "$E.G", "caption", "$"
-   };
-   private static final int PLUS_GRAMMER_CELL_COUNT = 5;
+	private static final String[] PLUS_NAMES = {
+		"ef", "$E.F", "eternaFunction", "$E.F",
+		"typical", "$E.T", "res", "$E.R",
+		"data", "$E.D", "dataV", "$E.D", "tmpData", "D", "tmpDataV", "D",
+		"efV", "$E.F", "typicalV", "$E.T", "resV", "$E.R",
+		"global", "$E.G", "globalV", "$E.G", "caption", "$"
+	};
+	private static final int PLUS_GRAMMER_CELL_COUNT = 5;
 
-   public static final String TYPICAL_NAME = "$typical";
-   public static final String TYPICAL_SAME_AS_NAME = "$sameAsName";
+	public static final String TYPICAL_NAME = "$typical";
+	public static final String TYPICAL_SAME_AS_NAME = "$sameAsName";
 
-   private static GrammerManager grammerManager;
+	private static GrammerManager grammerManager;
 
-   private static volatile int eternaId = 1;
+	private static volatile int eternaId = 1;
 
-   static
-   {
-      try
-      {
-         ViewTool.grammerManager = new GrammerManager();
-         ViewTool.grammerManager.init(BaseManager.class.getClassLoader().getResource(
-               "self/micromagic/eterna/view/grammer.xml").openStream());
-      }
-      catch (Exception ex)
-      {
-         log.error("Error in create grammerManager.", ex);
-      }
-   }
+	static
+	{
+		try
+		{
+			ViewTool.grammerManager = new GrammerManager();
+			ViewTool.grammerManager.init(BaseManager.class.getClassLoader().getResource(
+					"self/micromagic/eterna/view/grammer.xml").openStream());
+		}
+		catch (Exception ex)
+		{
+			log.error("Error in create grammerManager.", ex);
+		}
+	}
 
-   public static synchronized int createEternaId()
-   {
-      return 0xffffff & eternaId++;
-   }
+	public static synchronized int createEternaId()
+	{
+		return 0xffffff & eternaId++;
+	}
 
-   public static String addParentScript(String script, String parentScript)
-   {
-      if (script == null)
-      {
-         return parentScript;
-      }
-      if (parentScript == null)
-      {
-         parentScript = "";
-      }
-      int index = script.indexOf(Replacement.PARENT_SCRIPT);
-      if (index == -1)
-      {
-         return script;
-      }
-      StringAppender buf = StringTool.createStringAppender(script.length() + 64);
-      while (index != -1)
-      {
-         buf.append(script.substring(0, index));
-         buf.append(parentScript);
-         script = script.substring(index + Replacement.PARENT_SCRIPT.length());
-         index = script.indexOf(Replacement.PARENT_SCRIPT);
-      }
-      buf.append(script);
-      // ’‚¿Ôµƒ∑µªÿƒ⁄»›≤ª”√◊ˆ»Œ∫Œ¥¶¿Ì, “ÚŒ™‘⁄∫Û√ÊµƒdealScriptPart∑Ω∑®÷–ªπª·◊ˆ¥¶¿Ì
-      return buf.toString();
-   }
+	public static String addParentScript(String script, String parentScript)
+	{
+		if (script == null)
+		{
+			return parentScript;
+		}
+		if (parentScript == null)
+		{
+			parentScript = "";
+		}
+		int index = script.indexOf(Replacement.PARENT_SCRIPT);
+		if (index == -1)
+		{
+			return script;
+		}
+		StringAppender buf = StringTool.createStringAppender(script.length() + 64);
+		while (index != -1)
+		{
+			buf.append(script.substring(0, index));
+			buf.append(parentScript);
+			script = script.substring(index + Replacement.PARENT_SCRIPT.length());
+			index = script.indexOf(Replacement.PARENT_SCRIPT);
+		}
+		buf.append(script);
+		// ËøôÈáåÁöÑËøîÂõûÂÜÖÂÆπ‰∏çÁî®ÂÅö‰ªª‰ΩïÂ§ÑÁêÜ, Âõ†‰∏∫Âú®ÂêéÈù¢ÁöÑdealScriptPartÊñπÊ≥ï‰∏≠Ëøò‰ºöÂÅöÂ§ÑÁêÜ
+		return buf.toString();
+	}
 
-   public static String createTypicalComponentName(AppData data, Component com)
-         throws ConfigurationException
-   {
-      boolean hasOld = false;
-      // œ»¥”typical¡–±Ì∫Õused¡–±Ì÷–≤È’“∂‘”¶√˚≥∆µƒøÿº˛
-      Component oldCom = queryTypicalComponent(data, com.getName());
-      if (oldCom == com)
-      {
-         return com.getName();
-      }
-      else if (oldCom != null)
-      {
-         hasOld = true;
-      }
-      // »Áπ˚¥Ê‘⁄Õ¨√˚µƒøÿº˛, ‘Ú∑≈»Î¡–±Ìµƒ√˚≥∆“™º”…œ∫Û◊∫
-      String idName;
-      if (hasOld)
-      {
-         idName = com.getName() + "_T" + Integer.toString(System.identityHashCode(com), 32);
-         Component tmpCom = queryTypicalComponent(data, idName);
-         int idIndex = 0;
-         String tmpName = idName;
-         while (tmpCom != com)
-         {
-            if (tmpCom == null)
-            {
-               data.addSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, idName, com);
-               break;
-            }
-            // ƒ≥–©¥Ê¥¢µÿ÷∑±»Ωœ¥Ûµƒ«Èøˆœ¬, identityHashCodeø…ƒ‹ª·÷ÿ∏¥, À˘“‘‘ŸÃÌº”À≥–Ú±‡∫≈
-            idIndex++;
-            idName = tmpName + "_" + idIndex;
-            tmpCom = queryTypicalComponent(data, idName);
-         }
-      }
-      else
-      {
-         idName = com.getName();
-         data.addSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, idName, com);
-      }
-      return idName;
-   }
+	public static String createTypicalComponentName(AppData data, Component com)
+			throws ConfigurationException
+	{
+		boolean hasOld = false;
+		// ÂÖà‰ªétypicalÂàóË°®ÂíåusedÂàóË°®‰∏≠Êü•ÊâæÂØπÂ∫îÂêçÁß∞ÁöÑÊéß‰ª∂
+		Component oldCom = queryTypicalComponent(data, com.getName());
+		if (oldCom == com)
+		{
+			return com.getName();
+		}
+		else if (oldCom != null)
+		{
+			hasOld = true;
+		}
+		// Â¶ÇÊûúÂ≠òÂú®ÂêåÂêçÁöÑÊéß‰ª∂, ÂàôÊîæÂÖ•ÂàóË°®ÁöÑÂêçÁß∞Ë¶ÅÂä†‰∏äÂêéÁºÄ
+		String idName;
+		if (hasOld)
+		{
+			idName = com.getName() + "_T" + Integer.toString(System.identityHashCode(com), 32);
+			Component tmpCom = queryTypicalComponent(data, idName);
+			int idIndex = 0;
+			String tmpName = idName;
+			while (tmpCom != com)
+			{
+				if (tmpCom == null)
+				{
+					data.addSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, idName, com);
+					break;
+				}
+				// Êüê‰∫õÂ≠òÂÇ®Âú∞ÂùÄÊØîËæÉÂ§ßÁöÑÊÉÖÂÜµ‰∏ã, identityHashCodeÂèØËÉΩ‰ºöÈáçÂ§ç, ÊâÄ‰ª•ÂÜçÊ∑ªÂä†È°∫Â∫èÁºñÂè∑
+				idIndex++;
+				idName = tmpName + "_" + idIndex;
+				tmpCom = queryTypicalComponent(data, idName);
+			}
+		}
+		else
+		{
+			idName = com.getName();
+			data.addSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, idName, com);
+		}
+		return idName;
+	}
 
-   private static Component queryTypicalComponent(AppData data, String name)
-   {
-      Component tmp = (Component) data.getSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, name);
-      if (tmp == null)
-      {
-         tmp = (Component) data.getSpcialData(ViewAdapter.USED_TYPICAL_COMPONENTS, name);
-      }
-      return tmp;
-   }
+	private static Component queryTypicalComponent(AppData data, String name)
+	{
+		Component tmp = (Component) data.getSpcialData(ViewAdapter.TYPICAL_COMPONENTS_MAP, name);
+		if (tmp == null)
+		{
+			tmp = (Component) data.getSpcialData(ViewAdapter.USED_TYPICAL_COMPONENTS, name);
+		}
+		return tmp;
+	}
 
-   /**
-    * ÃÌº”“ª∏ˆ∂ØÃ¨◊ ‘¥µƒ√˚≥∆
-    */
-   public static void addDynamicResourceName(String name)
-   {
-      if (name != null)
-      {
-         AppData data = AppData.getCurrentData();
-         Set resourceNames = (Set) data.getSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_RESOURCE_NAMES);
-         if (resourceNames == null)
-         {
-            resourceNames = new HashSet();
-            data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_RESOURCE_NAMES, resourceNames);
-         }
-      }
-   }
+	/**
+	 * Ê∑ªÂä†‰∏Ä‰∏™Âä®ÊÄÅËµÑÊ∫êÁöÑÂêçÁß∞
+	 */
+	public static void addDynamicResourceName(String name)
+	{
+		if (name != null)
+		{
+			AppData data = AppData.getCurrentData();
+			Set resourceNames = (Set) data.getSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_RESOURCE_NAMES);
+			if (resourceNames == null)
+			{
+				resourceNames = new HashSet();
+				data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_RESOURCE_NAMES, resourceNames);
+			}
+		}
+	}
 
-   /**
-    * ÃÌº”“ª◊È∂ØÃ¨∑Ω∑®.
-    */
-   public static void addDynamicFunction(Map fnMap)
-   {
-      if (fnMap == null)
-      {
-         return;
-      }
-      if (fnMap.size() > 0)
-      {
-         AppData data = AppData.getCurrentData();
-         Map functions = (Map) data.getSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_FUNCTIONS);
-         if (functions == null)
-         {
-            functions = new HashMap();
-            data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_FUNCTIONS, functions);
-         }
-         putAllFunction(functions, fnMap);
-      }
-   }
+	/**
+	 * Ê∑ªÂä†‰∏ÄÁªÑÂä®ÊÄÅÊñπÊ≥ï.
+	 */
+	public static void addDynamicFunction(Map fnMap)
+	{
+		if (fnMap == null)
+		{
+			return;
+		}
+		if (fnMap.size() > 0)
+		{
+			AppData data = AppData.getCurrentData();
+			Map functions = (Map) data.getSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_FUNCTIONS);
+			if (functions == null)
+			{
+				functions = new HashMap();
+				data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_FUNCTIONS, functions);
+			}
+			putAllFunction(functions, fnMap);
+		}
+	}
 
-   /**
-    * œÚ∑Ω∑®µƒmap÷–ÃÌº”“ª◊È∑Ω∑®.
-    */
-   public static void putAllFunction(Map functionMap, Map putMap)
-   {
-      if (putMap != null)
-      {
-         Iterator entrys = putMap.entrySet().iterator();
-         while (entrys.hasNext())
-         {
-            Map.Entry entry = (Map.Entry) entrys.next();
-            Function oldFn = (Function) functionMap.get(entry.getKey());
-            if (oldFn != null && oldFn != entry.getValue())
-            {
-               log.error("Duplicate function name:[" + entry.getKey() + "] when add it.");
-            }
-            if (oldFn == null)
-            {
-               functionMap.put(entry.getKey(), entry.getValue());
-            }
-         }
-      }
-   }
+	/**
+	 * ÂêëÊñπÊ≥ïÁöÑmap‰∏≠Ê∑ªÂä†‰∏ÄÁªÑÊñπÊ≥ï.
+	 */
+	public static void putAllFunction(Map functionMap, Map putMap)
+	{
+		if (putMap != null)
+		{
+			Iterator entrys = putMap.entrySet().iterator();
+			while (entrys.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) entrys.next();
+				Function oldFn = (Function) functionMap.get(entry.getKey());
+				if (oldFn != null && oldFn != entry.getValue())
+				{
+					log.error("Duplicate function name:[" + entry.getKey() + "] when add it.");
+				}
+				if (oldFn == null)
+				{
+					functionMap.put(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+	}
 
-   /**
-    * Ω‚Œˆ◊ ‘¥Œƒ±æ.
-    */
-   public static List parseResourceText(String text)
-         throws ConfigurationException
-   {
-      GrammerElement ge = grammerManager.getGrammerElement("resource_parser");
-      ParserData pd = new ParserData(text);
-      try
-      {
-         if (!ge.verify(pd))
-         {
-            throw new ConfigurationException("Parse resource error:" + text
-                  + "\n[maxBuf:" + pd.getMaxErrorBuffer() + "].");
-         }
-         return pd.getGrammerCellLst();
-      }
-      catch (Exception ex)
-      {
-         log.error("Error in parse resource.", ex);
-         throw new ConfigurationException("Parse resource error:" + text + "\n[msg:"
-               + ex.getMessage() + "].");
-      }
-   }
+	/**
+	 * Ëß£ÊûêËµÑÊ∫êÊñáÊú¨.
+	 */
+	public static List parseResourceText(String text)
+			throws ConfigurationException
+	{
+		GrammerElement ge = grammerManager.getGrammerElement("resource_parser");
+		ParserData pd = new ParserData(text);
+		try
+		{
+			if (!ge.verify(pd))
+			{
+				throw new ConfigurationException("Parse resource error:" + text
+						+ "\n[maxBuf:" + pd.getMaxErrorBuffer() + "].");
+			}
+			return pd.getGrammerCellLst();
+		}
+		catch (Exception ex)
+		{
+			log.error("Error in parse resource.", ex);
+			throw new ConfigurationException("Parse resource error:" + text + "\n[msg:"
+					+ ex.getMessage() + "].");
+		}
+	}
 
-   /**
-    * ¥¶¿Ì¥˙¬Î÷–µƒ◊¢ Õ, ÃÊªª¥˙¬Î÷–µƒ¿©’π±Í«©µ».
-    */
-   public static String dealScriptPart(ViewAdapterGenerator.ModifiableViewRes viewRes, String script,
-         int grammerType, EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (script == null)
-      {
-         return null;
-      }
-      return StringTool.intern(checkGrammmer(viewRes, script, grammerType, factory), true);
-   }
+	/**
+	 * Â§ÑÁêÜ‰ª£Á†Å‰∏≠ÁöÑÊ≥®Èáä, ÊõøÊç¢‰ª£Á†Å‰∏≠ÁöÑÊâ©Â±ïÊ†áÁ≠æÁ≠â.
+	 */
+	public static String dealScriptPart(ViewAdapterGenerator.ModifiableViewRes viewRes, String script,
+			int grammerType, EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (script == null)
+		{
+			return null;
+		}
+		return StringTool.intern(checkGrammmer(viewRes, script, grammerType, factory), true);
+	}
 
-   private static String checkGrammmer(ViewAdapterGenerator.ModifiableViewRes viewRes, String script,
-         int grammerType, EternaFactory factory)
-         throws ConfigurationException
-   {
-      GrammerElement ge;
-      if (!FactoryManager.isCheckGrammer() || grammerType == GRAMMER_TYPE_NONE)
-      {
-         ge = grammerManager.getGrammerElement("expression_checker_onlyPlus");
-      }
-      else
-      {
-         ge = grammerManager.getGrammerElement(
-               grammerType == GRAMMER_TYPE_JSON ? "json_part" : "expression_checker");
-      }
-      ParserData pd = new ParserData(script);
-      try
-      {
-         if (!ge.verify(pd))
-         {
-            throw new ConfigurationException("Grammer error:" + script
-                  + "\n[maxBuf:" + pd.getMaxErrorBuffer() + "].");
-         }
-         StringAppender buf = StringTool.createStringAppender(script.length());
-         parseGrammerCell(viewRes, pd.getGrammerCellLst(), buf, factory);
-         if (log.isDebugEnabled())
-         {
-            if (buf.length() < script.length())
-            {
-               log.debug("buf:\n" + buf + "\n-----------------------\nscript:\n" + script);
-            }
-         }
-         return buf.toString();
-      }
-      catch (Exception ex)
-      {
-         log.error("Error in check grammer.", ex);
-         throw new ConfigurationException("Grammer error:" + script + "\n[msg:" + ex.getMessage() + "].");
-      }
-   }
+	private static String checkGrammmer(ViewAdapterGenerator.ModifiableViewRes viewRes, String script,
+			int grammerType, EternaFactory factory)
+			throws ConfigurationException
+	{
+		GrammerElement ge;
+		if (!FactoryManager.isCheckGrammer() || grammerType == GRAMMER_TYPE_NONE)
+		{
+			ge = grammerManager.getGrammerElement("expression_checker_onlyPlus");
+		}
+		else
+		{
+			ge = grammerManager.getGrammerElement(
+					grammerType == GRAMMER_TYPE_JSON ? "json_part" : "expression_checker");
+		}
+		ParserData pd = new ParserData(script);
+		try
+		{
+			if (!ge.verify(pd))
+			{
+				throw new ConfigurationException("Grammer error:" + script
+						+ "\n[maxBuf:" + pd.getMaxErrorBuffer() + "].");
+			}
+			StringAppender buf = StringTool.createStringAppender(script.length());
+			parseGrammerCell(viewRes, pd.getGrammerCellLst(), buf, factory);
+			if (log.isDebugEnabled())
+			{
+				if (buf.length() < script.length())
+				{
+					log.debug("buf:\n" + buf + "\n-----------------------\nscript:\n" + script);
+				}
+			}
+			return buf.toString();
+		}
+		catch (Exception ex)
+		{
+			log.error("Error in check grammer.", ex);
+			throw new ConfigurationException("Grammer error:" + script + "\n[msg:" + ex.getMessage() + "].");
+		}
+	}
 
-   private static void parseGrammerCell(ViewAdapterGenerator.ModifiableViewRes viewRes, List gclist,
-         StringAppender buf, EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (gclist == null)
-      {
-         return;
-      }
-      Iterator itr = gclist.iterator();
-      while (itr.hasNext())
-      {
-         ParserData.GrammerCell cell = (ParserData.GrammerCell) itr.next();
-         int type = cell.grammerElement.getType();
-         if ("plus".equals(cell.grammerElement.getName()))
-         {
-            boolean validPlusName = false;
-            ParserData.GrammerCell[] plusCells = new ParserData.GrammerCell[PLUS_GRAMMER_CELL_COUNT];
-            cell.subCells.toArray(plusCells);
-            for (int i = 0; i < PLUS_NAMES.length; i += 2)
-            {
-               String plusName = PLUS_NAMES[i];
-               if (plusName.equals(plusCells[1].textBuf))
-               {
-                  String tmpName = plusCells[3].textBuf;
-                  if (tmpName.length() > 0)
-                  {
-                     if (i < 4)
-                     {
-                        // «∞¡Ω∏ˆ±Ì æ π”√µƒ «æ≤Ã¨∑Ω∑®µ˜”√, –Ë“™◊¢≤·¥À∑Ω∑®
-                        tmpName = viewRes.addFunction(factory.getFunction(tmpName));
-                     }
-                     else if (i < 6)
-                     {
-                        // µ⁄»˝∏ˆ±Ì ætypicaløÿº˛, “™ÃÌº”¥À√˚≥∆
-                        viewRes.addTypicalComponentNames(tmpName);
-                     }
-                     else if (i < 8)
-                     {
-                        // µ⁄Àƒ∏ˆ±Ì æresource, “™ÃÌº”¥À√˚≥∆
-                        viewRes.addResourceNames(tmpName);
-                     }
-                  }
+	private static void parseGrammerCell(ViewAdapterGenerator.ModifiableViewRes viewRes, List gclist,
+			StringAppender buf, EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (gclist == null)
+		{
+			return;
+		}
+		Iterator itr = gclist.iterator();
+		while (itr.hasNext())
+		{
+			ParserData.GrammerCell cell = (ParserData.GrammerCell) itr.next();
+			int type = cell.grammerElement.getType();
+			if ("plus".equals(cell.grammerElement.getName()))
+			{
+				boolean validPlusName = false;
+				ParserData.GrammerCell[] plusCells = new ParserData.GrammerCell[PLUS_GRAMMER_CELL_COUNT];
+				cell.subCells.toArray(plusCells);
+				for (int i = 0; i < PLUS_NAMES.length; i += 2)
+				{
+					String plusName = PLUS_NAMES[i];
+					if (plusName.equals(plusCells[1].textBuf))
+					{
+						String tmpName = plusCells[3].textBuf;
+						if (tmpName.length() > 0)
+						{
+							if (i < 4)
+							{
+								// Ââç‰∏§‰∏™Ë°®Á§∫‰ΩøÁî®ÁöÑÊòØÈùôÊÄÅÊñπÊ≥ïË∞ÉÁî®, ÈúÄË¶ÅÊ≥®ÂÜåÊ≠§ÊñπÊ≥ï
+								tmpName = viewRes.addFunction(factory.getFunction(tmpName));
+							}
+							else if (i < 6)
+							{
+								// Á¨¨‰∏â‰∏™Ë°®Á§∫typicalÊéß‰ª∂, Ë¶ÅÊ∑ªÂä†Ê≠§ÂêçÁß∞
+								viewRes.addTypicalComponentNames(tmpName);
+							}
+							else if (i < 8)
+							{
+								// Á¨¨Âõõ‰∏™Ë°®Á§∫resource, Ë¶ÅÊ∑ªÂä†Ê≠§ÂêçÁß∞
+								viewRes.addResourceNames(tmpName);
+							}
+						}
 						if ("$".equals(PLUS_NAMES[i + 1]))
 						{
-                     if ("caption".equals(plusName))
+							if ("caption".equals(plusName))
 							{
 								buf.append('"');
 								String caption = Tool.translateCaption(factory, tmpName);
@@ -372,37 +372,37 @@ public class ViewTool
 							}
 						}
 						validPlusName = true;
-                  break;
-               }
-            }
-            if (validPlusName)
-            {
-               continue;
-            }
-            else
-            {
-               // ’‚∂Œœ÷‘⁄÷¥––≤ªµΩ, “ÚŒ™∑«∑®µƒ√˚≥∆≤ªª·Ω‚ŒˆŒ™plus
-               log.error("Invalid plus name:" + cell.textBuf);
-            }
-         }
-         if (type == GrammerElement.TYPE_NOTE)
-         {
-            if (buf.length() > 0 && buf.charAt(buf.length() - 1) > ' ')
-            {
-               buf.append(' ');
-            }
-            continue;
-         }
-         if (cell.subCells != null)
-         {
-            parseGrammerCell(viewRes, cell.subCells, buf, factory);
-         }
-         else
-         {
-            buf.append(cell.textBuf);
-         }
-      }
-   }
+						break;
+					}
+				}
+				if (validPlusName)
+				{
+					continue;
+				}
+				else
+				{
+					// ËøôÊÆµÁé∞Âú®ÊâßË°å‰∏çÂà∞, Âõ†‰∏∫ÈùûÊ≥ïÁöÑÂêçÁß∞‰∏ç‰ºöËß£Êûê‰∏∫plus
+					log.error("Invalid plus name:" + cell.textBuf);
+				}
+			}
+			if (type == GrammerElement.TYPE_NOTE)
+			{
+				if (buf.length() > 0 && buf.charAt(buf.length() - 1) > ' ')
+				{
+					buf.append(' ');
+				}
+				continue;
+			}
+			if (cell.subCells != null)
+			{
+				parseGrammerCell(viewRes, cell.subCells, buf, factory);
+			}
+			else
+			{
+				buf.append(cell.textBuf);
+			}
+		}
+	}
 
 
 }

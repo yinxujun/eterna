@@ -5,57 +5,57 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface TableListGenerator extends ComponentGenerator
 {
-   void setAutoArrange(boolean autoArrange) throws ConfigurationException;
+	void setAutoArrange(boolean autoArrange) throws ConfigurationException;
 
-   void setPercentWidth(boolean percentWidth) throws ConfigurationException;
+	void setPercentWidth(boolean percentWidth) throws ConfigurationException;
 
-   void setCaculateWidth(boolean caculateWidth) throws ConfigurationException;
+	void setCaculateWidth(boolean caculateWidth) throws ConfigurationException;
 
-   void setCaculateWidthFix(int caculateWidthFix) throws ConfigurationException;
+	void setCaculateWidthFix(int caculateWidthFix) throws ConfigurationException;
 
-   void setTR(Component tr) throws ConfigurationException;
+	void setTR(Component tr) throws ConfigurationException;
 
-   void setColumnOrder(String order) throws ConfigurationException;
+	void setColumnOrder(String order) throws ConfigurationException;
 
-   /**
-    * @param name  ¿ÉÒÔÊÇÒ»¸öquery       Ãû³ÆÒÔ[query:]¿ªÊ¼»òÖ±½ÓqueryµÄÃû³Æ
-    *              ¿ÉÒÔÊÇÒ»¸öreadManager Ãû³ÆÒÔ[reader:]¿ªÊ¼£¬ºóÃæ½ÓreaderManagerµÄÃû³Æ
-    *              ¿ÉÒÔÊÇÒ»¸ösearch      Ãû³ÆÒÔ[search:]¿ªÊ¼£¬ºóÃæ½ÓsearchµÄÃû³Æ
-    */
-   void setBaseName(String name) throws ConfigurationException;
+	/**
+	 * @param name  å¯ä»¥æ˜¯ä¸€ä¸ªquery       åç§°ä»¥[query:]å¼€å§‹æˆ–ç›´æ¥queryçš„åç§°
+	 *              å¯ä»¥æ˜¯ä¸€ä¸ªreadManager åç§°ä»¥[reader:]å¼€å§‹ï¼Œåé¢æ¥readerManagerçš„åç§°
+	 *              å¯ä»¥æ˜¯ä¸€ä¸ªsearch      åç§°ä»¥[search:]å¼€å§‹ï¼Œåé¢æ¥searchçš„åç§°
+	 */
+	void setBaseName(String name) throws ConfigurationException;
 
-   void setDataName(String dataName) throws ConfigurationException;
+	void setDataName(String dataName) throws ConfigurationException;
 
-   TableList createTableList() throws ConfigurationException;
+	TableList createTableList() throws ConfigurationException;
 
-   void addColumn(TableList.Column column) throws ConfigurationException;
+	void addColumn(TableList.Column column) throws ConfigurationException;
 
-   void deleteColumn(TableList.Column column) throws ConfigurationException;
+	void deleteColumn(TableList.Column column) throws ConfigurationException;
 
-   void clearColumns() throws ConfigurationException;
+	void clearColumns() throws ConfigurationException;
 
-   interface ColumnGenerator extends ComponentGenerator
-   {
-      void setWidth(int width) throws ConfigurationException;
+	interface ColumnGenerator extends ComponentGenerator
+	{
+		void setWidth(int width) throws ConfigurationException;
 
-      void setTitleParam(String param) throws ConfigurationException;
+		void setTitleParam(String param) throws ConfigurationException;
 
-      void setIgnoreGlobalTitleParam(boolean ignore) throws ConfigurationException;
+		void setIgnoreGlobalTitleParam(boolean ignore) throws ConfigurationException;
 
-      void setCaption(String caption) throws ConfigurationException;
+		void setCaption(String caption) throws ConfigurationException;
 
-      void setDefaultValue(String value) throws ConfigurationException;
+		void setDefaultValue(String value) throws ConfigurationException;
 
-      void setIgnore(boolean ignore) throws ConfigurationException;
+		void setIgnore(boolean ignore) throws ConfigurationException;
 
-      void setSrcName(String srcName) throws ConfigurationException;
+		void setSrcName(String srcName) throws ConfigurationException;
 
-      void setTypicalComponentName(String name) throws ConfigurationException;
+		void setTypicalComponentName(String name) throws ConfigurationException;
 
-      void setInitParam(String param) throws ConfigurationException;
+		void setInitParam(String param) throws ConfigurationException;
 
-      TableList.Column createColumn() throws ConfigurationException;
+		TableList.Column createColumn() throws ConfigurationException;
 
-   }
+	}
 
 }

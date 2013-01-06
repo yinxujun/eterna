@@ -9,109 +9,111 @@ import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.util.Utility;
 
 /**
- * ÉèÖÃÊôĞÔÊ±µÄ×ª»»Æ÷¹ÜÀíÕß.
+ * è®¾ç½®å±æ€§æ—¶çš„è½¬æ¢å™¨ç®¡ç†è€….
+ *
+ * @author micromagic@sina.com
  */
 class ConverterManager
 {
-   private ValueConverter[] converters = new ValueConverter[16];
-   private int usedCount;
-   private HashMap converterIndexMap = new HashMap();
+	private ValueConverter[] converters = new ValueConverter[16];
+	private int usedCount;
+	private HashMap converterIndexMap = new HashMap();
 
-   /**
-    * ¸ù¾İ×ª»»Æ÷µÄË÷ÒıÖµ»ñÈ¡¶ÔÓ¦µÄ×ª»»Æ÷.
-    *
-    * @param index  ×ª»»Æ÷µÄË÷ÒıÖµ
-    */
-   ValueConverter getConverter(int index)
-   {
-      return this.converters[index];
-   }
+	/**
+	 * æ ¹æ®è½¬æ¢å™¨çš„ç´¢å¼•å€¼è·å–å¯¹åº”çš„è½¬æ¢å™¨.
+	 *
+	 * @param index  è½¬æ¢å™¨çš„ç´¢å¼•å€¼
+	 */
+	ValueConverter getConverter(int index)
+	{
+		return this.converters[index];
+	}
 
-   /**
-    * ¸ù¾İÖµµÄÀàĞÍ»ñµÃ×ª»»Æ÷µÄË÷ÒıÖµ.
-    *
-    * @param type    ÖµµÄÀàĞÍ
-    * @return   -1Î´ÕÒµ½¶ÔÓ¦µÄ×ª»»Æ÷, Èç¹û´óÓÚµÈÓÚ0ÔòÎª×ª»»Æ÷¶ÔÓ¦µÄË÷ÒıÖµ
-    * @see #getConverter(int)
-    */
-   int getConverterIndex(Class type)
-   {
-      Integer i = (Integer) this.converterIndexMap.get(type);
-      if (i == null)
-      {
-         return -1;
-      }
-      return i.intValue();
-   }
+	/**
+	 * æ ¹æ®å€¼çš„ç±»å‹è·å¾—è½¬æ¢å™¨çš„ç´¢å¼•å€¼.
+	 *
+	 * @param type    å€¼çš„ç±»å‹
+	 * @return   -1æœªæ‰¾åˆ°å¯¹åº”çš„è½¬æ¢å™¨, å¦‚æœå¤§äºç­‰äº0åˆ™ä¸ºè½¬æ¢å™¨å¯¹åº”çš„ç´¢å¼•å€¼
+	 * @see #getConverter(int)
+	 */
+	int getConverterIndex(Class type)
+	{
+		Integer i = (Integer) this.converterIndexMap.get(type);
+		if (i == null)
+		{
+			return -1;
+		}
+		return i.intValue();
+	}
 
-   /**
-    * ¸øÒ»¸öÀàĞÍ×¢²áÒ»¸ö×ª»»Æ÷.
-    */
-   synchronized void registerConverter(Class type, ValueConverter converter)
-   {
-      if (converter == null)
-      {
-         return;
-      }
-      Integer i = (Integer) this.converterIndexMap.get(type);
-      if (i == null)
-      {
-         if (this.converters.length <= this.usedCount + 1)
-         {
-            int newCapacity = this.usedCount + 16;
-            ValueConverter[] newConverters = new ValueConverter[newCapacity];
-            System.arraycopy(this.converters, 0, newConverters, 0, this.converters.length);
-            this.converters = newConverters;
-         }
-         i = Utility.createInteger(++this.usedCount);
-         this.converterIndexMap.put(type, i);
-      }
-      if (this.converters[i.intValue()] != null && type.isPrimitive())
-      {
-         if (this.converters[i.intValue()].getClass() != converter.getClass())
-         {
-            throw new IllegalArgumentException("For the primitive [" + type
-                  + "], the ValueConverter class must same as the old.");
-         }
-      }
-      this.converters[i.intValue()] = converter;
-   }
+	/**
+	 * ç»™ä¸€ä¸ªç±»å‹æ³¨å†Œä¸€ä¸ªè½¬æ¢å™¨.
+	 */
+	synchronized void registerConverter(Class type, ValueConverter converter)
+	{
+		if (converter == null)
+		{
+			return;
+		}
+		Integer i = (Integer) this.converterIndexMap.get(type);
+		if (i == null)
+		{
+			if (this.converters.length <= this.usedCount + 1)
+			{
+				int newCapacity = this.usedCount + 16;
+				ValueConverter[] newConverters = new ValueConverter[newCapacity];
+				System.arraycopy(this.converters, 0, newConverters, 0, this.converters.length);
+				this.converters = newConverters;
+			}
+			i = Utility.createInteger(++this.usedCount);
+			this.converterIndexMap.put(type, i);
+		}
+		if (this.converters[i.intValue()] != null && type.isPrimitive())
+		{
+			if (this.converters[i.intValue()].getClass() != converter.getClass())
+			{
+				throw new IllegalArgumentException("For the primitive [" + type
+						+ "], the ValueConverter class must same as the old.");
+			}
+		}
+		this.converters[i.intValue()] = converter;
+	}
 
-   /**
-    * ¸øÒ»¸öÀàĞÍ×¢²áÒ»¸ö<code>PropertyEditor</code>, ×ª»»Æ÷»áÊ¹ÓÃËüÀ´½øĞĞ×ª»».
-    */
-   synchronized void registerPropertyEditor(Class type, PropertyEditor pe)
-   {
-      if (pe == null)
-      {
-         return;
-      }
-      if (type.isPrimitive())
-      {
-         int tmpI = this.getConverterIndex(type);
-         ValueConverter vc = this.converters[tmpI].copy();
-         vc.setPropertyEditor(pe);
-         this.converters[tmpI] = vc;
-      }
-      else
-      {
-         ValueConverter vc = new ObjectConverter();
-         vc.setPropertyEditor(pe);
-         this.registerConverter(type, vc);
-      }
-   }
+	/**
+	 * ç»™ä¸€ä¸ªç±»å‹æ³¨å†Œä¸€ä¸ª<code>PropertyEditor</code>, è½¬æ¢å™¨ä¼šä½¿ç”¨å®ƒæ¥è¿›è¡Œè½¬æ¢.
+	 */
+	synchronized void registerPropertyEditor(Class type, PropertyEditor pe)
+	{
+		if (pe == null)
+		{
+			return;
+		}
+		if (type.isPrimitive())
+		{
+			int tmpI = this.getConverterIndex(type);
+			ValueConverter vc = this.converters[tmpI].copy();
+			vc.setPropertyEditor(pe);
+			this.converters[tmpI] = vc;
+		}
+		else
+		{
+			ValueConverter vc = new ObjectConverter();
+			vc.setPropertyEditor(pe);
+			this.registerConverter(type, vc);
+		}
+	}
 
-   /**
-    * ¸´ÖÆ×ª»»Æ÷¹ÜÀíÕß.
-    */
-   public ConverterManager copy()
-   {
-      ConverterManager result = new ConverterManager();
+	/**
+	 * å¤åˆ¶è½¬æ¢å™¨ç®¡ç†è€….
+	 */
+	public ConverterManager copy()
+	{
+		ConverterManager result = new ConverterManager();
 		result.usedCount = this.usedCount;
-      result.converters = new ValueConverter[this.converters.length];
+		result.converters = new ValueConverter[this.converters.length];
 		System.arraycopy(this.converters, 0, result.converters, 0, result.converters.length);
-      result.converterIndexMap = new HashMap(this.converterIndexMap);
-      return result;
-   }
+		result.converterIndexMap = new HashMap(this.converterIndexMap);
+		return result;
+	}
 
 }

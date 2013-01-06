@@ -5,69 +5,69 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface TableFormGenerator extends ComponentGenerator
 {
-   void setAutoArrange(boolean autoArrange) throws ConfigurationException;
+	void setAutoArrange(boolean autoArrange) throws ConfigurationException;
 
-   void setPercentWidth(boolean percentWidth) throws ConfigurationException;
+	void setPercentWidth(boolean percentWidth) throws ConfigurationException;
 
-   void setCaculateWidth(boolean caculateWidth) throws ConfigurationException;
+	void setCaculateWidth(boolean caculateWidth) throws ConfigurationException;
 
-   void setCaculateWidthFix(int caculateWidthFix) throws ConfigurationException;
+	void setCaculateWidthFix(int caculateWidthFix) throws ConfigurationException;
 
-   void setColumns(String columns) throws ConfigurationException;
+	void setColumns(String columns) throws ConfigurationException;
 
-   void setTR(Component tr) throws ConfigurationException;
+	void setTR(Component tr) throws ConfigurationException;
 
-   void setCellOrder(String order) throws ConfigurationException;
+	void setCellOrder(String order) throws ConfigurationException;
 
-   /**
-    * @param name  ø…“‘ «“ª∏ˆquery       √˚≥∆“‘[query:]ø™ ºªÚ÷±Ω”queryµƒ√˚≥∆
-    *              ø…“‘ «“ª∏ˆreadManager √˚≥∆“‘[reader:]ø™ º£¨∫Û√ÊΩ”readerManagerµƒ√˚≥∆
-    *              ø…“‘ «“ª∏ˆsearch      √˚≥∆“‘[search:]ø™ º£¨∫Û√ÊΩ”searchµƒ√˚≥∆
-    */
-   void setBaseName(String name) throws ConfigurationException;
+	/**
+	 * @param name  ÂèØ‰ª•ÊòØ‰∏Ä‰∏™query       ÂêçÁß∞‰ª•[query:]ÂºÄÂßãÊàñÁõ¥Êé•queryÁöÑÂêçÁß∞
+	 *              ÂèØ‰ª•ÊòØ‰∏Ä‰∏™readManager ÂêçÁß∞‰ª•[reader:]ÂºÄÂßãÔºåÂêéÈù¢Êé•readerManagerÁöÑÂêçÁß∞
+	 *              ÂèØ‰ª•ÊòØ‰∏Ä‰∏™search      ÂêçÁß∞‰ª•[search:]ÂºÄÂßãÔºåÂêéÈù¢Êé•searchÁöÑÂêçÁß∞
+	 */
+	void setBaseName(String name) throws ConfigurationException;
 
-   void setDataName(String dataName) throws ConfigurationException;
+	void setDataName(String dataName) throws ConfigurationException;
 
-   TableForm createTableForm() throws ConfigurationException;
+	TableForm createTableForm() throws ConfigurationException;
 
-   void addCell(TableForm.Cell cell) throws ConfigurationException;
+	void addCell(TableForm.Cell cell) throws ConfigurationException;
 
-   void deleteCell(TableForm.Cell cell) throws ConfigurationException;
+	void deleteCell(TableForm.Cell cell) throws ConfigurationException;
 
-   void clearCells() throws ConfigurationException;
+	void clearCells() throws ConfigurationException;
 
-   interface CellGenerator extends ComponentGenerator
-   {
-      void setTitleSize(int size) throws ConfigurationException;
+	interface CellGenerator extends ComponentGenerator
+	{
+		void setTitleSize(int size) throws ConfigurationException;
 
-      void setTitleParam(String param) throws ConfigurationException;
+		void setTitleParam(String param) throws ConfigurationException;
 
-      void setContainerSize(int size) throws ConfigurationException;
+		void setContainerSize(int size) throws ConfigurationException;
 
-      void setIgnoreGlobalTitleParam(boolean ignore) throws ConfigurationException;
+		void setIgnoreGlobalTitleParam(boolean ignore) throws ConfigurationException;
 
-      void setRowSpan(int rowSpan) throws ConfigurationException;
+		void setRowSpan(int rowSpan) throws ConfigurationException;
 
-      void setCaption(String caption) throws ConfigurationException;
+		void setCaption(String caption) throws ConfigurationException;
 
-      void setDefaultValue(String value) throws ConfigurationException;
+		void setDefaultValue(String value) throws ConfigurationException;
 
-      void setIgnore(boolean ignore) throws ConfigurationException;
+		void setIgnore(boolean ignore) throws ConfigurationException;
 
-      void setNewRow(boolean newRow) throws ConfigurationException;
+		void setNewRow(boolean newRow) throws ConfigurationException;
 
-      void setSrcName(String srcName) throws ConfigurationException;
+		void setSrcName(String srcName) throws ConfigurationException;
 
-      void setRequired(boolean required) throws ConfigurationException;
+		void setRequired(boolean required) throws ConfigurationException;
 
-      void setNeedIndex(boolean needIndex) throws ConfigurationException;
+		void setNeedIndex(boolean needIndex) throws ConfigurationException;
 
-      void setTypicalComponentName(String name) throws ConfigurationException;
+		void setTypicalComponentName(String name) throws ConfigurationException;
 
-      void setInitParam(String param) throws ConfigurationException;
+		void setInitParam(String param) throws ConfigurationException;
 
-      TableForm.Cell createCell() throws ConfigurationException;
+		TableForm.Cell createCell() throws ConfigurationException;
 
-   }
+	}
 
 }

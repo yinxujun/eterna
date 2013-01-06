@@ -6,62 +6,62 @@ import java.beans.PropertyEditor;
 import self.micromagic.util.StringRef;
 
 /**
- * Öµ×ª»»Æ÷.
+ * å€¼è½¬æ¢å™¨.
  */
 public interface ValueConverter extends Cloneable
 {
-   /**
-    * ÔÚÎŞ·¨×ª»»Ê±ÊÇ·ñĞèÒªÅ×³öÒì³£.
-    * Ä¬ÈÏÎª²»Å×³öÒì³£.
-    */
-   boolean isNeedThrow();
-
-   /**
-    * ÉèÖÃÊÇ·ñÒªÅ×³öÒì³£, µ±ÎŞ·¨×ª»»³ÉÄ¿±êÀàĞÍÊ±.
-    */
-   void setNeedThrow(boolean need);
-
-   /**
-    * »ñµÃ<code>PropertyEditor</code>¶ÔÏó, Öµ×ª»»Æ÷»áÊ¹ÓÃËüÀ´½øĞĞ×ª»».
-    */
-   PropertyEditor getPropertyEditor();
-
-   /**
-    * ÉèÖÃ<code>PropertyEditor</code>¶ÔÏó, Öµ×ª»»Æ÷»áÊ¹ÓÃËüÀ´½øĞĞ×ª»».
-    */
-   void setPropertyEditor(PropertyEditor propertyEditor);
-
-   /**
-    * »ñµÃÒª×ª»»µÄÄ¿±êÀàĞÍ´úÂë.
-    *
-    * @param typeName   ½«»á±»ÉèÎªÄ¿±êÀàĞÍµÄÃû³Æ, Èç¹û²»ĞèÒª¿ÉÉèÎªnull
-    */
-   int getConvertType(StringRef typeName);
-
-   /**
-    * ¶ÔÒ»¸ö¶ÔÏó½øĞĞÀàĞÍ×ª»», ×ª»»³ÉËùÒªÇóµÄÀàĞÍ.
-    */
-   Object convert(Object value);
-
-   /**
-    * ¶ÔÒ»¸ö×Ö·û´®½øĞĞÀàĞÍ×ª»», ×ª»»³ÉËùÒªÇóµÄÀàĞÍ.
-    */
-   Object convert(String value);
-
-   /**
-    * ½«Ò»¸ö¶ÔÏó×ª»»³É×Ö·û´®.
-    */
-   String convertToString(Object value);
-
-   /**
-    * ½«Ò»¸ö¶ÔÏó×ª»»³É×Ö·û´®.
-    *
-    * @param changeNullToEmpty   ÊÇ·ñÒª½«null×ª»»Îª¿Õ×Ö·û´®
-    */
-   String convertToString(Object value, boolean changeNullToEmpty);
+	/**
+	 * åœ¨æ— æ³•è½¬æ¢æ—¶æ˜¯å¦éœ€è¦æŠ›å‡ºå¼‚å¸¸.
+	 * é»˜è®¤ä¸ºä¸æŠ›å‡ºå¼‚å¸¸.
+	 */
+	boolean isNeedThrow();
 
 	/**
-	 * ¸´ÖÆµ±Ç°µÄÖµ×ª»»Æ÷.
+	 * è®¾ç½®æ˜¯å¦è¦æŠ›å‡ºå¼‚å¸¸, å½“æ— æ³•è½¬æ¢æˆç›®æ ‡ç±»å‹æ—¶.
+	 */
+	void setNeedThrow(boolean need);
+
+	/**
+	 * è·å¾—<code>PropertyEditor</code>å¯¹è±¡, å€¼è½¬æ¢å™¨ä¼šä½¿ç”¨å®ƒæ¥è¿›è¡Œè½¬æ¢.
+	 */
+	PropertyEditor getPropertyEditor();
+
+	/**
+	 * è®¾ç½®<code>PropertyEditor</code>å¯¹è±¡, å€¼è½¬æ¢å™¨ä¼šä½¿ç”¨å®ƒæ¥è¿›è¡Œè½¬æ¢.
+	 */
+	void setPropertyEditor(PropertyEditor propertyEditor);
+
+	/**
+	 * è·å¾—è¦è½¬æ¢çš„ç›®æ ‡ç±»å‹ä»£ç .
+	 *
+	 * @param typeName   å°†ä¼šè¢«è®¾ä¸ºç›®æ ‡ç±»å‹çš„åç§°, å¦‚æœä¸éœ€è¦å¯è®¾ä¸ºnull
+	 */
+	int getConvertType(StringRef typeName);
+
+	/**
+	 * å¯¹ä¸€ä¸ªå¯¹è±¡è¿›è¡Œç±»å‹è½¬æ¢, è½¬æ¢æˆæ‰€è¦æ±‚çš„ç±»å‹.
+	 */
+	Object convert(Object value);
+
+	/**
+	 * å¯¹ä¸€ä¸ªå­—ç¬¦ä¸²è¿›è¡Œç±»å‹è½¬æ¢, è½¬æ¢æˆæ‰€è¦æ±‚çš„ç±»å‹.
+	 */
+	Object convert(String value);
+
+	/**
+	 * å°†ä¸€ä¸ªå¯¹è±¡è½¬æ¢æˆå­—ç¬¦ä¸².
+	 */
+	String convertToString(Object value);
+
+	/**
+	 * å°†ä¸€ä¸ªå¯¹è±¡è½¬æ¢æˆå­—ç¬¦ä¸².
+	 *
+	 * @param changeNullToEmpty   æ˜¯å¦è¦å°†nullè½¬æ¢ä¸ºç©ºå­—ç¬¦ä¸²
+	 */
+	String convertToString(Object value, boolean changeNullToEmpty);
+
+	/**
+	 * å¤åˆ¶å½“å‰çš„å€¼è½¬æ¢å™¨.
 	 */
 	ValueConverter copy();
 

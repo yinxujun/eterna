@@ -10,53 +10,55 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Ä¬ÈÏµÄbean¼ì²âÆ÷.
+ * é»˜è®¤çš„beanæ£€æµ‹å™¨.
+ *
+ * @author micromagic@sina.com
  */
 class DefaultBeanChecker
-      implements BeanChecker
+		implements BeanChecker
 {
-   public int check(Class beanClass)
-   {
-      if (beanClass == null)
-      {
-         return CHECK_RESULT_NO;
-      }
-      String beanClassName = beanClass.getName();
-      // java, javax ¼° org °üÏÂµÄÀà²»ÊÇbean
-      if (beanClassName.startsWith("java.") || beanClassName.startsWith("javax.")
-            || beanClassName.startsWith("org."))
-      {
-         return CHECK_RESULT_NO;
-      }
-      // »ù±¾ÀàĞÍ Êı×é ½Ó¿Ú ²»ÊÇbean
-      if (beanClass.isPrimitive() || beanClass.isArray() || beanClass.isInterface())
-      {
-         return CHECK_RESULT_NO;
-      }
-      // ·ÇpublicµÄÀà²»ÊÇbean
-      if (!Modifier.isPublic(beanClass.getModifiers()))
-      {
-         BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-         return CHECK_RESULT_NO;
-      }
-      // ÊµÏÖÁËCollection½Ó¿ÚµÄÀà²»ÊÇbean
-      if (Collection.class.isAssignableFrom(beanClass))
-      {
-         BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-         return CHECK_RESULT_NO;
-      }
-      // ÊµÏÖÁËMap½Ó¿ÚµÄÀà²»ÊÇbean
-      if (Map.class.isAssignableFrom(beanClass))
-      {
-         BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-         return CHECK_RESULT_NO;
-      }
-      try
-      {
+	public int check(Class beanClass)
+	{
+		if (beanClass == null)
+		{
+			return CHECK_RESULT_NO;
+		}
+		String beanClassName = beanClass.getName();
+		// java, javax åŠ org åŒ…ä¸‹çš„ç±»ä¸æ˜¯bean
+		if (beanClassName.startsWith("java.") || beanClassName.startsWith("javax.")
+				|| beanClassName.startsWith("org."))
+		{
+			return CHECK_RESULT_NO;
+		}
+		// åŸºæœ¬ç±»å‹ æ•°ç»„ æ¥å£ ä¸æ˜¯bean
+		if (beanClass.isPrimitive() || beanClass.isArray() || beanClass.isInterface())
+		{
+			return CHECK_RESULT_NO;
+		}
+		// épublicçš„ç±»ä¸æ˜¯bean
+		if (!Modifier.isPublic(beanClass.getModifiers()))
+		{
+			BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+			return CHECK_RESULT_NO;
+		}
+		// å®ç°äº†Collectionæ¥å£çš„ç±»ä¸æ˜¯bean
+		if (Collection.class.isAssignableFrom(beanClass))
+		{
+			BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+			return CHECK_RESULT_NO;
+		}
+		// å®ç°äº†Mapæ¥å£çš„ç±»ä¸æ˜¯bean
+		if (Map.class.isAssignableFrom(beanClass))
+		{
+			BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+			return CHECK_RESULT_NO;
+		}
+		try
+		{
 			BeanMethodInfo[] arr = BeanMethodInfo.getBeanMethods(beanClass);
-         // ²»´æÔÚÊôĞÔĞÅÏ¢µÄÀà»ò¹«¹²ÊôĞÔµÄ²»ÊÇbean
-         if (arr == null || arr.length == 0)
-         {
+			// ä¸å­˜åœ¨å±æ€§ä¿¡æ¯çš„ç±»æˆ–å…¬å…±å±æ€§çš„ä¸æ˜¯bean
+			if (arr == null || arr.length == 0)
+			{
 				boolean hasPublicField = false;
 				Field[] fields = beanClass.getFields();
 				for (int i = 0; i < fields.length; i++)
@@ -72,21 +74,21 @@ class DefaultBeanChecker
 					BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
 					return CHECK_RESULT_NO;
 				}
-         }
-         // ²»´æÔÚÎŞ²ÎµÄ¹¹Ôìº¯ÊıµÄÀà²»ÊÇbean
-         if (beanClass.getConstructor(new Class[0]) == null)
-         {
-            BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-            return CHECK_RESULT_NO;
-         }
-      }
-      catch (Throwable ex)
-      {
-         // ½âÎöbeanµÄ¹ı³ÌÖĞ³öÏÖÒì³£, ÔòÅĞ¶¨Îª²»ÊÇbean
-         BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
-         return CHECK_RESULT_NO;
-      }
-      return CHECK_RESULT_YES;
-   }
+			}
+			// ä¸å­˜åœ¨æ— å‚çš„æ„é€ å‡½æ•°çš„ç±»ä¸æ˜¯bean
+			if (beanClass.getConstructor(new Class[0]) == null)
+			{
+				BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+				return CHECK_RESULT_NO;
+			}
+		}
+		catch (Throwable ex)
+		{
+			// è§£æbeançš„è¿‡ç¨‹ä¸­å‡ºç°å¼‚å¸¸, åˆ™åˆ¤å®šä¸ºä¸æ˜¯bean
+			BeanTool.beanClassNameCheckMap.put(beanClassName, Boolean.FALSE);
+			return CHECK_RESULT_NO;
+		}
+		return CHECK_RESULT_YES;
+	}
 
 }

@@ -9,6 +9,6 @@ import self.micromagic.eterna.digester.ConfigurationException;
  */
 public interface SearchManagerGenerator extends Generator
 {
-   SearchManager createSearchManager() throws ConfigurationException;
+	SearchManager createSearchManager() throws ConfigurationException;
 
 }

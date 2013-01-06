@@ -18,6 +18,20 @@ import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.share.Generator;
 import self.micromagic.util.StringTool;
 
+/**
+ * 将数据设置到数据集中的执行器.
+ *
+ * 可设置的属性列表
+ *
+ * needPrepare      是否需要将准备好的数据设置的数据集中, 默认值为true
+ *
+ * pushPrepare      是否需要将准备好的数据(map)压入堆栈, 默认值为false
+ *
+ * prepares         需要准备的数据, 键和值的分隔符为"=", 元素项的分隔符为";"
+ *
+ *
+ * @author micromagic@sina.com
+ */
 public class DataPrepareExecute extends AbstractExecute
 		implements Execute, Generator
 {

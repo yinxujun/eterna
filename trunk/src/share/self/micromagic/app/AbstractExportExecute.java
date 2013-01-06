@@ -18,137 +18,137 @@ import self.micromagic.eterna.search.SearchAdapter;
 import self.micromagic.util.Utils;
 
 public abstract class AbstractExportExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   /**
-    * ±êÊ¶ÊÇ·ñÊÇÊ¹ÓÃÊı¾İ¼¯ÖĞµÄÖ¸¶¨ÖµÀ´×÷ÎªÎÄ¼şÃû.
-    */
-   public static final String DATA_FILE_NAME_PREFIX = "$data.";
+	/**
+	 * æ ‡è¯†æ˜¯å¦æ˜¯ä½¿ç”¨æ•°æ®é›†ä¸­çš„æŒ‡å®šå€¼æ¥ä½œä¸ºæ–‡ä»¶å.
+	 */
+	public static final String DATA_FILE_NAME_PREFIX = "$data.";
 
 	/**
-	 * ÔÚarrtibuteÖĞÉèÖÃµ¼³öÊ±²»°üº¬µÄÁĞ.
+	 * åœ¨arrtibuteä¸­è®¾ç½®å¯¼å‡ºæ—¶ä¸åŒ…å«çš„åˆ—.
 	 */
 	public static final String PRINT_EXCLUDE = "print.notPrint";
 
 	/**
-	 * ÔÚarrtibuteÖĞÉèÖÃµ¼³öÊ±ÁĞµÄ¿í¶È.
+	 * åœ¨arrtibuteä¸­è®¾ç½®å¯¼å‡ºæ—¶åˆ—çš„å®½åº¦.
 	 */
 	public static final String PRINT_WIDTH = "print.width";
 
 	/**
-	 * ÔÚarrtibuteÖĞÉèÖÃµ¼³öÊ±Ê¹ÓÃµÄ¸ñÊ½»¯·½Ê½.
+	 * åœ¨arrtibuteä¸­è®¾ç½®å¯¼å‡ºæ—¶ä½¿ç”¨çš„æ ¼å¼åŒ–æ–¹å¼.
 	 */
 	public static final String PRINT_FORMAT = "print.format";
 
 	/**
-	 * ÔÚarrtibuteÖĞÉèÖÃµ¼³öÊ±¶ÔÓ¦ÁĞµÄÀàĞÍ, Ö»ÓĞÔÚÉèÖÃÁË
-	 * <code>PRINT_FORMAT</code>ÊÇ²ÅĞèÒªÉèÖÃ.
+	 * åœ¨arrtibuteä¸­è®¾ç½®å¯¼å‡ºæ—¶å¯¹åº”åˆ—çš„ç±»å‹, åªæœ‰åœ¨è®¾ç½®äº†
+	 * <code>PRINT_FORMAT</code>æ˜¯æ‰éœ€è¦è®¾ç½®.
 	 */
 	public static final String PRINT_COLTYPE = "print.colType";
 
 	/**
-	 * ÔÚarrtibuteÖĞÉèÖÃµ¼³öÊ±Ê¹ÓÃµÄ±êÌâ.
+	 * åœ¨arrtibuteä¸­è®¾ç½®å¯¼å‡ºæ—¶ä½¿ç”¨çš„æ ‡é¢˜.
 	 */
 	public static final String PRINT_CAPTION = ResultReaders.PRINT_CAPTION;
 
 
-   public static final String DOWNLOAD_CONTENTTYPE = "download.contentType";
-   public static final String DOWNLOAD_FILENAME = "download.fileName";
-   public static final String DOWNLOAD_STREAM = "download.stream";
+	public static final String DOWNLOAD_CONTENTTYPE = "download.contentType";
+	public static final String DOWNLOAD_FILENAME = "download.fileName";
+	public static final String DOWNLOAD_STREAM = "download.stream";
 
-   public static final int PRINT_TYPE_NUMBER = 1;
-   public static final int PRINT_TYPE_DATE = 2;
+	public static final int PRINT_TYPE_NUMBER = 1;
+	public static final int PRINT_TYPE_DATE = 2;
 
-   protected boolean holdConnection = true;
-   protected int queryCacheIndex = 5;
-   protected ResultReaderManager otherReaderManager = null;
-   protected String fileName = "export";
-   protected String encodeName = "UTF-8";
-   protected String fileNameEncode = "UTF-8";
-   protected boolean saveExport = false;
+	protected boolean holdConnection = true;
+	protected int queryCacheIndex = 5;
+	protected ResultReaderManager otherReaderManager = null;
+	protected String fileName = "export";
+	protected String encodeName = "UTF-8";
+	protected String fileNameEncode = "UTF-8";
+	protected boolean saveExport = false;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
 
-      String temp = (String) this.getAttribute("fileName");
-      if (temp != null)
-      {
-         this.fileName = temp;
-      }
-      temp = (String) this.getAttribute("encodeName");
-      if (temp != null)
-      {
-         this.encodeName = temp;
-      }
-      temp = (String) this.getAttribute("fileNameEncode");
-      if (temp != null)
-      {
-         this.fileNameEncode = temp;
-      }
-      temp = (String) this.getAttribute("saveExport");
-      if (temp != null)
-      {
-         this.saveExport = "true".equalsIgnoreCase(temp);
-      }
-      temp = (String) this.getAttribute("queryCacheIndex");
-      if (temp != null)
-      {
-         this.queryCacheIndex = Utils.parseInt(temp, 5);
-      }
-      temp = (String) this.getAttribute("otherReaderManager");
-      if (temp != null)
-      {
-         this.otherReaderManager = model.getFactory().getReaderManager(temp);
-         if (this.otherReaderManager == null)
-         {
-            log.error("Not found reader manager [" + temp + "].");
-         }
-      }
-      this.holdConnection = model.getTransactionType() ==  ModelAdapter.T_HOLD;
-   }
+		String temp = (String) this.getAttribute("fileName");
+		if (temp != null)
+		{
+			this.fileName = temp;
+		}
+		temp = (String) this.getAttribute("encodeName");
+		if (temp != null)
+		{
+			this.encodeName = temp;
+		}
+		temp = (String) this.getAttribute("fileNameEncode");
+		if (temp != null)
+		{
+			this.fileNameEncode = temp;
+		}
+		temp = (String) this.getAttribute("saveExport");
+		if (temp != null)
+		{
+			this.saveExport = "true".equalsIgnoreCase(temp);
+		}
+		temp = (String) this.getAttribute("queryCacheIndex");
+		if (temp != null)
+		{
+			this.queryCacheIndex = Utils.parseInt(temp, 5);
+		}
+		temp = (String) this.getAttribute("otherReaderManager");
+		if (temp != null)
+		{
+			this.otherReaderManager = model.getFactory().getReaderManager(temp);
+			if (this.otherReaderManager == null)
+			{
+				log.error("Not found reader manager [" + temp + "].");
+			}
+		}
+		this.holdConnection = model.getTransactionType() ==  ModelAdapter.T_HOLD;
+	}
 
-   protected String getFileName(AppData data)
-   {
-      if (this.fileName.startsWith(DATA_FILE_NAME_PREFIX))
-      {
-         return (String) data.dataMap.get(this.fileName.substring(DATA_FILE_NAME_PREFIX.length()));
-      }
-      return this.fileName;
-   }
+	protected String getFileName(AppData data)
+	{
+		if (this.fileName.startsWith(DATA_FILE_NAME_PREFIX))
+		{
+			return (String) data.dataMap.get(this.fileName.substring(DATA_FILE_NAME_PREFIX.length()));
+		}
+		return this.fileName;
+	}
 
-   protected ResultIterator getResultIterator(AppData data, Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      Object obj = data.caches[this.queryCacheIndex];
-      if (obj == null)
-      {
-         throw new ConfigurationException("There is no value in cache:" + this.queryCacheIndex + ".");
-      }
-      if (obj instanceof QueryAdapter)
-      {
-         QueryAdapter query = (QueryAdapter) obj;
-         if (this.otherReaderManager != null)
-         {
-            query.setReaderManager(this.otherReaderManager);
-         }
-         return this.holdConnection ? query.executeQueryHoldConnection(conn) : query.executeQuery(conn);
-      }
-      if (obj instanceof ResultIterator)
-      {
-         return (ResultIterator) obj;
-      }
-      if (obj instanceof SearchAdapter.Result)
-      {
-         return ((SearchAdapter.Result) obj).queryResult;
-      }
-      throw new ConfigurationException("Error value type [" + obj.getClass() + "] in cache:"
-            + this.queryCacheIndex + ".");
-   }
+	protected ResultIterator getResultIterator(AppData data, Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		Object obj = data.caches[this.queryCacheIndex];
+		if (obj == null)
+		{
+			throw new ConfigurationException("There is no value in cache:" + this.queryCacheIndex + ".");
+		}
+		if (obj instanceof QueryAdapter)
+		{
+			QueryAdapter query = (QueryAdapter) obj;
+			if (this.otherReaderManager != null)
+			{
+				query.setReaderManager(this.otherReaderManager);
+			}
+			return this.holdConnection ? query.executeQueryHoldConnection(conn) : query.executeQuery(conn);
+		}
+		if (obj instanceof ResultIterator)
+		{
+			return (ResultIterator) obj;
+		}
+		if (obj instanceof SearchAdapter.Result)
+		{
+			return ((SearchAdapter.Result) obj).queryResult;
+		}
+		throw new ConfigurationException("Error value type [" + obj.getClass() + "] in cache:"
+				+ this.queryCacheIndex + ".");
+	}
 
 }

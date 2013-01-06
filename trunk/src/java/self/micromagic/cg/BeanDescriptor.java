@@ -5,95 +5,97 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * beanµÄÃèÊöÀà.
+ * beançš„æè¿°ç±».
+ *
+ * @author micromagic@sina.com
  */
 public class BeanDescriptor
 {
-   private Map cells;
-   private CellDescriptor initCell;
-   private Class beanType;
-   private ConverterManager converterManager;
+	private Map cells;
+	private CellDescriptor initCell;
+	private Class beanType;
+	private ConverterManager converterManager;
 
-   BeanDescriptor(Class beanType, Map cells, CellDescriptor initCell)
-   {
-      this.beanType = beanType;
-      this.cells = cells;
-      this.initCell = initCell;
-      this.converterManager = BeanTool.converterManager;
-   }
+	BeanDescriptor(Class beanType, Map cells, CellDescriptor initCell)
+	{
+		this.beanType = beanType;
+		this.cells = cells;
+		this.initCell = initCell;
+		this.converterManager = BeanTool.converterManager;
+	}
 
-   /**
-    * »ñÈ¡Óë´ËbeanÏà¹ØµÄÀàĞÍ×ª»»Æ÷¹ÜÀíÕß.
-    */
-   ConverterManager getConverterManager()
-   {
-      return this.converterManager;
-   }
+	/**
+	 * è·å–ä¸æ­¤beanç›¸å…³çš„ç±»å‹è½¬æ¢å™¨ç®¡ç†è€….
+	 */
+	ConverterManager getConverterManager()
+	{
+		return this.converterManager;
+	}
 
-   /**
-    * ÉèÖÃÓë´ËbeanÏà¹ØµÄÀàĞÍ×ª»»Æ÷¹ÜÀíÕß.
-    */
-   void setConverterManager(ConverterManager converterManager)
-   {
-      this.converterManager = converterManager;
-   }
+	/**
+	 * è®¾ç½®ä¸æ­¤beanç›¸å…³çš„ç±»å‹è½¬æ¢å™¨ç®¡ç†è€….
+	 */
+	void setConverterManager(ConverterManager converterManager)
+	{
+		this.converterManager = converterManager;
+	}
 
-   /**
-    * »ñµÃBeanMap´¦ÀíµÄbeanµÄÀàĞÍ.
-    */
-   public Class getBeanType()
-   {
-      return this.beanType;
-   }
+	/**
+	 * è·å¾—BeanMapå¤„ç†çš„beançš„ç±»å‹.
+	 */
+	public Class getBeanType()
+	{
+		return this.beanType;
+	}
 
-   /**
-    * »ñµÃBeanMapÖĞ¶ÔbeanµÄ¹¹Ôìµ¥Ôª.
-    */
-   public CellDescriptor getInitCell()
-   {
-      return this.initCell;
-   }
+	/**
+	 * è·å¾—BeanMapä¸­å¯¹beançš„æ„é€ å•å…ƒ.
+	 */
+	public CellDescriptor getInitCell()
+	{
+		return this.initCell;
+	}
 
-   /**
-    * »ñµÃBeanMapÖĞ¶ÔbeanÊôĞÔµÄ²Ù×÷µ¥Ôª.
-    */
-   public CellDescriptor getCell(String name)
-   {
-      return (CellDescriptor) this.cells.get(name);
-   }
+	/**
+	 * è·å¾—BeanMapä¸­å¯¹beanå±æ€§çš„æ“ä½œå•å…ƒ.
+	 */
+	public CellDescriptor getCell(String name)
+	{
+		return (CellDescriptor) this.cells.get(name);
+	}
 
-   /**
-    * ÒÔµü´úÆ÷µÄ·½Ê½»ñµÃBeanMapÖĞ¶ÔbeanÊôĞÔµÄËùÓĞ²Ù×÷µ¥Ôª.
-    */
-   public Iterator getCellIterator()
-   {
-      return this.cells.values().iterator();
-   }
+	/**
+	 * ä»¥è¿­ä»£å™¨çš„æ–¹å¼è·å¾—BeanMapä¸­å¯¹beanå±æ€§çš„æ‰€æœ‰æ“ä½œå•å…ƒ.
+	 */
+	public Iterator getCellIterator()
+	{
+		return this.cells.values().iterator();
+	}
 
-   /**
-    * ÔÚBeanMapÖĞÌí¼ÓÒ»¸ö¶ÔbeanÊôĞÔµÄ²Ù×÷µ¥Ôª.
-    *
-    * @param cd  beanÊôĞÔµÄ²Ù×÷µ¥Ôª
-    * @return    <code>true</code>Ìí¼Ó³É¹¦, <code>false</code>Ìí¼ÓÊ§°Ü
-    *            ÈçÒÑ¾­´æÔÚÍ¬ÃûµÄ²Ù×÷µ¥Ôª, cd²ÎÊıÎªnull»òcdµÄnameÎªnull
-    */
-   public synchronized boolean addCell(CellDescriptor cd)
-   {
-      if (cd == null)
-      {
-         return false;
-      }
-      String name = cd.getName();
-      if (name == null)
-      {
-         return false;
-      }
-      if (this.cells.containsKey(name))
-      {
-         return false;
-      }
-      this.cells.put(name, cd);
-      return true;
-   }
+	/**
+	 * åœ¨BeanMapä¸­æ·»åŠ ä¸€ä¸ªå¯¹beanå±æ€§çš„æ“ä½œå•å…ƒ.
+	 *
+	 * @param cd  beanå±æ€§çš„æ“ä½œå•å…ƒ
+	 * @return    <code>true</code>æ·»åŠ æˆåŠŸ, <code>false</code>æ·»åŠ å¤±è´¥
+	 *            å¦‚å·²ç»å­˜åœ¨åŒåçš„æ“ä½œå•å…ƒ, cdå‚æ•°ä¸ºnullæˆ–cdçš„nameä¸ºnull
+	 */
+	public synchronized boolean addCell(CellDescriptor cd)
+	{
+		if (cd == null)
+		{
+			return false;
+		}
+		String name = cd.getName();
+		if (name == null)
+		{
+			return false;
+		}
+		if (this.cells.containsKey(name))
+		{
+			return false;
+		}
+		this.cells.put(name, cd);
+		return true;
+	}
 
 }

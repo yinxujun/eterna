@@ -12,269 +12,269 @@ import java.sql.Savepoint;
 import java.util.Map;
 
 /**
- * Ò»¸ö¼òÒ×µÄÊı¾İ¿âÁ¬½Ó¸²¸ÇÀà, µ±Ã»ÓĞÉèÖÃautoCommitÊôĞÔÊ±, ÔòºöÂÔ
- * ¶ÔsetAutoCommit commit rollbackÕâĞ©·½·¨µÄµ÷ÓÃ. ÒòÎª¶ÔÒ»Ğ©²»Ö§³Ö
- * ÊÂÎñµÄÊı¾İ¿âÇı¶¯, µ÷ÓÃÕâĞ©·½·¨Ê±»á³ö´í, ÔÚÕâÀïÆÁ±Îµô, ÔÚÊ¹ÓÃÊ±
- * ¾ÍÎŞĞè¿¼ÂÇÊÂÎñÏà¹ØµÄ·½·¨ÊÇ·ñ¿Éµ÷ÓÃÁË.
+ * ä¸€ä¸ªç®€æ˜“çš„æ•°æ®åº“è¿æ¥è¦†ç›–ç±», å½“æ²¡æœ‰è®¾ç½®autoCommitå±æ€§æ—¶, åˆ™å¿½ç•¥
+ * å¯¹setAutoCommit commit rollbackè¿™äº›æ–¹æ³•çš„è°ƒç”¨. å› ä¸ºå¯¹ä¸€äº›ä¸æ”¯æŒ
+ * äº‹åŠ¡çš„æ•°æ®åº“é©±åŠ¨, è°ƒç”¨è¿™äº›æ–¹æ³•æ—¶ä¼šå‡ºé”™, åœ¨è¿™é‡Œå±è”½æ‰, åœ¨ä½¿ç”¨æ—¶
+ * å°±æ— éœ€è€ƒè™‘äº‹åŠ¡ç›¸å…³çš„æ–¹æ³•æ˜¯å¦å¯è°ƒç”¨äº†.
  */
 public class SimpleConnection
-      implements Connection
+		implements Connection
 {
-   private Connection oldConn;
-   private boolean autoCommitSetted;
+	private Connection oldConn;
+	private boolean autoCommitSetted;
 
-   public SimpleConnection(boolean autoCommitSetted, Connection oldConn)
-   {
-      this.autoCommitSetted = autoCommitSetted;
-      this.oldConn = oldConn;
-   }
+	public SimpleConnection(boolean autoCommitSetted, Connection oldConn)
+	{
+		this.autoCommitSetted = autoCommitSetted;
+		this.oldConn = oldConn;
+	}
 
-   public Statement createStatement()
-         throws SQLException
-   {
-      return this.oldConn.createStatement();
-   }
+	public Statement createStatement()
+			throws SQLException
+	{
+		return this.oldConn.createStatement();
+	}
 
-   public PreparedStatement prepareStatement(String sql)
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql);
-   }
+	public PreparedStatement prepareStatement(String sql)
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql);
+	}
 
-   public CallableStatement prepareCall(String sql)
-         throws SQLException
-   {
-      return this.oldConn.prepareCall(sql);
-   }
+	public CallableStatement prepareCall(String sql)
+			throws SQLException
+	{
+		return this.oldConn.prepareCall(sql);
+	}
 
-   public String nativeSQL(String sql)
-         throws SQLException
-   {
-      return this.oldConn.nativeSQL(sql);
-   }
+	public String nativeSQL(String sql)
+			throws SQLException
+	{
+		return this.oldConn.nativeSQL(sql);
+	}
 
-   public void setAutoCommit(boolean autoCommit)
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.setAutoCommit(autoCommit);
-      }
-   }
+	public void setAutoCommit(boolean autoCommit)
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.setAutoCommit(autoCommit);
+		}
+	}
 
-   public boolean getAutoCommit()
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.getAutoCommit();
-      }
-      return true;
-   }
+	public boolean getAutoCommit()
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.getAutoCommit();
+		}
+		return true;
+	}
 
-   public void commit()
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.commit();
-      }
-   }
+	public void commit()
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.commit();
+		}
+	}
 
-   public void rollback()
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.rollback();
-      }
-   }
+	public void rollback()
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.rollback();
+		}
+	}
 
-   public void close()
-         throws SQLException
-   {
-      this.oldConn.close();
-   }
+	public void close()
+			throws SQLException
+	{
+		this.oldConn.close();
+	}
 
-   public boolean isClosed()
-         throws SQLException
-   {
-      return this.oldConn.isClosed();
-   }
+	public boolean isClosed()
+			throws SQLException
+	{
+		return this.oldConn.isClosed();
+	}
 
-   public DatabaseMetaData getMetaData()
-         throws SQLException
-   {
-      return this.oldConn.getMetaData();
-   }
+	public DatabaseMetaData getMetaData()
+			throws SQLException
+	{
+		return this.oldConn.getMetaData();
+	}
 
-   public void setReadOnly(boolean readOnly)
-         throws SQLException
-   {
-      this.oldConn.setReadOnly(readOnly);
-   }
+	public void setReadOnly(boolean readOnly)
+			throws SQLException
+	{
+		this.oldConn.setReadOnly(readOnly);
+	}
 
-   public boolean isReadOnly()
-         throws SQLException
-   {
-      return this.oldConn.isReadOnly();
-   }
+	public boolean isReadOnly()
+			throws SQLException
+	{
+		return this.oldConn.isReadOnly();
+	}
 
-   public void setCatalog(String catalog)
-         throws SQLException
-   {
-      this.oldConn.setCatalog(catalog);
-   }
+	public void setCatalog(String catalog)
+			throws SQLException
+	{
+		this.oldConn.setCatalog(catalog);
+	}
 
-   public String getCatalog()
-         throws SQLException
-   {
-      return this.oldConn.getCatalog();
-   }
+	public String getCatalog()
+			throws SQLException
+	{
+		return this.oldConn.getCatalog();
+	}
 
-   public void setTransactionIsolation(int level)
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.setTransactionIsolation(level);
-      }
-   }
+	public void setTransactionIsolation(int level)
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.setTransactionIsolation(level);
+		}
+	}
 
-   public int getTransactionIsolation()
-         throws SQLException
-   {
-      return this.oldConn.getTransactionIsolation();
-   }
+	public int getTransactionIsolation()
+			throws SQLException
+	{
+		return this.oldConn.getTransactionIsolation();
+	}
 
-   public SQLWarning getWarnings()
-         throws SQLException
-   {
-      return this.oldConn.getWarnings();
-   }
+	public SQLWarning getWarnings()
+			throws SQLException
+	{
+		return this.oldConn.getWarnings();
+	}
 
-   public void clearWarnings()
-         throws SQLException
-   {
-      this.oldConn.clearWarnings();
-   }
+	public void clearWarnings()
+			throws SQLException
+	{
+		this.oldConn.clearWarnings();
+	}
 
-   public Statement createStatement(int resultSetType, int resultSetConcurrency)
-         throws SQLException
-   {
-      return this.oldConn.createStatement(resultSetType, resultSetConcurrency);
-   }
+	public Statement createStatement(int resultSetType, int resultSetConcurrency)
+			throws SQLException
+	{
+		return this.oldConn.createStatement(resultSetType, resultSetConcurrency);
+	}
 
-   public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql, resultSetType, resultSetConcurrency);
-   }
+	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql, resultSetType, resultSetConcurrency);
+	}
 
-   public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
-         throws SQLException
-   {
-      return this.oldConn.prepareCall(sql, resultSetType, resultSetConcurrency);
-   }
+	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
+			throws SQLException
+	{
+		return this.oldConn.prepareCall(sql, resultSetType, resultSetConcurrency);
+	}
 
-   public Map getTypeMap()
-         throws SQLException
-   {
-      return this.oldConn.getTypeMap();
-   }
+	public Map getTypeMap()
+			throws SQLException
+	{
+		return this.oldConn.getTypeMap();
+	}
 
-   public void setTypeMap(Map map)
-         throws SQLException
-   {
-      this.oldConn.setTypeMap(map);
-   }
+	public void setTypeMap(Map map)
+			throws SQLException
+	{
+		this.oldConn.setTypeMap(map);
+	}
 
-   public void setHoldability(int holdability)
-         throws SQLException
-   {
-      this.oldConn.setHoldability(holdability);
-   }
+	public void setHoldability(int holdability)
+			throws SQLException
+	{
+		this.oldConn.setHoldability(holdability);
+	}
 
-   public int getHoldability()
-         throws SQLException
-   {
-      return this.oldConn.getHoldability();
-   }
+	public int getHoldability()
+			throws SQLException
+	{
+		return this.oldConn.getHoldability();
+	}
 
-   public Savepoint setSavepoint()
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         return this.oldConn.setSavepoint();
-      }
-      return null;
-   }
+	public Savepoint setSavepoint()
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			return this.oldConn.setSavepoint();
+		}
+		return null;
+	}
 
-   public Savepoint setSavepoint(String name)
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         return this.oldConn.setSavepoint(name);
-      }
-      return null;
-   }
+	public Savepoint setSavepoint(String name)
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			return this.oldConn.setSavepoint(name);
+		}
+		return null;
+	}
 
-   public void rollback(Savepoint savepoint)
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.rollback(savepoint);
-      }
-   }
+	public void rollback(Savepoint savepoint)
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.rollback(savepoint);
+		}
+	}
 
-   public void releaseSavepoint(Savepoint savepoint)
-         throws SQLException
-   {
-      if (this.autoCommitSetted)
-      {
-         this.oldConn.releaseSavepoint(savepoint);
-      }
-   }
+	public void releaseSavepoint(Savepoint savepoint)
+			throws SQLException
+	{
+		if (this.autoCommitSetted)
+		{
+			this.oldConn.releaseSavepoint(savepoint);
+		}
+	}
 
-   public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-         throws SQLException
-   {
-      return this.oldConn.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
-   }
+	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+			throws SQLException
+	{
+		return this.oldConn.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+	}
 
-   public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-         int resultSetHoldability)
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-   }
+	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
+			int resultSetHoldability)
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+	}
 
-   public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
-         int resultSetHoldability)
-         throws SQLException
-   {
-      return this.oldConn.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-   }
+	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
+			int resultSetHoldability)
+			throws SQLException
+	{
+		return this.oldConn.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+	}
 
-   public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql, autoGeneratedKeys);
-   }
+	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql, autoGeneratedKeys);
+	}
 
-   public PreparedStatement prepareStatement(String sql, int columnIndexes[])
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql, columnIndexes);
-   }
+	public PreparedStatement prepareStatement(String sql, int columnIndexes[])
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql, columnIndexes);
+	}
 
-   public PreparedStatement prepareStatement(String sql, String columnNames[])
-         throws SQLException
-   {
-      return this.oldConn.prepareStatement(sql, columnNames);
-   }
+	public PreparedStatement prepareStatement(String sql, String columnNames[])
+			throws SQLException
+	{
+		return this.oldConn.prepareStatement(sql, columnNames);
+	}
 
 }

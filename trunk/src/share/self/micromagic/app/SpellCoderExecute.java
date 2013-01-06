@@ -16,70 +16,70 @@ import self.micromagic.coder.SpellCoder;
 import self.micromagic.util.Utils;
 
 /**
- * Ω´÷∏∂®cache÷–µƒ÷–Œƒ◊™ªª≥…∆¥“Ù.
- * ◊™ªª∫Ûµƒ∆¥“Ùª·∑≈µΩstack÷–.
+ * Â∞ÜÊåáÂÆöcache‰∏≠ÁöÑ‰∏≠ÊñáËΩ¨Êç¢ÊàêÊãºÈü≥.
+ * ËΩ¨Êç¢ÂêéÁöÑÊãºÈü≥‰ºöÊîæÂà∞stack‰∏≠.
  */
 public class SpellCoderExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   protected SpellCoder spellCoder = new SpellCoder();
-   protected int srcIndex = 0;
+	protected SpellCoder spellCoder = new SpellCoder();
+	protected int srcIndex = 0;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      String tmp;
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		String tmp;
 
-      tmp = (String) this.getAttribute("firstLetterOnly");
-      if (tmp != null)
-      {
-         this.spellCoder.setFirstLetterOnly("true".equalsIgnoreCase(tmp));
-      }
-      tmp = (String) this.getAttribute("unknowWordToInterrogation");
-      if (tmp != null)
-      {
-         this.spellCoder.setUnknowWordToInterrogation("true".equalsIgnoreCase(tmp));
-      }
-      tmp = (String) this.getAttribute("enableUnicodeLetter");
-      if (tmp != null)
-      {
-         this.spellCoder.setEnableUnicodeLetter("true".equalsIgnoreCase(tmp));
-      }
-      tmp = (String) this.getAttribute("ignoreOtherLetter");
-      if (tmp != null)
-      {
-         this.spellCoder.setIgnoreOtherLetter("true".equalsIgnoreCase(tmp));
-      }
-      tmp = (String) this.getAttribute("srcIndex");
-      if (tmp != null)
-      {
-         this.srcIndex = Utils.parseInt(tmp);
-      }
-   }
+		tmp = (String) this.getAttribute("firstLetterOnly");
+		if (tmp != null)
+		{
+			this.spellCoder.setFirstLetterOnly("true".equalsIgnoreCase(tmp));
+		}
+		tmp = (String) this.getAttribute("unknowWordToInterrogation");
+		if (tmp != null)
+		{
+			this.spellCoder.setUnknowWordToInterrogation("true".equalsIgnoreCase(tmp));
+		}
+		tmp = (String) this.getAttribute("enableUnicodeLetter");
+		if (tmp != null)
+		{
+			this.spellCoder.setEnableUnicodeLetter("true".equalsIgnoreCase(tmp));
+		}
+		tmp = (String) this.getAttribute("ignoreOtherLetter");
+		if (tmp != null)
+		{
+			this.spellCoder.setIgnoreOtherLetter("true".equalsIgnoreCase(tmp));
+		}
+		tmp = (String) this.getAttribute("srcIndex");
+		if (tmp != null)
+		{
+			this.srcIndex = Utils.parseInt(tmp);
+		}
+	}
 
-   public String getExecuteType()
-   {
-      return "spellCoder";
-   }
+	public String getExecuteType()
+	{
+		return "spellCoder";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      Object obj = data.caches[this.srcIndex];
-      if (obj != null && obj instanceof String)
-      {
-         data.push(this.spellCoder.makeSpellCode((String) obj));
-      }
-      else
-      {
-         data.push(null);
-      }
-      return null;
-   }
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		Object obj = data.caches[this.srcIndex];
+		if (obj != null && obj instanceof String)
+		{
+			data.push(this.spellCoder.makeSpellCode((String) obj));
+		}
+		else
+		{
+			data.push(null);
+		}
+		return null;
+	}
 
 }

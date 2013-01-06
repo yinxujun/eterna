@@ -12,21 +12,21 @@ import self.micromagic.eterna.model.AppData;
  */
 public interface ParameterSetting
 {
-   /**
-    * ³õÊ¼»¯, ¸Ã·½·¨»áÔÚËùÊôµÄsearch³õÊ¼»¯Ê±±»µ÷ÓÃ.
-    */
-   void initParameterSetting(SearchAdapter search) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–, è¯¥æ–¹æ³•ä¼šåœ¨æ‰€å±çš„searchåˆå§‹åŒ–æ—¶è¢«è°ƒç”¨.
+	 */
+	void initParameterSetting(SearchAdapter search) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÓÃÓÚ²éÑ¯µÄQueryAdapterµÄ²ÎÊı.
-    *
-    * @param first     ±íÊ¾ÊÇ·ñÎªµÚÒ»´ÎÖ´ĞĞ²ÎÊıÉèÖÃ, Èç¹û²»ÊÇµÚÒ»´Î, Ôò¿É¸ù¾İÇé¿ö,
-    *                  »òÖØĞÂÉèÖÃ²ÎÊı, »ò·µ»ØÊ²Ã´¶¼²»×öÊ¹ÓÃÇ°Ò»´ÎµÄÉèÖÃ.
-    * @param data      Êı¾İ, ÀïÃæ°üº¬ÁËrequestµÄparameter, requestµÄattribute,
-    *                  sessionµÄattritute
-    */
-   void setParameter(QueryAdapter query, SearchAdapter search, boolean first,
-         AppData data, Connection conn)
-         throws ConfigurationException;
+	/**
+	 * è®¾ç½®ç”¨äºæŸ¥è¯¢çš„QueryAdapterçš„å‚æ•°.
+	 *
+	 * @param first     è¡¨ç¤ºæ˜¯å¦ä¸ºç¬¬ä¸€æ¬¡æ‰§è¡Œå‚æ•°è®¾ç½®, å¦‚æœä¸æ˜¯ç¬¬ä¸€æ¬¡, åˆ™å¯æ ¹æ®æƒ…å†µ,
+	 *                  æˆ–é‡æ–°è®¾ç½®å‚æ•°, æˆ–è¿”å›ä»€ä¹ˆéƒ½ä¸åšä½¿ç”¨å‰ä¸€æ¬¡çš„è®¾ç½®.
+	 * @param data      æ•°æ®, é‡Œé¢åŒ…å«äº†requestçš„parameter, requestçš„attribute,
+	 *                  sessionçš„attritute
+	 */
+	void setParameter(QueryAdapter query, SearchAdapter search, boolean first,
+			AppData data, Connection conn)
+			throws ConfigurationException;
 
 }

@@ -6,537 +6,537 @@ import java.util.Arrays;
 import self.micromagic.util.IntegerRef;
 
 public class TimeRandomShift extends AbstractCoder
-      implements Coder
+		implements Coder
 {
-   private static final long SEED_MASK = (1L << 56) - 1;
-   private static final int GROUP_SIZE = 8;
-   private static final int HEAD_SIZE = 16;
-   private static final int KEY_SIZE = HEAD_SIZE;
+	private static final long SEED_MASK = (1L << 56) - 1;
+	private static final int GROUP_SIZE = 8;
+	private static final int HEAD_SIZE = 16;
+	private static final int KEY_SIZE = HEAD_SIZE;
 
-   private int infoLocal = 12;
-   private byte[] enKey = new byte[KEY_SIZE];
-   private byte[] tempBuf = new byte[GROUP_SIZE];
+	private int infoLocal = 12;
+	private byte[] enKey = new byte[KEY_SIZE];
+	private byte[] tempBuf = new byte[GROUP_SIZE];
 
-   private byte[] encodeHead = new byte[HEAD_SIZE];
-   private Random encodeRandom = null;
-   private byte[] encodeLeftByte = new byte[GROUP_SIZE];
-   private int encodeLeftCount = 0;
+	private byte[] encodeHead = new byte[HEAD_SIZE];
+	private Random encodeRandom = null;
+	private byte[] encodeLeftByte = new byte[GROUP_SIZE];
+	private int encodeLeftCount = 0;
 
-   private byte[] decodeHead = new byte[HEAD_SIZE];
-   private Random decodeRandom = null;
-   private byte[] decodeLeftByte = new byte[HEAD_SIZE];
-   private int decodeLeftCount = 0;
+	private byte[] decodeHead = new byte[HEAD_SIZE];
+	private Random decodeRandom = null;
+	private byte[] decodeLeftByte = new byte[HEAD_SIZE];
+	private int decodeLeftCount = 0;
 
-   public TimeRandomShift(byte[] key)
-   {
-      long tempSeed = 2006L;
-      for (int i = 0; i < key.length; i++)
-      {
-         tempSeed ^= ((long) (key[i] & 0xff)) << ((i % 12) * 5);
-      }
-      Random r = new Random(tempSeed);
-      r.nextBytes(this.enKey);
-   }
+	public TimeRandomShift(byte[] key)
+	{
+		long tempSeed = 2006L;
+		for (int i = 0; i < key.length; i++)
+		{
+			tempSeed ^= ((long) (key[i] & 0xff)) << ((i % 12) * 5);
+		}
+		Random r = new Random(tempSeed);
+		r.nextBytes(this.enKey);
+	}
 
-   public TimeRandomShift(byte[] key, int infoLocal)
-   {
-      this(key);
-      this.infoLocal = infoLocal & 0xf;
-   }
+	public TimeRandomShift(byte[] key, int infoLocal)
+	{
+		this(key);
+		this.infoLocal = infoLocal & 0xf;
+	}
 
-   private TimeRandomShift(TimeRandomShift src)
-   {
-      this.enKey = src.enKey;
-      this.infoLocal = src.infoLocal;
-   }
+	private TimeRandomShift(TimeRandomShift src)
+	{
+		this.enKey = src.enKey;
+		this.infoLocal = src.infoLocal;
+	}
 
-   public Coder createNew()
-   {
-      return new TimeRandomShift(this);
-   }
+	public Coder createNew()
+	{
+		return new TimeRandomShift(this);
+	}
 
-   public void clear()
-   {
-      this.encodeLeftCount = 0;
-      this.encodeRandom = null;
-      this.decodeLeftCount = 0;
-      this.decodeRandom = null;
-   }
+	public void clear()
+	{
+		this.encodeLeftCount = 0;
+		this.encodeRandom = null;
+		this.decodeLeftCount = 0;
+		this.decodeRandom = null;
+	}
 
-   public byte[] decode(byte[] des)
-   {
-      if (des.length < 16)
-      {
-         throw new IllegalArgumentException("The byte array length at least be 16.");
-      }
-      return this.decode(des, true);
-   }
+	public byte[] decode(byte[] des)
+	{
+		if (des.length < 16)
+		{
+			throw new IllegalArgumentException("The byte array length at least be 16.");
+		}
+		return this.decode(des, true);
+	}
 
-   public byte[] encode(byte[] buf, boolean over)
-   {
-      int aLen = buf.length + this.encodeLeftCount;
-      int numFullGroups = aLen / GROUP_SIZE;
-      int numBytesLeft = aLen - GROUP_SIZE * numFullGroups;
-      int resultLen = !over ? GROUP_SIZE * numFullGroups
-            : (this.encodeRandom == null && aLen < GROUP_SIZE ? GROUP_SIZE : aLen);
-      byte[] result = null;
-      if (resultLen == 0)
-      {
-         if (buf.length > 0)
-         {
-            System.arraycopy(buf, 0, this.encodeLeftByte,
-                  this.encodeLeftCount, buf.length);
-            this.encodeLeftCount += buf.length;
-         }
-         result = EMPTY_BYTE_ARRAY;
-      }
-      else
-      {
-         int srcOffset = 0;
-         int desOffset = 0;
-         if (this.encodeRandom == null)
-         {
-            // ¶Ôhead½øĞĞ±àÂë
-            resultLen += GROUP_SIZE;
-            result = new byte[resultLen];
-            int realCount = GROUP_SIZE;
-            if (aLen < GROUP_SIZE)
-            {
-               if (buf.length > 0)
-               {
-                  System.arraycopy(buf, 0, this.encodeLeftByte,
-                        this.encodeLeftCount, buf.length);
-                  this.encodeLeftCount += buf.length;
-                  srcOffset += buf.length;
-                  Arrays.fill(this.encodeLeftByte, this.encodeLeftCount, GROUP_SIZE, (byte) 0);
-               }
-               // Èç¹ûÔÚ³õÊ¼»¯headÊ±, ³¤¶È²»×ã8, ÔòËµÃ÷ÊÇ×Ö½ÚÁ÷½áÊøÁË
-               numBytesLeft = 0;
-               realCount = aLen;
-            }
-            else
-            {
-               srcOffset = GROUP_SIZE - this.encodeLeftCount;
-               System.arraycopy(buf, 0, this.encodeLeftByte,
-                     this.encodeLeftCount, srcOffset);
-            }
-            this.en_head(this.encodeLeftByte, result, realCount);
-            desOffset += HEAD_SIZE;
-            this.encodeLeftCount = 0;
-            numFullGroups--;
-         }
-         else
-         {
-            result = new byte[resultLen];
-         }
+	public byte[] encode(byte[] buf, boolean over)
+	{
+		int aLen = buf.length + this.encodeLeftCount;
+		int numFullGroups = aLen / GROUP_SIZE;
+		int numBytesLeft = aLen - GROUP_SIZE * numFullGroups;
+		int resultLen = !over ? GROUP_SIZE * numFullGroups
+				: (this.encodeRandom == null && aLen < GROUP_SIZE ? GROUP_SIZE : aLen);
+		byte[] result = null;
+		if (resultLen == 0)
+		{
+			if (buf.length > 0)
+			{
+				System.arraycopy(buf, 0, this.encodeLeftByte,
+						this.encodeLeftCount, buf.length);
+				this.encodeLeftCount += buf.length;
+			}
+			result = EMPTY_BYTE_ARRAY;
+		}
+		else
+		{
+			int srcOffset = 0;
+			int desOffset = 0;
+			if (this.encodeRandom == null)
+			{
+				// å¯¹headè¿›è¡Œç¼–ç 
+				resultLen += GROUP_SIZE;
+				result = new byte[resultLen];
+				int realCount = GROUP_SIZE;
+				if (aLen < GROUP_SIZE)
+				{
+					if (buf.length > 0)
+					{
+						System.arraycopy(buf, 0, this.encodeLeftByte,
+								this.encodeLeftCount, buf.length);
+						this.encodeLeftCount += buf.length;
+						srcOffset += buf.length;
+						Arrays.fill(this.encodeLeftByte, this.encodeLeftCount, GROUP_SIZE, (byte) 0);
+					}
+					// å¦‚æœåœ¨åˆå§‹åŒ–headæ—¶, é•¿åº¦ä¸è¶³8, åˆ™è¯´æ˜æ˜¯å­—èŠ‚æµç»“æŸäº†
+					numBytesLeft = 0;
+					realCount = aLen;
+				}
+				else
+				{
+					srcOffset = GROUP_SIZE - this.encodeLeftCount;
+					System.arraycopy(buf, 0, this.encodeLeftByte,
+							this.encodeLeftCount, srcOffset);
+				}
+				this.en_head(this.encodeLeftByte, result, realCount);
+				desOffset += HEAD_SIZE;
+				this.encodeLeftCount = 0;
+				numFullGroups--;
+			}
+			else
+			{
+				result = new byte[resultLen];
+			}
 
-         IntegerRef ref = new IntegerRef(this.encodeLeftCount);
-         this.f_datas(buf, srcOffset, result, desOffset, this.encodeLeftByte, ref,
-               true, over, numFullGroups, numBytesLeft);
-         this.encodeLeftCount = ref.value;
-      }
-      if (over)
-      {
-         this.encodeLeftCount = 0;
-         this.encodeRandom = null;
-      }
-      return result;
-   }
+			IntegerRef ref = new IntegerRef(this.encodeLeftCount);
+			this.f_datas(buf, srcOffset, result, desOffset, this.encodeLeftByte, ref,
+					true, over, numFullGroups, numBytesLeft);
+			this.encodeLeftCount = ref.value;
+		}
+		if (over)
+		{
+			this.encodeLeftCount = 0;
+			this.encodeRandom = null;
+		}
+		return result;
+	}
 
-   public byte[] decode(byte[] buf, boolean over)
-   {
-      int aLen = buf.length + this.decodeLeftCount;
-      byte[] result = null;
-      if ((!over && aLen < GROUP_SIZE)
-            || (this.decodeRandom == null && aLen < HEAD_SIZE))
-      {
-         if (buf.length != 0)
-         {
-            System.arraycopy(buf, 0, this.decodeLeftByte,
-                  this.decodeLeftCount, buf.length);
-            this.decodeLeftCount += buf.length;
-         }
-         result = EMPTY_BYTE_ARRAY;
-      }
-      else
-      {
-         int numFullGroups = aLen / GROUP_SIZE;
-         int numBytesLeft = aLen - GROUP_SIZE * numFullGroups;
-         int resultLen = over ? aLen : GROUP_SIZE * numFullGroups;
-         int desOffset = 0;
-         int srcOffset = 0;
-         if (this.decodeRandom == null)
-         {
-            resultLen -= GROUP_SIZE;
-            result = new byte[resultLen];
-            // ¶Ôhead½øĞĞ½âÂë
-            if (this.decodeLeftCount < HEAD_SIZE)
-            {
-               desOffset = HEAD_SIZE - this.decodeLeftCount;
-               System.arraycopy(buf, 0, this.decodeLeftByte,
-                     this.decodeLeftCount, desOffset);
-            }
-            int realCount = this.de_head(this.decodeLeftByte, result);
-            if (realCount < GROUP_SIZE)
-            {
-               // Èç¹ûÔÚ³õÊ¼»¯headÊ±, ·µ»ØµÄ³¤¶È²»×ã8, ÔòËµÃ÷ÊÇÔ­×Ö½Ú²»×ã8Î»
-               byte[] temp = new byte[realCount];
-               System.arraycopy(result, 0, temp, 0, realCount);
-               result = temp;
-            }
-            srcOffset += realCount;
-            this.decodeLeftCount = 0;
-            numFullGroups -= 2;;
-         }
-         else
-         {
-            result = new byte[resultLen];
-         }
+	public byte[] decode(byte[] buf, boolean over)
+	{
+		int aLen = buf.length + this.decodeLeftCount;
+		byte[] result = null;
+		if ((!over && aLen < GROUP_SIZE)
+				|| (this.decodeRandom == null && aLen < HEAD_SIZE))
+		{
+			if (buf.length != 0)
+			{
+				System.arraycopy(buf, 0, this.decodeLeftByte,
+						this.decodeLeftCount, buf.length);
+				this.decodeLeftCount += buf.length;
+			}
+			result = EMPTY_BYTE_ARRAY;
+		}
+		else
+		{
+			int numFullGroups = aLen / GROUP_SIZE;
+			int numBytesLeft = aLen - GROUP_SIZE * numFullGroups;
+			int resultLen = over ? aLen : GROUP_SIZE * numFullGroups;
+			int desOffset = 0;
+			int srcOffset = 0;
+			if (this.decodeRandom == null)
+			{
+				resultLen -= GROUP_SIZE;
+				result = new byte[resultLen];
+				// å¯¹headè¿›è¡Œè§£ç 
+				if (this.decodeLeftCount < HEAD_SIZE)
+				{
+					desOffset = HEAD_SIZE - this.decodeLeftCount;
+					System.arraycopy(buf, 0, this.decodeLeftByte,
+							this.decodeLeftCount, desOffset);
+				}
+				int realCount = this.de_head(this.decodeLeftByte, result);
+				if (realCount < GROUP_SIZE)
+				{
+					// å¦‚æœåœ¨åˆå§‹åŒ–headæ—¶, è¿”å›çš„é•¿åº¦ä¸è¶³8, åˆ™è¯´æ˜æ˜¯åŸå­—èŠ‚ä¸è¶³8ä½
+					byte[] temp = new byte[realCount];
+					System.arraycopy(result, 0, temp, 0, realCount);
+					result = temp;
+				}
+				srcOffset += realCount;
+				this.decodeLeftCount = 0;
+				numFullGroups -= 2;;
+			}
+			else
+			{
+				result = new byte[resultLen];
+			}
 
-         IntegerRef ref = new IntegerRef(this.decodeLeftCount);
-         this.f_datas(buf, desOffset, result, srcOffset, this.decodeLeftByte, ref,
-               false, over, numFullGroups, numBytesLeft);
-         this.decodeLeftCount = ref.value;
-      }
-      if (over)
-      {
-         this.decodeLeftCount = 0;
-         this.decodeRandom = null;
-      }
-      return result;
-   }
+			IntegerRef ref = new IntegerRef(this.decodeLeftCount);
+			this.f_datas(buf, desOffset, result, srcOffset, this.decodeLeftByte, ref,
+					false, over, numFullGroups, numBytesLeft);
+			this.decodeLeftCount = ref.value;
+		}
+		if (over)
+		{
+			this.decodeLeftCount = 0;
+			this.decodeRandom = null;
+		}
+		return result;
+	}
 
-   private void f_datas(byte[] buf, int bufOffset, byte[] result, int rOffset,
-         byte[] codeBuf, IntegerRef leftCount, boolean en_or_dn, boolean over,
-         int numFullGroups, int numBytesLeft)
-   {
-      int leftNum = leftCount.value;
-      // ´¦ÀíÇ°ÃæÁôÏÂÀ´µÄÒ»Ğ©×Ö½Ú
-      if (leftNum > 0)
-      {
-         if (numFullGroups >= 1)
-         {
-            bufOffset = GROUP_SIZE - leftNum;
-            System.arraycopy(buf, 0, codeBuf, leftNum, bufOffset);
-            this.f_data(codeBuf, 0, result, rOffset, en_or_dn, GROUP_SIZE);
-            numFullGroups--;
-            rOffset += GROUP_SIZE;
-            leftNum = 0;
-         }
-      }
+	private void f_datas(byte[] buf, int bufOffset, byte[] result, int rOffset,
+			byte[] codeBuf, IntegerRef leftCount, boolean en_or_dn, boolean over,
+			int numFullGroups, int numBytesLeft)
+	{
+		int leftNum = leftCount.value;
+		// å¤„ç†å‰é¢ç•™ä¸‹æ¥çš„ä¸€äº›å­—èŠ‚
+		if (leftNum > 0)
+		{
+			if (numFullGroups >= 1)
+			{
+				bufOffset = GROUP_SIZE - leftNum;
+				System.arraycopy(buf, 0, codeBuf, leftNum, bufOffset);
+				this.f_data(codeBuf, 0, result, rOffset, en_or_dn, GROUP_SIZE);
+				numFullGroups--;
+				rOffset += GROUP_SIZE;
+				leftNum = 0;
+			}
+		}
 
-      for (int i = 0; i < numFullGroups; i++)
-      {
-         this.f_data(buf, bufOffset, result, rOffset, en_or_dn, GROUP_SIZE);
-         bufOffset += GROUP_SIZE;
-         rOffset += GROUP_SIZE;
-      }
-      if (numBytesLeft != 0)
-      {
-         System.arraycopy(buf, bufOffset, codeBuf, leftNum, numBytesLeft - leftNum);
-         leftNum = numBytesLeft;
-         if (over)
-         {
-            this.f_data(codeBuf, 0, result, rOffset, en_or_dn, numBytesLeft);
-            rOffset += numBytesLeft;
-         }
-      }
-      leftCount.value = leftNum;
-   }
+		for (int i = 0; i < numFullGroups; i++)
+		{
+			this.f_data(buf, bufOffset, result, rOffset, en_or_dn, GROUP_SIZE);
+			bufOffset += GROUP_SIZE;
+			rOffset += GROUP_SIZE;
+		}
+		if (numBytesLeft != 0)
+		{
+			System.arraycopy(buf, bufOffset, codeBuf, leftNum, numBytesLeft - leftNum);
+			leftNum = numBytesLeft;
+			if (over)
+			{
+				this.f_data(codeBuf, 0, result, rOffset, en_or_dn, numBytesLeft);
+				rOffset += numBytesLeft;
+			}
+		}
+		leftCount.value = leftNum;
+	}
 
-   /**
-    * ¶ÔÒ»×é8×Ö½ÚÒÔÄÚ³¤µÄÊı¾İ½øĞĞ±àÂë»ò½âÂë²Ù×÷.
-    * Èç¹û³¤¶È²»×ã8×Ö½Ú. ÔòËµÃ÷ÊÇ×îºóÒ»×é.
-    */
-   private void f_data(byte[] src, int srcOffset, byte[] des, int desOffset,
-         boolean en_or_dn, int count)
-   {
-      Random r = en_or_dn ? this.encodeRandom : this.decodeRandom;
-      byte[] head = en_or_dn ? this.encodeHead : this.decodeHead;
-      boolean swap = r.nextInt(2) != 0;
-      int xorIndex = r.nextInt(HEAD_SIZE);
-      int keyIndex = r.nextInt(KEY_SIZE);
-      int tkey = r.nextInt(); // Éú³ÉÒÆÎ»ÓÃµÄÃÜÔ¿
-      if (count == GROUP_SIZE)
-      {
-         if (!en_or_dn)   // Èç¹ûÊÇ½âÂë, ÔòÏÈ½øĞĞÒì»ò
-         {
-            System.arraycopy(src, srcOffset, this.tempBuf, 0, GROUP_SIZE);
-            this.f_xor(this.tempBuf, 0, GROUP_SIZE, en_or_dn, head, xorIndex, keyIndex);
-            src = this.tempBuf;
-            srcOffset = 0;
-         }
-         if (swap)
-         {
-            f_32_13(src, srcOffset, des, desOffset + 4, tkey, en_or_dn);
-            f_32_13(src, srcOffset + 4, des, desOffset, tkey, en_or_dn);
-         }
-         else
-         {
-            f_32_13(src, srcOffset, des, desOffset, tkey, en_or_dn);
-            f_32_13(src, srcOffset + 4, des, desOffset + 4, tkey, en_or_dn);
-         }
-         if (en_or_dn)   // Èç¹ûÊÇ±àÂë, Ôòºó½øĞĞÒì»ò
-         {
-            this.f_xor(des, desOffset, GROUP_SIZE, en_or_dn, head, xorIndex, keyIndex);
-         }
-      }
-      else if (count >= 4)
-      {
-         if (!en_or_dn)   // Èç¹ûÊÇ½âÂë, ÔòÏÈ½øĞĞÒì»ò
-         {
-            System.arraycopy(src, srcOffset, this.tempBuf, 0, 4);
-            this.f_xor(this.tempBuf, 0, 4, en_or_dn, head, xorIndex, keyIndex);
-            if (swap)
-            {
-               this.tempBuf[5] = this.tempBuf[1];
-               this.tempBuf[1] = this.tempBuf[2];
-               this.tempBuf[2] = this.tempBuf[5];
-            }
-            f_32_13(this.tempBuf, 0, des, desOffset, tkey, en_or_dn);
-         }
-         else
-         {
-            f_32_13(src, srcOffset, des, desOffset, tkey, en_or_dn);
-            if (swap)
-            {
-               this.tempBuf[0] = des[desOffset + 1];
-               des[desOffset + 1] = des[desOffset + 2];
-               des[desOffset + 2] = this.tempBuf[0];
-            }
-            this.f_xor(des, desOffset, 4, en_or_dn, head, xorIndex, keyIndex);
-         }
-         if (count > 4)
-         {
-            this.f_data(src, srcOffset + 4, des, desOffset + 4, en_or_dn, count - 4);
-         }
-      }
-      else
-      {
-         System.arraycopy(src, srcOffset, des, desOffset, count);
-         if (!en_or_dn)
-         {
-            this.f_xor(des, desOffset, count, en_or_dn, head, xorIndex, keyIndex);
-         }
-         if (swap && count > 1)
-         {
-            this.tempBuf[0] = des[desOffset];
-            des[desOffset] = des[desOffset + 1];
-            des[desOffset + 1] = this.tempBuf[0];
-         }
-         if (en_or_dn)
-         {
-            this.f_xor(des, desOffset, count, en_or_dn, head, xorIndex, keyIndex);
-         }
-      }
-   }
+	/**
+	 * å¯¹ä¸€ç»„8å­—èŠ‚ä»¥å†…é•¿çš„æ•°æ®è¿›è¡Œç¼–ç æˆ–è§£ç æ“ä½œ.
+	 * å¦‚æœé•¿åº¦ä¸è¶³8å­—èŠ‚. åˆ™è¯´æ˜æ˜¯æœ€åä¸€ç»„.
+	 */
+	private void f_data(byte[] src, int srcOffset, byte[] des, int desOffset,
+			boolean en_or_dn, int count)
+	{
+		Random r = en_or_dn ? this.encodeRandom : this.decodeRandom;
+		byte[] head = en_or_dn ? this.encodeHead : this.decodeHead;
+		boolean swap = r.nextInt(2) != 0;
+		int xorIndex = r.nextInt(HEAD_SIZE);
+		int keyIndex = r.nextInt(KEY_SIZE);
+		int tkey = r.nextInt(); // ç”Ÿæˆç§»ä½ç”¨çš„å¯†é’¥
+		if (count == GROUP_SIZE)
+		{
+			if (!en_or_dn)   // å¦‚æœæ˜¯è§£ç , åˆ™å…ˆè¿›è¡Œå¼‚æˆ–
+			{
+				System.arraycopy(src, srcOffset, this.tempBuf, 0, GROUP_SIZE);
+				this.f_xor(this.tempBuf, 0, GROUP_SIZE, en_or_dn, head, xorIndex, keyIndex);
+				src = this.tempBuf;
+				srcOffset = 0;
+			}
+			if (swap)
+			{
+				f_32_13(src, srcOffset, des, desOffset + 4, tkey, en_or_dn);
+				f_32_13(src, srcOffset + 4, des, desOffset, tkey, en_or_dn);
+			}
+			else
+			{
+				f_32_13(src, srcOffset, des, desOffset, tkey, en_or_dn);
+				f_32_13(src, srcOffset + 4, des, desOffset + 4, tkey, en_or_dn);
+			}
+			if (en_or_dn)   // å¦‚æœæ˜¯ç¼–ç , åˆ™åè¿›è¡Œå¼‚æˆ–
+			{
+				this.f_xor(des, desOffset, GROUP_SIZE, en_or_dn, head, xorIndex, keyIndex);
+			}
+		}
+		else if (count >= 4)
+		{
+			if (!en_or_dn)   // å¦‚æœæ˜¯è§£ç , åˆ™å…ˆè¿›è¡Œå¼‚æˆ–
+			{
+				System.arraycopy(src, srcOffset, this.tempBuf, 0, 4);
+				this.f_xor(this.tempBuf, 0, 4, en_or_dn, head, xorIndex, keyIndex);
+				if (swap)
+				{
+					this.tempBuf[5] = this.tempBuf[1];
+					this.tempBuf[1] = this.tempBuf[2];
+					this.tempBuf[2] = this.tempBuf[5];
+				}
+				f_32_13(this.tempBuf, 0, des, desOffset, tkey, en_or_dn);
+			}
+			else
+			{
+				f_32_13(src, srcOffset, des, desOffset, tkey, en_or_dn);
+				if (swap)
+				{
+					this.tempBuf[0] = des[desOffset + 1];
+					des[desOffset + 1] = des[desOffset + 2];
+					des[desOffset + 2] = this.tempBuf[0];
+				}
+				this.f_xor(des, desOffset, 4, en_or_dn, head, xorIndex, keyIndex);
+			}
+			if (count > 4)
+			{
+				this.f_data(src, srcOffset + 4, des, desOffset + 4, en_or_dn, count - 4);
+			}
+		}
+		else
+		{
+			System.arraycopy(src, srcOffset, des, desOffset, count);
+			if (!en_or_dn)
+			{
+				this.f_xor(des, desOffset, count, en_or_dn, head, xorIndex, keyIndex);
+			}
+			if (swap && count > 1)
+			{
+				this.tempBuf[0] = des[desOffset];
+				des[desOffset] = des[desOffset + 1];
+				des[desOffset + 1] = this.tempBuf[0];
+			}
+			if (en_or_dn)
+			{
+				this.f_xor(des, desOffset, count, en_or_dn, head, xorIndex, keyIndex);
+			}
+		}
+	}
 
-   private void f_xor(byte buf[], int off, int count, boolean en_or_de,
-         byte[] head, int headIndex, int keyIndex)
-   {
-      byte tempb = 0;
-      for (int i = 0; i < count; i++)
-      {
-         if (!en_or_de)
-         {
-            tempb = buf[off + i];
-         }
-         buf[off + i] ^= head[headIndex++] ^ this.enKey[keyIndex++];
-         if (headIndex == HEAD_SIZE)
-         {
-            headIndex = 0;
-         }
-         if (keyIndex == KEY_SIZE)
-         {
-            keyIndex = 0;
-         }
-         if (en_or_de)
-         {
-            tempb = buf[off + i];
-         }
-         head[headIndex++] = tempb;
-         if (headIndex == HEAD_SIZE)
-         {
-            headIndex = 0;
-         }
-      }
-   }
+	private void f_xor(byte buf[], int off, int count, boolean en_or_de,
+			byte[] head, int headIndex, int keyIndex)
+	{
+		byte tempb = 0;
+		for (int i = 0; i < count; i++)
+		{
+			if (!en_or_de)
+			{
+				tempb = buf[off + i];
+			}
+			buf[off + i] ^= head[headIndex++] ^ this.enKey[keyIndex++];
+			if (headIndex == HEAD_SIZE)
+			{
+				headIndex = 0;
+			}
+			if (keyIndex == KEY_SIZE)
+			{
+				keyIndex = 0;
+			}
+			if (en_or_de)
+			{
+				tempb = buf[off + i];
+			}
+			head[headIndex++] = tempb;
+			if (headIndex == HEAD_SIZE)
+			{
+				headIndex = 0;
+			}
+		}
+	}
 
-   /**
-    * ±ØĞë±£Ö¤ÊäÈë×Ö½ÚÁ÷srcµÄ³¤¶È²»ÉÙÓÚ8, Êä³ö×Ö½ÚÁ÷desµÄ³¤¶È²»Ğ¡ÓÚ16.
-    */
-   private void en_head(byte[] src, byte[] des, int realCount)
-   {
-      // ²úÉúrandomµÄseed, Ö»Ê¹ÓÃ56Î»×÷Îªseed
-      long seed = System.currentTimeMillis();
-      long tempL = ((long) (this.enKey[14] & 0xff)) << 49;
-      for (int i = 0; i < GROUP_SIZE; i++)
-      {
-         tempL ^= (((long) (src[i] & 0xff)) << (i * 8 + 3))
-               | (((long) (this.enKey[i * 2 + 1] & 0xff)) << (i * 5));
-      }
-      seed = (seed ^ tempL) & SEED_MASK;
-      // ½«seed´æÈëºó7¸ö×Ö½Ú, µÚÒ»¸ö×Ö½Ú´æµÚÒ»×éµÄ×Ö½ÚÊıºÍÊ¹ÓÃÃÜÔ¿µÄÆğÊ¼Î»ÖÃµÈ
-      byte[] tempArr = new byte[GROUP_SIZE];
-      for (int i = 0; i < 7; i++)
-      {
-         tempArr[i + 1] = (byte) ((seed >>> (i * 8)) & 0xff);
-      }
-      //System.out.println("seed en:" + seed + " " + Long.toHexString(seed));
-      Random r = new Random(seed);
-      this.encodeRandom = r;
-      boolean srcFirst = r.nextInt(2) != 0;
-      int keyIndex = r.nextInt(8);
-      tempArr[0] = (byte) (realCount | (keyIndex << 4) | (srcFirst ? 0x80 : 0));
-      int tkey = r.nextInt(); // Éú³ÉÒÆÎ»ÓÃµÄÃÜÔ¿
-      for (int i = 4; i < 7; i++)
-      {
-         tkey ^= (this.enKey[i * 2] & 0xff) << ((i - 4) * 8 + 7);
-      }
-      // ÏÈ½øĞĞ±àÂë, ±àÂëºóÔÙÓëÃÜÔ¿Òì»ò, ×îºó¸´ÖÆµ½des×Ö½ÚÁ÷ÖĞ
-      f_32_13(src, 4, this.encodeHead, 0, tkey, true);
-      if (srcFirst)
-      {
-         f_32_13(src, 0, this.encodeHead, 4, tkey, true);
-         System.arraycopy(tempArr, 4, this.encodeHead, 8, 4);
-      }
-      else
-      {
-         System.arraycopy(tempArr, 4, this.encodeHead, 4, 4);
-         f_32_13(src, 0, this.encodeHead, 8, tkey, true);
-      }
-      System.arraycopy(tempArr, 0, this.encodeHead, 12, 4);
-      for (int i = 0; i < HEAD_SIZE; i++)
-      {
-         if (i != 12)
-         {
-            this.encodeHead[i] ^= this.enKey[keyIndex++];
-         }
-         if (keyIndex == KEY_SIZE)
-         {
-            keyIndex = 0;
-         }
-      }
-      // ¼ÓÃÜĞÅÏ¢×Ö½Ú
-      this.encodeHead[12] ^= this.enKey[2] ^ this.enKey[4] ^ this.enKey[6]
-            ^ this.enKey[8] ^ this.encodeHead[1] ^ this.encodeHead[3];
-      //System.out.print("head en:");
-      //Tester.printByte(this.encodeHead);
+	/**
+	 * å¿…é¡»ä¿è¯è¾“å…¥å­—èŠ‚æµsrcçš„é•¿åº¦ä¸å°‘äº8, è¾“å‡ºå­—èŠ‚æµdesçš„é•¿åº¦ä¸å°äº16.
+	 */
+	private void en_head(byte[] src, byte[] des, int realCount)
+	{
+		// äº§ç”Ÿrandomçš„seed, åªä½¿ç”¨56ä½ä½œä¸ºseed
+		long seed = System.currentTimeMillis();
+		long tempL = ((long) (this.enKey[14] & 0xff)) << 49;
+		for (int i = 0; i < GROUP_SIZE; i++)
+		{
+			tempL ^= (((long) (src[i] & 0xff)) << (i * 8 + 3))
+					| (((long) (this.enKey[i * 2 + 1] & 0xff)) << (i * 5));
+		}
+		seed = (seed ^ tempL) & SEED_MASK;
+		// å°†seedå­˜å…¥å7ä¸ªå­—èŠ‚, ç¬¬ä¸€ä¸ªå­—èŠ‚å­˜ç¬¬ä¸€ç»„çš„å­—èŠ‚æ•°å’Œä½¿ç”¨å¯†é’¥çš„èµ·å§‹ä½ç½®ç­‰
+		byte[] tempArr = new byte[GROUP_SIZE];
+		for (int i = 0; i < 7; i++)
+		{
+			tempArr[i + 1] = (byte) ((seed >>> (i * 8)) & 0xff);
+		}
+		//System.out.println("seed en:" + seed + " " + Long.toHexString(seed));
+		Random r = new Random(seed);
+		this.encodeRandom = r;
+		boolean srcFirst = r.nextInt(2) != 0;
+		int keyIndex = r.nextInt(8);
+		tempArr[0] = (byte) (realCount | (keyIndex << 4) | (srcFirst ? 0x80 : 0));
+		int tkey = r.nextInt(); // ç”Ÿæˆç§»ä½ç”¨çš„å¯†é’¥
+		for (int i = 4; i < 7; i++)
+		{
+			tkey ^= (this.enKey[i * 2] & 0xff) << ((i - 4) * 8 + 7);
+		}
+		// å…ˆè¿›è¡Œç¼–ç , ç¼–ç åå†ä¸å¯†é’¥å¼‚æˆ–, æœ€åå¤åˆ¶åˆ°deså­—èŠ‚æµä¸­
+		f_32_13(src, 4, this.encodeHead, 0, tkey, true);
+		if (srcFirst)
+		{
+			f_32_13(src, 0, this.encodeHead, 4, tkey, true);
+			System.arraycopy(tempArr, 4, this.encodeHead, 8, 4);
+		}
+		else
+		{
+			System.arraycopy(tempArr, 4, this.encodeHead, 4, 4);
+			f_32_13(src, 0, this.encodeHead, 8, tkey, true);
+		}
+		System.arraycopy(tempArr, 0, this.encodeHead, 12, 4);
+		for (int i = 0; i < HEAD_SIZE; i++)
+		{
+			if (i != 12)
+			{
+				this.encodeHead[i] ^= this.enKey[keyIndex++];
+			}
+			if (keyIndex == KEY_SIZE)
+			{
+				keyIndex = 0;
+			}
+		}
+		// åŠ å¯†ä¿¡æ¯å­—èŠ‚
+		this.encodeHead[12] ^= this.enKey[2] ^ this.enKey[4] ^ this.enKey[6]
+				^ this.enKey[8] ^ this.encodeHead[1] ^ this.encodeHead[3];
+		//System.out.print("head en:");
+		//Tester.printByte(this.encodeHead);
 
-      if (this.infoLocal != 12)
-      {
-         // ĞÅÏ¢×Ö½ÚÎ»ÖÃ²»ÔÚ12, ½øĞĞ½»»»
-         byte tmp = this.encodeHead[12];
-         this.encodeHead[12] = this.encodeHead[this.infoLocal];
-         this.encodeHead[this.infoLocal] = tmp;
-      }
-      System.arraycopy(this.encodeHead, 0, des, 0, HEAD_SIZE);
-   }
+		if (this.infoLocal != 12)
+		{
+			// ä¿¡æ¯å­—èŠ‚ä½ç½®ä¸åœ¨12, è¿›è¡Œäº¤æ¢
+			byte tmp = this.encodeHead[12];
+			this.encodeHead[12] = this.encodeHead[this.infoLocal];
+			this.encodeHead[this.infoLocal] = tmp;
+		}
+		System.arraycopy(this.encodeHead, 0, des, 0, HEAD_SIZE);
+	}
 
-   /**
-    * ±ØĞë±£Ö¤ÊäÈë×Ö½ÚÁ÷desµÄ³¤¶È²»ÉÙÓÚ16, Êä³ö×Ö½ÚÁ÷srcµÄ³¤¶È²»Ğ¡ÓÚ8.
-    *
-    * @return    Êµ¼ÊÓĞĞ§µÄ×Ö½ÚÊı
-    */
-   private int de_head(byte[] des, byte[] src)
-   {
-      System.arraycopy(des, 0, this.decodeHead, 0, HEAD_SIZE);
-      if (this.infoLocal != 12)
-      {
-         // ĞÅÏ¢×Ö½ÚÎ»ÖÃ²»ÔÚ12, ½«Æä»»»Ø12
-         byte tmp = this.decodeHead[12];
-         this.decodeHead[12] = this.decodeHead[this.infoLocal];
-         this.decodeHead[this.infoLocal] = tmp;
-      }
+	/**
+	 * å¿…é¡»ä¿è¯è¾“å…¥å­—èŠ‚æµdesçš„é•¿åº¦ä¸å°‘äº16, è¾“å‡ºå­—èŠ‚æµsrcçš„é•¿åº¦ä¸å°äº8.
+	 *
+	 * @return    å®é™…æœ‰æ•ˆçš„å­—èŠ‚æ•°
+	 */
+	private int de_head(byte[] des, byte[] src)
+	{
+		System.arraycopy(des, 0, this.decodeHead, 0, HEAD_SIZE);
+		if (this.infoLocal != 12)
+		{
+			// ä¿¡æ¯å­—èŠ‚ä½ç½®ä¸åœ¨12, å°†å…¶æ¢å›12
+			byte tmp = this.decodeHead[12];
+			this.decodeHead[12] = this.decodeHead[this.infoLocal];
+			this.decodeHead[this.infoLocal] = tmp;
+		}
 
-      //System.out.print("head de:");
-      //Tester.printByte(this.decodeHead);
-      // ´ÓµÚ12¸ö×Ö½ÚÖĞÌáÈ¡ĞÅÏ¢
-      byte info = (byte) (this.decodeHead[12] ^ this.enKey[2] ^ this.enKey[4] ^ this.enKey[6]
-            ^ this.enKey[8] ^ this.decodeHead[1] ^ this.decodeHead[3]);
-      //System.out.println("info:" + Integer.toHexString(info & 0xff));
-      boolean srcFirst = info < 0;  // Ğ¡ÓÚ0±íÊ¾×Ö½ÚµÄµÚÒ»Î»Îª1
-      int keyIndex = (info >>> 4) & 0x7;
-      int realCount = info & 0xf;
-      // ½øĞĞÒì»ò½âÂë, ²¢´Ó½âÂëµÄÊı¾İÖĞ»ñÈ¡randomµÄseed
-      byte[] tempArr = new byte[HEAD_SIZE];
-      for (int i = 0; i < HEAD_SIZE; i++)
-      {
-         if (i != 12)
-         {
-            tempArr[i] = (byte) (this.decodeHead[i] ^ this.enKey[keyIndex++]);
-         }
-         if (keyIndex == KEY_SIZE)
-         {
-            keyIndex = 0;
-         }
-      }
-      long seed = 0L;
-      for (int i = 0; i < 3; i++)
-      {
-         seed |= (tempArr[13 + i] & 0xff) << (i * 8);
-      }
-      int start = (srcFirst ? 8 : 4) - 3;
-      for (int i = 3; i < 7; i++)
-      {
-         seed |= ((long) (tempArr[start + i] & 0xff)) << (i * 8);
-      }
-      //System.out.println("seed de:" + seed + " " + Long.toHexString(seed));
-      // ¸ù¾İseedÉú³Érandom, ²¢¶ÔÊı¾İÇø½øĞĞ½âÂë, ·ÅÈësrc×Ö½ÚÁ÷ÖĞ
-      Random r = new Random(seed);
-      this.decodeRandom = r;
-      r.nextInt(2);  // Ó¦¸ÃµÈÓÚ srcFirst (!= 0)
-      //System.out.println(r.nextInt(2) + " " + srcFirst);
-      r.nextInt(8);  // Ó¦¸ÃµÈÓÚ keyIndex
-      //System.out.println(r.nextInt(8) + " " + ((info >>> 4) & 0x7));
-      int tkey = r.nextInt(); // Éú³ÉÒÆÎ»ÓÃµÄÃÜÔ¿
-      for (int i = 4; i < 7; i++)
-      {
-         tkey ^= (this.enKey[i * 2] & 0xff) << ((i - 4) * 8 + 7);
-      }
-      f_32_13(tempArr, 0, src, 4, tkey, false);
-      if (srcFirst)
-      {
-         f_32_13(tempArr, 4, src, 0, tkey, false);
-      }
-      else
-      {
-         f_32_13(tempArr, 8, src, 0, tkey, false);
-      }
+		//System.out.print("head de:");
+		//Tester.printByte(this.decodeHead);
+		// ä»ç¬¬12ä¸ªå­—èŠ‚ä¸­æå–ä¿¡æ¯
+		byte info = (byte) (this.decodeHead[12] ^ this.enKey[2] ^ this.enKey[4] ^ this.enKey[6]
+				^ this.enKey[8] ^ this.decodeHead[1] ^ this.decodeHead[3]);
+		//System.out.println("info:" + Integer.toHexString(info & 0xff));
+		boolean srcFirst = info < 0;  // å°äº0è¡¨ç¤ºå­—èŠ‚çš„ç¬¬ä¸€ä½ä¸º1
+		int keyIndex = (info >>> 4) & 0x7;
+		int realCount = info & 0xf;
+		// è¿›è¡Œå¼‚æˆ–è§£ç , å¹¶ä»è§£ç çš„æ•°æ®ä¸­è·å–randomçš„seed
+		byte[] tempArr = new byte[HEAD_SIZE];
+		for (int i = 0; i < HEAD_SIZE; i++)
+		{
+			if (i != 12)
+			{
+				tempArr[i] = (byte) (this.decodeHead[i] ^ this.enKey[keyIndex++]);
+			}
+			if (keyIndex == KEY_SIZE)
+			{
+				keyIndex = 0;
+			}
+		}
+		long seed = 0L;
+		for (int i = 0; i < 3; i++)
+		{
+			seed |= (tempArr[13 + i] & 0xff) << (i * 8);
+		}
+		int start = (srcFirst ? 8 : 4) - 3;
+		for (int i = 3; i < 7; i++)
+		{
+			seed |= ((long) (tempArr[start + i] & 0xff)) << (i * 8);
+		}
+		//System.out.println("seed de:" + seed + " " + Long.toHexString(seed));
+		// æ ¹æ®seedç”Ÿæˆrandom, å¹¶å¯¹æ•°æ®åŒºè¿›è¡Œè§£ç , æ”¾å…¥srcå­—èŠ‚æµä¸­
+		Random r = new Random(seed);
+		this.decodeRandom = r;
+		r.nextInt(2);  // åº”è¯¥ç­‰äº srcFirst (!= 0)
+		//System.out.println(r.nextInt(2) + " " + srcFirst);
+		r.nextInt(8);  // åº”è¯¥ç­‰äº keyIndex
+		//System.out.println(r.nextInt(8) + " " + ((info >>> 4) & 0x7));
+		int tkey = r.nextInt(); // ç”Ÿæˆç§»ä½ç”¨çš„å¯†é’¥
+		for (int i = 4; i < 7; i++)
+		{
+			tkey ^= (this.enKey[i * 2] & 0xff) << ((i - 4) * 8 + 7);
+		}
+		f_32_13(tempArr, 0, src, 4, tkey, false);
+		if (srcFirst)
+		{
+			f_32_13(tempArr, 4, src, 0, tkey, false);
+		}
+		else
+		{
+			f_32_13(tempArr, 8, src, 0, tkey, false);
+		}
 
-      if (this.infoLocal != 12)
-      {
-         // ĞÅÏ¢×Ö½ÚÎ»ÖÃ²»ÔÚ12, ½«head±ä»Ø½»»»ºóµÄÑù×Ó
-         byte tmp = this.decodeHead[12];
-         this.decodeHead[12] = this.decodeHead[this.infoLocal];
-         this.decodeHead[this.infoLocal] = tmp;
-      }
-      return realCount;
-   }
+		if (this.infoLocal != 12)
+		{
+			// ä¿¡æ¯å­—èŠ‚ä½ç½®ä¸åœ¨12, å°†headå˜å›äº¤æ¢åçš„æ ·å­
+			byte tmp = this.decodeHead[12];
+			this.decodeHead[12] = this.decodeHead[this.infoLocal];
+			this.decodeHead[this.infoLocal] = tmp;
+		}
+		return realCount;
+	}
 
-   /**
-    * ½«srcÖĞ´ÓsrcOffset¿ªÊ¼µÄ4¸ö×Ö½ÚµÄÖµ×óÒÆ»òÓÒÒÆ13Î»,
-    * ·ÅÈëdesÖĞµÄdesOffset´¦.
-    */
-   private static void f_32_13(byte[] src, int srcOffset, byte[] des, int desOffset,
-         int randomKey, boolean turnLeft)
-   {
-      int x = (src[srcOffset] & 0xff) | ((src[srcOffset + 1] & 0xff) << 8)
-            | ((src[srcOffset + 2] & 0xff) << 16) | ((src[srcOffset + 3] & 0xff) << 24);
-      if (turnLeft)
-      {
-         x = x << 13 | x >>> 19;
-         x ^= randomKey;
-      }
-      else
-      {
-         x ^= randomKey;
-         x = x << 19 | x >>> 13;
-      }
-      des[desOffset] = (byte) (x & 0xff);
-      des[desOffset + 1] = (byte) ((x >>> 8) & 0xff);
-      des[desOffset + 2] = (byte) ((x >>> 16) & 0xff);
-      des[desOffset + 3] = (byte) ((x >>> 24) & 0xff);
-   }
+	/**
+	 * å°†srcä¸­ä»srcOffsetå¼€å§‹çš„4ä¸ªå­—èŠ‚çš„å€¼å·¦ç§»æˆ–å³ç§»13ä½,
+	 * æ”¾å…¥desä¸­çš„desOffsetå¤„.
+	 */
+	private static void f_32_13(byte[] src, int srcOffset, byte[] des, int desOffset,
+			int randomKey, boolean turnLeft)
+	{
+		int x = (src[srcOffset] & 0xff) | ((src[srcOffset + 1] & 0xff) << 8)
+				| ((src[srcOffset + 2] & 0xff) << 16) | ((src[srcOffset + 3] & 0xff) << 24);
+		if (turnLeft)
+		{
+			x = x << 13 | x >>> 19;
+			x ^= randomKey;
+		}
+		else
+		{
+			x ^= randomKey;
+			x = x << 19 | x >>> 13;
+		}
+		des[desOffset] = (byte) (x & 0xff);
+		des[desOffset + 1] = (byte) ((x >>> 8) & 0xff);
+		des[desOffset + 2] = (byte) ((x >>> 16) & 0xff);
+		des[desOffset + 3] = (byte) ((x >>> 24) & 0xff);
+	}
 
 }

@@ -8,154 +8,154 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * ÉèÖÃ¶ÔÏóµÄÊôĞÔÖµ{key, value}¶Ô.
+ * è®¾ç½®å¯¹è±¡çš„å±æ€§å€¼{key, value}å¯¹.
  *
  * @author micromagic@sina.com
  */
 public class AttributeSetRule extends MyRule
 {
-   /**
-    * Èç¹ûvalueµÄÊôĞÔÎª<code>$useBodyText</code>, ÔòĞèÒªÊ¹ÓÃbodyÖĞµÄÎÄ±¾×÷ÎªvalueÖµ.
-    */
-   public static final String USE_BODY_TEXT = "$useBodyText";
+	/**
+	 * å¦‚æœvalueçš„å±æ€§ä¸º<code>$useBodyText</code>, åˆ™éœ€è¦ä½¿ç”¨bodyä¸­çš„æ–‡æœ¬ä½œä¸ºvalueå€¼.
+	 */
+	public static final String USE_BODY_TEXT = "$useBodyText";
 
-   /**
-    * Èç¹ûvalueµÄÊôĞÔÎª<code>$useBodyText.NO_trimLine</code>, ÔòĞèÒªÊ¹ÓÃbodyÖĞµÄÎÄ±¾
-    * ×÷ÎªvalueÖµ, ²¢ÇÒ²»¶ÔÃ¿Ò»ĞĞ½øĞĞÈ¥³ıÁ½±ß¿Õ¸ñµÄ´¦Àí.
-    */
-   public static final String USE_BODY_TEXT_NOTRIMLINE = "$useBodyText.NO_trimLine";
+	/**
+	 * å¦‚æœvalueçš„å±æ€§ä¸º<code>$useBodyText.NO_trimLine</code>, åˆ™éœ€è¦ä½¿ç”¨bodyä¸­çš„æ–‡æœ¬
+	 * ä½œä¸ºvalueå€¼, å¹¶ä¸”ä¸å¯¹æ¯ä¸€è¡Œè¿›è¡Œå»é™¤ä¸¤è¾¹ç©ºæ ¼çš„å¤„ç†.
+	 */
+	public static final String USE_BODY_TEXT_NOTRIMLINE = "$useBodyText.NO_trimLine";
 
-   /**
-    * Èç¹ûvalueµÄÊôĞÔÎª<code>$useBodyText.NO_line</code>, ÔòĞèÒªÊ¹ÓÃbodyÖĞµÄÎÄ±¾
-    * ×÷ÎªvalueÖµ, ²¢ÇÒ½«ËùÓĞµÄ»»ĞĞÌæ»»³É¿Õ¸ñ.
-    */
-   public static final String USE_BODY_TEXT_NOLINE = "$useBodyText.NO_line";
+	/**
+	 * å¦‚æœvalueçš„å±æ€§ä¸º<code>$useBodyText.NO_line</code>, åˆ™éœ€è¦ä½¿ç”¨bodyä¸­çš„æ–‡æœ¬
+	 * ä½œä¸ºvalueå€¼, å¹¶ä¸”å°†æ‰€æœ‰çš„æ¢è¡Œæ›¿æ¢æˆç©ºæ ¼.
+	 */
+	public static final String USE_BODY_TEXT_NOLINE = "$useBodyText.NO_line";
 
-   private String method;
-   private String attributeNameTag;
-   private String attributeValueTag;
-   private Class valueType;
+	private String method;
+	private String attributeNameTag;
+	private String attributeValueTag;
+	private Class valueType;
 
-   private String name = null;
-   private String value = null;
-   private String bodyValue = null;
-   private Object object = null;
-   private boolean trimLine = true;
-   private boolean noLine = false;
+	private String name = null;
+	private String value = null;
+	private String bodyValue = null;
+	private Object object = null;
+	private boolean trimLine = true;
+	private boolean noLine = false;
 
 	private String needResolveAttributeName;
 	private boolean needResolve;
 	private boolean textNeedResolve;
 
-   /**
-    * Ä¬ÈÏµÄ¹¹Ôìº¯Êı. <p>
-    * Ä¬ÈÏµ÷ÓÃµÄ·½·¨ÃûÎªsetAttribute
-    * Ä¬ÈÏ¶ÁÈ¡µÄÊôĞÔÃûÎªnameºÍvalue
-    */
-   public AttributeSetRule()
-   {
-      this.method = "setAttribute";
-      this.attributeNameTag = "name";
-      this.attributeValueTag = "value";
-      this.valueType = Object.class;
-   }
-
-   /**
-    * ¶¨ÖÆµ÷ÓÃµÄ·½·¨ºÍ¶ÁÈ¡µÄÊôĞÔÃû.
-    *
-    * @param method              µ÷ÓÃµÄ·½·¨Ãû
-    * @param attributeNameTag    ¶ÁÈ¡ÉèÖÃÃû³ÆµÄÊôĞÔÃû
-    * @param attributeValueTag   ¶ÁÈ¡ÉèÖÃÖµµÄÊôĞÔÃû
-    * @param valueType           ÉèÖÃµÄÖµµÄÀàĞÍ
-    */
-   public AttributeSetRule(String method, String attributeNameTag, String attributeValueTag,
-         Class valueType)
-   {
-      this.method = method;
-      this.attributeNameTag = attributeNameTag;
-      this.attributeValueTag = attributeValueTag;
-      this.valueType = valueType;
-   }
+	/**
+	 * é»˜è®¤çš„æ„é€ å‡½æ•°. <p>
+	 * é»˜è®¤è°ƒç”¨çš„æ–¹æ³•åä¸ºsetAttribute
+	 * é»˜è®¤è¯»å–çš„å±æ€§åä¸ºnameå’Œvalue
+	 */
+	public AttributeSetRule()
+	{
+		this.method = "setAttribute";
+		this.attributeNameTag = "name";
+		this.attributeValueTag = "value";
+		this.valueType = Object.class;
+	}
 
 	/**
-	 * ÉèÖÃÊÇ·ñĞèÒª´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ.
+	 * å®šåˆ¶è°ƒç”¨çš„æ–¹æ³•å’Œè¯»å–çš„å±æ€§å.
 	 *
-	 * @param attributeName  ÉèÖÃÊÇ·ñĞèÒª´¦ÀíµÄÊôĞÔÃû
-	 * @param defaultValue   Ä¬ÈÏÖµ, Èç¹ûÎ´µ÷ÓÃ´Ë·½·¨, ´ËÖµÎªfalse
+	 * @param method              è°ƒç”¨çš„æ–¹æ³•å
+	 * @param attributeNameTag    è¯»å–è®¾ç½®åç§°çš„å±æ€§å
+	 * @param attributeValueTag   è¯»å–è®¾ç½®å€¼çš„å±æ€§å
+	 * @param valueType           è®¾ç½®çš„å€¼çš„ç±»å‹
 	 */
-   public void setNeedResolve(String attributeName, boolean defaultValue)
-   {
-      this.needResolveAttributeName = attributeName;
-      this.needResolve = defaultValue;
-   }
+	public AttributeSetRule(String method, String attributeNameTag, String attributeValueTag,
+			Class valueType)
+	{
+		this.method = method;
+		this.attributeNameTag = attributeNameTag;
+		this.attributeValueTag = attributeValueTag;
+		this.valueType = valueType;
+	}
 
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String theName = attributes.getValue(this.attributeNameTag);
-      if (theName == null)
-      {
-         throw new InvalidAttributesException("Not fount the attribute '" + this.attributeNameTag + "'.");
-      }
-      String value = attributes.getValue(this.attributeValueTag);
-      if (value == null)
-      {
-         throw new InvalidAttributesException("Not fount the attribute '" + this.attributeValueTag + "'.");
-      }
+	/**
+	 * è®¾ç½®æ˜¯å¦éœ€è¦å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§.
+	 *
+	 * @param attributeName  è®¾ç½®æ˜¯å¦éœ€è¦å¤„ç†çš„å±æ€§å
+	 * @param defaultValue   é»˜è®¤å€¼, å¦‚æœæœªè°ƒç”¨æ­¤æ–¹æ³•, æ­¤å€¼ä¸ºfalse
+	 */
+	public void setNeedResolve(String attributeName, boolean defaultValue)
+	{
+		this.needResolveAttributeName = attributeName;
+		this.needResolve = defaultValue;
+	}
+
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String theName = attributes.getValue(this.attributeNameTag);
+		if (theName == null)
+		{
+			throw new InvalidAttributesException("Not fount the attribute '" + this.attributeNameTag + "'.");
+		}
+		String value = attributes.getValue(this.attributeValueTag);
+		if (value == null)
+		{
+			throw new InvalidAttributesException("Not fount the attribute '" + this.attributeValueTag + "'.");
+		}
 		if (this.needResolveAttributeName != null)
 		{
 			String tmp = attributes.getValue(this.needResolveAttributeName);
 			this.textNeedResolve = tmp == null ? this.needResolve : "true".equalsIgnoreCase(tmp);
 		}
-      this.name = StringTool.intern(theName);
-      this.value = this.textNeedResolve ? Utility.resolveDynamicPropnames(value) : value;
-      this.bodyValue = null;
-      this.object = this.digester.peek();
-      this.useBodyText = false;
-      this.trimLine = true;
-      this.noLine = false;
-      if (USE_BODY_TEXT.equals(this.value))
-      {
-         this.useBodyText = true;
-      }
-      else if (USE_BODY_TEXT_NOTRIMLINE.equals(this.value))
-      {
-         this.trimLine = false;
-         this.useBodyText = true;
-      }
-      else if (USE_BODY_TEXT_NOLINE.equals(this.value))
-      {
-         this.noLine = true;
-         this.useBodyText = true;
-      }
-   }
+		this.name = StringTool.intern(theName);
+		this.value = this.textNeedResolve ? Utility.resolveDynamicPropnames(value) : value;
+		this.bodyValue = null;
+		this.object = this.digester.peek();
+		this.useBodyText = false;
+		this.trimLine = true;
+		this.noLine = false;
+		if (USE_BODY_TEXT.equals(this.value))
+		{
+			this.useBodyText = true;
+		}
+		else if (USE_BODY_TEXT_NOTRIMLINE.equals(this.value))
+		{
+			this.trimLine = false;
+			this.useBodyText = true;
+		}
+		else if (USE_BODY_TEXT_NOLINE.equals(this.value))
+		{
+			this.noLine = true;
+			this.useBodyText = true;
+		}
+	}
 
-   public void myBody(String namespace, String name, BodyText text)
-         throws Exception
-   {
+	public void myBody(String namespace, String name, BodyText text)
+			throws Exception
+	{
 		String str = this.trimLine ? text.trimEveryLineSpace(this.noLine) : text.toString();
-      this.bodyValue = this.textNeedResolve ? Utility.resolveDynamicPropnames(str) : str;
-   }
+		this.bodyValue = this.textNeedResolve ? Utility.resolveDynamicPropnames(str) : str;
+	}
 
-   public void myEnd(String namespace, String name) throws Exception
-   {
-      if (this.bodyValue != null)
-      {
-         this.value = this.bodyValue;
-      }
-      try
-      {
-         String theValue = StringTool.intern(this.value, true);
-         Tool.invokeExactMethod(this.object, this.method,
-               new Object[]{this.name, theValue}, new Class[]{String.class, this.valueType});
-      }
-      catch (Exception ex)
-      {
-         FactoryManager.log.error("Method invoke error. method:" + this.method + "  param:(Stirng, "
-               +  ClassGenerator.getClassName(this.valueType) + ")  obj:" + this.object.getClass()
-               + "  value:(" + this.name + ", " + this.value + ")");
-         throw ex;
-      }
-   }
+	public void myEnd(String namespace, String name) throws Exception
+	{
+		if (this.bodyValue != null)
+		{
+			this.value = this.bodyValue;
+		}
+		try
+		{
+			String theValue = StringTool.intern(this.value, true);
+			Tool.invokeExactMethod(this.object, this.method,
+					new Object[]{this.name, theValue}, new Class[]{String.class, this.valueType});
+		}
+		catch (Exception ex)
+		{
+			FactoryManager.log.error("Method invoke error. method:" + this.method + "  param:(Stirng, "
+					+  ClassGenerator.getClassName(this.valueType) + ")  obj:" + this.object.getClass()
+					+ "  value:(" + this.name + ", " + this.value + ")");
+			throw ex;
+		}
+	}
 
 }

@@ -15,180 +15,180 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.security.PermissionSet;
 
 public class ConstantValueReader extends AbstractGenerator
-      implements ResultReader, ResultReaderGenerator
+		implements ResultReader, ResultReaderGenerator
 {
-   private int width = -1;
-   private String caption = null;
+	private int width = -1;
+	private String caption = null;
 
-   protected boolean htmlFilter = true;
-   protected boolean visible = true;
+	protected boolean htmlFilter = true;
+	protected boolean visible = true;
 
-   protected PermissionSet permissionSet = null;
-   protected String theValue = "";
+	protected PermissionSet permissionSet = null;
+	protected String theValue = "";
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createReader();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createReader();
+	}
 
-   public ResultReader createReader()
-   {
-      return this;
-   }
+	public ResultReader createReader()
+	{
+		return this;
+	}
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      this.theValue = (String) this.getAttribute("value");
-      if (this.permissionSet != null)
-      {
-         this.permissionSet.initialize(factory);
-      }
-      if (this.caption == null)
-      {
-         this.caption = Tool.translateCaption(factory, this.getName());
-      }
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		this.theValue = (String) this.getAttribute("value");
+		if (this.permissionSet != null)
+		{
+			this.permissionSet.initialize(factory);
+		}
+		if (this.caption == null)
+		{
+			this.caption = Tool.translateCaption(factory, this.getName());
+		}
+	}
 
-   public int getType()
-   {
-      return TypeManager.TYPE_STRING;
-   }
+	public int getType()
+	{
+		return TypeManager.TYPE_STRING;
+	}
 
-   public boolean isIgnore()
-   {
-      return false;
-   }
+	public boolean isIgnore()
+	{
+		return false;
+	}
 
-   public String getFormatName()
-   {
-      return null;
-   }
+	public String getFormatName()
+	{
+		return null;
+	}
 
-   public ResultFormat getFormat()
-   {
-      return null;
-   }
+	public ResultFormat getFormat()
+	{
+		return null;
+	}
 
-   public String getOrderName()
-   {
-      return null;
-   }
+	public String getOrderName()
+	{
+		return null;
+	}
 
-   public String getColumnName()
-   {
-      return this.name;
-   }
+	public String getColumnName()
+	{
+		return this.name;
+	}
 
-   public int getColumnIndex()
-   {
-      return -1;
-   }
+	public int getColumnIndex()
+	{
+		return -1;
+	}
 
-   public void setHtmlFilter(boolean filter)
-   {
-      this.htmlFilter = filter;
-   }
+	public void setHtmlFilter(boolean filter)
+	{
+		this.htmlFilter = filter;
+	}
 
-   public boolean needHtmlFilter()
-   {
-      return this.htmlFilter;
-   }
+	public boolean needHtmlFilter()
+	{
+		return this.htmlFilter;
+	}
 
-   public void setVisible(boolean visible)
-   {
-      this.visible = visible;
-   }
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
+	}
 
-   public boolean isVisible()
-   {
-      return this.visible;
-   }
+	public boolean isVisible()
+	{
+		return this.visible;
+	}
 
-   public boolean isValid()
-   {
-      return true;
-   }
+	public boolean isValid()
+	{
+		return true;
+	}
 
-   public boolean isUseColumnName()
-   {
-      return true;
-   }
+	public boolean isUseColumnName()
+	{
+		return true;
+	}
 
-   public boolean isUseColumnIndex()
-   {
-      return false;
-   }
+	public boolean isUseColumnIndex()
+	{
+		return false;
+	}
 
-   public void setPermissions(String permissions)
-   {
-      if (permissions == null || permissions.trim().length() == 0)
-      {
-         return;
-      }
-      this.permissionSet = new PermissionSet(
-            StringTool.separateString(permissions, ",", true));
-   }
+	public void setPermissions(String permissions)
+	{
+		if (permissions == null || permissions.trim().length() == 0)
+		{
+			return;
+		}
+		this.permissionSet = new PermissionSet(
+				StringTool.separateString(permissions, ",", true));
+	}
 
-   public PermissionSet getPermissionSet()
-   {
-      return this.permissionSet;
-   }
+	public PermissionSet getPermissionSet()
+	{
+		return this.permissionSet;
+	}
 
-   public void setCaption(String caption)
-   {
-      this.caption = caption;
-   }
+	public void setCaption(String caption)
+	{
+		this.caption = caption;
+	}
 
-   public String getFilledCaption()
-   {
-      if (this.caption == null)
-      {
-         return this.isUseColumnIndex() ?
-               "col_" + this.getColumnIndex() : this.getColumnName();
-      }
-      return this.caption;
-   }
+	public String getFilledCaption()
+	{
+		if (this.caption == null)
+		{
+			return this.isUseColumnIndex() ?
+					"col_" + this.getColumnIndex() : this.getColumnName();
+		}
+		return this.caption;
+	}
 
-   public String getCaption()
-   {
-      return this.caption;
-   }
+	public String getCaption()
+	{
+		return this.caption;
+	}
 
-   public void setWidth(int width)
-   {
-      this.width = width;
-   }
+	public void setWidth(int width)
+	{
+		this.width = width;
+	}
 
-   public int getWidth()
-   {
-      return this.width;
-   }
+	public int getWidth()
+	{
+		return this.width;
+	}
 
-   public Object readResult(ResultSet rs)
-   {
-      return this.theValue;
-   }
+	public Object readResult(ResultSet rs)
+	{
+		return this.theValue;
+	}
 
-   public Object readCall(CallableStatement call, int index)
-   {
-      return this.theValue;
-   }
+	public Object readCall(CallableStatement call, int index)
+	{
+		return this.theValue;
+	}
 
-   public Object readObject(Object obj)
-   {
-      return this.theValue;
-   }
+	public Object readObject(Object obj)
+	{
+		return this.theValue;
+	}
 
-   public void setColumnName(String columnName) {}
+	public void setColumnName(String columnName) {}
 
-   public void setColumnIndex(int columnIndex) {}
+	public void setColumnIndex(int columnIndex) {}
 
-   public void setOrderName(String orderName) {}
+	public void setOrderName(String orderName) {}
 
-   public void setFormatName(String name) {}
+	public void setFormatName(String name) {}
 
-   public void setType(String type) {}
+	public void setType(String type) {}
 
 }

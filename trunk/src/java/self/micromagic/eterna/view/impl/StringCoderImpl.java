@@ -15,35 +15,35 @@ import self.micromagic.util.StringTool;
  * @author micromagic@sina.com
  */
 public class StringCoderImpl
-      implements StringCoder
+		implements StringCoder
 {
-   /**
-    * ½âÎöÃû³ÆµÄ×î´ó³¤¶È.
-    */
-   protected static final int MAX_PARSE_LENGTH = 32;
+	/**
+	 * è§£æžåç§°çš„æœ€å¤§é•¿åº¦.
+	 */
+	protected static final int MAX_PARSE_LENGTH = 32;
 
 	/**
-	 * ×Ö·û×Öµä±íµÄ³ß´ç.
+	 * å­—ç¬¦å­—å…¸è¡¨çš„å°ºå¯¸.
 	 */
 	protected static final int CHAR_TABLE_SIZE = 128;
 
 	/**
-	 * JSONµÄÌØÊâ×Ö·û.
+	 * JSONçš„ç‰¹æ®Šå­—ç¬¦.
 	 */
 	protected static final String[] ESCAPES_JSON = new String[CHAR_TABLE_SIZE];
 
 	/**
-	 * HTMLµÄÌØÊâ×Ö·û.
+	 * HTMLçš„ç‰¹æ®Šå­—ç¬¦.
 	 */
 	protected static final String[] ESCAPES_HTML = new String[CHAR_TABLE_SIZE];
 
 	/**
-	 * ÓÐÐ§µÄÃû³Æ×Ö·û.
+	 * æœ‰æ•ˆçš„åç§°å­—ç¬¦.
 	 */
 	protected static final boolean[] VALID_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
 
 	/**
-	 * ÓÐÐ§µÄÆðÊ¼Ãû³Æ×Ö·û.
+	 * æœ‰æ•ˆçš„èµ·å§‹åç§°å­—ç¬¦.
 	 */
 	protected static final boolean[] VALID_FIRST_NAME_CHARS = new boolean[CHAR_TABLE_SIZE];
 
@@ -92,34 +92,34 @@ public class StringCoderImpl
 		}
 	}
 
-   public void initStringCoder(EternaFactory factory)
-         throws ConfigurationException
-   {
-   }
+	public void initStringCoder(EternaFactory factory)
+			throws ConfigurationException
+	{
+	}
 
-   public String parseJsonRefName(String str)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      if (str.length() > MAX_PARSE_LENGTH)
-      {
-         return "[\"" + this.toJsonString(str) + "\"]";
-      }
-      for (int i = 0; i < str.length(); i++)
-      {
-         char c = str.charAt(i);
-         if (!this.isValidNameChar(c, i == 0))
-         {
-            return "[\"" + this.toJsonString(str) + "\"]";
-         }
-      }
-      return "." + this.toJsonString(str);
-   }
+	public String parseJsonRefName(String str)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		if (str.length() > MAX_PARSE_LENGTH)
+		{
+			return "[\"" + this.toJsonString(str) + "\"]";
+		}
+		for (int i = 0; i < str.length(); i++)
+		{
+			char c = str.charAt(i);
+			if (!this.isValidNameChar(c, i == 0))
+			{
+				return "[\"" + this.toJsonString(str) + "\"]";
+			}
+		}
+		return "." + this.toJsonString(str);
+	}
 
-   protected boolean isValidNameChar(char c, boolean first)
-   {
+	protected boolean isValidNameChar(char c, boolean first)
+	{
 		if (first)
 		{
 			return c < CHAR_TABLE_SIZE ? VALID_FIRST_NAME_CHARS[c]: false;
@@ -128,58 +128,58 @@ public class StringCoderImpl
 		{
 			return c < CHAR_TABLE_SIZE ? VALID_NAME_CHARS[c]: false;
 		}
-   }
+	}
 
-   public String toHTML(String str)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      StringAppender temp = null;
-      int modifyCount = 0;
+	public String toHTML(String str)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
 		int len = str.length();
-      for (int i = 0; i < len; i++)
-      {
-         char c = str.charAt(i);
-         String appendStr = null;
+		for (int i = 0; i < len; i++)
+		{
+			char c = str.charAt(i);
+			String appendStr = null;
 			if (c < CHAR_TABLE_SIZE && (appendStr = ESCAPES_HTML[c]) != null)
 			{
 				modifyCount++;
 			}
-         if (modifyCount == 1)
-         {
-            temp = StringTool.createStringAppender(str.length() + 16);
-            temp.append(str.substring(0, i));
-            //ÕâÀï½«modifyCountµÄ¸öÊýÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌÐø½øÈëÕâ¸ö³õÊ¼»¯
-            modifyCount++;
-         }
-         if (modifyCount > 0)
-         {
-            if (appendStr == null)
-            {
-               temp.append(c);
-            }
-            else
-            {
-               temp.append(appendStr);
-            }
-         }
-      }
-      return temp == null ? str : temp.toString();
-   }
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16);
+				temp.append(str.substring(0, i));
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢žåŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append(c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
 
-   public void toHTML(Writer out, String str)
-         throws IOException
-   {
-      if (str == null)
-      {
-         return;
-      }
+	public void toHTML(Writer out, String str)
+			throws IOException
+	{
+		if (str == null)
+		{
+			return;
+		}
 		int len = str.length();
-      for (int i = 0; i < len; i++)
-      {
-         char c = str.charAt(i);
+		for (int i = 0; i < len; i++)
+		{
+			char c = str.charAt(i);
 			if (c < CHAR_TABLE_SIZE && ESCAPES_HTML[c] != null)
 			{
 				out.write(ESCAPES_HTML[c]);
@@ -188,57 +188,57 @@ public class StringCoderImpl
 			{
 				out.write(c);
 			}
-      }
-   }
+		}
+	}
 
-   public String toJsonString(String str)
-   {
-      if (str == null)
-      {
-         return "";
-      }
-      StringAppender temp = null;
-      int modifyCount = 0;
+	public String toJsonString(String str)
+	{
+		if (str == null)
+		{
+			return "";
+		}
+		StringAppender temp = null;
+		int modifyCount = 0;
 		int len = str.length();
-      for (int i = 0; i < len; i++)
-      {
-         char c = str.charAt(i);
-         String appendStr = null;
+		for (int i = 0; i < len; i++)
+		{
+			char c = str.charAt(i);
+			String appendStr = null;
 			if (c < CHAR_TABLE_SIZE && (appendStr = ESCAPES_JSON[c]) != null)
 			{
 				modifyCount++;
 			}
-         if (modifyCount == 1)
-         {
-            temp = StringTool.createStringAppender(str.length() + 16);
-            temp.append(str.substring(0, i));
-            //ÕâÀï½«modifyCountµÄ¸öÊýÔö¼Ó, ·ÀÖ¹ÏÂÒ»´Îµ÷ÓÃÊ¹Ëû¼ÌÐø½øÈëÕâ¸ö³õÊ¼»¯
-            modifyCount++;
-         }
-         if (modifyCount > 0)
-         {
-            if (appendStr == null)
-            {
-               temp.append(c);
-            }
-            else
-            {
-               temp.append(appendStr);
-            }
-         }
-      }
-      return temp == null ? str : temp.toString();
-   }
+			if (modifyCount == 1)
+			{
+				temp = StringTool.createStringAppender(str.length() + 16);
+				temp.append(str.substring(0, i));
+				//è¿™é‡Œå°†modifyCountçš„ä¸ªæ•°å¢žåŠ , é˜²æ­¢ä¸‹ä¸€æ¬¡è°ƒç”¨ä½¿ä»–ç»§ç»­è¿›å…¥è¿™ä¸ªåˆå§‹åŒ–
+				modifyCount++;
+			}
+			if (modifyCount > 0)
+			{
+				if (appendStr == null)
+				{
+					temp.append(c);
+				}
+				else
+				{
+					temp.append(appendStr);
+				}
+			}
+		}
+		return temp == null ? str : temp.toString();
+	}
 
-   public void toJsonString(Writer out, String str)
-         throws IOException
-   {
-      if (str == null)
-      {
-         return;
-      }
+	public void toJsonString(Writer out, String str)
+			throws IOException
+	{
+		if (str == null)
+		{
+			return;
+		}
 		this.toJsonStringWithoutCheck(out, str);
-   }
+	}
 
 	public void toJsonStringWithoutCheck(Writer out, String str)
 			throws IOException
@@ -278,9 +278,9 @@ public class StringCoderImpl
 			}
 		}
 		int startOutPos = 0;
-      for (int i = 0; i < len; i++)
-      {
-         char c = str.charAt(i);
+		for (int i = 0; i < len; i++)
+		{
+			char c = str.charAt(i);
 			if (c < CHAR_TABLE_SIZE && ESCAPES_JSON[c] != null)
 			{
 				if (startOutPos < i)
@@ -290,7 +290,7 @@ public class StringCoderImpl
 				out.write(ESCAPES_JSON[c]);
 				startOutPos = i + 1;
 			}
-      }
+		}
 		if (startOutPos < len)
 		{
 			out.write(str, startOutPos, len - startOutPos);
@@ -311,10 +311,10 @@ public class StringCoderImpl
 	}
 
 
-   /**
-    * µ±×Ö·ûÔÚ100ÒÔÉÏÊ±, Ê¹ÓÃ·´Éäµ÷»ñÈ¡charÊý×é±ÈÊ¹ÓÃcharAt¸ü¿ì.
-    */
-   private static final int REFLECT_GET_GAP = 100;
+	/**
+	 * å½“å­—ç¬¦åœ¨100ä»¥ä¸Šæ—¶, ä½¿ç”¨åå°„è°ƒèŽ·å–charæ•°ç»„æ¯”ä½¿ç”¨charAtæ›´å¿«.
+	 */
+	private static final int REFLECT_GET_GAP = 100;
 
 	private static class StringInfo
 	{

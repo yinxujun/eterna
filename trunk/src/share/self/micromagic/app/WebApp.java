@@ -33,182 +33,182 @@ import self.micromagic.util.container.ValueContainerMap;
 
 public interface WebApp
 {
-   public static final Log log = Utility.createLog("app");
+	public static final Log log = Utility.createLog("app");
 
-   public static final String DEFAULT_MODEL_TAG = "defaultModel";
-   public static final String VIEW_TAG = "self.micromagic.view";
-   public static final String APPDATA_TAG = "self.micromagic.appData";
+	public static final String DEFAULT_MODEL_TAG = "defaultModel";
+	public static final String VIEW_TAG = "self.micromagic.view";
+	public static final String APPDATA_TAG = "self.micromagic.appData";
 
-   public static final QueryTool queryTool = new QueryTool();
-   public static final AppTool appTool = new AppTool();
+	public static final QueryTool queryTool = new QueryTool();
+	public static final AppTool appTool = new AppTool();
 
-   public static final String SERVER_ROOT_TAG = "self.micromagic.server.contextRoot";
+	public static final String SERVER_ROOT_TAG = "self.micromagic.server.contextRoot";
 
-   public static final String SESSION_SECURITY_MANAGER = "self.micromagic.security.manager.";
-   public static final String SECURITY_NAME = "security";
-   public static final String NORIGHT_PAGE = "noright";
-   public static final String ERROR_PAGE = "error";
-   public static final String ERROR_404 = "error404";
-   public static final String MESSAGE_PAGE = "message";
-   public static final String LIST_PAGE = "list";
-   public static final String EXCEL_PAGE = "excel";
-   public static final String LIST_METHOD = "listMethod";
+	public static final String SESSION_SECURITY_MANAGER = "self.micromagic.security.manager.";
+	public static final String SECURITY_NAME = "security";
+	public static final String NORIGHT_PAGE = "noright";
+	public static final String ERROR_PAGE = "error";
+	public static final String ERROR_404 = "error404";
+	public static final String MESSAGE_PAGE = "message";
+	public static final String LIST_PAGE = "list";
+	public static final String EXCEL_PAGE = "excel";
+	public static final String LIST_METHOD = "listMethod";
 
-   public static final String PERFORM_IN_APPLICATION = Utility.getProperty(
-         "self.micromagic.app_perform", "do");
-   public static final String METHOD_NAME = Utility.getProperty(
-         "self.micromagic.method_name", "method");
+	public static final String PERFORM_IN_APPLICATION = Utility.getProperty(
+			"self.micromagic.app_perform", "do");
+	public static final String METHOD_NAME = Utility.getProperty(
+			"self.micromagic.method_name", "method");
 
-   public static class AppTool
-   {
-      /**
-       * Ê¹ÓÃÒ»¸öMap¶ÔÏóÖĞµÄÊı¾İ×÷ÎªÇëÇóµÄ²ÎÊıÀ´¹¹ÔìÒ»¸öAppData.
-       *
-       * @param param   ´æ·ÅÇëÇóµÄ²ÎÊıµÄMap¶ÔÏó
-       */
-      public AppData getAppData(Map param)
-      {
-         return this.getAppData(param, 0, null);
-      }
+	public static class AppTool
+	{
+		/**
+		 * ä½¿ç”¨ä¸€ä¸ªMapå¯¹è±¡ä¸­çš„æ•°æ®ä½œä¸ºè¯·æ±‚çš„å‚æ•°æ¥æ„é€ ä¸€ä¸ªAppData.
+		 *
+		 * @param param   å­˜æ”¾è¯·æ±‚çš„å‚æ•°çš„Mapå¯¹è±¡
+		 */
+		public AppData getAppData(Map param)
+		{
+			return this.getAppData(param, 0, null);
+		}
 
-      /**
-       * Ê¹ÓÃÒ»¸öMap¶ÔÏóÖĞµÄÊı¾İ×÷ÎªÇëÇóµÄ²ÎÊıÀ´¹¹ÔìÒ»¸öAppData.
-       *
-       * @param param            ´æ·ÅÇëÇóµÄ²ÎÊıµÄMap¶ÔÏó
-       * @param appendPosition   Ìí¼Ó¶îÍâµÄµ±Ç°Î»ÖÃĞÅÏ¢
-       * @param oldAppData       Ò»¸ö³ö²Î, Èç¹û´«Èë½«»á°ÑÔ­À´µÄAppData±¸·İµ½ÀïÃæ
-       *                         Èç¹û²ÎÊı¶ÔÏóÏàÍ¬»òÔ­À´Ã»ÓĞAppData, Ôò²»»á±¸·İ
-       */
-      public AppData getAppData(Map param, int appendPosition, ObjectRef oldAppData)
-      {
-         AppData tmpData = AppData.getCurrentData();
-         if (oldAppData != null)
-         {
-            if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null
-                  && tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
-            {
-               oldAppData.setObject(tmpData);
-               tmpData = new AppData();
-               ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
-            }
-         }
-         if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
-         {
-            tmpData.clearData();
-            tmpData.position |= appendPosition;
-            tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = param == null ? new HashMap() : param;
-            tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP] = new HashMap();
-            tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP] = new HashMap();
-         }
-         return tmpData;
-      }
+		/**
+		 * ä½¿ç”¨ä¸€ä¸ªMapå¯¹è±¡ä¸­çš„æ•°æ®ä½œä¸ºè¯·æ±‚çš„å‚æ•°æ¥æ„é€ ä¸€ä¸ªAppData.
+		 *
+		 * @param param            å­˜æ”¾è¯·æ±‚çš„å‚æ•°çš„Mapå¯¹è±¡
+		 * @param appendPosition   æ·»åŠ é¢å¤–çš„å½“å‰ä½ç½®ä¿¡æ¯
+		 * @param oldAppData       ä¸€ä¸ªå‡ºå‚, å¦‚æœä¼ å…¥å°†ä¼šæŠŠåŸæ¥çš„AppDataå¤‡ä»½åˆ°é‡Œé¢
+		 *                         å¦‚æœå‚æ•°å¯¹è±¡ç›¸åŒæˆ–åŸæ¥æ²¡æœ‰AppData, åˆ™ä¸ä¼šå¤‡ä»½
+		 */
+		public AppData getAppData(Map param, int appendPosition, ObjectRef oldAppData)
+		{
+			AppData tmpData = AppData.getCurrentData();
+			if (oldAppData != null)
+			{
+				if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null
+						&& tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
+				{
+					oldAppData.setObject(tmpData);
+					tmpData = new AppData();
+					ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
+				}
+			}
+			if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != param)
+			{
+				tmpData.clearData();
+				tmpData.position |= appendPosition;
+				tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = param == null ? new HashMap() : param;
+				tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP] = new HashMap();
+				tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP] = new HashMap();
+			}
+			return tmpData;
+		}
 
-      /**
-       * Ê¹ÓÃÒ»¸öHttpServletRequest¶ÔÏóÀ´¹¹ÔìÒ»¸öAppData.
-       *
-       * @param request   ·¢ÆğÇëÇóµÄHttpServletRequest¶ÔÏó
-       */
-      public AppData getAppData(HttpServletRequest request)
-      {
-         return this.getAppData(request, 0, null);
-      }
+		/**
+		 * ä½¿ç”¨ä¸€ä¸ªHttpServletRequestå¯¹è±¡æ¥æ„é€ ä¸€ä¸ªAppData.
+		 *
+		 * @param request   å‘èµ·è¯·æ±‚çš„HttpServletRequestå¯¹è±¡
+		 */
+		public AppData getAppData(HttpServletRequest request)
+		{
+			return this.getAppData(request, 0, null);
+		}
 
-      /**
-       * Ê¹ÓÃÒ»¸öHttpServletRequest¶ÔÏóÀ´¹¹ÔìÒ»¸öAppData.
-       *
-       * @param request          ·¢ÆğÇëÇóµÄHttpServletRequest¶ÔÏó
-       * @param appendPosition   Ìí¼Ó¶îÍâµÄµ±Ç°Î»ÖÃĞÅÏ¢
-       * @param oldAppData       Ò»¸ö³ö²Î, Èç¹û´«Èë½«»á°ÑÔ­À´µÄAppData±¸·İµ½ÀïÃæ
-       *                         Èç¹ûServletRequest¶ÔÏó¶ÔÏóÏàÍ¬»òÔ­À´Ã»ÓĞAppData, Ôò²»»á±¸·İ
-       */
-      public AppData getAppData(HttpServletRequest request, int appendPosition, ObjectRef oldAppData)
-      {
-         AppData tmpData = AppData.getCurrentData();
-         if (oldAppData != null)
-         {
-            if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null && tmpData.request != request)
-            {
-               oldAppData.setObject(tmpData);
-               tmpData = new AppData();
-               ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
-            }
-         }
-         if (tmpData.request != request)
-         {
-            tmpData.clearData();
-            tmpData.position |= appendPosition;
-            tmpData.contextRoot = request.getContextPath();
-            tmpData.request = request;
-            tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
-            tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP]
-                  = ValueContainerMap.createRequestAttributeMap(request);
-            tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP]
-                  = ValueContainerMap.createSessionAttributeMap(request);
-         }
-         return tmpData;
-      }
+		/**
+		 * ä½¿ç”¨ä¸€ä¸ªHttpServletRequestå¯¹è±¡æ¥æ„é€ ä¸€ä¸ªAppData.
+		 *
+		 * @param request          å‘èµ·è¯·æ±‚çš„HttpServletRequestå¯¹è±¡
+		 * @param appendPosition   æ·»åŠ é¢å¤–çš„å½“å‰ä½ç½®ä¿¡æ¯
+		 * @param oldAppData       ä¸€ä¸ªå‡ºå‚, å¦‚æœä¼ å…¥å°†ä¼šæŠŠåŸæ¥çš„AppDataå¤‡ä»½åˆ°é‡Œé¢
+		 *                         å¦‚æœServletRequestå¯¹è±¡å¯¹è±¡ç›¸åŒæˆ–åŸæ¥æ²¡æœ‰AppData, åˆ™ä¸ä¼šå¤‡ä»½
+		 */
+		public AppData getAppData(HttpServletRequest request, int appendPosition, ObjectRef oldAppData)
+		{
+			AppData tmpData = AppData.getCurrentData();
+			if (oldAppData != null)
+			{
+				if (tmpData.maps[AppData.REQUEST_PARAMETER_MAP] != null && tmpData.request != request)
+				{
+					oldAppData.setObject(tmpData);
+					tmpData = new AppData();
+					ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, tmpData);
+				}
+			}
+			if (tmpData.request != request)
+			{
+				tmpData.clearData();
+				tmpData.position |= appendPosition;
+				tmpData.contextRoot = request.getContextPath();
+				tmpData.request = request;
+				tmpData.maps[AppData.REQUEST_PARAMETER_MAP] = request.getParameterMap();
+				tmpData.maps[AppData.REQUEST_ATTRIBUTE_MAP]
+						= ValueContainerMap.createRequestAttributeMap(request);
+				tmpData.maps[AppData.SESSION_ATTRIBUTE_MAP]
+						= ValueContainerMap.createSessionAttributeMap(request);
+			}
+			return tmpData;
+		}
 
-      /**
-       * ½«´«ÈëµÄAppData»Ö¸´µ½Ïß³ÌµÄ»º´æÖĞ.
-       *
-       * @param data  Òª»Ö¸´µÄAppData¶ÔÏó
-       */
-      public void resumeAppData(AppData data)
-      {
-         if (data != null)
-         {
-            ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, data);
-         }
-      }
+		/**
+		 * å°†ä¼ å…¥çš„AppDataæ¢å¤åˆ°çº¿ç¨‹çš„ç¼“å­˜ä¸­.
+		 *
+		 * @param data  è¦æ¢å¤çš„AppDataå¯¹è±¡
+		 */
+		public void resumeAppData(AppData data)
+		{
+			if (data != null)
+			{
+				ThreadCache.getInstance().setProperty(AppData.CACHE_NAME, data);
+			}
+		}
 
-      /**
-       * Ö´ĞĞÒ»¸ömodel.
-       *
-       * @param data         Ö´ĞĞmodelÊ±ĞèÒªÓÃµ½µÄÊı¾İ¶ÔÏó
-       * @param conn         µ±Ç°´æÔÚµÄÒ»¸öÄ¬ÈÏÊı¾İÔ´µÄÊı¾İ¿âÁ´½Ó, Èç¹ûµ±Ç°²»´æÔÚÏàÓ¦
-       *                     µÄÊı¾İ¿âÁ´½Ó, Ôò¿ÉÒÔ¸ø<code>null</code>
-       * @param factory      ÒªÖ´ĞĞµÄmodelËùÔÚµÄ¹¤³§
-       * @param modelName    ÒªÖ´ĞĞµÄmodelµÄÃû³Æ
-       * @return    modelÖ´ĞĞÍêºó, ĞèÒª×ªÏòµÄexport, Èç¹ûÖ´ĞĞµÄmodelÎ´ÉèÖÃÏàÓ¦µÄexport
-       *            Ôò·µ»Ø<code>null</code>
-       */
-      public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
-            String modelName)
-            throws ConfigurationException, SQLException, IOException
-      {
-         return this.callModel(data, conn, factory, modelName, false);
-      }
+		/**
+		 * æ‰§è¡Œä¸€ä¸ªmodel.
+		 *
+		 * @param data         æ‰§è¡Œmodelæ—¶éœ€è¦ç”¨åˆ°çš„æ•°æ®å¯¹è±¡
+		 * @param conn         å½“å‰å­˜åœ¨çš„ä¸€ä¸ªé»˜è®¤æ•°æ®æºçš„æ•°æ®åº“é“¾æ¥, å¦‚æœå½“å‰ä¸å­˜åœ¨ç›¸åº”
+		 *                     çš„æ•°æ®åº“é“¾æ¥, åˆ™å¯ä»¥ç»™<code>null</code>
+		 * @param factory      è¦æ‰§è¡Œçš„modelæ‰€åœ¨çš„å·¥å‚
+		 * @param modelName    è¦æ‰§è¡Œçš„modelçš„åç§°
+		 * @return    modelæ‰§è¡Œå®Œå, éœ€è¦è½¬å‘çš„export, å¦‚æœæ‰§è¡Œçš„modelæœªè®¾ç½®ç›¸åº”çš„export
+		 *            åˆ™è¿”å›<code>null</code>
+		 */
+		public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
+				String modelName)
+				throws ConfigurationException, SQLException, IOException
+		{
+			return this.callModel(data, conn, factory, modelName, false);
+		}
 
-      /**
-       * Ö´ĞĞÒ»¸ömodel.
-       *
-       * @param data         Ö´ĞĞmodelÊ±ĞèÒªÓÃµ½µÄÊı¾İ¶ÔÏó
-       * @param conn         µ±Ç°´æÔÚµÄÒ»¸öÄ¬ÈÏÊı¾İÔ´µÄÊı¾İ¿âÁ´½Ó, Èç¹ûµ±Ç°²»´æÔÚÏàÓ¦
-       *                     µÄÊı¾İ¿âÁ´½Ó, Ôò¿ÉÒÔ¸ø<code>null</code>
-       * @param factory      ÒªÖ´ĞĞµÄmodelËùÔÚµÄ¹¤³§
-       * @param modelName    ÒªÖ´ĞĞµÄmodelµÄÃû³Æ
-       * @param noJump       ³öÏÖ´íÎóÊ±ÊÇ·ñ²»ÓÃÌø³ö(¼´: Å×³öÒì³£), ÉèÎª<code>true</code>
-       *                     Ê±, ÈÎºÎÇé¿ö¶¼²»»áÌø³ö
-       * @return    modelÖ´ĞĞÍêºó, ĞèÒª×ªÏòµÄexport, Èç¹ûÖ´ĞĞµÄmodelÎ´ÉèÖÃÏàÓ¦µÄexport
-       *            Ôò·µ»Ø<code>null</code>
-       */
-      public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
-            String modelName, boolean noJump)
-            throws ConfigurationException, SQLException, IOException
-      {
+		/**
+		 * æ‰§è¡Œä¸€ä¸ªmodel.
+		 *
+		 * @param data         æ‰§è¡Œmodelæ—¶éœ€è¦ç”¨åˆ°çš„æ•°æ®å¯¹è±¡
+		 * @param conn         å½“å‰å­˜åœ¨çš„ä¸€ä¸ªé»˜è®¤æ•°æ®æºçš„æ•°æ®åº“é“¾æ¥, å¦‚æœå½“å‰ä¸å­˜åœ¨ç›¸åº”
+		 *                     çš„æ•°æ®åº“é“¾æ¥, åˆ™å¯ä»¥ç»™<code>null</code>
+		 * @param factory      è¦æ‰§è¡Œçš„modelæ‰€åœ¨çš„å·¥å‚
+		 * @param modelName    è¦æ‰§è¡Œçš„modelçš„åç§°
+		 * @param noJump       å‡ºç°é”™è¯¯æ—¶æ˜¯å¦ä¸ç”¨è·³å‡º(å³: æŠ›å‡ºå¼‚å¸¸), è®¾ä¸º<code>true</code>
+		 *                     æ—¶, ä»»ä½•æƒ…å†µéƒ½ä¸ä¼šè·³å‡º
+		 * @return    modelæ‰§è¡Œå®Œå, éœ€è¦è½¬å‘çš„export, å¦‚æœæ‰§è¡Œçš„modelæœªè®¾ç½®ç›¸åº”çš„export
+		 *            åˆ™è¿”å›<code>null</code>
+		 */
+		public ModelExport callModel(AppData data, Connection conn, EternaFactory factory,
+				String modelName, boolean noJump)
+				throws ConfigurationException, SQLException, IOException
+		{
 			Object oldRef = null;
-         ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
-         if (preConn == null)
-         {
-            preConn = new ObjectRef(conn);
-            data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN, preConn);
-         }
+			ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
+			if (preConn == null)
+			{
+				preConn = new ObjectRef(conn);
+				data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN, preConn);
+			}
 			else
 			{
 				oldRef = preConn.getObject();
 				preConn.setObject(conn);
 			}
-      	boolean executed = false;
+			boolean executed = false;
 			try
 			{
 				ModelAdapter tmpModel = factory.createModelAdapter(modelName);
@@ -237,14 +237,14 @@ public interface WebApp
 			finally
 			{
 				Object tmp = preConn.getObject();
-			   preConn.setObject(oldRef);
+				preConn.setObject(oldRef);
 				if (tmp != null)
 				{
 					if (tmp instanceof Connection)
 					{
 						if (conn != tmp)
 						{
-							// µ±ÒıÓÃµÄÁ¬½ÓÓëµ±Ç°Á¬½Ó²»Ò»ÖÂÊ±, ±íÊ¾Éú³ÉÁËĞÂµÄÁ¬½Ó, ĞèÒª½«Æä¹Ø±Õ
+							// å½“å¼•ç”¨çš„è¿æ¥ä¸å½“å‰è¿æ¥ä¸ä¸€è‡´æ—¶, è¡¨ç¤ºç”Ÿæˆäº†æ–°çš„è¿æ¥, éœ€è¦å°†å…¶å…³é—­
 							Connection tmpConn = (Connection) tmp;
 							if (!executed) tmpConn.rollback();
 							else tmpConn.commit();
@@ -253,7 +253,7 @@ public interface WebApp
 					}
 					else if (preConn.getObject() instanceof Map)
 					{
-						// µ±ÒıÓÃµÄ¶ÔÏóÎªMapÊ±, ±íÊ¾Éú³ÉÁËĞÂµÄÁ¬½Ó, ĞèÒª½«Æä¹Ø±Õ
+						// å½“å¼•ç”¨çš„å¯¹è±¡ä¸ºMapæ—¶, è¡¨ç¤ºç”Ÿæˆäº†æ–°çš„è¿æ¥, éœ€è¦å°†å…¶å…³é—­
 						Map map = (Map) preConn.getObject();
 						Iterator values = map.values().iterator();
 						while (values.hasNext())
@@ -261,7 +261,7 @@ public interface WebApp
 							Connection tmpConn = (Connection) values.next();
 							if (tmpConn == conn)
 							{
-								// µ±Ç°Á¬½Ó²»ĞèÒª¹Ø±Õ
+								// å½“å‰è¿æ¥ä¸éœ€è¦å…³é—­
 								continue;
 							}
 							try
@@ -282,166 +282,166 @@ public interface WebApp
 					}
 				}
 			}
-      }
+		}
 
-   }
+	}
 
-   public static class QueryTool
-         implements EternaInitialize
-   {
-      private EternaFactory factory;
+	public static class QueryTool
+			implements EternaInitialize
+	{
+		private EternaFactory factory;
 
-      public QueryTool()
-      {
-         FactoryManager.Instance instance = FactoryManager.getGlobalFactoryManager();
-         instance.addInitializedListener(this);
-      }
+		public QueryTool()
+		{
+			FactoryManager.Instance instance = FactoryManager.getGlobalFactoryManager();
+			instance.addInitializedListener(this);
+		}
 
-      public QueryTool(EternaFactory factory)
-      {
-         try
-         {
-            FactoryManager.Instance instance;
-            if (factory == null)
-            {
-               instance = FactoryManager.getGlobalFactoryManager();
-            }
-            else
-            {
-               instance = factory.getFactoryManager();
-            }
-            instance.addInitializedListener(this);
-         }
-         catch (ConfigurationException ex)
-         {
-            log.error("Error when create QueryTool.", ex);
-         }
-      }
+		public QueryTool(EternaFactory factory)
+		{
+			try
+			{
+				FactoryManager.Instance instance;
+				if (factory == null)
+				{
+					instance = FactoryManager.getGlobalFactoryManager();
+				}
+				else
+				{
+					instance = factory.getFactoryManager();
+				}
+				instance.addInitializedListener(this);
+			}
+			catch (ConfigurationException ex)
+			{
+				log.error("Error when create QueryTool.", ex);
+			}
+		}
 
-      private void afterEternaInitialize(FactoryManager.Instance instance)
-            throws ConfigurationException
-      {
-         this.factory = instance.getEternaFactory();
-      }
+		private void afterEternaInitialize(FactoryManager.Instance instance)
+				throws ConfigurationException
+		{
+			this.factory = instance.getEternaFactory();
+		}
 
-      public QueryAdapter getQueryAdapter(String name, String sql, String[] paramTypes,
-            String readerManager, String[] readerTypes)
-            throws ConfigurationException
-      {
-         try
-         {
-            QueryAdapter query = factory.createQueryAdapter(name);
-            return query;
-         }
-         catch (ConfigurationException ex)
-         {
-            QueryAdapterImpl impl = new QueryAdapterImpl();
-            impl.setName(name);
-            impl.setPreparedSQL(sql);
-            if (paramTypes != null)
-            {
-               for (int i = 0; i < paramTypes.length; i++)
-               {
-                  SQLParameterGenerator spg = new SQLParameterGeneratorImpl();
-                  spg.setName("param" + (i + 1));
-                  spg.setParamType(paramTypes[i]);
-                  impl.addParameter(spg);
-               }
-            }
-            if (readerManager != null)
-            {
-               impl.setReaderManagerName(readerManager);
-            }
-            if (readerTypes != null)
-            {
-               ResultReaderGeneratorImpl rg = new ResultReaderGeneratorImpl();
-               for (int i = 0; i < readerTypes.length; i++)
-               {
-                  rg.setName("col" + (i + 1));
-                  rg.setColumnIndex(i + 1);
-                  rg.setType(readerTypes[i]);
-                  impl.addResultReader(rg.createReader());
-               }
-            }
-            this.factory.registerQueryAdapter(impl);
-            return impl.createQueryAdapter();
-         }
-      }
+		public QueryAdapter getQueryAdapter(String name, String sql, String[] paramTypes,
+				String readerManager, String[] readerTypes)
+				throws ConfigurationException
+		{
+			try
+			{
+				QueryAdapter query = factory.createQueryAdapter(name);
+				return query;
+			}
+			catch (ConfigurationException ex)
+			{
+				QueryAdapterImpl impl = new QueryAdapterImpl();
+				impl.setName(name);
+				impl.setPreparedSQL(sql);
+				if (paramTypes != null)
+				{
+					for (int i = 0; i < paramTypes.length; i++)
+					{
+						SQLParameterGenerator spg = new SQLParameterGeneratorImpl();
+						spg.setName("param" + (i + 1));
+						spg.setParamType(paramTypes[i]);
+						impl.addParameter(spg);
+					}
+				}
+				if (readerManager != null)
+				{
+					impl.setReaderManagerName(readerManager);
+				}
+				if (readerTypes != null)
+				{
+					ResultReaderGeneratorImpl rg = new ResultReaderGeneratorImpl();
+					for (int i = 0; i < readerTypes.length; i++)
+					{
+						rg.setName("col" + (i + 1));
+						rg.setColumnIndex(i + 1);
+						rg.setType(readerTypes[i]);
+						impl.addResultReader(rg.createReader());
+					}
+				}
+				this.factory.registerQueryAdapter(impl);
+				return impl.createQueryAdapter();
+			}
+		}
 
-      public ResultIterator executeQuery(QueryAdapter query, String[] params, Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         if (params != null && params.length > 0)
-         {
-            Iterator itr = query.getParameterIterator();
-            for (int i = 0; i < params.length; i++)
-            {
-               SQLParameter param = (SQLParameter) itr.next();
-               query.setValuePreparer(param.createValuePreparer(params[i]));
-            }
-         }
-         return query.executeQuery(conn);
-      }
+		public ResultIterator executeQuery(QueryAdapter query, String[] params, Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			if (params != null && params.length > 0)
+			{
+				Iterator itr = query.getParameterIterator();
+				for (int i = 0; i < params.length; i++)
+				{
+					SQLParameter param = (SQLParameter) itr.next();
+					query.setValuePreparer(param.createValuePreparer(params[i]));
+				}
+			}
+			return query.executeQuery(conn);
+		}
 
-      public ResultIterator executeQuery(String name, String sql, String readerManager, String[] readerTypes,
-            Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         QueryAdapter query = this.getQueryAdapter(name, sql, null,
-               readerManager, readerTypes);
-         return this.executeQuery(query, null, conn);
-      }
+		public ResultIterator executeQuery(String name, String sql, String readerManager, String[] readerTypes,
+				Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			QueryAdapter query = this.getQueryAdapter(name, sql, null,
+					readerManager, readerTypes);
+			return this.executeQuery(query, null, conn);
+		}
 
-      public ResultIterator executeQuery(String name, String sql, Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         return this.executeQuery(name, sql, null, null,conn);
-      }
+		public ResultIterator executeQuery(String name, String sql, Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			return this.executeQuery(name, sql, null, null,conn);
+		}
 
-      public ResultRow getFirstRow(ResultIterator ritr)
-            throws SQLException, ConfigurationException
-      {
-         if (ritr == null)
-         {
-            return null;
-         }
-         if (ritr.hasMoreRow())
-         {
-            return ritr.nextRow();
-         }
-         return null;
-      }
+		public ResultRow getFirstRow(ResultIterator ritr)
+				throws SQLException, ConfigurationException
+		{
+			if (ritr == null)
+			{
+				return null;
+			}
+			if (ritr.hasMoreRow())
+			{
+				return ritr.nextRow();
+			}
+			return null;
+		}
 
-      public ResultRow getFirstRow(QueryAdapter query, Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         return this.getFirstRow(this.executeQuery(query, null, conn));
-      }
+		public ResultRow getFirstRow(QueryAdapter query, Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			return this.getFirstRow(this.executeQuery(query, null, conn));
+		}
 
-      public ResultRow getFirstRow(QueryAdapter query, String[] params, Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         return this.getFirstRow(this.executeQuery(query, params, conn));
-      }
+		public ResultRow getFirstRow(QueryAdapter query, String[] params, Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			return this.getFirstRow(this.executeQuery(query, params, conn));
+		}
 
-      public ResultRow getFirstRow(String name, String sql, String[] paramTypes, String[] params,
-            String readerManager, String[] readerTypes, Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         QueryAdapter query = this.getQueryAdapter(name, sql, paramTypes,
-               readerManager, readerTypes);
-         ResultIterator ritr = this.executeQuery(query, params, conn);
-         return this.getFirstRow(ritr);
-      }
+		public ResultRow getFirstRow(String name, String sql, String[] paramTypes, String[] params,
+				String readerManager, String[] readerTypes, Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			QueryAdapter query = this.getQueryAdapter(name, sql, paramTypes,
+					readerManager, readerTypes);
+			ResultIterator ritr = this.executeQuery(query, params, conn);
+			return this.getFirstRow(ritr);
+		}
 
-      public ResultRow getFirstRow(String name, String sql, String[] paramTypes, String[] params,
-            Connection conn)
-            throws ConfigurationException, SQLException
-      {
-         return this.getFirstRow(name, sql, paramTypes, params, null, null, conn);
-      }
+		public ResultRow getFirstRow(String name, String sql, String[] paramTypes, String[] params,
+				Connection conn)
+				throws ConfigurationException, SQLException
+		{
+			return this.getFirstRow(name, sql, paramTypes, params, null, null, conn);
+		}
 
-   }
+	}
 
 }
 

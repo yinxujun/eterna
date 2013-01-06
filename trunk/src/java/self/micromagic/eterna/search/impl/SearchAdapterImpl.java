@@ -48,162 +48,162 @@ import self.micromagic.util.MemoryChars;
  * @author micromagic@sina.com
  */
 public class SearchAdapterImpl extends AbstractGenerator
-      implements SearchAdapter, SearchAdapterGenerator
+		implements SearchAdapter, SearchAdapterGenerator
 {
-   private static final int[] conditionDocumentCounts = {1, 3, 7};
+	private static final int[] conditionDocumentCounts = {1, 3, 7};
 
-   private int maxPageSize = -1;
+	private int maxPageSize = -1;
 
-   private String parentName;
-   private SearchAdapter[] parents;
+	private String parentName;
+	private SearchAdapter[] parents;
 
-   private String sessionQueryTag;
-   private String searchManagerName = null;
-   private String queryName;
-   private int queryIndex;
-   private String columnType;
-   private ColumnSetting columnSetting = null;
-   private ParameterSetting parameterSetting = null;
-   private int countType = QueryAdapter.TOTAL_COUNT_AUTO;
-   private String countReaderName = null;
-   private String countSearchName = null;
-   private int countSearchIndex = -1;
+	private String sessionQueryTag;
+	private String searchManagerName = null;
+	private String queryName;
+	private int queryIndex;
+	private String columnType;
+	private ColumnSetting columnSetting = null;
+	private ParameterSetting parameterSetting = null;
+	private int countType = QueryAdapter.TOTAL_COUNT_AUTO;
+	private String countReaderName = null;
+	private String countSearchName = null;
+	private int countSearchIndex = -1;
 
-   private String otherName;
-   private SearchAdapter[] others = null;
-   private String conditionPropertyOrderWithOther = null;
+	private String otherName;
+	private SearchAdapter[] others = null;
+	private String conditionPropertyOrderWithOther = null;
 
-   private boolean needWrap = true;
-   private boolean specialCondition = false;
-   private int conditionIndex;
+	private boolean needWrap = true;
+	private boolean specialCondition = false;
+	private int conditionIndex;
 
-   private String conditionPropertyOrder = null;
-   private PermissionSet[] permissionSets = null;
-   private Map conditionPropertyMap =  new HashMap();
-   private List conditionProperties = new LinkedList();
-   private ConditionProperty[] allConditionProperties = null;
-   private ConditionProperty[] allConditionPropertiesWithOther = null;
-   private int conditionDocumentCount = 1;
-   private MemoryChars conditionDocument = null;
-   private MemoryChars[] conditionDocuments = null;
+	private String conditionPropertyOrder = null;
+	private PermissionSet[] permissionSets = null;
+	private Map conditionPropertyMap =  new HashMap();
+	private List conditionProperties = new LinkedList();
+	private ConditionProperty[] allConditionProperties = null;
+	private ConditionProperty[] allConditionPropertiesWithOther = null;
+	private int conditionDocumentCount = 1;
+	private MemoryChars conditionDocument = null;
+	private MemoryChars[] conditionDocuments = null;
 
 	/**
-	 * ÷¥––À—À˜ ±(doSearch),  «∑Ò“™º”Õ¨≤ΩÀ¯.
-	 * ‘⁄searchµƒattribute÷–Õ®π˝needSynchronize Ù–‘√˚Ω¯––…Ë÷√.
+	 * ÊâßË°åÊêúÁ¥¢Êó∂(doSearch), ÊòØÂê¶Ë¶ÅÂä†ÂêåÊ≠•ÈîÅ.
+	 * Âú®searchÁöÑattribute‰∏≠ÈÄöËøáneedSynchronizeÂ±ûÊÄßÂêçËøõË°åËÆæÁΩÆ.
 	 */
 	protected boolean needSynchronize = false;
 
-   private boolean initialized = false;
+	private boolean initialized = false;
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      this.initialized = true;
-      this.sessionQueryTag = "s:" + this.getName() + ":" + factory.getFactoryManager().getId();
-      if (this.parentName != null)
-      {
-         if (this.parentName.indexOf(',') == -1)
-         {
-            this.parents = new SearchAdapter[1];
-            this.parents[0] = factory.createSearchAdapter(this.parentName);
-            if (this.parents[0] == null)
-            {
-               log.warn("The search parent [" + this.parentName + "] not found.");
-            }
-         }
-         else
-         {
-            StringTokenizer token = new StringTokenizer(this.parentName, ",");
-            this.parents = new SearchAdapter[token.countTokens()];
-            for (int i = 0; i < this.parents.length; i++)
-            {
-               String temp = token.nextToken().trim();
-               this.parents[i] = factory.createSearchAdapter(temp);
-               if (this.parents[i] == null)
-               {
-                  log.warn("The search parent [" + temp + "] not found.");
-               }
-            }
-         }
-      }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		this.initialized = true;
+		this.sessionQueryTag = "s:" + this.getName() + ":" + factory.getFactoryManager().getId();
+		if (this.parentName != null)
+		{
+			if (this.parentName.indexOf(',') == -1)
+			{
+				this.parents = new SearchAdapter[1];
+				this.parents[0] = factory.createSearchAdapter(this.parentName);
+				if (this.parents[0] == null)
+				{
+					log.warn("The search parent [" + this.parentName + "] not found.");
+				}
+			}
+			else
+			{
+				StringTokenizer token = new StringTokenizer(this.parentName, ",");
+				this.parents = new SearchAdapter[token.countTokens()];
+				for (int i = 0; i < this.parents.length; i++)
+				{
+					String temp = token.nextToken().trim();
+					this.parents[i] = factory.createSearchAdapter(temp);
+					if (this.parents[i] == null)
+					{
+						log.warn("The search parent [" + temp + "] not found.");
+					}
+				}
+			}
+		}
 
-      if (this.otherName != null)
-      {
-         if (this.otherName.indexOf(',') == -1)
-         {
-            this.others = new SearchAdapter[1];
-            this.others[0] = factory.createSearchAdapter(this.otherName);
-            if (this.others[0] == null)
-            {
-               log.warn("The search parent [" + this.otherName + "] not found.");
-            }
-         }
-         else
-         {
-            StringTokenizer token = new StringTokenizer(this.otherName, ",");
-            this.others = new SearchAdapter[token.countTokens()];
-            for (int i = 0; i < this.others.length; i++)
-            {
-               String temp = token.nextToken().trim();
-               this.others[i] = factory.createSearchAdapter(temp);
-               if (this.others[i] == null)
-               {
-                  log.warn("The search parent [" + temp + "] not found.");
-               }
-            }
-         }
-      }
+		if (this.otherName != null)
+		{
+			if (this.otherName.indexOf(',') == -1)
+			{
+				this.others = new SearchAdapter[1];
+				this.others[0] = factory.createSearchAdapter(this.otherName);
+				if (this.others[0] == null)
+				{
+					log.warn("The search parent [" + this.otherName + "] not found.");
+				}
+			}
+			else
+			{
+				StringTokenizer token = new StringTokenizer(this.otherName, ",");
+				this.others = new SearchAdapter[token.countTokens()];
+				for (int i = 0; i < this.others.length; i++)
+				{
+					String temp = token.nextToken().trim();
+					this.others[i] = factory.createSearchAdapter(temp);
+					if (this.others[i] == null)
+					{
+						log.warn("The search parent [" + temp + "] not found.");
+					}
+				}
+			}
+		}
 
-      if (this.queryName != null && !NONE_QUERY_NAME.equals(this.queryName))
-      {
-         this.queryIndex = this.getFactory().getQueryAdapterId(this.queryName);
-      }
-      else
-      {
-         this.queryName = NONE_QUERY_NAME;
-         this.queryIndex = -1;
-      }
+		if (this.queryName != null && !NONE_QUERY_NAME.equals(this.queryName))
+		{
+			this.queryIndex = this.getFactory().getQueryAdapterId(this.queryName);
+		}
+		else
+		{
+			this.queryName = NONE_QUERY_NAME;
+			this.queryIndex = -1;
+		}
 
-      if (this.searchManagerName == null)
-      {
-         this.searchManagerName = this.sessionQueryTag;
-      }
-      if (this.countSearchName != null)
-      {
-         this.countSearchIndex = this.getFactory().getSearchAdapterId(this.countSearchName);
-      }
+		if (this.searchManagerName == null)
+		{
+			this.searchManagerName = this.sessionQueryTag;
+		}
+		if (this.countSearchName != null)
+		{
+			this.countSearchIndex = this.getFactory().getSearchAdapterId(this.countSearchName);
+		}
 
-      Iterator cps = this.conditionProperties.iterator();
-      while (cps.hasNext())
-      {
-         ConditionProperty cp = (ConditionProperty) cps.next();
-         cp.initialize(factory);
-      }
+		Iterator cps = this.conditionProperties.iterator();
+		while (cps.hasNext())
+		{
+			ConditionProperty cp = (ConditionProperty) cps.next();
+			cp.initialize(factory);
+		}
 
-      if (this.parameterSetting != null)
-      {
-         this.parameterSetting.initParameterSetting(this);
-      }
-      if (this.columnSetting != null)
-      {
-         this.columnSetting.initColumnSetting(this);
-      }
+		if (this.parameterSetting != null)
+		{
+			this.parameterSetting.initParameterSetting(this);
+		}
+		if (this.columnSetting != null)
+		{
+			this.columnSetting.initColumnSetting(this);
+		}
 
 		/*
-		µ±conditionIndexŒ™0 ±≤ª…Ë÷√Ãıº˛, Œﬁ¬€ «∑Ò…Ë÷√¡ÀConditionProperty
-		’‚—˘‘⁄∂‡∏ˆsearchπ≤Õ¨‘À◊˜ ±±„”⁄∂®“Â“ª∏ˆπ´π≤µƒsearch»√∆‰À¸µƒsearchºÃ≥–,
-		∂¯’‚∏ˆsearch±æ…Ìø…ƒ‹≤ªª·…Ë÷√»Œ∫ŒÃıº˛
-      if (this.conditionIndex == 0)
-      {
-         if (this.getConditionPropertyCount() > 0)
-         {
-            throw new ConfigurationException("Can't set conditionIndex 0 in a search witch has conditionProperty.");
-         }
-      }
+		ÂΩìconditionIndex‰∏∫0Êó∂‰∏çËÆæÁΩÆÊù°‰ª∂, Êó†ËÆ∫ÊòØÂê¶ËÆæÁΩÆ‰∫ÜConditionProperty
+		ËøôÊ†∑Âú®Â§ö‰∏™searchÂÖ±ÂêåËøê‰ΩúÊó∂‰æø‰∫éÂÆö‰πâ‰∏Ä‰∏™ÂÖ¨ÂÖ±ÁöÑsearchËÆ©ÂÖ∂ÂÆÉÁöÑsearchÁªßÊâø,
+		ËÄåËøô‰∏™searchÊú¨Ë∫´ÂèØËÉΩ‰∏ç‰ºöËÆæÁΩÆ‰ªª‰ΩïÊù°‰ª∂
+		if (this.conditionIndex == 0)
+		{
+			if (this.getConditionPropertyCount() > 0)
+			{
+				throw new ConfigurationException("Can't set conditionIndex 0 in a search witch has conditionProperty.");
+			}
+		}
 		*/
 
 		String tmpStr = (String) this.getAttribute("needSynchronize");
@@ -211,130 +211,130 @@ public class SearchAdapterImpl extends AbstractGenerator
 		{
 			this.needSynchronize = "true".equalsIgnoreCase(tmpStr);
 		}
-   }
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createSearchAdapter();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createSearchAdapter();
+	}
 
-   public SearchAdapter createSearchAdapter()
-         throws ConfigurationException
-   {
-      return this;
-   }
+	public SearchAdapter createSearchAdapter()
+			throws ConfigurationException
+	{
+		return this;
+	}
 
-   public EternaFactory getFactory()
-   {
-      return (EternaFactory) this.factory;
-   }
+	public EternaFactory getFactory()
+	{
+		return (EternaFactory) this.factory;
+	}
 
-   public void setQueryName(String queryName)
-   {
-      this.queryName = queryName;
-   }
+	public void setQueryName(String queryName)
+	{
+		this.queryName = queryName;
+	}
 
-   public String getQueryName()
-   {
-      return this.queryName;
-   }
+	public String getQueryName()
+	{
+		return this.queryName;
+	}
 
-   public boolean isSpecialCondition()
-   {
-      return this.specialCondition;
-   }
+	public boolean isSpecialCondition()
+	{
+		return this.specialCondition;
+	}
 
-   public void setSpecialCondition(boolean special)
-   {
-      this.specialCondition = special;
-   }
+	public void setSpecialCondition(boolean special)
+	{
+		this.specialCondition = special;
+	}
 
-   public void setCountType(String countType)
-         throws ConfigurationException
-   {
-      if ("auto".equals(countType))
-      {
-         this.countType = QueryAdapter.TOTAL_COUNT_AUTO;
-      }
-      else if ("count".equals(countType))
-      {
-         this.countType = QueryAdapter.TOTAL_COUNT_COUNT;
-      }
-      else if ("none".equals(countType))
-      {
-         this.countType = QueryAdapter.TOTAL_COUNT_NONE;
-      }
-      else if (countType != null && countType.startsWith("search:"))
-      {
-         int index = countType.indexOf(',');
-         if (index == -1)
-         {
-            throw new ConfigurationException("Error count type:[" + countType + "].");
-         }
-         this.countSearchName = countType.substring(7, index).trim();
-         this.countReaderName = countType.substring(index + 1).trim();
-      }
-      else
-      {
-         throw new ConfigurationException("Error count type:[" + countType + "].");
-      }
-   }
+	public void setCountType(String countType)
+			throws ConfigurationException
+	{
+		if ("auto".equals(countType))
+		{
+			this.countType = QueryAdapter.TOTAL_COUNT_AUTO;
+		}
+		else if ("count".equals(countType))
+		{
+			this.countType = QueryAdapter.TOTAL_COUNT_COUNT;
+		}
+		else if ("none".equals(countType))
+		{
+			this.countType = QueryAdapter.TOTAL_COUNT_NONE;
+		}
+		else if (countType != null && countType.startsWith("search:"))
+		{
+			int index = countType.indexOf(',');
+			if (index == -1)
+			{
+				throw new ConfigurationException("Error count type:[" + countType + "].");
+			}
+			this.countSearchName = countType.substring(7, index).trim();
+			this.countReaderName = countType.substring(index + 1).trim();
+		}
+		else
+		{
+			throw new ConfigurationException("Error count type:[" + countType + "].");
+		}
+	}
 
-   public boolean isNeedWrap()
-   {
-      return this.needWrap;
-   }
+	public boolean isNeedWrap()
+	{
+		return this.needWrap;
+	}
 
-   public void setNeedWrap(boolean needWrap)
-   {
-      this.needWrap = needWrap;
-   }
+	public void setNeedWrap(boolean needWrap)
+	{
+		this.needWrap = needWrap;
+	}
 
-   public int getConditionIndex()
-   {
-      return this.conditionIndex;
-   }
+	public int getConditionIndex()
+	{
+		return this.conditionIndex;
+	}
 
-   public void setConditionIndex(int index)
-   {
-      this.conditionIndex = index;
-   }
+	public void setConditionIndex(int index)
+	{
+		this.conditionIndex = index;
+	}
 
-   public String getColumnSettingType()
-   {
-      return this.columnType;
-   }
+	public String getColumnSettingType()
+	{
+		return this.columnType;
+	}
 
-   public void setColumnSettingType(String type)
-   {
-      this.columnType = type;
-   }
+	public void setColumnSettingType(String type)
+	{
+		this.columnType = type;
+	}
 
 	public ColumnSetting getColumnSetting()
 	{
 		return this.columnSetting;
 	}
 
-   public void setColumnSetting(ColumnSetting setting)
-   {
-      this.columnSetting = setting;
-   }
+	public void setColumnSetting(ColumnSetting setting)
+	{
+		this.columnSetting = setting;
+	}
 
-   public ParameterSetting getParameterSetting()
-   {
-      return this.parameterSetting;
-   }
+	public ParameterSetting getParameterSetting()
+	{
+		return this.parameterSetting;
+	}
 
-   public void setParameterSetting(ParameterSetting setting)
-   {
-      this.parameterSetting = setting;
-   }
+	public void setParameterSetting(ParameterSetting setting)
+	{
+		this.parameterSetting = setting;
+	}
 
-   public String getOtherSearchManagerName()
-   {
-      return this.otherName;
-   }
+	public String getOtherSearchManagerName()
+	{
+		return this.otherName;
+	}
 
 	public SearchAdapter[] getOtherSearchs()
 	{
@@ -347,301 +347,301 @@ public class SearchAdapterImpl extends AbstractGenerator
 		return result;
 	}
 
-   public void setOtherSearchManagerName(String otherName)
-   {
-      this.otherName = otherName;
-   }
+	public void setOtherSearchManagerName(String otherName)
+	{
+		this.otherName = otherName;
+	}
 
-   public String getConditionPropertyOrderWithOther()
-   {
-      return this.conditionPropertyOrderWithOther;
-   }
+	public String getConditionPropertyOrderWithOther()
+	{
+		return this.conditionPropertyOrderWithOther;
+	}
 
-   public void setConditionPropertyOrderWithOther(String order)
-   {
-      this.conditionPropertyOrderWithOther = order;
-   }
+	public void setConditionPropertyOrderWithOther(String order)
+	{
+		this.conditionPropertyOrderWithOther = order;
+	}
 
-   private PermissionSet[] getPermissionSet(ConditionProperty[] cps)
-         throws ConfigurationException
-   {
-      Set psSet = null;
-      for (int i = 0; i < cps.length; i++)
-      {
-         PermissionSet ps = cps[i].getPermissionSet();
-         if (ps != null)
-         {
-            if (psSet == null)
-            {
-               psSet = new HashSet();
-            }
-            psSet.add(ps);
-         }
-      }
-      if (psSet == null)
-      {
-         this.conditionDocuments = null;
-         this.conditionDocumentCount = 1;
-         return new PermissionSet[0];
-      }
-      else
-      {
-         PermissionSet[] result = new PermissionSet[psSet.size()];
-         psSet.toArray(result);
-         if (result.length <= conditionDocumentCounts.length)
-         {
-            this.conditionDocuments = new MemoryChars[conditionDocumentCounts[result.length - 1]];
-         }
-         else
-         {
-            this.conditionDocuments = null;
-         }
-         this.conditionDocumentCount = (int) Math.pow(2, result.length);
-         return result;
-      }
-   }
+	private PermissionSet[] getPermissionSet(ConditionProperty[] cps)
+			throws ConfigurationException
+	{
+		Set psSet = null;
+		for (int i = 0; i < cps.length; i++)
+		{
+			PermissionSet ps = cps[i].getPermissionSet();
+			if (ps != null)
+			{
+				if (psSet == null)
+				{
+					psSet = new HashSet();
+				}
+				psSet.add(ps);
+			}
+		}
+		if (psSet == null)
+		{
+			this.conditionDocuments = null;
+			this.conditionDocumentCount = 1;
+			return new PermissionSet[0];
+		}
+		else
+		{
+			PermissionSet[] result = new PermissionSet[psSet.size()];
+			psSet.toArray(result);
+			if (result.length <= conditionDocumentCounts.length)
+			{
+				this.conditionDocuments = new MemoryChars[conditionDocumentCounts[result.length - 1]];
+			}
+			else
+			{
+				this.conditionDocuments = null;
+			}
+			this.conditionDocumentCount = (int) Math.pow(2, result.length);
+			return result;
+		}
+	}
 
-   private MemoryChars getConditionDocument0(Permission permission)
-         throws ConfigurationException
-   {
-      int cdId = 0;
-      int addInt = 1;
-      for (int i = 0; i < this.permissionSets.length; i++)
-      {
-         if (this.permissionSets[i].checkPermission(permission))
-         {
-            cdId += addInt;
-         }
-         addInt *= 2;
-      }
-      if (cdId == this.conditionDocumentCount - 1)
-      {
-         if (this.conditionDocument == null)
-         {
-            this.conditionDocument = this.createConditionDocument(permission);
-         }
-         return this.conditionDocument;
-      }
-      if (this.conditionDocuments != null)
-      {
-         if (this.conditionDocuments[cdId] == null)
-         {
-            this.conditionDocuments[cdId] = this.createConditionDocument(permission);
-         }
-         return this.conditionDocuments[cdId];
-      }
-      return this.createConditionDocument(permission);
-   }
+	private MemoryChars getConditionDocument0(Permission permission)
+			throws ConfigurationException
+	{
+		int cdId = 0;
+		int addInt = 1;
+		for (int i = 0; i < this.permissionSets.length; i++)
+		{
+			if (this.permissionSets[i].checkPermission(permission))
+			{
+				cdId += addInt;
+			}
+			addInt *= 2;
+		}
+		if (cdId == this.conditionDocumentCount - 1)
+		{
+			if (this.conditionDocument == null)
+			{
+				this.conditionDocument = this.createConditionDocument(permission);
+			}
+			return this.conditionDocument;
+		}
+		if (this.conditionDocuments != null)
+		{
+			if (this.conditionDocuments[cdId] == null)
+			{
+				this.conditionDocuments[cdId] = this.createConditionDocument(permission);
+			}
+			return this.conditionDocuments[cdId];
+		}
+		return this.createConditionDocument(permission);
+	}
 
-   private MemoryChars createConditionDocument(Permission permission)
-         throws ConfigurationException
-   {
-      Document document = DocumentHelper.createDocument();
-      Element root = document.addElement("eterna");
-      Element el_cps = root.addElement("condition-propertys");
-      if (this.others != null && this.others.length > 0)
-      {
-         el_cps.addAttribute("noGroup", "1");
-      }
-      Element el_cbls = root.addElement("condition-builder-lists");
+	private MemoryChars createConditionDocument(Permission permission)
+			throws ConfigurationException
+	{
+		Document document = DocumentHelper.createDocument();
+		Element root = document.addElement("eterna");
+		Element el_cps = root.addElement("condition-propertys");
+		if (this.others != null && this.others.length > 0)
+		{
+			el_cps.addAttribute("noGroup", "1");
+		}
+		Element el_cbls = root.addElement("condition-builder-lists");
 
-      this.list2Document(this.getConditionPropertysWithOther(),
-            el_cps, el_cbls, permission);
-      MemoryChars mcs = new MemoryChars(2, 256);
-      XMLWriter writer = new XMLWriter(mcs.getWriter());
-      try
-      {
-         writer.write(document);
-         writer.close();
-      }
-      catch (IOException ex)
-      {
-         //use MemoryChars, so not IOException
-      }
-      return mcs;
-   }
+		this.list2Document(this.getConditionPropertysWithOther(),
+				el_cps, el_cbls, permission);
+		MemoryChars mcs = new MemoryChars(2, 256);
+		XMLWriter writer = new XMLWriter(mcs.getWriter());
+		try
+		{
+			writer.write(document);
+			writer.close();
+		}
+		catch (IOException ex)
+		{
+			//use MemoryChars, so not IOException
+		}
+		return mcs;
+	}
 
-   public Reader getConditionDocument(Permission permission)
-         throws ConfigurationException
-   {
-      if (this.permissionSets == null)
-      {
-         synchronized (this)
-         {
-            if (this.permissionSets == null)
-            {
-               this.permissionSets = this.getPermissionSet(this.getConditionPropertysWithOther());
-            }
-         }
-      }
-      return this.getConditionDocument0(permission).getReader();
-   }
+	public Reader getConditionDocument(Permission permission)
+			throws ConfigurationException
+	{
+		if (this.permissionSets == null)
+		{
+			synchronized (this)
+			{
+				if (this.permissionSets == null)
+				{
+					this.permissionSets = this.getPermissionSet(this.getConditionPropertysWithOther());
+				}
+			}
+		}
+		return this.getConditionDocument0(permission).getReader();
+	}
 
-   private void list2Document(ConditionProperty[] cps, Element el_conditionPropertys,
-         Element el_conditionBuilserLists, Permission permission)
-         throws ConfigurationException
-   {
-      Set addedBuilders = new HashSet();
+	private void list2Document(ConditionProperty[] cps, Element el_conditionPropertys,
+			Element el_conditionBuilserLists, Permission permission)
+			throws ConfigurationException
+	{
+		Set addedBuilders = new HashSet();
 
-      for (int i = 0; i < cps.length; i++)
-      {
-         ConditionProperty cp = cps[i];
-         if (checkPermission(cp, permission))
-         {
-            Element el_cp = el_conditionPropertys.addElement("condition-property");
-            el_cp.addAttribute("name", cp.getName());
-            el_cp.addAttribute("colId", i + "");
-            el_cp.addAttribute("caption", cp.getColumnCaption());
-            el_cp.addAttribute("inputType", cp.getConditionInputType());
-            el_cp.addAttribute("type",
-                  TypeManager.getTypeName(TypeManager.getPureType(cp.getColumnType())));
-            el_cp.addAttribute("builderList", cp.getConditionBuilderListName());
+		for (int i = 0; i < cps.length; i++)
+		{
+			ConditionProperty cp = cps[i];
+			if (checkPermission(cp, permission))
+			{
+				Element el_cp = el_conditionPropertys.addElement("condition-property");
+				el_cp.addAttribute("name", cp.getName());
+				el_cp.addAttribute("colId", i + "");
+				el_cp.addAttribute("caption", cp.getColumnCaption());
+				el_cp.addAttribute("inputType", cp.getConditionInputType());
+				el_cp.addAttribute("type",
+						TypeManager.getTypeName(TypeManager.getPureType(cp.getColumnType())));
+				el_cp.addAttribute("builderList", cp.getConditionBuilderListName());
 
-            String[] pNames = cp.getAttributeNames();
-            if (pNames.length > 0)
-            {
-               for (int j = 0; j < pNames.length; j++)
-               {
-                  el_cp.addElement("parameter").addAttribute("name", pNames[j])
-                        .addAttribute("value", cp.getAttribute(pNames[j]));
-               }
-            }
+				String[] pNames = cp.getAttributeNames();
+				if (pNames.length > 0)
+				{
+					for (int j = 0; j < pNames.length; j++)
+					{
+						el_cp.addElement("parameter").addAttribute("name", pNames[j])
+								.addAttribute("value", cp.getAttribute(pNames[j]));
+					}
+				}
 
-            if (!addedBuilders.contains(cp.getConditionBuilderListName()))
-            {
-               addedBuilders.add(cp.getConditionBuilderListName());
-               Element el_cbl = el_conditionBuilserLists.addElement("builder-list");
-               el_cbl.addAttribute("name", cp.getConditionBuilderListName());
-               Iterator cbl = cp.getConditionBuilderList().iterator();
-               while (cbl.hasNext())
-               {
-                  ConditionBuilder cb = (ConditionBuilder) cbl.next();
-                  el_cbl.addElement("builder").addAttribute("name", cb.getName())
-                        .addAttribute("caption", cb.getCaption());
-               }
-            }
-         }
-      }
-   }
+				if (!addedBuilders.contains(cp.getConditionBuilderListName()))
+				{
+					addedBuilders.add(cp.getConditionBuilderListName());
+					Element el_cbl = el_conditionBuilserLists.addElement("builder-list");
+					el_cbl.addAttribute("name", cp.getConditionBuilderListName());
+					Iterator cbl = cp.getConditionBuilderList().iterator();
+					while (cbl.hasNext())
+					{
+						ConditionBuilder cb = (ConditionBuilder) cbl.next();
+						el_cbl.addElement("builder").addAttribute("name", cb.getName())
+								.addAttribute("caption", cb.getCaption());
+					}
+				}
+			}
+		}
+	}
 
-   private boolean checkPermission(ConditionProperty cp, Permission permission)
-         throws ConfigurationException
-   {
-      if (permission == null)
-      {
-         return true;
-      }
-      PermissionSet ps = cp.getPermissionSet();
-      if (ps == null)
-      {
-         return true;
-      }
-      return ps.checkPermission(permission);
-   }
+	private boolean checkPermission(ConditionProperty cp, Permission permission)
+			throws ConfigurationException
+	{
+		if (permission == null)
+		{
+			return true;
+		}
+		PermissionSet ps = cp.getPermissionSet();
+		if (ps == null)
+		{
+			return true;
+		}
+		return ps.checkPermission(permission);
+	}
 
-   public String getParentConditionPropretyName()
-   {
-      return this.parentName;
-   }
+	public String getParentConditionPropretyName()
+	{
+		return this.parentName;
+	}
 
-   public void setParentConditionPropretyName(String parentName)
-   {
-      this.parentName = parentName;
-   }
+	public void setParentConditionPropretyName(String parentName)
+	{
+		this.parentName = parentName;
+	}
 
-   public String getConditionPropertyOrder()
-   {
-      return this.conditionPropertyOrder;
-   }
+	public String getConditionPropertyOrder()
+	{
+		return this.conditionPropertyOrder;
+	}
 
-   public void setConditionPropertyOrder(String order)
-   {
-      this.conditionPropertyOrder = order;
-   }
+	public void setConditionPropertyOrder(String order)
+	{
+		this.conditionPropertyOrder = order;
+	}
 
-   public void clearConditionPropertys() throws ConfigurationException
-   {
-      this.allConditionProperties = null;
-      this.conditionProperties.clear();
-   }
+	public void clearConditionPropertys() throws ConfigurationException
+	{
+		this.allConditionProperties = null;
+		this.conditionProperties.clear();
+	}
 
-   public void addConditionProperty(ConditionProperty cp) throws ConfigurationException
-   {
-      this.allConditionProperties = null;
-      if (this.conditionPropertyMap.containsKey(cp.getName()))
-      {
-         throw new ConfigurationException(
-               "Duplicate [ConditionProperty] name:" + cp.getName() + ".");
-      }
-      this.conditionProperties.add(cp);
-      this.conditionPropertyMap.put(cp.getName(), cp);
-   }
+	public void addConditionProperty(ConditionProperty cp) throws ConfigurationException
+	{
+		this.allConditionProperties = null;
+		if (this.conditionPropertyMap.containsKey(cp.getName()))
+		{
+			throw new ConfigurationException(
+					"Duplicate [ConditionProperty] name:" + cp.getName() + ".");
+		}
+		this.conditionProperties.add(cp);
+		this.conditionPropertyMap.put(cp.getName(), cp);
+	}
 
-   public int getConditionPropertyCount()
-         throws ConfigurationException
-   {
-      return this.getConditionPropertys0().length;
-   }
+	public int getConditionPropertyCount()
+			throws ConfigurationException
+	{
+		return this.getConditionPropertys0().length;
+	}
 
-   public ConditionProperty getConditionProperty(int colId)
-         throws ConfigurationException
-   {
-      ConditionProperty[] temp = this.getConditionPropertys0();
-      return temp[colId];
-   }
+	public ConditionProperty getConditionProperty(int colId)
+			throws ConfigurationException
+	{
+		ConditionProperty[] temp = this.getConditionPropertys0();
+		return temp[colId];
+	}
 
-   public ConditionProperty getConditionProperty(String name)
-         throws ConfigurationException
-   {
-      this.getConditionPropertys0();
-      return (ConditionProperty) this.conditionPropertyMap.get(name);
-   }
+	public ConditionProperty getConditionProperty(String name)
+			throws ConfigurationException
+	{
+		this.getConditionPropertys0();
+		return (ConditionProperty) this.conditionPropertyMap.get(name);
+	}
 
-   public int getPageSize()
-         throws ConfigurationException
-   {
-      if (this.maxPageSize == -1)
-      {
-         int tempSize = -1;
-         Object size = this.getFactory().getAttribute(PAGE_SIZE_ATTRIBUTE);
-         if (size != null)
-         {
-            try
-            {
-               tempSize = Integer.parseInt((String) size);
-            }
-            catch (NumberFormatException ex) {}
-         }
-         this.maxPageSize = tempSize < 1 ? 10 : tempSize;
-      }
-      return this.maxPageSize;
-   }
+	public int getPageSize()
+			throws ConfigurationException
+	{
+		if (this.maxPageSize == -1)
+		{
+			int tempSize = -1;
+			Object size = this.getFactory().getAttribute(PAGE_SIZE_ATTRIBUTE);
+			if (size != null)
+			{
+				try
+				{
+					tempSize = Integer.parseInt((String) size);
+				}
+				catch (NumberFormatException ex) {}
+			}
+			this.maxPageSize = tempSize < 1 ? 10 : tempSize;
+		}
+		return this.maxPageSize;
+	}
 
-   public void setPageSize(int pageSize)
-   {
-      if (pageSize > 0)
-      {
-         this.maxPageSize = pageSize;
-      }
-   }
+	public void setPageSize(int pageSize)
+	{
+		if (pageSize > 0)
+		{
+			this.maxPageSize = pageSize;
+		}
+	}
 
-   public String getSearchManagerName()
-   {
-      return this.searchManagerName;
-   }
+	public String getSearchManagerName()
+	{
+		return this.searchManagerName;
+	}
 
-   public void setSearchManagerName(String name)
-   {
-      this.searchManagerName = name;
-   }
+	public void setSearchManagerName(String name)
+	{
+		this.searchManagerName = name;
+	}
 
-   public SearchManager getSearchManager(AppData data)
-         throws ConfigurationException
-   {
-      SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
-      manager.setPageNumAndCondition(data, this);
-      return manager;
-   }
+	public SearchManager getSearchManager(AppData data)
+			throws ConfigurationException
+	{
+		SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
+		manager.setPageNumAndCondition(data, this);
+		return manager;
+	}
 
 	public Result doSearch(AppData data, Connection conn)
 			throws ConfigurationException, SQLException
@@ -656,36 +656,36 @@ public class SearchAdapterImpl extends AbstractGenerator
 		return this.doSearch0(data, conn, false);
 	}
 
-   /**
-    * ÷¥––≤È—Ø, ≤¢ªÒµ√Ω·π˚.
-    *
-    * @param data        AppData∂‘œÛ
-	 * @param conn         ˝æ›ø‚¡¨Ω”
-	 * @param onlySearch   «∑ÒŒ™Ωˆ÷¥––À—À˜, ≤ªΩ¯––¡–…Ë÷√ªÚ»´º«¬ºªÒ»°
-    */
-   protected Result doSearch0(AppData data, Connection conn, boolean onlySearch)
-         throws ConfigurationException, SQLException
-   {
-      if (log.isDebugEnabled())
-      {
-         log.debug("Start prepare query:" + System.currentTimeMillis());
-      }
+	/**
+	 * ÊâßË°åÊü•ËØ¢, Âπ∂Ëé∑ÂæóÁªìÊûú.
+	 *
+	 * @param data        AppDataÂØπË±°
+	 * @param conn        Êï∞ÊçÆÂ∫ìËøûÊé•
+	 * @param onlySearch  ÊòØÂê¶‰∏∫‰ªÖÊâßË°åÊêúÁ¥¢, ‰∏çËøõË°åÂàóËÆæÁΩÆÊàñÂÖ®ËÆ∞ÂΩïËé∑Âèñ
+	 */
+	protected Result doSearch0(AppData data, Connection conn, boolean onlySearch)
+			throws ConfigurationException, SQLException
+	{
+		if (log.isDebugEnabled())
+		{
+			log.debug("Start prepare query:" + System.currentTimeMillis());
+		}
 
-      Map raMap = data.getRequestAttributeMap();
-      BooleanRef isFirst = new BooleanRef();
-      SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
-      QueryAdapter query = getQueryAdapter(data, conn, this, isFirst, this.sessionQueryTag, manager,
+		Map raMap = data.getRequestAttributeMap();
+		BooleanRef isFirst = new BooleanRef();
+		SearchManager manager = this.getSearchManager0(data.getSessionAttributeMap());
+		QueryAdapter query = getQueryAdapter(data, conn, this, isFirst, this.sessionQueryTag, manager,
 				this.queryIndex, onlySearch ? null : this.columnSetting, onlySearch ? null : this.columnType);
-      manager.setPageNumAndCondition(data, this);
+		manager.setPageNumAndCondition(data, this);
 
-      if (query == null)
-      {
-         log.warn("The search [" + this.getName() + "] can't execute!");
-         return null;
-      }
-      int maxRow = manager.getPageSize(this.getPageSize());
-      int pageNum = manager.getPageNum();
-      int startRow = pageNum * maxRow;
+		if (query == null)
+		{
+			log.warn("The search [" + this.getName() + "] can't execute!");
+			return null;
+		}
+		int maxRow = manager.getPageSize(this.getPageSize());
+		int pageNum = manager.getPageNum();
+		int startRow = pageNum * maxRow;
 		if ("1".equals(raMap.get(READ_ALL_ROW)) && !onlySearch)
 		{
 			startRow = 0;
@@ -710,34 +710,34 @@ public class SearchAdapterImpl extends AbstractGenerator
 				}
 			}
 		}
-      query.setMaxRows(maxRow);
-      query.setStartRow(startRow + 1);
+		query.setMaxRows(maxRow);
+		query.setStartRow(startRow + 1);
 		dealOthers(data, conn, this.others, query, isFirst.value);
-      if (this.conditionIndex > 0)
-      {
-         if (this.specialCondition)
-         {
-            String subConSQL = manager.getSpecialConditionPart(this, this.needWrap);
-            PreparerManager spm = manager.getSpecialPreparerManager(this);
-            query.setSubSQL(this.conditionIndex, subConSQL, spm);
-         }
-         else
-         {
-            query.setSubSQL(this.conditionIndex, manager.getConditionPart(this.needWrap),
-                  manager.getPreparerManager());
-         }
-      }
-      if (this.parameterSetting != null)
-      {
-         this.parameterSetting.setParameter(query, this, isFirst.value, data, conn);
-      }
-      String singleOrederName = null;
-      boolean singleOrederDesc = false;
-      if (query.canOrder())
-      {
-         String orderStr = data.getRequestParameter(this.getName() + SINGLE_ORDER_SUFIX);
-         if (orderStr != null)
-         {
+		if (this.conditionIndex > 0)
+		{
+			if (this.specialCondition)
+			{
+				String subConSQL = manager.getSpecialConditionPart(this, this.needWrap);
+				PreparerManager spm = manager.getSpecialPreparerManager(this);
+				query.setSubSQL(this.conditionIndex, subConSQL, spm);
+			}
+			else
+			{
+				query.setSubSQL(this.conditionIndex, manager.getConditionPart(this.needWrap),
+						manager.getPreparerManager());
+			}
+		}
+		if (this.parameterSetting != null)
+		{
+			this.parameterSetting.setParameter(query, this, isFirst.value, data, conn);
+		}
+		String singleOrederName = null;
+		boolean singleOrederDesc = false;
+		if (query.canOrder())
+		{
+			String orderStr = data.getRequestParameter(this.getName() + SINGLE_ORDER_SUFIX);
+			if (orderStr != null)
+			{
 				int orderType = 0;
 				String orderTypeStr = data.getRequestParameter(this.getName() + SINGLE_ORDER_TYPE);
 				if (orderTypeStr != null)
@@ -748,68 +748,68 @@ public class SearchAdapterImpl extends AbstractGenerator
 					}
 					catch (Exception ex) {}
 				}
-            query.setSingleOrder(orderStr, orderType);
-         }
+				query.setSingleOrder(orderStr, orderType);
+			}
 			BooleanRef tmp = new BooleanRef();
 			singleOrederName = query.getSingleOrder(tmp);
 			singleOrederDesc = tmp.value;
-      }
+		}
 
-      if (log.isDebugEnabled())
-      {
-         log.debug("Search SQL:" + query.getPreparedSQL());
-         log.debug("End prepare query:" + System.currentTimeMillis());
-      }
-      //System.out.println("Search SQL:" + query.getPreparedSQL());
-      ResultIterator countRitr = null;
-      ResultIterator ritr;
-      if ("1".equals(raMap.get(HOLD_CONNECTION)) && !onlySearch)
-      {
-         ritr = query.executeQueryHoldConnection(conn);
-      }
-      else
-      {
-         if (this.countSearchIndex != -1)
-         {
-            SearchAdapter tmpSearch = this.getFactory().createSearchAdapter(this.countSearchIndex);
-            Object oldObj = raMap.get(READ_ROW_START_AND_COUNT);
-            raMap.put(READ_ROW_START_AND_COUNT, new StartAndCount(1, 1));
-            countRitr = tmpSearch.doSearch(data, conn).queryResult;
-            int count = countRitr.nextRow().getInt(this.countReaderName);
-            query.setTotalCount(count);
-            countRitr.beforeFirst();
-            if (oldObj == null)
-            {
-               raMap.remove(READ_ROW_START_AND_COUNT);
-            }
-            else
-            {
-               raMap.put(READ_ROW_START_AND_COUNT, oldObj);
-            }
-         }
-         else if (this.countType != 0)
-         {
-            query.setTotalCount(this.countType);
-         }
-         ritr = query.executeQuery(conn);
-      }
-      Result result = new Result(this.name, this.queryName, ritr, countRitr, maxRow, pageNum,
-            singleOrederName, singleOrederDesc);
-      if (log.isDebugEnabled())
-      {
-         log.debug("End execute query:" + System.currentTimeMillis());
-      }
-      return result;
-   }
+		if (log.isDebugEnabled())
+		{
+			log.debug("Search SQL:" + query.getPreparedSQL());
+			log.debug("End prepare query:" + System.currentTimeMillis());
+		}
+		//System.out.println("Search SQL:" + query.getPreparedSQL());
+		ResultIterator countRitr = null;
+		ResultIterator ritr;
+		if ("1".equals(raMap.get(HOLD_CONNECTION)) && !onlySearch)
+		{
+			ritr = query.executeQueryHoldConnection(conn);
+		}
+		else
+		{
+			if (this.countSearchIndex != -1)
+			{
+				SearchAdapter tmpSearch = this.getFactory().createSearchAdapter(this.countSearchIndex);
+				Object oldObj = raMap.get(READ_ROW_START_AND_COUNT);
+				raMap.put(READ_ROW_START_AND_COUNT, new StartAndCount(1, 1));
+				countRitr = tmpSearch.doSearch(data, conn).queryResult;
+				int count = countRitr.nextRow().getInt(this.countReaderName);
+				query.setTotalCount(count);
+				countRitr.beforeFirst();
+				if (oldObj == null)
+				{
+					raMap.remove(READ_ROW_START_AND_COUNT);
+				}
+				else
+				{
+					raMap.put(READ_ROW_START_AND_COUNT, oldObj);
+				}
+			}
+			else if (this.countType != 0)
+			{
+				query.setTotalCount(this.countType);
+			}
+			ritr = query.executeQuery(conn);
+		}
+		Result result = new Result(this.name, this.queryName, ritr, countRitr, maxRow, pageNum,
+				singleOrederName, singleOrederDesc);
+		if (log.isDebugEnabled())
+		{
+			log.debug("End execute query:" + System.currentTimeMillis());
+		}
+		return result;
+	}
 
 	/**
-	 * Õ®π˝∆‰À˚µƒ∏®÷˙search¿¥…Ë÷√Ãıº˛.
+	 * ÈÄöËøáÂÖ∂‰ªñÁöÑËæÖÂä©searchÊù•ËÆæÁΩÆÊù°‰ª∂.
 	 *
-	 * @param data      AppData∂‘œÛ
-	 * @param conn       ˝æ›ø‚¡¨Ω”
-	 * @param others    ∆‰À˚µƒ∏®÷˙search
-	 * @param query     ”√”⁄÷¥––≤È—Øµƒquery∂‘œÛ
-	 * @param first      «∑ÒŒ™µ⁄“ª¥Œ÷¥––
+	 * @param data      AppDataÂØπË±°
+	 * @param conn      Êï∞ÊçÆÂ∫ìËøûÊé•
+	 * @param others    ÂÖ∂‰ªñÁöÑËæÖÂä©search
+	 * @param query     Áî®‰∫éÊâßË°åÊü•ËØ¢ÁöÑqueryÂØπË±°
+	 * @param first     ÊòØÂê¶‰∏∫Á¨¨‰∏ÄÊ¨°ÊâßË°å
 	 */
 	protected static void dealOthers(AppData data, Connection conn, SearchAdapter[] others,
 			QueryAdapter query, boolean first)
@@ -847,32 +847,32 @@ public class SearchAdapterImpl extends AbstractGenerator
 
 
 	/**
-	 * ªÒµ√“ª∏ˆ”√”⁄÷¥––≤È—Øµƒquery∂‘œÛ.
+	 * Ëé∑Âæó‰∏Ä‰∏™Áî®‰∫éÊâßË°åÊü•ËØ¢ÁöÑqueryÂØπË±°.
 	 *
-	 * @param data              AppData∂‘œÛ
-	 * @param conn               ˝æ›ø‚¡¨Ω”, ‘⁄ªÒ»°¡–…Ë÷√ ±ª· π”√µΩ
-	 * @param search            µ±«∞µƒsearch∂‘œÛ
-	 * @param first             ≥ˆ≤Œ,  «∑ÒŒ™µ⁄“ª¥Œ÷¥––, µ⁄“ª¥ŒΩ¯»ÎªÚ÷ÿ–¬…Ë÷√¡ÀÃıº˛ ±, ÷µŒ™true
-	 * @param sessionQueryTag   query∑≈‘⁄session÷– π”√µƒ√˚≥∆
-	 * @param searchManager     À—À˜µƒπ‹¿Ì∆˜, ”√”⁄øÿ÷∆∑÷“≥º∞≤È—ØÃıº˛
-	 * @param queryIndex        ”√”⁄ªÒ»°≤È—ØµƒÀ˜“˝÷µ
-	 * @param columnSetting     ”√”⁄Ω¯––¡–…Ë÷√µƒ∂‘œÛ
-	 * @param columnType        ¡–…Ë÷√µƒ¿‡–Õ, ”√”⁄«¯∑÷∂¡»°ƒƒ∏ˆ¡–…Ë÷√
+	 * @param data              AppDataÂØπË±°
+	 * @param conn              Êï∞ÊçÆÂ∫ìËøûÊé•, Âú®Ëé∑ÂèñÂàóËÆæÁΩÆÊó∂‰ºö‰ΩøÁî®Âà∞
+	 * @param search            ÂΩìÂâçÁöÑsearchÂØπË±°
+	 * @param first             Âá∫ÂèÇ, ÊòØÂê¶‰∏∫Á¨¨‰∏ÄÊ¨°ÊâßË°å, Á¨¨‰∏ÄÊ¨°ËøõÂÖ•ÊàñÈáçÊñ∞ËÆæÁΩÆ‰∫ÜÊù°‰ª∂Êó∂, ÂÄº‰∏∫true
+	 * @param sessionQueryTag   queryÊîæÂú®session‰∏≠‰ΩøÁî®ÁöÑÂêçÁß∞
+	 * @param searchManager     ÊêúÁ¥¢ÁöÑÁÆ°ÁêÜÂô®, Áî®‰∫éÊéßÂà∂ÂàÜÈ°µÂèäÊü•ËØ¢Êù°‰ª∂
+	 * @param queryIndex        Áî®‰∫éËé∑ÂèñÊü•ËØ¢ÁöÑÁ¥¢ÂºïÂÄº
+	 * @param columnSetting     Áî®‰∫éËøõË°åÂàóËÆæÁΩÆÁöÑÂØπË±°
+	 * @param columnType        ÂàóËÆæÁΩÆÁöÑÁ±ªÂûã, Áî®‰∫éÂå∫ÂàÜËØªÂèñÂì™‰∏™ÂàóËÆæÁΩÆ
 	 */
-   protected static QueryAdapter getQueryAdapter(AppData data, Connection conn, SearchAdapter search,
+	protected static QueryAdapter getQueryAdapter(AppData data, Connection conn, SearchAdapter search,
 			BooleanRef first, String sessionQueryTag, SearchManager searchManager, int queryIndex,
 			ColumnSetting columnSetting, String columnType)
-         throws ConfigurationException
-   {
-      if (queryIndex == -1)
-      {
-         return null;
-      }
-      QueryAdapter query = null;
+			throws ConfigurationException
+	{
+		if (queryIndex == -1)
+		{
+			return null;
+		}
+		QueryAdapter query = null;
 		Map raMap = data.getRequestAttributeMap();
-      if ("1".equals(raMap.get(FORCE_LOAD_COLUMN_SETTING)) && columnSetting != null)
-      {
-         query = search.getFactory().createQueryAdapter(queryIndex);
+		if ("1".equals(raMap.get(FORCE_LOAD_COLUMN_SETTING)) && columnSetting != null)
+		{
+			query = search.getFactory().createQueryAdapter(queryIndex);
 			String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, true, data, conn);
 			if (colSetting != null)
 			{
@@ -880,219 +880,219 @@ public class SearchAdapterImpl extends AbstractGenerator
 				readerManager.setReaderList(colSetting);
 				query.setReaderManager(readerManager);
 			}
-         UserManager um = search.getFactory().getUserManager();
-         if (um != null)
-         {
-            User user = um.getUser(data);
-            if (user != null)
-            {
-               query.setPermission(user.getPermission());
-            }
-            else
-            {
-               query.setPermission(EmptyPermission.getInstance());
-            }
-         }
-         first.value = true;
-         return query;
-      }
+			UserManager um = search.getFactory().getUserManager();
+			if (um != null)
+			{
+				User user = um.getUser(data);
+				if (user != null)
+				{
+					query.setPermission(user.getPermission());
+				}
+				else
+				{
+					query.setPermission(EmptyPermission.getInstance());
+				}
+			}
+			first.value = true;
+			return query;
+		}
 
 		Map saMap = data.getSessionAttributeMap();
-      Map queryMap = (Map) SessionCache.getInstance().getProperty(saMap, SESSION_SEARCH_QUERY);
-      if (queryMap == null)
-      {
-         queryMap = new HashMap();
-         SessionCache.getInstance().setProperty(saMap, SESSION_SEARCH_QUERY, queryMap);
-      }
+		Map queryMap = (Map) SessionCache.getInstance().getProperty(saMap, SESSION_SEARCH_QUERY);
+		if (queryMap == null)
+		{
+			queryMap = new HashMap();
+			SessionCache.getInstance().setProperty(saMap, SESSION_SEARCH_QUERY, queryMap);
+		}
 
-      QueryContainer qc = (QueryContainer) queryMap.get(sessionQueryTag);
-      int qcVersion;
-      if (qc == null)
-      {
-         qcVersion = 0;
-      }
-      else
-      {
-         qcVersion = qc.conditionVersion;
-      }
-      boolean isFirst = searchManager.hasQueryType(data) || searchManager.getConditionVersion() > qcVersion;
-      qcVersion = searchManager.getConditionVersion();
-      if (isFirst || qc == null)
-      {
-         isFirst = true;
-         query = search.getFactory().createQueryAdapter(queryIndex);
-         UserManager um = search.getFactory().getUserManager();
-         if (um != null)
-         {
-            User user = um.getUser(data);
-            if (user != null)
-            {
-               query.setPermission(user.getPermission());
-            }
-            else
-            {
-               query.setPermission(EmptyPermission.getInstance());
-            }
-         }
-         queryMap.put(sessionQueryTag, new QueryContainer(query, qcVersion));
-      }
-      else
-      {
-         query = qc.query;
-      }
-      if (columnSetting != null)
-      {
-         String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, isFirst, data, conn);
-         if (colSetting != null)
-         {
-            ResultReaderManager readerManager = query.getReaderManager();
-            readerManager.setReaderList(colSetting);
-            query.setReaderManager(readerManager);
-         }
-      }
-      first.value = isFirst;
-      return query;
-   }
+		QueryContainer qc = (QueryContainer) queryMap.get(sessionQueryTag);
+		int qcVersion;
+		if (qc == null)
+		{
+			qcVersion = 0;
+		}
+		else
+		{
+			qcVersion = qc.conditionVersion;
+		}
+		boolean isFirst = searchManager.hasQueryType(data) || searchManager.getConditionVersion() > qcVersion;
+		qcVersion = searchManager.getConditionVersion();
+		if (isFirst || qc == null)
+		{
+			isFirst = true;
+			query = search.getFactory().createQueryAdapter(queryIndex);
+			UserManager um = search.getFactory().getUserManager();
+			if (um != null)
+			{
+				User user = um.getUser(data);
+				if (user != null)
+				{
+					query.setPermission(user.getPermission());
+				}
+				else
+				{
+					query.setPermission(EmptyPermission.getInstance());
+				}
+			}
+			queryMap.put(sessionQueryTag, new QueryContainer(query, qcVersion));
+		}
+		else
+		{
+			query = qc.query;
+		}
+		if (columnSetting != null)
+		{
+			String[] colSetting = columnSetting.getColumnSetting(columnType, query, search, isFirst, data, conn);
+			if (colSetting != null)
+			{
+				ResultReaderManager readerManager = query.getReaderManager();
+				readerManager.setReaderList(colSetting);
+				query.setReaderManager(readerManager);
+			}
+		}
+		first.value = isFirst;
+		return query;
+	}
 
-   private SearchManager getSearchManager0(Map saMap)
-         throws ConfigurationException
-   {
-      Map managerMap = (Map) SessionCache.getInstance().getProperty(saMap, SESSION_SEARCH_MANAGER);
-      if (managerMap == null)
-      {
-         managerMap = new HashMap();
-         SessionCache.getInstance().setProperty(saMap, SESSION_SEARCH_MANAGER, managerMap);
-      }
-      SearchManager manager = (SearchManager) managerMap.get(this.searchManagerName);
-      if (manager == null)
-      {
-         manager = this.getFactory().createSearchManager();
-         managerMap.put(this.searchManagerName, manager);
-      }
-      return manager;
-   }
+	private SearchManager getSearchManager0(Map saMap)
+			throws ConfigurationException
+	{
+		Map managerMap = (Map) SessionCache.getInstance().getProperty(saMap, SESSION_SEARCH_MANAGER);
+		if (managerMap == null)
+		{
+			managerMap = new HashMap();
+			SessionCache.getInstance().setProperty(saMap, SESSION_SEARCH_MANAGER, managerMap);
+		}
+		SearchManager manager = (SearchManager) managerMap.get(this.searchManagerName);
+		if (manager == null)
+		{
+			manager = this.getFactory().createSearchManager();
+			managerMap.put(this.searchManagerName, manager);
+		}
+		return manager;
+	}
 
-   private ConditionProperty[] getConditionPropertys0()
-         throws ConfigurationException
-   {
-      if (this.allConditionProperties != null)
-      {
-         return this.allConditionProperties;
-      }
-      OrderManager om = new OrderManager();
-      List resultList = om.getOrder(new MyOrderItem(), this.parents, this.conditionPropertyOrder,
-            this.conditionProperties, this.conditionPropertyMap);
-      this.allConditionProperties = (ConditionProperty[]) resultList.toArray(new ConditionProperty[0]);
-      return this.allConditionProperties;
-   }
+	private ConditionProperty[] getConditionPropertys0()
+			throws ConfigurationException
+	{
+		if (this.allConditionProperties != null)
+		{
+			return this.allConditionProperties;
+		}
+		OrderManager om = new OrderManager();
+		List resultList = om.getOrder(new MyOrderItem(), this.parents, this.conditionPropertyOrder,
+				this.conditionProperties, this.conditionPropertyMap);
+		this.allConditionProperties = (ConditionProperty[]) resultList.toArray(new ConditionProperty[0]);
+		return this.allConditionProperties;
+	}
 
-   private ConditionProperty[] getConditionPropertysWithOther()
-         throws ConfigurationException
-   {
-      if (this.allConditionPropertiesWithOther != null)
-      {
-         return this.allConditionPropertiesWithOther;
-      }
-      OrderManager om = new OrderManager("other");
-      Map temp = new HashMap(this.conditionPropertyMap);
-      List resultList = om.getOrder(new MyOrderItem(), this.others, this.conditionPropertyOrderWithOther,
-            this.conditionProperties, temp);
-      this.allConditionPropertiesWithOther = (ConditionProperty[]) resultList.toArray(new ConditionProperty[0]);
-      return this.allConditionPropertiesWithOther;
-   }
+	private ConditionProperty[] getConditionPropertysWithOther()
+			throws ConfigurationException
+	{
+		if (this.allConditionPropertiesWithOther != null)
+		{
+			return this.allConditionPropertiesWithOther;
+		}
+		OrderManager om = new OrderManager("other");
+		Map temp = new HashMap(this.conditionPropertyMap);
+		List resultList = om.getOrder(new MyOrderItem(), this.others, this.conditionPropertyOrderWithOther,
+				this.conditionProperties, temp);
+		this.allConditionPropertiesWithOther = (ConditionProperty[]) resultList.toArray(new ConditionProperty[0]);
+		return this.allConditionPropertiesWithOther;
+	}
 
-   private static class MyOrderItem extends OrderManager.OrderItem
-   {
-      private ConditionProperty cp;
+	private static class MyOrderItem extends OrderManager.OrderItem
+	{
+		private ConditionProperty cp;
 
-      public MyOrderItem()
-      {
-         super("", null);
-      }
+		public MyOrderItem()
+		{
+			super("", null);
+		}
 
-      protected MyOrderItem(String name, Object obj)
-      {
-         super(name, obj);
-         this.cp = (ConditionProperty) obj;
-      }
+		protected MyOrderItem(String name, Object obj)
+		{
+			super(name, obj);
+			this.cp = (ConditionProperty) obj;
+		}
 
-      public boolean isIgnore()
-            throws ConfigurationException
-      {
-         return this.cp.isIgnore();
-      }
+		public boolean isIgnore()
+				throws ConfigurationException
+		{
+			return this.cp.isIgnore();
+		}
 
-      public OrderManager.OrderItem create(Object obj)
-            throws ConfigurationException
-      {
-         if (obj == null)
-         {
-            return null;
-         }
-         ConditionProperty cp = (ConditionProperty) obj;
-         return new MyOrderItem(cp.getName(), cp);
-      }
+		public OrderManager.OrderItem create(Object obj)
+				throws ConfigurationException
+		{
+			if (obj == null)
+			{
+				return null;
+			}
+			ConditionProperty cp = (ConditionProperty) obj;
+			return new MyOrderItem(cp.getName(), cp);
+		}
 
-      public Iterator getOrderItemIterator(Object container)
-            throws ConfigurationException
-      {
-         SearchAdapter search = (SearchAdapter) container;
-         return new MyIterator(search);
-      }
+		public Iterator getOrderItemIterator(Object container)
+				throws ConfigurationException
+		{
+			SearchAdapter search = (SearchAdapter) container;
+			return new MyIterator(search);
+		}
 
-   }
+	}
 
-   private static class MyIterator
-         implements Iterator
-   {
-      private int index = 0;
-      private int count;
-      SearchAdapter search;
+	private static class MyIterator
+			implements Iterator
+	{
+		private int index = 0;
+		private int count;
+		SearchAdapter search;
 
-      public MyIterator(SearchAdapter search)
-            throws ConfigurationException
-      {
-         this.search = search;
-         this.count = search.getConditionPropertyCount();
-      }
+		public MyIterator(SearchAdapter search)
+				throws ConfigurationException
+		{
+			this.search = search;
+			this.count = search.getConditionPropertyCount();
+		}
 
-      public boolean hasNext()
-      {
-         return this.index < this.count;
-      }
+		public boolean hasNext()
+		{
+			return this.index < this.count;
+		}
 
-      public Object next()
-      {
-         try
-         {
-            return this.search.getConditionProperty(this.index++);
-         }
-         catch (ConfigurationException ex)
-         {
-            log.error("Search my iterator next.", ex);
-            throw new UnsupportedOperationException(ex.getMessage());
-         }
-      }
+		public Object next()
+		{
+			try
+			{
+				return this.search.getConditionProperty(this.index++);
+			}
+			catch (ConfigurationException ex)
+			{
+				log.error("Search my iterator next.", ex);
+				throw new UnsupportedOperationException(ex.getMessage());
+			}
+		}
 
-      public void remove()
-      {
-         throw new UnsupportedOperationException();
-      }
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
 
-   }
+	}
 
-   protected static class QueryContainer
-   {
-      public final QueryAdapter query;
-      public final int conditionVersion;
+	protected static class QueryContainer
+	{
+		public final QueryAdapter query;
+		public final int conditionVersion;
 
-      public QueryContainer(QueryAdapter query, int conditionVersion)
-      {
-         this.query = query;
-         this.conditionVersion = conditionVersion;
-      }
+		public QueryContainer(QueryAdapter query, int conditionVersion)
+		{
+			this.query = query;
+			this.conditionVersion = conditionVersion;
+		}
 
-   }
+	}
 
 }
 

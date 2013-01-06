@@ -21,9 +21,9 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 
 /**
- * ×¢: Ê¹ÓÃÊ±Ğè×¢Òâ, Èç¹ûÃ»ÓĞÍ¨¹ıValueContainerMap¶øÊÇÖ±½Ó¶Ô
- * AttributeÉèÖÃ»òÉ¾³ıÖµµÄ»°, ÄÇÔÙ·ÃÎÊValueContainerMapµÄ
- * valuesºÍkeySetµÄ»°»áÔì³ÉÊı¾İ²»Ò»ÖÂ
+ * æ³¨: ä½¿ç”¨æ—¶éœ€æ³¨æ„, å¦‚æœæ²¡æœ‰é€šè¿‡ValueContainerMapè€Œæ˜¯ç›´æ¥å¯¹
+ * Attributeè®¾ç½®æˆ–åˆ é™¤å€¼çš„è¯, é‚£å†è®¿é—®ValueContainerMapçš„
+ * valueså’ŒkeySetçš„è¯ä¼šé€ æˆæ•°æ®ä¸ä¸€è‡´
  */
 public class ValueContainerMap extends AbstractMap
 		implements Map
@@ -32,8 +32,8 @@ public class ValueContainerMap extends AbstractMap
 	private ValueContainer vContainer;
 
 	/**
-	 * ÔÚÖ´ĞĞputºÍremoveÊ±, ÊÇ·ñÒª¶ÁÈ¡Ô­Ê¼Öµ.
-	 * <code>true</code>ÎªĞèÒª¶ÁÈ¡Ô­Ê¼Öµ.
+	 * åœ¨æ‰§è¡Œputå’Œremoveæ—¶, æ˜¯å¦è¦è¯»å–åŸå§‹å€¼.
+	 * <code>true</code>ä¸ºéœ€è¦è¯»å–åŸå§‹å€¼.
 	 */
 	private boolean loadOldValue = false;
 
@@ -108,7 +108,7 @@ public class ValueContainerMap extends AbstractMap
 	}
 
 	/**
-	 * ÔÚÖ´ĞĞputºÍremoveÊ±, ÊÇ·ñÒª¶ÁÈ¡Ô­Ê¼Öµ.
+	 * åœ¨æ‰§è¡Œputå’Œremoveæ—¶, æ˜¯å¦è¦è¯»å–åŸå§‹å€¼.
 	 */
 	public boolean isLoadOldValue()
 	{
@@ -116,7 +116,7 @@ public class ValueContainerMap extends AbstractMap
 	}
 
 	/**
-	 * ÉèÖÃÔÚÖ´ĞĞputºÍremoveÊ±, ÊÇ·ñÒª¶ÁÈ¡Ô­Ê¼Öµ.
+	 * è®¾ç½®åœ¨æ‰§è¡Œputå’Œremoveæ—¶, æ˜¯å¦è¦è¯»å–åŸå§‹å€¼.
 	 */
 	public void setLoadOldValue(boolean loadOldValue)
 	{
@@ -124,7 +124,7 @@ public class ValueContainerMap extends AbstractMap
 	}
 
 	/**
-	 * ÊÇ·ñĞèÒª±£´æentryÁĞ±í.
+	 * æ˜¯å¦éœ€è¦ä¿å­˜entryåˆ—è¡¨.
 	 */
 	public boolean isKeepEntry()
 	{
@@ -132,9 +132,9 @@ public class ValueContainerMap extends AbstractMap
 	}
 
 	/**
-	 * ÉèÖÃÊÇ·ñĞèÒª±£´æentryÁĞ±í.
-	 * Èç¹û²»±£´æ, ½«ÔÚÃ¿´ÎÊ¹ÓÃÊ±Éú³ÉĞÂµÄentryÁĞ±í.
-	 * Ä¬ÈÏÖµÎª: true.
+	 * è®¾ç½®æ˜¯å¦éœ€è¦ä¿å­˜entryåˆ—è¡¨.
+	 * å¦‚æœä¸ä¿å­˜, å°†åœ¨æ¯æ¬¡ä½¿ç”¨æ—¶ç”Ÿæˆæ–°çš„entryåˆ—è¡¨.
+	 * é»˜è®¤å€¼ä¸º: true.
 	 */
 	public void setKeepEntry(boolean keepEntry)
 	{
@@ -391,7 +391,7 @@ public class ValueContainerMap extends AbstractMap
 			}
 			catch (Exception ex)
 			{
-				// ´´½¨sessionÊ±¿ÉÄÜ»á³ö´í, ±ÈÈçÒÑ¾­Ìá½»ÁËÓ¦´ğÖ®ºó
+				// åˆ›å»ºsessionæ—¶å¯èƒ½ä¼šå‡ºé”™, æ¯”å¦‚å·²ç»æäº¤äº†åº”ç­”ä¹‹å
 				if (AppData.getAppLogType() > 0)
 				{
 					AppData.log.warn("Error in create session.", ex);

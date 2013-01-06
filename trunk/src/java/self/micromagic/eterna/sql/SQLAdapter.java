@@ -12,1212 +12,1212 @@ import self.micromagic.eterna.sql.preparer.PreparerManager;
 import self.micromagic.eterna.sql.preparer.ValuePreparer;
 
 /**
- * ÓÃÓÚ´¦ÀíÔ¤±¸SQLÓï¾ä.
+ * ç”¨äºå¤„ç†é¢„å¤‡SQLè¯­å¥.
  *
  * @author  micromagic
  * @version 1.0, 2002-10-13
  */
 public interface SQLAdapter
 {
-   public static final String SQL_LOG_PROPERTY = "self.micromagic.eterna.sql.logType";
-   public static final int SQL_LOG_TYPE_NONE = -1;
-   public static final int SQL_LOG_TYPE_SAVE = 0x2;
-   public static final int SQL_LOG_TYPE_PRINT = 0x1;
-   public static final int SQL_LOG_TYPE_SPECIAL = 0x4;
+	public static final String SQL_LOG_PROPERTY = "self.micromagic.eterna.sql.logType";
+	public static final int SQL_LOG_TYPE_NONE = -1;
+	public static final int SQL_LOG_TYPE_SAVE = 0x2;
+	public static final int SQL_LOG_TYPE_PRINT = 0x1;
+	public static final int SQL_LOG_TYPE_SPECIAL = 0x4;
 
-   public static final String SQL_TYPE_UPDATE = "update";
-   public static final String SQL_TYPE_QUERY = "query";
-   public static final String SQL_TYPE_COUNT = "count";
-   public static final String SQL_TYPE_SQL = "SQL";
+	public static final String SQL_TYPE_UPDATE = "update";
+	public static final String SQL_TYPE_QUERY = "query";
+	public static final String SQL_TYPE_COUNT = "count";
+	public static final String SQL_TYPE_SQL = "SQL";
 
-   /**
-    * »ñÈ¡±¾SQLÊÊÅäÆ÷µÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLé€‚é…å™¨çš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾SQLÊÊÅäÆ÷µÄÀàĞÍ.
-    * Èç: query, update.
-    */
-   String getType() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLé€‚é…å™¨çš„ç±»å‹.
+	 * å¦‚: query, update.
+	 */
+	String getType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾SQLÊÊÅäÆ÷Ä³¸öÉèÖÃµÄÊôĞÔ.
-    */
-   Object getAttribute(String name) throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLé€‚é…å™¨æŸä¸ªè®¾ç½®çš„å±æ€§.
+	 */
+	Object getAttribute(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾SQLÊÊÅäÆ÷ÉèÖÃµÄËùÓĞÊôĞÔµÄÃû³Æ.
-    */
-   String[] getAttributeNames() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLé€‚é…å™¨è®¾ç½®çš„æ‰€æœ‰å±æ€§çš„åç§°.
+	 */
+	String[] getAttributeNames() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾SQLÊÊÅäÆ÷sqlÈÕÖ¾µÄ¼ÇÂ¼·½Ê½
-    */
-   int getLogType() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬SQLé€‚é…å™¨sqlæ—¥å¿—çš„è®°å½•æ–¹å¼
+	 */
+	int getLogType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Éú³É±¾ÊÊÅäÆ÷µÄ¹¤³§.
-    */
-   EternaFactory getFactory() throws ConfigurationException;
+	/**
+	 * è·å–ç”Ÿæˆæœ¬é€‚é…å™¨çš„å·¥å‚.
+	 */
+	EternaFactory getFactory() throws ConfigurationException;
 
-   /**
-    * »ñµÃ²ÎÊıµÄ¸öÊı.
-    *
-    * @return    <code>SQLAdapter</code>ÖĞ²ÎÊıµÄ¸öÊı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   int getParameterCount() throws ConfigurationException;
+	/**
+	 * è·å¾—å‚æ•°çš„ä¸ªæ•°.
+	 *
+	 * @return    <code>SQLAdapter</code>ä¸­å‚æ•°çš„ä¸ªæ•°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	int getParameterCount() throws ConfigurationException;
 
-   /**
-    * »ñµÃÊµ¼ÊÓĞĞ§µÄ²ÎÊı¸öÊı.
-    *
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   public int getActiveParamCount() throws ConfigurationException;
+	/**
+	 * è·å¾—å®é™…æœ‰æ•ˆçš„å‚æ•°ä¸ªæ•°.
+	 *
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	public int getActiveParamCount() throws ConfigurationException;
 
-   /**
-    * ÅĞ¶ÏÊÇ·ñÓĞÓĞĞ§µÄ²ÎÊı.
-    *
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   public boolean hasActiveParam() throws ConfigurationException;
+	/**
+	 * åˆ¤æ–­æ˜¯å¦æœ‰æœ‰æ•ˆçš„å‚æ•°.
+	 *
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	public boolean hasActiveParam() throws ConfigurationException;
 
-   /**
-    * ¸ù¾İParameterµÄÃû³Æ»ñÈ¡Ò»¸öSQLParameter.
-    */
-   SQLParameter getParameter(String paramName) throws ConfigurationException;
+	/**
+	 * æ ¹æ®Parameterçš„åç§°è·å–ä¸€ä¸ªSQLParameter.
+	 */
+	SQLParameter getParameter(String paramName) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡°üº¬ËùÓĞSQLParameterµÄµü´úÆ÷.
-	 * µü´úÆ÷ÖĞµÄËùÓĞSQLParameter±ØĞè°´Ë÷ÒıÖµ´ÓĞ¡µ½´óË³ĞòÅÅÁĞ.
+	/**
+	 * è·å–åŒ…å«æ‰€æœ‰SQLParameterçš„è¿­ä»£å™¨.
+	 * è¿­ä»£å™¨ä¸­çš„æ‰€æœ‰SQLParameterå¿…éœ€æŒ‰ç´¢å¼•å€¼ä»å°åˆ°å¤§é¡ºåºæ’åˆ—.
 	 *
 	 * @see SQLParameter#getIndex
-    */
-   Iterator getParameterIterator() throws ConfigurationException;
-
-   /**
-    * Ö´ĞĞ±¾SQLÊÊÅäÆ÷.
-    */
-   void execute(Connection conn) throws ConfigurationException, SQLException;
-
-   /**
-    * »ñµÃ×ÓÓï¾äµÄ¸öÊı.
-    *
-    * @return    <code>SQLAdapter</code>ÖĞ×ÓÓï¾äµÄ¸öÊı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   int getSubSQLCount() throws ConfigurationException;
-
-   /**
-    * »ñµÃÔ¤±¸SQLÓï¾ä. <p>
-    * ¸ÃÔ¤±¸SQLÓï¾äÊÇ¾­¹ıµÚÒ»²½´¦Àí£¬½«×ÓÓï¾äÉèÖÃÍêºóµÄÔ¤±¸SQLÓï¾ä¡£
-    *
-    * @return    ¾­¹ıµÚÒ»²½´¦ÀíÔ¤±¸SQLÓï¾ä.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   String getPreparedSQL() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ×ÓÓï¾ä.
-    *
-    * @param index    ×ÓÓï¾äµÄË÷ÒıÖµ.
-    * @param subPart  ÒªÉèÖÃµÄ×ÓÓï¾ä.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setSubSQL(int index, String subPart) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ×ÓÓï¾ä, ²¢ÎªÆäÅäÉÏÏàÓ¦µÄ²ÎÊı.
-    *
-    * @param index    ×ÓÓï¾äµÄË÷ÒıÖµ.
-    * @param subPart  ÒªÉèÖÃµÄ×ÓÓï¾ä.
-    * @param pm       ÒªÅäÉÏµÄ²ÎÊı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setSubSQL(int index, String subPart, PreparerManager pm) throws ConfigurationException;
-
-   /**
-    * »ñµÃ±¾sqlÊÊÅäÆ÷µÄÅäÖÃ²ÎÊı.
-    */
-   PreparerManager getPreparerManager() throws ConfigurationException;
-
-   /**
-    * ¸ù¾İË÷ÒıÖµÅĞ¶Ï¶ÔÓ¦µÄ²ÎÊıÊÇ·ñÊÇ¶¯Ì¬²ÎÊı.
-    *
-    * @param index    µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    */
-   boolean isDynamicParameter(int index) throws ConfigurationException;
-
-   /**
-    * ¸ù¾İ²ÎÊıµÄÃû³ÆÅĞ¶Ï¶ÔÓ¦µÄ²ÎÊıÊÇ·ñÊÇ¶¯Ì¬²ÎÊı.
-    *
-    * @param name    ²ÎÊıµÄÃû³Æ
-    */
-   boolean isDynamicParameter(String name) throws ConfigurationException;
-
-   /**
-    * Í¨¹ıValuePreparerÀ´ÉèÖÃ²ÎÊı.
-    */
-   void setValuePreparer(ValuePreparer preparer) throws ConfigurationException;
-
-   /**
-    * ½«²ÎÊıÉèÖÃµ½PreparedStatementÖĞ.
-    */
-   void prepareValues(PreparedStatement stmt) throws ConfigurationException, SQLException;
-
-   /**
-    * ½«²ÎÊıÉèÖÃµ½PreparedStatementWrapÖĞ.
-    */
-   void prepareValues(PreparedStatementWrap stmtWrap) throws ConfigurationException, SQLException;
-
-   /**
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªºöÂÔ.
-    * Ö»ÓĞ¶¯Ì¬²ÎÊı²Å¿ÉÉèÖÃÎªºöÂÔ.
-    *
-    * @param parameterIndex µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setIgnore(int parameterIndex) throws ConfigurationException;
-
-   /**
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªºöÂÔ.
-    * Ö»ÓĞ¶¯Ì¬²ÎÊı²Å¿ÉÉèÖÃÎªºöÂÔ.
-    *
-    * @param parameterName  Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setIgnore(String parameterName) throws ConfigurationException;
-
-   /* *
-    * ÓÃÒ»¸ö<code>Timestamp</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterIndex   ²ÎÊıµÄË÷ÒıÖµ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param cal              ÓÃÀ´¹¹ÔìTimestampµÄ<code>Calendar</code>.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setTimestamp(int parameterIndex, java.sql.Timestamp x, Calendar cal)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Timestamp</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterName    ²ÎÊıµÄÃû³Æ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param cal              ÓÃÀ´¹¹ÔìTimestampµÄ<code>Calendar</code>.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setTimestamp(String parameterName, java.sql.Timestamp x, Calendar cal)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterIndex   ²ÎÊıµÄË÷ÒıÖµ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(int parameterIndex, Object x)
-         throws ConfigurationException;
-   */
-
-   /*
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterName    ²ÎÊıµÄÃû³Æ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(String parameterName, Object x)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterIndex   ²ÎÊıµÄË÷ÒıÖµ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param targetSqlType    SQLÖĞµÄÀàĞÍ(ÔÚjava.sql.TypesÖĞ¶¨Òå).
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(int parameterIndex, Object x, int targetSqlType)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterName    ²ÎÊıµÄÃû³Æ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param targetSqlType    SQLÖĞµÄÀàĞÍ(ÔÚjava.sql.TypesÖĞ¶¨Òå).
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(String parameterName, Object x, int targetSqlType)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterIndex   ²ÎÊıµÄË÷ÒıÖµ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param targetSqlType    SQLÖĞµÄÀàĞÍ(ÔÚjava.sql.TypesÖĞ¶¨Òå).
-    * @param scale            ÉèÖÃDECIMALºÍNUMERICµÄĞ¡ÊıÎ»Êı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(int parameterIndex, Object x, int targetSqlType, int scale)
-         throws ConfigurationException;
-   */
-
-   /* *
-    * ÓÃÒ»¸ö<code>Object</code>À´ÉèÖÃÄ¿±ê²ÎÊı.
-    *
-    * @param parameterName    ²ÎÊıµÄÃû³Æ.
-    * @param x                ²ÎÊıµÄÖµ.
-    * @param targetSqlType    SQLÖĞµÄÀàĞÍ(ÔÚjava.sql.TypesÖĞ¶¨Òå).
-    * @param scale            ÉèÖÃDECIMALºÍNUMERICµÄĞ¡ÊıÎ»Êı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    *
-   public void setObject(String parameterName, Object x, int targetSqlType, int scale)
-         throws ConfigurationException;
-   */
-
-   /**
-    * Sets the designated parameter to SQL <code>NULL</code>.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªSQLµÄ<code>NULL</code>.
-    *
-    * <P><B>Note:</B> You must specify the parameter's SQL type.
-    * <P><B>×¢:</B> Äã±ØĞëÖ¸¶¨²ÎÊıµÄSQLÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
-    *                <p>ÔÚ<code>java.sql.Types</code>ÖĞ¶¨ÒåµÄSQLĞÍ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setNull(int parameterIndex, int sqlType) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to SQL <code>NULL</code>.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªSQLµÄ<code>NULL</code>.
-    *
-    * <P><B>Note:</B> You must specify the parameter's SQL type.
-    * <P><B>×¢:</B> Äã±ØĞëÖ¸¶¨²ÎÊıµÄSQLÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
-    *                <p>ÔÚ<code>java.sql.Types</code>ÖĞ¶¨ÒåµÄSQLĞÍ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setNull(String parameterName, int sqlType) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>boolean</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>boolean</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>BIT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>BIT</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBoolean(int parameterIndex, boolean x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>boolean</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>boolean</code>Öµ.
-    * to an SQL <code>BIT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>BIT</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBoolean(String parameterName, boolean x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>byte</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>byte</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>TINYINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TINYINT</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setByte(int parameterIndex, byte x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>byte</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>byte</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>TINYINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TINYINT</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setByte(String parameterName, byte x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>short</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>short</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>SMALLINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>SMALLINT</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setShort(int parameterIndex, short x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>short</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>short</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>SMALLINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>SMALLINT</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setShort(String parameterName, short x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>int</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>int</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>INTEGER</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>INTEGER</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setInt(int parameterIndex, int x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>int</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>int</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>INTEGER</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>INTEGER</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setInt(String parameterName, int x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>long</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>long</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>BIGINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>BIGINT</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setLong(int parameterIndex, long x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>long</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>long</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>BIGINT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>BIGINT</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setLong(String parameterName, long x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>float</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>float</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>FLOAT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>FLOAT</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setFloat(int parameterIndex, float x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>float</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>float</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>FLOAT</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>FLOAT</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setFloat(String parameterName, float x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>double</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>double</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>DOUBLE</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>DOUBLE</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setDouble(int parameterIndex, double x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>double</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>double</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>DOUBLE</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>DOUBLE</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setDouble(String parameterName, double x) throws ConfigurationException;
-
-   /* *
-    * Sets the designated parameter to the given <code>java.math.BigDecimal</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.math.BigDecimal</code>Öµ.
-    * The driver converts this to an SQL <code>NUMERIC</code> value when
-    * it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>NUMERIC</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    * Î´Ö§³Ö
-    *
-   void setBigDecimal(int parameterIndex, BigDecimal x) throws ConfigurationException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>java.math.BigDecimal</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.math.BigDecimal</code>Öµ.
-    * The driver converts this to an SQL <code>NUMERIC</code> value when
-    * it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>NUMERIC</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    * Î´Ö§³Ö
-    *
-   void setBigDecimal(String parameterName, BigDecimal x) throws ConfigurationException;
-   */
-
-   /**
-    * Sets the designated parameter to the given Java <code>String</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>String</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>VARCHAR</code> or <code>LONGVARCHAR</code> value
-    * (depending on the argument's
-    * size relative to the driver's limits on <code>VARCHAR</code> values)
-    * when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>VARCHAR</code>»ò
-    * <code>LONGVARCHAR</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setString(int parameterIndex, String x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java <code>String</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>String</code>Öµ.
-    * The driver converts this
-    * to an SQL <code>VARCHAR</code> or <code>LONGVARCHAR</code> value
-    * (depending on the argument's
-    * size relative to the driver's limits on <code>VARCHAR</code> values)
-    * when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>VARCHAR</code>»ò
-    * <code>LONGVARCHAR</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setString(String parameterName, String x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java array of bytes.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>byte</code>Êı×é.
-    * The driver converts
-    * this to an SQL <code>VARBINARY</code> or <code>LONGVARBINARY</code>
-    * (depending on the argument's size relative to the driver's limits on
-    * <code>VARBINARY</code> values) when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>VARBINARY</code>»ò
-    * <code>LONGVARBINARY</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBytes(int parameterIndex, byte[] x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given Java array of bytes.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>byte</code>Êı×é.
-    * The driver converts
-    * this to an SQL <code>VARBINARY</code> or <code>LONGVARBINARY</code>
-    * (depending on the argument's size relative to the driver's limits on
-    * <code>VARBINARY</code> values) when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>VARBINARY</code>»ò
-    * <code>LONGVARBINARY</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBytes(String parameterName, byte[] x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Date</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Date</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>DATE</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>DATE</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setDate(int parameterIndex, java.sql.Date x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Date</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Date</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>DATE</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>DATE</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setDate(String parameterName, java.sql.Date x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Time</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Time</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>TIME</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TIME</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setTime(int parameterIndex, java.sql.Time x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Time</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Time</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>TIME</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TIME</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setTime(String parameterName, java.sql.Time x) throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Timestamp</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>TIMESTAMP</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TIMESTAMP</code>ÀàĞÍ.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ...
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setTimestamp(int parameterIndex, java.sql.Timestamp x)
-         throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value.
-    * ½«¶¨ÒåºÃµÄ²ÎÊıÉèÎªJavaµÄ<code>java.sql.Timestamp</code>Êı×é.
-    * The driver converts this
-    * to an SQL <code>TIMESTAMP</code> value when it sends it to the database.
-    * SQLÇı¶¯ÒªÔÚ½«Õâ¸öÖµ·¢ËÍµ½Êı¾İ¿âÊ±×ªÎªSQLµÄ<code>TIMESTAMP</code>ÀàĞÍ.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setTimestamp(String parameterName, java.sql.Timestamp x)
-         throws ConfigurationException;
-
-   /*  *
-    * Sets the designated parameter to the given input stream, which will have
-    * the specified number of bytes.
-    * When a very large ASCII value is input to a <code>LONGVARCHAR</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.InputStream</code>. Data will be read from the stream
-    * as needed until end-of-file is reached.  The JDBC driver will
-    * do any necessary conversion from ASCII to the database char format.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the Java input stream that contains the ASCII parameter value
-    * @param length the number of bytes in the stream
-    * @exception java.sql.SQLException if a database access error occurs
-    * Î´Ö§³Ö
-   void setAsciiStream(int parameterIndex, java.io.InputStream x, int length)
-         throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given input stream, which
-    * will have the specified number of bytes. A Unicode character has
-    * two bytes, with the first byte being the high byte, and the second
-    * being the low byte.
-    *
-    * When a very large Unicode value is input to a <code>LONGVARCHAR</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.InputStream</code> object. The data will be read from the
-    * stream as needed until end-of-file is reached.  The JDBC driver will
-    * do any necessary conversion from Unicode to the database char format.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x a <code>java.io.InputStream</code> object that contains the
-    *        Unicode parameter value as two-byte Unicode characters
-    * @param length the number of bytes in the stream
-    * @exception java.sql.SQLException if a database access error occurs
-    * @deprecated
-    * Î´Ö§³Ö
-    *
-   void setUnicodeStream(int parameterIndex, java.io.InputStream x,
-         int length) throws SQLException;
-   */
-
-   /**
-    * Sets the designated parameter to the given input stream, which will have
-    * the specified number of bytes.
-    * When a very large binary value is input to a <code>LONGVARBINARY</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.InputStream</code> object. The data will be read from the
-    * stream as needed until end-of-file is reached.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the java input stream which contains the binary parameter value
-    * @param length the number of bytes in the stream
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBinaryStream(int parameterIndex, java.io.InputStream x, int length)
-         throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given input stream, which will have
-    * the specified number of bytes.
-    * When a very large binary value is input to a <code>LONGVARBINARY</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.InputStream</code> object. The data will be read from the
-    * stream as needed until end-of-file is reached.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterName  Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the java input stream which contains the binary parameter value
-    * @param length the number of bytes in the stream
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setBinaryStream(String parameterName, java.io.InputStream x, int length)
-         throws ConfigurationException;
-
-   /* *
-    * Clears the current parameter values immediately.
-    * <P>In general, parameter values remain in force for repeated use of a
-    * statement. Setting a parameter value automatically clears its
-    * previous value.  However, in some cases it is useful to immediately
-    * release the resources used by the current parameter values; this can
-    * be done by calling the method <code>clearParameters</code>.
-    *
-    * @exception java.sql.SQLException if a database access error occurs
-    * Î´Ö§³Ö
-    *
-   void clearParameters() throws SQLException;
-   */
-
-   //----------------------------------------------------------------------
-   // Advanced features:
-
-   /* *
-    * <p>Sets the value of the designated parameter with the given object. The second
-    * argument must be an object type; for integral values, the
-    * <code>java.lang</code> equivalent objects should be used.
-    *
-    * <p>The given Java object will be converted to the given targetSqlType
-    * before being sent to the database.
-    *
-    * If the object has a custom mapping (is of a class implementing the
-    * interface <code>SQLData</code>),
-    * the JDBC driver should call the method <code>SQLData.writeSQL</code> to
-    * write it to the SQL data stream.
-    * If, on the other hand, the object is of a class implementing
-    * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
-    * or <code>Array</code>, the driver should pass it to the database as a
-    * value of the corresponding SQL type.
-    *
-    * <p>Note that this method may be used to pass database-specific
-    * abstract data types.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the object containing the input parameter value
-    * @param targetSqlType the SQL type (as defined in java.sql.Types) to be
-    * sent to the database. The scale argument may further qualify this type.
-    * @param scale for java.sql.Types.DECIMAL or java.sql.Types.NUMERIC types,
-    *          this is the number of digits after the decimal point.  For all other
-    *          types, this value will be ignored.
-    * @see java.sql.Types
-    * Î´Ö§³Ö
-    *
-   void setObject(int parameterIndex, Object x, int targetSqlType, int scale)
-         throws SQLException;
-   */
-
-   /* *
-    * Sets the value of the designated parameter with the given object.
-    * This method is like the method <code>setObject</code>
-    * above, except that it assumes a scale of zero.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the object containing the input parameter value
-    * @param targetSqlType the SQL type (as defined in java.sql.Types) to be
-    *                      sent to the database
-    * @exception java.sql.SQLException if a database access error occurs
-    * Î´Ö§³Ö
-    *
-   void setObject(int parameterIndex, Object x, int targetSqlType)
-         throws SQLException;
-   */
-
-   /**
-    * <p>Sets the value of the designated parameter using the given object.
-    * The second parameter must be of type <code>Object</code>; therefore, the
-    * <code>java.lang</code> equivalent objects should be used for built-in types.
-    *
-    * <p>The JDBC specification specifies a standard mapping from
-    * Java <code>Object</code> types to SQL types.  The given argument
-    * will be converted to the corresponding SQL type before being
-    * sent to the database.
-    *
-    * <p>Note that this method may be used to pass datatabase-
-    * specific abstract data types, by using a driver-specific Java
-    * type.
-    *
-    * If the object is of a class implementing the interface <code>SQLData</code>,
-    * the JDBC driver should call the method <code>SQLData.writeSQL</code>
-    * to write it to the SQL data stream.
-    * If, on the other hand, the object is of a class implementing
-    * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
-    * or <code>Array</code>, the driver should pass it to the database as a
-    * value of the corresponding SQL type.
-    * <P>
-    * This method throws an exception if there is an ambiguity, for example, if the
-    * object is of a class implementing more than one of the interfaces named above.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ..
-    *                       <p>µÚÒ»¸ö²ÎÊıÊÇ1, µÚ¶ş¸öÊÇ2, ....
-    * @param x the object containing the input parameter value
-    *          <p> º¬ÓĞÕâ¸ö²ÎÊıÖµµÄ¶ÔÏó
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setObject(int parameterIndex, Object x) throws ConfigurationException;
-
-   /**
-    * <p>Sets the value of the designated parameter using the given object.
-    * The second parameter must be of type <code>Object</code>; therefore, the
-    * <code>java.lang</code> equivalent objects should be used for built-in types.
-    *
-    * <p>The JDBC specification specifies a standard mapping from
-    * Java <code>Object</code> types to SQL types.  The given argument
-    * will be converted to the corresponding SQL type before being
-    * sent to the database.
-    *
-    * <p>Note that this method may be used to pass datatabase-
-    * specific abstract data types, by using a driver-specific Java
-    * type.
-    *
-    * If the object is of a class implementing the interface <code>SQLData</code>,
-    * the JDBC driver should call the method <code>SQLData.writeSQL</code>
-    * to write it to the SQL data stream.
-    * If, on the other hand, the object is of a class implementing
-    * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
-    * or <code>Array</code>, the driver should pass it to the database as a
-    * value of the corresponding SQL type.
-    * <P>
-    * This method throws an exception if there is an ambiguity, for example, if the
-    * object is of a class implementing more than one of the interfaces named above.
-    *
-    * @param parameterName  the parameter name
-    *                       <p>Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param x the parameter value
-    *          <p> Õâ¸ö²ÎÊıµÄÖµ
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setObject(String parameterName, Object x) throws ConfigurationException;
-
-   //--------------------------JDBC 2.0-----------------------------
-
-   /* *
-    * Adds a set of parameters to this <code>PreparedStatement</code>
-    * object's batch of commands.
-    *
-    * @exception SQLException if a database access error occurs
-    * @see java.sql.Statement#addBatch
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void addBatch() throws SQLException;
-   */
-
-   /**
-    * Sets the designated parameter to the given <code>Reader</code>
-    * object, which is the given number of characters long.
-    * When a very large UNICODE value is input to a <code>LONGVARCHAR</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.Reader</code> object. The data will be read from the stream
-    * as needed until end-of-file is reached.  The JDBC driver will
-    * do any necessary conversion from UNICODE to the database char format.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param reader the <code>java.io.Reader</code> object that contains the
-    *        Unicode data
-    * @param length the number of characters in the stream
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    * @since 1.2
-    */
-   void setCharacterStream(int parameterIndex, java.io.Reader reader, int length)
-         throws ConfigurationException;
-
-   /**
-    * Sets the designated parameter to the given <code>Reader</code>
-    * object, which is the given number of characters long.
-    * When a very large UNICODE value is input to a <code>LONGVARCHAR</code>
-    * parameter, it may be more practical to send it via a
-    * <code>java.io.Reader</code> object. The data will be read from the stream
-    * as needed until end-of-file is reached.  The JDBC driver will
-    * do any necessary conversion from UNICODE to the database char format.
-    *
-    * <P><B>Note:</B> This stream object can either be a standard
-    * Java stream object or your own subclass that implements the
-    * standard interface.
-    *
-    * @param parameterName  Õâ¸ö²ÎÊıµÄÃû³Æ
-    * @param reader the <code>java.io.Reader</code> object that contains the
-    *        Unicode data
-    * @param length the number of characters in the stream
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    * @since 1.2
-    */
-   void setCharacterStream(String parameterName, java.io.Reader reader, int length)
-         throws ConfigurationException;
-
-   /* *
-    * Sets the designated parameter to the given
-    *  <code>REF(&lt;structured-type&gt;)</code> value.
-    * The driver converts this to an SQL <code>REF</code> value when it
-    * sends it to the database.
-    *
-    * @param i the first parameter is 1, the second is 2, ...
-    * @param x an SQL <code>REF</code> value
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setRef(int i, Ref x) throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>Blob</code> object.
-    * The driver converts this to an SQL <code>BLOB</code> value when it
-    * sends it to the database.
-    *
-    * @param i the first parameter is 1, the second is 2, ...
-    * @param x a <code>Blob</code> object that maps an SQL <code>BLOB</code> value
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setBlob(int i, Blob x) throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>Clob</code> object.
-    * The driver converts this to an SQL <code>CLOB</code> value when it
-    * sends it to the database.
-    *
-    * @param i the first parameter is 1, the second is 2, ...
-    * @param x a <code>Clob</code> object that maps an SQL <code>CLOB</code> value
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setClob(int i, Clob x) throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>Array</code> object.
-    * The driver converts this to an SQL <code>ARRAY</code> value when it
-    * sends it to the database.
-    *
-    * @param i the first parameter is 1, the second is 2, ...
-    * @param x an <code>Array</code> object that maps an SQL <code>ARRAY</code> value
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setArray(int i, Array x) throws SQLException;
-   */
-
-   /* *
-    * Retrieves a <code>ResultSetMetaData</code> object that contains
-    * information about the columns of the <code>ResultSet</code> object
-    * that will be returned when this <code>PreparedStatement</code> object
-    * is executed.
-    * <P>
-    * Because a <code>PreparedStatement</code> object is precompiled, it is
-    * possible to know about the <code>ResultSet</code> object that it will
-    * return without having to execute it.  Consequently, it is possible
-    * to invoke the method <code>getMetaData</code> on a
-    * <code>PreparedStatement</code> object rather than waiting to execute
-    * it and then invoking the <code>ResultSet.getMetaData</code> method
-    * on the <code>ResultSet</code> object that is returned.
-    * <P>
-    * <B>NOTE:</B> Using this method may be expensive for some drivers due
-    * to the lack of underlying DBMS support.
-    *
-    * @return the description of a <code>ResultSet</code> object's columns or
-    *         <code>null</code> if the driver cannot return a
-    *         <code>ResultSetMetaData</code> object
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * ²»Ö§³Ö
-    *
-   ResultSetMetaData getMetaData() throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>java.sql.Date</code> value,
-    * using the given <code>Calendar</code> object.  The driver uses
-    * the <code>Calendar</code> object to construct an SQL <code>DATE</code> value,
-    * which the driver then sends to the database.  With
-    * a <code>Calendar</code> object, the driver can calculate the date
-    * taking into account a custom timezone.  If no
-    * <code>Calendar</code> object is specified, the driver uses the default
-    * timezone, which is that of the virtual machine running the application.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the parameter value
-    * @param cal the <code>Calendar</code> object the driver will use
-    *            to construct the date
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setDate(int parameterIndex, java.sql.Date x, Calendar cal)
-         throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>java.sql.Time</code> value,
-    * using the given <code>Calendar</code> object.  The driver uses
-    * the <code>Calendar</code> object to construct an SQL <code>TIME</code> value,
-    * which the driver then sends to the database.  With
-    * a <code>Calendar</code> object, the driver can calculate the time
-    * taking into account a custom timezone.  If no
-    * <code>Calendar</code> object is specified, the driver uses the default
-    * timezone, which is that of the virtual machine running the application.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the parameter value
-    * @param cal the <code>Calendar</code> object the driver will use
-    *            to construct the time
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setTime(int parameterIndex, java.sql.Time x, Calendar cal)
-         throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value,
-    * using the given <code>Calendar</code> object.  The driver uses
-    * the <code>Calendar</code> object to construct an SQL <code>TIMESTAMP</code> value,
-    * which the driver then sends to the database.  With a
-    *  <code>Calendar</code> object, the driver can calculate the timestamp
-    * taking into account a custom timezone.  If no
-    * <code>Calendar</code> object is specified, the driver uses the default
-    * timezone, which is that of the virtual machine running the application.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the parameter value
-    * @param cal the <code>Calendar</code> object the driver will use
-    *            to construct the timestamp
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setTimestamp(int parameterIndex, java.sql.Timestamp x, Calendar cal)
-         throws SQLException;
-   */
-
-   /* *
-    * Sets the designated parameter to SQL <code>NULL</code>.
-    * This version of the method <code>setNull</code> should
-    * be used for user-defined types and REF type parameters.  Examples
-    * of user-defined types include: STRUCT, DISTINCT, JAVA_OBJECT, and
-    * named array types.
-    *
-    * <P><B>Note:</B> To be portable, applications must give the
-    * SQL type code and the fully-qualified SQL type name when specifying
-    * a NULL user-defined or REF parameter.  In the case of a user-defined type
-    * the name is the type name of the parameter itself.  For a REF
-    * parameter, the name is the type name of the referenced type.  If
-    * a JDBC driver does not need the type code or type name information,
-    * it may ignore it.
-    *
-    * Although it is intended for user-defined and Ref parameters,
-    * this method may be used to set a null parameter of any JDBC type.
-    * If the parameter does not have a user-defined or REF type, the given
-    * typeName is ignored.
-    *
-    *
-    * @param paramIndex the first parameter is 1, the second is 2, ...
-    * @param sqlType a value from <code>java.sql.Types</code>
-    * @param typeName the fully-qualified name of an SQL user-defined type;
-    *  ignored if the parameter is not a user-defined type or REF
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.2
-    * Î´Ö§³Ö
-    *
-   void setNull(int paramIndex, int sqlType, String typeName)
-         throws SQLException;
-   */
-
-   //------------------------- JDBC 3.0 -----------------------------------
-
-   /* *
-    * Sets the designated parameter to the given <code>java.net.URL</code> value.
-    * The driver converts this to an SQL <code>DATALINK</code> value
-    * when it sends it to the database.
-    *
-    * @param parameterIndex the first parameter is 1, the second is 2, ...
-    * @param x the <code>java.net.URL</code> object to be set
-    * @exception java.sql.SQLException if a database access error occurs
-    * @since 1.4
-    * Î´Ö§³Ö
-    *
-   void setURL(int parameterIndex, java.net.URL x) throws SQLException;
-   */
-
-   /* *
-    * Retrieves the number, types and properties of this
-    * <code>PreparedStatement</code> object's parameters.
-    *
-    * @return a <code>ParameterMetaData</code> object that contains information
-    *         about the number, types and properties of this
-    *         <code>PreparedStatement</code> object's parameters
-    * @exception java.sql.SQLException if a database access error occurs
-    * @see java.sql.ParameterMetaData
-    * @since 1.4
-    * ²»Ö§³Ö
-    *
-   ParameterMetaData getParameterMetaData() throws SQLException;
-   */
+	 */
+	Iterator getParameterIterator() throws ConfigurationException;
+
+	/**
+	 * æ‰§è¡Œæœ¬SQLé€‚é…å™¨.
+	 */
+	void execute(Connection conn) throws ConfigurationException, SQLException;
+
+	/**
+	 * è·å¾—å­è¯­å¥çš„ä¸ªæ•°.
+	 *
+	 * @return    <code>SQLAdapter</code>ä¸­å­è¯­å¥çš„ä¸ªæ•°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	int getSubSQLCount() throws ConfigurationException;
+
+	/**
+	 * è·å¾—é¢„å¤‡SQLè¯­å¥. <p>
+	 * è¯¥é¢„å¤‡SQLè¯­å¥æ˜¯ç»è¿‡ç¬¬ä¸€æ­¥å¤„ç†ï¼Œå°†å­è¯­å¥è®¾ç½®å®Œåçš„é¢„å¤‡SQLè¯­å¥ã€‚
+	 *
+	 * @return    ç»è¿‡ç¬¬ä¸€æ­¥å¤„ç†é¢„å¤‡SQLè¯­å¥.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	String getPreparedSQL() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®å­è¯­å¥.
+	 *
+	 * @param index    å­è¯­å¥çš„ç´¢å¼•å€¼.
+	 * @param subPart  è¦è®¾ç½®çš„å­è¯­å¥.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setSubSQL(int index, String subPart) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®å­è¯­å¥, å¹¶ä¸ºå…¶é…ä¸Šç›¸åº”çš„å‚æ•°.
+	 *
+	 * @param index    å­è¯­å¥çš„ç´¢å¼•å€¼.
+	 * @param subPart  è¦è®¾ç½®çš„å­è¯­å¥.
+	 * @param pm       è¦é…ä¸Šçš„å‚æ•°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setSubSQL(int index, String subPart, PreparerManager pm) throws ConfigurationException;
+
+	/**
+	 * è·å¾—æœ¬sqlé€‚é…å™¨çš„é…ç½®å‚æ•°.
+	 */
+	PreparerManager getPreparerManager() throws ConfigurationException;
+
+	/**
+	 * æ ¹æ®ç´¢å¼•å€¼åˆ¤æ–­å¯¹åº”çš„å‚æ•°æ˜¯å¦æ˜¯åŠ¨æ€å‚æ•°.
+	 *
+	 * @param index    ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 */
+	boolean isDynamicParameter(int index) throws ConfigurationException;
+
+	/**
+	 * æ ¹æ®å‚æ•°çš„åç§°åˆ¤æ–­å¯¹åº”çš„å‚æ•°æ˜¯å¦æ˜¯åŠ¨æ€å‚æ•°.
+	 *
+	 * @param name    å‚æ•°çš„åç§°
+	 */
+	boolean isDynamicParameter(String name) throws ConfigurationException;
+
+	/**
+	 * é€šè¿‡ValuePrepareræ¥è®¾ç½®å‚æ•°.
+	 */
+	void setValuePreparer(ValuePreparer preparer) throws ConfigurationException;
+
+	/**
+	 * å°†å‚æ•°è®¾ç½®åˆ°PreparedStatementä¸­.
+	 */
+	void prepareValues(PreparedStatement stmt) throws ConfigurationException, SQLException;
+
+	/**
+	 * å°†å‚æ•°è®¾ç½®åˆ°PreparedStatementWrapä¸­.
+	 */
+	void prepareValues(PreparedStatementWrap stmtWrap) throws ConfigurationException, SQLException;
+
+	/**
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºå¿½ç•¥.
+	 * åªæœ‰åŠ¨æ€å‚æ•°æ‰å¯è®¾ç½®ä¸ºå¿½ç•¥.
+	 *
+	 * @param parameterIndex ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setIgnore(int parameterIndex) throws ConfigurationException;
+
+	/**
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºå¿½ç•¥.
+	 * åªæœ‰åŠ¨æ€å‚æ•°æ‰å¯è®¾ç½®ä¸ºå¿½ç•¥.
+	 *
+	 * @param parameterName  è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setIgnore(String parameterName) throws ConfigurationException;
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Timestamp</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterIndex   å‚æ•°çš„ç´¢å¼•å€¼.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param cal              ç”¨æ¥æ„é€ Timestampçš„<code>Calendar</code>.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setTimestamp(int parameterIndex, java.sql.Timestamp x, Calendar cal)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Timestamp</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterName    å‚æ•°çš„åç§°.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param cal              ç”¨æ¥æ„é€ Timestampçš„<code>Calendar</code>.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setTimestamp(String parameterName, java.sql.Timestamp x, Calendar cal)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterIndex   å‚æ•°çš„ç´¢å¼•å€¼.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(int parameterIndex, Object x)
+			throws ConfigurationException;
+	*/
+
+	/*
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterName    å‚æ•°çš„åç§°.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(String parameterName, Object x)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterIndex   å‚æ•°çš„ç´¢å¼•å€¼.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param targetSqlType    SQLä¸­çš„ç±»å‹(åœ¨java.sql.Typesä¸­å®šä¹‰).
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(int parameterIndex, Object x, int targetSqlType)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterName    å‚æ•°çš„åç§°.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param targetSqlType    SQLä¸­çš„ç±»å‹(åœ¨java.sql.Typesä¸­å®šä¹‰).
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(String parameterName, Object x, int targetSqlType)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterIndex   å‚æ•°çš„ç´¢å¼•å€¼.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param targetSqlType    SQLä¸­çš„ç±»å‹(åœ¨java.sql.Typesä¸­å®šä¹‰).
+	 * @param scale            è®¾ç½®DECIMALå’ŒNUMERICçš„å°æ•°ä½æ•°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(int parameterIndex, Object x, int targetSqlType, int scale)
+			throws ConfigurationException;
+	*/
+
+	/* *
+	 * ç”¨ä¸€ä¸ª<code>Object</code>æ¥è®¾ç½®ç›®æ ‡å‚æ•°.
+	 *
+	 * @param parameterName    å‚æ•°çš„åç§°.
+	 * @param x                å‚æ•°çš„å€¼.
+	 * @param targetSqlType    SQLä¸­çš„ç±»å‹(åœ¨java.sql.Typesä¸­å®šä¹‰).
+	 * @param scale            è®¾ç½®DECIMALå’ŒNUMERICçš„å°æ•°ä½æ•°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 *
+	public void setObject(String parameterName, Object x, int targetSqlType, int scale)
+			throws ConfigurationException;
+	*/
+
+	/**
+	 * Sets the designated parameter to SQL <code>NULL</code>.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºSQLçš„<code>NULL</code>.
+	 *
+	 * <P><B>Note:</B> You must specify the parameter's SQL type.
+	 * <P><B>æ³¨:</B> ä½ å¿…é¡»æŒ‡å®šå‚æ•°çš„SQLç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
+	 *                <p>åœ¨<code>java.sql.Types</code>ä¸­å®šä¹‰çš„SQLå‹
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setNull(int parameterIndex, int sqlType) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to SQL <code>NULL</code>.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºSQLçš„<code>NULL</code>.
+	 *
+	 * <P><B>Note:</B> You must specify the parameter's SQL type.
+	 * <P><B>æ³¨:</B> ä½ å¿…é¡»æŒ‡å®šå‚æ•°çš„SQLç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param sqlType the SQL type code defined in <code>java.sql.Types</code>
+	 *                <p>åœ¨<code>java.sql.Types</code>ä¸­å®šä¹‰çš„SQLå‹
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setNull(String parameterName, int sqlType) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>boolean</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>boolean</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>BIT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>BIT</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBoolean(int parameterIndex, boolean x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>boolean</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>boolean</code>å€¼.
+	 * to an SQL <code>BIT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>BIT</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBoolean(String parameterName, boolean x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>byte</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>byte</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>TINYINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TINYINT</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setByte(int parameterIndex, byte x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>byte</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>byte</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>TINYINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TINYINT</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setByte(String parameterName, byte x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>short</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>short</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>SMALLINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>SMALLINT</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setShort(int parameterIndex, short x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>short</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>short</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>SMALLINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>SMALLINT</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setShort(String parameterName, short x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>int</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>int</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>INTEGER</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>INTEGER</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setInt(int parameterIndex, int x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>int</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>int</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>INTEGER</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>INTEGER</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setInt(String parameterName, int x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>long</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>long</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>BIGINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>BIGINT</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setLong(int parameterIndex, long x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>long</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>long</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>BIGINT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>BIGINT</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setLong(String parameterName, long x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>float</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>float</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>FLOAT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>FLOAT</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setFloat(int parameterIndex, float x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>float</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>float</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>FLOAT</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>FLOAT</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setFloat(String parameterName, float x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>double</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>double</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>DOUBLE</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>DOUBLE</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setDouble(int parameterIndex, double x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>double</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>double</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>DOUBLE</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>DOUBLE</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setDouble(String parameterName, double x) throws ConfigurationException;
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.math.BigDecimal</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.math.BigDecimal</code>å€¼.
+	 * The driver converts this to an SQL <code>NUMERIC</code> value when
+	 * it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>NUMERIC</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 * æœªæ”¯æŒ
+	 *
+	void setBigDecimal(int parameterIndex, BigDecimal x) throws ConfigurationException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.math.BigDecimal</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.math.BigDecimal</code>å€¼.
+	 * The driver converts this to an SQL <code>NUMERIC</code> value when
+	 * it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>NUMERIC</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 * æœªæ”¯æŒ
+	 *
+	void setBigDecimal(String parameterName, BigDecimal x) throws ConfigurationException;
+	*/
+
+	/**
+	 * Sets the designated parameter to the given Java <code>String</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>String</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>VARCHAR</code> or <code>LONGVARCHAR</code> value
+	 * (depending on the argument's
+	 * size relative to the driver's limits on <code>VARCHAR</code> values)
+	 * when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>VARCHAR</code>æˆ–
+	 * <code>LONGVARCHAR</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setString(int parameterIndex, String x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java <code>String</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>String</code>å€¼.
+	 * The driver converts this
+	 * to an SQL <code>VARCHAR</code> or <code>LONGVARCHAR</code> value
+	 * (depending on the argument's
+	 * size relative to the driver's limits on <code>VARCHAR</code> values)
+	 * when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>VARCHAR</code>æˆ–
+	 * <code>LONGVARCHAR</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setString(String parameterName, String x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java array of bytes.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>byte</code>æ•°ç»„.
+	 * The driver converts
+	 * this to an SQL <code>VARBINARY</code> or <code>LONGVARBINARY</code>
+	 * (depending on the argument's size relative to the driver's limits on
+	 * <code>VARBINARY</code> values) when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>VARBINARY</code>æˆ–
+	 * <code>LONGVARBINARY</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBytes(int parameterIndex, byte[] x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given Java array of bytes.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>byte</code>æ•°ç»„.
+	 * The driver converts
+	 * this to an SQL <code>VARBINARY</code> or <code>LONGVARBINARY</code>
+	 * (depending on the argument's size relative to the driver's limits on
+	 * <code>VARBINARY</code> values) when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>VARBINARY</code>æˆ–
+	 * <code>LONGVARBINARY</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBytes(String parameterName, byte[] x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Date</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Date</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>DATE</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>DATE</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setDate(int parameterIndex, java.sql.Date x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Date</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Date</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>DATE</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>DATE</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setDate(String parameterName, java.sql.Date x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Time</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Time</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>TIME</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TIME</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setTime(int parameterIndex, java.sql.Time x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Time</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Time</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>TIME</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TIME</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setTime(String parameterName, java.sql.Time x) throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Timestamp</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>TIMESTAMP</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TIMESTAMP</code>ç±»å‹.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ...
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setTimestamp(int parameterIndex, java.sql.Timestamp x)
+			throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value.
+	 * å°†å®šä¹‰å¥½çš„å‚æ•°è®¾ä¸ºJavaçš„<code>java.sql.Timestamp</code>æ•°ç»„.
+	 * The driver converts this
+	 * to an SQL <code>TIMESTAMP</code> value when it sends it to the database.
+	 * SQLé©±åŠ¨è¦åœ¨å°†è¿™ä¸ªå€¼å‘é€åˆ°æ•°æ®åº“æ—¶è½¬ä¸ºSQLçš„<code>TIMESTAMP</code>ç±»å‹.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setTimestamp(String parameterName, java.sql.Timestamp x)
+			throws ConfigurationException;
+
+	/*  *
+	 * Sets the designated parameter to the given input stream, which will have
+	 * the specified number of bytes.
+	 * When a very large ASCII value is input to a <code>LONGVARCHAR</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.InputStream</code>. Data will be read from the stream
+	 * as needed until end-of-file is reached.  The JDBC driver will
+	 * do any necessary conversion from ASCII to the database char format.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the Java input stream that contains the ASCII parameter value
+	 * @param length the number of bytes in the stream
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * æœªæ”¯æŒ
+	void setAsciiStream(int parameterIndex, java.io.InputStream x, int length)
+			throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given input stream, which
+	 * will have the specified number of bytes. A Unicode character has
+	 * two bytes, with the first byte being the high byte, and the second
+	 * being the low byte.
+	 *
+	 * When a very large Unicode value is input to a <code>LONGVARCHAR</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.InputStream</code> object. The data will be read from the
+	 * stream as needed until end-of-file is reached.  The JDBC driver will
+	 * do any necessary conversion from Unicode to the database char format.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x a <code>java.io.InputStream</code> object that contains the
+	 *        Unicode parameter value as two-byte Unicode characters
+	 * @param length the number of bytes in the stream
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @deprecated
+	 * æœªæ”¯æŒ
+	 *
+	void setUnicodeStream(int parameterIndex, java.io.InputStream x,
+			int length) throws SQLException;
+	*/
+
+	/**
+	 * Sets the designated parameter to the given input stream, which will have
+	 * the specified number of bytes.
+	 * When a very large binary value is input to a <code>LONGVARBINARY</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.InputStream</code> object. The data will be read from the
+	 * stream as needed until end-of-file is reached.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the java input stream which contains the binary parameter value
+	 * @param length the number of bytes in the stream
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBinaryStream(int parameterIndex, java.io.InputStream x, int length)
+			throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given input stream, which will have
+	 * the specified number of bytes.
+	 * When a very large binary value is input to a <code>LONGVARBINARY</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.InputStream</code> object. The data will be read from the
+	 * stream as needed until end-of-file is reached.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterName  è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the java input stream which contains the binary parameter value
+	 * @param length the number of bytes in the stream
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setBinaryStream(String parameterName, java.io.InputStream x, int length)
+			throws ConfigurationException;
+
+	/* *
+	 * Clears the current parameter values immediately.
+	 * <P>In general, parameter values remain in force for repeated use of a
+	 * statement. Setting a parameter value automatically clears its
+	 * previous value.  However, in some cases it is useful to immediately
+	 * release the resources used by the current parameter values; this can
+	 * be done by calling the method <code>clearParameters</code>.
+	 *
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * æœªæ”¯æŒ
+	 *
+	void clearParameters() throws SQLException;
+	*/
+
+	//----------------------------------------------------------------------
+	// Advanced features:
+
+	/* *
+	 * <p>Sets the value of the designated parameter with the given object. The second
+	 * argument must be an object type; for integral values, the
+	 * <code>java.lang</code> equivalent objects should be used.
+	 *
+	 * <p>The given Java object will be converted to the given targetSqlType
+	 * before being sent to the database.
+	 *
+	 * If the object has a custom mapping (is of a class implementing the
+	 * interface <code>SQLData</code>),
+	 * the JDBC driver should call the method <code>SQLData.writeSQL</code> to
+	 * write it to the SQL data stream.
+	 * If, on the other hand, the object is of a class implementing
+	 * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
+	 * or <code>Array</code>, the driver should pass it to the database as a
+	 * value of the corresponding SQL type.
+	 *
+	 * <p>Note that this method may be used to pass database-specific
+	 * abstract data types.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the object containing the input parameter value
+	 * @param targetSqlType the SQL type (as defined in java.sql.Types) to be
+	 * sent to the database. The scale argument may further qualify this type.
+	 * @param scale for java.sql.Types.DECIMAL or java.sql.Types.NUMERIC types,
+	 *          this is the number of digits after the decimal point.  For all other
+	 *          types, this value will be ignored.
+	 * @see java.sql.Types
+	 * æœªæ”¯æŒ
+	 *
+	void setObject(int parameterIndex, Object x, int targetSqlType, int scale)
+			throws SQLException;
+	*/
+
+	/* *
+	 * Sets the value of the designated parameter with the given object.
+	 * This method is like the method <code>setObject</code>
+	 * above, except that it assumes a scale of zero.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the object containing the input parameter value
+	 * @param targetSqlType the SQL type (as defined in java.sql.Types) to be
+	 *                      sent to the database
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * æœªæ”¯æŒ
+	 *
+	void setObject(int parameterIndex, Object x, int targetSqlType)
+			throws SQLException;
+	*/
+
+	/**
+	 * <p>Sets the value of the designated parameter using the given object.
+	 * The second parameter must be of type <code>Object</code>; therefore, the
+	 * <code>java.lang</code> equivalent objects should be used for built-in types.
+	 *
+	 * <p>The JDBC specification specifies a standard mapping from
+	 * Java <code>Object</code> types to SQL types.  The given argument
+	 * will be converted to the corresponding SQL type before being
+	 * sent to the database.
+	 *
+	 * <p>Note that this method may be used to pass datatabase-
+	 * specific abstract data types, by using a driver-specific Java
+	 * type.
+	 *
+	 * If the object is of a class implementing the interface <code>SQLData</code>,
+	 * the JDBC driver should call the method <code>SQLData.writeSQL</code>
+	 * to write it to the SQL data stream.
+	 * If, on the other hand, the object is of a class implementing
+	 * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
+	 * or <code>Array</code>, the driver should pass it to the database as a
+	 * value of the corresponding SQL type.
+	 * <P>
+	 * This method throws an exception if there is an ambiguity, for example, if the
+	 * object is of a class implementing more than one of the interfaces named above.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ..
+	 *                       <p>ç¬¬ä¸€ä¸ªå‚æ•°æ˜¯1, ç¬¬äºŒä¸ªæ˜¯2, ....
+	 * @param x the object containing the input parameter value
+	 *          <p> å«æœ‰è¿™ä¸ªå‚æ•°å€¼çš„å¯¹è±¡
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setObject(int parameterIndex, Object x) throws ConfigurationException;
+
+	/**
+	 * <p>Sets the value of the designated parameter using the given object.
+	 * The second parameter must be of type <code>Object</code>; therefore, the
+	 * <code>java.lang</code> equivalent objects should be used for built-in types.
+	 *
+	 * <p>The JDBC specification specifies a standard mapping from
+	 * Java <code>Object</code> types to SQL types.  The given argument
+	 * will be converted to the corresponding SQL type before being
+	 * sent to the database.
+	 *
+	 * <p>Note that this method may be used to pass datatabase-
+	 * specific abstract data types, by using a driver-specific Java
+	 * type.
+	 *
+	 * If the object is of a class implementing the interface <code>SQLData</code>,
+	 * the JDBC driver should call the method <code>SQLData.writeSQL</code>
+	 * to write it to the SQL data stream.
+	 * If, on the other hand, the object is of a class implementing
+	 * <code>Ref</code>, <code>Blob</code>, <code>Clob</code>, <code>Struct</code>,
+	 * or <code>Array</code>, the driver should pass it to the database as a
+	 * value of the corresponding SQL type.
+	 * <P>
+	 * This method throws an exception if there is an ambiguity, for example, if the
+	 * object is of a class implementing more than one of the interfaces named above.
+	 *
+	 * @param parameterName  the parameter name
+	 *                       <p>è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param x the parameter value
+	 *          <p> è¿™ä¸ªå‚æ•°çš„å€¼
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setObject(String parameterName, Object x) throws ConfigurationException;
+
+	//--------------------------JDBC 2.0-----------------------------
+
+	/* *
+	 * Adds a set of parameters to this <code>PreparedStatement</code>
+	 * object's batch of commands.
+	 *
+	 * @exception SQLException if a database access error occurs
+	 * @see java.sql.Statement#addBatch
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void addBatch() throws SQLException;
+	*/
+
+	/**
+	 * Sets the designated parameter to the given <code>Reader</code>
+	 * object, which is the given number of characters long.
+	 * When a very large UNICODE value is input to a <code>LONGVARCHAR</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.Reader</code> object. The data will be read from the stream
+	 * as needed until end-of-file is reached.  The JDBC driver will
+	 * do any necessary conversion from UNICODE to the database char format.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param reader the <code>java.io.Reader</code> object that contains the
+	 *        Unicode data
+	 * @param length the number of characters in the stream
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 * @since 1.2
+	 */
+	void setCharacterStream(int parameterIndex, java.io.Reader reader, int length)
+			throws ConfigurationException;
+
+	/**
+	 * Sets the designated parameter to the given <code>Reader</code>
+	 * object, which is the given number of characters long.
+	 * When a very large UNICODE value is input to a <code>LONGVARCHAR</code>
+	 * parameter, it may be more practical to send it via a
+	 * <code>java.io.Reader</code> object. The data will be read from the stream
+	 * as needed until end-of-file is reached.  The JDBC driver will
+	 * do any necessary conversion from UNICODE to the database char format.
+	 *
+	 * <P><B>Note:</B> This stream object can either be a standard
+	 * Java stream object or your own subclass that implements the
+	 * standard interface.
+	 *
+	 * @param parameterName  è¿™ä¸ªå‚æ•°çš„åç§°
+	 * @param reader the <code>java.io.Reader</code> object that contains the
+	 *        Unicode data
+	 * @param length the number of characters in the stream
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 * @since 1.2
+	 */
+	void setCharacterStream(String parameterName, java.io.Reader reader, int length)
+			throws ConfigurationException;
+
+	/* *
+	 * Sets the designated parameter to the given
+	 *  <code>REF(&lt;structured-type&gt;)</code> value.
+	 * The driver converts this to an SQL <code>REF</code> value when it
+	 * sends it to the database.
+	 *
+	 * @param i the first parameter is 1, the second is 2, ...
+	 * @param x an SQL <code>REF</code> value
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setRef(int i, Ref x) throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>Blob</code> object.
+	 * The driver converts this to an SQL <code>BLOB</code> value when it
+	 * sends it to the database.
+	 *
+	 * @param i the first parameter is 1, the second is 2, ...
+	 * @param x a <code>Blob</code> object that maps an SQL <code>BLOB</code> value
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setBlob(int i, Blob x) throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>Clob</code> object.
+	 * The driver converts this to an SQL <code>CLOB</code> value when it
+	 * sends it to the database.
+	 *
+	 * @param i the first parameter is 1, the second is 2, ...
+	 * @param x a <code>Clob</code> object that maps an SQL <code>CLOB</code> value
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setClob(int i, Clob x) throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>Array</code> object.
+	 * The driver converts this to an SQL <code>ARRAY</code> value when it
+	 * sends it to the database.
+	 *
+	 * @param i the first parameter is 1, the second is 2, ...
+	 * @param x an <code>Array</code> object that maps an SQL <code>ARRAY</code> value
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setArray(int i, Array x) throws SQLException;
+	*/
+
+	/* *
+	 * Retrieves a <code>ResultSetMetaData</code> object that contains
+	 * information about the columns of the <code>ResultSet</code> object
+	 * that will be returned when this <code>PreparedStatement</code> object
+	 * is executed.
+	 * <P>
+	 * Because a <code>PreparedStatement</code> object is precompiled, it is
+	 * possible to know about the <code>ResultSet</code> object that it will
+	 * return without having to execute it.  Consequently, it is possible
+	 * to invoke the method <code>getMetaData</code> on a
+	 * <code>PreparedStatement</code> object rather than waiting to execute
+	 * it and then invoking the <code>ResultSet.getMetaData</code> method
+	 * on the <code>ResultSet</code> object that is returned.
+	 * <P>
+	 * <B>NOTE:</B> Using this method may be expensive for some drivers due
+	 * to the lack of underlying DBMS support.
+	 *
+	 * @return the description of a <code>ResultSet</code> object's columns or
+	 *         <code>null</code> if the driver cannot return a
+	 *         <code>ResultSetMetaData</code> object
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * ä¸æ”¯æŒ
+	 *
+	ResultSetMetaData getMetaData() throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.sql.Date</code> value,
+	 * using the given <code>Calendar</code> object.  The driver uses
+	 * the <code>Calendar</code> object to construct an SQL <code>DATE</code> value,
+	 * which the driver then sends to the database.  With
+	 * a <code>Calendar</code> object, the driver can calculate the date
+	 * taking into account a custom timezone.  If no
+	 * <code>Calendar</code> object is specified, the driver uses the default
+	 * timezone, which is that of the virtual machine running the application.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the parameter value
+	 * @param cal the <code>Calendar</code> object the driver will use
+	 *            to construct the date
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setDate(int parameterIndex, java.sql.Date x, Calendar cal)
+			throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.sql.Time</code> value,
+	 * using the given <code>Calendar</code> object.  The driver uses
+	 * the <code>Calendar</code> object to construct an SQL <code>TIME</code> value,
+	 * which the driver then sends to the database.  With
+	 * a <code>Calendar</code> object, the driver can calculate the time
+	 * taking into account a custom timezone.  If no
+	 * <code>Calendar</code> object is specified, the driver uses the default
+	 * timezone, which is that of the virtual machine running the application.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the parameter value
+	 * @param cal the <code>Calendar</code> object the driver will use
+	 *            to construct the time
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setTime(int parameterIndex, java.sql.Time x, Calendar cal)
+			throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.sql.Timestamp</code> value,
+	 * using the given <code>Calendar</code> object.  The driver uses
+	 * the <code>Calendar</code> object to construct an SQL <code>TIMESTAMP</code> value,
+	 * which the driver then sends to the database.  With a
+	 *  <code>Calendar</code> object, the driver can calculate the timestamp
+	 * taking into account a custom timezone.  If no
+	 * <code>Calendar</code> object is specified, the driver uses the default
+	 * timezone, which is that of the virtual machine running the application.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the parameter value
+	 * @param cal the <code>Calendar</code> object the driver will use
+	 *            to construct the timestamp
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setTimestamp(int parameterIndex, java.sql.Timestamp x, Calendar cal)
+			throws SQLException;
+	*/
+
+	/* *
+	 * Sets the designated parameter to SQL <code>NULL</code>.
+	 * This version of the method <code>setNull</code> should
+	 * be used for user-defined types and REF type parameters.  Examples
+	 * of user-defined types include: STRUCT, DISTINCT, JAVA_OBJECT, and
+	 * named array types.
+	 *
+	 * <P><B>Note:</B> To be portable, applications must give the
+	 * SQL type code and the fully-qualified SQL type name when specifying
+	 * a NULL user-defined or REF parameter.  In the case of a user-defined type
+	 * the name is the type name of the parameter itself.  For a REF
+	 * parameter, the name is the type name of the referenced type.  If
+	 * a JDBC driver does not need the type code or type name information,
+	 * it may ignore it.
+	 *
+	 * Although it is intended for user-defined and Ref parameters,
+	 * this method may be used to set a null parameter of any JDBC type.
+	 * If the parameter does not have a user-defined or REF type, the given
+	 * typeName is ignored.
+	 *
+	 *
+	 * @param paramIndex the first parameter is 1, the second is 2, ...
+	 * @param sqlType a value from <code>java.sql.Types</code>
+	 * @param typeName the fully-qualified name of an SQL user-defined type;
+	 *  ignored if the parameter is not a user-defined type or REF
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.2
+	 * æœªæ”¯æŒ
+	 *
+	void setNull(int paramIndex, int sqlType, String typeName)
+			throws SQLException;
+	*/
+
+	//------------------------- JDBC 3.0 -----------------------------------
+
+	/* *
+	 * Sets the designated parameter to the given <code>java.net.URL</code> value.
+	 * The driver converts this to an SQL <code>DATALINK</code> value
+	 * when it sends it to the database.
+	 *
+	 * @param parameterIndex the first parameter is 1, the second is 2, ...
+	 * @param x the <code>java.net.URL</code> object to be set
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @since 1.4
+	 * æœªæ”¯æŒ
+	 *
+	void setURL(int parameterIndex, java.net.URL x) throws SQLException;
+	*/
+
+	/* *
+	 * Retrieves the number, types and properties of this
+	 * <code>PreparedStatement</code> object's parameters.
+	 *
+	 * @return a <code>ParameterMetaData</code> object that contains information
+	 *         about the number, types and properties of this
+	 *         <code>PreparedStatement</code> object's parameters
+	 * @exception java.sql.SQLException if a database access error occurs
+	 * @see java.sql.ParameterMetaData
+	 * @since 1.4
+	 * ä¸æ”¯æŒ
+	 *
+	ParameterMetaData getParameterMetaData() throws SQLException;
+	*/
 }

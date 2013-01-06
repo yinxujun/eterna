@@ -14,31 +14,31 @@ import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.util.Utility;
 
 public class ResultMetaDataImpl
-      implements ResultMetaData
+		implements ResultMetaData
 {
-   private String name;
-   private ResultReader[] readers;
-   private QueryAdapter query;
-   private ResultReaderManager readerManager;
-   private Map nameToIndexMap;
+	private String name;
+	private ResultReader[] readers;
+	private QueryAdapter query;
+	private ResultReaderManager readerManager;
+	private Map nameToIndexMap;
 	private boolean colNameSensitive = true;
 
-   public ResultMetaDataImpl(List readerList, ResultReaderManager readerManager, QueryAdapter query)
+	public ResultMetaDataImpl(List readerList, ResultReaderManager readerManager, QueryAdapter query)
 			throws ConfigurationException
 	{
-      this.query = query;
-      int count = readerList.size();
-      this.readers = new ResultReader[count];
-      Iterator itr = readerList.iterator();
-      for (int i = 0; i < this.readers.length; i++)
-      {
-         this.readers[i] = (ResultReader) itr.next();
-      }
+		this.query = query;
+		int count = readerList.size();
+		this.readers = new ResultReader[count];
+		Iterator itr = readerList.iterator();
+		for (int i = 0; i < this.readers.length; i++)
+		{
+			this.readers[i] = (ResultReader) itr.next();
+		}
 		this.readerManager = readerManager;
 		if (readerManager == null || !readerManager.isLocked())
 		{
 			this.colNameSensitive = readerManager == null ? true : readerManager.isColNameSensitive();
-			// µ±readerManagerÎªnull»òÎ´Ëø¶¨Ê±, ÐèÒª¹¹Ôì×Ô¼ºµÄÃû³ÆÖµ¶ÔÓ¦±í
+			// å½“readerManagerä¸ºnullæˆ–æœªé”å®šæ—¶, éœ€è¦æž„é€ è‡ªå·±çš„åç§°å€¼å¯¹åº”è¡¨
 			this.nameToIndexMap = new HashMap((int) (count * 1.5));
 			for (int i = 0; i < this.readers.length; i++)
 			{
@@ -65,12 +65,12 @@ public class ResultMetaDataImpl
 		{
 			this.name = "unknow";
 		}
-   }
+	}
 
-   public QueryAdapter getQuery()
-   {
-      return this.query;
-   }
+	public QueryAdapter getQuery()
+	{
+		return this.query;
+	}
 
 	public ResultReaderManager getReaderManager()
 	{
@@ -82,33 +82,33 @@ public class ResultMetaDataImpl
 		return this.name;
 	}
 
-   public int getColumnCount()
-   {
-      return this.readers.length;
-   }
+	public int getColumnCount()
+	{
+		return this.readers.length;
+	}
 
-   public int getColumnWidth(int column)
-         throws ConfigurationException
-   {
-      return this.readers[column - 1].getWidth();
-   }
+	public int getColumnWidth(int column)
+			throws ConfigurationException
+	{
+		return this.readers[column - 1].getWidth();
+	}
 
-   public String getColumnCaption(int column)
-         throws ConfigurationException
-   {
-      return this.readers[column - 1].getCaption();
-   }
+	public String getColumnCaption(int column)
+			throws ConfigurationException
+	{
+		return this.readers[column - 1].getCaption();
+	}
 
-   public String getColumnName(int column)
-         throws ConfigurationException
-   {
-      return this.readers[column - 1].getName();
-   }
+	public String getColumnName(int column)
+			throws ConfigurationException
+	{
+		return this.readers[column - 1].getName();
+	}
 
-   public ResultReader getColumnReader(int column)
-   {
-      return this.readers[column - 1];
-   }
+	public ResultReader getColumnReader(int column)
+	{
+		return this.readers[column - 1];
+	}
 
 	public int findColumn(String columnName)
 			throws ConfigurationException

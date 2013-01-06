@@ -5,38 +5,38 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface QueryAdapterGenerator extends SQLAdapterGenerator
 {
-   /**
-    * ÉèÖÃÅÅĞòµÄ×ÓsqlÓï¾äËùÔÚµÄÎ»ÖÃ.
-    */
-   void setOrderIndex(int index) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ’åºçš„å­sqlè¯­å¥æ‰€åœ¨çš„ä½ç½®.
+	 */
+	void setOrderIndex(int index) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÕâ¾ä²éÑ¯ÊÇ·ñÖ»ÄÜÓÃforwardOnlyÄ£Ê½À´Ö´ĞĞ.
-    */
-   void setForwardOnly(boolean forwardOnly) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¿™å¥æŸ¥è¯¢æ˜¯å¦åªèƒ½ç”¨forwardOnlyæ¨¡å¼æ¥æ‰§è¡Œ.
+	 */
+	void setForwardOnly(boolean forwardOnly) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃResultReaderµÄÅÅĞò·½Ê½×Ö·û´®.
-    */
-   void setReaderOrder(String readerOrder) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ResultReaderçš„æ’åºæ–¹å¼å­—ç¬¦ä¸².
+	 */
+	void setReaderOrder(String readerOrder) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¼Ì³ĞµÄResultReaderManagerµÄÃû³Æ.
-    */
-   void setReaderManagerName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ç»§æ‰¿çš„ResultReaderManagerçš„åç§°.
+	 */
+	void setReaderManagerName(String name) throws ConfigurationException;
 
-   /**
-    * ÔÚ¼Ì³ĞµÄResultReaderManagerµÄ»ù´¡ÉÏÌí¼ÓÒ»¸öResultReader, Èç¹û
-    * Ãû³ÆÓëResultReaderManagerÖĞµÄÖØ¸´, Ôò¸²¸ÇÔ­À´µÄ.
-    */
-   void addResultReader(ResultReader reader) throws ConfigurationException;
+	/**
+	 * åœ¨ç»§æ‰¿çš„ResultReaderManagerçš„åŸºç¡€ä¸Šæ·»åŠ ä¸€ä¸ªResultReader, å¦‚æœ
+	 * åç§°ä¸ResultReaderManagerä¸­çš„é‡å¤, åˆ™è¦†ç›–åŸæ¥çš„.
+	 */
+	void addResultReader(ResultReader reader) throws ConfigurationException;
 
-   /**
-    * »ñµÃÒ»¸ö<code>QueryAdapter</code>µÄÊµÀı. <p>
-    *
-    * @return <code>QueryAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   QueryAdapter createQueryAdapter() throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>QueryAdapter</code>çš„å®ä¾‹. <p>
+	 *
+	 * @return <code>QueryAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	QueryAdapter createQueryAdapter() throws ConfigurationException;
 
 }

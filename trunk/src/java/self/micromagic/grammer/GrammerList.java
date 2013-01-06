@@ -7,213 +7,213 @@ import java.util.Map;
 import java.util.Iterator;
 
 public class GrammerList extends AbstractElement
-      implements GrammerElement
+		implements GrammerElement
 {
-   public static final char LIST_TYPE_ONE = ' ';
-   public static final char LIST_TYPE_MORE = '+';
-   public static final char LIST_TYPE_ONE_P = '?';
-   public static final char LIST_TYPE_MORE_P = '*';
+	public static final char LIST_TYPE_ONE = ' ';
+	public static final char LIST_TYPE_MORE = '+';
+	public static final char LIST_TYPE_ONE_P = '?';
+	public static final char LIST_TYPE_MORE_P = '*';
 
-   private List listElements = new ArrayList();
-   private boolean initialized = false;
-   private boolean initOver = false;
-   private boolean allSubNone = false;
+	private List listElements = new ArrayList();
+	private boolean initialized = false;
+	private boolean initOver = false;
+	private boolean allSubNone = false;
 
-   public void initialize(Map elements)
-         throws GrammerException
-   {
-      if (!this.initialized)
-      {
-         this.initialized = true;
-         int hasType = 0;
-         Iterator itr = this.listElements.iterator();
-         while (itr.hasNext())
-         {
-            GrammerListCell cell = (GrammerListCell) itr.next();
-            cell.initialize(elements);
-            int nowType;
-            try
-            {
-               nowType = cell.grammerElement.isTypeNone() ? -1 : 1;
-            }
-            catch (GrammerException ex)
-            {
-               // »Áπ˚≥ˆœ÷“Ï≥£, ƒ«±Ì æ¥À‘™Àÿ±ª—≠ª∑“˝”√¡À, ƒ¨»œ±ª—≠ª∑“˝”√µƒ‘™Àÿ”–¿‡–Õ
-               nowType = 1;
-            }
-            if (hasType == 0)
-            {
-               hasType = nowType;
-            }
-            else
-            {
-               if (hasType != nowType)
-               {
-                  throw new GrammerException("In a list[" + this.getName()
-                        + "], all cell type must TYPE_NONE or not TYPE_NONE." + this.listElements);
-               }
-            }
-         }
-         this.allSubNone = hasType == 1 ? false : true;
-         this.initOver = true;
-      }
-   }
+	public void initialize(Map elements)
+			throws GrammerException
+	{
+		if (!this.initialized)
+		{
+			this.initialized = true;
+			int hasType = 0;
+			Iterator itr = this.listElements.iterator();
+			while (itr.hasNext())
+			{
+				GrammerListCell cell = (GrammerListCell) itr.next();
+				cell.initialize(elements);
+				int nowType;
+				try
+				{
+					nowType = cell.grammerElement.isTypeNone() ? -1 : 1;
+				}
+				catch (GrammerException ex)
+				{
+					// Â¶ÇÊûúÂá∫Áé∞ÂºÇÂ∏∏, ÈÇ£Ë°®Á§∫Ê≠§ÂÖÉÁ¥†Ë¢´Âæ™ÁéØÂºïÁî®‰∫Ü, ÈªòËÆ§Ë¢´Âæ™ÁéØÂºïÁî®ÁöÑÂÖÉÁ¥†ÊúâÁ±ªÂûã
+					nowType = 1;
+				}
+				if (hasType == 0)
+				{
+					hasType = nowType;
+				}
+				else
+				{
+					if (hasType != nowType)
+					{
+						throw new GrammerException("In a list[" + this.getName()
+								+ "], all cell type must TYPE_NONE or not TYPE_NONE." + this.listElements);
+					}
+				}
+			}
+			this.allSubNone = hasType == 1 ? false : true;
+			this.initOver = true;
+		}
+	}
 
-   public boolean isTypeNone()
-         throws GrammerException
-   {
-      if (!this.initOver)
-      {
-         throw new GrammerException("In a list[" + this.getName()
-               + "], hasn't initialized.");
-      }
-      return this.getType() == TYPE_NONE ? this.allSubNone : false;
-   }
+	public boolean isTypeNone()
+			throws GrammerException
+	{
+		if (!this.initOver)
+		{
+			throw new GrammerException("In a list[" + this.getName()
+					+ "], hasn't initialized.");
+		}
+		return this.getType() == TYPE_NONE ? this.allSubNone : false;
+	}
 
-   public void addElement(String name, char opt)
-   {
-      this.listElements.add(new GrammerListCell(name, opt));
-   }
+	public void addElement(String name, char opt)
+	{
+		this.listElements.add(new GrammerListCell(name, opt));
+	}
 
-   public void addElement(GrammerElement element, char opt)
-   {
-      this.listElements.add(new GrammerListCell(element.getName(), opt, element));
-   }
+	public void addElement(GrammerElement element, char opt)
+	{
+		this.listElements.add(new GrammerListCell(element.getName(), opt, element));
+	}
 
-   public void addElement(String name, int min, int max)
-   {
-      GrammerListCell cell = new GrammerListCell(name, LIST_TYPE_MORE_P);
-      cell.setRangeCount(min, max);
-      this.listElements.add(cell);
-   }
+	public void addElement(String name, int min, int max)
+	{
+		GrammerListCell cell = new GrammerListCell(name, LIST_TYPE_MORE_P);
+		cell.setRangeCount(min, max);
+		this.listElements.add(cell);
+	}
 
-   public void addElement(GrammerElement element, int min, int max)
-   {
-      GrammerListCell cell = new GrammerListCell(name, LIST_TYPE_MORE_P, element);
-      cell.setRangeCount(min, max);
-      this.listElements.add(cell);
-   }
+	public void addElement(GrammerElement element, int min, int max)
+	{
+		GrammerListCell cell = new GrammerListCell(name, LIST_TYPE_MORE_P, element);
+		cell.setRangeCount(min, max);
+		this.listElements.add(cell);
+	}
 
-   public boolean doVerify(ParserData pd)
-         throws GrammerException
-   {
-      Iterator itr = this.listElements.iterator();
-      while (itr.hasNext())
-      {
-         GrammerListCell cell = (GrammerListCell) itr.next();
-         int count = cell.grammerElement.verify(pd) ? 1 : 0;
-         if (count == 0)
-         {
-            if (cell.opt == LIST_TYPE_ONE || cell.opt == LIST_TYPE_MORE)
-            {
-               return false;
-            }
-         }
-         if (cell.opt == LIST_TYPE_MORE_P || cell.opt == LIST_TYPE_MORE)
-         {
-            if (count > 0)
-            {
-               int preIndex = pd.getCurrentIndex();
-               while (cell.grammerElement.verify(pd))
-               {
-                  // µ±±æ¥ŒŒª÷√∫Õ«∞“ª¥ŒŒª÷√œ‡Õ¨, ±Ì æ√ª”–Ω¯’π, ÕÀ≥ˆ—≠ª∑
-                  if (preIndex == pd.getCurrentIndex())
-                  {
-                     break;
-                  }
-                  preIndex = pd.getCurrentIndex();
-                  count++;
-               }
-            }
-            if (!cell.checkRange(count))
-            {
-               return false;
-            }
-         }
-      }
-      return true;
-   }
+	public boolean doVerify(ParserData pd)
+			throws GrammerException
+	{
+		Iterator itr = this.listElements.iterator();
+		while (itr.hasNext())
+		{
+			GrammerListCell cell = (GrammerListCell) itr.next();
+			int count = cell.grammerElement.verify(pd) ? 1 : 0;
+			if (count == 0)
+			{
+				if (cell.opt == LIST_TYPE_ONE || cell.opt == LIST_TYPE_MORE)
+				{
+					return false;
+				}
+			}
+			if (cell.opt == LIST_TYPE_MORE_P || cell.opt == LIST_TYPE_MORE)
+			{
+				if (count > 0)
+				{
+					int preIndex = pd.getCurrentIndex();
+					while (cell.grammerElement.verify(pd))
+					{
+						// ÂΩìÊú¨Ê¨°‰ΩçÁΩÆÂíåÂâç‰∏ÄÊ¨°‰ΩçÁΩÆÁõ∏Âêå, Ë°®Á§∫Ê≤°ÊúâËøõÂ±ï, ÈÄÄÂá∫Âæ™ÁéØ
+						if (preIndex == pd.getCurrentIndex())
+						{
+							break;
+						}
+						preIndex = pd.getCurrentIndex();
+						count++;
+					}
+				}
+				if (!cell.checkRange(count))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
-   public String toString()
-   {
-      return "List:" + this.getName() + ":" + GrammerManager.getGrammerElementTypeName(this.getType());
-   }
+	public String toString()
+	{
+		return "List:" + this.getName() + ":" + GrammerManager.getGrammerElementTypeName(this.getType());
+	}
 
-   private static class GrammerListCell
-   {
-      public final String name;
-      public final char opt;
-      private GrammerElement grammerElement = null;
+	private static class GrammerListCell
+	{
+		public final String name;
+		public final char opt;
+		private GrammerElement grammerElement = null;
 
-      private int minCount = -1;
-      private int maxCount = -1;
+		private int minCount = -1;
+		private int maxCount = -1;
 
-      public GrammerListCell(String name, char opt)
-      {
-         this.name = name;
-         this.opt = opt;
-      }
+		public GrammerListCell(String name, char opt)
+		{
+			this.name = name;
+			this.opt = opt;
+		}
 
-      public GrammerListCell(String name, char opt, GrammerElement grammerElement)
-      {
-         this.name = name;
-         this.opt = opt;
-         this.grammerElement = grammerElement;
-      }
+		public GrammerListCell(String name, char opt, GrammerElement grammerElement)
+		{
+			this.name = name;
+			this.opt = opt;
+			this.grammerElement = grammerElement;
+		}
 
-      public void setRangeCount(int min, int max)
-      {
-         this.minCount = min;
-         this.maxCount = max;
-      }
+		public void setRangeCount(int min, int max)
+		{
+			this.minCount = min;
+			this.maxCount = max;
+		}
 
-      public boolean checkRange(int count)
-      {
-         if (this.minCount != -1)
-         {
-            if (count < this.minCount)
-            {
-               return false;
-            }
-         }
-         if (this.maxCount != -1)
-         {
-            if (count > this.maxCount)
-            {
-               return false;
-            }
-         }
-         return true;
-      }
+		public boolean checkRange(int count)
+		{
+			if (this.minCount != -1)
+			{
+				if (count < this.minCount)
+				{
+					return false;
+				}
+			}
+			if (this.maxCount != -1)
+			{
+				if (count > this.maxCount)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 
-      public void initialize(Map elements)
-            throws GrammerException
-      {
-         if (this.grammerElement == null)
-         {
-            GrammerElement e = (GrammerElement) elements.get(this.name);
-            if (e == null)
-            {
-               throw new GrammerException("Not found the GrammerElement:" + this.name + ".");
-            }
-            e.initialize(elements);
-            this.grammerElement = e;
-         }
-         else
-         {
-            this.grammerElement.initialize(elements);
-         }
-      }
+		public void initialize(Map elements)
+				throws GrammerException
+		{
+			if (this.grammerElement == null)
+			{
+				GrammerElement e = (GrammerElement) elements.get(this.name);
+				if (e == null)
+				{
+					throw new GrammerException("Not found the GrammerElement:" + this.name + ".");
+				}
+				e.initialize(elements);
+				this.grammerElement = e;
+			}
+			else
+			{
+				this.grammerElement.initialize(elements);
+			}
+		}
 
-      public String toString()
-      {
-         if (this.grammerElement == null)
-         {
-            return this.name;
-         }
-         return this.grammerElement.toString();
-      }
+		public String toString()
+		{
+			if (this.grammerElement == null)
+			{
+				return this.name;
+			}
+			return this.grammerElement.toString();
+		}
 
-   }
+	}
 
 }

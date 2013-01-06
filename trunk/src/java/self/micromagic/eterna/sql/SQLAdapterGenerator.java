@@ -6,59 +6,59 @@ import self.micromagic.eterna.share.AdapterGenerator;
 
 public interface SQLAdapterGenerator extends AdapterGenerator
 {
-   /**
-    * ÉèÖÃÒª¹¹ÔìµÄSQLÊÊÅäÆ÷µÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¦æ„é€ çš„SQLé€‚é…å™¨çš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Òª¹¹ÔìµÄSQLÊÊÅäÆ÷µÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–è¦æ„é€ çš„SQLé€‚é…å™¨çš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ±¾SQLÊÊÅäÆ÷sqlÈÕÖ¾µÄ¼ÇÂ¼·½Ê½
-    */
-   void setLogType(String logType) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æœ¬SQLé€‚é…å™¨sqlæ—¥å¿—çš„è®°å½•æ–¹å¼
+	 */
+	void setLogType(String logType) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÔ¤±¸SQLÓï¾ä. <p>
-    *
-    * @param sql      ÒªÉèÖÃµÄÔ¤±¸SQLÓï¾ä.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void setPreparedSQL(String sql) throws ConfigurationException;
+	/**
+	 * è®¾ç½®é¢„å¤‡SQLè¯­å¥. <p>
+	 *
+	 * @param sql      è¦è®¾ç½®çš„é¢„å¤‡SQLè¯­å¥.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void setPreparedSQL(String sql) throws ConfigurationException;
 
-   /**
-    * Çå¿Õ²ÎÊı±í. <p>
-    *
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void clearParameters() throws ConfigurationException;
+	/**
+	 * æ¸…ç©ºå‚æ•°è¡¨. <p>
+	 *
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void clearParameters() throws ConfigurationException;
 
-   /**
-    * Ìí¼ÓÒ»¸ö²ÎÊı. <p>
-    *
-    * @param paramGenerator     ²ÎÊı¹¹ÔìÆ÷.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void addParameter(SQLParameterGenerator paramGenerator) throws ConfigurationException;
+	/**
+	 * æ·»åŠ ä¸€ä¸ªå‚æ•°. <p>
+	 *
+	 * @param paramGenerator     å‚æ•°æ„é€ å™¨.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void addParameter(SQLParameterGenerator paramGenerator) throws ConfigurationException;
 
-   /**
-    * Ìí¼ÓÒ»¸ö²ÎÊı×é. <p>
-    *
-    * @param groupName     ²ÎÊı×éÃû³Æ.
-    * @param ignoreList    ºöÂÔµÄ²ÎÊıÁĞ±í.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void addParameterRef(String groupName, String ignoreList) throws ConfigurationException;
+	/**
+	 * æ·»åŠ ä¸€ä¸ªå‚æ•°ç»„. <p>
+	 *
+	 * @param groupName     å‚æ•°ç»„åç§°.
+	 * @param ignoreList    å¿½ç•¥çš„å‚æ•°åˆ—è¡¨.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void addParameterRef(String groupName, String ignoreList) throws ConfigurationException;
 
-   /**
-    * »ñµÃÒ»¸ö<code>SQLAdapter</code>µÄÊµÀı. <p>
-    *
-    * @return <code>SQLAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   SQLAdapter createSQLAdapter() throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>SQLAdapter</code>çš„å®ä¾‹. <p>
+	 *
+	 * @return <code>SQLAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	SQLAdapter createSQLAdapter() throws ConfigurationException;
 
 }

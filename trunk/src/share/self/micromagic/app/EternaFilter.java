@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import self.micromagic.eterna.model.AppData;
 
+/**
+ * ç”¨äºç”ŸæˆAppDataçš„è¿‡æ»¤å™¨.
+ *
+ * @author micromagic@sina.com
+ */
 public class EternaFilter
 		implements Filter
 {
@@ -69,14 +74,14 @@ public class EternaFilter
 	}
 
 	/**
-	 * ¿ªÊ¼µ÷ÓÃ¹ıÂËÁ´±íÊ±»áµ÷ÓÃ´Ë·½·¨.
+	 * å¼€å§‹è°ƒç”¨è¿‡æ»¤é“¾è¡¨æ—¶ä¼šè°ƒç”¨æ­¤æ–¹æ³•.
 	 */
 	protected void beginChain(AppData data)
 	{
 	}
 
 	/**
-	 * ¹ıÂËÁ´±íµ÷ÓÃÍê³Éºó»áµ÷ÓÃ´Ë·½·¨.
+	 * è¿‡æ»¤é“¾è¡¨è°ƒç”¨å®Œæˆåä¼šè°ƒç”¨æ­¤æ–¹æ³•.
 	 */
 	protected void endChain(AppData data)
 	{

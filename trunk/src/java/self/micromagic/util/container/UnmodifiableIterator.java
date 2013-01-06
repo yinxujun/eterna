@@ -11,31 +11,31 @@ import org.apache.commons.collections.iterators.IteratorEnumeration;
  * @author micromagic@sina.com
  */
 public class UnmodifiableIterator
-      implements Iterator
+		implements Iterator
 {
-   public static final Iterator EMPTY_ITERATOR = EmptyIterator.INSTANCE;
-   public static final Enumeration EMPTY_ENUMERATION = new IteratorEnumeration(EmptyIterator.INSTANCE);
+	public static final Iterator EMPTY_ITERATOR = EmptyIterator.INSTANCE;
+	public static final Enumeration EMPTY_ENUMERATION = new IteratorEnumeration(EmptyIterator.INSTANCE);
 
-   private Iterator itr;
+	private Iterator itr;
 
-   public UnmodifiableIterator(Iterator itr)
-   {
-      this.itr = itr == null ? EMPTY_ITERATOR : itr;
-   }
+	public UnmodifiableIterator(Iterator itr)
+	{
+		this.itr = itr == null ? EMPTY_ITERATOR : itr;
+	}
 
-   public boolean hasNext()
-   {
-      return this.itr.hasNext();
-   }
+	public boolean hasNext()
+	{
+		return this.itr.hasNext();
+	}
 
-   public Object next()
-   {
-      return this.itr.next();
-   }
+	public Object next()
+	{
+		return this.itr.next();
+	}
 
-   public void remove()
-   {
-      throw new UnsupportedOperationException();
-   }
+	public void remove()
+	{
+		throw new UnsupportedOperationException();
+	}
 
 }

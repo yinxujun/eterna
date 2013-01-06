@@ -3,16 +3,16 @@ package self.micromagic.eterna.security;
 
 public interface User
 {
-   String getUserId();
+	String getUserId();
 
-   String getUserName();
+	String getUserName();
 
-   Role[] getRoles();
+	Role[] getRoles();
 
-   Role getRole(String name);
+	Role getRole(String name);
 
-   Object getAttribute(String name);
+	Object getAttribute(String name);
 
-   Permission getPermission();
+	Permission getPermission();
 
 }

@@ -14,166 +14,166 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * ¿ò¼ÜÖĞĞèÒªÓÃµ½µÄÒ»Ğ©¹«¹²·½·¨.
+ * æ¡†æ¶ä¸­éœ€è¦ç”¨åˆ°çš„ä¸€äº›å…¬å…±æ–¹æ³•.
  */
 public class Tool
 {
-   /**
-    * ÓÃÓÚ¼ÇÂ¼ÈÕÖ¾.
-    */
-   public static final Log log = Utility.createLog("eterna");
+	/**
+	 * ç”¨äºè®°å½•æ—¥å¿—.
+	 */
+	public static final Log log = Utility.createLog("eterna");
 
-   public static final String CAPTION_TRANSLATE_TAG = "caption.translate";
-   public static final String CAPTION_TRANSLATE_MAP_TAG = "caption.translate.map";
-   public static final String CAPTION_TRANSLATE_MAP_FACTORY_TAG = "caption.translate.map.factory";
+	public static final String CAPTION_TRANSLATE_TAG = "caption.translate";
+	public static final String CAPTION_TRANSLATE_MAP_TAG = "caption.translate.map";
+	public static final String CAPTION_TRANSLATE_MAP_FACTORY_TAG = "caption.translate.map.factory";
 
-   /**
-    * ¸ù¾İ±êÌâ·­ÒëÁĞ±íµÄÅäÖÃ½øĞĞ·­Òë.
-    */
-   public static String translateCaption(EternaFactory factory, String name)
-         throws ConfigurationException
-   {
-      Map translateMap = (Map) factory.getAttribute(CAPTION_TRANSLATE_MAP_TAG);
-      Object checkFactory = factory.getAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG);
-      if (translateMap == null || checkFactory != factory)
-      {
-         translateMap = getCaptionTranslateMap(factory);
-         if (translateMap == null)
-         {
-            return null;
-         }
-      }
-      return (String) translateMap.get(name);
-   }
+	/**
+	 * æ ¹æ®æ ‡é¢˜ç¿»è¯‘åˆ—è¡¨çš„é…ç½®è¿›è¡Œç¿»è¯‘.
+	 */
+	public static String translateCaption(EternaFactory factory, String name)
+			throws ConfigurationException
+	{
+		Map translateMap = (Map) factory.getAttribute(CAPTION_TRANSLATE_MAP_TAG);
+		Object checkFactory = factory.getAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG);
+		if (translateMap == null || checkFactory != factory)
+		{
+			translateMap = getCaptionTranslateMap(factory);
+			if (translateMap == null)
+			{
+				return null;
+			}
+		}
+		return (String) translateMap.get(name);
+	}
 
-   /**
-    * »ñµÃ±êÌâ·­ÒëÓÃµÄmap.
-    */
-   public static synchronized Map getCaptionTranslateMap(EternaFactory factory)
-         throws ConfigurationException
-   {
-      String translateStr = (String) factory.getAttribute(CAPTION_TRANSLATE_TAG);
-      if (translateStr == null)
-      {
-         return null;
-      }
-      Map translateMap = (Map) factory.getAttribute(CAPTION_TRANSLATE_MAP_TAG);
-      Object checkFactory = factory.getAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG);
-      if (translateMap == null || checkFactory != factory)
-      {
-         EternaFactory share = factory.getShareFactory();
-         boolean needTranslate = true;
-         if (share != null)
-         {
-            String shareStr = (String) share.getAttribute(CAPTION_TRANSLATE_TAG);
-            if (shareStr != null)
-            {
-               if (shareStr == translateStr)
-               {
-                  translateMap = getCaptionTranslateMap(share);
-                  needTranslate = false;
-               }
-               else
-               {
-                  translateMap = new HashMap(getCaptionTranslateMap(share));
-               }
-            }
-         }
-         if (translateMap == null)
-         {
-            translateMap = new HashMap();
-         }
-         if (needTranslate)
-         {
-            String[] tmps = StringTool.separateString(
-                  Utility.resolveDynamicPropnames(translateStr), ";", true);
-            for (int i = 0; i < tmps.length; i++)
-            {
-               int index = tmps[i].indexOf('=');
-               if (index != -1)
-               {
-                  translateMap.put(tmps[i].substring(0, index).trim(),
-                        tmps[i].substring(index + 1).trim());
-               }
-            }
-            factory.setAttribute(CAPTION_TRANSLATE_MAP_TAG, Collections.unmodifiableMap(translateMap));
-         }
-         else
-         {
-            factory.setAttribute(CAPTION_TRANSLATE_MAP_TAG, translateMap);
-         }
-         factory.setAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG, factory);
-      }
-      return translateMap;
-   }
+	/**
+	 * è·å¾—æ ‡é¢˜ç¿»è¯‘ç”¨çš„map.
+	 */
+	public static synchronized Map getCaptionTranslateMap(EternaFactory factory)
+			throws ConfigurationException
+	{
+		String translateStr = (String) factory.getAttribute(CAPTION_TRANSLATE_TAG);
+		if (translateStr == null)
+		{
+			return null;
+		}
+		Map translateMap = (Map) factory.getAttribute(CAPTION_TRANSLATE_MAP_TAG);
+		Object checkFactory = factory.getAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG);
+		if (translateMap == null || checkFactory != factory)
+		{
+			EternaFactory share = factory.getShareFactory();
+			boolean needTranslate = true;
+			if (share != null)
+			{
+				String shareStr = (String) share.getAttribute(CAPTION_TRANSLATE_TAG);
+				if (shareStr != null)
+				{
+					if (shareStr == translateStr)
+					{
+						translateMap = getCaptionTranslateMap(share);
+						needTranslate = false;
+					}
+					else
+					{
+						translateMap = new HashMap(getCaptionTranslateMap(share));
+					}
+				}
+			}
+			if (translateMap == null)
+			{
+				translateMap = new HashMap();
+			}
+			if (needTranslate)
+			{
+				String[] tmps = StringTool.separateString(
+						Utility.resolveDynamicPropnames(translateStr), ";", true);
+				for (int i = 0; i < tmps.length; i++)
+				{
+					int index = tmps[i].indexOf('=');
+					if (index != -1)
+					{
+						translateMap.put(tmps[i].substring(0, index).trim(),
+								tmps[i].substring(index + 1).trim());
+					}
+				}
+				factory.setAttribute(CAPTION_TRANSLATE_MAP_TAG, Collections.unmodifiableMap(translateMap));
+			}
+			else
+			{
+				factory.setAttribute(CAPTION_TRANSLATE_MAP_TAG, translateMap);
+			}
+			factory.setAttribute(CAPTION_TRANSLATE_MAP_FACTORY_TAG, factory);
+		}
+		return translateMap;
+	}
 
-   /**
-    * ÔÚfactoryÖĞ×¢²ábeanÃû³ÆµÄÊôĞÔÃû.
-    */
-   public static final String BEAN_CLASS_NAMES = "bean.class.names";
+	/**
+	 * åœ¨factoryä¸­æ³¨å†Œbeanåç§°çš„å±æ€§å.
+	 */
+	public static final String BEAN_CLASS_NAMES = "bean.class.names";
 
-   /**
-    * ×¢²á×÷ÎªbeanµÄÀà, ¶à¸öÀàÃûÖ®¼äÓÃ","»ò";"¸ô¿ª.
-    */
-   public static void registerBean(String classNames)
-   {
-      BeanTool.registerBean(classNames);
-   }
+	/**
+	 * æ³¨å†Œä½œä¸ºbeançš„ç±», å¤šä¸ªç±»åä¹‹é—´ç”¨","æˆ–";"éš”å¼€.
+	 */
+	public static void registerBean(String classNames)
+	{
+		BeanTool.registerBean(classNames);
+	}
 
-   /**
-    * ÅĞ¶ÏËù¸ø³öµÄÀàÊÇ·ñÊÇbean.
-    */
-   public static boolean isBean(Class c)
-   {
-      return BeanTool.checkBean(c);
-   }
+	/**
+	 * åˆ¤æ–­æ‰€ç»™å‡ºçš„ç±»æ˜¯å¦æ˜¯bean.
+	 */
+	public static boolean isBean(Class c)
+	{
+		return BeanTool.checkBean(c);
+	}
 
-   /**
-    * Éú³ÉÒ»¸öbeanµÄÊôĞÔÊä³öÀà.
-    *
-    * @param beanClass           beanÀà
-    * @param interfaceClass      ´¦Àí½Ó¿Ú
-    * @param methodHead          ·½·¨Í·²¿
-    * @param beanParamName       bean²ÎÊıµÄÃû³Æ
-    * @param unitTemplate        µ¥Ôª´úÂëÄ£°å
-    * @param primitiveTemplate   »ù±¾ÀàĞÍµ¥Ôª´úÂëÄ£°å
-    * @param linkTemplate        Á½¸öÀàĞÍµ¥ÔªÖ®¼äµÄÁ¬½ÓÄ£°å
-    * @param imports             ÒªÒıÈëµÄ°ü
-    * @return                    ·µ»ØÏàÓ¦µÄ´¦ÀíÀà
-    */
-   public static Object createBeanPrinter(Class beanClass, Class interfaceClass, String methodHead,
-         String beanParamName, String unitTemplate, String primitiveTemplate, String linkTemplate,
-         String[] imports)
-   {
-      return BeanTool.createBeanProcesser("Printer", beanClass, interfaceClass, methodHead, beanParamName,
-            unitTemplate, primitiveTemplate, linkTemplate, imports, BeanTool.BEAN_PROCESSER_TYPE_R);
-   }
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªbeançš„å±æ€§è¾“å‡ºç±».
+	 *
+	 * @param beanClass           beanç±»
+	 * @param interfaceClass      å¤„ç†æ¥å£
+	 * @param methodHead          æ–¹æ³•å¤´éƒ¨
+	 * @param beanParamName       beanå‚æ•°çš„åç§°
+	 * @param unitTemplate        å•å…ƒä»£ç æ¨¡æ¿
+	 * @param primitiveTemplate   åŸºæœ¬ç±»å‹å•å…ƒä»£ç æ¨¡æ¿
+	 * @param linkTemplate        ä¸¤ä¸ªç±»å‹å•å…ƒä¹‹é—´çš„è¿æ¥æ¨¡æ¿
+	 * @param imports             è¦å¼•å…¥çš„åŒ…
+	 * @return                    è¿”å›ç›¸åº”çš„å¤„ç†ç±»
+	 */
+	public static Object createBeanPrinter(Class beanClass, Class interfaceClass, String methodHead,
+			String beanParamName, String unitTemplate, String primitiveTemplate, String linkTemplate,
+			String[] imports)
+	{
+		return BeanTool.createBeanProcesser("Printer", beanClass, interfaceClass, methodHead, beanParamName,
+				unitTemplate, primitiveTemplate, linkTemplate, imports, BeanTool.BEAN_PROCESSER_TYPE_R);
+	}
 
-   /**
-    * µ÷ÓÃÒ»¸ö¶ÔÏóµÄ·½·¨.
-    *
-    * @param object          ±»µ÷ÓÃ·½·¨µÄ¶ÔÏó, Èç¹û´Ë¶ÔÏóÊÇ¸ö<code>Class</code>, Ôò
-    *                        ¸ø³öµÄ·½·¨Ãû±ØĞëÊÇ´ËÀàµÄ¾²Ì¬·½·¨
-    * @param methodName      ·½·¨µÄÃû³Æ
-    * @param args            µ÷ÓÃµÄ²ÎÊı
-    * @param parameterTypes  µ÷ÓÃµÄ²ÎÊıÀàĞÍ
-    * @return  ±»µ÷ÓÃµÄ·½·¨µÄ·µ»Ø½á¹û
-    */
-   public static Object invokeExactMethod(Object object, String methodName, Object[] args,
-         Class[] parameterTypes)
-         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
-   {
-      Class c;
-      if (object instanceof Class)
-      {
-         c = (Class) object;
-      }
-      else
-      {
-         c = object.getClass();
-      }
-      Method method = c.getMethod(methodName, parameterTypes);
-      return method.invoke(object, args);
-   }
+	/**
+	 * è°ƒç”¨ä¸€ä¸ªå¯¹è±¡çš„æ–¹æ³•.
+	 *
+	 * @param object          è¢«è°ƒç”¨æ–¹æ³•çš„å¯¹è±¡, å¦‚æœæ­¤å¯¹è±¡æ˜¯ä¸ª<code>Class</code>, åˆ™
+	 *                        ç»™å‡ºçš„æ–¹æ³•åå¿…é¡»æ˜¯æ­¤ç±»çš„é™æ€æ–¹æ³•
+	 * @param methodName      æ–¹æ³•çš„åç§°
+	 * @param args            è°ƒç”¨çš„å‚æ•°
+	 * @param parameterTypes  è°ƒç”¨çš„å‚æ•°ç±»å‹
+	 * @return  è¢«è°ƒç”¨çš„æ–¹æ³•çš„è¿”å›ç»“æœ
+	 */
+	public static Object invokeExactMethod(Object object, String methodName, Object[] args,
+			Class[] parameterTypes)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+	{
+		Class c;
+		if (object instanceof Class)
+		{
+			c = (Class) object;
+		}
+		else
+		{
+			c = object.getClass();
+		}
+		Method method = c.getMethod(methodName, parameterTypes);
+		return method.invoke(object, args);
+	}
 
 }

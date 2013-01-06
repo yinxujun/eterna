@@ -2,73 +2,75 @@
 package self.micromagic.util;
 
 /**
- * ×Ö·û´®Á¬½ÓÆ÷, ÓÃÓÚ¶Ô×Ö·û´®½øĞĞÌí¼Ó²Ù×÷µÄ½Ó¿Ú.
+ * å­—ç¬¦ä¸²è¿æ¥å™¨, ç”¨äºå¯¹å­—ç¬¦ä¸²è¿›è¡Œæ·»åŠ æ“ä½œçš„æ¥å£.
+ *
+ * @author micromagic@sina.com
  */
 public interface StringAppender extends CharSequence
 {
-    /**
-     * Ìí¼ÓÒ»¸ö¶ÔÏóµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(Object obj);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå¯¹è±¡åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(Object obj);
 
-    /**
-     * Ìí¼ÓÒ»¸ö×Ö·û´®µ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(String str);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå­—ç¬¦ä¸²åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(String str);
 
-    /**
-     * Ìí¼ÓÒ»¸ö×Ö·û´®µ½×Ö·û´®Ö®ºó, ²¢Éè¶¨ÆğÖ¹Î»ÖÃ.
-     */
-    StringAppender append(String str, int startIndex, int length);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå­—ç¬¦ä¸²åˆ°å­—ç¬¦ä¸²ä¹‹å, å¹¶è®¾å®šèµ·æ­¢ä½ç½®.
+	  */
+	 StringAppender append(String str, int startIndex, int length);
 
-    /**
-     * Ìí¼ÓÒ»¸ö×Ö·ûÊı×éµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(char[] chars);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå­—ç¬¦æ•°ç»„åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(char[] chars);
 
-    /**
-     * Ìí¼ÓÒ»¸ö×Ö·ûÊı×éµ½×Ö·û´®Ö®ºó, ²¢Éè¶¨ÆğÖ¹Î»ÖÃ.
-     */
-    StringAppender append(char[] chars, int startIndex, int length);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå­—ç¬¦æ•°ç»„åˆ°å­—ç¬¦ä¸²ä¹‹å, å¹¶è®¾å®šèµ·æ­¢ä½ç½®.
+	  */
+	 StringAppender append(char[] chars, int startIndex, int length);
 
-    /**
-     * Ìí¼ÓÒ»¸ö²¼¶ûÖµµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(boolean value);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå¸ƒå°”å€¼åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(boolean value);
 
-    /**
-     * Ìí¼ÓÒ»¸ö×Ö·ûµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(char ch);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªå­—ç¬¦åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(char ch);
 
-    /**
-     * Ìí¼ÓÒ»¸öÕûĞÍÖµµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(int value);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªæ•´å‹å€¼åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(int value);
 
-    /**
-     * Ìí¼ÓÒ»¸ö³¤ÕûĞÍÖµµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(long value);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªé•¿æ•´å‹å€¼åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(long value);
 
-    /**
-     * Ìí¼ÓÒ»¸ö¸¡µãĞÍÖµµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(float value);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªæµ®ç‚¹å‹å€¼åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(float value);
 
-    /**
-     * Ìí¼ÓÒ»¸öË«¾«¶È¸¡µãĞÍÖµµ½×Ö·û´®Ö®ºó.
-     */
-    StringAppender append(double value);
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªåŒç²¾åº¦æµ®ç‚¹å‹å€¼åˆ°å­—ç¬¦ä¸²ä¹‹å.
+	  */
+	 StringAppender append(double value);
 
-    /**
-     * Ìí¼ÓÒ»¸ö»»ĞĞ·û.
-     */
-    StringAppender appendln();
+	 /**
+	  * æ·»åŠ ä¸€ä¸ªæ¢è¡Œç¬¦.
+	  */
+	 StringAppender appendln();
 
-    /**
-     * »ñÈ¡×Ó×Ö·û´®.
-     */
-    String substring(int beginIndex, int endIndex);
+	 /**
+	  * è·å–å­å­—ç¬¦ä¸².
+	  */
+	 String substring(int beginIndex, int endIndex);
 
 }

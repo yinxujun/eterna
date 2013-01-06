@@ -5,15 +5,15 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * 文本资源构造器.
+ * 鏂囨湰璧勬簮鏋勯�犲櫒.
  */
 public interface ResourceGenerator extends Generator
 {
-   /**
-    * 设置此文本资源的文本.
-    */
-   void setResourceText(String text) throws ConfigurationException;
+	/**
+	 * 璁剧疆姝ゆ枃鏈祫婧愮殑鏂囨湰.
+	 */
+	void setResourceText(String text) throws ConfigurationException;
 
-   Resource createResource() throws ConfigurationException;
+	Resource createResource() throws ConfigurationException;
 
 }

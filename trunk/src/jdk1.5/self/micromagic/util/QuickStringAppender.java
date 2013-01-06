@@ -4,7 +4,7 @@ package self.micromagic.util;
 import java.lang.reflect.Constructor;
 
 /**
- * Ò»¸ö¿ìËÙµÄ×Ö·û´®Æ´½Ó¹¤¾ß.
+ * ä¸€ä¸ªå¿«é€Ÿçš„å­—ç¬¦ä¸²æ‹¼æ¥å·¥å…·.
  *
  * @author micromagic.sina.com
  */
@@ -12,12 +12,12 @@ class QuickStringAppender
 		implements StringAppender, StringTool.StringAppenderCreater
 {
 	/**
-	 * ÓÃÓÚ´æ´¢×Ö·û.
+	 * ç”¨äºå­˜å‚¨å­—ç¬¦.
 	 */
 	private char value[];
 
 	/**
-	 * ×Ö·ûµÄ¸öÊı.
+	 * å­—ç¬¦çš„ä¸ªæ•°.
 	 */
 	private int count;
 
@@ -36,7 +36,7 @@ class QuickStringAppender
 	}
 
 	/**
-	 * ¶Ô×Ö·ûµÄ´æ´¢¿Õ¼ä½øĞĞÀ©Õ¹.
+	 * å¯¹å­—ç¬¦çš„å­˜å‚¨ç©ºé—´è¿›è¡Œæ‰©å±•.
 	 */
 	private void expandCapacity(int minimumCapacity)
 	{
@@ -228,7 +228,7 @@ class QuickStringAppender
 	{
 		if (this.value.length - this.count > MAX_WASTE_COUNT)
 		{
-			// Èç¹ûÀË·ÑµÄ¿Õ¼ä¹ı´ó, Ôò²ÉÓÃ¸´ÖÆ×Ö·û´®µÄ·½Ê½
+			// å¦‚æœæµªè´¹çš„ç©ºé—´è¿‡å¤§, åˆ™é‡‡ç”¨å¤åˆ¶å­—ç¬¦ä¸²çš„æ–¹å¼
 			return new String(this.value, 0, this.count);
 		}
 		return this.createString(0, this.count, this.value);
@@ -255,12 +255,12 @@ class QuickStringAppender
 
 
 	/**
-	 * µ±×Ö·ûÔÚ200ÒÔÉÏÊ±, Ê¹ÓÃ·´Éäµ÷ÓÃ²»¸´ÖÆ×Ö·û´®µÄ¹¹Ôìº¯Êı»á±È¸´ÖÆ×Ö·û´®¸ü¿ì.
+	 * å½“å­—ç¬¦åœ¨200ä»¥ä¸Šæ—¶, ä½¿ç”¨åå°„è°ƒç”¨ä¸å¤åˆ¶å­—ç¬¦ä¸²çš„æ„é€ å‡½æ•°ä¼šæ¯”å¤åˆ¶å­—ç¬¦ä¸²æ›´å¿«.
 	 */
 	private static final int REFLECT_CREATE_GAP = 200;
 
 	/**
-	 * ×î´óÀË·Ñ¿Õ¼äµÄ×Ö½ÚÊı, Èç¹û³¬¹ıÕâ¸öÊı, ÔòÊ¹ÓÃ¸´ÖÆ×Ö·û´®µÄ·½Ê½.
+	 * æœ€å¤§æµªè´¹ç©ºé—´çš„å­—èŠ‚æ•°, å¦‚æœè¶…è¿‡è¿™ä¸ªæ•°, åˆ™ä½¿ç”¨å¤åˆ¶å­—ç¬¦ä¸²çš„æ–¹å¼.
 	 */
 	private static final int MAX_WASTE_COUNT = 512;
 
@@ -294,7 +294,7 @@ class QuickStringAppender
 			}
 			catch (Throwable ex)
 			{
-				// Èç¹û³ö´í¾Í²»Ê¹ÓÃ·´ÉäÀ´Éú³É×Ö·û´®
+				// å¦‚æœå‡ºé”™å°±ä¸ä½¿ç”¨åå°„æ¥ç”Ÿæˆå­—ç¬¦ä¸²
 				strConstructor = null;
 				return new String(chars, offset, count);
 			}

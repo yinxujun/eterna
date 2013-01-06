@@ -17,107 +17,109 @@ import self.micromagic.util.StringRef;
 import self.micromagic.util.StringTool;
 
 /**
- * beanºÍmapµÄ×ª»»¹¤¾ß. <p>
- * ¿ÉÒÔ¿ìËÙµØ½«bean×ª»»Îªmap.
- * Ò²¿ÉÒÔ¿ìËÙµØ½«mapÖĞµÄÖµÉèÖÃµ½beanÖĞ.
+ * beanå’Œmapçš„è½¬æ¢å·¥å…·. <p>
+ * å¯ä»¥å¿«é€Ÿåœ°å°†beanè½¬æ¢ä¸ºmap.
+ * ä¹Ÿå¯ä»¥å¿«é€Ÿåœ°å°†mapä¸­çš„å€¼è®¾ç½®åˆ°beanä¸­.
+ *
+ * @author micromagic@sina.com
  */
 public class BeanMap extends AbstractMap
-      implements Map
+		implements Map
 {
-   private Object beanObj;
-   private Class beanType;
-   private String namePrefix;
-   private BeanDescriptor beanDescriptor;
-   private ConverterManager converterManager;
-   private boolean converterManagerCopied = false;
-   private List entryList = null;
+	private Object beanObj;
+	private Class beanType;
+	private String namePrefix;
+	private BeanDescriptor beanDescriptor;
+	private ConverterManager converterManager;
+	private boolean converterManagerCopied = false;
+	private List entryList = null;
 	private boolean bean2Map;
 
-   BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor)
-   {
-      this.beanObj = beanObj;
-      this.beanType = beanObj.getClass();
-      this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
-      this.beanDescriptor = beanDescriptor;
-      this.converterManager = beanDescriptor.getConverterManager();
-   }
+	BeanMap(Object beanObj, String namePrefix, BeanDescriptor beanDescriptor)
+	{
+		this.beanObj = beanObj;
+		this.beanType = beanObj.getClass();
+		this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
+		this.beanDescriptor = beanDescriptor;
+		this.converterManager = beanDescriptor.getConverterManager();
+	}
 
-   BeanMap(Class beanType, String namePrefix, BeanDescriptor beanDescriptor)
-   {
-      this.beanType = beanType;
-      this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
-      this.beanDescriptor = beanDescriptor;
-      this.converterManager = beanDescriptor.getConverterManager();
-   }
-
-   /**
-    * ×¢²áÒ»¸öÀàĞÍ×ª»»Æ÷.
-    */
-   public void registerConverter(Class type, ValueConverter converter)
-   {
-      if (!this.converterManagerCopied)
-      {
-         this.converterManager = this.converterManager.copy();
-         this.converterManagerCopied = true;
-      }
-      this.converterManager.registerConverter(type, converter);
-   }
-
-   /**
-    * ×¢²áÒ»¸öÀàĞÍ×ª»»Ê±Ê¹ÓÃµÄ<code>PropertyEditor</code>.
-    */
-   public void registerPropertyEditor(Class type, PropertyEditor pe)
-   {
-      if (!this.converterManagerCopied)
-      {
-         this.converterManager = this.converterManager.copy();
-         this.converterManagerCopied = true;
-      }
-      this.converterManager.registerPropertyEditor(type, pe);
-   }
-
-   /**
-    * ¸ù¾İ×ª»»Æ÷µÄË÷ÒıÖµ»ñÈ¡¶ÔÓ¦µÄ×ª»»Æ÷.
-    *
-    * @param index  ×ª»»Æ÷µÄË÷ÒıÖµ
-    */
-   public ValueConverter getConverter(int index)
-   {
-      return this.converterManager.getConverter(index);
-   }
-
-   /**
-    * ´´½¨Ò»¸öĞÂµÄbean¶ÔÏó, ´Ë¶ÔÏó»á¸²¸ÇÔ­À´°ó¶¨µÄbean¶ÔÏó.
-    */
-   public Object createBean()
-   {
-      try
-      {
-         this.beanObj = this.beanDescriptor.getInitCell().readProcesser.getBeanValue(
-               null, null, null, this.getPrefix(), this);
-      }
-      catch (Exception ex) {}
-      return this.beanObj;
-   }
-
-   /**
-    * »ñÈ¡bean¶ÔÏó¶ÔÓ¦µÄÀàĞÍ.
-    */
-   public Class getBeanType()
-   {
-      return this.beanType;
-   }
-
-   /**
-    * »ñÈ¡¶ÔÓ¦µÄbean¶ÔÏó.
-    */
-   public Object getBean()
-   {
-      return this.beanObj;
-   }
+	BeanMap(Class beanType, String namePrefix, BeanDescriptor beanDescriptor)
+	{
+		this.beanType = beanType;
+		this.namePrefix = StringTool.isEmpty(namePrefix) ? "" : namePrefix;
+		this.beanDescriptor = beanDescriptor;
+		this.converterManager = beanDescriptor.getConverterManager();
+	}
 
 	/**
-	 * »ñÈ¡¶ÔÏóÊ±, ÊÇ·ñÒª½«bean¶ÔÏó×ª»»³Émap·µ»Ø.
+	 * æ³¨å†Œä¸€ä¸ªç±»å‹è½¬æ¢å™¨.
+	 */
+	public void registerConverter(Class type, ValueConverter converter)
+	{
+		if (!this.converterManagerCopied)
+		{
+			this.converterManager = this.converterManager.copy();
+			this.converterManagerCopied = true;
+		}
+		this.converterManager.registerConverter(type, converter);
+	}
+
+	/**
+	 * æ³¨å†Œä¸€ä¸ªç±»å‹è½¬æ¢æ—¶ä½¿ç”¨çš„<code>PropertyEditor</code>.
+	 */
+	public void registerPropertyEditor(Class type, PropertyEditor pe)
+	{
+		if (!this.converterManagerCopied)
+		{
+			this.converterManager = this.converterManager.copy();
+			this.converterManagerCopied = true;
+		}
+		this.converterManager.registerPropertyEditor(type, pe);
+	}
+
+	/**
+	 * æ ¹æ®è½¬æ¢å™¨çš„ç´¢å¼•å€¼è·å–å¯¹åº”çš„è½¬æ¢å™¨.
+	 *
+	 * @param index  è½¬æ¢å™¨çš„ç´¢å¼•å€¼
+	 */
+	public ValueConverter getConverter(int index)
+	{
+		return this.converterManager.getConverter(index);
+	}
+
+	/**
+	 * åˆ›å»ºä¸€ä¸ªæ–°çš„beanå¯¹è±¡, æ­¤å¯¹è±¡ä¼šè¦†ç›–åŸæ¥ç»‘å®šçš„beanå¯¹è±¡.
+	 */
+	public Object createBean()
+	{
+		try
+		{
+			this.beanObj = this.beanDescriptor.getInitCell().readProcesser.getBeanValue(
+					null, null, null, this.getPrefix(), this);
+		}
+		catch (Exception ex) {}
+		return this.beanObj;
+	}
+
+	/**
+	 * è·å–beanå¯¹è±¡å¯¹åº”çš„ç±»å‹.
+	 */
+	public Class getBeanType()
+	{
+		return this.beanType;
+	}
+
+	/**
+	 * è·å–å¯¹åº”çš„beanå¯¹è±¡.
+	 */
+	public Object getBean()
+	{
+		return this.beanObj;
+	}
+
+	/**
+	 * è·å–å¯¹è±¡æ—¶, æ˜¯å¦è¦å°†beanå¯¹è±¡è½¬æ¢æˆmapè¿”å›.
 	 */
 	public boolean isBean2Map()
 	{
@@ -125,647 +127,649 @@ public class BeanMap extends AbstractMap
 	}
 
 	/**
-	 * ÉèÖÃ»ñÈ¡¶ÔÏóÊ±, ÊÇ·ñÒª½«bean¶ÔÏó×ª»»³Émap·µ»Ø.
+	 * è®¾ç½®è·å–å¯¹è±¡æ—¶, æ˜¯å¦è¦å°†beanå¯¹è±¡è½¬æ¢æˆmapè¿”å›.
 	 */
 	public void setBean2Map(boolean bean2Map)
 	{
 		this.bean2Map = bean2Map;
 	}
 
-   /**
-    * »ñÈ¡ÊôĞÔÃû³ÆµÄÇ°×º.
-    */
-   public String getPrefix()
-   {
-      return this.namePrefix;
-   }
-
-   /**
-    * Í¨¹ıÒ»¸öMapÉèÖÃbeanÖĞËùÓĞ¶ÔÓ¦µÄÊôĞÔÖµ.
-    * ´Ë·½·¨ÊÇÒÔbeanµÄ½á¹¹Îª»ù´¡, ´ÓmapÖĞ»ñÈ¡¶ÔÓ¦µÄÖµ²¢½øĞĞÉèÖÃ.
-    */
-   public int setValues(Map map)
-   {
-      if (this.getBean() == null)
-      {
-         this.createBean();
-      }
-      int settedCount = 0;
-      Iterator cdItr = this.beanDescriptor.getCellIterator();
-      Object bean = this.getBean();
-      String prefix = this.getPrefix();
-      Object value;
-      while (cdItr.hasNext())
-      {
-         CellDescriptor cd = (CellDescriptor) cdItr.next();
-			if (!cd.isValid())
-			{
-				continue;
-			}
-         String pName = cd.getName();
-         value = map.get(prefix.length() == 0 ? pName : prefix + pName);
-         if (cd.writeProcesser != null)
-         {
-            if (cd.isBeanType() || value != null)
-            {
-               try
-               {
-                  Object oldValue = null;
-                  if (cd.readProcesser != null && cd.isReadOldValue())
-                  {
-                     oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
-                  }
-                  settedCount += cd.writeProcesser.setBeanValue(
-                        cd, null, bean, value, prefix, this, map, oldValue);
-               }
-               catch (Exception ex)
-               {
-                  if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-                  {
-                     CG.log.info("Write bean value error.", ex);
-                  }
-               }
-            }
-         }
-      }
-      return settedCount;
-   }
-
-   /**
-    * Í¨¹ıÒ»¸öResultRowÉèÖÃbeanÖĞËùÓĞ¶ÔÓ¦µÄÊôĞÔÖµ.
-    * ´Ë·½·¨ÊÇÒÔbeanµÄ½á¹¹Îª»ù´¡, ´ÓResultRowÖĞ»ñÈ¡¶ÔÓ¦µÄÖµ²¢½øĞĞÉèÖÃ.
-    */
-   public int setValues(ResultRow row)
-   {
-      if (this.getBean() == null)
-      {
-         this.createBean();
-      }
-      int settedCount = 0;
-      Iterator cdItr = this.beanDescriptor.getCellIterator();
-      Object bean = this.getBean();
-      String prefix = this.getPrefix();
-      Object value;
-      while (cdItr.hasNext())
-      {
-         CellDescriptor cd = (CellDescriptor) cdItr.next();
-			if (!cd.isValid())
-			{
-				continue;
-			}
-         String pName = cd.getName();
-         String name = prefix.length() == 0 ? pName : prefix + pName;
-         try
-         {
-            value = row.getObject(name, true);
-            if (cd.writeProcesser != null)
-            {
-               if (cd.isBeanType() || value != null)
-               {
-                  Object oldValue = null;
-                  if (cd.readProcesser != null && cd.isReadOldValue())
-                  {
-                     oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
-                  }
-                  settedCount += cd.writeProcesser.setBeanValue(
-                        cd, null, bean, value, prefix, this, row, oldValue);
-               }
-            }
-         }
-         catch (Exception ex)
-         {
-            if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-            {
-               CG.log.info("Write bean value error.", ex);
-            }
-         }
-      }
-      return settedCount;
-   }
-
-   /**
-    * ¸ù¾İ¼üÖµ»ñÈ¡ÊôĞÔµ¥ÔªµÄ·ÃÎÊĞÅÏ¢.
-    *
-    * @param key          ÓÃÓÚ»ñÈ¡ÊôĞÔµ¥Ôª·ÃÎÊĞÅÏ¢µÄ¼üÖµ
-    */
-   public CellAccessInfo getCellAccessInfo(String key)
-   {
-      return this.getCellAccessInfo(key, false);
-   }
-
-   /**
-    * ¸ù¾İ¼üÖµ»ñÈ¡ÊôĞÔµ¥ÔªµÄ·ÃÎÊĞÅÏ¢.
-    *
-    * @param key          ÓÃÓÚ»ñÈ¡ÊôĞÔµ¥Ôª·ÃÎÊĞÅÏ¢µÄ¼üÖµ
-    * @param needCreate   Èç¹û¶ÔÓ¦µÄbean²»´æÔÚÊ±ÊÇ·ñÒª×Ô¶¯´´½¨
-    */
-   public CellAccessInfo getCellAccessInfo(String key, boolean needCreate)
-   {
-      int index = key.indexOf('.');
-      if (index != -1)
-      {
-         String tmpName;
-         StringRef refName = new StringRef();
-         int[] indexs = this.parseArrayName(key.substring(0, index), refName);
-         tmpName = refName.getString();
-         CellDescriptor cd =  this.beanDescriptor.getCell(tmpName);
-         if (cd != null && cd.isValid())
-         {
-            if (cd.isBeanType())
-            {
-               if (indexs != null)
-               {
-                  // beanÀàĞÍµÄÎŞ·¨ÒÔÊı×é·½Ê½»ñÈ¡
-                  return null;
-               }
-               BeanMap sub = null;
-               Object thisObj = this.getBean();
-               if (thisObj == null && needCreate)
-               {
-                  thisObj = this.createBean();
-               }
-               String prefix = this.getPrefix();
-               if (thisObj != null && cd.readProcesser != null)
-               {
-                  try
-                  {
-                     Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
-                     if (tmpObj != null)
-                     {
-                        sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
-                     }
-                  }
-                  catch (Exception ex) {}
-               }
-               if (sub == null)
-               {
-                  sub = BeanTool.getBeanMap(cd.getCellType(), prefix + tmpName + ".");
-                  if (needCreate && cd.writeProcesser != null)
-                  {
-                     try
-                     {
-                        cd.writeProcesser.setBeanValue(cd, null, thisObj, sub.createBean(),
-                              prefix, this, null, null);
-                     }
-                     catch (Exception ex)
-                     {
-                        if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-                        {
-                           CG.log.info("Write bean value error.", ex);
-                        }
-                     }
-                  }
-               }
-               if (sub != null)
-               {
-                  return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
-               }
-            }
-            else if (cd.isArrayType())
-            {
-               if (!cd.isArrayBeanType() || indexs == null)
-               {
-                  // Êı×éµÄÔªËØÀàĞÍ²»ÊÇbean»òÃ»ÓĞÊı×éË÷Òı, ÎŞ·¨·ÃÎÊ×ÓÊôĞÔ
-                  return null;
-               }
-               Object thisObj = this.getBean();
-               if (thisObj == null)
-               {
-                  // µ±Ç°¶ÔÏó²»´æÔÚ, ÎŞ·¨·ÃÎÊÊı×é×ÓÊôĞÔ
-                  return null;
-               }
-               String prefix = this.getPrefix();
-               if (cd.readProcesser != null)
-               {
-                  try
-                  {
-                     Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
-                     if (tmpObj == null || tmpObj.getClass().isArray())
-                     {
-                        // Èç¹ûÃ»»ñµÃµ½¶ÔÏó, »ò¶ÔÏó»¹ÊÇÒ»¸öÊı×é, ÎŞ·¨·ÃÎÊ×ÓÊôĞÔ
-                        return null;
-                     }
-                     BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
-                     return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
-                  }
-                  catch (Exception ex) {}
-               }
-            }
-            else if (Collection.class.isAssignableFrom(cd.getCellType()))
-            {
-               if (indexs == null && indexs.length != 1)
-               {
-                  // ¼¯ºÏÈİÆ÷ÀàĞÍÇÒÔªËØË÷Òı¸öÊı²»Îª1, ÎŞ·¨·ÃÎÊ×ÓÊôĞÔ
-                  return null;
-               }
-               Object thisObj = this.getBean();
-               if (thisObj == null)
-               {
-                  // µ±Ç°¶ÔÏó²»´æÔÚ, ÎŞ·¨·ÃÎÊÊı×é×ÓÊôĞÔ
-                  return null;
-               }
-               String prefix = this.getPrefix();
-               if (cd.readProcesser != null)
-               {
-                  try
-                  {
-                     Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
-                     if (tmpObj == null || !BeanTool.checkBean(tmpObj.getClass()))
-                     {
-                        // Èç¹ûÃ»»ñµÃµ½¶ÔÏó, »ò¶ÔÏó²»ÊÇÒ»¸öbean
-                        return null;
-                     }
-                     BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
-                     return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
-                  }
-                  catch (Exception ex) {}
-               }
-            }
-         }
-         return null;
-      }
-      StringRef refName = new StringRef();
-      int[] indexs = this.parseArrayName(key, refName);
-      CellDescriptor cd = this.beanDescriptor.getCell(refName.toString());
-      if (cd == null || !cd.isValid())
-      {
-         return null;
-      }
-      return new CellAccessInfo(this, cd, indexs);
-   }
+	/**
+	 * è·å–å±æ€§åç§°çš„å‰ç¼€.
+	 */
+	public String getPrefix()
+	{
+		return this.namePrefix;
+	}
 
 	/**
-	 * Çå¿Õµ¥ÔªÃèÊöµÄ»º´æ.
+	 * é€šè¿‡ä¸€ä¸ªMapè®¾ç½®beanä¸­æ‰€æœ‰å¯¹åº”çš„å±æ€§å€¼.
+	 * æ­¤æ–¹æ³•æ˜¯ä»¥beançš„ç»“æ„ä¸ºåŸºç¡€, ä»mapä¸­è·å–å¯¹åº”çš„å€¼å¹¶è¿›è¡Œè®¾ç½®.
+	 */
+	public int setValues(Map map)
+	{
+		if (this.getBean() == null)
+		{
+			this.createBean();
+		}
+		int settedCount = 0;
+		Iterator cdItr = this.beanDescriptor.getCellIterator();
+		Object bean = this.getBean();
+		String prefix = this.getPrefix();
+		Object value;
+		while (cdItr.hasNext())
+		{
+			CellDescriptor cd = (CellDescriptor) cdItr.next();
+			if (!cd.isValid())
+			{
+				continue;
+			}
+			String pName = cd.getName();
+			value = map.get(prefix.length() == 0 ? pName : prefix + pName);
+			if (cd.writeProcesser != null)
+			{
+				if (cd.isBeanType() || value != null)
+				{
+					try
+					{
+						Object oldValue = null;
+						if (cd.readProcesser != null && cd.isReadOldValue())
+						{
+							oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
+						}
+						settedCount += cd.writeProcesser.setBeanValue(
+								cd, null, bean, value, prefix, this, map, oldValue);
+					}
+					catch (Exception ex)
+					{
+						if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+						{
+							CG.log.info("Write bean value error.", ex);
+						}
+					}
+				}
+			}
+		}
+		return settedCount;
+	}
+
+	/**
+	 * é€šè¿‡ä¸€ä¸ªResultRowè®¾ç½®beanä¸­æ‰€æœ‰å¯¹åº”çš„å±æ€§å€¼.
+	 * æ­¤æ–¹æ³•æ˜¯ä»¥beançš„ç»“æ„ä¸ºåŸºç¡€, ä»ResultRowä¸­è·å–å¯¹åº”çš„å€¼å¹¶è¿›è¡Œè®¾ç½®.
+	 */
+	public int setValues(ResultRow row)
+	{
+		if (this.getBean() == null)
+		{
+			this.createBean();
+		}
+		int settedCount = 0;
+		Iterator cdItr = this.beanDescriptor.getCellIterator();
+		Object bean = this.getBean();
+		String prefix = this.getPrefix();
+		Object value;
+		while (cdItr.hasNext())
+		{
+			CellDescriptor cd = (CellDescriptor) cdItr.next();
+			if (!cd.isValid())
+			{
+				continue;
+			}
+			String pName = cd.getName();
+			String name = prefix.length() == 0 ? pName : prefix + pName;
+			try
+			{
+				value = row.getObject(name, true);
+				if (cd.writeProcesser != null)
+				{
+					if (cd.isBeanType() || value != null)
+					{
+						Object oldValue = null;
+						if (cd.readProcesser != null && cd.isReadOldValue())
+						{
+							oldValue = cd.readProcesser.getBeanValue(cd, null, beanObj, prefix, this);
+						}
+						settedCount += cd.writeProcesser.setBeanValue(
+								cd, null, bean, value, prefix, this, row, oldValue);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+				{
+					CG.log.info("Write bean value error.", ex);
+				}
+			}
+		}
+		return settedCount;
+	}
+
+	/**
+	 * æ ¹æ®é”®å€¼è·å–å±æ€§å•å…ƒçš„è®¿é—®ä¿¡æ¯.
+	 *
+	 * @param key  ç”¨äºè·å–å±æ€§å•å…ƒè®¿é—®ä¿¡æ¯çš„é”®å€¼
+	 */
+	public CellAccessInfo getCellAccessInfo(String key)
+	{
+		return this.getCellAccessInfo(key, false);
+	}
+
+	/**
+	 * æ ¹æ®é”®å€¼è·å–å±æ€§å•å…ƒçš„è®¿é—®ä¿¡æ¯.
+	 *
+	 * @param key         ç”¨äºè·å–å±æ€§å•å…ƒè®¿é—®ä¿¡æ¯çš„é”®å€¼
+	 * @param needCreate  å¦‚æœå¯¹åº”çš„beanä¸å­˜åœ¨æ—¶æ˜¯å¦è¦è‡ªåŠ¨åˆ›å»º
+	 */
+	public CellAccessInfo getCellAccessInfo(String key, boolean needCreate)
+	{
+		int index = key.indexOf('.');
+		if (index != -1)
+		{
+			String tmpName;
+			StringRef refName = new StringRef();
+			int[] indexs = this.parseArrayName(key.substring(0, index), refName);
+			tmpName = refName.getString();
+			CellDescriptor cd =  this.beanDescriptor.getCell(tmpName);
+			if (cd != null && cd.isValid())
+			{
+				if (cd.isBeanType())
+				{
+					if (indexs != null)
+					{
+						// beanç±»å‹çš„æ— æ³•ä»¥æ•°ç»„æ–¹å¼è·å–
+						return null;
+					}
+					BeanMap sub = null;
+					Object thisObj = this.getBean();
+					if (thisObj == null && needCreate)
+					{
+						thisObj = this.createBean();
+					}
+					String prefix = this.getPrefix();
+					if (thisObj != null && cd.readProcesser != null)
+					{
+						try
+						{
+							Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
+							if (tmpObj != null)
+							{
+								sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+							}
+						}
+						catch (Exception ex) {}
+					}
+					if (sub == null)
+					{
+						sub = BeanTool.getBeanMap(cd.getCellType(), prefix + tmpName + ".");
+						if (needCreate && cd.writeProcesser != null)
+						{
+							try
+							{
+								cd.writeProcesser.setBeanValue(cd, null, thisObj, sub.createBean(),
+										prefix, this, null, null);
+							}
+							catch (Exception ex)
+							{
+								if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+								{
+									CG.log.info("Write bean value error.", ex);
+								}
+							}
+						}
+					}
+					if (sub != null)
+					{
+						return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+					}
+				}
+				else if (cd.isArrayType())
+				{
+					if (!cd.isArrayBeanType() || indexs == null)
+					{
+						// æ•°ç»„çš„å…ƒç´ ç±»å‹ä¸æ˜¯beanæˆ–æ²¡æœ‰æ•°ç»„ç´¢å¼•, æ— æ³•è®¿é—®å­å±æ€§
+						return null;
+					}
+					Object thisObj = this.getBean();
+					if (thisObj == null)
+					{
+						// å½“å‰å¯¹è±¡ä¸å­˜åœ¨, æ— æ³•è®¿é—®æ•°ç»„å­å±æ€§
+						return null;
+					}
+					String prefix = this.getPrefix();
+					if (cd.readProcesser != null)
+					{
+						try
+						{
+							Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
+							if (tmpObj == null || tmpObj.getClass().isArray())
+							{
+								// å¦‚æœæ²¡è·å¾—åˆ°å¯¹è±¡, æˆ–å¯¹è±¡è¿˜æ˜¯ä¸€ä¸ªæ•°ç»„, æ— æ³•è®¿é—®å­å±æ€§
+								return null;
+							}
+							BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+							return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+						}
+						catch (Exception ex) {}
+					}
+				}
+				else if (Collection.class.isAssignableFrom(cd.getCellType()))
+				{
+					if (indexs == null && indexs.length != 1)
+					{
+						// é›†åˆå®¹å™¨ç±»å‹ä¸”å…ƒç´ ç´¢å¼•ä¸ªæ•°ä¸ä¸º1, æ— æ³•è®¿é—®å­å±æ€§
+						return null;
+					}
+					Object thisObj = this.getBean();
+					if (thisObj == null)
+					{
+						// å½“å‰å¯¹è±¡ä¸å­˜åœ¨, æ— æ³•è®¿é—®æ•°ç»„å­å±æ€§
+						return null;
+					}
+					String prefix = this.getPrefix();
+					if (cd.readProcesser != null)
+					{
+						try
+						{
+							Object tmpObj = cd.readProcesser.getBeanValue(cd, indexs, thisObj, prefix, this);
+							if (tmpObj == null || !BeanTool.checkBean(tmpObj.getClass()))
+							{
+								// å¦‚æœæ²¡è·å¾—åˆ°å¯¹è±¡, æˆ–å¯¹è±¡ä¸æ˜¯ä¸€ä¸ªbean
+								return null;
+							}
+							BeanMap sub = BeanTool.getBeanMap(tmpObj, prefix + tmpName + ".");
+							return sub.getCellAccessInfo(key.substring(index + 1), needCreate);
+						}
+						catch (Exception ex) {}
+					}
+				}
+			}
+			return null;
+		}
+		StringRef refName = new StringRef();
+		int[] indexs = this.parseArrayName(key, refName);
+		CellDescriptor cd = this.beanDescriptor.getCell(refName.toString());
+		if (cd == null || !cd.isValid())
+		{
+			return null;
+		}
+		return new CellAccessInfo(this, cd, indexs);
+	}
+
+	/**
+	 * æ¸…ç©ºå•å…ƒæè¿°çš„ç¼“å­˜.
 	 */
 	public void clearCellCache()
 	{
 		this.entryList = null;
 	}
 
-   /**
-    * ½âÎöÃû³ÆÖĞµÄÊı×éĞÅÏ¢. <p>
-    * Èç:
-    * ¶¨ÒåµÄÃû³Æ   ³ö²Î          ·µ»ØÖµ
-    * tmpName      tmpName       null
-    * tArr[1]      tArr          [1]
-    * arrs[2][3]   arrs          [2, 3]
-    *
-    * @param name      ¶¨ÒåµÄÃû³Æ
-    * @param pureName  ³ö²Î, ²»°üº¬Êı×éĞÅÏ¢µÄÃû³Æ¶¨Òå
-    * @return   Êı×é·ÃÎÊµÄË÷ÒıÖµÁĞ±í
-    */
-   public static int[] parseArrayName(String name, StringRef pureName)
-   {
-      if (name.charAt(name.length() - 1) == ']')
-      {
-         int index = name.indexOf('[');
-         if (index == -1 || index == 0)
-         {
-            throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
-         }
-         pureName.setString(name.substring(0, index));
-         int endIndex = name.indexOf(']', index + 1);
-         if (endIndex == name.length() - 1)
-         {
-            return new int[]{Integer.parseInt(name.substring(index + 1, endIndex))};
-         }
-         else
-         {
-            List indexList = new LinkedList();
-            indexList.add(new Integer(name.substring(index + 1, endIndex)));
-            while (endIndex < name.length() - 1)
-            {
-               index = name.indexOf('[', endIndex + 1);
-               if (index == -1)
-               {
-                  throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
-               }
-               endIndex = name.indexOf(']', index + 1);
-               indexList.add(new Integer(name.substring(index + 1, endIndex)));
-            }
-            int tmpI = 0;
-            int[] indexs = new int[indexList.size()];
-            Iterator itr = indexList.iterator();
-            while (itr.hasNext())
-            {
-               indexs[tmpI++] = ((Integer) itr.next()).intValue();
-            }
-            return indexs;
-         }
-      }
-      pureName.setString(name);
-      return null;
-   }
+	/**
+	 * è§£æåç§°ä¸­çš„æ•°ç»„ä¿¡æ¯. <p>
+	 * å¦‚:
+	 * å®šä¹‰çš„åç§°  å‡ºå‚     è¿”å›å€¼
+	 * tmpName     tmpName  null
+	 * tArr[1]     tArr     [1]
+	 * arrs[2][3]  arrs     [2, 3]
+	 *
+	 * @param name      å®šä¹‰çš„åç§°
+	 * @param pureName  å‡ºå‚, ä¸åŒ…å«æ•°ç»„ä¿¡æ¯çš„åç§°å®šä¹‰
+	 * @return  æ•°ç»„è®¿é—®çš„ç´¢å¼•å€¼åˆ—è¡¨
+	 */
+	public static int[] parseArrayName(String name, StringRef pureName)
+	{
+		if (name.charAt(name.length() - 1) == ']')
+		{
+			int index = name.indexOf('[');
+			if (index == -1 || index == 0)
+			{
+				throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
+			}
+			pureName.setString(name.substring(0, index));
+			int endIndex = name.indexOf(']', index + 1);
+			if (endIndex == name.length() - 1)
+			{
+				return new int[]{Integer.parseInt(name.substring(index + 1, endIndex))};
+			}
+			else
+			{
+				List indexList = new LinkedList();
+				indexList.add(new Integer(name.substring(index + 1, endIndex)));
+				while (endIndex < name.length() - 1)
+				{
+					index = name.indexOf('[', endIndex + 1);
+					if (index == -1)
+					{
+						throw new IllegalArgumentException("Error array visit name:\"" + name + "\".");
+					}
+					endIndex = name.indexOf(']', index + 1);
+					indexList.add(new Integer(name.substring(index + 1, endIndex)));
+				}
+				int tmpI = 0;
+				int[] indexs = new int[indexList.size()];
+				Iterator itr = indexList.iterator();
+				while (itr.hasNext())
+				{
+					indexs[tmpI++] = ((Integer) itr.next()).intValue();
+				}
+				return indexs;
+			}
+		}
+		pureName.setString(name);
+		return null;
+	}
 
-   /**
-    * »ñÈ¡ÊôĞÔµ¥ÔªÃèÊöÀàµÄÁĞ±í.
-    */
-   private synchronized List getEntryList(Class[] beanTypeStack)
-   {
+	/**
+	 * è·å–å±æ€§å•å…ƒæè¿°ç±»çš„åˆ—è¡¨.
+	 */
+	private synchronized List getEntryList(Class[] beanTypeStack)
+	{
 		List result = this.entryList;
-      if (result != null)
-      {
-         return result;
-      }
-      if (beanTypeStack == null)
-      {
-         beanTypeStack = new Class[]{this.getBeanType()};
-      }
-      else
-      {
-         Class[] types = new Class[beanTypeStack.length + 1];
-         System.arraycopy(beanTypeStack, 0, types, 0, beanTypeStack.length);
-         types[beanTypeStack.length] = this.getBeanType();
-      }
-      result = new LinkedList();
-      Iterator cdItr = this.beanDescriptor.getCellIterator();
-      while (cdItr.hasNext())
-      {
-         CellDescriptor cd = (CellDescriptor) cdItr.next();
+		if (result != null)
+		{
+			return result;
+		}
+		if (beanTypeStack == null)
+		{
+			beanTypeStack = new Class[]{this.getBeanType()};
+		}
+		else
+		{
+			Class[] types = new Class[beanTypeStack.length + 1];
+			System.arraycopy(beanTypeStack, 0, types, 0, beanTypeStack.length);
+			types[beanTypeStack.length] = this.getBeanType();
+		}
+		result = new LinkedList();
+		Iterator cdItr = this.beanDescriptor.getCellIterator();
+		while (cdItr.hasNext())
+		{
+			CellDescriptor cd = (CellDescriptor) cdItr.next();
 			if (!cd.isValid())
 			{
 				continue;
 			}
-         String pName = cd.getName();
-         BeanMap sub = null;
-         if (cd.isBeanType() && !this.bean2Map)
-         {
-            Object thisObj = this.getBean();
-            String prefix = this.getPrefix();
-            if (thisObj != null && cd.readProcesser != null)
-            {
-               try
-               {
-                  Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
-                  if (tmpObj != null)
-                  {
-                     sub = BeanTool.getBeanMap(tmpObj, prefix + pName + ".");
-                  }
-               }
-               catch (Exception ex) {}
-            }
-            if (sub == null)
-            {
-               sub = BeanTool.getBeanMap(cd.getCellType(), prefix + pName + ".");
-            }
-         }
-         if (sub != null)
-         {
-            if (!this.isTypeInStack(beanTypeStack, sub.getBeanType()))
-            {
-               result.addAll(sub.getEntryList(beanTypeStack));
-            }
-         }
-         else
-         {
-            result.add(new BeanMapEntry(this, pName, cd));
-         }
-      }
-      this.entryList = result;
-      return result;
-   }
+			String pName = cd.getName();
+			BeanMap sub = null;
+			if (cd.isBeanType() && !this.bean2Map)
+			{
+				Object thisObj = this.getBean();
+				String prefix = this.getPrefix();
+				if (thisObj != null && cd.readProcesser != null)
+				{
+					try
+					{
+						Object tmpObj = cd.readProcesser.getBeanValue(cd, null, thisObj, prefix, this);
+						if (tmpObj != null)
+						{
+							sub = BeanTool.getBeanMap(tmpObj, prefix + pName + ".");
+						}
+					}
+					catch (Exception ex) {}
+				}
+				if (sub == null)
+				{
+					sub = BeanTool.getBeanMap(cd.getCellType(), prefix + pName + ".");
+				}
+			}
+			if (sub != null)
+			{
+				if (!this.isTypeInStack(beanTypeStack, sub.getBeanType()))
+				{
+					result.addAll(sub.getEntryList(beanTypeStack));
+				}
+			}
+			else
+			{
+				result.add(new BeanMapEntry(this, pName, cd));
+			}
+		}
+		this.entryList = result;
+		return result;
+	}
 
-   /**
-    * ÅĞ¶Ï¸ø³öµÄÀàĞÍÊÇ·ñÔÚÀàĞÍ¶ÑÕ»ÖĞ, ·ÀÖ¹µİ¹éµÄ½âÎö
-    */
-   private boolean isTypeInStack(Class[] beanTypeStack, Class type)
-   {
-      if (beanTypeStack == null)
-      {
-         return false;
-      }
-      for (int i = 0; i < beanTypeStack.length; i++)
-      {
-         if (type == beanTypeStack[i])
-         {
-            return true;
-         }
-      }
-      return false;
-   }
+	/**
+	 * åˆ¤æ–­ç»™å‡ºçš„ç±»å‹æ˜¯å¦åœ¨ç±»å‹å †æ ˆä¸­, é˜²æ­¢é€’å½’çš„è§£æ
+	 */
+	private boolean isTypeInStack(Class[] beanTypeStack, Class type)
+	{
+		if (beanTypeStack == null)
+		{
+			return false;
+		}
+		for (int i = 0; i < beanTypeStack.length; i++)
+		{
+			if (type == beanTypeStack[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
-   public void putAll(Map t)
-   {
-      this.setValues(t);
-   }
+	public void putAll(Map t)
+	{
+		this.setValues(t);
+	}
 
-   public boolean containsKey(Object key)
-   {
-      if (key == null)
-      {
-         return false;
-      }
-      return this.getCellAccessInfo(String.valueOf(key), false) != null;
-   }
+	public boolean containsKey(Object key)
+	{
+		if (key == null)
+		{
+			return false;
+		}
+		return this.getCellAccessInfo(String.valueOf(key), false) != null;
+	}
 
-   public Object get(Object key)
-   {
-      if (key == null)
-      {
-         return null;
-      }
-      CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), false);
-      if (cai == null)
-      {
-         return null;
-      }
-      return cai.getValue();
-   }
+	public Object get(Object key)
+	{
+		if (key == null)
+		{
+			return null;
+		}
+		CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), false);
+		if (cai == null)
+		{
+			return null;
+		}
+		return cai.getValue();
+	}
 
-   public Object put(Object key, Object value)
-   {
-      if (key == null)
-      {
-         return null;
-      }
-      CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), true);
-      if (cai == null)
-      {
-         return null;
-      }
-      return cai.setValue(value);
-   }
+	public Object put(Object key, Object value)
+	{
+		if (key == null)
+		{
+			return null;
+		}
+		CellAccessInfo cai = this.getCellAccessInfo(String.valueOf(key), true);
+		if (cai == null)
+		{
+			return null;
+		}
+		return cai.setValue(value);
+	}
 
-   public Object remove(Object key)
-   {
-      return this.put(key, null);
-   }
+	public Object remove(Object key)
+	{
+		return this.put(key, null);
+	}
 
-   public void clear()
-   {
-      this.entrySet().clear();
-   }
+	public void clear()
+	{
+		this.entrySet().clear();
+	}
 
-   public Set keySet()
-   {
-      return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_KEY);
-   }
+	public Set keySet()
+	{
+		return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_KEY);
+	}
 
-   public Collection values()
-   {
-      return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_VALUE);
-   }
+	public Collection values()
+	{
+		return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_VALUE);
+	}
 
-   public Set entrySet()
-   {
-      return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_ENTRY);
-   }
+	public Set entrySet()
+	{
+		return new BeanMapEntrySet(this, BEANMAP_SET_TYPE_ENTRY);
+	}
 
-   private static final int BEANMAP_SET_TYPE_ENTRY = 1;
-   private static final int BEANMAP_SET_TYPE_VALUE = 2;
-   private static final int BEANMAP_SET_TYPE_KEY = 3;
+	private static final int BEANMAP_SET_TYPE_ENTRY = 1;
+	private static final int BEANMAP_SET_TYPE_VALUE = 2;
+	private static final int BEANMAP_SET_TYPE_KEY = 3;
 
-   private static class BeanMapEntrySet extends AbstractSet
-         implements Set
-   {
-      private int beanMapSetType;
-      private List entryList;
+	private static class BeanMapEntrySet extends AbstractSet
+			implements Set
+	{
+		private int beanMapSetType;
+		private List entryList;
 
-      public BeanMapEntrySet(BeanMap beanMap, int beanMapSetType)
-      {
-         this.beanMapSetType = beanMapSetType;
-         this.entryList = beanMap.getEntryList(null);
-      }
+		public BeanMapEntrySet(BeanMap beanMap, int beanMapSetType)
+		{
+			this.beanMapSetType = beanMapSetType;
+			this.entryList = beanMap.getEntryList(null);
+		}
 
-      public int size()
-      {
-         return this.entryList.size();
-      }
+		public int size()
+		{
+			return this.entryList.size();
+		}
 
-      public Iterator iterator()
-      {
-         return new BeanMapIterator(this.beanMapSetType, this.entryList.iterator());
-      }
+		public Iterator iterator()
+		{
+			return new BeanMapIterator(this.beanMapSetType, this.entryList.iterator());
+		}
 
-      public boolean add(Object o)
-      {
-         return false;
-      }
+		public boolean add(Object o)
+		{
+			return false;
+		}
 
-      public boolean addAll(Collection c)
-      {
-         return false;
-      }
+		public boolean addAll(Collection c)
+		{
+			return false;
+		}
 
-      public boolean retainAll(Collection c)
-      {
-         return false;
-      }
+		public boolean retainAll(Collection c)
+		{
+			return false;
+		}
 
-      public boolean remove(Object o)
-      {
-         return false;
-      }
+		public boolean remove(Object o)
+		{
+			return false;
+		}
 
-      public boolean removeAll(Collection c)
-      {
-         return false;
-      }
+		public boolean removeAll(Collection c)
+		{
+			return false;
+		}
 
-   }
+	}
 
-   private static class BeanMapIterator
-         implements Iterator
-   {
-      private int beanMapSetType;
-      private Iterator entrySetIterator;
-      BeanMapEntry nowEntry = null;
+	private static class BeanMapIterator
+			implements Iterator
+	{
+		private int beanMapSetType;
+		private Iterator entrySetIterator;
+		BeanMapEntry nowEntry = null;
 
-      public BeanMapIterator(int beanMapSetType, Iterator entrySetIterator)
-      {
-         this.beanMapSetType = beanMapSetType;
-         this.entrySetIterator = entrySetIterator;
-      }
+		public BeanMapIterator(int beanMapSetType, Iterator entrySetIterator)
+		{
+			this.beanMapSetType = beanMapSetType;
+			this.entrySetIterator = entrySetIterator;
+		}
 
-      public boolean hasNext()
-      {
-         return this.entrySetIterator.hasNext();
-      }
+		public boolean hasNext()
+		{
+			return this.entrySetIterator.hasNext();
+		}
 
-      public Object next()
-      {
-         this.nowEntry = (BeanMapEntry) this.entrySetIterator.next();
-         if (this.beanMapSetType == BEANMAP_SET_TYPE_VALUE)
-         {
-            return this.nowEntry.getValue();
-         }
-         else if (this.beanMapSetType == BEANMAP_SET_TYPE_KEY)
-         {
-            return this.nowEntry.getKey();
-         }
-         return this.nowEntry;
-      }
+		public Object next()
+		{
+			this.nowEntry = (BeanMapEntry) this.entrySetIterator.next();
+			if (this.beanMapSetType == BEANMAP_SET_TYPE_VALUE)
+			{
+				return this.nowEntry.getValue();
+			}
+			else if (this.beanMapSetType == BEANMAP_SET_TYPE_KEY)
+			{
+				return this.nowEntry.getKey();
+			}
+			return this.nowEntry;
+		}
 
-      public void remove()
-      {
-         if (this.nowEntry != null)
-         {
-            this.nowEntry.setValue(null);
-         }
-      }
+		public void remove()
+		{
+			if (this.nowEntry != null)
+			{
+				this.nowEntry.setValue(null);
+			}
+		}
 
-   }
+	}
 
-   private static class BeanMapEntry
-         implements Map.Entry
-   {
-      private BeanMap beanMap;
-      private Object key;
-      private CellAccessInfo cellAccessInfo;
+	private static class BeanMapEntry
+			implements Map.Entry
+	{
+		private BeanMap beanMap;
+		private Object key;
+		private CellAccessInfo cellAccessInfo;
 
-      public BeanMapEntry(BeanMap beanMap, Object key, CellDescriptor cellDescriptor)
-      {
-         this.beanMap = beanMap;
-         this.key = key;
-         this.cellAccessInfo = new CellAccessInfo(beanMap, cellDescriptor, null);
-      }
+		public BeanMapEntry(BeanMap beanMap, Object key, CellDescriptor cellDescriptor)
+		{
+			this.beanMap = beanMap;
+			this.key = key;
+			this.cellAccessInfo = new CellAccessInfo(beanMap, cellDescriptor, null);
+		}
 
-      public Object getKey()
-      {
-         String prefix = this.beanMap.getPrefix();
-         return prefix.length() == 0 ? this.key : prefix + this.key;
-      }
+		public Object getKey()
+		{
+			String prefix = this.beanMap.getPrefix();
+			return prefix.length() == 0 ? this.key : prefix + this.key;
+		}
 
-      public Object getValue()
-      {
-         return this.cellAccessInfo.getValue();
-      }
+		public Object getValue()
+		{
+			return this.cellAccessInfo.getValue();
+		}
 
-      public Object setValue(Object value)
-      {
-         return this.cellAccessInfo.setValue(value);
-      }
+		public Object setValue(Object value)
+		{
+			return this.cellAccessInfo.setValue(value);
+		}
 
-      public int hashCode()
-      {
-         Object key = this.getKey();
-         Object value = this.getValue();
-         return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
-      }
+		public int hashCode()
+		{
+			Object key = this.getKey();
+			Object value = this.getValue();
+			return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+		}
 
-      public boolean equals(Object obj)
-      {
-         if (obj instanceof Map.Entry)
-         {
-            Map.Entry e = (Map.Entry) obj;
-            Object k1 = this.getKey();
-            Object k2 = e.getKey();
-            if (k1 == k2 || (k1 != null && k1.equals(k2)))
-            {
-               Object v1 = this.getValue();
-               Object v2 = e.getValue();
-               if (v1 == v2 || (v1 != null && v1.equals(v2)))
-                  return true;
-            }
-         }
-         return false;
-      }
+		public boolean equals(Object obj)
+		{
+			if (obj instanceof Map.Entry)
+			{
+				Map.Entry e = (Map.Entry) obj;
+				Object k1 = this.getKey();
+				Object k2 = e.getKey();
+				if (k1 == k2 || (k1 != null && k1.equals(k2)))
+				{
+					Object v1 = this.getValue();
+					Object v2 = e.getValue();
+					if (v1 == v2 || (v1 != null && v1.equals(v2)))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 
-      public String toString()
-      {
-         return this.getKey() + "=" + this.getValue();
-      }
+		public String toString()
+		{
+			return this.getKey() + "=" + this.getValue();
+		}
 
-   }
+	}
 
 }

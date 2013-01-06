@@ -12,45 +12,45 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.view.ViewAdapter;
 
 /**
- * ÔÚJSPÖĞ, ¿ÉÍ¨¹ı´Ë±êÇ©ÔÚÒ³ÃæÖĞ³õÊ¼»¯Eterna¶ÔÏó.
+ * åœ¨JSPä¸­, å¯é€šè¿‡æ­¤æ ‡ç­¾åœ¨é¡µé¢ä¸­åˆå§‹åŒ–Eternaå¯¹è±¡.
  *
  * @author micromagic@sina.com
  */
 public class EternaInit extends InitBaseTag
 {
 	/**
-	 * ²»Êä³öhtml´úÂë
+	 * ä¸è¾“å‡ºhtmlä»£ç 
 	 */
 	public static final int PRINT_HTML_NONE = 0;
 
 	/**
-	 * ½öÊä³öeternaÈİÆ÷¶ÔÏóµÄdiv´úÂë
+	 * ä»…è¾“å‡ºeternaå®¹å™¨å¯¹è±¡çš„divä»£ç 
 	 */
 	public static final int PRINT_HTML_PART = 1;
 
 	/**
-	 * Êä³öÍêÕûµÄhtmlÒ³Ãæ´úÂë
+	 * è¾“å‡ºå®Œæ•´çš„htmlé¡µé¢ä»£ç 
 	 */
 	public static final int PRINT_HTML_ALL = 2;
 
 	/**
-	 * ²ÎÊıÖĞ¿ØÖÆdebugµÄ²ÎÊıÃû
+	 * å‚æ•°ä¸­æ§åˆ¶debugçš„å‚æ•°å
 	 */
 	public static final String PARAM_DEBUF_FLAG = "___debug";
 
-   private String view;
-   private String appData;
+	private String view;
+	private String appData;
 	private int printHTML;
 	private String charset;
 	private String docType;
 	private String divClass;
 	private boolean includeBody = false;
 
-   public int doStartTag()
-         throws JspException
-   {
-      try
-      {
+	public int doStartTag()
+			throws JspException
+	{
+		try
+		{
 			String viewTag = this.view == null ? WebApp.VIEW_TAG : this.view;
 			String appDataTag = this.appData == null ? WebApp.APPDATA_TAG : this.appData;
 			JspWriter out = this.pageContext.getOut();
@@ -68,17 +68,17 @@ public class EternaInit extends InitBaseTag
 				this.includeBody = false;
 				view.printView(out, data, this.getCacheMap(view));
 			}
-      }
-      catch (ConfigurationException ex)
-      {
-         DefaultFinder.log.warn("Error in init.", ex);
-      }
-      catch (Throwable ex)
-      {
-         DefaultFinder.log.error("Other Error in init.", ex);
-      }
-      return SKIP_BODY;
-   }
+		}
+		catch (ConfigurationException ex)
+		{
+			DefaultFinder.log.warn("Error in init.", ex);
+		}
+		catch (Throwable ex)
+		{
+			DefaultFinder.log.error("Other Error in init.", ex);
+		}
+		return SKIP_BODY;
+	}
 
 	public int doEndTag()
 			throws JspException
@@ -87,8 +87,8 @@ public class EternaInit extends InitBaseTag
 		{
 			return EVAL_PAGE;
 		}
-      try
-      {
+		try
+		{
 			JspWriter out = this.pageContext.getOut();
 			if (this.printHTML == PRINT_HTML_ALL)
 			{
@@ -111,26 +111,26 @@ public class EternaInit extends InitBaseTag
 				out.println("</body>");
 				out.println("</html>");
 			}
-      }
-      catch (Throwable ex)
-      {
-         DefaultFinder.log.error("Other Error in init.", ex);
-      }
+		}
+		catch (Throwable ex)
+		{
+			DefaultFinder.log.error("Other Error in init.", ex);
+		}
 		return EVAL_PAGE;
 	}
 
 	/**
-	 * Êä³ö³õÊ¼»¯µÄ½Å±¾.
+	 * è¾“å‡ºåˆå§‹åŒ–çš„è„šæœ¬.
 	 */
 	private void printInitScript(ViewAdapter view, AppData data, JspWriter out)
-         throws IOException, ConfigurationException
+			throws IOException, ConfigurationException
 	{
 		out.println("<script type=\"text/javascript\">");
 		out.println("(function() {");
 		out.println("var retryFind = false;");
 		this.printEternaScript(view, data, out);
 
-		// Èç¹û¶¨ÒåÁËjQuery
+		// å¦‚æœå®šä¹‰äº†jQuery
 		out.println("if (typeof jQuery != \"undefined\")");
 		out.println('{');
 		out.println("jQuery(eCheckInitFn);");
@@ -138,7 +138,7 @@ public class EternaInit extends InitBaseTag
 		out.println("else");
 		out.println('{');
 		out.println("retryFind = true;");
-		// Èç¹ûÎ´¶¨ÒåjQuery, ÔòÑÓ³Ù200ºÁÃëºóÔÙ³¢ÊÔ
+		// å¦‚æœæœªå®šä¹‰jQuery, åˆ™å»¶è¿Ÿ200æ¯«ç§’åå†å°è¯•
 		out.println("setTimeout(eCheckInitFn, 200);");
 		out.println('}');
 
@@ -147,12 +147,12 @@ public class EternaInit extends InitBaseTag
 	}
 
 	/**
-	 * ´òÓ¡EternaµÄ³õÊ¼»¯½Å±¾.
+	 * æ‰“å°Eternaçš„åˆå§‹åŒ–è„šæœ¬.
 	 */
 	private void printEternaScript(ViewAdapter view, AppData data, JspWriter out)
-         throws IOException, ConfigurationException
+			throws IOException, ConfigurationException
 	{
-		// ¶¨Òå³õÊ¼»¯EternaµÄ·½·¨
+		// å®šä¹‰åˆå§‹åŒ–Eternaçš„æ–¹æ³•
 		out.println("var eInitFn = function ()");
 		out.println('{');
 		out.print("var $E = ");
@@ -177,7 +177,7 @@ public class EternaInit extends InitBaseTag
 		out.println("_eterna.reInit();");
 		out.println("};");
 
-		// ¶¨Òå¼ì²é²¢³õÊ¼»¯EternaµÄ·½·¨
+		// å®šä¹‰æ£€æŸ¥å¹¶åˆå§‹åŒ–Eternaçš„æ–¹æ³•
 		out.println("var eCheckInitFn = function ()");
 		out.println('{');
 		out.println("if (typeof jQuery != \"undefined\" && typeof Eterna != \"undefined\")");
@@ -186,17 +186,17 @@ public class EternaInit extends InitBaseTag
 		out.println('}');
 		out.println("else");
 		out.println('{');
-		// Èç¹ûÓĞĞèÒªµÄ¶ÔÏóÎ´Éú³É, ÔòÑÓ³Ù200ºÁÃëºóÔÙ³¢ÊÔ
+		// å¦‚æœæœ‰éœ€è¦çš„å¯¹è±¡æœªç”Ÿæˆ, åˆ™å»¶è¿Ÿ200æ¯«ç§’åå†å°è¯•
 		out.println("setTimeout(eCheckInitFn, 200);");
 		out.println('}');
 		out.println("};");
 	}
 
 	/**
-	 * Êä³ö³õÊ¼»¯µÄÒ³Ãæ.
+	 * è¾“å‡ºåˆå§‹åŒ–çš„é¡µé¢.
 	 */
 	private void printInitPage(ViewAdapter view, AppData data, JspWriter out)
-         throws IOException, ConfigurationException
+			throws IOException, ConfigurationException
 	{
 		if (this.printHTML == PRINT_HTML_ALL)
 		{
@@ -218,17 +218,17 @@ public class EternaInit extends InitBaseTag
 		this.printInitScript(view, data, out);
 	}
 
-   public void release()
-   {
-      this.view = null;
-      this.appData = null;
+	public void release()
+	{
+		this.view = null;
+		this.appData = null;
 		this.printHTML = 0;
 		this.charset = null;
 		this.docType = null;
 		this.divClass = null;
 		this.includeBody = false;
-      super.release();
-   }
+		super.release();
+	}
 
 	public String getView()
 	{

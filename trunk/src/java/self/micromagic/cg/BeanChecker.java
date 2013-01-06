@@ -2,26 +2,28 @@
 package self.micromagic.cg;
 
 /**
- * ÅĞ¶Ï¸ø³öµÄÀàÃûÊÇ·ñÎªbeanµÄ¼ì²éÆ÷.
+ * åˆ¤æ–­ç»™å‡ºçš„ç±»åæ˜¯å¦ä¸ºbeançš„æ£€æŸ¥å™¨.
+ *
+ * @author micromagic@sina.com
  */
 public interface BeanChecker
 {
-   /**
-    * ¼ì²é½á¹û£¬ÊÇ.
-    */
-   public static final int CHECK_RESULT_YES = 1;
+	/**
+	 * æ£€æŸ¥ç»“æœï¼Œæ˜¯.
+	 */
+	public static final int CHECK_RESULT_YES = 1;
 
-   /**
-    * ¼ì²é½á¹û£¬·ñ.
-    */
-   public static final int CHECK_RESULT_NO = -1;
+	/**
+	 * æ£€æŸ¥ç»“æœï¼Œå¦.
+	 */
+	public static final int CHECK_RESULT_NO = -1;
 
-   /**
-    * ¼ì²é½á¹û£¬²»Ã÷.
-    */
-   public static final int CHECK_RESULT_UNKNOW = 0;
+	/**
+	 * æ£€æŸ¥ç»“æœï¼Œä¸æ˜.
+	 */
+	public static final int CHECK_RESULT_UNKNOW = 0;
 
 
-   public int check(Class beanClass);
+	public int check(Class beanClass);
 
 }

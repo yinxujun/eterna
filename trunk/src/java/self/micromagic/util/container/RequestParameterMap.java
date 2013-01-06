@@ -13,333 +13,333 @@ import javax.servlet.ServletRequest;
 import self.micromagic.util.Utility;
 
 public class RequestParameterMap
-      implements Map
+		implements Map
 {
-   /**
-    * ÅäÖÃÊÇ·ñĞèÒª¶ÔrequestÖĞµÄÊı¾İÈ¡Öµ½øĞĞ½âÎö.
-    */
-   public static final String PARSE_PARAM_PROPERTY = "self.micromagic.parse.request.param";
+	/**
+	 * é…ç½®æ˜¯å¦éœ€è¦å¯¹requestä¸­çš„æ•°æ®å–å€¼è¿›è¡Œè§£æ.
+	 */
+	public static final String PARSE_PARAM_PROPERTY = "self.micromagic.parse.request.param";
 
-   /**
-    * ÊÇ·ñĞèÒª¶ÔrequestÖĞµÄÊı¾İÈ¡Öµ½øĞĞ½âÎö. <p>
-    * Èç¹û½øĞĞ½âÎöµÄ»°, Ê¹ÓÃÆÕÍ¨µÄÃû³Æ(Èç: name)Ê±, Ö»»áÈ¡³ö×Ö·û´®Êı×éÖĞµÄµÚÒ»¸ö;
-    * Ê¹ÓÃÌØÊâµÄÃû³Æ(Èç: name[])Ê±, ²Å»áÒÔÊı×éµÄĞÎÊ½È¡³ö²ÎÊı.
-    */
-   private static boolean PARSE_PARAM = false;
+	/**
+	 * æ˜¯å¦éœ€è¦å¯¹requestä¸­çš„æ•°æ®å–å€¼è¿›è¡Œè§£æ. <p>
+	 * å¦‚æœè¿›è¡Œè§£æçš„è¯, ä½¿ç”¨æ™®é€šçš„åç§°(å¦‚: name)æ—¶, åªä¼šå–å‡ºå­—ç¬¦ä¸²æ•°ç»„ä¸­çš„ç¬¬ä¸€ä¸ª;
+	 * ä½¿ç”¨ç‰¹æ®Šçš„åç§°(å¦‚: name[])æ—¶, æ‰ä¼šä»¥æ•°ç»„çš„å½¢å¼å–å‡ºå‚æ•°.
+	 */
+	private static boolean PARSE_PARAM = false;
 
-   static
-   {
-      try
-      {
-         Utility.addFieldPropertyManager(PARSE_PARAM_PROPERTY, RequestParameterMap.class, "PARSE_PARAM");
-      }
-      catch (Throwable ex) {}
-   }
+	static
+	{
+		try
+		{
+			Utility.addFieldPropertyManager(PARSE_PARAM_PROPERTY, RequestParameterMap.class, "PARSE_PARAM");
+		}
+		catch (Throwable ex) {}
+	}
 
-   private Map paramMap;
-   private Map originParamMap;
-   private boolean readOnly = true;
-   private boolean selfMap = false;
-   private boolean parseValue = PARSE_PARAM;
+	private Map paramMap;
+	private Map originParamMap;
+	private boolean readOnly = true;
+	private boolean selfMap = false;
+	private boolean parseValue = PARSE_PARAM;
 
-   private RequestParameterMap(Map requestMap)
-   {
-      this.paramMap = requestMap;
-      this.originParamMap = this.paramMap;
-   }
+	private RequestParameterMap(Map requestMap)
+	{
+		this.paramMap = requestMap;
+		this.originParamMap = this.paramMap;
+	}
 
-   private RequestParameterMap(Map requestMap, boolean readOnly)
-   {
-      this(requestMap);
-      this.readOnly = readOnly;
-   }
+	private RequestParameterMap(Map requestMap, boolean readOnly)
+	{
+		this(requestMap);
+		this.readOnly = readOnly;
+	}
 
-   private RequestParameterMap(ServletRequest request)
-   {
-      this.paramMap = request.getParameterMap();
-      this.originParamMap = this.paramMap;
-   }
+	private RequestParameterMap(ServletRequest request)
+	{
+		this.paramMap = request.getParameterMap();
+		this.originParamMap = this.paramMap;
+	}
 
-   private RequestParameterMap(ServletRequest request, boolean readOnly)
-   {
-      this(request);
-      this.readOnly = readOnly;
-   }
+	private RequestParameterMap(ServletRequest request, boolean readOnly)
+	{
+		this(request);
+		this.readOnly = readOnly;
+	}
 
-   /**
-    * »ñÈ¡¶ÔÏóÖĞµÄµÚÒ»¸ö×Ö·û´®.
-    */
-   public static String getFirstParam(Object obj)
-   {
-      if (obj == null)
-      {
-         return null;
-      }
-      if (obj instanceof String[])
-      {
-         String[] arr = (String[]) obj;
-         return arr.length > 0 ? arr[0] : null;
-      }
-      if (obj instanceof String)
-      {
-         return (String) obj;
-      }
-      if (obj instanceof Object[])
-      {
-         Object[] arr = (Object[]) obj;
-         return arr.length > 0 ? getFirstParam(arr[0]) : null;
-      }
-      if (obj instanceof Collection)
-      {
-         Collection c = (Collection) obj;
-         return c.size() > 0 ? getFirstParam(c.iterator().next()) : null;
-      }
-      return obj.toString();
-   }
+	/**
+	 * è·å–å¯¹è±¡ä¸­çš„ç¬¬ä¸€ä¸ªå­—ç¬¦ä¸².
+	 */
+	public static String getFirstParam(Object obj)
+	{
+		if (obj == null)
+		{
+			return null;
+		}
+		if (obj instanceof String[])
+		{
+			String[] arr = (String[]) obj;
+			return arr.length > 0 ? arr[0] : null;
+		}
+		if (obj instanceof String)
+		{
+			return (String) obj;
+		}
+		if (obj instanceof Object[])
+		{
+			Object[] arr = (Object[]) obj;
+			return arr.length > 0 ? getFirstParam(arr[0]) : null;
+		}
+		if (obj instanceof Collection)
+		{
+			Collection c = (Collection) obj;
+			return c.size() > 0 ? getFirstParam(c.iterator().next()) : null;
+		}
+		return obj.toString();
+	}
 
-   /**
-    * Í¨¹ırequestÀ´¹¹ÔìÒ»¸örequest.parameterµÄmap.
-    */
-   public static RequestParameterMap create(ServletRequest request)
-   {
-      return request == null ? null : new RequestParameterMap(request);
-   }
+	/**
+	 * é€šè¿‡requestæ¥æ„é€ ä¸€ä¸ªrequest.parameterçš„map.
+	 */
+	public static RequestParameterMap create(ServletRequest request)
+	{
+		return request == null ? null : new RequestParameterMap(request);
+	}
 
-   /**
-    * Í¨¹ırequestÀ´¹¹ÔìÒ»¸örequest.parameterµÄmap.
-    *
-    * @param readOnly   ÊÇ·ñÎªÖ»¶Á, Èç¹ûÉèÎªture, ±íÊ¾²»¿ÉÒÔÉèÖÃÊôĞÔ.
-    */
-   public static RequestParameterMap create(ServletRequest request, boolean readOnly)
-   {
-      return request == null ? null : new RequestParameterMap(request, readOnly);
-   }
+	/**
+	 * é€šè¿‡requestæ¥æ„é€ ä¸€ä¸ªrequest.parameterçš„map.
+	 *
+	 * @param readOnly   æ˜¯å¦ä¸ºåªè¯», å¦‚æœè®¾ä¸ºture, è¡¨ç¤ºä¸å¯ä»¥è®¾ç½®å±æ€§.
+	 */
+	public static RequestParameterMap create(ServletRequest request, boolean readOnly)
+	{
+		return request == null ? null : new RequestParameterMap(request, readOnly);
+	}
 
-   /**
-    * Í¨¹ımapÀ´¹¹ÔìÒ»¸örequest.parameterµÄmap. <p>
-    * Ò»°ãÔÚportlet»òµ¥Ôª²âÊÔµÄ»·¾³ÖĞÊ¹ÓÃ.
-    */
-   public static RequestParameterMap create(Map requestMap)
-   {
-      return requestMap == null ? null : new RequestParameterMap(requestMap);
-   }
+	/**
+	 * é€šè¿‡mapæ¥æ„é€ ä¸€ä¸ªrequest.parameterçš„map. <p>
+	 * ä¸€èˆ¬åœ¨portletæˆ–å•å…ƒæµ‹è¯•çš„ç¯å¢ƒä¸­ä½¿ç”¨.
+	 */
+	public static RequestParameterMap create(Map requestMap)
+	{
+		return requestMap == null ? null : new RequestParameterMap(requestMap);
+	}
 
-   /**
-    * Í¨¹ımapÀ´¹¹ÔìÒ»¸örequest.parameterµÄmap. <p>
-    * Ò»°ãÔÚportlet»òµ¥Ôª²âÊÔµÄ»·¾³ÖĞÊ¹ÓÃ.
-    *
-    * @param readOnly   ÊÇ·ñÎªÖ»¶Á, Èç¹ûÉèÎªture, ±íÊ¾²»¿ÉÒÔÉèÖÃÊôĞÔ.
-    */
-   public static RequestParameterMap create(Map requestMap, boolean readOnly)
-   {
-      return requestMap == null ? null : new RequestParameterMap(requestMap, readOnly);
-   }
+	/**
+	 * é€šè¿‡mapæ¥æ„é€ ä¸€ä¸ªrequest.parameterçš„map. <p>
+	 * ä¸€èˆ¬åœ¨portletæˆ–å•å…ƒæµ‹è¯•çš„ç¯å¢ƒä¸­ä½¿ç”¨.
+	 *
+	 * @param readOnly   æ˜¯å¦ä¸ºåªè¯», å¦‚æœè®¾ä¸ºture, è¡¨ç¤ºä¸å¯ä»¥è®¾ç½®å±æ€§.
+	 */
+	public static RequestParameterMap create(Map requestMap, boolean readOnly)
+	{
+		return requestMap == null ? null : new RequestParameterMap(requestMap, readOnly);
+	}
 
-   /**
-    * »ñµÃÔ­Ê¼µÄ²ÎÊımap.
-    */
-   public Map getOriginParamMap()
-   {
-      return this.originParamMap;
-   }
+	/**
+	 * è·å¾—åŸå§‹çš„å‚æ•°map.
+	 */
+	public Map getOriginParamMap()
+	{
+		return this.originParamMap;
+	}
 
-   /**
-    * »ñÈ¡ÊÇ·ñÒª¶Ô¶ÁÈ¡µÄvalue½øĞĞ´¦Àí.
-    */
-   public boolean isParseValue()
-   {
-      return parseValue;
-   }
+	/**
+	 * è·å–æ˜¯å¦è¦å¯¹è¯»å–çš„valueè¿›è¡Œå¤„ç†.
+	 */
+	public boolean isParseValue()
+	{
+		return parseValue;
+	}
 
-   /**
-    * ÉèÖÃÊÇ·ñÒª¶Ô»ñÈ¡µÄvalue½øĞĞ´¦Àí. <p>
-    * Èç¹ûÉèÎª<code>true</code>, ÔòÈç¹û¸øµÄÃû³ÆÎªÆÕÍ¨µÄÃû×Ö, ÔòÍ¨¹ıgetFirstParam·½·¨
-    * »ñÈ¡µÚÒ»¸ö×Ö·û´®, Èç¹û¸øµÄÃû³ÆÊÇÒÔ"[]"½áÎ²µÄ, ÔòÒÔ×Ö·û´®Êı×éµÄĞÎÊ½·µ»Ø.
-    * Èç¹ûÉèÎª<code>false</code>, Ôò²»×÷´¦Àí, Ö±½Ó·Å»Ø.
-    *
-    * @see #getFirstParam
-    */
-   public void setParseValue(boolean parseValue)
-   {
-      this.parseValue = parseValue;
-   }
+	/**
+	 * è®¾ç½®æ˜¯å¦è¦å¯¹è·å–çš„valueè¿›è¡Œå¤„ç†. <p>
+	 * å¦‚æœè®¾ä¸º<code>true</code>, åˆ™å¦‚æœç»™çš„åç§°ä¸ºæ™®é€šçš„åå­—, åˆ™é€šè¿‡getFirstParamæ–¹æ³•
+	 * è·å–ç¬¬ä¸€ä¸ªå­—ç¬¦ä¸², å¦‚æœç»™çš„åç§°æ˜¯ä»¥"[]"ç»“å°¾çš„, åˆ™ä»¥å­—ç¬¦ä¸²æ•°ç»„çš„å½¢å¼è¿”å›.
+	 * å¦‚æœè®¾ä¸º<code>false</code>, åˆ™ä¸ä½œå¤„ç†, ç›´æ¥æ”¾å›.
+	 *
+	 * @see #getFirstParam
+	 */
+	public void setParseValue(boolean parseValue)
+	{
+		this.parseValue = parseValue;
+	}
 
-   /**
-    * »ñÈ¡´Ë²ÎÊımapÊÇ·ñÊÇÖ»¶ÁµÄ.
-    */
-   public boolean isReadOnly()
-   {
-      return this.readOnly;
-   }
+	/**
+	 * è·å–æ­¤å‚æ•°mapæ˜¯å¦æ˜¯åªè¯»çš„.
+	 */
+	public boolean isReadOnly()
+	{
+		return this.readOnly;
+	}
 
-   /**
-    * »ñÈ¡²ÎÊıÊı×éÖĞµÄµÚÒ»¸ö×Ö·û´®.
-    */
-   public String getFirstString(Object key)
-   {
-      return getFirstParam(this.paramMap.get(key));
-   }
+	/**
+	 * è·å–å‚æ•°æ•°ç»„ä¸­çš„ç¬¬ä¸€ä¸ªå­—ç¬¦ä¸².
+	 */
+	public String getFirstString(Object key)
+	{
+		return getFirstParam(this.paramMap.get(key));
+	}
 
-   /**
-    * ¼ì²é´Ë²ÎÊımapÊÇ·ñ¿É±à¼­, Èç¹ûÊÇ¿É±à¼­µÄ, ÔòÍ¨¹ıÔ­Ê¼µÄ²ÎÊımapÀ´¹¹ÔìÒ»¸öĞÂµÄmap.
-    */
-   private boolean checkEdit()
-   {
-      if (!this.readOnly)
-      {
-         if (!this.selfMap)
-         {
-            this.paramMap = new HashMap(this.originParamMap);
-            this.selfMap = true;
-         }
-         return true;
-      }
-      return false;
-   }
+	/**
+	 * æ£€æŸ¥æ­¤å‚æ•°mapæ˜¯å¦å¯ç¼–è¾‘, å¦‚æœæ˜¯å¯ç¼–è¾‘çš„, åˆ™é€šè¿‡åŸå§‹çš„å‚æ•°mapæ¥æ„é€ ä¸€ä¸ªæ–°çš„map.
+	 */
+	private boolean checkEdit()
+	{
+		if (!this.readOnly)
+		{
+			if (!this.selfMap)
+			{
+				this.paramMap = new HashMap(this.originParamMap);
+				this.selfMap = true;
+			}
+			return true;
+		}
+		return false;
+	}
 
-   public Object get(Object key)
-   {
-      if (this.parseValue)
-      {
-         if (key == null)
-         {
-            return this.getFirstString(key);
-         }
-         String strKey = key.toString();
-         if (strKey.endsWith("[]"))
-         {
-            Object value = this.paramMap.get(strKey.substring(0, strKey.length() - 2));
-            if (value == null)
-            {
-               return null;
-            }
-            if (value instanceof String[])
-            {
-               return (String[]) value;
-            }
-            if (value instanceof String)
-            {
-               return new String[]{(String) value};
-            }
-            if (value instanceof Object[])
-            {
-               // Èç¹ûÊÇ¸ö¶ÔÏóÊı×éÕâÀï½«Æä±ä³ÉCollection
-               // ÔÚÏÂÒ»¸öÅĞ¶ÏÌõ¼şÖĞ´¦Àí
-               value = Arrays.asList((Object[]) value);
-            }
-            if (value instanceof Collection)
-            {
-               Collection c = (Collection) value;
-               String[] arr = new String[c.size()];
-               Iterator itr = c.iterator();
-               int index = 0;
-               while (itr.hasNext())
-               {
-                  Object obj = itr.next();
-                  arr[index++] = obj == null ? null : obj.toString();
-               }
-               return arr;
-            }
-            return new String[]{value.toString()};
-         }
-         else
-         {
-            return this.getFirstString(key);
-         }
-      }
-      return this.paramMap.get(key);
-   }
+	public Object get(Object key)
+	{
+		if (this.parseValue)
+		{
+			if (key == null)
+			{
+				return this.getFirstString(key);
+			}
+			String strKey = key.toString();
+			if (strKey.endsWith("[]"))
+			{
+				Object value = this.paramMap.get(strKey.substring(0, strKey.length() - 2));
+				if (value == null)
+				{
+					return null;
+				}
+				if (value instanceof String[])
+				{
+					return (String[]) value;
+				}
+				if (value instanceof String)
+				{
+					return new String[]{(String) value};
+				}
+				if (value instanceof Object[])
+				{
+					// å¦‚æœæ˜¯ä¸ªå¯¹è±¡æ•°ç»„è¿™é‡Œå°†å…¶å˜æˆCollection
+					// åœ¨ä¸‹ä¸€ä¸ªåˆ¤æ–­æ¡ä»¶ä¸­å¤„ç†
+					value = Arrays.asList((Object[]) value);
+				}
+				if (value instanceof Collection)
+				{
+					Collection c = (Collection) value;
+					String[] arr = new String[c.size()];
+					Iterator itr = c.iterator();
+					int index = 0;
+					while (itr.hasNext())
+					{
+						Object obj = itr.next();
+						arr[index++] = obj == null ? null : obj.toString();
+					}
+					return arr;
+				}
+				return new String[]{value.toString()};
+			}
+			else
+			{
+				return this.getFirstString(key);
+			}
+		}
+		return this.paramMap.get(key);
+	}
 
-   public Object put(Object key, Object value)
-   {
-      this.checkEdit();
-      return this.paramMap.put(key, value);
-   }
+	public Object put(Object key, Object value)
+	{
+		this.checkEdit();
+		return this.paramMap.put(key, value);
+	}
 
-   public Object remove(Object key)
-   {
-      this.checkEdit();
-      return this.paramMap.remove(key);
-   }
+	public Object remove(Object key)
+	{
+		this.checkEdit();
+		return this.paramMap.remove(key);
+	}
 
-   public void putAll(Map t)
-   {
-      this.checkEdit();
-      this.paramMap.putAll(t);
-   }
+	public void putAll(Map t)
+	{
+		this.checkEdit();
+		this.paramMap.putAll(t);
+	}
 
-   public void clear()
-   {
-      this.checkEdit();
-      this.paramMap.clear();
-   }
+	public void clear()
+	{
+		this.checkEdit();
+		this.paramMap.clear();
+	}
 
-   public Set keySet()
-   {
-      return this.paramMap.keySet();
-   }
+	public Set keySet()
+	{
+		return this.paramMap.keySet();
+	}
 
-   public Collection values()
-   {
+	public Collection values()
+	{
 		if (this.parseValue)
 		{
 			return new RequestParameterMapEntrySet(this, true);
 		}
-      return this.paramMap.values();
-   }
+		return this.paramMap.values();
+	}
 
-   public Set entrySet()
-   {
-      this.checkEdit();
+	public Set entrySet()
+	{
+		this.checkEdit();
 		if (this.parseValue)
 		{
 			return new RequestParameterMapEntrySet(this, false);
 		}
-      return this.paramMap.entrySet();
-   }
+		return this.paramMap.entrySet();
+	}
 
 	/**
-	 * »ñÈ¡ÕæÕıµÄEntrySet
+	 * è·å–çœŸæ­£çš„EntrySet
 	 */
 	Set realEntrySet()
 	{
-      this.checkEdit();
-      return this.paramMap.entrySet();
+		this.checkEdit();
+		return this.paramMap.entrySet();
 	}
 
-   public boolean equals(Object obj)
-   {
-      return this.paramMap.equals(obj);
-   }
+	public boolean equals(Object obj)
+	{
+		return this.paramMap.equals(obj);
+	}
 
-   public int hashCode()
-   {
-      return this.paramMap.hashCode();
-   }
+	public int hashCode()
+	{
+		return this.paramMap.hashCode();
+	}
 
-   public int size()
-   {
-      return this.paramMap.size();
-   }
+	public int size()
+	{
+		return this.paramMap.size();
+	}
 
-   public boolean isEmpty()
-   {
-      return this.paramMap.isEmpty();
-   }
+	public boolean isEmpty()
+	{
+		return this.paramMap.isEmpty();
+	}
 
-   public boolean containsKey(Object key)
-   {
-      return this.paramMap.containsKey(key);
-   }
+	public boolean containsKey(Object key)
+	{
+		return this.paramMap.containsKey(key);
+	}
 
-   public boolean containsValue(Object value)
-   {
+	public boolean containsValue(Object value)
+	{
 		if (this.parseValue)
 		{
 			Set s = new RequestParameterMapEntrySet(this, true);
 			return s.contains(value);
 		}
-      return this.paramMap.containsValue(value);
-   }
+		return this.paramMap.containsValue(value);
+	}
 
 }

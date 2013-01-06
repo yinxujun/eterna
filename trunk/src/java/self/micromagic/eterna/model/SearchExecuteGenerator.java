@@ -5,39 +5,39 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface SearchExecuteGenerator
 {
-   /**
-    * searchÏà¹ØµÄ¿ØÖÆ±êÊ¶´æÈëÊı¾İ¼¯µÄÃû³Æ.
-    */
-   public static final String SEARCH_MANAGER_ATTRIBUTES = "searchManager_attributes";
+	/**
+	 * searchç›¸å…³çš„æ§åˆ¶æ ‡è¯†å­˜å…¥æ•°æ®é›†çš„åç§°.
+	 */
+	public static final String SEARCH_MANAGER_ATTRIBUTES = "searchManager_attributes";
 
-   /**
-    * ÉèÖÃ¶ÁÈ¡searchÃû³ÆµÄ±êÇ©Ãû
-    */
-   void setSearchNameTag(String tag) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¯»å–searchåç§°çš„æ ‡ç­¾å
+	 */
+	void setSearchNameTag(String tag) throws ConfigurationException;
 
-   void setSearchName(String name) throws ConfigurationException;
+	void setSearchName(String name) throws ConfigurationException;
 
-   void setQueryResultName(String name) throws ConfigurationException;
+	void setQueryResultName(String name) throws ConfigurationException;
 
-   void setSearchManagerName(String name) throws ConfigurationException;
+	void setSearchManagerName(String name) throws ConfigurationException;
 
-   void setSearchCountName(String name) throws ConfigurationException;
+	void setSearchCountName(String name) throws ConfigurationException;
 
-   void setSaveCondition(boolean saveCondition) throws ConfigurationException;
+	void setSaveCondition(boolean saveCondition) throws ConfigurationException;
 
-   void setStart(int start) throws ConfigurationException;
+	void setStart(int start) throws ConfigurationException;
 
-   void setCount(int count) throws ConfigurationException;
+	void setCount(int count) throws ConfigurationException;
 
-   void setDoExecute(boolean execute) throws ConfigurationException;
+	void setDoExecute(boolean execute) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÊÇ·ñÒÔ±£³ÖÊı¾İ¿âÁ´½ÓµÄ·½Ê½²éÑ¯. <p>
-    * Èç¹û´ËÊôĞÔÉèÖÃÁËtrue, ÄÇÃ´´ËSearchExecute±ØĞëÔÚÊÂÎñ·½Ê½ÎªholdµÄmodelÏÂÖ´ĞĞ¡£
-    * Áí£º´ËÊôĞÔÉèÖÃÎªtrueºó£¬»áºöÂÔsaveCondition, start, countÕâ3¸öÊôĞÔ¡£
-    */
-   void setHoldConnection(boolean hold) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¯å¦ä»¥ä¿æŒæ•°æ®åº“é“¾æ¥çš„æ–¹å¼æŸ¥è¯¢. <p>
+	 * å¦‚æœæ­¤å±æ€§è®¾ç½®äº†true, é‚£ä¹ˆæ­¤SearchExecuteå¿…é¡»åœ¨äº‹åŠ¡æ–¹å¼ä¸ºholdçš„modelä¸‹æ‰§è¡Œã€‚
+	 * å¦ï¼šæ­¤å±æ€§è®¾ç½®ä¸ºtrueåï¼Œä¼šå¿½ç•¥saveCondition, start, countè¿™3ä¸ªå±æ€§ã€‚
+	 */
+	void setHoldConnection(boolean hold) throws ConfigurationException;
 
-   Execute createExecute() throws ConfigurationException;
+	Execute createExecute() throws ConfigurationException;
 
 }

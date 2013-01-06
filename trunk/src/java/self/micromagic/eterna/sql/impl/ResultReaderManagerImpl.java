@@ -22,540 +22,540 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 public class ResultReaderManagerImpl
-      implements ResultReaderManager
+		implements ResultReaderManager
 {
-   private boolean initialized;
-   private boolean locked;
+	private boolean initialized;
+	private boolean locked;
 
-   /**
-    * Ëø×¡ readerMap µÄ±êÖ¾, ±ÈÈçÔÚµ÷ÓÃqueryµÄgetReaderManager·½·¨Ê±
-    * ¾Í²»ĞèÒª¸´ÖÆ readerMap.
-    */
-   private boolean readMapLocked;
+	/**
+	 * é”ä½ readerMap çš„æ ‡å¿—, æ¯”å¦‚åœ¨è°ƒç”¨queryçš„getReaderManageræ–¹æ³•æ—¶
+	 * å°±ä¸éœ€è¦å¤åˆ¶ readerMap.
+	 */
+	private boolean readMapLocked;
 
-   private boolean nonePermission;
-   private boolean colNameSensitive;
+	private boolean nonePermission;
+	private boolean colNameSensitive;
 
-   private String name;
-   private String parentName;
-   private ResultReaderManager[] parents;
-   private EternaFactory factory;
+	private String name;
+	private String parentName;
+	private ResultReaderManager[] parents;
+	private EternaFactory factory;
 
-   /**
-    * ¶¨ÒåreaderË³ĞòµÄ×Ö·û´®
-    */
-   private String readerOrder = null;
+	/**
+	 * å®šä¹‰readeré¡ºåºçš„å­—ç¬¦ä¸²
+	 */
+	private String readerOrder = null;
 
-   private Map readerMap;
-   private Map nameToIndexMap;
+	private Map readerMap;
+	private Map nameToIndexMap;
 
-   private List readerList;
-   private List allReaderList;
+	private List readerList;
+	private List allReaderList;
 
-   private List orderList;
+	private List orderList;
 
-   /**
-    * Éú³ÉµÄsqlÓï¾äÖĞµÄ"order by"×Ó¾ä
-    */
-   private String orderStr;
+	/**
+	 * ç”Ÿæˆçš„sqlè¯­å¥ä¸­çš„"order by"å­å¥
+	 */
+	private String orderStr;
 
-   public ResultReaderManagerImpl()
-   {
-      this.initialized = false;
-      this.nonePermission = true;
-      this.colNameSensitive = true;
+	public ResultReaderManagerImpl()
+	{
+		this.initialized = false;
+		this.nonePermission = true;
+		this.colNameSensitive = true;
 
-      this.readerMap = new HashMap();
-      this.nameToIndexMap = new HashMap();
-      this.readerList = new ArrayList();
-      this.orderList = new ArrayList(0);
-      this.orderStr = null;
-   }
+		this.readerMap = new HashMap();
+		this.nameToIndexMap = new HashMap();
+		this.readerList = new ArrayList();
+		this.orderList = new ArrayList(0);
+		this.orderStr = null;
+	}
 
-   protected ResultReaderManagerImpl(ResultReaderManagerImpl other, boolean readMapLocked)
-   {
-      this.initialized = true;
-      this.nonePermission = other.nonePermission;
-      this.colNameSensitive = other.colNameSensitive;
+	protected ResultReaderManagerImpl(ResultReaderManagerImpl other, boolean readMapLocked)
+	{
+		this.initialized = true;
+		this.nonePermission = other.nonePermission;
+		this.colNameSensitive = other.colNameSensitive;
 
-      this.locked = false;
-      this.readMapLocked = readMapLocked;
+		this.locked = false;
+		this.readMapLocked = readMapLocked;
 
-      this.readerOrder = other.readerOrder;
-      this.readerMap = readMapLocked ? other.readerMap : new HashMap(other.readerMap);
-      this.nameToIndexMap = readMapLocked ? other.nameToIndexMap : new HashMap(other.nameToIndexMap);
-      this.allReaderList = readMapLocked ? other.allReaderList : null;
-      this.readerList = readMapLocked ? other.readerList : new ArrayList(other.readerList);
-      this.orderList = other.orderList;
-      this.orderStr = other.orderStr;
-   }
+		this.readerOrder = other.readerOrder;
+		this.readerMap = readMapLocked ? other.readerMap : new HashMap(other.readerMap);
+		this.nameToIndexMap = readMapLocked ? other.nameToIndexMap : new HashMap(other.nameToIndexMap);
+		this.allReaderList = readMapLocked ? other.allReaderList : null;
+		this.readerList = readMapLocked ? other.readerList : new ArrayList(other.readerList);
+		this.orderList = other.orderList;
+		this.orderStr = other.orderStr;
+	}
 
-   protected ResultReaderManagerImpl(ResultReaderManagerImpl other)
-   {
-      this.initialized = false;
-      this.nonePermission = other.nonePermission;
-      this.colNameSensitive = other.colNameSensitive;
+	protected ResultReaderManagerImpl(ResultReaderManagerImpl other)
+	{
+		this.initialized = false;
+		this.nonePermission = other.nonePermission;
+		this.colNameSensitive = other.colNameSensitive;
 
-      this.locked = false;
-      this.readMapLocked = false;
+		this.locked = false;
+		this.readMapLocked = false;
 
-      this.readerOrder = other.readerOrder;
-      this.readerMap = new HashMap(other.readerMap);
-      this.nameToIndexMap = new HashMap(other.nameToIndexMap);
-      this.allReaderList = null;
-      this.readerList = new ArrayList(other.readerList);
-      this.orderList = new ArrayList(other.orderList);
-      this.orderStr = other.orderStr;
-   }
+		this.readerOrder = other.readerOrder;
+		this.readerMap = new HashMap(other.readerMap);
+		this.nameToIndexMap = new HashMap(other.nameToIndexMap);
+		this.allReaderList = null;
+		this.readerList = new ArrayList(other.readerList);
+		this.orderList = new ArrayList(other.orderList);
+		this.orderStr = other.orderStr;
+	}
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (!this.initialized)
-      {
-         this.initialized = true;
-         this.factory = factory;
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (!this.initialized)
+		{
+			this.initialized = true;
+			this.factory = factory;
 
-         Iterator itr = this.readerMap.values().iterator();
-         while (itr.hasNext())
-         {
-            ((ResultReader) itr.next()).initialize(factory);
-         }
+			Iterator itr = this.readerMap.values().iterator();
+			while (itr.hasNext())
+			{
+				((ResultReader) itr.next()).initialize(factory);
+			}
 
-         if (this.parentName != null)
-         {
-            if (this.parentName.indexOf(',') == -1)
-            {
-               this.parents = new ResultReaderManager[1];
-               this.parents[0] = factory.getReaderManager(this.parentName);
-               if (this.parents[0] == null)
-               {
-                  SQLManager.log.warn(
-                        "The reader manager [" + this.parentName + "] not found.");
-               }
-            }
-            else
-            {
-               StringTokenizer token = new StringTokenizer(this.parentName, ",");
-               this.parents = new ResultReaderManager[token.countTokens()];
-               for (int i = 0; i < this.parents.length; i++)
-               {
-                  String temp = token.nextToken().trim();
-                  this.parents[i] = factory.getReaderManager(temp);
-                  if (this.parents[i] == null)
-                  {
-                     SQLManager.log.warn("The reader manager [" + temp + "] not found.");
-                  }
-               }
-            }
-         }
-      }
-   }
+			if (this.parentName != null)
+			{
+				if (this.parentName.indexOf(',') == -1)
+				{
+					this.parents = new ResultReaderManager[1];
+					this.parents[0] = factory.getReaderManager(this.parentName);
+					if (this.parents[0] == null)
+					{
+						SQLManager.log.warn(
+								"The reader manager [" + this.parentName + "] not found.");
+					}
+				}
+				else
+				{
+					StringTokenizer token = new StringTokenizer(this.parentName, ",");
+					this.parents = new ResultReaderManager[token.countTokens()];
+					for (int i = 0; i < this.parents.length; i++)
+					{
+						String temp = token.nextToken().trim();
+						this.parents[i] = factory.getReaderManager(temp);
+						if (this.parents[i] == null)
+						{
+							SQLManager.log.warn("The reader manager [" + temp + "] not found.");
+						}
+					}
+				}
+			}
+		}
+	}
 
-   public void setName(String name)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         throw new ConfigurationException("You can't set name at initialized ResultReaderManager.");
-      }
-      this.name = name;
-   }
+	public void setName(String name)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			throw new ConfigurationException("You can't set name at initialized ResultReaderManager.");
+		}
+		this.name = name;
+	}
 
-   public String getName()
-   {
-      return this.name;
-   }
+	public String getName()
+	{
+		return this.name;
+	}
 
-   public void setParentName(String name)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         throw new ConfigurationException("You can't set parent name at initialized ResultReaderManager.");
-      }
-      this.parentName = name;
-   }
+	public void setParentName(String name)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			throw new ConfigurationException("You can't set parent name at initialized ResultReaderManager.");
+		}
+		this.parentName = name;
+	}
 
-   public String getParentName()
-   {
-      return this.parentName;
-   }
+	public String getParentName()
+	{
+		return this.parentName;
+	}
 
-   public ResultReaderManager getParent()
-   {
-      if (this.parents != null && this.parents.length > 0)
-      {
-         return this.parents[0];
-      }
-      return null;
-   }
+	public ResultReaderManager getParent()
+	{
+		if (this.parents != null && this.parents.length > 0)
+		{
+			return this.parents[0];
+		}
+		return null;
+	}
 
-   public EternaFactory getFactory()
-   {
-      return this.factory;
-   }
+	public EternaFactory getFactory()
+	{
+		return this.factory;
+	}
 
-   public String getReaderOrder()
-   {
-      return this.readerOrder;
-   }
+	public String getReaderOrder()
+	{
+		return this.readerOrder;
+	}
 
-   public void setReaderOrder(String readerOrder)
-   {
-      this.readerOrder = readerOrder;
-   }
+	public void setReaderOrder(String readerOrder)
+	{
+		this.readerOrder = readerOrder;
+	}
 
-   public int getReaderCount()
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      return this.readerMap.size();
-   }
+	public int getReaderCount()
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		return this.readerMap.size();
+	}
 
-   public ResultReader getReader(String name)
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      return (ResultReader) this.readerMap.get(this.colNameSensitive ? name : name.toUpperCase());
-   }
+	public ResultReader getReader(String name)
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		return (ResultReader) this.readerMap.get(this.colNameSensitive ? name : name.toUpperCase());
+	}
 
-   public ResultReader addReader(ResultReader reader)
-         throws ConfigurationException
-   {
-      if (this.readMapLocked)
-      {
-         throw new ConfigurationException("You can't add reader at initialized ResultReaderManager.");
-      }
-      if (this.locked)
-      {
-         throw new ConfigurationException("You can't invoke addReader when ResultReaderManager locked.");
-      }
+	public ResultReader addReader(ResultReader reader)
+			throws ConfigurationException
+	{
+		if (this.readMapLocked)
+		{
+			throw new ConfigurationException("You can't add reader at initialized ResultReaderManager.");
+		}
+		if (this.locked)
+		{
+			throw new ConfigurationException("You can't invoke addReader when ResultReaderManager locked.");
+		}
 
-      this.allReaderList = null;
-      if (this.nonePermission && reader.getPermissionSet() != null)
-      {
-         this.nonePermission = false;
-      }
-      String readerName = this.colNameSensitive ? reader.getName() : reader.getName().toUpperCase();
-      ResultReader temp = (ResultReader) this.readerMap.put(readerName, reader);
+		this.allReaderList = null;
+		if (this.nonePermission && reader.getPermissionSet() != null)
+		{
+			this.nonePermission = false;
+		}
+		String readerName = this.colNameSensitive ? reader.getName() : reader.getName().toUpperCase();
+		ResultReader temp = (ResultReader) this.readerMap.put(readerName, reader);
 
-      if (temp != null)
-      {
-         throw new ConfigurationException(
-               "Duplicate [ResultReader] name:" + reader.getName() + ".");
-      }
-      this.readerList.add(reader);
-      this.nameToIndexMap.put(readerName, Utility.createInteger(this.readerList.size()));
-      return temp;
-   }
+		if (temp != null)
+		{
+			throw new ConfigurationException(
+					"Duplicate [ResultReader] name:" + reader.getName() + ".");
+		}
+		this.readerList.add(reader);
+		this.nameToIndexMap.put(readerName, Utility.createInteger(this.readerList.size()));
+		return temp;
+	}
 
-   public void setColNameSensitive(boolean colNameSensitive)
-         throws ConfigurationException
-   {
-      if (this.getReaderCount() == 0)
-      {
-         this.colNameSensitive = colNameSensitive;
-      }
-      else
-      {
-         throw new ConfigurationException("You can't set column name sensitive when ResultReaderManager has readers.");
-      }
-   }
+	public void setColNameSensitive(boolean colNameSensitive)
+			throws ConfigurationException
+	{
+		if (this.getReaderCount() == 0)
+		{
+			this.colNameSensitive = colNameSensitive;
+		}
+		else
+		{
+			throw new ConfigurationException("You can't set column name sensitive when ResultReaderManager has readers.");
+		}
+	}
 
 	public boolean isColNameSensitive()
 	{
 		return this.colNameSensitive;
 	}
 
-   public void setReaderList(String[] names)
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      if (this.locked)
-      {
-         throw new ConfigurationException("You can't invoke setReaderList when ResultReaderManager locked.");
-      }
+	public void setReaderList(String[] names)
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		if (this.locked)
+		{
+			throw new ConfigurationException("You can't invoke setReaderList when ResultReaderManager locked.");
+		}
 
-      this.readerList = new ArrayList(names.length);
-      this.orderList = new ArrayList(5);
-      this.nameToIndexMap = new HashMap(names.length * 2);
-      this.orderStr = null;
-      for (int i = 0; i < names.length; i++)
-      {
-         String name = names[i];
-         char orderType = name.charAt(name.length() - 1);
-         name = name.substring(0, name.length() - 1);
-         ResultReader reader = this.getReader(name);
-         if (reader == null)
-         {
-            throw new ConfigurationException(
-                  "Invalid ResultReader name:" + name + " at ResultReaderManager "
-                  + this.getName() + ".");
-         }
-         if (orderType != '-')
-         {
-            this.orderList.add(reader.getOrderName() + (orderType == 'D' ? " DESC" : "" ));
-         }
-         this.readerList.add(reader);
-         if (this.colNameSensitive)
-         {
-            this.nameToIndexMap.put(reader.getName(),
-                  Utility.createInteger(this.readerList.size()));
-         }
-         else
-         {
-            this.nameToIndexMap.put(reader.getName().toUpperCase(),
-                  Utility.createInteger(this.readerList.size()));
-         }
-      }
-   }
+		this.readerList = new ArrayList(names.length);
+		this.orderList = new ArrayList(5);
+		this.nameToIndexMap = new HashMap(names.length * 2);
+		this.orderStr = null;
+		for (int i = 0; i < names.length; i++)
+		{
+			String name = names[i];
+			char orderType = name.charAt(name.length() - 1);
+			name = name.substring(0, name.length() - 1);
+			ResultReader reader = this.getReader(name);
+			if (reader == null)
+			{
+				throw new ConfigurationException(
+						"Invalid ResultReader name:" + name + " at ResultReaderManager "
+						+ this.getName() + ".");
+			}
+			if (orderType != '-')
+			{
+				this.orderList.add(reader.getOrderName() + (orderType == 'D' ? " DESC" : "" ));
+			}
+			this.readerList.add(reader);
+			if (this.colNameSensitive)
+			{
+				this.nameToIndexMap.put(reader.getName(),
+						Utility.createInteger(this.readerList.size()));
+			}
+			else
+			{
+				this.nameToIndexMap.put(reader.getName().toUpperCase(),
+						Utility.createInteger(this.readerList.size()));
+			}
+		}
+	}
 
-   public int getIndexByName(String name, boolean notThrow)
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      Integer i = (Integer) this.nameToIndexMap.get(
-            this.colNameSensitive ? name : name.toUpperCase());
-      if (i == null)
-      {
-         if (notThrow)
-         {
-            return -1;
-         }
-         else
-         {
-            throw new ConfigurationException(
-                  "Invalid ResultReader name:[" + name + "] at ResultReaderManager ["
-                  + this.getName() + "].");
-         }
-      }
-      return i.intValue();
-   }
+	public int getIndexByName(String name, boolean notThrow)
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		Integer i = (Integer) this.nameToIndexMap.get(
+				this.colNameSensitive ? name : name.toUpperCase());
+		if (i == null)
+		{
+			if (notThrow)
+			{
+				return -1;
+			}
+			else
+			{
+				throw new ConfigurationException(
+						"Invalid ResultReader name:[" + name + "] at ResultReaderManager ["
+						+ this.getName() + "].");
+			}
+		}
+		return i.intValue();
+	}
 
-   public int getIndexByName(String name)
-         throws ConfigurationException
-   {
-      return this.getIndexByName(name, false);
-   }
+	public int getIndexByName(String name)
+			throws ConfigurationException
+	{
+		return this.getIndexByName(name, false);
+	}
 
-   public String getOrderByString()
-   {
-      if (this.orderStr == null)
-      {
-         StringAppender temp = StringTool.createStringAppender(this.orderList.size() * 16);
-         Iterator itr = this.orderList.iterator();
-         if (itr.hasNext())
-         {
-            temp.append(itr.next());
-         }
-         while (itr.hasNext())
-         {
-            temp.append(", ").append(itr.next());
-         }
-         this.orderStr = temp.toString();
-      }
-      return this.orderStr;
-   }
+	public String getOrderByString()
+	{
+		if (this.orderStr == null)
+		{
+			StringAppender temp = StringTool.createStringAppender(this.orderList.size() * 16);
+			Iterator itr = this.orderList.iterator();
+			if (itr.hasNext())
+			{
+				temp.append(itr.next());
+			}
+			while (itr.hasNext())
+			{
+				temp.append(", ").append(itr.next());
+			}
+			this.orderStr = temp.toString();
+		}
+		return this.orderStr;
+	}
 
-   /**
-    * »ñµÃÒ»¸ö<code>ResultReader</code>µÄÁĞ±í.
-    * ´Ë·½·¨ÁĞ³öµÄÊÇËùÓĞµÄ<code>ResultReader</code>.
-	 * ÎŞÂÛsetReaderListÉèÖÃÁËÔõÑùµÄÖµ, ¶¼ÊÇ·µ»ØËùÓĞµÄ.
-    *
-    * @return  ÓÃÓÚ¶ÁÈ¡Êı¾İµÄËùÓĞ<code>ResultReader</code>µÄÁĞ±í.
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * æ­¤æ–¹æ³•åˆ—å‡ºçš„æ˜¯æ‰€æœ‰çš„<code>ResultReader</code>.
+	 * æ— è®ºsetReaderListè®¾ç½®äº†æ€æ ·çš„å€¼, éƒ½æ˜¯è¿”å›æ‰€æœ‰çš„.
+	 *
+	 * @return  ç”¨äºè¯»å–æ•°æ®çš„æ‰€æœ‰<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
 	 * @see #setReaderList
-    */
-   public List getReaderList()
-         throws ConfigurationException
-   {
-      return this.getReaderList0();
-   }
+	 */
+	public List getReaderList()
+			throws ConfigurationException
+	{
+		return this.getReaderList0();
+	}
 
-   /**
-    * ¸ù¾İÈ¨ÏŞ, »ñµÃÒ»¸ö<code>ResultReader</code>µÄÁĞ±í.
-	 * Èç¹ûsetReaderListÉèÖÃÁËÏÔÊ¾µÄ<code>ResultReader</code>, ÄÇ·µ»ØµÄÁĞ±íÖ»»áÔÚ
-	 * ´Ë·¶Î§ÄÚ.
-    * Èç¹ûÄ³¸öÁĞÃ»ÓĞ¶ÁÈ¡È¨ÏŞµÄ»°, ÄÇÏàÓ¦µÄÁĞ»áÌæ»»Îª<code>NullResultReader</code>
-    * µÄÊµÀı.
-    *
-    * @return  ÕıÊ½ÓÃÓÚ¶ÁÈ¡Êı¾İµÄ<code>ResultReader</code>µÄÁĞ±í.
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
+	/**
+	 * æ ¹æ®æƒé™, è·å¾—ä¸€ä¸ª<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * å¦‚æœsetReaderListè®¾ç½®äº†æ˜¾ç¤ºçš„<code>ResultReader</code>, é‚£è¿”å›çš„åˆ—è¡¨åªä¼šåœ¨
+	 * æ­¤èŒƒå›´å†….
+	 * å¦‚æœæŸä¸ªåˆ—æ²¡æœ‰è¯»å–æƒé™çš„è¯, é‚£ç›¸åº”çš„åˆ—ä¼šæ›¿æ¢ä¸º<code>NullResultReader</code>
+	 * çš„å®ä¾‹.
+	 *
+	 * @return  æ­£å¼ç”¨äºè¯»å–æ•°æ®çš„<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
 	 * @see #setReaderList
-    */
-   public List getReaderList(Permission permission)
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      if (this.nonePermission)
-      {
-         return Collections.unmodifiableList(this.readerList);
-      }
-      if (permission == null)
-      {
-         return Collections.unmodifiableList(this.readerList);
-      }
+	 */
+	public List getReaderList(Permission permission)
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		if (this.nonePermission)
+		{
+			return Collections.unmodifiableList(this.readerList);
+		}
+		if (permission == null)
+		{
+			return Collections.unmodifiableList(this.readerList);
+		}
 
-      int count = 0;
-      Iterator srcItr = this.readerList.iterator();
-      ArrayList temp = null;
-      while (srcItr.hasNext())
-      {
-         ResultReader reader = (ResultReader) srcItr.next();
-         if (!checkPermission(reader, permission))
-         {
-            if (temp == null)
-            {
-               temp = new ArrayList(this.readerList.size());
-               srcItr = this.readerList.iterator();
-               for (int i = 0; i < count; i++)
-               {
-                  temp.add(srcItr.next());
-               }
-               srcItr.next();
-            }
-            temp.add(new NullResultReader(reader.getName()));
-         }
-         else
-         {
-            if (temp != null)
-            {
-               temp.add(reader);
-            }
-         }
-         count++;
-      }
-      return Collections.unmodifiableList(temp == null ? this.readerList : temp);
-   }
+		int count = 0;
+		Iterator srcItr = this.readerList.iterator();
+		ArrayList temp = null;
+		while (srcItr.hasNext())
+		{
+			ResultReader reader = (ResultReader) srcItr.next();
+			if (!checkPermission(reader, permission))
+			{
+				if (temp == null)
+				{
+					temp = new ArrayList(this.readerList.size());
+					srcItr = this.readerList.iterator();
+					for (int i = 0; i < count; i++)
+					{
+						temp.add(srcItr.next());
+					}
+					srcItr.next();
+				}
+				temp.add(new NullResultReader(reader.getName()));
+			}
+			else
+			{
+				if (temp != null)
+				{
+					temp.add(reader);
+				}
+			}
+			count++;
+		}
+		return Collections.unmodifiableList(temp == null ? this.readerList : temp);
+	}
 
-   private boolean checkPermission(ResultReader reader, Permission permission)
-         throws ConfigurationException
-   {
-      PermissionSet ps = reader.getPermissionSet();
-      if (ps == null)
-      {
-         return true;
-      }
-      return ps.checkPermission(permission);
-   }
+	private boolean checkPermission(ResultReader reader, Permission permission)
+			throws ConfigurationException
+	{
+		PermissionSet ps = reader.getPermissionSet();
+		if (ps == null)
+		{
+			return true;
+		}
+		return ps.checkPermission(permission);
+	}
 
-   public ResultReader getReaderInList(int index)
-         throws ConfigurationException
-   {
-      this.getReaderList0();
-      try
-      {
-         return (ResultReader) this.readerList.get(index);
-      }
-      catch (Exception ex)
-      {
-         throw new ConfigurationException(ex.getMessage());
-      }
-   }
+	public ResultReader getReaderInList(int index)
+			throws ConfigurationException
+	{
+		this.getReaderList0();
+		try
+		{
+			return (ResultReader) this.readerList.get(index);
+		}
+		catch (Exception ex)
+		{
+			throw new ConfigurationException(ex.getMessage());
+		}
+	}
 
-   public void lock()
-   {
-      this.locked = true;
-   }
+	public void lock()
+	{
+		this.locked = true;
+	}
 
 	public boolean isLocked()
 	{
 		return this.locked;
 	}
 
-   public ResultReaderManager copy(String copyName)
-         throws ConfigurationException
-   {
-      ResultReaderManagerImpl other;
-      if (this.initialized)
-      {
-         this.getReaderList0();
-         other = new ResultReaderManagerImpl(this, copyName == null);
-      }
-      else
-      {
-         other = new ResultReaderManagerImpl(this);
-      }
-      other.name = copyName == null ? this.name : this.name + "/" + copyName;
-      other.parentName = this.parentName;
-      other.parents = this.parents;
-      return other;
-   }
+	public ResultReaderManager copy(String copyName)
+			throws ConfigurationException
+	{
+		ResultReaderManagerImpl other;
+		if (this.initialized)
+		{
+			this.getReaderList0();
+			other = new ResultReaderManagerImpl(this, copyName == null);
+		}
+		else
+		{
+			other = new ResultReaderManagerImpl(this);
+		}
+		other.name = copyName == null ? this.name : this.name + "/" + copyName;
+		other.parentName = this.parentName;
+		other.parents = this.parents;
+		return other;
+	}
 
-   private List getReaderList0()
-         throws ConfigurationException
-   {
-      if (this.allReaderList != null)
-      {
-         return this.allReaderList;
-      }
-      OrderManager om = new OrderManager();
-      List resultList = om.getOrder(new MyOrderItem(), this.parents, this.readerOrder,
-            this.readerList, this.readerMap);
-      Iterator itr = resultList.iterator();
-      int index = 1;
-      while (itr.hasNext())
-      {
-         ResultReader reader = (ResultReader) itr.next();
-         if (this.colNameSensitive)
-         {
-            this.nameToIndexMap.put(reader.getName(), Utility.createInteger(index));
-         }
-         else
-         {
-            this.nameToIndexMap.put(reader.getName().toUpperCase(), Utility.createInteger(index));
-         }
-         index++;
+	private List getReaderList0()
+			throws ConfigurationException
+	{
+		if (this.allReaderList != null)
+		{
+			return this.allReaderList;
+		}
+		OrderManager om = new OrderManager();
+		List resultList = om.getOrder(new MyOrderItem(), this.parents, this.readerOrder,
+				this.readerList, this.readerMap);
+		Iterator itr = resultList.iterator();
+		int index = 1;
+		while (itr.hasNext())
+		{
+			ResultReader reader = (ResultReader) itr.next();
+			if (this.colNameSensitive)
+			{
+				this.nameToIndexMap.put(reader.getName(), Utility.createInteger(index));
+			}
+			else
+			{
+				this.nameToIndexMap.put(reader.getName().toUpperCase(), Utility.createInteger(index));
+			}
+			index++;
 			if (this.nonePermission && reader.getPermissionSet() != null)
 			{
 				this.nonePermission = false;
 			}
-      }
-      this.readerList = new ArrayList(resultList);
-      this.allReaderList = Collections.unmodifiableList(resultList);
-      return this.allReaderList;
-   }
+		}
+		this.readerList = new ArrayList(resultList);
+		this.allReaderList = Collections.unmodifiableList(resultList);
+		return this.allReaderList;
+	}
 
-   private static class MyOrderItem extends OrderManager.OrderItem
-   {
-      private ResultReader reader;
+	private static class MyOrderItem extends OrderManager.OrderItem
+	{
+		private ResultReader reader;
 
-      public MyOrderItem()
-      {
-         super("", null);
-      }
+		public MyOrderItem()
+		{
+			super("", null);
+		}
 
-      protected MyOrderItem(String name, Object obj)
-      {
-         super(name, obj);
-         this.reader = (ResultReader) obj;
-      }
+		protected MyOrderItem(String name, Object obj)
+		{
+			super(name, obj);
+			this.reader = (ResultReader) obj;
+		}
 
-      public boolean isIgnore()
-            throws ConfigurationException
-      {
-         return this.reader.isIgnore();
-      }
+		public boolean isIgnore()
+				throws ConfigurationException
+		{
+			return this.reader.isIgnore();
+		}
 
-      public OrderManager.OrderItem create(Object obj)
-            throws ConfigurationException
-      {
-         if (obj == null)
-         {
-            return null;
-         }
-         ResultReader reader = (ResultReader) obj;
-         return new MyOrderItem(reader.getName(), reader);
-      }
+		public OrderManager.OrderItem create(Object obj)
+				throws ConfigurationException
+		{
+			if (obj == null)
+			{
+				return null;
+			}
+			ResultReader reader = (ResultReader) obj;
+			return new MyOrderItem(reader.getName(), reader);
+		}
 
-      public Iterator getOrderItemIterator(Object container)
-            throws ConfigurationException
-      {
-         ResultReaderManager rm = (ResultReaderManager) container;
-         return rm.getReaderList().iterator();
-      }
+		public Iterator getOrderItemIterator(Object container)
+				throws ConfigurationException
+		{
+			ResultReaderManager rm = (ResultReaderManager) container;
+			return rm.getReaderList().iterator();
+		}
 
-   }
+	}
 
 }

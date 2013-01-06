@@ -25,11 +25,11 @@ class ConditionBuilderImpl
 	private String operator;
 
 	/**
-	 *   -1 : ÊÇ·ñÎª¿ÕµÄÅĞ¶Ï
-	 *    0 : Ò»°ãÇé¿ö
-	 *  0x1 : Õë¶Ô×Ö·û´®, ÔÚºóÃæ¼ÓÉÏÍ¨Åä·û
-	 *  0x2 : Õë¶Ô×Ö·û´®, ÔÚÇ°Ãæ¼ÓÉÏÍ¨Åä·û
-	 *  0x3 : Õë¶Ô×Ö·û´®, ÔÚÁ½±ß¼ÓÉÏÍ¨Åä·û
+	 *   -1 : æ˜¯å¦ä¸ºç©ºçš„åˆ¤æ–­
+	 *    0 : ä¸€èˆ¬æƒ…å†µ
+	 *  0x1 : é’ˆå¯¹å­—ç¬¦ä¸², åœ¨åé¢åŠ ä¸Šé€šé…ç¬¦
+	 *  0x2 : é’ˆå¯¹å­—ç¬¦ä¸², åœ¨å‰é¢åŠ ä¸Šé€šé…ç¬¦
+	 *  0x3 : é’ˆå¯¹å­—ç¬¦ä¸², åœ¨ä¸¤è¾¹åŠ ä¸Šé€šé…ç¬¦
 	 */
 	private int optType;
 
@@ -90,7 +90,7 @@ class ConditionBuilderImpl
 			{
 				if (this.optType == 0)
 				{
-					// ¶ÔÓÚmatch, Ä¬ÈÏ¼ÓÉÏescape
+					// å¯¹äºmatch, é»˜è®¤åŠ ä¸Šescape
 					sqlPart.append(" escape '\\'");
 				}
 				else
@@ -143,8 +143,8 @@ class ConditionBuilderImpl
 		String temp = equalsFlag ? colName + " IS NULL" : colName + " IS NOT NULL";
 		return new Condition(temp);
 		/*
-		¶ÔÓÚ×Ö·û´®µÄÇé¿ö, ÕâÀï²»×öÊÇ·ñÎª¿Õ×Ö·û´®µÄÅĞ¶Ï, Èç¹ûĞèÒª¿ÉÒÔÖØĞ´Õâ¸ö·½·¨,
-		È»ºóÔÚÅäÖÃÖĞ¶¨Òå×Ô¼ºµÄbuilder
+		å¯¹äºå­—ç¬¦ä¸²çš„æƒ…å†µ, è¿™é‡Œä¸åšæ˜¯å¦ä¸ºç©ºå­—ç¬¦ä¸²çš„åˆ¤æ–­, å¦‚æœéœ€è¦å¯ä»¥é‡å†™è¿™ä¸ªæ–¹æ³•,
+		ç„¶ååœ¨é…ç½®ä¸­å®šä¹‰è‡ªå·±çš„builder
 		if (TypeManager.isTypeString(cp.getColumnType()))
 		{
 			String tempOp1, tempOp2;

@@ -9,17 +9,17 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface Execute
 {
-   void initialize(ModelAdapter model) throws ConfigurationException;
+	void initialize(ModelAdapter model) throws ConfigurationException;
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   ModelAdapter getModelAdapter() throws ConfigurationException;
+	ModelAdapter getModelAdapter() throws ConfigurationException;
 
-   String getExecuteType() throws ConfigurationException;
+	String getExecuteType() throws ConfigurationException;
 
-   ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException;
+	ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException;
 
-   void destroy();
+	void destroy();
 
 }

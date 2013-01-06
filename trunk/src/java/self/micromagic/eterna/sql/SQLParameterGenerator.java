@@ -7,29 +7,29 @@ import self.micromagic.util.IntegerRef;
 
 public interface SQLParameterGenerator extends Generator
 {
-   /**
-    * ÉèÖÃÒª¹¹ÔìµÄSQLParameterµÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¦æ„é€ çš„SQLParameterçš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¶ÔÓ¦µÄÁĞÃû.
-    */
-   void setColumnName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®å¯¹åº”çš„åˆ—å.
+	 */
+	void setColumnName(String name) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÒª¹¹ÔìµÄSQLParameterµÄÀàĞÍ.
-    */
-   void setParamType(String type) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¦æ„é€ çš„SQLParameterçš„ç±»å‹.
+	 */
+	void setParamType(String type) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¶ÔÓ¦µÄÊı¾İ×¼±¸Éú³ÉÆ÷.
-    */
-   void setParamVPC(String vpcName) throws ConfigurationException;
+	/**
+	 * è®¾ç½®å¯¹åº”çš„æ•°æ®å‡†å¤‡ç”Ÿæˆå™¨.
+	 */
+	void setParamVPC(String vpcName) throws ConfigurationException;
 
-   /**
-    * ¹¹ÔìÒ»¸öSQLParameter.
-    */
-   SQLParameter createParameter(int paramIndex) throws ConfigurationException;
+	/**
+	 * æ„é€ ä¸€ä¸ªSQLParameter.
+	 */
+	SQLParameter createParameter(int paramIndex) throws ConfigurationException;
 
 }

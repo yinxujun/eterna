@@ -15,136 +15,138 @@ import self.micromagic.util.IntegerRef;
 import self.micromagic.util.StringAppender;
 
 /**
- * Ò»¸öÀàµÄ×Ô¶¯±àÒë¼°Éú³É¹¤¾ß.
+ * ä¸€ä¸ªç±»çš„è‡ªåŠ¨ç¼–è¯‘åŠç”Ÿæˆå·¥å…·.
+ *
+ * @author micromagic@sina.com
  */
 public class ClassGenerator
 {
-   /**
-    * ÒÑ×¢²áµÄÀàÉú³É¹¤¾ßµÄ»º´æ.
-    */
-   private static final Map cgCache = new HashMap();
+	/**
+	 * å·²æ³¨å†Œçš„ç±»ç”Ÿæˆå·¥å…·çš„ç¼“å­˜.
+	 */
+	private static final Map cgCache = new HashMap();
 
-   /**
-    * ×¢²áÒ»¸öÀàÉú³É¹¤¾ß.
-    *
-    * @param name   Ãû³Æ
-    * @param cg     ÀàÉú³É¹¤¾ßµÄÊµÏÖ
-    */
-   public static void registerCG(String name, CG cg)
-   {
-      cgCache.put(name, cg);
-   }
+	/**
+	 * æ³¨å†Œä¸€ä¸ªç±»ç”Ÿæˆå·¥å…·.
+	 *
+	 * @param name   åç§°
+	 * @param cg     ç±»ç”Ÿæˆå·¥å…·çš„å®ç°
+	 */
+	public static void registerCG(String name, CG cg)
+	{
+		cgCache.put(name, cg);
+	}
 
-   private String className;
-   private ClassLoader classLoader;
-   private Class superClass;
-   private List interfaces = new ArrayList();
-   private Set importPackages = new HashSet();
-   private Map classPathCache = new HashMap();
-   private List fields = new ArrayList();
-   private List constructors = new ArrayList();
-   private List methods = new ArrayList();
-   private String compileType;
+	private String className;
+	private ClassLoader classLoader;
+	private Class superClass;
+	private List interfaces = new ArrayList();
+	private Set importPackages = new HashSet();
+	private Map classPathCache = new HashMap();
+	private List fields = new ArrayList();
+	private List constructors = new ArrayList();
+	private List methods = new ArrayList();
+	private String compileType;
 
-   /**
-    * »ñÈ¡±¾´úÂëµÄÀàÃû.
-    */
-   public String getClassName()
-   {
-      return this.className;
-   }
+	/**
+	 * è·å–æœ¬ä»£ç çš„ç±»å.
+	 */
+	public String getClassName()
+	{
+		return this.className;
+	}
 
-   /**
-    * ÉèÖÃ±¾´úÂëµÄÀàÃû.
-    */
-   public void setClassName(String className)
-   {
-      if (!StringTool.isEmpty(className))
-      {
-         this.className = className;
-      }
-   }
+	/**
+	 * è®¾ç½®æœ¬ä»£ç çš„ç±»å.
+	 */
+	public void setClassName(String className)
+	{
+		if (!StringTool.isEmpty(className))
+		{
+			this.className = className;
+		}
+	}
 
-   /**
-    * »ñµÃÉú³ÉÀàÊÇÊ¹ÓÃµÄ<code>ClassLoader</code>.
-    */
-   public ClassLoader getClassLoader()
-   {
-      if (this.classLoader == null)
-      {
-         return this.getClass().getClassLoader();
-      }
-      return this.classLoader;
-   }
+	/**
+	 * è·å¾—ç”Ÿæˆç±»æ˜¯ä½¿ç”¨çš„<code>ClassLoader</code>.
+	 */
+	public ClassLoader getClassLoader()
+	{
+		if (this.classLoader == null)
+		{
+			return this.getClass().getClassLoader();
+		}
+		return this.classLoader;
+	}
 
-   /**
-    * ÉèÖÃÉú³ÉÀàÊÇÊ¹ÓÃµÄ<code>ClassLoader</code>.
-    */
-   public void setClassLoader(ClassLoader classLoader)
-   {
-      this.classLoader = classLoader;
-   }
+	/**
+	 * è®¾ç½®ç”Ÿæˆç±»æ˜¯ä½¿ç”¨çš„<code>ClassLoader</code>.
+	 */
+	public void setClassLoader(ClassLoader classLoader)
+	{
+		this.classLoader = classLoader;
+	}
 
-   /**
-    * ÉèÖÃ±¾´úÂëĞèÒª¼Ì³ĞµÄÀà.
-    */
-   public void setSuperClass(Class superClass)
-   {
-      this.superClass = superClass;
-   }
+	/**
+	 * è®¾ç½®æœ¬ä»£ç éœ€è¦ç»§æ‰¿çš„ç±».
+	 */
+	public void setSuperClass(Class superClass)
+	{
+		this.superClass = superClass;
+	}
 
-   /**
-    * »ñµÃ¼Ì³ĞµÄÀà.
-    */
-   public Class getSuperClass()
-   {
-      return superClass;
-   }
+	/**
+	 * è·å¾—ç»§æ‰¿çš„ç±».
+	 */
+	public Class getSuperClass()
+	{
+		return superClass;
+	}
 
-   /**
-    * Ìí¼Ó±¾´úÂëĞèÒªÊµÏÖµÄ½Ó¿Ú.
-    */
-   public void addInterface(Class anInterface)
-   {
-      if (anInterface != null)
-      {
-         this.interfaces.add(anInterface);
-      }
-   }
+	/**
+	 * æ·»åŠ æœ¬ä»£ç éœ€è¦å®ç°çš„æ¥å£.
+	 */
+	public void addInterface(Class anInterface)
+	{
+		if (anInterface != null)
+		{
+			this.interfaces.add(anInterface);
+		}
+	}
 
-   /**
-    * »ñµÃĞèÒªÊµÏÖµÄ½Ó¿ÚÁĞ±í.
-    */
-   public Class[] getInterfaces()
-   {
-      return (Class[]) this.interfaces.toArray(new Class[this.interfaces.size()]);
-   }
+	/**
+	 * è·å¾—éœ€è¦å®ç°çš„æ¥å£åˆ—è¡¨.
+	 */
+	public Class[] getInterfaces()
+	{
+		return (Class[]) this.interfaces.toArray(new Class[this.interfaces.size()]);
+	}
 
-   /**
-    * Ìí¼ÓĞèÒªÒıÓÃµÄ°ü.
-    */
-   public void importPackage(String packageName)
-   {
-      if (!StringTool.isEmpty(packageName))
-      {
-         this.importPackages.add(packageName);
-      }
-   }
+	/**
+	 * æ·»åŠ éœ€è¦å¼•ç”¨çš„åŒ….
+	 */
+	public void importPackage(String packageName)
+	{
+		if (!StringTool.isEmpty(packageName))
+		{
+			this.importPackages.add(packageName);
+		}
+	}
 
-   /**
-    * »ñµÃĞèÒªÒıÓÃµÄ°üÁĞ±í.
-    */
-   public String[] getPackages()
-   {
-      String[] arr = new String[this.importPackages.size()];
-      return (String[]) this.importPackages.toArray(arr);
-   }
+	/**
+	 * è·å¾—éœ€è¦å¼•ç”¨çš„åŒ…åˆ—è¡¨.
+	 */
+	public String[] getPackages()
+	{
+		String[] arr = new String[this.importPackages.size()];
+		return (String[]) this.importPackages.toArray(arr);
+	}
 
-   /**
-    * Ìí¼ÓÒ»¸ö¶ÁÈ¡ÆäËûÀàµÄÂ·¾¶¹¤¾ß.
-    */
-   public void addClassPath(Class pathClass)
-   {
+	/**
+	 * æ·»åŠ ä¸€ä¸ªè¯»å–å…¶ä»–ç±»çš„è·¯å¾„å·¥å…·.
+	 */
+	public void addClassPath(Class pathClass)
+	{
 		if (pathClass == null)
 		{
 			return;
@@ -154,405 +156,417 @@ public class ClassGenerator
 		{
 			return;
 		}
-      if (!this.classPathCache.containsKey(cl))
-      {
-         this.classPathCache.put(pathClass.getClassLoader(), pathClass);
-      }
-   }
+		if (!this.classPathCache.containsKey(cl))
+		{
+			this.classPathCache.put(pathClass.getClassLoader(), pathClass);
+		}
+	}
 
-   /**
-    * »ñµÃĞèÒª¶ÁÈ¡ÆäËûÀàµÄÂ·¾¶¹¤¾ßÁĞ±í.
-    */
-   public Class[] getClassPaths()
-   {
-      Collection values = this.classPathCache.values();
-      return (Class[]) values.toArray(new Class[values.size()]);
-   }
+	/**
+	 * è·å¾—éœ€è¦è¯»å–å…¶ä»–ç±»çš„è·¯å¾„å·¥å…·åˆ—è¡¨.
+	 */
+	public Class[] getClassPaths()
+	{
+		Collection values = this.classPathCache.values();
+		return (Class[]) values.toArray(new Class[values.size()]);
+	}
 
-   /**
-    * Ìí¼ÓÒ»¸öÊôĞÔ´úÂë.
-    */
-   public void addField(String field)
-   {
-      if (!StringTool.isEmpty(field))
-      {
-         this.fields.add(field);
-      }
-   }
+	/**
+	 * æ·»åŠ ä¸€ä¸ªå±æ€§ä»£ç .
+	 */
+	public void addField(String field)
+	{
+		if (!StringTool.isEmpty(field))
+		{
+			this.fields.add(field);
+		}
+	}
 
-   /**
-    * »ñµÃÊôĞÔ´úÂëÁĞ±í.
-    */
-   public String[] getFields()
-   {
-      if (this.getClassName() == null)
-      {
-         return (String[]) this.fields.toArray(new String[this.fields.size()]);
-      }
-      else
-      {
-         String[] arr = new String[this.fields.size()];
-         this.fields.toArray(arr);
-         Map map = new HashMap(2);
-         map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
-         for (int i = 0; i < arr.length; i++)
-         {
-            arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
-         }
-         return arr;
-      }
-   }
+	/**
+	 * è·å¾—å±æ€§ä»£ç åˆ—è¡¨.
+	 */
+	public String[] getFields()
+	{
+		if (this.getClassName() == null)
+		{
+			return (String[]) this.fields.toArray(new String[this.fields.size()]);
+		}
+		else
+		{
+			String[] arr = new String[this.fields.size()];
+			this.fields.toArray(arr);
+			Map map = new HashMap(2);
+			map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
+			for (int i = 0; i < arr.length; i++)
+			{
+				arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
+			}
+			return arr;
+		}
+	}
 
-   /**
-    * Ìí¼ÓÒ»¸ö¹¹Ôì·½·¨´úÂë.
-    * ´úÂëÖĞ¹¹Ôìº¯ÊıµÄÃû³Æ¿ÉÒÔÓÃ"${thisName}"´úÌæ.
-    * @see CG#THIS_NAME
-    */
-   public void addConstructor(String constructor)
-   {
-      if (!StringTool.isEmpty(constructor))
-      {
-         this.constructors.add(constructor);
-      }
-   }
+	/**
+	 * æ·»åŠ ä¸€ä¸ªæ„é€ æ–¹æ³•ä»£ç .
+	 * ä»£ç ä¸­æ„é€ å‡½æ•°çš„åç§°å¯ä»¥ç”¨"${thisName}"ä»£æ›¿.
+	 * @see CG#THIS_NAME
+	 */
+	public void addConstructor(String constructor)
+	{
+		if (!StringTool.isEmpty(constructor))
+		{
+			this.constructors.add(constructor);
+		}
+	}
 
-   /**
-    * »ñµÃ¹¹Ôì·½·¨´úÂëÁĞ±í.
-    */
-   public String[] getConstructors()
-   {
-      if (this.getClassName() == null)
-      {
-         throw new IllegalArgumentException("The class name hasn't bean setted .");
-      }
-      String[] arr = new String[this.constructors.size()];
-      this.constructors.toArray(arr);
-      Map map = new HashMap(2);
-      map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
-      for (int i = 0; i < arr.length; i++)
-      {
-         arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
-      }
-      return arr;
-   }
+	/**
+	 * è·å¾—æ„é€ æ–¹æ³•ä»£ç åˆ—è¡¨.
+	 */
+	public String[] getConstructors()
+	{
+		if (this.getClassName() == null)
+		{
+			throw new IllegalArgumentException("The class name hasn't bean setted .");
+		}
+		String[] arr = new String[this.constructors.size()];
+		this.constructors.toArray(arr);
+		Map map = new HashMap(2);
+		map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
+		for (int i = 0; i < arr.length; i++)
+		{
+			arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
+		}
+		return arr;
+	}
 
-   /**
-    * Ìí¼ÓÒ»¸ö·½·¨´úÂë.
-    */
-   public void addMethod(String methodCode)
-   {
-      if (!StringTool.isEmpty(methodCode))
-      {
-         this.methods.add(methodCode);
-      }
-   }
+	/**
+	 * æ·»åŠ ä¸€ä¸ªæ–¹æ³•ä»£ç .
+	 */
+	public void addMethod(String methodCode)
+	{
+		if (!StringTool.isEmpty(methodCode))
+		{
+			this.methods.add(methodCode);
+		}
+	}
 
-   /**
-    * »ñµÃ·½·¨´úÂëÁĞ±í.
-    */
-   public String[] getMethods()
-   {
-      if (this.getClassName() == null)
-      {
-         return (String[]) this.methods.toArray(new String[this.methods.size()]);
-      }
-      else
-      {
-         String[] arr = new String[this.methods.size()];
-         this.methods.toArray(arr);
-         Map map = new HashMap(2);
-         map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
-         for (int i = 0; i < arr.length; i++)
-         {
-            arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
-         }
-         return arr;
-      }
-   }
+	/**
+	 * è·å¾—æ–¹æ³•ä»£ç åˆ—è¡¨.
+	 */
+	public String[] getMethods()
+	{
+		if (this.getClassName() == null)
+		{
+			return (String[]) this.methods.toArray(new String[this.methods.size()]);
+		}
+		else
+		{
+			String[] arr = new String[this.methods.size()];
+			this.methods.toArray(arr);
+			Map map = new HashMap(2);
+			map.put(CG.THIS_NAME, getConstructorName(this.getClassName()));
+			for (int i = 0; i < arr.length; i++)
+			{
+				arr[i] = Utility.resolveDynamicPropnames(arr[i], map, true);
+			}
+			return arr;
+		}
+	}
 
-   /**
-    * »ñµÃ¶Ô±¾´úÂëµÄ±àÒë·½Ê½.
-    */
-   public String getCompileType()
-   {
-      if (this.compileType == null)
-      {
-         return Utility.getProperty(CG.COMPILE_TYPE_PROPERTY, "javassist");
-      }
-      return this.compileType;
-   }
+	/**
+	 * è·å¾—å¯¹æœ¬ä»£ç çš„ç¼–è¯‘æ–¹å¼.
+	 */
+	public String getCompileType()
+	{
+		if (this.compileType == null)
+		{
+			return Utility.getProperty(CG.COMPILE_TYPE_PROPERTY, "javassist");
+		}
+		return this.compileType;
+	}
 
-   /**
-    * ÉèÖÃ¶Ô±¾´úÂëµÄ±àÒë·½Ê½.
-    */
-   public void setCompileType(String compileType)
-   {
-      this.compileType = compileType;
-   }
+	/**
+	 * è®¾ç½®å¯¹æœ¬ä»£ç çš„ç¼–è¯‘æ–¹å¼.
+	 */
+	public void setCompileType(String compileType)
+	{
+		this.compileType = compileType;
+	}
 
-   /**
-    * ¸ù¾İÉèÖÃµÄ´úÂëÉú³ÉÒ»¸öÀà.
-    */
-   public Class createClass()
-   {
-      if (this.getClassName() == null)
-      {
-         throw new IllegalArgumentException("The class name hasn't bean setted .");
-      }
-      String type = this.getCompileType();
-      try
-      {
-         CG cg = (CG) cgCache.get(type.toLowerCase());
-         if (cg != null)
-         {
-            return cg.createClass(this);
-         }
-      }
-      catch (Exception ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      throw new IllegalArgumentException("Error compile type:" + type + ".");
-   }
+	/**
+	 * æ ¹æ®è®¾ç½®çš„ä»£ç ç”Ÿæˆä¸€ä¸ªç±».
+	 */
+	public Class createClass()
+	{
+		if (this.getClassName() == null)
+		{
+			throw new IllegalArgumentException("The class name hasn't bean setted .");
+		}
+		String type = this.getCompileType();
+		try
+		{
+			CG cg = (CG) cgCache.get(type.toLowerCase());
+			if (cg != null)
+			{
+				return cg.createClass(this);
+			}
+		}
+		catch (Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		throw new IllegalArgumentException("Error compile type:" + type + ".");
+	}
 
-   /**
-    * ÓÃÓÚÉú³ÉÀàµÄÁ÷Ë®ºÅ, ·ÀÖ¹ÀàÃûÖØ¸´.
-    */
-   private static volatile int CLASS_GENERATOR_ID = 1;
+	/**
+	 * ç”¨äºç”Ÿæˆç±»çš„æµæ°´å·, é˜²æ­¢ç±»åé‡å¤.
+	 */
+	private static volatile int CLASS_GENERATOR_ID = 1;
 
-   /**
-    * ´´½¨Ò»¸öÀàÉú³É¹¤¾ß.
-    *
-    * @param baseClass       Éú³ÉµÄÀàËùÊ¹ÓÃµÄ»ù´¡Àà,
-    *                        »áÊ¹ÓÃ´ËÀàµÄClassLoaderÀ´ÔØÈëĞÂÉú³ÉµÄÀà
-    * @param interfaceClass  ĞèÒªÊµÏÖµÄ½Ó¿Ú
-    * @param imports         ĞèÒªÒıÓÃµÄ°üÁĞ±í
-    * @return  <code>ClassGenerator</code>µÄÊµÀı.
-    */
-   public static ClassGenerator createClassGenerator(Class baseClass, Class interfaceClass,
-         String[] imports)
-   {
-      return createClassGenerator(null, baseClass, interfaceClass, imports);
-   }
+	/**
+	 * åˆ›å»ºä¸€ä¸ªç±»ç”Ÿæˆå·¥å…·.
+	 *
+	 * @param baseClass       ç”Ÿæˆçš„ç±»æ‰€ä½¿ç”¨çš„åŸºç¡€ç±»,
+	 *                        ä¼šä½¿ç”¨æ­¤ç±»çš„ClassLoaderæ¥è½½å…¥æ–°ç”Ÿæˆçš„ç±»
+	 * @param interfaceClass  éœ€è¦å®ç°çš„æ¥å£
+	 * @param imports         éœ€è¦å¼•ç”¨çš„åŒ…åˆ—è¡¨
+	 * @return  <code>ClassGenerator</code>çš„å®ä¾‹.
+	 */
+	public static ClassGenerator createClassGenerator(Class baseClass, Class interfaceClass,
+			String[] imports)
+	{
+		return createClassGenerator(null, baseClass, interfaceClass, imports);
+	}
 
-   /**
-    * ´´½¨Ò»¸öÀàÉú³É¹¤¾ß. <p>
-    * ĞÂµÄÀàÃûÎª£ºeterna.[baseClass]$suffix$$EBP_[ĞòÁĞºÅ]
-    *
-    * @param suffix          Éú³ÉÀàÃûµÄºó×º
-    * @param baseClass       Éú³ÉµÄÀàËùÊ¹ÓÃµÄ»ù´¡Àà,
-    *                        »áÊ¹ÓÃ´ËÀàµÄClassLoaderÀ´ÔØÈëĞÂÉú³ÉµÄÀà
-    * @param interfaceClass  ĞèÒªÊµÏÖµÄ½Ó¿Ú
-    * @param imports         ĞèÒªÒıÓÃµÄ°üÁĞ±í
-    * @return  <code>ClassGenerator</code>µÄÊµÀı.
-    */
-   public static ClassGenerator createClassGenerator(String suffix, Class baseClass, Class interfaceClass,
-         String[] imports)
-   {
-      ClassGenerator cg = new ClassGenerator();
-      cg.addClassPath(baseClass);
-      cg.addClassPath(interfaceClass);
-      cg.addClassPath(ClassGenerator.class);
-      String tmpSuffix;
-      synchronized (ClassGenerator.class)
-      {
-         if (StringTool.isEmpty(suffix))
-         {
-            tmpSuffix = "$$ECG_" + (CLASS_GENERATOR_ID++);
-         }
-         else
-         {
-            tmpSuffix = "$" + suffix + "$$ECG_" + (CLASS_GENERATOR_ID++);
-         }
-      }
-      cg.setClassName("cg." + baseClass.getName() + tmpSuffix);
-      cg.addInterface(interfaceClass);
-      if (imports != null)
-      {
-         for (int i = 0; i < imports.length; i++)
-         {
-            if (!StringTool.isEmpty(imports[i]))
-            {
-               cg.importPackage(imports[i]);
-            }
-         }
-      }
-      return cg;
-   }
+	/**
+	 * åˆ›å»ºä¸€ä¸ªç±»ç”Ÿæˆå·¥å…·. <p>
+	 * æ–°çš„ç±»åä¸ºï¼šeterna.[baseClass]$suffix$$EBP_[åºåˆ—å·]
+	 *
+	 * @param suffix          ç”Ÿæˆç±»åçš„åç¼€
+	 * @param baseClass       ç”Ÿæˆçš„ç±»æ‰€ä½¿ç”¨çš„åŸºç¡€ç±»,
+	 *                        ä¼šä½¿ç”¨æ­¤ç±»çš„ClassLoaderæ¥è½½å…¥æ–°ç”Ÿæˆçš„ç±»
+	 * @param interfaceClass  éœ€è¦å®ç°çš„æ¥å£
+	 * @param imports         éœ€è¦å¼•ç”¨çš„åŒ…åˆ—è¡¨
+	 * @return  <code>ClassGenerator</code>çš„å®ä¾‹.
+	 */
+	public static ClassGenerator createClassGenerator(String suffix, Class baseClass, Class interfaceClass,
+			String[] imports)
+	{
+		ClassGenerator cg = new ClassGenerator();
+		cg.addClassPath(baseClass);
+		cg.addClassPath(interfaceClass);
+		cg.addClassPath(ClassGenerator.class);
+		String tmpSuffix;
+		synchronized (ClassGenerator.class)
+		{
+			if (StringTool.isEmpty(suffix))
+			{
+				tmpSuffix = "$$ECG_" + (CLASS_GENERATOR_ID++);
+			}
+			else
+			{
+				tmpSuffix = "$" + suffix + "$$ECG_" + (CLASS_GENERATOR_ID++);
+			}
+		}
+		cg.setClassName("cg." + baseClass.getName() + tmpSuffix);
+		cg.addInterface(interfaceClass);
+		if (imports != null)
+		{
+			for (int i = 0; i < imports.length; i++)
+			{
+				if (!StringTool.isEmpty(imports[i]))
+				{
+					cg.importPackage(imports[i]);
+				}
+			}
+		}
+		return cg;
+	}
 
-   /**
-    * »ñÈ¡¸ø¶¨ÀàµÄ°üÂ·¾¶×Ö·û´®.
-    */
-   public static String getPackageString(Class c)
-   {
-      String cName = c.getName();
-      int lastIndex = cName.lastIndexOf('.');
-      if (lastIndex == -1)
-      {
-         return "";
-      }
-      return cName.substring(0, lastIndex);
-   }
+	/**
+	 * è·å–ç»™å®šç±»çš„åŒ…è·¯å¾„å­—ç¬¦ä¸².
+	 */
+	public static String getPackageString(Class c)
+	{
+		String cName = c.getName();
+		int lastIndex = cName.lastIndexOf('.');
+		if (lastIndex == -1)
+		{
+			return "";
+		}
+		return cName.substring(0, lastIndex);
+	}
 
-   /**
-    * »ñÈ¡¸ø¶¨ÀàÃûµÄ°üÂ·¾¶×Ö·û´®.
-    */
-   public static String getPackageString(String className)
-   {
-      if (className == null)
-      {
-         return "";
-      }
-      int lastIndex = className.lastIndexOf('.');
-      if (lastIndex == -1)
-      {
-         return "";
-      }
-      return className.substring(0, lastIndex);
-   }
+	/**
+	 * è·å–ç»™å®šç±»åçš„åŒ…è·¯å¾„å­—ç¬¦ä¸².
+	 */
+	public static String getPackageString(String className)
+	{
+		if (className == null)
+		{
+			return "";
+		}
+		int lastIndex = className.lastIndexOf('.');
+		if (lastIndex == -1)
+		{
+			return "";
+		}
+		return className.substring(0, lastIndex);
+	}
 
-   /**
-    * »ñÈ¡¸ø¶¨ÀàÃûµÄ¹¹Ôìº¯ÊıÃû³Æ.
-    */
-   public static String getConstructorName(String className)
-   {
-      int lastIndex = className.lastIndexOf('.');
-      if (lastIndex == -1)
-      {
-         return className;
-      }
-      return className.substring(lastIndex + 1);
-   }
+	/**
+	 * è·å–ç»™å®šç±»åçš„æ„é€ å‡½æ•°åç§°.
+	 */
+	public static String getConstructorName(String className)
+	{
+		int lastIndex = className.lastIndexOf('.');
+		if (lastIndex == -1)
+		{
+			return className;
+		}
+		return className.substring(lastIndex + 1);
+	}
 
-   /**
-    * »ñÈ¡Êı×éµÄÔªËØÀàĞÍ.
-    *
-    * @param arrayClass  Êı×éÀà
-    * @param levelRef    ·µ»ØÊı×éµÄÎ¬¶È
-    */
-   public static Class getArrayElementType(Class arrayClass, IntegerRef levelRef)
-   {
-      if (arrayClass == null || !arrayClass.isArray())
-      {
-         return null;
-      }
-      int level = 0;
-      Class tmpClass = arrayClass;
-      while (tmpClass.isArray())
-      {
-         tmpClass = tmpClass.getComponentType();
-         level++;
-      }
-      if (levelRef != null)
-      {
-         levelRef.value = level;
-      }
-      return tmpClass;
-   }
+	/**
+	 * è·å–æ•°ç»„çš„å…ƒç´ ç±»å‹.
+	 *
+	 * @param arrayClass  æ•°ç»„ç±»
+	 * @param levelRef    è¿”å›æ•°ç»„çš„ç»´åº¦
+	 */
+	public static Class getArrayElementType(Class arrayClass, IntegerRef levelRef)
+	{
+		if (arrayClass == null || !arrayClass.isArray())
+		{
+			return null;
+		}
+		int level = 0;
+		Class tmpClass = arrayClass;
+		while (tmpClass.isArray())
+		{
+			tmpClass = tmpClass.getComponentType();
+			level++;
+		}
+		if (levelRef != null)
+		{
+			levelRef.value = level;
+		}
+		return tmpClass;
+	}
 
-   /**
-    * »ñµÃÒ»¸öÀàµÄÀàÃû.
-    * ´Ë·½·¨»á¸ù¾İ²»Í¬µÄJDK°æ±¾µ÷ÓÃ²»Í¬µÄ·½·¨.
-    * Èç£º1.5 ÒÔÉÏµÄĞèÒªÊ¹ÓÃgetCanonicalName.
-    */
-   public static String getClassName(Class c)
-   {
-      if (c.isArray())
-      {
-         IntegerRef level = new IntegerRef();
-         Class type = getArrayElementType(c, level);
-         String nameStr = nameAccessor.getName(type);
-         StringAppender arrVL = StringTool.createStringAppender(nameStr.length() + level.value * 2);
-         arrVL.append(nameStr);
-         for (int i = 0; i < level.value; i++)
-         {
-            arrVL.append("[]");
-         }
-         return arrVL.toString();
-      }
-      return nameAccessor.getName(c);
-   }
+	/**
+	 * è·å¾—ä¸€ä¸ªç±»çš„ç±»å.
+	 * æ­¤æ–¹æ³•ä¼šæ ¹æ®ä¸åŒçš„JDKç‰ˆæœ¬è°ƒç”¨ä¸åŒçš„æ–¹æ³•.
+	 * å¦‚ï¼š1.5 ä»¥ä¸Šçš„éœ€è¦ä½¿ç”¨getCanonicalName.
+	 */
+	public static String getClassName(Class c)
+	{
+		if (c.isArray())
+		{
+			IntegerRef level = new IntegerRef();
+			Class type = getArrayElementType(c, level);
+			String nameStr = nameAccessor.getName(type);
+			StringAppender arrDef = StringTool.createStringAppender(nameStr.length() + level.value * 2);
+			arrDef.append(nameStr);
+			arrDef.append(getArrayDefine(level.value));
+			return arrDef.toString();
+		}
+		return nameAccessor.getName(c);
+	}
 
-   static int COMPILE_LOG_TYPE = 1;
+	/**
+	 * è·å–æ•°ç»„çš„å®šä¹‰éƒ¨åˆ†, å¦‚: ä¸€ç»´æ•°ç»„[], äºŒç»´æ•°ç»„[][] ...
+	 *
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦.
+	 */
+	public static String getArrayDefine(int arrayLevel)
+	{
+		StringAppender arrVL = StringTool.createStringAppender();
+		for (int i = 0; i < arrayLevel; i++)
+		{
+			arrVL.append("[]");
+		}
+		return arrVL.toString();
+	}
 
-   /**
-    * ³õÊ¼»¯Ò»¸öÀàÃûµÄ·ÃÎÊÕß.
-    */
-   private static NameAccessor nameAccessor;
+	static int COMPILE_LOG_TYPE = 1;
 
-   static
-   {
-      try
-      {
-         Class c = Class.forName("self.micromagic.cg.ClassGenerator$ClassCanonicalNameAccessor");
-         nameAccessor = (NameAccessor) c.newInstance();
-      }
-      catch (Throwable ex)
-      {
-         // Èç¹û³öÏÖÒì³£, Õâ¿ÉÄÜÊÇjdk°æ±¾Ğ¡ÓÚ1.5, Ê¹ÓÃgetName·½·¨À´»ñÈ¡ÀàÃû
-         nameAccessor = new ClassNameAccessor();
-         if (!(ex instanceof UnsupportedClassVersionError || ex instanceof LinkageError
+	/**
+	 * åˆå§‹åŒ–ä¸€ä¸ªç±»åçš„è®¿é—®è€….
+	 */
+	private static NameAccessor nameAccessor;
+
+	static
+	{
+		try
+		{
+			Class c = Class.forName("self.micromagic.cg.ClassGenerator$ClassCanonicalNameAccessor");
+			nameAccessor = (NameAccessor) c.newInstance();
+		}
+		catch (Throwable ex)
+		{
+			// å¦‚æœå‡ºç°å¼‚å¸¸, è¿™å¯èƒ½æ˜¯jdkç‰ˆæœ¬å°äº1.5, ä½¿ç”¨getNameæ–¹æ³•æ¥è·å–ç±»å
+			nameAccessor = new ClassNameAccessor();
+			if (!(ex instanceof UnsupportedClassVersionError || ex instanceof LinkageError
 					|| ex.getCause() instanceof UnsupportedClassVersionError))
-         {
-				// µ±²»ÊÇ°æ±¾Ïà¹ØµÄÒì³£Ê±, ²Å¼ÇÂ¼ÈÕÖ¾
-            if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-            {
-               CG.log.error("init name accessor error.", ex);
-            }
-         }
-      }
-      try
-      {
-         Utility.addFieldPropertyManager(CG.COMPILE_LOG_PROPERTY, ClassGenerator.class, "COMPILE_LOG_TYPE");
-         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
-         {
-            CG.log.info("map entry name:" + nameAccessor.getName(Map.Entry.class)
-                  + ", accessor class:" + nameAccessor.getClass());
-         }
-      }
-      catch (Throwable ex) {}
-      try
-      {
-         registerCG("ant", new AntCG());
-      }
-      catch (Throwable ex)
-      {
-         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
-         {
-            CG.log.error("AntCG init error.", ex);
-         }
+			{
+				// å½“ä¸æ˜¯ç‰ˆæœ¬ç›¸å…³çš„å¼‚å¸¸æ—¶, æ‰è®°å½•æ—¥å¿—
+				if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+				{
+					CG.log.error("init name accessor error.", ex);
+				}
+			}
+		}
+		try
+		{
+			Utility.addFieldPropertyManager(CG.COMPILE_LOG_PROPERTY, ClassGenerator.class, "COMPILE_LOG_TYPE");
+			if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
+			{
+				CG.log.info("map entry name:" + nameAccessor.getName(Map.Entry.class)
+						+ ", accessor class:" + nameAccessor.getClass());
+			}
+		}
+		catch (Throwable ex) {}
+		try
+		{
+			registerCG("ant", new AntCG());
+		}
+		catch (Throwable ex)
+		{
+			if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_INFO)
+			{
+				CG.log.error("AntCG init error.", ex);
+			}
 			else if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-         {
-            CG.log.warn("AntCG init error, message is [" + ex + "].");
-         }
-      }
-      try
-      {
-         registerCG("javassist", new JavassistCG());
-      }
-      catch (Throwable ex)
-      {
-         if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-         {
-            CG.log.error("JavassistCG init error.", ex);
-         }
-      }
-   }
+			{
+				CG.log.warn("AntCG init error, message is [" + ex + "].");
+			}
+		}
+		try
+		{
+			registerCG("javassist", new JavassistCG());
+		}
+		catch (Throwable ex)
+		{
+			if (COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+			{
+				CG.log.error("JavassistCG init error.", ex);
+			}
+		}
+	}
 
-   interface NameAccessor
-   {
-      String getName(Class c);
+	interface NameAccessor
+	{
+		String getName(Class c);
 
-   }
+	}
 
-   static class ClassNameAccessor
-         implements NameAccessor
-   {
-      public String getName(Class c)
-      {
-         return c.getName();
-      }
+	static class ClassNameAccessor
+			implements NameAccessor
+	{
+		public String getName(Class c)
+		{
+			return c.getName();
+		}
 
-   }
+	}
 
 }

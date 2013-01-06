@@ -4,21 +4,23 @@ package self.micromagic.cg;
 import java.util.Map;
 
 /**
- * ½«mapÖĞµÄÊôĞÔÉèÖÃµ½beanÖĞµÄ¹¤¾ß.
+ * å°†mapä¸­çš„å±æ€§è®¾ç½®åˆ°beanä¸­çš„å·¥å…·.
+ *
+ * @author micromagic@sina.com
  */
 public interface MapToBean
 {
-   /**
-    * ½«mapÖĞµÄÊı¾İÉèÖÃµ½beanµÄÊôĞÔÖĞ.
-    *
-    * @param bean     ±»ÉèÖÃÊôĞÔµÄbeean
-    * @param values   ÖµËùÔÚµÄmap
-    * @param prefix   »ñÈ¡ÖµËùÓÃµÄÃû³ÆµÄÇ°×º
-    *                 Èç£º
-    *                 prefix = "" Ê±Ê¹ÓÃvalues.get("name")
-    *                 prefix = "sub." Ê±Ê¹ÓÃvalues.get("sub.name")
-    * @return     ³É¹¦ÉèÖÃÁËµÄÊôĞÔ¸öÊı
-    */
-   public int setBeanValues(Object bean, Map values, String prefix) throws Exception;
+	/**
+	 * å°†mapä¸­çš„æ•°æ®è®¾ç½®åˆ°beançš„å±æ€§ä¸­.
+	 *
+	 * @param bean     è¢«è®¾ç½®å±æ€§çš„beean
+	 * @param values   å€¼æ‰€åœ¨çš„map
+	 * @param prefix   è·å–å€¼æ‰€ç”¨çš„åç§°çš„å‰ç¼€
+	 *                 å¦‚ï¼š
+	 *                 prefix = "" æ—¶ä½¿ç”¨values.get("name")
+	 *                 prefix = "sub." æ—¶ä½¿ç”¨values.get("sub.name")
+	 * @return     æˆåŠŸè®¾ç½®äº†çš„å±æ€§ä¸ªæ•°
+	 */
+	public int setBeanValues(Object bean, Map values, String prefix) throws Exception;
 
 }

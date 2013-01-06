@@ -5,47 +5,49 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * ¶¯Ì¬Éú³ÉÀàÊ±µÄ³ö´íĞÅÏ¢.
+ * åŠ¨æ€ç”Ÿæˆç±»æ—¶çš„å‡ºé”™ä¿¡æ¯.
+ *
+ * @author micromagic@sina.com
  */
 public class CodeErrorInfo
 {
-   /**
-    * ĞèÒª¶¯Ì¬±àÒëµÄ´úÂë.
-    */
-   public final String code;
+	/**
+	 * éœ€è¦åŠ¨æ€ç¼–è¯‘çš„ä»£ç .
+	 */
+	public final String code;
 
-   /**
-    * ´úÂëËùÔÚµÄÎ»ÖÃĞÅÏ¢.
-    */
-   public final String position;
+	/**
+	 * ä»£ç æ‰€åœ¨çš„ä½ç½®ä¿¡æ¯.
+	 */
+	public final String position;
 
-   /**
-    * ³ö´íµÄÒì³£ĞÅÏ¢.
-    */
-   public final Exception error;
+	/**
+	 * å‡ºé”™çš„å¼‚å¸¸ä¿¡æ¯.
+	 */
+	public final Exception error;
 
-   public CodeErrorInfo(String code, String position, Exception error)
-   {
-      this.code = code;
-      this.position = position;
-      this.error = error;
-   }
+	public CodeErrorInfo(String code, String position, Exception error)
+	{
+		this.code = code;
+		this.position = position;
+		this.error = error;
+	}
 
-   private String message;
+	private String message;
 
-   public String toString()
-   {
-      if (this.message == null)
-      {
-         StringAppender buf = StringTool.createStringAppender(256);
-         buf.append("CodeErrorInfo:[").appendln()
+	public String toString()
+	{
+		if (this.message == null)
+		{
+			StringAppender buf = StringTool.createStringAppender(256);
+			buf.append("CodeErrorInfo:[").appendln()
 					.append("   position:").append(this.position).appendln()
-               .append("   error:").append(this.error.getMessage()).appendln()
-               .append("   code:").appendln().append(this.code).appendln()
-               .append(" ]");
-         this.message = buf.toString();
-      }
-      return this.message;
-   }
+					.append("   error:").append(this.error.getMessage()).appendln()
+					.append("   code:").appendln().append(this.code).appendln()
+					.append(" ]");
+			this.message = buf.toString();
+		}
+		return this.message;
+	}
 
 }

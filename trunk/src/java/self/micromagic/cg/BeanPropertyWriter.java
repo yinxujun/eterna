@@ -2,26 +2,28 @@
 package self.micromagic.cg;
 
 /**
- * ÉèÖÃÒ»¸öbeanÊôĞÔµÄ¹¤¾ß.
+ * è®¾ç½®ä¸€ä¸ªbeanå±æ€§çš„å·¥å…·.
+ *
+ * @author micromagic@sina.com
  */
 public interface BeanPropertyWriter
 {
-   /**
-    * ÉèÖÃÒ»¸öÊôĞÔµÄÖµ.
-    *
-    * @param cd            ÊôĞÔÃèÊöÀà
-    * @param indexs        Èç¹ûÊôĞÔÊÇ¸öÊı×é»òCollection, ¿ÉÍ¨¹ı´ËË÷ÒıÖµÀ´¿ØÖÆÉèÖÃÄÄ¸öÖµ
-    * @param bean          ÊôĞÔËùÔÚµÄbean¶ÔÏó
-    * @param value         ÒªÉèÖÃµÄÖµ
-    * @param prefix        µ±Ç°µÄÃû³ÆÇ°×º
-    * @param beanMap       µ±Ç°µÄBeanMap¶ÔÏó
-    * @param originObj     ÉèÖÃµÄÖµËùÔÚµÄÔ­Ê¼¶ÔÏó, ¿ÉÄÜÊÇÒ»¸öMap, Ò²¿ÉÄÜÊÇÒ»¸öResultRow,
-    *                      Ò²¿ÉÄÜÊÇnull(µ±Ô­Ê¼¶ÔÏó²»´æÔÚÊ±)
-    * @param oldValue      ¸ÃÊôĞÔµÄÔ­Ê¼Öµ
-    * @return              ³É¹¦ÉèÖÃÁËÖµµÄÊôĞÔµÄ¸öÊı
-    */
-   public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, Object value,
-         String prefix, BeanMap beanMap, Object originObj, Object oldValue)
-         throws Exception;
+	/**
+	 * è®¾ç½®ä¸€ä¸ªå±æ€§çš„å€¼.
+	 *
+	 * @param cd            å±æ€§æè¿°ç±»
+	 * @param indexs        å¦‚æœå±æ€§æ˜¯ä¸ªæ•°ç»„æˆ–Collection, å¯é€šè¿‡æ­¤ç´¢å¼•å€¼æ¥æ§åˆ¶è®¾ç½®å“ªä¸ªå€¼
+	 * @param bean          å±æ€§æ‰€åœ¨çš„beanå¯¹è±¡
+	 * @param value         è¦è®¾ç½®çš„å€¼
+	 * @param prefix        å½“å‰çš„åç§°å‰ç¼€
+	 * @param beanMap       å½“å‰çš„BeanMapå¯¹è±¡
+	 * @param originObj     è®¾ç½®çš„å€¼æ‰€åœ¨çš„åŸå§‹å¯¹è±¡, å¯èƒ½æ˜¯ä¸€ä¸ªMap, ä¹Ÿå¯èƒ½æ˜¯ä¸€ä¸ªResultRow,
+	 *                      ä¹Ÿå¯èƒ½æ˜¯null(å½“åŸå§‹å¯¹è±¡ä¸å­˜åœ¨æ—¶)
+	 * @param oldValue      è¯¥å±æ€§çš„åŸå§‹å€¼
+	 * @return              æˆåŠŸè®¾ç½®äº†å€¼çš„å±æ€§çš„ä¸ªæ•°
+	 */
+	public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, Object value,
+			String prefix, BeanMap beanMap, Object originObj, Object oldValue)
+			throws Exception;
 
 }

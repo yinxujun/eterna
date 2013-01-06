@@ -10,31 +10,31 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface DataSourceManager
 {
-   /**
-    * ÔÚ³õÊ¼»¯»º´æ(¼´¹¤³§¹ÜÀíÆ÷µÄÊµÀı)ÖĞ·ÅÖÃÊı¾İÔ´Ó³Éä±íµÄÃû³Æ.
-    */
-   public static final String DATA_SOURCE_MAP = "dataSourceMap";
-   /**
-    * ÔÚ³õÊ¼»¯»º´æ(¼´¹¤³§¹ÜÀíÆ÷µÄÊµÀı)ÖĞ·ÅÖÃÄ¬ÈÏÊ¹ÓÃµÄÊı¾İÔ´µÄÃû³Æ.
-    */
-   public static final String DEFAULT_DATA_SOURCE_NAME = "defaultDataSourceName";
+	/**
+	 * åœ¨åˆå§‹åŒ–ç¼“å­˜(å³å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹)ä¸­æ”¾ç½®æ•°æ®æºæ˜ å°„è¡¨çš„åç§°.
+	 */
+	public static final String DATA_SOURCE_MAP = "dataSourceMap";
+	/**
+	 * åœ¨åˆå§‹åŒ–ç¼“å­˜(å³å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹)ä¸­æ”¾ç½®é»˜è®¤ä½¿ç”¨çš„æ•°æ®æºçš„åç§°.
+	 */
+	public static final String DEFAULT_DATA_SOURCE_NAME = "defaultDataSourceName";
 
-   /**
-    * ³õÊ¼»¯Õâ¸öDataSourceManager.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–è¿™ä¸ªDataSourceManager.
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   DataSource getDefaultDataSource() throws ConfigurationException;
+	DataSource getDefaultDataSource() throws ConfigurationException;
 
-   DataSource getDataSource(String name) throws ConfigurationException;
+	DataSource getDataSource(String name) throws ConfigurationException;
 
-   Map getDataSourceMap() throws ConfigurationException;
+	Map getDataSourceMap() throws ConfigurationException;
 
-   String getDefaultDataSourceName() throws ConfigurationException;
+	String getDefaultDataSourceName() throws ConfigurationException;
 
-   void setDefaultDataSourceName(String name) throws ConfigurationException;
+	void setDefaultDataSourceName(String name) throws ConfigurationException;
 
-   void addDataSource(Context context, String dataSourceConfig)
-         throws ConfigurationException;
+	void addDataSource(Context context, String dataSourceConfig)
+			throws ConfigurationException;
 
 }

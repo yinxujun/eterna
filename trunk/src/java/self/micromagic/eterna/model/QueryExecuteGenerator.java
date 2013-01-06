@@ -6,23 +6,23 @@ import self.micromagic.eterna.share.Generator;
 
 public interface QueryExecuteGenerator extends Generator
 {
-   void setCache(int cacheIndex) throws ConfigurationException;
+	void setCache(int cacheIndex) throws ConfigurationException;
 
-   void setDoExecute(boolean execute) throws ConfigurationException;
+	void setDoExecute(boolean execute) throws ConfigurationException;
 
-   void setPushResult(boolean push) throws ConfigurationException;
+	void setPushResult(boolean push) throws ConfigurationException;
 
-   void setStart(int start) throws ConfigurationException;
+	void setStart(int start) throws ConfigurationException;
 
-   void setCount(int count) throws ConfigurationException;
+	void setCount(int count) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¼ÆËã×Ü¼ÇÂ¼ÊıµÄ·½Ê½. <p>
-    * ·Ö±ğÎªauto, count, none. Ä¬ÈÏÖµÎª: none.
-    */
-   void setCountType(String countType) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è®¡ç®—æ€»è®°å½•æ•°çš„æ–¹å¼. <p>
+	 * åˆ†åˆ«ä¸ºauto, count, none. é»˜è®¤å€¼ä¸º: none.
+	 */
+	void setCountType(String countType) throws ConfigurationException;
 
-   void addParamBind(ParamBind bind) throws ConfigurationException;
+	void addParamBind(ParamBind bind) throws ConfigurationException;
 
-   Execute createExecute() throws ConfigurationException;
+	Execute createExecute() throws ConfigurationException;
 }

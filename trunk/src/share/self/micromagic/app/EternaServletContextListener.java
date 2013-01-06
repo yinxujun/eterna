@@ -7,22 +7,22 @@ import javax.servlet.ServletContextListener;
 import self.micromagic.eterna.digester.FactoryManager;
 
 /**
- * ÔÚservlet³õÊ¼»¯Íê³Éºó, ÏòÈ«¾ÖµÄ¹¤³Ì¹ÜÀíÆ÷ÊµÀıÖĞÌí¼Ó
- * <code>SERVLET_CONTEXT</code>ÊôĞÔ.
+ * åœ¨servletåˆå§‹åŒ–å®Œæˆå, å‘å…¨å±€çš„å·¥ç¨‹ç®¡ç†å™¨å®ä¾‹ä¸­æ·»åŠ 
+ * <code>SERVLET_CONTEXT</code>å±æ€§.
  *
  * @see FactoryManager#SERVLET_CONTEXT
  */
 public class EternaServletContextListener
-      implements ServletContextListener
+		implements ServletContextListener
 {
-   public void contextInitialized(ServletContextEvent sce)
-   {
-      FactoryManager.getGlobalFactoryManager().setAttribute(
-            FactoryManager.SERVLET_CONTEXT, sce.getServletContext());
-   }
+	public void contextInitialized(ServletContextEvent sce)
+	{
+		FactoryManager.getGlobalFactoryManager().setAttribute(
+				FactoryManager.SERVLET_CONTEXT, sce.getServletContext());
+	}
 
-   public void contextDestroyed(ServletContextEvent sce)
-   {
-   }
+	public void contextDestroyed(ServletContextEvent sce)
+	{
+	}
 
 }

@@ -17,79 +17,79 @@ import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.share.Generator;
 
 public class RenderExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   protected ModelExport view = null;
-   protected ModelExport edit = null;
-   protected ModelExport help = null;
+	protected ModelExport view = null;
+	protected ModelExport edit = null;
+	protected ModelExport help = null;
 
-   public void initialize(ModelAdapter model)
-            throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      String tmp = (String) this.getAttribute("view");
-      if (tmp != null)
-      {
-         this.view = model.getFactory().getModelExport(tmp);
-         if (this.view == null)
-         {
-            log.warn("The Model Export [" + tmp + "] not found.");
-         }
-      }
-      tmp = (String) this.getAttribute("edit");
-      if (tmp != null)
-      {
-         this.edit = model.getFactory().getModelExport(tmp);
-         if (this.edit == null)
-         {
-            log.warn("The Model Export [" + tmp + "] not found.");
-         }
-      }
-      tmp = (String) this.getAttribute("help");
-      if (tmp != null)
-      {
-         this.help = model.getFactory().getModelExport(tmp);
-         if (this.help == null)
-         {
-            log.warn("The Model Export [" + tmp + "] not found.");
-         }
-      }
-   }
+	public void initialize(ModelAdapter model)
+				throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		String tmp = (String) this.getAttribute("view");
+		if (tmp != null)
+		{
+			this.view = model.getFactory().getModelExport(tmp);
+			if (this.view == null)
+			{
+				log.warn("The Model Export [" + tmp + "] not found.");
+			}
+		}
+		tmp = (String) this.getAttribute("edit");
+		if (tmp != null)
+		{
+			this.edit = model.getFactory().getModelExport(tmp);
+			if (this.edit == null)
+			{
+				log.warn("The Model Export [" + tmp + "] not found.");
+			}
+		}
+		tmp = (String) this.getAttribute("help");
+		if (tmp != null)
+		{
+			this.help = model.getFactory().getModelExport(tmp);
+			if (this.help == null)
+			{
+				log.warn("The Model Export [" + tmp + "] not found.");
+			}
+		}
+	}
 
-   public String getExecuteType() throws ConfigurationException
-   {
-      return "doRender";
-   }
+	public String getExecuteType() throws ConfigurationException
+	{
+		return "doRender";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      WindowState state = data.renderRequest.getWindowState();
-      if (!state.equals(WindowState.MINIMIZED))
-      {
-         PortletMode mode = data.renderRequest.getPortletMode();
-         if (PortletMode.VIEW.equals(mode))
-         {
-	         return this.view;
-         }
-         else if (PortletMode.EDIT.equals(mode))
-         {
-            return this.edit;
-         }
-         else if (PortletMode.HELP.equals(mode))
-         {
-	         return this.help;
-         }
-         else
-         {
-            log.error("Unknown portlet mode: " + mode + ".");
-         }
-      }
-      return null;
-   }
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		WindowState state = data.renderRequest.getWindowState();
+		if (!state.equals(WindowState.MINIMIZED))
+		{
+			PortletMode mode = data.renderRequest.getPortletMode();
+			if (PortletMode.VIEW.equals(mode))
+			{
+				return this.view;
+			}
+			else if (PortletMode.EDIT.equals(mode))
+			{
+				return this.edit;
+			}
+			else if (PortletMode.HELP.equals(mode))
+			{
+				return this.help;
+			}
+			else
+			{
+				log.error("Unknown portlet mode: " + mode + ".");
+			}
+		}
+		return null;
+	}
 
 }

@@ -301,7 +301,7 @@
 				{
 					<!--
 					如果是string类型, 则
-					param1 为分隔符	  默认为","
+					param1 为分隔符     默认为","
 					param2 为是否需trim 默认为false
 					-->
 					if (param1 != null)
@@ -329,8 +329,8 @@
 							{
 								<!--
 								如果是二维数组类型, 则
-								param1 为id列的索引值		默认为 0
-								param2 为value列的索引值	默认为 1
+								param1 为id列的索引值     默认为 0
+								param2 为value列的索引值  默认为 1
 								-->
 								if (param1 != null)
 								{
@@ -1691,7 +1691,7 @@
 			<!--
 				在具体的替换节点中, 需要在before-init里
 				先设置 {$parentScript} 引用before-init中的代码
-				在 eg_temp.dataName  中指定使用的数据集名称
+				在 eg_temp.dataName 中指定使用的数据集名称
 			-->
 			<typical-component name="form_template" type="form">
 				<before-init>

@@ -7,78 +7,78 @@ import java.util.HashMap;
 import org.xml.sax.Attributes;
 
 /**
- * ¼ì²é¸¸ÅäÖÃÖĞµÄ¶ÔÏóÊÇ·ñÓë×ÓÅäÖÃÖĞÏàÍ¬µÄ³õÊ¼»¯¹æÔò.
- * Èç¹ûÏàÍ¬, Ôò²»´¦Àí´Ë¶ÔÏó, Í¨¹ıÉèÖÃMyRule.dealRuleÀ´¿ØÖÆ.
+ * æ£€æŸ¥çˆ¶é…ç½®ä¸­çš„å¯¹è±¡æ˜¯å¦ä¸å­é…ç½®ä¸­ç›¸åŒçš„åˆå§‹åŒ–è§„åˆ™.
+ * å¦‚æœç›¸åŒ, åˆ™ä¸å¤„ç†æ­¤å¯¹è±¡, é€šè¿‡è®¾ç½®MyRule.dealRuleæ¥æ§åˆ¶.
  *
  * @author micromagic@sina.com
  */
 public class SameCheckRule extends MyRule
 {
-   private static final Object FILL_OBJ = new Object();
-   private static Map dealedObjMap;
+	private static final Object FILL_OBJ = new Object();
+	private static Map dealedObjMap;
 
-   private String objName;
-   private String attrName;
-   private boolean ignoreObj = false;
+	private String objName;
+	private String attrName;
+	private boolean ignoreObj = false;
 
-   /**
-    * @param objName      ¶ÔÏóµÄÀàĞÍÃû³Æ
-    * @param attrName     ÅäÖÃÖĞÖ¸¶¨¶ÔÏóÃû³ÆµÄÊôĞÔ
-    */
-   public SameCheckRule(String objName, String attrName)
-   {
-      this.objName = objName;
-      this.attrName = attrName;
-   }
+	/**
+	 * @param objName      å¯¹è±¡çš„ç±»å‹åç§°
+	 * @param attrName     é…ç½®ä¸­æŒ‡å®šå¯¹è±¡åç§°çš„å±æ€§
+	 */
+	public SameCheckRule(String objName, String attrName)
+	{
+		this.objName = objName;
+		this.attrName = attrName;
+	}
 
-   public void begin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      if (!dealRule)
-      {
-         return;
-      }
-      String objFlag = this.objName;
-      if (this.attrName != null)
-      {
-         objFlag = this.objName + ":" + attributes.getValue(this.attrName);
-      }
-      boolean hasObj = dealedObjMap.put(objFlag, FILL_OBJ) != null;
-      if (hasObj && FactoryManager.getSuperInitLevel() > 0)
-      {
-         dealRule = false;
-         this.ignoreObj = true;
-         if (FactoryManager.log.isDebugEnabled())
-         {
-            FactoryManager.log.debug(objFlag + " has bean overwrited.");
-         }
-      }
-   }
+	public void begin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		if (!dealRule)
+		{
+			return;
+		}
+		String objFlag = this.objName;
+		if (this.attrName != null)
+		{
+			objFlag = this.objName + ":" + attributes.getValue(this.attrName);
+		}
+		boolean hasObj = dealedObjMap.put(objFlag, FILL_OBJ) != null;
+		if (hasObj && FactoryManager.getSuperInitLevel() > 0)
+		{
+			dealRule = false;
+			this.ignoreObj = true;
+			if (FactoryManager.log.isDebugEnabled())
+			{
+				FactoryManager.log.debug(objFlag + " has bean overwrited.");
+			}
+		}
+	}
 
-   public void end(String namespace, String name)
-         throws Exception
-   {
-      if (this.ignoreObj)
-      {
-         this.ignoreObj = false;
-         dealRule = true;
-      }
-   }
+	public void end(String namespace, String name)
+			throws Exception
+	{
+		if (this.ignoreObj)
+		{
+			this.ignoreObj = false;
+			dealRule = true;
+		}
+	}
 
-   /**
-    * ³õÊ¼»¯ÒÑ´¦Àí¶ÔÏóµÄ»º´æ.
-    */
-   static void initDealedObjMap()
-   {
-      dealedObjMap = new HashMap(512);
-   }
+	/**
+	 * åˆå§‹åŒ–å·²å¤„ç†å¯¹è±¡çš„ç¼“å­˜.
+	 */
+	static void initDealedObjMap()
+	{
+		dealedObjMap = new HashMap(512);
+	}
 
-   /**
-    * Çå¿ÕÒÑ´¦Àí¶ÔÏóµÄ»º´æ.
-    */
-   static void clearDealedObjMap()
-   {
-      dealedObjMap = null;
-   }
+	/**
+	 * æ¸…ç©ºå·²å¤„ç†å¯¹è±¡çš„ç¼“å­˜.
+	 */
+	static void clearDealedObjMap()
+	{
+		dealedObjMap = null;
+	}
 
 }

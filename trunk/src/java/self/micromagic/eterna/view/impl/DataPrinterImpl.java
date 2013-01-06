@@ -33,59 +33,59 @@ import self.micromagic.util.FormatTool;
  * @author micromagic@sina.com
  */
 public class DataPrinterImpl extends AbstractGenerator
-      implements DataPrinter, DataPrinterGenerator
+		implements DataPrinter, DataPrinterGenerator
 {
-   protected StringCoder stringCoder;
+	protected StringCoder stringCoder;
 	protected DateFormat dateFormat = FormatTool.dateFullFormat;
 
-   public DataPrinterImpl()
-   {
-   }
+	public DataPrinterImpl()
+	{
+	}
 
-   public DataPrinterImpl(StringCoder stringCoder)
-   {
-      this.stringCoder = stringCoder;
-   }
+	public DataPrinterImpl(StringCoder stringCoder)
+	{
+		this.stringCoder = stringCoder;
+	}
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      this.stringCoder = factory.getStringCoder();
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		this.stringCoder = factory.getStringCoder();
+	}
 
-   public void printData(Writer out, Map data, boolean hasPreData)
-         throws IOException, ConfigurationException
-   {
-      boolean first = true;
-      Iterator entrys = data.entrySet().iterator();
-      while (entrys.hasNext())
-      {
-         Map.Entry entry = (Map.Entry) entrys.next();
-         Object value = entry.getValue();
-         if (value != null)
-         {
+	public void printData(Writer out, Map data, boolean hasPreData)
+			throws IOException, ConfigurationException
+	{
+		boolean first = true;
+		Iterator entrys = data.entrySet().iterator();
+		while (entrys.hasNext())
+		{
+			Map.Entry entry = (Map.Entry) entrys.next();
+			Object value = entry.getValue();
+			if (value != null)
+			{
 				Object key = entry.getKey();
-         	String keyStr = key == null ? null : key.toString();
-            if (hasPreData || !first)
-            {
-               //  ‰≥ˆdata ˝æ›ºØ«∞√Êª·”–∆‰À¸ ˝æ›ªÚ≤ª «µ⁄“ª∏ˆ ˝æ› ±£¨–Ë“™œ» ‰≥ˆ","
-               out.write(",\"");
-            }
+				String keyStr = key == null ? null : key.toString();
+				if (hasPreData || !first)
+				{
+					// ËæìÂá∫dataÊï∞ÊçÆÈõÜÂâçÈù¢‰ºöÊúâÂÖ∂ÂÆÉÊï∞ÊçÆÊàñ‰∏çÊòØÁ¨¨‰∏Ä‰∏™Êï∞ÊçÆÊó∂ÔºåÈúÄË¶ÅÂÖàËæìÂá∫","
+					out.write(",\"");
+				}
 				else
 				{
-            	first = false;
-            	out.write('"');
+					first = false;
+					out.write('"');
 				}
-            this.stringCoder.toJsonString(out, keyStr);
-            out.write("\":");
-            this.print(out, value);
-         }
-      }
-   }
+				this.stringCoder.toJsonString(out, keyStr);
+				out.write("\":");
+				this.print(out, value);
+			}
+		}
+	}
 
-   public void print(Writer out, Object value)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, Object value)
+			throws IOException, ConfigurationException
+	{
 		if (value == null)
 		{
 			out.write("null");
@@ -152,6 +152,10 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			this.print(out, (int[]) value);
 		}
+		else if (value instanceof byte[])
+		{
+			this.print(out, (byte[]) value);
+		}
 		else if (value instanceof double[])
 		{
 			this.print(out, (double[]) value);
@@ -179,10 +183,6 @@ public class DataPrinterImpl extends AbstractGenerator
 		else if (value instanceof long[])
 		{
 			this.print(out, (long[]) value);
-		}
-		else if (value instanceof byte[])
-		{
-			this.print(out, (byte[]) value);
 		}
 		else if (value instanceof Map.Entry)
 		{
@@ -213,11 +213,11 @@ public class DataPrinterImpl extends AbstractGenerator
 			this.stringCoder.toJsonStringWithoutCheck(out, String.valueOf(value));
 			out.write('"');
 		}
-   }
+	}
 
-   public void print(Writer out, Object[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, Object[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
@@ -229,181 +229,181 @@ public class DataPrinterImpl extends AbstractGenerator
 			this.print(out, values[i]);
 		}
 		out.write(']');
-   }
+	}
 
-   public void printMap(Writer out, Map map)
-         throws IOException, ConfigurationException
-   {
-      out.write('{');
-      this.printData(out, map, false);
-      out.write('}');
-   }
+	public void printMap(Writer out, Map map)
+			throws IOException, ConfigurationException
+	{
+		out.write('{');
+		this.printData(out, map, false);
+		out.write('}');
+	}
 
-   protected void printCollection(Writer out, Collection collection)
-         throws IOException, ConfigurationException
-   {
-      if (collection.size() > 0)
-      {
-         this.printIterator(out, collection.iterator());
-      }
-      else
-      {
-         out.write("[]");
-      }
-   }
+	protected void printCollection(Writer out, Collection collection)
+			throws IOException, ConfigurationException
+	{
+		if (collection.size() > 0)
+		{
+			this.printIterator(out, collection.iterator());
+		}
+		else
+		{
+			out.write("[]");
+		}
+	}
 
-   public void printResultRow(Writer out, ResultRow row)
-         throws IOException, ConfigurationException, SQLException
-   {
-      out.write('{');
-      ResultMetaData rmd = row.getResultIterator().getMetaData();
-      int count = rmd.getColumnCount();
-      boolean firstSetted = false;
-      for (int i = 1; i <= count; i++)
-      {
-         if (rmd.getColumnReader(i).isValid())
-         {
-            if (firstSetted)
-            {
-               out.write(",\"");
-            }
-				else
+	public void printResultRow(Writer out, ResultRow row)
+			throws IOException, ConfigurationException, SQLException
+	{
+		out.write('{');
+		ResultMetaData rmd = row.getResultIterator().getMetaData();
+		int count = rmd.getColumnCount();
+		boolean firstSetted = false;
+		for (int i = 1; i <= count; i++)
+		{
+			if (rmd.getColumnReader(i).isValid())
+			{
+				if (firstSetted)
 				{
-            	firstSetted = true;
-            	out.write('"');
+					out.write(",\"");
 				}
-            this.stringCoder.toJsonString(out, rmd.getColumnName(i));
-            out.write("\":\"");
-            this.stringCoder.toJsonString(out, row.getFormated(i));
-            out.write('"');
-         }
-      }
-      out.write('}');
-   }
-
-   public void printResultIterator(Writer out, ResultIterator ritr)
-         throws IOException, ConfigurationException, SQLException
-   {
-      ResultMetaData rmd = ritr.getMetaData();
-      int count = rmd.getColumnCount();
-      out.write("names:{");
-      boolean firstSetted = false;
-      for (int i = 1; i <= count; i++)
-      {
-         if (rmd.getColumnReader(i).isValid())
-         {
-            if (firstSetted)
-            {
-               out.write(",\"");
-            }
 				else
 				{
-            	firstSetted = true;
+					firstSetted = true;
 					out.write('"');
 				}
-            this.stringCoder.toJsonString(out, rmd.getColumnName(i));
-            out.write("\":");
-            out.write(String.valueOf(i));
-         }
-      }
-      out.write("},rowCount:");
-      out.write(String.valueOf(ritr.getRecordCount()));
-      out.write(",rows:[");
+				this.stringCoder.toJsonString(out, rmd.getColumnName(i));
+				out.write("\":\"");
+				this.stringCoder.toJsonString(out, row.getFormated(i));
+				out.write('"');
+			}
+		}
+		out.write('}');
+	}
+
+	public void printResultIterator(Writer out, ResultIterator ritr)
+			throws IOException, ConfigurationException, SQLException
+	{
+		ResultMetaData rmd = ritr.getMetaData();
+		int count = rmd.getColumnCount();
+		out.write("names:{");
+		boolean firstSetted = false;
+		for (int i = 1; i <= count; i++)
+		{
+			if (rmd.getColumnReader(i).isValid())
+			{
+				if (firstSetted)
+				{
+					out.write(",\"");
+				}
+				else
+				{
+					firstSetted = true;
+					out.write('"');
+				}
+				this.stringCoder.toJsonString(out, rmd.getColumnName(i));
+				out.write("\":");
+				out.write(String.valueOf(i));
+			}
+		}
+		out.write("},rowCount:");
+		out.write(String.valueOf(ritr.getRecordCount()));
+		out.write(",rows:[");
 		boolean nextRow = false;
-      while (ritr.hasNext())
-      {
+		while (ritr.hasNext())
+		{
 			if (nextRow)
 			{
-            out.write(",[");
+				out.write(",[");
 			}
 			else
 			{
 				nextRow = true;
-         	out.write('[');
+				out.write('[');
 			}
-         ResultRow row = (ResultRow) ritr.next();
-         for (int i = 1; i <= count; i++)
-         {
-            if (i > 1)
-            {
-               out.write(",\"");
-            }
+			ResultRow row = (ResultRow) ritr.next();
+			for (int i = 1; i <= count; i++)
+			{
+				if (i > 1)
+				{
+					out.write(",\"");
+				}
 				else
 				{
-            	out.write('"');
+					out.write('"');
 				}
-            this.stringCoder.toJsonString(out, row.getFormated(i));
-            out.write('"');
-         }
-         out.write(']');
-      }
-      out.write(']');
-   }
+				this.stringCoder.toJsonString(out, row.getFormated(i));
+				out.write('"');
+			}
+			out.write(']');
+		}
+		out.write(']');
+	}
 
 	public void printEnumeration(Writer out, Enumeration e)
-         throws IOException, ConfigurationException
+			throws IOException, ConfigurationException
 	{
-      out.write('[');
+		out.write('[');
 		if (e.hasMoreElements())
 		{
 			this.print(out, e.nextElement());
 		}
-      while (e.hasMoreElements())
-      {
+		while (e.hasMoreElements())
+		{
 			out.write(',');
 			this.print(out, e.nextElement());
-      }
-      out.write(']');
+		}
+		out.write(']');
 	}
 
-   public void printIterator(Writer out, Iterator itr)
-         throws IOException, ConfigurationException
-   {
-      out.write('[');
+	public void printIterator(Writer out, Iterator itr)
+			throws IOException, ConfigurationException
+	{
+		out.write('[');
 		if (itr.hasNext())
 		{
 			this.print(out, itr.next());
 		}
-      while (itr.hasNext())
-      {
+		while (itr.hasNext())
+		{
 			out.write(',');
 			this.print(out, itr.next());
-      }
-      out.write(']');
-   }
+		}
+		out.write(']');
+	}
 
-   public void print(Writer out, boolean b)
-         throws IOException, ConfigurationException
-   {
-      out.write(b ? "true" : "false");
-   }
+	public void print(Writer out, boolean b)
+			throws IOException, ConfigurationException
+	{
+		out.write(b ? "true" : "false");
+	}
 
-   public void print(Writer out, boolean[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, boolean[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
-      	out.write(values[0] ? "true" : "false");
+			out.write(values[0] ? "true" : "false");
 		}
 		for (int i = 1; i < values.length; i++)
 		{
-      	out.write(values[i] ? ",true" : ",false");
+			out.write(values[i] ? ",true" : ",false");
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, char c)
-         throws IOException, ConfigurationException
-   {
-      out.write('"');
+	public void print(Writer out, char c)
+			throws IOException, ConfigurationException
+	{
+		out.write('"');
 		this.stringCoder.toJsonString(out, c);
-      out.write('"');
-   }
+		out.write('"');
+	}
 
-   public void print(Writer out, char[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, char[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
@@ -418,71 +418,71 @@ public class DataPrinterImpl extends AbstractGenerator
 			out.write('"');
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, int i)
-         throws IOException, ConfigurationException
-   {
-      out.write(Integer.toString(i, 10));
-   }
+	public void print(Writer out, int i)
+			throws IOException, ConfigurationException
+	{
+		out.write(Integer.toString(i, 10));
+	}
 
-   public void print(Writer out, int[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, int[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
-      	out.write(Integer.toString(values[0], 10));
+			out.write(Integer.toString(values[0], 10));
 		}
 		for (int i = 1; i < values.length; i++)
 		{
 			out.write(',');
-      	out.write(Integer.toString(values[i], 10));
+			out.write(Integer.toString(values[i], 10));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, byte[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, byte[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
-      	out.write(Integer.toString(values[0], 10));
+			out.write(Integer.toString(values[0], 10));
 		}
 		for (int i = 1; i < values.length; i++)
 		{
 			out.write(',');
-      	out.write(Integer.toString(values[i], 10));
+			out.write(Integer.toString(values[i], 10));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, short[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, short[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
-      	out.write(Integer.toString(values[0], 10));
+			out.write(Integer.toString(values[0], 10));
 		}
 		for (int i = 1; i < values.length; i++)
 		{
 			out.write(',');
-      	out.write(Integer.toString(values[i], 10));
+			out.write(Integer.toString(values[i], 10));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, long l)
-         throws IOException, ConfigurationException
-   {
-      out.write(Long.toString(l, 10));
-   }
+	public void print(Writer out, long l)
+			throws IOException, ConfigurationException
+	{
+		out.write(Long.toString(l, 10));
+	}
 
-   public void print(Writer out, long[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, long[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
@@ -494,17 +494,17 @@ public class DataPrinterImpl extends AbstractGenerator
 			out.write(Long.toString(values[i], 10));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, float f)
-         throws IOException, ConfigurationException
-   {
-      out.write(Float.toString(f));
-   }
+	public void print(Writer out, float f)
+			throws IOException, ConfigurationException
+	{
+		out.write(Float.toString(f));
+	}
 
-   public void print(Writer out, float[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, float[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
@@ -516,17 +516,17 @@ public class DataPrinterImpl extends AbstractGenerator
 			out.write(Float.toString(values[i]));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, double d)
-         throws IOException, ConfigurationException
-   {
-      out.write(Double.toString(d));
-   }
+	public void print(Writer out, double d)
+			throws IOException, ConfigurationException
+	{
+		out.write(Double.toString(d));
+	}
 
-   public void print(Writer out, double[] values)
-         throws IOException, ConfigurationException
-   {
+	public void print(Writer out, double[] values)
+			throws IOException, ConfigurationException
+	{
 		out.write('[');
 		if (values.length > 0)
 		{
@@ -538,22 +538,22 @@ public class DataPrinterImpl extends AbstractGenerator
 			out.write(Double.toString(values[i]));
 		}
 		out.write(']');
-   }
+	}
 
-   public void print(Writer out, String s)
-         throws IOException, ConfigurationException
-   {
-      if (s == null)
-      {
-         out.write("null");
-      }
-      else
-      {
-         out.write('"');
-         this.stringCoder.toJsonStringWithoutCheck(out, s);
-         out.write('"');
-      }
-   }
+	public void print(Writer out, String s)
+			throws IOException, ConfigurationException
+	{
+		if (s == null)
+		{
+			out.write("null");
+		}
+		else
+		{
+			out.write('"');
+			this.stringCoder.toJsonStringWithoutCheck(out, s);
+			out.write('"');
+		}
+	}
 
 	public void printObjectBegin(Writer out)
 			throws IOException
@@ -752,143 +752,143 @@ public class DataPrinterImpl extends AbstractGenerator
 		this.dateFormat = format;
 	}
 
-   public DataPrinter createDataPrinter()
-   {
-      return this;
-   }
+	public DataPrinter createDataPrinter()
+	{
+		return this;
+	}
 
-   public Object create()
-   {
-      return this.createDataPrinter();
-   }
+	public Object create()
+	{
+		return this.createDataPrinter();
+	}
 
-   /**
-    * ¥Ê∑≈BeanPrinterµƒª∫¥Ê
-    */
-   private static ClassKeyCache beanPrinterCache = ClassKeyCache.getInstance();
+	/**
+	 * Â≠òÊîæBeanPrinterÁöÑÁºìÂ≠ò
+	 */
+	private static ClassKeyCache beanPrinterCache = ClassKeyCache.getInstance();
 
-   public BeanPrinter getBeanPrinter(Class beanClass)
-   {
-      BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
-      if (bp == null)
-      {
-         bp = getBeanPrinter0(beanClass);
-      }
-      return bp;
-   }
+	public BeanPrinter getBeanPrinter(Class beanClass)
+	{
+		BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
+		if (bp == null)
+		{
+			bp = getBeanPrinter0(beanClass);
+		}
+		return bp;
+	}
 
-   private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
-   {
-      BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
-      if (bp == null)
-      {
-         try
-         {
+	private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
+	{
+		BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
+		if (bp == null)
+		{
+			try
+			{
 				/*
-            String mh = "public void print(DataPrinter p, Writer out, Object bean)"
-                  + " throws IOException, ConfigurationException";
-            String ut = "p.printPair(out, \"${name}\", ${value}, ${first});";
-            String pt = "p.printPair(out, \"${name}\", ${o_value}, ${first});";
-            String lt = "";
-				 π”√…œ√Ê’‚∂Œ¥˙¬Î£¨∂‘beanµƒ¥¶¿Ì–ß¬ √˜œ‘œ¬Ωµ
+				String mh = "public void print(DataPrinter p, Writer out, Object bean)"
+						+ " throws IOException, ConfigurationException";
+				String ut = "p.printPair(out, \"${name}\", ${value}, ${first});";
+				String pt = "p.printPair(out, \"${name}\", ${o_value}, ${first});";
+				String lt = "";
+				‰ΩøÁî®‰∏äÈù¢ËøôÊÆµ‰ª£Á†ÅÔºåÂØπbeanÁöÑÂ§ÑÁêÜÊïàÁéáÊòéÊòæ‰∏ãÈôç
 				*/
-            String mh = "public void print(DataPrinter p, Writer out, Object bean)"
-                  + " throws IOException, ConfigurationException";
-            String ut = "out.write(\"\\\"${name}\\\":\");"
-                  + "p.print(out, ${value});";
-            String pt = "out.write(\"\\\"${name}\\\":\");"
-                  + "p.print(out, ${o_value});";
-            String lt = "out.write(\",\");";
-            String[] imports = new String[]{
-               ClassGenerator.getPackageString(DataPrinter.class),
-               ClassGenerator.getPackageString(Writer.class),
-               ClassGenerator.getPackageString(ConfigurationException.class),
-               ClassGenerator.getPackageString(beanClass)
-            };
-            bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
-                  "bean", ut, pt, lt, imports);
-            if (bp == null)
-            {
-               bp = new BeanPrinterImpl(beanClass);
-            }
-         }
-         catch (Throwable ex)
-         {
-            bp = new BeanPrinterImpl(beanClass);
-         }
-         beanPrinterCache.setProperty(beanClass, bp);
-      }
-      return bp;
-   }
+				String mh = "public void print(DataPrinter p, Writer out, Object bean)"
+						+ " throws IOException, ConfigurationException";
+				String ut = "out.write(\"\\\"${name}\\\":\");"
+						+ "p.print(out, ${value});";
+				String pt = "out.write(\"\\\"${name}\\\":\");"
+						+ "p.print(out, ${o_value});";
+				String lt = "out.write(\",\");";
+				String[] imports = new String[]{
+					ClassGenerator.getPackageString(DataPrinter.class),
+					ClassGenerator.getPackageString(Writer.class),
+					ClassGenerator.getPackageString(ConfigurationException.class),
+					ClassGenerator.getPackageString(beanClass)
+				};
+				bp = (BeanPrinter) Tool.createBeanPrinter(beanClass, BeanPrinter.class, mh,
+						"bean", ut, pt, lt, imports);
+				if (bp == null)
+				{
+					bp = new BeanPrinterImpl(beanClass);
+				}
+			}
+			catch (Throwable ex)
+			{
+				bp = new BeanPrinterImpl(beanClass);
+			}
+			beanPrinterCache.setProperty(beanClass, bp);
+		}
+		return bp;
+	}
 
-   private static class BeanPrinterImpl
-         implements BeanPrinter
-   {
-      private Field[] fields;
-      private BeanMethodInfo[] methods;
+	private static class BeanPrinterImpl
+			implements BeanPrinter
+	{
+		private Field[] fields;
+		private BeanMethodInfo[] methods;
 
-      public BeanPrinterImpl(Class c)
-      {
-         this.fields = BeanTool.getBeanFields(c);
-         this.methods = BeanTool.getBeanReadMethods(c);
-      }
+		public BeanPrinterImpl(Class c)
+		{
+			this.fields = BeanTool.getBeanFields(c);
+			this.methods = BeanTool.getBeanReadMethods(c);
+		}
 
-      public void print(DataPrinter p, Writer out, Object bean)
-            throws IOException, ConfigurationException
-      {
-         try
-         {
-            boolean first = true;
-            for (int i = 0; i < this.fields.length; i++)
-            {
-               if (first)
+		public void print(DataPrinter p, Writer out, Object bean)
+				throws IOException, ConfigurationException
+		{
+			try
+			{
+				boolean first = true;
+				for (int i = 0; i < this.fields.length; i++)
+				{
+					if (first)
 					{
-               	first = false;
-               	out.write('"');
+						first = false;
+						out.write('"');
 					}
 					else
-               {
-                  out.write(",\"");
-               }
-               Field f = this.fields[i];
-               out.write(f.getName());
-               out.write("\":");
-               p.print(out, f.get(bean));
-            }
-            for (int i = 0; i < this.methods.length; i++)
-            {
-               BeanMethodInfo m = this.methods[i];
-               if (m.method != null)
-               {
-                  if (first)
-                  {
+					{
+						out.write(",\"");
+					}
+					Field f = this.fields[i];
+					out.write(f.getName());
+					out.write("\":");
+					p.print(out, f.get(bean));
+				}
+				for (int i = 0; i < this.methods.length; i++)
+				{
+					BeanMethodInfo m = this.methods[i];
+					if (m.method != null)
+					{
+						if (first)
+						{
 							first = false;
 							out.write('"');
-                  }
+						}
 						else
 						{
 							out.write(",\"");
 						}
-                  out.write(m.name);
-                  out.write("\":");
-                  p.print(out, m.method.invoke(bean, new Object[0]));
-               }
-            }
-         }
-         catch (Exception ex)
-         {
-            if (ex instanceof IOException)
-            {
-               throw (IOException) ex;
-            }
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            throw new ConfigurationException(ex);
-         }
-      }
+						out.write(m.name);
+						out.write("\":");
+						p.print(out, m.method.invoke(bean, new Object[0]));
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				if (ex instanceof IOException)
+				{
+					throw (IOException) ex;
+				}
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				throw new ConfigurationException(ex);
+			}
+		}
 
-   }
+	}
 
 }

@@ -11,92 +11,92 @@ import self.micromagic.eterna.digester.ConfigurationException;
  */
 public interface ResultIterator extends Iterator
 {
-   /**
-    * »ñÈ¡Õâ¸ö<code>ResultIterator</code>µÄÁĞÊı, ÒÔ¼°Ã¿ÁĞµÄÃû³Æ ¿í¶È
-    * ±êÌâ reader¶ÔÏó.
-    */
-   ResultMetaData getMetaData() throws SQLException, ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ª<code>ResultIterator</code>çš„åˆ—æ•°, ä»¥åŠæ¯åˆ—çš„åç§° å®½åº¦
+	 * æ ‡é¢˜ readerå¯¹è±¡.
+	 */
+	ResultMetaData getMetaData() throws SQLException, ConfigurationException;
 
-   /**
-    * ÅĞ¶ÏÊÇ·ñ»¹ÓĞ¸ü¶àµÄ¼ÇÂ¼.
-    */
-   boolean hasMoreRow() throws SQLException, ConfigurationException;
+	/**
+	 * åˆ¤æ–­æ˜¯å¦è¿˜æœ‰æ›´å¤šçš„è®°å½•.
+	 */
+	boolean hasMoreRow() throws SQLException, ConfigurationException;
 
-   /**
-    * Ô¤È¡ÏÂÒ»¸ö<code>ResultRow</code>. <p>
-    * Õâ¸ö²Ù×÷²¢²»»á½«ÓÎ±êÖ¸ÏòÏÂÒ»¸ö, ËùÒÔ¾ÍËãÊÇµ÷ÓÃ¶à´Î, Ò²Ö»ÊÇÈ¡µ½ÏÂÒ»¸ö.
-    * Èç¹ûÃ»ÓĞÏÂÒ»¸ö, ÄÇ·µ»Ønull.
-    */
-   ResultRow preFetch() throws SQLException, ConfigurationException;
+	/**
+	 * é¢„å–ä¸‹ä¸€ä¸ª<code>ResultRow</code>. <p>
+	 * è¿™ä¸ªæ“ä½œå¹¶ä¸ä¼šå°†æ¸¸æ ‡æŒ‡å‘ä¸‹ä¸€ä¸ª, æ‰€ä»¥å°±ç®—æ˜¯è°ƒç”¨å¤šæ¬¡, ä¹Ÿåªæ˜¯å–åˆ°ä¸‹ä¸€ä¸ª.
+	 * å¦‚æœæ²¡æœ‰ä¸‹ä¸€ä¸ª, é‚£è¿”å›null.
+	 */
+	ResultRow preFetch() throws SQLException, ConfigurationException;
 
-   /**
-    * Ô¤È¡ÏÂÃæµÄÄ³¸ö<code>ResultRow</code>. <p>
-    * Õâ¸ö²Ù×÷²¢²»»á½«ÓÎ±êÒÆ¶¯, ËùÒÔ¾ÍËãÊÇµ÷ÓÃ¶à´Î, ÓÎ±êÒ²ÊÇÔÚÔ­À´Î»ÖÃ.
-    * Èç¹ûÊ£Óà¼ÇÂ¼ÊıÃ»ÄÇÃ´¶à, ÄÇ·µ»Ønull.
-    *
-    * @param index    ÒªÔ¤È¡Ö®ºóµÄµÚ¼¸Ìõ¼ÇÂ¼, 1ÎªµÚÒ»Ìõ 2ÎªµÚ¶şÌõ
-    */
-   ResultRow preFetch(int index) throws SQLException, ConfigurationException;
+	/**
+	 * é¢„å–ä¸‹é¢çš„æŸä¸ª<code>ResultRow</code>. <p>
+	 * è¿™ä¸ªæ“ä½œå¹¶ä¸ä¼šå°†æ¸¸æ ‡ç§»åŠ¨, æ‰€ä»¥å°±ç®—æ˜¯è°ƒç”¨å¤šæ¬¡, æ¸¸æ ‡ä¹Ÿæ˜¯åœ¨åŸæ¥ä½ç½®.
+	 * å¦‚æœå‰©ä½™è®°å½•æ•°æ²¡é‚£ä¹ˆå¤š, é‚£è¿”å›null.
+	 *
+	 * @param index    è¦é¢„å–ä¹‹åçš„ç¬¬å‡ æ¡è®°å½•, 1ä¸ºç¬¬ä¸€æ¡ 2ä¸ºç¬¬äºŒæ¡
+	 */
+	ResultRow preFetch(int index) throws SQLException, ConfigurationException;
 
-   /**
-    * »ñÈ¡µ±Ç°<code>ResultRow</code>.
-    * Èç¹ûÎ´Ö´ĞĞ¹ı nextRow»ònext, »òÕß¸ÕÖ´ĞĞ¹ıbeforeFirst, ÄÇ·µ»Ønull.
-    */
-   ResultRow getCurrentRow() throws SQLException, ConfigurationException;
+	/**
+	 * è·å–å½“å‰<code>ResultRow</code>.
+	 * å¦‚æœæœªæ‰§è¡Œè¿‡ nextRowæˆ–next, æˆ–è€…åˆšæ‰§è¡Œè¿‡beforeFirst, é‚£è¿”å›null.
+	 */
+	ResultRow getCurrentRow() throws SQLException, ConfigurationException;
 
-   /**
-    * »ñÈ¡ÏÂÒ»¸ö<code>ResultRow</code>.
-    */
-   ResultRow nextRow() throws SQLException, ConfigurationException;
+	/**
+	 * è·å–ä¸‹ä¸€ä¸ª<code>ResultRow</code>.
+	 */
+	ResultRow nextRow() throws SQLException, ConfigurationException;
 
-   /**
-    * ½«ÓÎ±êÒÆµ½µÚÒ»ĞĞÖ®Ç°.
-    *
-    * @return <code>true</code> ¼ÙÈçÓÎ±êÒÆ¶¯³É¹¦
-    *         <code>false</code> ÓÎ±êÎŞ·¨ÒÆ¶¯
-   */
-   boolean beforeFirst() throws SQLException, ConfigurationException;
+	/**
+	 * å°†æ¸¸æ ‡ç§»åˆ°ç¬¬ä¸€è¡Œä¹‹å‰.
+	 *
+	 * @return <code>true</code> å‡å¦‚æ¸¸æ ‡ç§»åŠ¨æˆåŠŸ
+	 *         <code>false</code> æ¸¸æ ‡æ— æ³•ç§»åŠ¨
+	*/
+	boolean beforeFirst() throws SQLException, ConfigurationException;
 
-   /**
-    * ¹Ø±ÕÕâ¸ö<code>ResultIterator</code>¶ÔÏó, ¹Ø±ÕµÄÍ¬Ê±»á¹Ø±Õ¶ÔÓ¦
-    * µÄÊı¾İ¿âÁ¬½Ó.
-    */
-   void close() throws SQLException, ConfigurationException;
+	/**
+	 * å…³é—­è¿™ä¸ª<code>ResultIterator</code>å¯¹è±¡, å…³é—­çš„åŒæ—¶ä¼šå…³é—­å¯¹åº”
+	 * çš„æ•°æ®åº“è¿æ¥.
+	 */
+	void close() throws SQLException, ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸ö<code>ResultIterator</code>µÄ¸±±¾.
-	 * Éú³É¸±±¾µÄÍ¬Ê±»áµ÷ÓÃbeforeFirst·½·¨, ½«ÓÎ±êÒÆµ½µÚÒ»ĞĞÖ®Ç°.
-    *
-    * @return    Éú³ÉµÄ¸±±¾, Èç¹ûÎŞ·¨Éú³É¸±±¾Ôò·µ»Ø<code>null</code>.
+	/**
+	 * è·å–è¿™ä¸ª<code>ResultIterator</code>çš„å‰¯æœ¬.
+	 * ç”Ÿæˆå‰¯æœ¬çš„åŒæ—¶ä¼šè°ƒç”¨beforeFirstæ–¹æ³•, å°†æ¸¸æ ‡ç§»åˆ°ç¬¬ä¸€è¡Œä¹‹å‰.
+	 *
+	 * @return    ç”Ÿæˆçš„å‰¯æœ¬, å¦‚æœæ— æ³•ç”Ÿæˆå‰¯æœ¬åˆ™è¿”å›<code>null</code>.
 	 * @see #beforeFirst
-    */
-   ResultIterator copy() throws ConfigurationException;
+	 */
+	ResultIterator copy() throws ConfigurationException;
 
-   /**
-    * È¡µÃ½á¹û¼¯ÖĞÊµ¼ÊµÄ¼ÇÂ¼Êı. <p>
-    */
-   int getRealRecordCount() throws SQLException, ConfigurationException;
+	/**
+	 * å–å¾—ç»“æœé›†ä¸­å®é™…çš„è®°å½•æ•°. <p>
+	 */
+	int getRealRecordCount() throws SQLException, ConfigurationException;
 
-   /**
-    * È¡µÃ´Ó½á¹û¼¯ÖĞ»ñÈ¡µÄ¼ÇÂ¼Êı. <p>
-    * Èç¹û»ñÈ¡µÄÊÇËùÓĞ¼ÇÂ¼£¬Ôò·µ»ØµÄ¼ÇÂ¼ÊıÓë·½·¨{@link #getRealRecordCount}
-    * ·µ»ØµÄ¼ÇÂ¼ÊıÏàÍ¬¡£·´Ö®£¬»ñÈ¡µÄ¼ÇÂ¼Êı×ÜÊÇ±ÈÊµ¼ÊµÄ¼ÇÂ¼ÊıĞ¡¡£
-    */
-   int getRecordCount() throws SQLException, ConfigurationException;
+	/**
+	 * å–å¾—ä»ç»“æœé›†ä¸­è·å–çš„è®°å½•æ•°. <p>
+	 * å¦‚æœè·å–çš„æ˜¯æ‰€æœ‰è®°å½•ï¼Œåˆ™è¿”å›çš„è®°å½•æ•°ä¸æ–¹æ³•{@link #getRealRecordCount}
+	 * è¿”å›çš„è®°å½•æ•°ç›¸åŒã€‚åä¹‹ï¼Œè·å–çš„è®°å½•æ•°æ€»æ˜¯æ¯”å®é™…çš„è®°å½•æ•°å°ã€‚
+	 */
+	int getRecordCount() throws SQLException, ConfigurationException;
 
-   /**
-    * {@link #getRealRecordCount}ÖĞµÃµ½½á¹û¼¯ÖĞÊµ¼ÊµÄ¼ÇÂ¼ÊıÊÇ·ñÓĞĞ§. <p>
-    * µ±½á¹û¼¯µÄÀàĞÍÊÇ<code>TYPE_SCROLL_INSENSITIVE</code>£¬»ò»ñÈ¡ËùÓĞµÄ¼ÇÂ¼ÊÇ
-    * ¾Í»á·µ»Øtrue¡£Èç¹û·µ»Øfalse£¬Ôò{@link #getRealRecordCount}·µ»ØµÄ¸öÊı²¢
-    * ²»ÊÇÊµ¼ÊµÄ¼ÇÂ¼¸öÊı¡£
-    */
-   boolean isRealRecordCountAvailable() throws SQLException, ConfigurationException;
+	/**
+	 * {@link #getRealRecordCount}ä¸­å¾—åˆ°ç»“æœé›†ä¸­å®é™…çš„è®°å½•æ•°æ˜¯å¦æœ‰æ•ˆ. <p>
+	 * å½“ç»“æœé›†çš„ç±»å‹æ˜¯<code>TYPE_SCROLL_INSENSITIVE</code>ï¼Œæˆ–è·å–æ‰€æœ‰çš„è®°å½•æ˜¯
+	 * å°±ä¼šè¿”å›trueã€‚å¦‚æœè¿”å›falseï¼Œåˆ™{@link #getRealRecordCount}è¿”å›çš„ä¸ªæ•°å¹¶
+	 * ä¸æ˜¯å®é™…çš„è®°å½•ä¸ªæ•°ã€‚
+	 */
+	boolean isRealRecordCountAvailable() throws SQLException, ConfigurationException;
 
-   /**
-    * Êµ¼Ê½á¹û¼¯ÖĞÊÇ·ñ»¹ÓĞ¸ü¶àµÄ¼ÇÂ¼. <p>
-    * Èç¹û»ñÈ¡µÄ²»ÊÇËùÓĞµÄ¼ÇÂ¼, Ôò¿ÉÍ¨¹ıÕâ¸ö·½·¨À´ÅĞ¶ÏÊµ¼ÊµÄ½á¹û¼¯ÖĞÊÇ·ñ»¹ÓĞ
-    * ¸ü¶àµÄ¼ÇÂ¼.
-    */
-   boolean isHasMoreRecord() throws SQLException, ConfigurationException;
+	/**
+	 * å®é™…ç»“æœé›†ä¸­æ˜¯å¦è¿˜æœ‰æ›´å¤šçš„è®°å½•. <p>
+	 * å¦‚æœè·å–çš„ä¸æ˜¯æ‰€æœ‰çš„è®°å½•, åˆ™å¯é€šè¿‡è¿™ä¸ªæ–¹æ³•æ¥åˆ¤æ–­å®é™…çš„ç»“æœé›†ä¸­æ˜¯å¦è¿˜æœ‰
+	 * æ›´å¤šçš„è®°å½•.
+	 */
+	boolean isHasMoreRecord() throws SQLException, ConfigurationException;
 
 }

@@ -29,37 +29,37 @@ import self.micromagic.util.container.PreFetchIterator;
  * @author micromagic@sina.com
  */
 public abstract class AbstractSQLAdapter extends AbstractGenerator
-      implements SQLAdapter, SQLAdapterGenerator
+		implements SQLAdapter, SQLAdapterGenerator
 {
-   private String preparedSQL;
-   private SQLManager sqlManager;
-   private PreparerManager preparerManager;
-   private SQLParameterGroup paramGroup;
+	private String preparedSQL;
+	private SQLManager sqlManager;
+	private PreparerManager preparerManager;
+	private SQLParameterGroup paramGroup;
 
-   private Map parameterNameMap;
-   private SQLParameter[] parameterArray;
-   protected ValuePreparerCreaterGenerator vpcg;
+	private Map parameterNameMap;
+	private SQLParameter[] parameterArray;
+	protected ValuePreparerCreaterGenerator vpcg;
 
-   protected boolean initialized;
+	protected boolean initialized;
 
-   public EternaFactory getFactory()
-   {
-      return (EternaFactory) this.factory;
-   }
+	public EternaFactory getFactory()
+	{
+		return (EternaFactory) this.factory;
+	}
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (!this.initialized)
-      {
-         if (this.preparedSQL == null)
-         {
-            throw new ConfigurationException( "Can't initialize without preparedSQL.");
-         }
-         this.initialized = true;
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (!this.initialized)
+		{
+			if (this.preparedSQL == null)
+			{
+				throw new ConfigurationException( "Can't initialize without preparedSQL.");
+			}
+			this.initialized = true;
 
-         this.vpcg = factory.getDefaultValuePreparerCreaterGenerator();
-         List paramList = new ArrayList();
+			this.vpcg = factory.getDefaultValuePreparerCreaterGenerator();
+			List paramList = new ArrayList();
 			if (this.paramGroup != null)
 			{
 				this.paramGroup.initialize(factory);
@@ -74,35 +74,35 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 				}
 				this.paramGroup = null;
 			}
-         SQLParameter[] paramArray = new SQLParameter[paramList.size()];
-         paramList.toArray(paramArray);
-         this.parameterArray = paramArray;
+			SQLParameter[] paramArray = new SQLParameter[paramList.size()];
+			paramList.toArray(paramArray);
+			this.parameterArray = paramArray;
 
-         this.sqlManager = new SQLManager();
-         String tmpSQL = this.sqlManager.frontParse(this.preparedSQL, paramArray);
-         this.sqlManager.parse(tmpSQL);
-         this.preparerManager = new PreparerManager(this, paramArray);
-         this.sqlManager.initialize(this.getFactory());
+			this.sqlManager = new SQLManager();
+			String tmpSQL = this.sqlManager.frontParse(this.preparedSQL, paramArray);
+			this.sqlManager.parse(tmpSQL);
+			this.preparerManager = new PreparerManager(this, paramArray);
+			this.sqlManager.initialize(this.getFactory());
 
-   		this.parameterNameMap = new HashMap();
-         for (int i = 0; i < paramArray.length; i++)
-         {
-            SQLParameter param = paramArray[i];
-            this.addParameterNameMap(param);
-         }
-         if (this.sqlManager.getParameterCount() > paramArray.length)
-         {
-            throw new ConfigurationException(
-                  "Not all parameter has been bound in [" + this.getName() + "].");
-         }
-      }
-   }
+			this.parameterNameMap = new HashMap();
+			for (int i = 0; i < paramArray.length; i++)
+			{
+				SQLParameter param = paramArray[i];
+				this.addParameterNameMap(param);
+			}
+			if (this.sqlManager.getParameterCount() > paramArray.length)
+			{
+				throw new ConfigurationException(
+						"Not all parameter has been bound in [" + this.getName() + "].");
+			}
+		}
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createSQLAdapter();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createSQLAdapter();
+	}
 
 	protected void copy(SQLAdapter copyObj)
 	{
@@ -119,230 +119,230 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 		other.vpcg = this.vpcg;
 		other.initialized = this.initialized;
 
-   	other.attributes = this.attributes;
-   	other.name = this.name;
-   	other.factory = this.factory;
+		other.attributes = this.attributes;
+		other.name = this.name;
+		other.factory = this.factory;
 	}
 
-   public int getParameterCount()
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.sqlManager.getParameterCount();
-   }
+	public int getParameterCount()
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.sqlManager.getParameterCount();
+	}
 
-   public boolean hasActiveParam()
-         throws ConfigurationException
-   {
-      if (this.preparerManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.preparerManager.hasActiveParam();
-   }
+	public boolean hasActiveParam()
+			throws ConfigurationException
+	{
+		if (this.preparerManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.preparerManager.hasActiveParam();
+	}
 
-   public int getActiveParamCount()
-         throws ConfigurationException
-   {
-      if (this.preparerManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.preparerManager.getParamCount();
-   }
+	public int getActiveParamCount()
+			throws ConfigurationException
+	{
+		if (this.preparerManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.preparerManager.getParamCount();
+	}
 
-   public int getSubSQLCount()
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.sqlManager.getSubPartCount();
-   }
+	public int getSubSQLCount()
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.sqlManager.getSubPartCount();
+	}
 
-   public String getPreparedSQL()
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.sqlManager.getPreparedSQL();
-   }
+	public String getPreparedSQL()
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.sqlManager.getPreparedSQL();
+	}
 
-   /**
-    * 根据临时设置的子句获取预备SQL.
-    */
-   String getTempPreparedSQL(int[] indexs, String[] subParts)
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.sqlManager.getTempPreparedSQL(indexs, subParts);
-   }
+	/**
+	 * 鏍规嵁涓存椂璁剧疆鐨勫瓙鍙ヨ幏鍙栭澶嘢QL.
+	 */
+	String getTempPreparedSQL(int[] indexs, String[] subParts)
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.sqlManager.getTempPreparedSQL(indexs, subParts);
+	}
 
-   public void setPreparedSQL(String sql)
-         throws ConfigurationException
-   {
-      if (this.preparedSQL != null)
-      {
-         throw new ConfigurationException("You can't set prepared sql twice.");
-      }
-      if (sql == null)
-      {
-         throw new NullPointerException();
-      }
-      this.preparedSQL = sql;
-   }
+	public void setPreparedSQL(String sql)
+			throws ConfigurationException
+	{
+		if (this.preparedSQL != null)
+		{
+			throw new ConfigurationException("You can't set prepared sql twice.");
+		}
+		if (sql == null)
+		{
+			throw new NullPointerException();
+		}
+		this.preparedSQL = sql;
+	}
 
-   protected void clear()
-         throws ConfigurationException
-   {
-      this.preparedSQL = null;
-      this.sqlManager = null;
-      this.preparerManager = null;
-      this.clearParameters();
-   }
+	protected void clear()
+			throws ConfigurationException
+	{
+		this.preparedSQL = null;
+		this.sqlManager = null;
+		this.preparerManager = null;
+		this.clearParameters();
+	}
 
-   public void setSubSQL(int index, String subPart)
-         throws ConfigurationException
-   {
-      this.setSubSQL(index, subPart, null);
-   }
+	public void setSubSQL(int index, String subPart)
+			throws ConfigurationException
+	{
+		this.setSubSQL(index, subPart, null);
+	}
 
-   public void setSubSQL(int index, String subPart, PreparerManager pm)
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      int tempI = this.sqlManager.setSubPart(index - 1, subPart);
-      this.preparerManager.inserPreparerManager(pm, tempI, index);
-   }
+	public void setSubSQL(int index, String subPart, PreparerManager pm)
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		int tempI = this.sqlManager.setSubPart(index - 1, subPart);
+		this.preparerManager.inserPreparerManager(pm, tempI, index);
+	}
 
-   public PreparerManager getPreparerManager()
-   {
-      return this.preparerManager;
-   }
+	public PreparerManager getPreparerManager()
+	{
+		return this.preparerManager;
+	}
 
-   public boolean isDynamicParameter(int index)
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      return this.sqlManager.isDynamicParameter(index - 1);
-   }
+	public boolean isDynamicParameter(int index)
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		return this.sqlManager.isDynamicParameter(index - 1);
+	}
 
-   public boolean isDynamicParameter(String name)
-         throws ConfigurationException
-   {
-      return this.isDynamicParameter(this.getIndexByParameterName(name));
-   }
+	public boolean isDynamicParameter(String name)
+			throws ConfigurationException
+	{
+		return this.isDynamicParameter(this.getIndexByParameterName(name));
+	}
 
-   public void setIgnore(int parameterIndex)
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      this.preparerManager.setIgnore(parameterIndex);
-      this.sqlManager.setParamSetted(parameterIndex - 1, false);
-   }
+	public void setIgnore(int parameterIndex)
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		this.preparerManager.setIgnore(parameterIndex);
+		this.sqlManager.setParamSetted(parameterIndex - 1, false);
+	}
 
-   public void setIgnore(String parameterName)
-         throws ConfigurationException
-   {
-      this.setIgnore(this.getIndexByParameterName(parameterName));
-   }
+	public void setIgnore(String parameterName)
+			throws ConfigurationException
+	{
+		this.setIgnore(this.getIndexByParameterName(parameterName));
+	}
 
-   public void setValuePreparer(ValuePreparer preparer)
-         throws ConfigurationException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      this.preparerManager.setValuePreparer(preparer);
-      preparer.setName(this.parameterArray[preparer.getRelativeIndex() - 1].getName());
-      this.sqlManager.setParamSetted(preparer.getRelativeIndex() - 1, true);
-   }
+	public void setValuePreparer(ValuePreparer preparer)
+			throws ConfigurationException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		this.preparerManager.setValuePreparer(preparer);
+		preparer.setName(this.parameterArray[preparer.getRelativeIndex() - 1].getName());
+		this.sqlManager.setParamSetted(preparer.getRelativeIndex() - 1, true);
+	}
 
-   public void prepareValues(PreparedStatement stmt)
-         throws ConfigurationException, SQLException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      this.preparerManager.prepareValues(new PreparedStatementWrapImpl(stmt));
-   }
+	public void prepareValues(PreparedStatement stmt)
+			throws ConfigurationException, SQLException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		this.preparerManager.prepareValues(new PreparedStatementWrapImpl(stmt));
+	}
 
-   public void prepareValues(PreparedStatementWrap stmtWrap)
-         throws ConfigurationException, SQLException
-   {
-      if (this.sqlManager == null)
-      {
-         throw new ConfigurationException("SQL not initialized.");
-      }
-      this.preparerManager.prepareValues(stmtWrap);
-   }
+	public void prepareValues(PreparedStatementWrap stmtWrap)
+			throws ConfigurationException, SQLException
+	{
+		if (this.sqlManager == null)
+		{
+			throw new ConfigurationException("SQL not initialized.");
+		}
+		this.preparerManager.prepareValues(stmtWrap);
+	}
 
-   public Iterator getParameterIterator()
-         throws ConfigurationException
-   {
-      return new PreFetchIterator(Arrays.asList(this.parameterArray).iterator(), false);
-   }
+	public Iterator getParameterIterator()
+			throws ConfigurationException
+	{
+		return new PreFetchIterator(Arrays.asList(this.parameterArray).iterator(), false);
+	}
 
-   private void addParameterNameMap(SQLParameter param)
-         throws ConfigurationException
-   {
-      int index = param.getIndex();
-      if (index < 1 || index > this.getParameterCount())
-      {
-         throw new ConfigurationException(
-               "Invalid parameter index:" + index + " at SQLAdapter "
-               + this.getName() + ".");
-      }
-      Object obj = this.parameterNameMap.put(param.getName(), param);
-      if (obj != null)
-      {
-         throw new ConfigurationException(
-               "Duplicate parameter name:" + param.getName() + " at SQLAdapter "
-               + this.getName() + ".");
-      }
-      ParameterManager pm = this.sqlManager.getParameterManager(index - 1);
-      pm.setParam(param);
-   }
+	private void addParameterNameMap(SQLParameter param)
+			throws ConfigurationException
+	{
+		int index = param.getIndex();
+		if (index < 1 || index > this.getParameterCount())
+		{
+			throw new ConfigurationException(
+					"Invalid parameter index:" + index + " at SQLAdapter "
+					+ this.getName() + ".");
+		}
+		Object obj = this.parameterNameMap.put(param.getName(), param);
+		if (obj != null)
+		{
+			throw new ConfigurationException(
+					"Duplicate parameter name:" + param.getName() + " at SQLAdapter "
+					+ this.getName() + ".");
+		}
+		ParameterManager pm = this.sqlManager.getParameterManager(index - 1);
+		pm.setParam(param);
+	}
 
-   public void clearParameters()
-         throws ConfigurationException
-   {
-      if (this.sqlManager != null)
-      {
-         int count = this.sqlManager.getParameterCount();
-         for (int i = 0; i < count; i++)
-         {
-            ParameterManager pm = this.sqlManager.getParameterManager(i);
-            pm.clearParam();
-         }
-         this.parameterNameMap = null;
-      }
-      this.paramGroup = null;
-   }
+	public void clearParameters()
+			throws ConfigurationException
+	{
+		if (this.sqlManager != null)
+		{
+			int count = this.sqlManager.getParameterCount();
+			for (int i = 0; i < count; i++)
+			{
+				ParameterManager pm = this.sqlManager.getParameterManager(i);
+				pm.clearParam();
+			}
+			this.parameterNameMap = null;
+		}
+		this.paramGroup = null;
+	}
 
-   public void addParameter(SQLParameterGenerator paramGenerator)
-         throws ConfigurationException
-   {
+	public void addParameter(SQLParameterGenerator paramGenerator)
+			throws ConfigurationException
+	{
 		if (this.initialized)
 		{
 			throw new ConfigurationException(
@@ -352,12 +352,12 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 		{
 			this.paramGroup = new SQLParameterGroupImpl();
 		}
-      this.paramGroup.addParameter(paramGenerator);
-   }
+		this.paramGroup.addParameter(paramGenerator);
+	}
 
-   public void addParameterRef(String groupName, String ignoreList)
-         throws ConfigurationException
-   {
+	public void addParameterRef(String groupName, String ignoreList)
+			throws ConfigurationException
+	{
 		if (this.initialized)
 		{
 			throw new ConfigurationException(
@@ -367,25 +367,25 @@ public abstract class AbstractSQLAdapter extends AbstractGenerator
 		{
 			this.paramGroup = new SQLParameterGroupImpl();
 		}
-      this.paramGroup.addParameterRef(groupName, ignoreList);
-   }
+		this.paramGroup.addParameterRef(groupName, ignoreList);
+	}
 
-   protected int getIndexByParameterName(String name)
-         throws ConfigurationException
-   {
-      return this.getParameter(name).getIndex();
-   }
+	protected int getIndexByParameterName(String name)
+			throws ConfigurationException
+	{
+		return this.getParameter(name).getIndex();
+	}
 
-   public SQLParameter getParameter(String paramName)
-         throws ConfigurationException
-   {
-      SQLParameter p = (SQLParameter) this.parameterNameMap.get(paramName);
-      if (p == null)
-      {
-         throw new ConfigurationException("Invalid parameter name:[" + paramName + "].");
-      }
-      return p;
-   }
+	public SQLParameter getParameter(String paramName)
+			throws ConfigurationException
+	{
+		SQLParameter p = (SQLParameter) this.parameterNameMap.get(paramName);
+		if (p == null)
+		{
+			throw new ConfigurationException("Invalid parameter name:[" + paramName + "].");
+		}
+		return p;
+	}
 
 }
 
