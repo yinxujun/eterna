@@ -35,355 +35,355 @@ import self.micromagic.eterna.security.UserManager;
 public interface EternaFactory extends Factory
 {
 
-   /**
-    * »ñµÃ±¾factoryµÄ¸¸factory.
-    */
-   EternaFactory getShareFactory() throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öUserManager¶ÔÏó.
-    *
-    * @return  Èç¹ûUserManager¶ÔÏóÎ´ÉèÖÃµÄ»°, Ôò·µ»Ønull.
-    */
-   UserManager getUserManager() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öUserManager¶ÔÏó.
-    */
-   void setUserManager(UserManager um) throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öDataSourceManager¶ÔÏó.
-    *
-    * @return  Èç¹ûDataSourceManager¶ÔÏóÎ´ÉèÖÃµÄ»°, Ôò·µ»Ønull.
-    */
-   DataSourceManager getDataSourceManager() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öUserManager¶ÔÏó.
-    */
-   void setDataSourceManager(DataSourceManager dsm) throws ConfigurationException;
-
-
-   //----------------------------------  SQLFactory  --------------------------------------
-
-   /**
-    * »ñµÃÒ»¸ö³£Á¿µÄÖµ.
-    *
-    * @param name       ³£Á¿µÄÃû³Æ.
-    */
-   String getConstantValue(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸ö³£Á¿µÄÖµ.
-    *
-    * @param name       ³£Á¿µÄÃû³Æ.
-    * @param value      ³£Á¿µÄÖµ.
-    */
-   void addConstantValue(String name, String value) throws ConfigurationException;
-
-   /**
-    * »ñµÃÈÕÖ¾¼ÇÂ¼Æ÷<code>SpecialLog</code>.
-    */
-   SpecialLog getSpecialLog() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÈÕÖ¾¼ÇÂ¼Æ÷<code>SpecialLog</code>.
-    */
-   void setSpecialLog(SpecialLog sl)throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öResultFormatÀà. ÓÃÓÚ¸ñÊ½»¯²éÑ¯µÄ½á¹û.
-    *
-    * @param name       formatÃû³Æ.
-    */
-   ResultFormat getFormat(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öResultFormatÀà. ÓÃÓÚ¸ñÊ½»¯²éÑ¯µÄ½á¹û.
-    *
-    * @param name       formatÃû³Æ.
-    * @param format     ÒªÉèÖÃµÄResultFormatÀà.
-    */
-   void addFormat(String name, ResultFormat format) throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öResultReaderManagerÀà. ÓÃÓÚ¹ÜÀí²éÑ¯ÏÔÊ¾µÄÁĞ.
-    *
-    * @param name       ResultReaderManagerÃû³Æ.
-    */
-   ResultReaderManager getReaderManager(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öResultReaderManagerÀà. ÓÃÓÚ¹ÜÀí²éÑ¯ÏÔÊ¾µÄÁĞ.
-    *
-    * @param name        ResultReaderManagerÃû³Æ.
-    * @param manager     ÒªÉèÖÃµÄResultReaderManagerÊµÀı.
-    */
-   void addReaderManager(String name, ResultReaderManager manager) throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öSQLParameterGroupÀà.
-    *
-    * @param name       SQLParameterGroupÃû³Æ.
-    */
-   SQLParameterGroup getParameterGroup(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öSQLParameterGroupÀà.
-    *
-    * @param name        SQLParameterGroupÃû³Æ.
-    * @param group       ÒªÉèÖÃµÄSQLParameterGroupÊµÀı.
-    */
-   void addParameterGroup(String name, SQLParameterGroup group) throws ConfigurationException;
-
-   /**
-    * Éú³ÉÒ»¸ö<code>QueryAdapter</code>µÄÊµÀı.
-    *
-    * @param name       <code>QueryAdapter</code>µÄÃû³Æ.
-    * @return           <code>QueryAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   QueryAdapter createQueryAdapter(String name) throws ConfigurationException;
-
-   /**
-    * Éú³ÉÒ»¸ö<code>QueryAdapter</code>µÄÊµÀı.
-    *
-    * @param id         <code>QueryAdapter</code>µÄid.
-    * @return           <code>QueryAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   QueryAdapter createQueryAdapter(int id) throws ConfigurationException;
-
-   /**
-    * Í¨¹ı<code>QueryAdapter</code>µÄÃû³Æ»ñµÃËüµÄid.
-    *
-    * @param name       <code>QueryAdapter</code>µÄµÄÃû³Æ.
-    * @return           <code>QueryAdapter</code>µÄid.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   int getQueryAdapterId(String name) throws ConfigurationException;
-
-   /**
-    * ×¢²áÒ»¸ö<code>QueryAdapter</code>.
-    *
-    * @param generator   ĞèÒª×¢²áµÄ<code>QueryAdapter</code>µÄÑù±¾.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void registerQueryAdapter(QueryAdapterGenerator generator) throws ConfigurationException;;
-
-   /**
-    * ³·ÏúÒ»¸ö<code>QueryAdapter</code>µÄ×¢²á.
-    *
-    * @param name       ĞèÒª³·Ïú×¢²áµÄ<code>QueryAdapter</code>µÄÃû³Æ.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void deregisterQueryAdapter(String name) throws ConfigurationException;
-
-   /**
-    * Éú³ÉÒ»¸ö<code>UpdateAdapter</code>µÄÊµÀı.
-    *
-    * @param name       <code>UpdateAdapter</code>µÄÃû³Æ.
-    * @return           <code>UpdateAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   UpdateAdapter createUpdateAdapter(String name) throws ConfigurationException;
-
-   /**
-    * Éú³ÉÒ»¸ö<code>UpdateAdapter</code>µÄÊµÀı.
-    *
-    * @param id         <code>UpdateAdapter</code>µÄid.
-    * @return           <code>UpdateAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   UpdateAdapter createUpdateAdapter(int id) throws ConfigurationException;
-
-   /**
-    * Í¨¹ı<code>UpdateAdapter</code>µÄÃû³Æ»ñµÃËüµÄid.
-    *
-    * @param name       <code>UpdateAdapter</code>µÄµÄÃû³Æ.
-    * @return           <code>UpdateAdapter</code>µÄid.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   int getUpdateAdapterId(String name) throws ConfigurationException;
-
-   /**
-    * ×¢²áÒ»¸ö<code>UpdateAdapter</code>.
-    *
-    * @param generator   ĞèÒª×¢²áµÄ<code>UpdateAdapter</code>µÄÑù±¾.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void registerUpdateAdapter(UpdateAdapterGenerator generator) throws ConfigurationException;
-
-   /**
-    * ³·ÏúÒ»¸ö<code>UpdateAdapter</code>µÄ×¢²á.
-    *
-    * @param name       ĞèÒª³·Ïú×¢²áµÄ<code>UpdateAdapter</code>µÄÃû³Æ.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   void deregisterUpdateAdapter(String name) throws ConfigurationException;
-
-   /**
-    * ×¢²áÒ»¸ö<code>ValuePreparerCreaterGenerator</code>.
-    */
-   void registerValuePreparerGenerator(ValuePreparerCreaterGenerator generator)
-         throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öÄ¬ÈÏµÄ<code>ValuePreparerCreaterGenerator</code>.
-    */
-   ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator();
-
-   /**
-    * Éú³ÉÒ»¸ö<code>VPGenerator</code>µÄÊµÀı.
-    * Èç¹ûnameÎªnull, ÔòÊ¹ÓÃÄ¬ÈÏµÄValuePreparerGenerator.
-    *
-    * @param name       ValuePreparerCreaterµÄÃû³Æ.
-    * @param type       valueµÄÀàĞÍ.
-    */
-   ValuePreparerCreater createValuePreparerCreater(String name, int type)
-         throws ConfigurationException;
-
-   /**
-    * Éú³ÉÒ»¸ö<code>VPGenerator</code>Ä¬ÈÏµÄÊµÀı.
-    *
-    * @param type       valueµÄÀàĞÍ.
-    */
-   ValuePreparerCreater createValuePreparerCreater(int type)
-         throws ConfigurationException;
-
-
-   //----------------------------------  SearchFactory  --------------------------------------
-
-   public static final String SEARCH_MANAGER_ATTRIBUTE_PREFIX = "search-manager.attribute.";
-
-   /**
-    * »ñµÃÒ»¸öConditionBuilderÀà. ÓÃÓÚ¹¹³ÉÒ»¸ö²éÑ¯Ìõ¼ş.
-    *
-    * @param name       ConditionBuilderÃû³Æ.
-    */
-   ConditionBuilder getConditionBuilder(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öConditionBuilderÀà. ÓÃÓÚ¹¹³ÉÒ»¸ö²éÑ¯Ìõ¼ş.
-    *
-    * @param name        ConditionBuilderÃû³Æ.
-    * @param builder     ÒªÉèÖÃµÄConditionBuilderÀà.
-    */
-   void addConditionBuilder(String name, ConditionBuilder builder) throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öConditionBuilderµÄÁĞ±í. ÔÚConditionPropertyÖĞ»áÓÃµÄ¸ÃÁĞ±í,
-    * ÓÃÓÚÈ·¶¨¸ÃÌõ¼şµÄ¿ÉÑ¡²Ù×÷µÄ·¶Î§.
-    *
-    * @param name       ConditionBuilderÁĞ±íµÄÃû³Æ.
-    */
-   List getConditionBuilderList(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öConditionBuilderµÄÁĞ±í.
-    *
-    * @param name              ÁĞ±íÃû³Æ.
-    * @param builderNames      ÒªÉèÖÃµÄConditionBuilderµÄÁĞ±í.
-    */
-   void addConditionBuilderList(String name, List builderNames) throws ConfigurationException;
-
-   SearchAdapter createSearchAdapter(String name) throws ConfigurationException;
-
-   SearchAdapter createSearchAdapter(int id) throws ConfigurationException;
-
-   int getSearchAdapterId(String name) throws ConfigurationException;
-
-   void registerSearchAdapter(SearchAdapterGenerator generator)
-         throws ConfigurationException;
-
-   void deregisterSearchAdapter(String name) throws ConfigurationException;
-
-   void registerSearchManager(SearchManagerGenerator generator)
-         throws ConfigurationException;
-
-   SearchManager createSearchManager() throws ConfigurationException;
-
-   SearchManager.Attributes getSearchManagerAttributes()
-         throws ConfigurationException;
-
-
-   //----------------------------------  ModelFactory  --------------------------------------
-
-   /**
-    * ÔÚfactoryÖĞÉèÖÃ´æ·ÅmodelÃû³ÆµÄ±êÇ©µÄÊôĞÔÃû³Æ.
-    */
-   public static final String MODEL_NAME_TAG_FLAG = "model.name.tag";
-
-   String getModelNameTag() throws ConfigurationException;
-
-   ModelCaller getModelCaller() throws ConfigurationException;
-
-   void setModelCaller(ModelCaller mc)throws ConfigurationException;
-
-   void addModelExport(String exportName, ModelExport modelExport) throws ConfigurationException;
-
-   ModelExport getModelExport(String exportName) throws ConfigurationException;
-
-   ModelAdapter createModelAdapter(String name) throws ConfigurationException;
-
-   ModelAdapter createModelAdapter(int id) throws ConfigurationException;
-
-   int getModelAdapterId(String name) throws ConfigurationException;
-
-   void registerModelAdapter(ModelAdapterGenerator generator) throws ConfigurationException;
-
-   void deregisterModelAdapter(String name) throws ConfigurationException;
-
-
-   //----------------------------------  ViewFactory  --------------------------------------
-
-   /**
-    * ÔÚfactoryÖĞÉèÖÃÊÓÍ¼È«¾ÖÅäÖÃµÄÊôĞÔÃû³Æ.
-    */
-   public static final String VIEW_GLOBAL_SETTING_FLAG = "view.global.setting";
-
-   String getViewGlobalSetting() throws ConfigurationException;
-
-   /**
-    * »ñµÃÒ»¸öÊı¾İ¼¯Êä³öÆ÷.
-    *
-    * @param name       Êı¾İ¼¯Êä³öÆ÷µÄÃû³Æ.
-    */
-   DataPrinter getDataPrinter(String name) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃÒ»¸öÊı¾İ¼¯Êä³öÆ÷.
-    *
-    * @param name            Êı¾İ¼¯Êä³öÆ÷µÄÃû³Æ.
-    * @param dataPrinter     ÒªÉèÖÃµÄÊı¾İ¼¯Êä³öÆ÷.
-    */
-   void addDataPrinter(String name, DataPrinter dataPrinter) throws ConfigurationException;
-
-   Function getFunction(String name) throws ConfigurationException;
-
-   void addFunction(String name, Function fun)throws ConfigurationException;
-
-   Component getTypicalComponent(String name) throws ConfigurationException;
-
-   void addTypicalComponent(String name, Component com)throws ConfigurationException;
-
-   StringCoder getStringCoder() throws ConfigurationException;
-
-   void setStringCoder(StringCoder sc)throws ConfigurationException;
-
-   ViewAdapter createViewAdapter(String name) throws ConfigurationException;
-
-   ViewAdapter createViewAdapter(int id) throws ConfigurationException;
-
-   int getViewAdapterId(String name) throws ConfigurationException;
-
-   void registerViewAdapter(ViewAdapterGenerator generator) throws ConfigurationException;
-
-   void deregisterViewAdapter(String name) throws ConfigurationException;
-
-   Resource getResource(String name) throws ConfigurationException;
-
-   void addResource(String name, Resource resource)throws ConfigurationException;
+	/**
+	 * è·å¾—æœ¬factoryçš„çˆ¶factory.
+	 */
+	EternaFactory getShareFactory() throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªUserManagerå¯¹è±¡.
+	 *
+	 * @return  å¦‚æœUserManagerå¯¹è±¡æœªè®¾ç½®çš„è¯, åˆ™è¿”å›null.
+	 */
+	UserManager getUserManager() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªUserManagerå¯¹è±¡.
+	 */
+	void setUserManager(UserManager um) throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªDataSourceManagerå¯¹è±¡.
+	 *
+	 * @return  å¦‚æœDataSourceManagerå¯¹è±¡æœªè®¾ç½®çš„è¯, åˆ™è¿”å›null.
+	 */
+	DataSourceManager getDataSourceManager() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªUserManagerå¯¹è±¡.
+	 */
+	void setDataSourceManager(DataSourceManager dsm) throws ConfigurationException;
+
+
+	//----------------------------------  SQLFactory  --------------------------------------
+
+	/**
+	 * è·å¾—ä¸€ä¸ªå¸¸é‡çš„å€¼.
+	 *
+	 * @param name       å¸¸é‡çš„åç§°.
+	 */
+	String getConstantValue(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªå¸¸é‡çš„å€¼.
+	 *
+	 * @param name       å¸¸é‡çš„åç§°.
+	 * @param value      å¸¸é‡çš„å€¼.
+	 */
+	void addConstantValue(String name, String value) throws ConfigurationException;
+
+	/**
+	 * è·å¾—æ—¥å¿—è®°å½•å™¨<code>SpecialLog</code>.
+	 */
+	SpecialLog getSpecialLog() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®æ—¥å¿—è®°å½•å™¨<code>SpecialLog</code>.
+	 */
+	void setSpecialLog(SpecialLog sl)throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªResultFormatç±». ç”¨äºæ ¼å¼åŒ–æŸ¥è¯¢çš„ç»“æœ.
+	 *
+	 * @param name       formatåç§°.
+	 */
+	ResultFormat getFormat(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªResultFormatç±». ç”¨äºæ ¼å¼åŒ–æŸ¥è¯¢çš„ç»“æœ.
+	 *
+	 * @param name       formatåç§°.
+	 * @param format     è¦è®¾ç½®çš„ResultFormatç±».
+	 */
+	void addFormat(String name, ResultFormat format) throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªResultReaderManagerç±». ç”¨äºç®¡ç†æŸ¥è¯¢æ˜¾ç¤ºçš„åˆ—.
+	 *
+	 * @param name       ResultReaderManageråç§°.
+	 */
+	ResultReaderManager getReaderManager(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªResultReaderManagerç±». ç”¨äºç®¡ç†æŸ¥è¯¢æ˜¾ç¤ºçš„åˆ—.
+	 *
+	 * @param name        ResultReaderManageråç§°.
+	 * @param manager     è¦è®¾ç½®çš„ResultReaderManagerå®ä¾‹.
+	 */
+	void addReaderManager(String name, ResultReaderManager manager) throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªSQLParameterGroupç±».
+	 *
+	 * @param name       SQLParameterGroupåç§°.
+	 */
+	SQLParameterGroup getParameterGroup(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªSQLParameterGroupç±».
+	 *
+	 * @param name        SQLParameterGroupåç§°.
+	 * @param group       è¦è®¾ç½®çš„SQLParameterGroupå®ä¾‹.
+	 */
+	void addParameterGroup(String name, SQLParameterGroup group) throws ConfigurationException;
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>QueryAdapter</code>çš„å®ä¾‹.
+	 *
+	 * @param name       <code>QueryAdapter</code>çš„åç§°.
+	 * @return           <code>QueryAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	QueryAdapter createQueryAdapter(String name) throws ConfigurationException;
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>QueryAdapter</code>çš„å®ä¾‹.
+	 *
+	 * @param id         <code>QueryAdapter</code>çš„id.
+	 * @return           <code>QueryAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	QueryAdapter createQueryAdapter(int id) throws ConfigurationException;
+
+	/**
+	 * é€šè¿‡<code>QueryAdapter</code>çš„åç§°è·å¾—å®ƒçš„id.
+	 *
+	 * @param name       <code>QueryAdapter</code>çš„çš„åç§°.
+	 * @return           <code>QueryAdapter</code>çš„id.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	int getQueryAdapterId(String name) throws ConfigurationException;
+
+	/**
+	 * æ³¨å†Œä¸€ä¸ª<code>QueryAdapter</code>.
+	 *
+	 * @param generator   éœ€è¦æ³¨å†Œçš„<code>QueryAdapter</code>çš„æ ·æœ¬.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void registerQueryAdapter(QueryAdapterGenerator generator) throws ConfigurationException;;
+
+	/**
+	 * æ’¤é”€ä¸€ä¸ª<code>QueryAdapter</code>çš„æ³¨å†Œ.
+	 *
+	 * @param name       éœ€è¦æ’¤é”€æ³¨å†Œçš„<code>QueryAdapter</code>çš„åç§°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void deregisterQueryAdapter(String name) throws ConfigurationException;
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>UpdateAdapter</code>çš„å®ä¾‹.
+	 *
+	 * @param name       <code>UpdateAdapter</code>çš„åç§°.
+	 * @return           <code>UpdateAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	UpdateAdapter createUpdateAdapter(String name) throws ConfigurationException;
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>UpdateAdapter</code>çš„å®ä¾‹.
+	 *
+	 * @param id         <code>UpdateAdapter</code>çš„id.
+	 * @return           <code>UpdateAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	UpdateAdapter createUpdateAdapter(int id) throws ConfigurationException;
+
+	/**
+	 * é€šè¿‡<code>UpdateAdapter</code>çš„åç§°è·å¾—å®ƒçš„id.
+	 *
+	 * @param name       <code>UpdateAdapter</code>çš„çš„åç§°.
+	 * @return           <code>UpdateAdapter</code>çš„id.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	int getUpdateAdapterId(String name) throws ConfigurationException;
+
+	/**
+	 * æ³¨å†Œä¸€ä¸ª<code>UpdateAdapter</code>.
+	 *
+	 * @param generator   éœ€è¦æ³¨å†Œçš„<code>UpdateAdapter</code>çš„æ ·æœ¬.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void registerUpdateAdapter(UpdateAdapterGenerator generator) throws ConfigurationException;
+
+	/**
+	 * æ’¤é”€ä¸€ä¸ª<code>UpdateAdapter</code>çš„æ³¨å†Œ.
+	 *
+	 * @param name       éœ€è¦æ’¤é”€æ³¨å†Œçš„<code>UpdateAdapter</code>çš„åç§°.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	void deregisterUpdateAdapter(String name) throws ConfigurationException;
+
+	/**
+	 * æ³¨å†Œä¸€ä¸ª<code>ValuePreparerCreaterGenerator</code>.
+	 */
+	void registerValuePreparerGenerator(ValuePreparerCreaterGenerator generator)
+			throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªé»˜è®¤çš„<code>ValuePreparerCreaterGenerator</code>.
+	 */
+	ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator();
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>VPGenerator</code>çš„å®ä¾‹.
+	 * å¦‚æœnameä¸ºnull, åˆ™ä½¿ç”¨é»˜è®¤çš„ValuePreparerGenerator.
+	 *
+	 * @param name       ValuePreparerCreaterçš„åç§°.
+	 * @param type       valueçš„ç±»å‹.
+	 */
+	ValuePreparerCreater createValuePreparerCreater(String name, int type)
+			throws ConfigurationException;
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ª<code>VPGenerator</code>é»˜è®¤çš„å®ä¾‹.
+	 *
+	 * @param type       valueçš„ç±»å‹.
+	 */
+	ValuePreparerCreater createValuePreparerCreater(int type)
+			throws ConfigurationException;
+
+
+	//----------------------------------  SearchFactory  --------------------------------------
+
+	public static final String SEARCH_MANAGER_ATTRIBUTE_PREFIX = "search-manager.attribute.";
+
+	/**
+	 * è·å¾—ä¸€ä¸ªConditionBuilderç±». ç”¨äºæ„æˆä¸€ä¸ªæŸ¥è¯¢æ¡ä»¶.
+	 *
+	 * @param name       ConditionBuilderåç§°.
+	 */
+	ConditionBuilder getConditionBuilder(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªConditionBuilderç±». ç”¨äºæ„æˆä¸€ä¸ªæŸ¥è¯¢æ¡ä»¶.
+	 *
+	 * @param name        ConditionBuilderåç§°.
+	 * @param builder     è¦è®¾ç½®çš„ConditionBuilderç±».
+	 */
+	void addConditionBuilder(String name, ConditionBuilder builder) throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªConditionBuilderçš„åˆ—è¡¨. åœ¨ConditionPropertyä¸­ä¼šç”¨çš„è¯¥åˆ—è¡¨,
+	 * ç”¨äºç¡®å®šè¯¥æ¡ä»¶çš„å¯é€‰æ“ä½œçš„èŒƒå›´.
+	 *
+	 * @param name       ConditionBuilderåˆ—è¡¨çš„åç§°.
+	 */
+	List getConditionBuilderList(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªConditionBuilderçš„åˆ—è¡¨.
+	 *
+	 * @param name              åˆ—è¡¨åç§°.
+	 * @param builderNames      è¦è®¾ç½®çš„ConditionBuilderçš„åˆ—è¡¨.
+	 */
+	void addConditionBuilderList(String name, List builderNames) throws ConfigurationException;
+
+	SearchAdapter createSearchAdapter(String name) throws ConfigurationException;
+
+	SearchAdapter createSearchAdapter(int id) throws ConfigurationException;
+
+	int getSearchAdapterId(String name) throws ConfigurationException;
+
+	void registerSearchAdapter(SearchAdapterGenerator generator)
+			throws ConfigurationException;
+
+	void deregisterSearchAdapter(String name) throws ConfigurationException;
+
+	void registerSearchManager(SearchManagerGenerator generator)
+			throws ConfigurationException;
+
+	SearchManager createSearchManager() throws ConfigurationException;
+
+	SearchManager.Attributes getSearchManagerAttributes()
+			throws ConfigurationException;
+
+
+	//----------------------------------  ModelFactory  --------------------------------------
+
+	/**
+	 * åœ¨factoryä¸­è®¾ç½®å­˜æ”¾modelåç§°çš„æ ‡ç­¾çš„å±æ€§åç§°.
+	 */
+	public static final String MODEL_NAME_TAG_FLAG = "model.name.tag";
+
+	String getModelNameTag() throws ConfigurationException;
+
+	ModelCaller getModelCaller() throws ConfigurationException;
+
+	void setModelCaller(ModelCaller mc)throws ConfigurationException;
+
+	void addModelExport(String exportName, ModelExport modelExport) throws ConfigurationException;
+
+	ModelExport getModelExport(String exportName) throws ConfigurationException;
+
+	ModelAdapter createModelAdapter(String name) throws ConfigurationException;
+
+	ModelAdapter createModelAdapter(int id) throws ConfigurationException;
+
+	int getModelAdapterId(String name) throws ConfigurationException;
+
+	void registerModelAdapter(ModelAdapterGenerator generator) throws ConfigurationException;
+
+	void deregisterModelAdapter(String name) throws ConfigurationException;
+
+
+	//----------------------------------  ViewFactory  --------------------------------------
+
+	/**
+	 * åœ¨factoryä¸­è®¾ç½®è§†å›¾å…¨å±€é…ç½®çš„å±æ€§åç§°.
+	 */
+	public static final String VIEW_GLOBAL_SETTING_FLAG = "view.global.setting";
+
+	String getViewGlobalSetting() throws ConfigurationException;
+
+	/**
+	 * è·å¾—ä¸€ä¸ªæ•°æ®é›†è¾“å‡ºå™¨.
+	 *
+	 * @param name       æ•°æ®é›†è¾“å‡ºå™¨çš„åç§°.
+	 */
+	DataPrinter getDataPrinter(String name) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®ä¸€ä¸ªæ•°æ®é›†è¾“å‡ºå™¨.
+	 *
+	 * @param name            æ•°æ®é›†è¾“å‡ºå™¨çš„åç§°.
+	 * @param dataPrinter     è¦è®¾ç½®çš„æ•°æ®é›†è¾“å‡ºå™¨.
+	 */
+	void addDataPrinter(String name, DataPrinter dataPrinter) throws ConfigurationException;
+
+	Function getFunction(String name) throws ConfigurationException;
+
+	void addFunction(String name, Function fun)throws ConfigurationException;
+
+	Component getTypicalComponent(String name) throws ConfigurationException;
+
+	void addTypicalComponent(String name, Component com)throws ConfigurationException;
+
+	StringCoder getStringCoder() throws ConfigurationException;
+
+	void setStringCoder(StringCoder sc)throws ConfigurationException;
+
+	ViewAdapter createViewAdapter(String name) throws ConfigurationException;
+
+	ViewAdapter createViewAdapter(int id) throws ConfigurationException;
+
+	int getViewAdapterId(String name) throws ConfigurationException;
+
+	void registerViewAdapter(ViewAdapterGenerator generator) throws ConfigurationException;
+
+	void deregisterViewAdapter(String name) throws ConfigurationException;
+
+	Resource getResource(String name) throws ConfigurationException;
+
+	void addResource(String name, Resource resource)throws ConfigurationException;
 
 }

@@ -14,223 +14,223 @@ import self.micromagic.util.BooleanRef;
  */
 public interface QueryAdapter extends SQLAdapter
 {
-   /**
-    * ÉèÖÃÊÇ·ñĞèÒª¼ì²éÊı¾İ¿âÃû³ÆµÄ±êÇ©, Èç¹ûÉèÎªtrue(Ä¬ÈÏÖµ)±íÊ¾ĞèÒª¼ì²é. <p>
-	 * ¶ÔÓÚÒ»Ğ©Êı¾İ¿â, µ±ÉèÖÃÁËstartRowºÍmaxRowsÊ±, »áÌí¼Ó»ñÈ¡¼ÇÂ¼ÊıÏŞÖÆµÄÓï¾ä.
-    */
-   public static final String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
+	/**
+	 * è®¾ç½®æ˜¯å¦éœ€è¦æ£€æŸ¥æ•°æ®åº“åç§°çš„æ ‡ç­¾, å¦‚æœè®¾ä¸ºtrue(é»˜è®¤å€¼)è¡¨ç¤ºéœ€è¦æ£€æŸ¥. <p>
+	 * å¯¹äºä¸€äº›æ•°æ®åº“, å½“è®¾ç½®äº†startRowå’ŒmaxRowsæ—¶, ä¼šæ·»åŠ è·å–è®°å½•æ•°é™åˆ¶çš„è¯­å¥.
+	 */
+	public static final String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
 
-   /**
-    * ¸´ÖÆËùÓĞµÄResultReader. <p>
-	 * Èç¹ûÉèÎªtrue, Ôò»áÔÚ³õÊ¼»¯Ê±¸´ÖÆËùÓĞ¼Ì³ĞÁËResultReaders.ObjectReader
-	 * µÄResultReader, ²¢ÇÒ½«ÆächeckIndexÊôĞÔÉèÎªtrue.
-	 * Ä¬ÈÏÖµÎªfalse.
+	/**
+	 * å¤åˆ¶æ‰€æœ‰çš„ResultReader. <p>
+	 * å¦‚æœè®¾ä¸ºtrue, åˆ™ä¼šåœ¨åˆå§‹åŒ–æ—¶å¤åˆ¶æ‰€æœ‰ç»§æ‰¿äº†ResultReaders.ObjectReader
+	 * çš„ResultReader, å¹¶ä¸”å°†å…¶checkIndexå±æ€§è®¾ä¸ºtrue.
+	 * é»˜è®¤å€¼ä¸ºfalse.
 	 *
 	 * @see ResultReaders.ObjectReader
 	 * @see ResultReaders.ObjectReader#setCheckIndex
-    */
-   public static final String COPY_READERS_FLAG = "copyReaders";
-
-   /**
-    * ¿ÉÉèÖÃµÄÆäËüResultReaderManagerµÄÃû³ÆÁĞ±í, ÒÔ¶ººÅ·Ö¸î.
-    */
-   public static final String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
-
-   /**
-    * ×Ô¶¯¼ÆËã×Ü¼ÇÂ¼Êı, Í¨¹ıÑ­»·ResultSetµÄnext·½·¨À´¼ÆËã.
-    */
-   public static final int TOTAL_COUNT_AUTO = -1;
-
-   /**
-    * ²»¼ÆËã×Ü¼ÇÂ¼Êı.
-    */
-   public static final int TOTAL_COUNT_NONE = -2;
-
-   /**
-    * Í¨¹ı×Ô¶¯Éú³ÉµÄcountÓï¾ä, »ñÈ¡×Ü¼ÇÂ¼Êı.
-    */
-   public static final int TOTAL_COUNT_COUNT = -3;
-
-   /**
-    * Èç¹û²éÑ¯Ê±Òª¸ù¾İÈ¨ÏŞÀ´¿ØÖÆÁĞµÄÏÔÊ¾, ÇëÔÚÖ´ĞĞÇ°ÉèÖÃÈ¨ÏŞÀà.
-    */
-   void setPermission(Permission permission);
+	 */
+	public static final String COPY_READERS_FLAG = "copyReaders";
 
 	/**
-	 * »ñµÃÔ­Ê¼µÄ²éÑ¯Óï¾ä.
-	 * µ±µ÷ÓÃ<code>getPreparedSQL</code>, »ñÈ¡µÄSQLÓĞ¿ÉÄÜÊÇ±»×ª»»¹ıµÄ,
-	 * Èç: µ±ÉèÖÃÁËstartRowºÍmaxRowsÊ±, »áÌí¼Ó»ñÈ¡¼ÇÂ¼ÊıÏŞÖÆµÄÓï¾äµÈ.
+	 * å¯è®¾ç½®çš„å…¶å®ƒResultReaderManagerçš„åç§°åˆ—è¡¨, ä»¥é€—å·åˆ†å‰².
+	 */
+	public static final String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
+
+	/**
+	 * è‡ªåŠ¨è®¡ç®—æ€»è®°å½•æ•°, é€šè¿‡å¾ªç¯ResultSetçš„nextæ–¹æ³•æ¥è®¡ç®—.
+	 */
+	public static final int TOTAL_COUNT_AUTO = -1;
+
+	/**
+	 * ä¸è®¡ç®—æ€»è®°å½•æ•°.
+	 */
+	public static final int TOTAL_COUNT_NONE = -2;
+
+	/**
+	 * é€šè¿‡è‡ªåŠ¨ç”Ÿæˆçš„countè¯­å¥, è·å–æ€»è®°å½•æ•°.
+	 */
+	public static final int TOTAL_COUNT_COUNT = -3;
+
+	/**
+	 * å¦‚æœæŸ¥è¯¢æ—¶è¦æ ¹æ®æƒé™æ¥æ§åˆ¶åˆ—çš„æ˜¾ç¤º, è¯·åœ¨æ‰§è¡Œå‰è®¾ç½®æƒé™ç±».
+	 */
+	void setPermission(Permission permission);
+
+	/**
+	 * è·å¾—åŸå§‹çš„æŸ¥è¯¢è¯­å¥.
+	 * å½“è°ƒç”¨<code>getPreparedSQL</code>, è·å–çš„SQLæœ‰å¯èƒ½æ˜¯è¢«è½¬æ¢è¿‡çš„,
+	 * å¦‚: å½“è®¾ç½®äº†startRowå’ŒmaxRowsæ—¶, ä¼šæ·»åŠ è·å–è®°å½•æ•°é™åˆ¶çš„è¯­å¥ç­‰.
 	 *
 	 * @see #getPreparedSQL
 	 */
 	String getPrimitiveQuerySQL() throws ConfigurationException;
 
-   /**
-    * »ñµÃResultReaderµÄÅÅĞò·½Ê½×Ö·û´®.
-    */
-   String getReaderOrder() throws ConfigurationException;
-
-   /**
-    * »ñµÃµ±Ç°²éÑ¯¶ÔÏóµÄResultReaderManager. <p>
-    * ¸Ã·½·¨Ö÷ÒªÓÃÓÚ¶ÔResultReaderManager½øĞĞÒ»Ğ©ÉèÖÃ, Èç×Ô¶¨ÒåÁĞ.
-    * È»ºóÍ¨¹ı{@link #setReaderManager(ResultReaderManager)}·½·¨½«
-    * ¸Ä¶¯×÷ÓÃµ½²éÑ¯¶ÔÏóÉÏ.
-    */
-   ResultReaderManager getReaderManager() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ¸Ã²éÑ¯µÄResultReaderManager, ËùÉèÖÃµÄResultReaderManagerµÄÃû³Æ±ØĞë
-    * ÓëÔ­À´µÄÃû³ÆÏàÍ¬, »òÕßÔÚ<code>otherReaderManagerSet</code>ÁĞ±íÖĞ.
-    */
-   void setReaderManager(ResultReaderManager readerManager) throws ConfigurationException;
-
-   /**
-    * ÊÇ·ñ¿ÉÉèÖÃÅÅĞò. <p>
-    * Èç¹ûÔÚ¶¨ÒåÊ±ÉèÖÃÁËorderIndexÕâ¸ÃqueryÊÇ¿ÉÉèÖÃÅÅĞòµÄ.
-    */
-   boolean canOrder() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃµ¥ÁĞÅÅĞòµÄÁĞ. <p>
-    * ÅÅĞòµÄÉı½µĞòÎª×Ô¶¯ÉèÖÃ, ÈçÇ°Ò»´ÎÉèÖÃÁË¸ÃÁĞ, ³õÊ¼ÎªÉıĞò, ÔòÔÙ´Î
-    * ÉèÖÃÊ±¾Í»á±äÎª½µĞò. Èç¹ûÇ°Ò»´ÎÉèÖÃµÄ²»ÊÇ¸ÃÁĞ, ÔòÄ¬ÈÏÎªÉıĞò.
-    */
-   void setSingleOrder(String readerName) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃµ¥ÁĞÅÅĞòµÄÁĞ.
-    *
-    * @param orderType   0    ±íÊ¾×Ô¶¯Ñ¡ÔñË³Ğò, Í¬{@link #setSingleOrder(String)}
-    *                    ¸ºÊı ±íÊ¾Ê¹ÓÃ½µĞò
-    *                    ÕıÊı ±íÊ¾Ê¹ÓÃÉıĞò
-    */
-   void setSingleOrder(String readerName, int orderType) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡µ¥ÁĞÅÅĞòµÄÁĞÃû, ¸ÃÃû³ÆÎªÄ³¸öreaderµÄÃû³Æ. <p>
-    * Èç¹ûÉĞÎ´ÉèÖÃµ¥ÁĞÅÅĞò, Ôò·µ»Ønull.
-    *
-    * @param desc  ±íÊ¾ÊÇ·ñÎª½µĞò, true±íÊ¾ÊÇ½µĞò
-    */
-   String getSingleOrder(BooleanRef desc) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ¶àÁĞÅÅĞò. <p>
-    * ×¢: ¶àÁĞÅÅĞòÉèÖÃµÄ²»ÊÇreaderµÄÃû³Æ, ¶øÊÇreaderµÄÃû³ÆÔÙ¼ÓÉÏÅÅĞò·û.
-    * Èç: ÉıĞò readerName + 'A', ½µĞò readerName + 'D'
-    *
-    * @param orderNames   ¶àÁĞÅÅĞòÅÅĞòÃû³ÆÊı×é
-    */
-   void setMultipleOrder(String[] orderNames) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡Õâ¸ö²éÑ¯¶ÔÏóÊÇ·ñÖ»ÄÜÓÃforwardOnlyÄ£Ê½À´Ö´ĞĞ.
-    */
-   boolean isForwardOnly() throws ConfigurationException;
-
-   /**
-    * »ñÈ¡¸Ã²éÑ¯¶ÔÏóÊÇ´ÓµÚ¼¸Ìõ¼ÇÂ¼¿ªÊ¼¶ÁÈ¡, Ä¬ÈÏÖµÎª"1".
-    */
-   int getStartRow() throws SQLException;
-
-   /**
-    * ÉèÖÃ´ÓµÚ¼¸Ìõ¼ÇÂ¼¿ªÊ¼È¡Öµ(´Ó1¿ªÊ¼¼ÆÊı).
-    *
-    * @param startRow   ÆğÊ¼ĞĞºÅ
-    */
-   void setStartRow(int startRow) throws SQLException;
-
-   /**
-    * »ñÈ¡¸Ã²éÑ¯¶ÔÏó¶ÁÈ¡µÄ×î´ó¼ÇÂ¼Êı, Ä¬ÈÏÖµÎª"-1", ±íÊ¾
-    * È¡ÍêÎªÖ¹.
-    */
-   int getMaxRows() throws SQLException;
-
-   /**
-    * ÉèÖÃÈ¡³öµÄ×î´ó¼ÇÂ¼Êı£¬-1±íÊ¾È¡ÍêÎªÖ¹.
-    *
-    * @param maxRows   È¡³öµÄ×î´ó¼ÇÂ¼Êı
-    */
-   void setMaxRows(int maxRows) throws SQLException;
-
-   /**
-    * »ñÈ¡¸Ã²éÑ¯¶ÔÏóÉèÖÃµÄ×Ü¼ÇÂ¼Êı.
-    */
-   int getTotalCount() throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ¸Ã²éÑ¯¶ÔÏóµÄ¼ÇÂ¼Êı. <p>
-    * Ä¬ÈÏÖµÎª<code>TOTAL_COUNT_AUTO(-1)</code>.
-    *
-    * @param totalCount   ×Ü¼ÇÂ¼Êı.
-    *                     <code>TOTAL_COUNT_AUTO(-1)</code>, <code>TOTAL_COUNT_NONE(-2)</code>,
-    *                     <code>TOTAL_COUNT_COUNT(-3)</code>ÎªÌØÊâµÄÉèÖÃ. 0-NÎªÖ±½ÓÉèÖÃ×Ü¼ÇÂ¼Êı.
-    *
-    * @see #TOTAL_COUNT_AUTO
-    * @see #TOTAL_COUNT_NONE
-    * @see #TOTAL_COUNT_COUNT
-    */
-   void setTotalCount(int totalCount) throws ConfigurationException;
-
-   /**
-    * ÉèÖÃ¸Ã²éÑ¯¶ÔÏóµÄ¼ÇÂ¼Êı. <p>
-    *
-    * @param totalCount   ×Ü¼ÇÂ¼Êı.
-    * @param ext          À©Õ¹ĞÅÏ¢, Ö»ÓĞÔÚtotalCountµÄÖµÉèÎª0-NÊ±²ÅÓĞĞ§.
-    *
-    * @see #setTotalCount(int)
-    * @see #TOTAL_COUNT_AUTO
-    * @see #TOTAL_COUNT_NONE
-    * @see #TOTAL_COUNT_COUNT
-    */
-   void setTotalCount(int totalCount, TotalCountExt ext) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡¸Ã²éÑ¯¶ÔÏóÉèÖÃµÄ×Ü¼ÇÂ¼ÊıÀ©Õ¹ĞÅÏ¢. <p>
-	 * Ö»ÓĞÔÚtotalCountµÄÖµÉèÎª0-NÊ±, ¸ÃÖµ²ÅÓĞĞ§.
-    */
-   TotalCountExt getTotalCountExt() throws ConfigurationException;
-
-   /**
-    * »ñµÃ²éÑ¯µÄ½á¹û, ÓÃÓÚÉÙÁ¿(100Ìõ×óÓÒ)Êı¾İµÄ²éÑ¯.
-    * <p>ÊµÏÖÕßÒª±£´æ½á¹û, ÔÚÊı¾İ¿âÁ¬½Ó<code>Connection</code>±»¹Ø±ÕµÄÊ±ºò,
-    * Ò²ÒªÄÜ¹»¶ÁÈ¡Êı¾İ.
-    *
-    * @param conn      Êı¾İ¿âµÄÁ¬½Ó
-    * @return          ²éÑ¯³öÀ´µÄ½á¹û¼¯
-    * @throws ConfigurationException   µ±Ïà¹ØÅäÖÃ³ö´íÊ±
-    * @throws SQLException    ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   ResultIterator executeQuery(Connection conn)
-         throws ConfigurationException, SQLException;
-
-   /**
-    * »ñµÃ²éÑ¯µÄ½á¹û, ÓÃÓÚ´óÁ¿(500ÌõÒÔÉÏ)Êı¾İµÄ²éÑ¯.
-    * <p>ÊµÏÖÕß²»Ğè±£´æ½á¹û, ¿ÉÒÔÖ±½ÓÔÚÊ¹ÓÃ<code>ResultSet</code>×÷Îª½á¹ûµÄÔØÌå.
-    * µ±Êı¾İ¿âÁ¬½Ó<code>Connection</code>±»¹Ø±ÕµÄÊ±ºò, Ò²¾ÍÎŞ·¨¶ÁÈ¡Êı¾İ.
-    *
-    * ×¢: Ê¹ÓÃÕâÖÖ¶ÁÈ¡·½Ê½Ê±, ½«ºöÂÔstartRowºÍmaxRowµÄÉèÖÃ.
-    *
-    * @param conn      Êı¾İ¿âµÄÁ¬½Ó
-    * @return          ²éÑ¯³öÀ´µÄ½á¹û¼¯
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
-    * @throws SQLException    ¼ÙÈç·ÃÎÊÊı¾İ¿âÊ±³ö´í
-    */
-   ResultIterator executeQueryHoldConnection(Connection conn)
-         throws ConfigurationException, SQLException;
+	/**
+	 * è·å¾—ResultReaderçš„æ’åºæ–¹å¼å­—ç¬¦ä¸².
+	 */
+	String getReaderOrder() throws ConfigurationException;
 
 	/**
-	 * ÉèÖÃ×Ü¼ÇÂ¼ÊıµÄÀ©Õ¹ĞÅÏ¢.
+	 * è·å¾—å½“å‰æŸ¥è¯¢å¯¹è±¡çš„ResultReaderManager. <p>
+	 * è¯¥æ–¹æ³•ä¸»è¦ç”¨äºå¯¹ResultReaderManagerè¿›è¡Œä¸€äº›è®¾ç½®, å¦‚è‡ªå®šä¹‰åˆ—.
+	 * ç„¶åé€šè¿‡{@link #setReaderManager(ResultReaderManager)}æ–¹æ³•å°†
+	 * æ”¹åŠ¨ä½œç”¨åˆ°æŸ¥è¯¢å¯¹è±¡ä¸Š.
+	 */
+	ResultReaderManager getReaderManager() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®è¯¥æŸ¥è¯¢çš„ResultReaderManager, æ‰€è®¾ç½®çš„ResultReaderManagerçš„åç§°å¿…é¡»
+	 * ä¸åŸæ¥çš„åç§°ç›¸åŒ, æˆ–è€…åœ¨<code>otherReaderManagerSet</code>åˆ—è¡¨ä¸­.
+	 */
+	void setReaderManager(ResultReaderManager readerManager) throws ConfigurationException;
+
+	/**
+	 * æ˜¯å¦å¯è®¾ç½®æ’åº. <p>
+	 * å¦‚æœåœ¨å®šä¹‰æ—¶è®¾ç½®äº†orderIndexè¿™è¯¥queryæ˜¯å¯è®¾ç½®æ’åºçš„.
+	 */
+	boolean canOrder() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®å•åˆ—æ’åºçš„åˆ—. <p>
+	 * æ’åºçš„å‡é™åºä¸ºè‡ªåŠ¨è®¾ç½®, å¦‚å‰ä¸€æ¬¡è®¾ç½®äº†è¯¥åˆ—, åˆå§‹ä¸ºå‡åº, åˆ™å†æ¬¡
+	 * è®¾ç½®æ—¶å°±ä¼šå˜ä¸ºé™åº. å¦‚æœå‰ä¸€æ¬¡è®¾ç½®çš„ä¸æ˜¯è¯¥åˆ—, åˆ™é»˜è®¤ä¸ºå‡åº.
+	 */
+	void setSingleOrder(String readerName) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®å•åˆ—æ’åºçš„åˆ—.
+	 *
+	 * @param orderType   0    è¡¨ç¤ºè‡ªåŠ¨é€‰æ‹©é¡ºåº, åŒ{@link #setSingleOrder(String)}
+	 *                    è´Ÿæ•° è¡¨ç¤ºä½¿ç”¨é™åº
+	 *                    æ­£æ•° è¡¨ç¤ºä½¿ç”¨å‡åº
+	 */
+	void setSingleOrder(String readerName, int orderType) throws ConfigurationException;
+
+	/**
+	 * è·å–å•åˆ—æ’åºçš„åˆ—å, è¯¥åç§°ä¸ºæŸä¸ªreaderçš„åç§°. <p>
+	 * å¦‚æœå°šæœªè®¾ç½®å•åˆ—æ’åº, åˆ™è¿”å›null.
+	 *
+	 * @param desc  è¡¨ç¤ºæ˜¯å¦ä¸ºé™åº, trueè¡¨ç¤ºæ˜¯é™åº
+	 */
+	String getSingleOrder(BooleanRef desc) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®å¤šåˆ—æ’åº. <p>
+	 * æ³¨: å¤šåˆ—æ’åºè®¾ç½®çš„ä¸æ˜¯readerçš„åç§°, è€Œæ˜¯readerçš„åç§°å†åŠ ä¸Šæ’åºç¬¦.
+	 * å¦‚: å‡åº readerName + 'A', é™åº readerName + 'D'
+	 *
+	 * @param orderNames   å¤šåˆ—æ’åºæ’åºåç§°æ•°ç»„
+	 */
+	void setMultipleOrder(String[] orderNames) throws ConfigurationException;
+
+	/**
+	 * è·å–è¿™ä¸ªæŸ¥è¯¢å¯¹è±¡æ˜¯å¦åªèƒ½ç”¨forwardOnlyæ¨¡å¼æ¥æ‰§è¡Œ.
+	 */
+	boolean isForwardOnly() throws ConfigurationException;
+
+	/**
+	 * è·å–è¯¥æŸ¥è¯¢å¯¹è±¡æ˜¯ä»ç¬¬å‡ æ¡è®°å½•å¼€å§‹è¯»å–, é»˜è®¤å€¼ä¸º"1".
+	 */
+	int getStartRow() throws SQLException;
+
+	/**
+	 * è®¾ç½®ä»ç¬¬å‡ æ¡è®°å½•å¼€å§‹å–å€¼(ä»1å¼€å§‹è®¡æ•°).
+	 *
+	 * @param startRow   èµ·å§‹è¡Œå·
+	 */
+	void setStartRow(int startRow) throws SQLException;
+
+	/**
+	 * è·å–è¯¥æŸ¥è¯¢å¯¹è±¡è¯»å–çš„æœ€å¤§è®°å½•æ•°, é»˜è®¤å€¼ä¸º"-1", è¡¨ç¤º
+	 * å–å®Œä¸ºæ­¢.
+	 */
+	int getMaxRows() throws SQLException;
+
+	/**
+	 * è®¾ç½®å–å‡ºçš„æœ€å¤§è®°å½•æ•°ï¼Œ-1è¡¨ç¤ºå–å®Œä¸ºæ­¢.
+	 *
+	 * @param maxRows   å–å‡ºçš„æœ€å¤§è®°å½•æ•°
+	 */
+	void setMaxRows(int maxRows) throws SQLException;
+
+	/**
+	 * è·å–è¯¥æŸ¥è¯¢å¯¹è±¡è®¾ç½®çš„æ€»è®°å½•æ•°.
+	 */
+	int getTotalCount() throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®è¯¥æŸ¥è¯¢å¯¹è±¡çš„è®°å½•æ•°. <p>
+	 * é»˜è®¤å€¼ä¸º<code>TOTAL_COUNT_AUTO(-1)</code>.
+	 *
+	 * @param totalCount   æ€»è®°å½•æ•°.
+	 *                     <code>TOTAL_COUNT_AUTO(-1)</code>, <code>TOTAL_COUNT_NONE(-2)</code>,
+	 *                     <code>TOTAL_COUNT_COUNT(-3)</code>ä¸ºç‰¹æ®Šçš„è®¾ç½®. 0-Nä¸ºç›´æ¥è®¾ç½®æ€»è®°å½•æ•°.
+	 *
+	 * @see #TOTAL_COUNT_AUTO
+	 * @see #TOTAL_COUNT_NONE
+	 * @see #TOTAL_COUNT_COUNT
+	 */
+	void setTotalCount(int totalCount) throws ConfigurationException;
+
+	/**
+	 * è®¾ç½®è¯¥æŸ¥è¯¢å¯¹è±¡çš„è®°å½•æ•°. <p>
+	 *
+	 * @param totalCount   æ€»è®°å½•æ•°.
+	 * @param ext          æ‰©å±•ä¿¡æ¯, åªæœ‰åœ¨totalCountçš„å€¼è®¾ä¸º0-Næ—¶æ‰æœ‰æ•ˆ.
+	 *
+	 * @see #setTotalCount(int)
+	 * @see #TOTAL_COUNT_AUTO
+	 * @see #TOTAL_COUNT_NONE
+	 * @see #TOTAL_COUNT_COUNT
+	 */
+	void setTotalCount(int totalCount, TotalCountExt ext) throws ConfigurationException;
+
+	/**
+	 * è·å–è¯¥æŸ¥è¯¢å¯¹è±¡è®¾ç½®çš„æ€»è®°å½•æ•°æ‰©å±•ä¿¡æ¯. <p>
+	 * åªæœ‰åœ¨totalCountçš„å€¼è®¾ä¸º0-Næ—¶, è¯¥å€¼æ‰æœ‰æ•ˆ.
+	 */
+	TotalCountExt getTotalCountExt() throws ConfigurationException;
+
+	/**
+	 * è·å¾—æŸ¥è¯¢çš„ç»“æœ, ç”¨äºå°‘é‡(100æ¡å·¦å³)æ•°æ®çš„æŸ¥è¯¢.
+	 * <p>å®ç°è€…è¦ä¿å­˜ç»“æœ, åœ¨æ•°æ®åº“è¿æ¥<code>Connection</code>è¢«å…³é—­çš„æ—¶å€™,
+	 * ä¹Ÿè¦èƒ½å¤Ÿè¯»å–æ•°æ®.
+	 *
+	 * @param conn      æ•°æ®åº“çš„è¿æ¥
+	 * @return          æŸ¥è¯¢å‡ºæ¥çš„ç»“æœé›†
+	 * @throws ConfigurationException   å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
+	 * @throws SQLException    å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	ResultIterator executeQuery(Connection conn)
+			throws ConfigurationException, SQLException;
+
+	/**
+	 * è·å¾—æŸ¥è¯¢çš„ç»“æœ, ç”¨äºå¤§é‡(500æ¡ä»¥ä¸Š)æ•°æ®çš„æŸ¥è¯¢.
+	 * <p>å®ç°è€…ä¸éœ€ä¿å­˜ç»“æœ, å¯ä»¥ç›´æ¥åœ¨ä½¿ç”¨<code>ResultSet</code>ä½œä¸ºç»“æœçš„è½½ä½“.
+	 * å½“æ•°æ®åº“è¿æ¥<code>Connection</code>è¢«å…³é—­çš„æ—¶å€™, ä¹Ÿå°±æ— æ³•è¯»å–æ•°æ®.
+	 *
+	 * æ³¨: ä½¿ç”¨è¿™ç§è¯»å–æ–¹å¼æ—¶, å°†å¿½ç•¥startRowå’ŒmaxRowçš„è®¾ç½®.
+	 *
+	 * @param conn      æ•°æ®åº“çš„è¿æ¥
+	 * @return          æŸ¥è¯¢å‡ºæ¥çš„ç»“æœé›†
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
+	 * @throws SQLException    å‡å¦‚è®¿é—®æ•°æ®åº“æ—¶å‡ºé”™
+	 */
+	ResultIterator executeQueryHoldConnection(Connection conn)
+			throws ConfigurationException, SQLException;
+
+	/**
+	 * è®¾ç½®æ€»è®°å½•æ•°çš„æ‰©å±•ä¿¡æ¯.
 	 */
 	static final class TotalCountExt
 	{
 		/**
-		 * ÊÇ·ñ»¹ÓĞ¸ü¶à¼ÇÂ¼.
+		 * æ˜¯å¦è¿˜æœ‰æ›´å¤šè®°å½•.
 		 */
 		public final boolean hasMoreRecord;
 
 		/**
-		 * ×Ü¼ÇÂ¼ÊıÊÇ·ñ¿ÉÓÃ.
+		 * æ€»è®°å½•æ•°æ˜¯å¦å¯ç”¨.
 		 */
 		public final boolean realRecordCountAvailable;
 

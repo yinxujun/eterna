@@ -33,663 +33,663 @@ import self.micromagic.util.StringTool;
  * @author micromagic@sina.com
  */
 public class SearchManagerImpl extends AbstractGenerator
-      implements SearchManagerGenerator, SearchManager, DataPrinter.BeanPrinter
+		implements SearchManagerGenerator, SearchManager, DataPrinter.BeanPrinter
 {
-   static final String SEARCHMANAGER_DEALED_PREFIX = "ETERNA_SEARCHMANAGER_DEALED:";
+	static final String SEARCHMANAGER_DEALED_PREFIX = "ETERNA_SEARCHMANAGER_DEALED:";
 
-   private transient Attributes attributes = DEFAULT_PROPERTIES;
+	private transient Attributes attributes = DEFAULT_PROPERTIES;
 
-   private transient String preparedCondition = "";
-   private transient PreparerManager generatedPM = null;
-   private transient Map conditionMap = null;
-   private List conditionList = null;
-   private transient SearchAdapter resetConditionSearch = null;
-   private transient Map specialMap = null;
+	private transient String preparedCondition = "";
+	private transient PreparerManager generatedPM = null;
+	private transient Map conditionMap = null;
+	private List conditionList = null;
+	private transient SearchAdapter resetConditionSearch = null;
+	private transient Map specialMap = null;
 
-   private int conditionVersion = 1;
-   private int pageNum = 0;
-   private int pageSize = -1;
+	private int conditionVersion = 1;
+	private int pageNum = 0;
+	private int pageSize = -1;
 
-   public SearchManagerImpl()
-   {
-   }
+	public SearchManagerImpl()
+	{
+	}
 
-   public int getPageNum()
-   {
-      return this.pageNum;
-   }
+	public int getPageNum()
+	{
+		return this.pageNum;
+	}
 
-   public int getPageSize(int defaultSize)
-   {
-      return this.pageSize == -1 ? defaultSize : this.pageSize;
-   }
+	public int getPageSize(int defaultSize)
+	{
+		return this.pageSize == -1 ? defaultSize : this.pageSize;
+	}
 
-   public boolean hasQueryType(AppData data)
-   {
-      String temp;
+	public boolean hasQueryType(AppData data)
+	{
+		String temp;
 		Map raMap = data.getRequestAttributeMap();
-      if (raMap.get(FORCE_DEAL_CONDITION) != null)
-      {
-         temp = this.attributes.queryTypeReset;
-      }
-      else if (raMap.get(FORCE_CLEAR_CONDITION) != null)
-      {
-         temp = this.attributes.queryTypeClear;
-      }
-      else
-      {
-         temp = data.getRequestParameter(this.attributes.queryTypeTag);
-      }
-      return temp != null
+		if (raMap.get(FORCE_DEAL_CONDITION) != null)
+		{
+			temp = this.attributes.queryTypeReset;
+		}
+		else if (raMap.get(FORCE_CLEAR_CONDITION) != null)
+		{
+			temp = this.attributes.queryTypeClear;
+		}
+		else
+		{
+			temp = data.getRequestParameter(this.attributes.queryTypeTag);
+		}
+		return temp != null
 				&& (this.attributes.queryTypeReset.equals(temp) || this.attributes.queryTypeClear.equals(temp));
-   }
+	}
 
-   public int getConditionVersion()
-   {
-      return this.conditionVersion;
-   }
+	public int getConditionVersion()
+	{
+		return this.conditionVersion;
+	}
 
-   public void setPageNumAndCondition(AppData data, SearchAdapter search)
-         throws ConfigurationException
-   {
-      this.setPageNumAndCondition(data, search, true);
-   }
+	public void setPageNumAndCondition(AppData data, SearchAdapter search)
+			throws ConfigurationException
+	{
+		this.setPageNumAndCondition(data, search, true);
+	}
 
-   private void setPageNumAndCondition(AppData data, SearchAdapter search, boolean checkDealed)
-         throws ConfigurationException
-   {
-      Map raMap = data.getRequestAttributeMap();
-      if (checkDealed)
-      {
-         String checkName = SEARCHMANAGER_DEALED_PREFIX + search.getSearchManagerName();
-         if (raMap.get(checkName) != null)
-         {
-            if (raMap.get(FORCE_DEAL_CONDITION) == null && raMap.get(FORCE_CLEAR_CONDITION) == null)
-            {
-               return;
-            }
-         }
-         raMap.put(checkName, "1");
-      }
-      try
-      {
-         this.pageNum = Integer.parseInt(data.getRequestParameter(this.attributes.pageNumTag));
-      }
-      catch (Exception ex) {}
-      try
-      {
-         int tmpI = Integer.parseInt(data.getRequestParameter(this.attributes.pageSizeTag));
-         this.pageSize = tmpI < 0 ? -1 : tmpI > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : tmpI;
-      }
-      catch (Exception ex) {}
-      try
-      {
-         String temp;
-         if (raMap.get(FORCE_DEAL_CONDITION) != null)
-         {
-            temp = this.attributes.queryTypeReset;
-         }
-         else if (raMap.get(FORCE_CLEAR_CONDITION) != null)
-         {
-            temp = this.attributes.queryTypeClear;
-         }
-         else
-         {
-            temp = data.getRequestParameter(this.attributes.queryTypeTag);
-         }
-         if (this.attributes.queryTypeReset.equals(temp))
-         {
-            this.conditionVersion++;
-            this.resetConditionSearch = search;
-            String xml = data.getRequestParameter(this.attributes.querySettingTag);
-            if (log.isDebugEnabled())
-            {
-               log.debug("The xml:" + xml);
-            }
-            boolean saveCondition = raMap.get(SAVE_CONDITION) != null || search.isSpecialCondition();
-            this.clearCondition();
-            if (xml != null)
-            {
-               Document doc = DocumentHelper.parseText(xml);
-               this.setConditionValues(doc, search, saveCondition);
-            }
-            else
-            {
-               this.setConditionValues(data, search, saveCondition, false);
-            }
-         }
-         else if (this.attributes.queryTypeClear.equals(temp))
-         {
-            this.conditionVersion++;
-            this.preparedCondition = null;
-            this.generatedPM = null;
-            this.clearCondition();
-         }
-         else if (this.conditionVersion == 1)
-         {
-            // versionŒ™1, ±Ì æ «µ⁄“ª¥ŒΩ¯»Î«“Œ¥±Íº«“™…Ë÷√Ãıº˛
-            this.conditionVersion++;
-            boolean saveCondition = raMap.get(SAVE_CONDITION) != null || search.isSpecialCondition();
-            this.setConditionValues(data, search, saveCondition, true);
-         }
-      }
-      catch (Exception ex)
-      {
-         log.error("When set condition values.", ex);
-      }
-   }
+	private void setPageNumAndCondition(AppData data, SearchAdapter search, boolean checkDealed)
+			throws ConfigurationException
+	{
+		Map raMap = data.getRequestAttributeMap();
+		if (checkDealed)
+		{
+			String checkName = SEARCHMANAGER_DEALED_PREFIX + search.getSearchManagerName();
+			if (raMap.get(checkName) != null)
+			{
+				if (raMap.get(FORCE_DEAL_CONDITION) == null && raMap.get(FORCE_CLEAR_CONDITION) == null)
+				{
+					return;
+				}
+			}
+			raMap.put(checkName, "1");
+		}
+		try
+		{
+			this.pageNum = Integer.parseInt(data.getRequestParameter(this.attributes.pageNumTag));
+		}
+		catch (Exception ex) {}
+		try
+		{
+			int tmpI = Integer.parseInt(data.getRequestParameter(this.attributes.pageSizeTag));
+			this.pageSize = tmpI < 0 ? -1 : tmpI > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : tmpI;
+		}
+		catch (Exception ex) {}
+		try
+		{
+			String temp;
+			if (raMap.get(FORCE_DEAL_CONDITION) != null)
+			{
+				temp = this.attributes.queryTypeReset;
+			}
+			else if (raMap.get(FORCE_CLEAR_CONDITION) != null)
+			{
+				temp = this.attributes.queryTypeClear;
+			}
+			else
+			{
+				temp = data.getRequestParameter(this.attributes.queryTypeTag);
+			}
+			if (this.attributes.queryTypeReset.equals(temp))
+			{
+				this.conditionVersion++;
+				this.resetConditionSearch = search;
+				String xml = data.getRequestParameter(this.attributes.querySettingTag);
+				if (log.isDebugEnabled())
+				{
+					log.debug("The xml:" + xml);
+				}
+				boolean saveCondition = raMap.get(SAVE_CONDITION) != null || search.isSpecialCondition();
+				this.clearCondition();
+				if (xml != null)
+				{
+					Document doc = DocumentHelper.parseText(xml);
+					this.setConditionValues(doc, search, saveCondition);
+				}
+				else
+				{
+					this.setConditionValues(data, search, saveCondition, false);
+				}
+			}
+			else if (this.attributes.queryTypeClear.equals(temp))
+			{
+				this.conditionVersion++;
+				this.preparedCondition = null;
+				this.generatedPM = null;
+				this.clearCondition();
+			}
+			else if (this.conditionVersion == 1)
+			{
+				// version‰∏∫1, Ë°®Á§∫ÊòØÁ¨¨‰∏ÄÊ¨°ËøõÂÖ•‰∏îÊú™Ê†áËÆ∞Ë¶ÅËÆæÁΩÆÊù°‰ª∂
+				this.conditionVersion++;
+				boolean saveCondition = raMap.get(SAVE_CONDITION) != null || search.isSpecialCondition();
+				this.setConditionValues(data, search, saveCondition, true);
+			}
+		}
+		catch (Exception ex)
+		{
+			log.error("When set condition values.", ex);
+		}
+	}
 
-   /**
-    * ∏˘æ›≤Œ ˝µƒ√˚≥∆¥”<code>doc</code>÷–µƒÃıº˛≈‰÷√£¨…Ë÷√≤È—ØÃıº˛°£
-    */
-   private void setConditionValues(Document doc, SearchAdapter search, boolean saveCondition)
-         throws ConfigurationException
-   {
-      StringAppender buf = StringTool.createStringAppender(512);
+	/**
+	 * Ê†πÊçÆÂèÇÊï∞ÁöÑÂêçÁß∞‰ªé<code>doc</code>‰∏≠ÁöÑÊù°‰ª∂ÈÖçÁΩÆÔºåËÆæÁΩÆÊü•ËØ¢Êù°‰ª∂„ÄÇ
+	 */
+	private void setConditionValues(Document doc, SearchAdapter search, boolean saveCondition)
+			throws ConfigurationException
+	{
+		StringAppender buf = StringTool.createStringAppender(512);
 
-      List preparerList = new LinkedList();
-      List groups = doc.getRootElement().element("groups").elements("group");
-      Iterator gitr = groups.iterator();
-      Element group;
-      String value;
-      while (gitr.hasNext())
-      {
-         group = (Element) gitr.next();
-         List conditions = group.elements("condition");
-         if (conditions.size() > 0)
-         {
-            Iterator citr = conditions.iterator();
-            int index = 0;
-            while (citr.hasNext())
-            {
-               Element condition = (Element) citr.next();
-               // ’‚¿Ô≤ª≤∂ªÒ“Ï≥£, “ÚŒ™‘⁄∑Ω∑®Õ‚“—æ≠≤∂ªÒ¡À
-               ConditionProperty cp = search.getConditionProperty(
-                     condition.attributeValue("name"));
-               if (cp != null && !cp.isIgnore())
-               {
-                  ConditionBuilder cb = cp.isUseDefaultConditionBuilder() ? cp.getDefaultConditionBuilder()
-                        : search.getFactory().getConditionBuilder(condition.attributeValue("builder"));
-                  value = condition.attributeValue("value");
-                  ConditionBuilder.Condition cbCon = null;
-                  try
-                  {
-                     cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
-                     if (saveCondition)
-                     {
-                        this.addCondition(new Condition(cp.getName(), group.attributeValue("name"), value, cb));
-                     }
-                  }
-                  catch (Exception ex)
-                  {
-                     log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
-                           + "], search[" + search.getName() + "]", ex);
-                  }
-                  if (log.isDebugEnabled())
-                  {
-                     log.debug("OneCondition:" + cbCon != null  ? cbCon.toString() : null);
-                  }
-                  if (cbCon != null)
-                  {
-                     if (index != 0)
-                     {
-                        buf.append(" AND ");
-                     }
-                     else
-                     {
-                        if (buf.length() > 0)
-                        {
-                           buf.append(" OR (");
-                        }
-                        else
-                        {
-                           buf.append("( (");
-                        }
-                     }
-                     buf.append(cbCon.sqlPart);
-                     for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
-                     {
-                        cbCon.preparers[pIndex].setName(cp.getName());
-                     }
-                     preparerList.addAll(Arrays.asList(cbCon.preparers));
-                     index++;
-                  }
-               }
-            }
-            if (index > 0)
-            {
-               buf.append(')');
-            }
-         }
-      }
-      if (buf.length() > 0)
-      {
-         buf.append(" )");
-      }
-      this.preparedCondition = buf.toString();
-      if (log.isDebugEnabled())
-      {
-         log.debug("Condition:" + buf.toString());
-      }
-      int pSize = preparerList.size();
-      if (pSize > 0)
-      {
-         PreparerManager tmpPM = new PreparerManager(pSize);
-         Iterator itr = preparerList.iterator();
-         for (int i = 0; i < pSize; i++)
-         {
-            ValuePreparer preparer = (ValuePreparer) itr.next();
-            preparer.setRelativeIndex(i + 1);
-            tmpPM.setValuePreparer(preparer);
-         }
+		List preparerList = new LinkedList();
+		List groups = doc.getRootElement().element("groups").elements("group");
+		Iterator gitr = groups.iterator();
+		Element group;
+		String value;
+		while (gitr.hasNext())
+		{
+			group = (Element) gitr.next();
+			List conditions = group.elements("condition");
+			if (conditions.size() > 0)
+			{
+				Iterator citr = conditions.iterator();
+				int index = 0;
+				while (citr.hasNext())
+				{
+					Element condition = (Element) citr.next();
+					// ËøôÈáå‰∏çÊçïËé∑ÂºÇÂ∏∏, Âõ†‰∏∫Âú®ÊñπÊ≥ïÂ§ñÂ∑≤ÁªèÊçïËé∑‰∫Ü
+					ConditionProperty cp = search.getConditionProperty(
+							condition.attributeValue("name"));
+					if (cp != null && !cp.isIgnore())
+					{
+						ConditionBuilder cb = cp.isUseDefaultConditionBuilder() ? cp.getDefaultConditionBuilder()
+								: search.getFactory().getConditionBuilder(condition.attributeValue("builder"));
+						value = condition.attributeValue("value");
+						ConditionBuilder.Condition cbCon = null;
+						try
+						{
+							cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
+							if (saveCondition)
+							{
+								this.addCondition(new Condition(cp.getName(), group.attributeValue("name"), value, cb));
+							}
+						}
+						catch (Exception ex)
+						{
+							log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
+									+ "], search[" + search.getName() + "]", ex);
+						}
+						if (log.isDebugEnabled())
+						{
+							log.debug("OneCondition:" + cbCon != null  ? cbCon.toString() : null);
+						}
+						if (cbCon != null)
+						{
+							if (index != 0)
+							{
+								buf.append(" AND ");
+							}
+							else
+							{
+								if (buf.length() > 0)
+								{
+									buf.append(" OR (");
+								}
+								else
+								{
+									buf.append("( (");
+								}
+							}
+							buf.append(cbCon.sqlPart);
+							for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
+							{
+								cbCon.preparers[pIndex].setName(cp.getName());
+							}
+							preparerList.addAll(Arrays.asList(cbCon.preparers));
+							index++;
+						}
+					}
+				}
+				if (index > 0)
+				{
+					buf.append(')');
+				}
+			}
+		}
+		if (buf.length() > 0)
+		{
+			buf.append(" )");
+		}
+		this.preparedCondition = buf.toString();
+		if (log.isDebugEnabled())
+		{
+			log.debug("Condition:" + buf.toString());
+		}
+		int pSize = preparerList.size();
+		if (pSize > 0)
+		{
+			PreparerManager tmpPM = new PreparerManager(pSize);
+			Iterator itr = preparerList.iterator();
+			for (int i = 0; i < pSize; i++)
+			{
+				ValuePreparer preparer = (ValuePreparer) itr.next();
+				preparer.setRelativeIndex(i + 1);
+				tmpPM.setValuePreparer(preparer);
+			}
 			this.generatedPM = tmpPM;
-      }
-      else
-      {
-         this.generatedPM = null;
-      }
-   }
+		}
+		else
+		{
+			this.generatedPM = null;
+		}
+	}
 
-   /**
-    * ∏˘æ›≤Œ ˝µƒ√˚≥∆¥”<code>request</code>÷–µƒ∂¡»°≤Œ ˝£¨…Ë÷√≤È—ØÃıº˛°£
-    */
-   private void setConditionValues(AppData data, SearchAdapter search, boolean saveCondition, boolean dealDefault)
-         throws ConfigurationException
-   {
-      StringAppender buf = StringTool.createStringAppender(512);
+	/**
+	 * Ê†πÊçÆÂèÇÊï∞ÁöÑÂêçÁß∞‰ªé<code>request</code>‰∏≠ÁöÑËØªÂèñÂèÇÊï∞ÔºåËÆæÁΩÆÊü•ËØ¢Êù°‰ª∂„ÄÇ
+	 */
+	private void setConditionValues(AppData data, SearchAdapter search, boolean saveCondition, boolean dealDefault)
+			throws ConfigurationException
+	{
+		StringAppender buf = StringTool.createStringAppender(512);
 
-      List preparerList = new LinkedList();
-      int index = 0;
-      int count = search.getConditionPropertyCount();
-      for (int i = 0; i < count; i++)
-      {
-         // ’‚¿Ô≤ª≤∂ªÒ“Ï≥£, “ÚŒ™‘⁄∑Ω∑®Õ‚“—æ≠≤∂ªÒ¡À
-         ConditionProperty cp = search.getConditionProperty(i);
-         String value;
-         if (dealDefault)
-         {
-            value = cp.getDefaultValue();
-            if (value != null)
-            {
-               if (value.startsWith(DATA_DEFAULT_VALUE_PREFIX))
-               {
-                  Object obj = data.dataMap.get(value.substring(DATA_DEFAULT_VALUE_PREFIX.length()));
-                  if (obj == null)
-                  {
-                     value = null;
-                  }
-                  else
-                  {
-                     value = String.valueOf(obj);
-                  }
-               }
-            }
-         }
-         else
-         {
-            value = data.getRequestParameter(cp.getName());
-         }
-         if (!cp.isIgnore() && value != null && value.length() > 0)
-         {
-            ConditionBuilder cb = cp.getDefaultConditionBuilder();
-            ConditionBuilder.Condition cbCon = null;
-            try
-            {
-               cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
-               if (saveCondition)
-               {
-                  this.addCondition(new Condition(cp.getName(), null, value, cb));
-               }
-            }
-            catch (Exception ex)
-            {
-               log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
-                     + "], search[" + search.getName() + "]", ex);
-            }
-            if (log.isDebugEnabled())
-            {
-               log.debug("OneCondition:" + cbCon != null  ? cbCon.toString() : null);
-            }
-            if (cbCon != null)
-            {
-               if (index != 0)
-               {
-                  buf.append(" AND ");
-               }
-               else
-               {
-                  buf.append('(');
-               }
-               buf.append(cbCon.sqlPart);
-               for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
-               {
-                  cbCon.preparers[pIndex].setName(cp.getName());
-               }
-               preparerList.addAll(Arrays.asList(cbCon.preparers));
-               index++;
-            }
-         }
-      }
-      if (buf.length() > 1)
-      {
-         buf.append(')');
-         this.preparedCondition = buf.toString();
-      }
-      else
-      {
-         this.preparedCondition = "";
-      }
-      if (log.isDebugEnabled())
-      {
-         log.debug("Condition:" + buf.toString());
-      }
-      int pSize = preparerList.size();
-      if (pSize > 0)
-      {
-         PreparerManager tmpPM = new PreparerManager(pSize);
-         Iterator itr = preparerList.iterator();
-         for (int i = 0; i < pSize; i++)
-         {
-            ValuePreparer preparer = (ValuePreparer) itr.next();
-            preparer.setRelativeIndex(i + 1);
-            tmpPM.setValuePreparer(preparer);
-         }
+		List preparerList = new LinkedList();
+		int index = 0;
+		int count = search.getConditionPropertyCount();
+		for (int i = 0; i < count; i++)
+		{
+			// ËøôÈáå‰∏çÊçïËé∑ÂºÇÂ∏∏, Âõ†‰∏∫Âú®ÊñπÊ≥ïÂ§ñÂ∑≤ÁªèÊçïËé∑‰∫Ü
+			ConditionProperty cp = search.getConditionProperty(i);
+			String value;
+			if (dealDefault)
+			{
+				value = cp.getDefaultValue();
+				if (value != null)
+				{
+					if (value.startsWith(DATA_DEFAULT_VALUE_PREFIX))
+					{
+						Object obj = data.dataMap.get(value.substring(DATA_DEFAULT_VALUE_PREFIX.length()));
+						if (obj == null)
+						{
+							value = null;
+						}
+						else
+						{
+							value = String.valueOf(obj);
+						}
+					}
+				}
+			}
+			else
+			{
+				value = data.getRequestParameter(cp.getName());
+			}
+			if (!cp.isIgnore() && value != null && value.length() > 0)
+			{
+				ConditionBuilder cb = cp.getDefaultConditionBuilder();
+				ConditionBuilder.Condition cbCon = null;
+				try
+				{
+					cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
+					if (saveCondition)
+					{
+						this.addCondition(new Condition(cp.getName(), null, value, cb));
+					}
+				}
+				catch (Exception ex)
+				{
+					log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
+							+ "], search[" + search.getName() + "]", ex);
+				}
+				if (log.isDebugEnabled())
+				{
+					log.debug("OneCondition:" + cbCon != null  ? cbCon.toString() : null);
+				}
+				if (cbCon != null)
+				{
+					if (index != 0)
+					{
+						buf.append(" AND ");
+					}
+					else
+					{
+						buf.append('(');
+					}
+					buf.append(cbCon.sqlPart);
+					for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
+					{
+						cbCon.preparers[pIndex].setName(cp.getName());
+					}
+					preparerList.addAll(Arrays.asList(cbCon.preparers));
+					index++;
+				}
+			}
+		}
+		if (buf.length() > 1)
+		{
+			buf.append(')');
+			this.preparedCondition = buf.toString();
+		}
+		else
+		{
+			this.preparedCondition = "";
+		}
+		if (log.isDebugEnabled())
+		{
+			log.debug("Condition:" + buf.toString());
+		}
+		int pSize = preparerList.size();
+		if (pSize > 0)
+		{
+			PreparerManager tmpPM = new PreparerManager(pSize);
+			Iterator itr = preparerList.iterator();
+			for (int i = 0; i < pSize; i++)
+			{
+				ValuePreparer preparer = (ValuePreparer) itr.next();
+				preparer.setRelativeIndex(i + 1);
+				tmpPM.setValuePreparer(preparer);
+			}
 			this.generatedPM = tmpPM;
-      }
-      else
-      {
-         this.generatedPM = null;
-      }
-   }
+		}
+		else
+		{
+			this.generatedPM = null;
+		}
+	}
 
-   public PreparerManager getPreparerManager()
-   {
-      return this.generatedPM;
-   }
+	public PreparerManager getPreparerManager()
+	{
+		return this.generatedPM;
+	}
 
-   public PreparerManager getSpecialPreparerManager(SearchAdapter search)
-         throws ConfigurationException
-   {
-      if (search == this.resetConditionSearch)
-      {
-         return this.getPreparerManager();
-      }
-      if (this.specialMap != null)
-      {
-         Object[] temp = (Object[]) this.specialMap.get(search.getName());
-         if (temp != null)
-         {
-            return (PreparerManager) temp[1];
-         }
-      }
-      return (PreparerManager) this.createSpecialCondition(search)[1];
-   }
+	public PreparerManager getSpecialPreparerManager(SearchAdapter search)
+			throws ConfigurationException
+	{
+		if (search == this.resetConditionSearch)
+		{
+			return this.getPreparerManager();
+		}
+		if (this.specialMap != null)
+		{
+			Object[] temp = (Object[]) this.specialMap.get(search.getName());
+			if (temp != null)
+			{
+				return (PreparerManager) temp[1];
+			}
+		}
+		return (PreparerManager) this.createSpecialCondition(search)[1];
+	}
 
-   public String getConditionPart()
-   {
-      if (this.preparedCondition == null)
-      {
-         this.preparedCondition = "";
-      }
-      return this.preparedCondition;
-   }
+	public String getConditionPart()
+	{
+		if (this.preparedCondition == null)
+		{
+			this.preparedCondition = "";
+		}
+		return this.preparedCondition;
+	}
 
-   public String getConditionPart(boolean needWrap)
-   {
-      String r = this.getConditionPart();
-      return needWrap || r.length() == 0 ? r : r.substring(1, r.length() - 1);
-   }
+	public String getConditionPart(boolean needWrap)
+	{
+		String r = this.getConditionPart();
+		return needWrap || r.length() == 0 ? r : r.substring(1, r.length() - 1);
+	}
 
-   public String getSpecialConditionPart(SearchAdapter search)
-         throws ConfigurationException
-   {
-      if (search == this.resetConditionSearch)
-      {
-         return this.getConditionPart();
-      }
-      if (this.specialMap != null)
-      {
-         Object[] temp = (Object[]) this.specialMap.get(search.getName());
-         if (temp != null)
-         {
-            return (String) temp[0];
-         }
-      }
-      return (String) this.createSpecialCondition(search)[0];
-   }
+	public String getSpecialConditionPart(SearchAdapter search)
+			throws ConfigurationException
+	{
+		if (search == this.resetConditionSearch)
+		{
+			return this.getConditionPart();
+		}
+		if (this.specialMap != null)
+		{
+			Object[] temp = (Object[]) this.specialMap.get(search.getName());
+			if (temp != null)
+			{
+				return (String) temp[0];
+			}
+		}
+		return (String) this.createSpecialCondition(search)[0];
+	}
 
-   public String getSpecialConditionPart(SearchAdapter search, boolean needWrap)
-         throws ConfigurationException
-   {
-      if (search == this.resetConditionSearch)
-      {
-         return this.getConditionPart(needWrap);
-      }
-      String r = this.getSpecialConditionPart(search);
-      return needWrap || r.length() == 0 ? r : r.substring(1, r.length() - 1);
-   }
+	public String getSpecialConditionPart(SearchAdapter search, boolean needWrap)
+			throws ConfigurationException
+	{
+		if (search == this.resetConditionSearch)
+		{
+			return this.getConditionPart(needWrap);
+		}
+		String r = this.getSpecialConditionPart(search);
+		return needWrap || r.length() == 0 ? r : r.substring(1, r.length() - 1);
+	}
 
 
-   private Map prepareCondition(SearchAdapter search)
-         throws ConfigurationException
-   {
-      List cons = this.getConditions();
-      if (cons.size() == 0)
-      {
-         return null;
-      }
-      Map result = new HashMap();
-      Iterator itr = cons.iterator();
-      while (itr.hasNext())
-      {
-         Condition con = (Condition) itr.next();
-         ConditionProperty cp = search.getConditionProperty(con.name);
-         if (cp != null && !cp.isIgnore())
-         {
-            List group = (List) result.get(con.group);
-            if (group == null)
-            {
-               group = new LinkedList();
-               result.put(con.group, group);
-            }
-            group.add(con);
-            group.add(cp);
-         }
-      }
-      return result;
-   }
+	private Map prepareCondition(SearchAdapter search)
+			throws ConfigurationException
+	{
+		List cons = this.getConditions();
+		if (cons.size() == 0)
+		{
+			return null;
+		}
+		Map result = new HashMap();
+		Iterator itr = cons.iterator();
+		while (itr.hasNext())
+		{
+			Condition con = (Condition) itr.next();
+			ConditionProperty cp = search.getConditionProperty(con.name);
+			if (cp != null && !cp.isIgnore())
+			{
+				List group = (List) result.get(con.group);
+				if (group == null)
+				{
+					group = new LinkedList();
+					result.put(con.group, group);
+				}
+				group.add(con);
+				group.add(cp);
+			}
+		}
+		return result;
+	}
 
-   /**
-    * …˙≥…Ãıº˛◊”ºØ£¨∑µªÿ÷µŒ™2∏ˆ£¨µ⁄“ª∏ˆŒ™ConditionPart£¨µ⁄∂˛∏ˆŒ™PreparerManager.
-    */
-   private Object[] createSpecialCondition(SearchAdapter search)
-         throws ConfigurationException
-   {
-      Map consMap = this.prepareCondition(search);
-      if (consMap == null || consMap.size() == 0)
-      {
-         return new Object[]{"", null};
-      }
-      StringAppender buf = StringTool.createStringAppender(512);
-      List preparerList = new LinkedList();
-      Iterator gitr = consMap.values().iterator();
-      String value;
-      while (gitr.hasNext())
-      {
-         List conditions = (List) gitr.next();
-         if (conditions.size() > 0)
-         {
-            Iterator citr = conditions.iterator();
-            int index = 0;
-            while (citr.hasNext())
-            {
-               Condition condition = (Condition) citr.next();
-               ConditionProperty cp = (ConditionProperty) citr.next();
-               ConditionBuilder cb = cp.isUseDefaultConditionBuilder() ?
-                     cp.getDefaultConditionBuilder() : condition.builder;
-               value = condition.value;
-               ConditionBuilder.Condition cbCon = null;
-               try
-               {
-                  cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
-               }
-               catch (Exception ex)
-               {
-                  log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
-                        + "], search[" + search.getName() + "]", ex);
-               }
-               if (log.isDebugEnabled())
-               {
-                  log.debug("OneCondition:" + cbCon.toString());
-               }
-               if (cbCon != null)
-               {
-                  if (index != 0)
-                  {
-                     buf.append(" AND ");
-                  }
-                  else
-                  {
-                     if (buf.length() > 0)
-                     {
-                        buf.append(" OR (");
-                     }
-                     else
-                     {
-                        buf.append("( (");
-                     }
-                  }
-                  buf.append(cbCon.sqlPart);
-                  for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
-                  {
-                     cbCon.preparers[pIndex].setName(cp.getName());
-                  }
-                  preparerList.addAll(Arrays.asList(cbCon.preparers));
-                  index++;
-               }
-            }
-            if (buf.length() > 0)
-            {
-               buf.append(')');
-            }
-         }
-      }
-      if (buf.length() > 0)
-      {
-         buf.append(" )");
-      }
-      String pCon = buf.toString();
-      if (log.isDebugEnabled())
-      {
-         log.debug("Condition:" + buf.toString());
-      }
-      int pSize = preparerList.size();
-      PreparerManager gPM = null;
-      if (pSize > 0)
-      {
-         gPM = new PreparerManager(pSize);
-         Iterator itr = preparerList.iterator();
-         for (int i = 0; i < pSize; i++)
-         {
-            ValuePreparer preparer = (ValuePreparer) itr.next();
-            preparer.setRelativeIndex(i + 1);
-            gPM.setValuePreparer(preparer);
-         }
-      }
-      Object[] result = new Object[]{pCon, gPM};
-      if (this.specialMap == null)
-      {
-         this.specialMap = new HashMap();
-      }
-      this.specialMap.put(search.getName(), result);
-      return result;
-   }
+	/**
+	 * ÁîüÊàêÊù°‰ª∂Â≠êÈõÜÔºåËøîÂõûÂÄº‰∏∫2‰∏™ÔºåÁ¨¨‰∏Ä‰∏™‰∏∫ConditionPartÔºåÁ¨¨‰∫å‰∏™‰∏∫PreparerManager.
+	 */
+	private Object[] createSpecialCondition(SearchAdapter search)
+			throws ConfigurationException
+	{
+		Map consMap = this.prepareCondition(search);
+		if (consMap == null || consMap.size() == 0)
+		{
+			return new Object[]{"", null};
+		}
+		StringAppender buf = StringTool.createStringAppender(512);
+		List preparerList = new LinkedList();
+		Iterator gitr = consMap.values().iterator();
+		String value;
+		while (gitr.hasNext())
+		{
+			List conditions = (List) gitr.next();
+			if (conditions.size() > 0)
+			{
+				Iterator citr = conditions.iterator();
+				int index = 0;
+				while (citr.hasNext())
+				{
+					Condition condition = (Condition) citr.next();
+					ConditionProperty cp = (ConditionProperty) citr.next();
+					ConditionBuilder cb = cp.isUseDefaultConditionBuilder() ?
+							cp.getDefaultConditionBuilder() : condition.builder;
+					value = condition.value;
+					ConditionBuilder.Condition cbCon = null;
+					try
+					{
+						cbCon = cb.buildeCondition(cp.getColumnName(), value, cp);
+					}
+					catch (Exception ex)
+					{
+						log.error("Error wen builde condition: ConditionProperty[" + cp.getName()
+								+ "], search[" + search.getName() + "]", ex);
+					}
+					if (log.isDebugEnabled())
+					{
+						log.debug("OneCondition:" + cbCon.toString());
+					}
+					if (cbCon != null)
+					{
+						if (index != 0)
+						{
+							buf.append(" AND ");
+						}
+						else
+						{
+							if (buf.length() > 0)
+							{
+								buf.append(" OR (");
+							}
+							else
+							{
+								buf.append("( (");
+							}
+						}
+						buf.append(cbCon.sqlPart);
+						for (int pIndex = 0; pIndex < cbCon.preparers.length; pIndex++)
+						{
+							cbCon.preparers[pIndex].setName(cp.getName());
+						}
+						preparerList.addAll(Arrays.asList(cbCon.preparers));
+						index++;
+					}
+				}
+				if (buf.length() > 0)
+				{
+					buf.append(')');
+				}
+			}
+		}
+		if (buf.length() > 0)
+		{
+			buf.append(" )");
+		}
+		String pCon = buf.toString();
+		if (log.isDebugEnabled())
+		{
+			log.debug("Condition:" + buf.toString());
+		}
+		int pSize = preparerList.size();
+		PreparerManager gPM = null;
+		if (pSize > 0)
+		{
+			gPM = new PreparerManager(pSize);
+			Iterator itr = preparerList.iterator();
+			for (int i = 0; i < pSize; i++)
+			{
+				ValuePreparer preparer = (ValuePreparer) itr.next();
+				preparer.setRelativeIndex(i + 1);
+				gPM.setValuePreparer(preparer);
+			}
+		}
+		Object[] result = new Object[]{pCon, gPM};
+		if (this.specialMap == null)
+		{
+			this.specialMap = new HashMap();
+		}
+		this.specialMap.put(search.getName(), result);
+		return result;
+	}
 
-   public Attributes getAttributes()
-   {
-      return this.attributes;
-   }
+	public Attributes getAttributes()
+	{
+		return this.attributes;
+	}
 
-   public void setAttributes(Attributes attributes)
-   {
-      this.attributes = attributes == null ? DEFAULT_PROPERTIES : attributes;
-   }
+	public void setAttributes(Attributes attributes)
+	{
+		this.attributes = attributes == null ? DEFAULT_PROPERTIES : attributes;
+	}
 
-   public Condition getCondition(String name)
-   {
-      if (this.conditionMap == null)
-      {
-         return null;
-      }
-      List list = (List) this.conditionMap.get(name);
-      if (list == null)
-      {
-         return null;
-      }
-      return (Condition) list.get(0);
-   }
+	public Condition getCondition(String name)
+	{
+		if (this.conditionMap == null)
+		{
+			return null;
+		}
+		List list = (List) this.conditionMap.get(name);
+		if (list == null)
+		{
+			return null;
+		}
+		return (Condition) list.get(0);
+	}
 
-   public List getConditions(String name)
-   {
-      if (this.conditionMap == null)
-      {
-         return null;
-      }
-      List list = (List) this.conditionMap.get(name);
-      if (list == null)
-      {
-         return null;
-      }
-      return Collections.unmodifiableList(list);
-   }
+	public List getConditions(String name)
+	{
+		if (this.conditionMap == null)
+		{
+			return null;
+		}
+		List list = (List) this.conditionMap.get(name);
+		if (list == null)
+		{
+			return null;
+		}
+		return Collections.unmodifiableList(list);
+	}
 
-   public List getConditions()
-   {
-      if (this.conditionList == null)
-      {
-         return Collections.EMPTY_LIST;
-      }
-      return Collections.unmodifiableList(this.conditionList);
-   }
+	public List getConditions()
+	{
+		if (this.conditionList == null)
+		{
+			return Collections.EMPTY_LIST;
+		}
+		return Collections.unmodifiableList(this.conditionList);
+	}
 
-   private void clearCondition()
-   {
-      this.specialMap = null;
-      if (this.conditionList != null)
-      {
-         this.conditionList.clear();
-         this.conditionMap.clear();
-      }
-   }
+	private void clearCondition()
+	{
+		this.specialMap = null;
+		if (this.conditionList != null)
+		{
+			this.conditionList.clear();
+			this.conditionMap.clear();
+		}
+	}
 
-   private void addCondition(Condition condition)
-   {
-      if (this.conditionList == null)
-      {
-         this.conditionList = new LinkedList();
-         this.conditionMap = new HashMap();
-      }
-      this.conditionList.add(condition);
-      ArrayList conditions = (ArrayList) this.conditionMap.get(condition.name);
-      if (conditions == null)
-      {
-         conditions = new ArrayList(2);
-         this.conditionMap.put(condition.name, conditions);
-      }
-      conditions.add(condition);
-   }
+	private void addCondition(Condition condition)
+	{
+		if (this.conditionList == null)
+		{
+			this.conditionList = new LinkedList();
+			this.conditionMap = new HashMap();
+		}
+		this.conditionList.add(condition);
+		ArrayList conditions = (ArrayList) this.conditionMap.get(condition.name);
+		if (conditions == null)
+		{
+			conditions = new ArrayList(2);
+			this.conditionMap.put(condition.name, conditions);
+		}
+		conditions.add(condition);
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createSearchManager();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createSearchManager();
+	}
 
-   public SearchManager createSearchManager()
-         throws ConfigurationException
-   {
-      return new SearchManagerImpl();
-   }
+	public SearchManager createSearchManager()
+			throws ConfigurationException
+	{
+		return new SearchManagerImpl();
+	}
 
 	public void print(DataPrinter p, Writer out, Object bean)
 			throws IOException, ConfigurationException

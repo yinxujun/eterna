@@ -16,170 +16,170 @@ import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.converter.BooleanConverter;
 
 public class ResultFormatGeneratorImpl extends AbstractGenerator
-      implements ResultFormatGenerator
+		implements ResultFormatGenerator
 {
-   private String formatType;
-   private String formatPattern;
+	private String formatType;
+	private String formatPattern;
 
-   public void setType(String type)
-   {
-      this.formatType = type;
-   }
+	public void setType(String type)
+	{
+		this.formatType = type;
+	}
 
-   public void setPattern(String pattern)
-   {
-      this.formatPattern = pattern;
-   }
+	public void setPattern(String pattern)
+	{
+		this.formatPattern = pattern;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createFormat();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createFormat();
+	}
 
-   public ResultFormat createFormat()
-         throws ConfigurationException
-   {
-      Format format;
-      if (this.formatType == null)
-      {
-         // µ±Ã»ÓĞÖ¸¶¨ÀàĞÍÊ±, ÎŞ·¨Éú³ÉĞèÒªµÄ¸ñÊ½»¯¶ÔÏó
-         throw new ConfigurationException(
-               "The format's attribute [type] not give.");
-      }
-      if ("Number".equals(this.formatType))
-      {
-         if (this.formatPattern == null)
-         {
-            format = NumberFormat.getInstance();
-         }
-         else
-         {
-            format = new java.text.DecimalFormat(this.formatPattern);
-         }
-      }
-      else if ("Date".equals(this.formatType))
-      {
-         if (this.formatPattern == null)
-         {
-            format = DateFormat.getInstance();
-         }
-         else if (this.formatPattern.startsWith("locale:"))
-         {
-            int index = this.formatPattern.indexOf(',');
-            if (index == -1)
-            {
-               // Èç¹ûÓĞµØÇøÉèÖÃ£¬µØÇøÓëÈÕÆÚÄ£Ê½Ö®¼ä±ØĞëÓÃ¡°,¡±·Ö¸ô
-               throw new ConfigurationException(
-                     "Error format pattern:[" + this.formatPattern + "].");
-            }
-            String pattern = this.formatPattern.substring(index + 1);
-            String localeStr = this.formatPattern.substring(7, index);
-            index = localeStr.indexOf('_');
-            Locale locale = index == -1 ? new Locale(localeStr)
-                  : new Locale(localeStr.substring(0, index), localeStr.substring(index + 1));
-            format = new java.text.SimpleDateFormat(pattern, locale);
-         }
-         else
-         {
-            format = new java.text.SimpleDateFormat(this.formatPattern);
-         }
-      }
-      else if ("boolean".equals(this.formatType))
-      {
-         return new BooleanFormat(this.formatPattern, this.name);
-      }
-      else
-      {
-         // ÀàĞÍ²»Ã÷, ÎŞ·¨Éú³ÉĞèÒªµÄ¸ñÊ½»¯¶ÔÏó
-         throw new ConfigurationException(
-               "Error format type [" + this.formatType + "].");
-      }
-      return new MyResultFormat(format, this.name);
-   }
+	public ResultFormat createFormat()
+			throws ConfigurationException
+	{
+		Format format;
+		if (this.formatType == null)
+		{
+			// å½“æ²¡æœ‰æŒ‡å®šç±»å‹æ—¶, æ— æ³•ç”Ÿæˆéœ€è¦çš„æ ¼å¼åŒ–å¯¹è±¡
+			throw new ConfigurationException(
+					"The format's attribute [type] not give.");
+		}
+		if ("Number".equals(this.formatType))
+		{
+			if (this.formatPattern == null)
+			{
+				format = NumberFormat.getInstance();
+			}
+			else
+			{
+				format = new java.text.DecimalFormat(this.formatPattern);
+			}
+		}
+		else if ("Date".equals(this.formatType))
+		{
+			if (this.formatPattern == null)
+			{
+				format = DateFormat.getInstance();
+			}
+			else if (this.formatPattern.startsWith("locale:"))
+			{
+				int index = this.formatPattern.indexOf(',');
+				if (index == -1)
+				{
+					// å¦‚æœæœ‰åœ°åŒºè®¾ç½®ï¼Œåœ°åŒºä¸æ—¥æœŸæ¨¡å¼ä¹‹é—´å¿…é¡»ç”¨â€œ,â€åˆ†éš”
+					throw new ConfigurationException(
+							"Error format pattern:[" + this.formatPattern + "].");
+				}
+				String pattern = this.formatPattern.substring(index + 1);
+				String localeStr = this.formatPattern.substring(7, index);
+				index = localeStr.indexOf('_');
+				Locale locale = index == -1 ? new Locale(localeStr)
+						: new Locale(localeStr.substring(0, index), localeStr.substring(index + 1));
+				format = new java.text.SimpleDateFormat(pattern, locale);
+			}
+			else
+			{
+				format = new java.text.SimpleDateFormat(this.formatPattern);
+			}
+		}
+		else if ("boolean".equals(this.formatType))
+		{
+			return new BooleanFormat(this.formatPattern, this.name);
+		}
+		else
+		{
+			// ç±»å‹ä¸æ˜, æ— æ³•ç”Ÿæˆéœ€è¦çš„æ ¼å¼åŒ–å¯¹è±¡
+			throw new ConfigurationException(
+					"Error format type [" + this.formatType + "].");
+		}
+		return new MyResultFormat(format, this.name);
+	}
 
-   private static class MyResultFormat
-         implements ResultFormat
-   {
-      private Format format;
-      private String name;
+	private static class MyResultFormat
+			implements ResultFormat
+	{
+		private Format format;
+		private String name;
 
-      public MyResultFormat(Format format, String name)
-      {
-         this.format = format;
-         this.name = name;
-      }
+		public MyResultFormat(Format format, String name)
+		{
+			this.format = format;
+			this.name = name;
+		}
 
-      public void initialize(EternaFactory factory) {}
+		public void initialize(EternaFactory factory) {}
 
-      public String getName()
-      {
-         return this.name;
-      }
+		public String getName()
+		{
+			return this.name;
+		}
 
-      public String format(Object obj, Permission permission)
-      {
-         return obj == null ? "" : this.format.format(obj);
-      }
+		public String format(Object obj, Permission permission)
+		{
+			return obj == null ? "" : this.format.format(obj);
+		}
 
-      public String format(Object obj, ResultRow row, Permission permission)
-      {
-         return obj == null ? "" : this.format.format(obj);
-      }
+		public String format(Object obj, ResultRow row, Permission permission)
+		{
+			return obj == null ? "" : this.format.format(obj);
+		}
 
-   }
+	}
 
-   private static class BooleanFormat
-         implements ResultFormat
-   {
+	private static class BooleanFormat
+			implements ResultFormat
+	{
 		private static final BooleanConverter booleanConverter = new BooleanConverter();
 
-      private String trueValue = "Yes";
-      private String falseValue = "No";
-      private String name;
+		private String trueValue = "Yes";
+		private String falseValue = "No";
+		private String name;
 
-      public BooleanFormat(String formatPattern, String name)
-      {
-         this.name = name;
-         if (formatPattern == null)
-         {
-            return;
-         }
-         int index = formatPattern.indexOf(':');
-         if (index != -1)
-         {
-            this.trueValue = formatPattern.substring(0, index);
-            this.falseValue = formatPattern.substring(index + 1);
-         }
-      }
+		public BooleanFormat(String formatPattern, String name)
+		{
+			this.name = name;
+			if (formatPattern == null)
+			{
+				return;
+			}
+			int index = formatPattern.indexOf(':');
+			if (index != -1)
+			{
+				this.trueValue = formatPattern.substring(0, index);
+				this.falseValue = formatPattern.substring(index + 1);
+			}
+		}
 
-      public void initialize(EternaFactory factory) {}
+		public void initialize(EternaFactory factory) {}
 
-      public String getName()
-      {
-         return this.name;
-      }
+		public String getName()
+		{
+			return this.name;
+		}
 
-      public String format(Object obj, Permission permission)
-      {
+		public String format(Object obj, Permission permission)
+		{
 			if (obj == null)
 			{
 				return "";
 			}
-         boolean v = booleanConverter.convertToBoolean(obj);
-         return v ? this.trueValue : this.falseValue;
-      }
+			boolean v = booleanConverter.convertToBoolean(obj);
+			return v ? this.trueValue : this.falseValue;
+		}
 
-      public String format(Object obj, ResultRow row, Permission permission)
-      {
+		public String format(Object obj, ResultRow row, Permission permission)
+		{
 			if (obj == null)
 			{
 				return "";
 			}
-         boolean v = booleanConverter.convertToBoolean(obj);
-         return v ? this.trueValue : this.falseValue;
-      }
+			boolean v = booleanConverter.convertToBoolean(obj);
+			return v ? this.trueValue : this.falseValue;
+		}
 
-   }
+	}
 
 }

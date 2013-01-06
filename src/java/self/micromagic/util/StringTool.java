@@ -11,632 +11,632 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <code>StringTool</code>ÀàÊÇÊµÏÖÒ»Ğ©³£ÓÃµÄ×Ö·û´®´¦Àí. <p>
+ * <code>StringTool</code>ç±»æ˜¯å®ç°ä¸€äº›å¸¸ç”¨çš„å­—ç¬¦ä¸²å¤„ç†. <p>
  *
  * @author  micromagic@sina.com
  */
 public class StringTool
 {
-   /**
-    * ÊÇ·ñĞèÒªÊ¹ÓÃQuickStringAppend.
-    * Èç¹ûĞèÒªÔò¿ÉÔÚÅäÖÃÎÄ¼şÖĞÉèÖÃ:
-    * self.micromagic.use.quickStringAppend=true
-    */
-   public static final String USE_QUICK_STRING_APPEND = "self.micromagic.use.quickStringAppend";
+	/**
+	 * æ˜¯å¦éœ€è¦ä½¿ç”¨QuickStringAppend.
+	 * å¦‚æœéœ€è¦åˆ™å¯åœ¨é…ç½®æ–‡ä»¶ä¸­è®¾ç½®:
+	 * self.micromagic.use.quickStringAppend=true
+	 */
+	public static final String USE_QUICK_STRING_APPEND = "self.micromagic.use.quickStringAppend";
 
-   public static final String[] EMPTY_STRING_ARRAY = new String[0];
+	public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
-   public static final int MAX_INTERN_SIZE = 1024 * 8;
+	public static final int MAX_INTERN_SIZE = 1024 * 8;
 
-   /**
-    * ¶Ô×Ö·û´®½øĞĞintern´¦Àí. <p>
-    * Èç¹ûÊäÈëµÄ×Ö·û´®Îªnull, ÔòÖ±½Ó·µ»Ønull¡£Èç¹ûÊäÈëµÄ×Ö·û´®³¤
-    * ¶È³¬³öÁËÏŞÖÆ, Ôò²»½øĞĞintern´¦Àí¡£
-    *
-    * @param str           Òªintern´¦ÀíµÄ×Ö·û´®
-    * @param newOnBeyond   ³¬³öÏŞÖÆÊÇÊÇ·ñÒªÖØĞÂ¹¹Ôì×Ö·û´®
-    * @return              ´¦ÀíÍêµÄ×Ö·û´®
-    */
-   public static String intern(String str, boolean newOnBeyond)
-   {
-      /*
-      ¶ÔÒ»Ğ©³¤ÆÚ±£´æµÄ×Ö·û´®½«Æä·ÅÈë×Ö·û´®³Ø, ÕâÑù¿É½ÚÊ¡30%ÒÔÉÏµÄÄÚ´æ¿Õ¼ä
-      ÁíÍâ¶ÔÓÚ³¬¹ı8kµÄ×Ö·û´®, µ±ÉèÖÃÁËnewOnBeyondÊ±, ½«»áÖØĞÂÉú³ÉĞÂµÄ×Ö·û´®
-      ÒòÎªÈçStringBufferÉú³ÉµÄ×Ö·û´®£¬»áÓĞÀË·ÑµÄ¿Õ¼ä, Èç¹ûÖ±½Ó³¤ÆÚ±£´æµÄ»°
-      ÕâĞ©¿Õ¼ä¾Í²»»á±»ÊÍ·Å, ½«»á³¤ÆÚÕ¼ÓÃÄÚ´æ
-      */
-      if (str == null)
-      {
-         return null;
-      }
-      return str.length() > MAX_INTERN_SIZE ?
-            (newOnBeyond ? new String(str) : str) : str.intern();
-   }
+	/**
+	 * å¯¹å­—ç¬¦ä¸²è¿›è¡Œinternå¤„ç†. <p>
+	 * å¦‚æœè¾“å…¥çš„å­—ç¬¦ä¸²ä¸ºnull, åˆ™ç›´æ¥è¿”å›nullã€‚å¦‚æœè¾“å…¥çš„å­—ç¬¦ä¸²é•¿
+	 * åº¦è¶…å‡ºäº†é™åˆ¶, åˆ™ä¸è¿›è¡Œinternå¤„ç†ã€‚
+	 *
+	 * @param str           è¦internå¤„ç†çš„å­—ç¬¦ä¸²
+	 * @param newOnBeyond   è¶…å‡ºé™åˆ¶æ˜¯æ˜¯å¦è¦é‡æ–°æ„é€ å­—ç¬¦ä¸²
+	 * @return              å¤„ç†å®Œçš„å­—ç¬¦ä¸²
+	 */
+	public static String intern(String str, boolean newOnBeyond)
+	{
+		/*
+		å¯¹ä¸€äº›é•¿æœŸä¿å­˜çš„å­—ç¬¦ä¸²å°†å…¶æ”¾å…¥å­—ç¬¦ä¸²æ± , è¿™æ ·å¯èŠ‚çœ30%ä»¥ä¸Šçš„å†…å­˜ç©ºé—´
+		å¦å¤–å¯¹äºè¶…è¿‡8kçš„å­—ç¬¦ä¸², å½“è®¾ç½®äº†newOnBeyondæ—¶, å°†ä¼šé‡æ–°ç”Ÿæˆæ–°çš„å­—ç¬¦ä¸²
+		å› ä¸ºå¦‚StringBufferç”Ÿæˆçš„å­—ç¬¦ä¸²ï¼Œä¼šæœ‰æµªè´¹çš„ç©ºé—´, å¦‚æœç›´æ¥é•¿æœŸä¿å­˜çš„è¯
+		è¿™äº›ç©ºé—´å°±ä¸ä¼šè¢«é‡Šæ”¾, å°†ä¼šé•¿æœŸå ç”¨å†…å­˜
+		*/
+		if (str == null)
+		{
+			return null;
+		}
+		return str.length() > MAX_INTERN_SIZE ?
+				(newOnBeyond ? new String(str) : str) : str.intern();
+	}
 
-   /**
-    * ¶Ô×Ö·û´®½øĞĞintern´¦Àí. <p>
-    * Èç¹ûÊäÈëµÄ×Ö·û´®Îªnull, ÔòÖ±½Ó·µ»Ønull¡£Èç¹ûÊäÈëµÄ×Ö·û´®³¤
-    * ¶È³¬³öÁËÏŞÖÆ, Ôò²»½øĞĞintern´¦Àí¡£
-    *
-    * @param str    Òªintern´¦ÀíµÄ×Ö·û´®
-    * @return       ´¦ÀíÍêµÄ×Ö·û´®
-    */
-   public static String intern(String str)
-   {
-      return intern(str, false);
-   }
+	/**
+	 * å¯¹å­—ç¬¦ä¸²è¿›è¡Œinternå¤„ç†. <p>
+	 * å¦‚æœè¾“å…¥çš„å­—ç¬¦ä¸²ä¸ºnull, åˆ™ç›´æ¥è¿”å›nullã€‚å¦‚æœè¾“å…¥çš„å­—ç¬¦ä¸²é•¿
+	 * åº¦è¶…å‡ºäº†é™åˆ¶, åˆ™ä¸è¿›è¡Œinternå¤„ç†ã€‚
+	 *
+	 * @param str    è¦internå¤„ç†çš„å­—ç¬¦ä¸²
+	 * @return       å¤„ç†å®Œçš„å­—ç¬¦ä¸²
+	 */
+	public static String intern(String str)
+	{
+		return intern(str, false);
+	}
 
-   /**
-    * ÅĞ¶Ï×Ö·û´®ÊÇ·ñÎª¿Õ. <p>
-    * ¿Õ´®<code>""</code>ºÍ¿Õ¶ÔÏó<code>null</code>¶¼·µ»Ø<code>true</code>, ÆäËû
-    * Çé¿öÔò·µ»Ø<code>false</code>.
-    *
-    * @param str    ±»ÅĞ¶ÏµÄ×Ö·û´®
-    * @return       ÊÇ·ñÎª¿Õ
-    */
-   public static boolean isEmpty(String str)
-   {
-      return str == null || str.length() == 0;
-   }
+	/**
+	 * åˆ¤æ–­å­—ç¬¦ä¸²æ˜¯å¦ä¸ºç©º. <p>
+	 * ç©ºä¸²<code>""</code>å’Œç©ºå¯¹è±¡<code>null</code>éƒ½è¿”å›<code>true</code>, å…¶ä»–
+	 * æƒ…å†µåˆ™è¿”å›<code>false</code>.
+	 *
+	 * @param str    è¢«åˆ¤æ–­çš„å­—ç¬¦ä¸²
+	 * @return       æ˜¯å¦ä¸ºç©º
+	 */
+	public static boolean isEmpty(String str)
+	{
+		return str == null || str.length() == 0;
+	}
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄ·Ö¸ô·û<code>delimiter</code>·Ö¸îÒ»¸ö×Ö·û´®
-    * <code>str</code>. <p>
-    * Èç¹û¸ø³öµÄ×Ö·û´®<code>str</code>Îª<code>null</code>¡¢¿Õ´®
-    * <code>""</code>£¬Ôò·µ»Ø<code>null</code>£¬Ö»°üº¬·Ö¸ô·û
-    * <code>delimiter</code>£¬Ôò·µ»Ø³¤¶ÈÎª0µÄ×Ö·û´®Êı×é¡£Èç¹û¸ø³öµÄ
-    * ×Ö·û´®<code>str</code>¿ÉÒÔ·Ö¸î£¬¼´²»ÔÚÉÏÊöÇé¿öÖ®ÁĞ£¬Ôò·µ»ØÒ»¸ö
-    * ×Ö·û´®Êı×é£¬Ã¿¸öµ¥Ôª°üº¬Ò»¸ö±»·Ö¸ô³öÀ´µÄ×Ö·û´®¡£
-    * <p>
-    * ÀıÈç£º
-    * <blockquote><pre>
-    * StringProcessor.separateString("Ò»,¶ş,Èı", ",")
-    *         ·µ»Ø {"Ò»", "¶ş", "Èı"}
-    * StringProcessor.separateString("ÄãºÃ£¬´ó¼ÒºÃ£¡ÎÒºÜºÃ¡£", "£¬£¡")
-    *         ·µ»Ø {"ÄãºÃ", "´ó¼ÒºÃ", "ÎÒºÜºÃ¡£"}
-    * StringProcessor.separateString(null, ", \t\r\n")
-    *         ·µ»Ø null
-    * StringProcessor.separateString(", , , , ", ", \n")
-    *         ·µ»Ø {}
-    * </pre></blockquote>
-    *
-    * @param str         Òª½øĞĞ·Ö¸îµÄ×Ö·û´®
-    * @param delimiter   ·Ö¸ô·û¼¯ºÏ
-    * @return  ·Ö¸îºóµÄ×Ö·û´®Ëù×é³ÉµÄÊı×é
-    */
-   public static String[] separateString(String str, String delimiter)
-   {
-      return separateString(str, delimiter, false);
-   }
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„åˆ†éš”ç¬¦<code>delimiter</code>åˆ†å‰²ä¸€ä¸ªå­—ç¬¦ä¸²
+	 * <code>str</code>. <p>
+	 * å¦‚æœç»™å‡ºçš„å­—ç¬¦ä¸²<code>str</code>ä¸º<code>null</code>ã€ç©ºä¸²
+	 * <code>""</code>ï¼Œåˆ™è¿”å›<code>null</code>ï¼ŒåªåŒ…å«åˆ†éš”ç¬¦
+	 * <code>delimiter</code>ï¼Œåˆ™è¿”å›é•¿åº¦ä¸º0çš„å­—ç¬¦ä¸²æ•°ç»„ã€‚å¦‚æœç»™å‡ºçš„
+	 * å­—ç¬¦ä¸²<code>str</code>å¯ä»¥åˆ†å‰²ï¼Œå³ä¸åœ¨ä¸Šè¿°æƒ…å†µä¹‹åˆ—ï¼Œåˆ™è¿”å›ä¸€ä¸ª
+	 * å­—ç¬¦ä¸²æ•°ç»„ï¼Œæ¯ä¸ªå•å…ƒåŒ…å«ä¸€ä¸ªè¢«åˆ†éš”å‡ºæ¥çš„å­—ç¬¦ä¸²ã€‚
+	 * <p>
+	 * ä¾‹å¦‚ï¼š
+	 * <blockquote><pre>
+	 * StringProcessor.separateString("ä¸€,äºŒ,ä¸‰", ",")
+	 *         è¿”å› {"ä¸€", "äºŒ", "ä¸‰"}
+	 * StringProcessor.separateString("ä½ å¥½ï¼Œå¤§å®¶å¥½ï¼æˆ‘å¾ˆå¥½ã€‚", "ï¼Œï¼")
+	 *         è¿”å› {"ä½ å¥½", "å¤§å®¶å¥½", "æˆ‘å¾ˆå¥½ã€‚"}
+	 * StringProcessor.separateString(null, ", \t\r\n")
+	 *         è¿”å› null
+	 * StringProcessor.separateString(", , , , ", ", \n")
+	 *         è¿”å› {}
+	 * </pre></blockquote>
+	 *
+	 * @param str         è¦è¿›è¡Œåˆ†å‰²çš„å­—ç¬¦ä¸²
+	 * @param delimiter   åˆ†éš”ç¬¦é›†åˆ
+	 * @return  åˆ†å‰²åçš„å­—ç¬¦ä¸²æ‰€ç»„æˆçš„æ•°ç»„
+	 */
+	public static String[] separateString(String str, String delimiter)
+	{
+		return separateString(str, delimiter, false);
+	}
 
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄ·Ö¸ô·û<code>delimiter</code>·Ö¸îÒ»¸ö×Ö·û´®
-    * <code>str</code>. <p>
-    *
-    * @param str         Òª½øĞĞ·Ö¸îµÄ×Ö·û´®
-    * @param delimiter   ·Ö¸ô·û¼¯ºÏ
-    * @param trim        ÊÇ·ñÒª¶Ô·Ö¸î³öÀ´µÄÃ¿¸ö×Ö·û´®½øĞĞÈ¥³ı¿Õ¸ñ´¦Àí
-    * @return  ·Ö¸îºóµÄ×Ö·û´®Ëù×é³ÉµÄÊı×é
-    */
-   public static String[] separateString(String str, String delimiter, boolean trim)
-   {
-      if (str == null)
-      {
-         return null;
-      }
-      int count = str.length();
-      if (count == 0)
-      {
-         return EMPTY_STRING_ARRAY;
-      }
-      if (isEmpty(delimiter))
-      {
-         delimiter = " \t\n\r\f";
-      }
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„åˆ†éš”ç¬¦<code>delimiter</code>åˆ†å‰²ä¸€ä¸ªå­—ç¬¦ä¸²
+	 * <code>str</code>. <p>
+	 *
+	 * @param str         è¦è¿›è¡Œåˆ†å‰²çš„å­—ç¬¦ä¸²
+	 * @param delimiter   åˆ†éš”ç¬¦é›†åˆ
+	 * @param trim        æ˜¯å¦è¦å¯¹åˆ†å‰²å‡ºæ¥çš„æ¯ä¸ªå­—ç¬¦ä¸²è¿›è¡Œå»é™¤ç©ºæ ¼å¤„ç†
+	 * @return  åˆ†å‰²åçš„å­—ç¬¦ä¸²æ‰€ç»„æˆçš„æ•°ç»„
+	 */
+	public static String[] separateString(String str, String delimiter, boolean trim)
+	{
+		if (str == null)
+		{
+			return null;
+		}
+		int count = str.length();
+		if (count == 0)
+		{
+			return EMPTY_STRING_ARRAY;
+		}
+		if (isEmpty(delimiter))
+		{
+			delimiter = " \t\n\r\f";
+		}
 
-      List list = new ArrayList();
-      int i = 0;
-      int begin = 0;
-      boolean notMatch = false;
-      if (delimiter.length() == 1)
-      {
-         // ½öÓĞÒ»¸ö×Ö·ûÊ±ÓÃ×Ö·û±È½ÏÀ´ÅĞ¶Ï
-         char c = delimiter.charAt(0);
-         while (i < count)
-         {
-            if (str.charAt(i) == c)
-            {
-               if (notMatch)
-               {
-                  list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
-                  notMatch = false;
-               }
-               begin = ++i;
-               continue;
-            }
-            notMatch = true;
-            i++;
-         }
-      }
-      else
-      {
-         // ÓĞ¶à¸ö×Ö·ûÊ±ÓÃ×Ö·û´®µÄ°üº¬×Ö·ûÀ´ÅĞ¶Ï
-         while (i < count)
-         {
-            if (delimiter.indexOf(str.charAt(i)) >= 0)
-            {
-               if (notMatch)
-               {
-                  list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
-                  notMatch = false;
-               }
-               begin = ++i;
-               continue;
-            }
-            notMatch = true;
-            i++;
-         }
-      }
-      if (notMatch)
-      {
-         list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
-      }
+		List list = new ArrayList();
+		int i = 0;
+		int begin = 0;
+		boolean notMatch = false;
+		if (delimiter.length() == 1)
+		{
+			// ä»…æœ‰ä¸€ä¸ªå­—ç¬¦æ—¶ç”¨å­—ç¬¦æ¯”è¾ƒæ¥åˆ¤æ–­
+			char c = delimiter.charAt(0);
+			while (i < count)
+			{
+				if (str.charAt(i) == c)
+				{
+					if (notMatch)
+					{
+						list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+						notMatch = false;
+					}
+					begin = ++i;
+					continue;
+				}
+				notMatch = true;
+				i++;
+			}
+		}
+		else
+		{
+			// æœ‰å¤šä¸ªå­—ç¬¦æ—¶ç”¨å­—ç¬¦ä¸²çš„åŒ…å«å­—ç¬¦æ¥åˆ¤æ–­
+			while (i < count)
+			{
+				if (delimiter.indexOf(str.charAt(i)) >= 0)
+				{
+					if (notMatch)
+					{
+						list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+						notMatch = false;
+					}
+					begin = ++i;
+					continue;
+				}
+				notMatch = true;
+				i++;
+			}
+		}
+		if (notMatch)
+		{
+			list.add(trim ? str.substring(begin, i).trim() : str.substring(begin, i));
+		}
 
-      return (String[]) list.toArray(new String[list.size()]);
-   }
+		return (String[]) list.toArray(new String[list.size()]);
+	}
 
-   /*
-   Ô­À´¾ÉµÄÊµÏÖ
-   public static String[] separateString(String str, String delimiter, boolean trim)
-   {
-      if (str == null)
-      {
-         return null;
-      }
+	/*
+	åŸæ¥æ—§çš„å®ç°
+	public static String[] separateString(String str, String delimiter, boolean trim)
+	{
+		if (str == null)
+		{
+			return null;
+		}
 
-      StringTokenizer st = new StringTokenizer(str, delimiter);
-      int count = st.countTokens();
-      if (count == 0)
-      {
-         return EMPTY_STRING_ARRAY;
-      }
+		StringTokenizer st = new StringTokenizer(str, delimiter);
+		int count = st.countTokens();
+		if (count == 0)
+		{
+			return EMPTY_STRING_ARRAY;
+		}
 
-      String[] bolck = new String[count];
-      for (int i = 0; i < count; i++)
-      {
-         bolck[i] = st.nextToken();
-      }
-      if (trim)
-      {
-         for (int i = 0; i < count; i++)
-         {
-            bolck[i] = bolck[i].trim();
-         }
-      }
-      return bolck;
-   }
-   */
+		String[] bolck = new String[count];
+		for (int i = 0; i < count; i++)
+		{
+			bolck[i] = st.nextToken();
+		}
+		if (trim)
+		{
+			for (int i = 0; i < count; i++)
+			{
+				bolck[i] = bolck[i].trim();
+			}
+		}
+		return bolck;
+	}
+	*/
 
-   /**
-    * ½«<code>src</code>×Ö·û´®ÖĞµÄËùÓĞ<code>oldStr</code>Ìæ»»Îª
-    * <code>newStr</code>. <p>
-    * Èç¹û<code>oldStr</code>Ã»ÓĞÔÚÔ­×Ö·û´®ÖĞ³öÏÖ, Ôò·µ»ØÔ­×Ö·û´®.
-    *
-    * @param src           Ô­×Ö·û´®
-    * @param oldStr        ÒªÌæ»»µÄ×Ó´®
-    * @return              Ìæ»»ºóµÄ×Ö·û´®
-    */
-   public static String replaceAll(String src, String oldStr, String newStr)
-   {
-      if (isEmpty(src) || isEmpty(oldStr))
-      {
-         return src;
-      }
+	/**
+	 * å°†<code>src</code>å­—ç¬¦ä¸²ä¸­çš„æ‰€æœ‰<code>oldStr</code>æ›¿æ¢ä¸º
+	 * <code>newStr</code>. <p>
+	 * å¦‚æœ<code>oldStr</code>æ²¡æœ‰åœ¨åŸå­—ç¬¦ä¸²ä¸­å‡ºç°, åˆ™è¿”å›åŸå­—ç¬¦ä¸².
+	 *
+	 * @param src           åŸå­—ç¬¦ä¸²
+	 * @param oldStr        è¦æ›¿æ¢çš„å­ä¸²
+	 * @return              æ›¿æ¢åçš„å­—ç¬¦ä¸²
+	 */
+	public static String replaceAll(String src, String oldStr, String newStr)
+	{
+		if (isEmpty(src) || isEmpty(oldStr))
+		{
+			return src;
+		}
 
-      if (newStr == null)
-      {
-         newStr = "";
-      }
-      int begin = 0;
-      int end = src.indexOf(oldStr);
-      if (end == -1)
-      {
-         return src;
-      }
+		if (newStr == null)
+		{
+			newStr = "";
+		}
+		int begin = 0;
+		int end = src.indexOf(oldStr);
+		if (end == -1)
+		{
+			return src;
+		}
 
-      int oldStrLength = oldStr.length();
-      int plusSize = newStr.length() - oldStrLength;
-      plusSize = plusSize <= 0 ? 0 : plusSize * 8 + 16;
-      StringAppender result = createStringAppender(src.length() + plusSize);
-      do
-      {
-         result.append(src.substring(begin, end)).append(newStr);
-         begin = end + oldStrLength;
-         end = src.indexOf(oldStr, begin);
-      } while (end != -1);
-      result.append(src.substring(begin));
+		int oldStrLength = oldStr.length();
+		int plusSize = newStr.length() - oldStrLength;
+		plusSize = plusSize <= 0 ? 0 : plusSize * 8 + 16;
+		StringAppender result = createStringAppender(src.length() + plusSize);
+		do
+		{
+			result.append(src.substring(begin, end)).append(newStr);
+			begin = end + oldStrLength;
+			end = src.indexOf(oldStr, begin);
+		} while (end != -1);
+		result.append(src.substring(begin));
 
-      return result.toString();
-   }
+		return result.toString();
+	}
 
-   /**
-    * ½«×Ö·û´®Êı×é<code>arr</code>ÓÃÁ´½Ó·û<code>link</code>Á´½Ó³ÉÒ»¸ö×Ö·û´®. <p>
-    *
-    * @param arr    ÒªÁ´½ÓµÄ×Ö·û´®Êı×é
-    * @param link   Á´½Ó·û
-    * @return       ÓÃÁ´½Ó·ûÁ´½ÓºóµÄ×Ö·û´®
-    */
-   public static String linkStringArr(String[] arr, String link)
-   {
-      if (arr == null || arr.length == 0)
-      {
-         return "";
-      }
-      if (arr.length == 1)
-      {
-         return arr[0];
-      }
-      link = link == null ? "" : link;
-      StringAppender buf = StringTool.createStringAppender(arr.length * (link.length() + 16));
+	/**
+	 * å°†å­—ç¬¦ä¸²æ•°ç»„<code>arr</code>ç”¨é“¾æ¥ç¬¦<code>link</code>é“¾æ¥æˆä¸€ä¸ªå­—ç¬¦ä¸². <p>
+	 *
+	 * @param arr    è¦é“¾æ¥çš„å­—ç¬¦ä¸²æ•°ç»„
+	 * @param link   é“¾æ¥ç¬¦
+	 * @return       ç”¨é“¾æ¥ç¬¦é“¾æ¥åçš„å­—ç¬¦ä¸²
+	 */
+	public static String linkStringArr(String[] arr, String link)
+	{
+		if (arr == null || arr.length == 0)
+		{
+			return "";
+		}
+		if (arr.length == 1)
+		{
+			return arr[0];
+		}
+		link = link == null ? "" : link;
+		StringAppender buf = StringTool.createStringAppender(arr.length * (link.length() + 16));
 		buf.append(arr[0]);
-      for (int i = 1; i < arr.length; i++)
-      {
+		for (int i = 1; i < arr.length; i++)
+		{
 			buf.append(link).append(arr[i]);
-      }
-      return buf.toString();
-   }
+		}
+		return buf.toString();
+	}
 
-   /**
-    * ½«×Ö·û´®°´ÕÕÒ»¶¨µÄ¸ñÊ½×ª»»³ÉMap. <p>
-    *
-    * @param str              Òª×ª»»³ÉMapµÄ×Ö·û´®
-    * @param itemDelimiter    MapÔªËØµÄ·Ö¸ô·û¼¯ºÏ
-    * @param kvDelimiter      keyºÍvalueµÄ·Ö¸ô·û
-    * @return          ×ª»»ºóµÄMap¶ÔÏó
-    */
-   public static Map string2Map(String str, String itemDelimiter, char kvDelimiter)
-   {
-      return string2Map(str, itemDelimiter, kvDelimiter, true, true, null, null);
-   }
+	/**
+	 * å°†å­—ç¬¦ä¸²æŒ‰ç…§ä¸€å®šçš„æ ¼å¼è½¬æ¢æˆMap. <p>
+	 *
+	 * @param str              è¦è½¬æ¢æˆMapçš„å­—ç¬¦ä¸²
+	 * @param itemDelimiter    Mapå…ƒç´ çš„åˆ†éš”ç¬¦é›†åˆ
+	 * @param kvDelimiter      keyå’Œvalueçš„åˆ†éš”ç¬¦
+	 * @return          è½¬æ¢åçš„Mapå¯¹è±¡
+	 */
+	public static Map string2Map(String str, String itemDelimiter, char kvDelimiter)
+	{
+		return string2Map(str, itemDelimiter, kvDelimiter, true, true, null, null);
+	}
 
-   /**
-    * ½«×Ö·û´®°´ÕÕÒ»¶¨µÄ¸ñÊ½×ª»»³ÉMap. <p>
-    *
-    * @param str              Òª×ª»»³ÉMapµÄ×Ö·û´®
-    * @param itemDelimiter    MapÔªËØµÄ·Ö¸ô·û¼¯ºÏ
-    * @param kvDelimiter      keyºÍvalueµÄ·Ö¸ô·û
-    * @param trimItem         ÊÇ·ñÒª¶ÔÃ¿¸öÔªËØ½øĞĞtrim
-    * @param needResolve      ÊÇ·ñÒª´¦ÀíÎÄ±¾ÖĞ"${...}"µÄ¶¯Ì¬ÊôĞÔ
-    * @param resolveRes       ´¦Àí¶¯Ì¬ÊôĞÔÊÇ°ó¶¨µÄ×ÊÔ´
-    * @param result           ½«×ª»»µÄ½á¹û·ÅÈë´ËMapÖĞ
-    * @return          ×ª»»ºóµÄMap¶ÔÏó
-    */
-   public static Map string2Map(String str, String itemDelimiter, char kvDelimiter,
-         boolean trimItem, boolean needResolve, Map resolveRes, Map result)
-   {
-      if (str == null)
-      {
-         return null;
-      }
-      if (result == null)
-      {
-         result = new HashMap();
-      }
-      if (needResolve)
-      {
-         str = Utility.resolveDynamicPropnames(str, resolveRes);
-      }
-      String[] arr = StringTool.separateString(str, itemDelimiter, trimItem);
-      for (int i = 0; i < arr.length; i++)
-      {
-         int index = arr[i].indexOf(kvDelimiter);
-         if (index != -1)
-         {
-            String k = arr[i].substring(0, index);
-            String v = arr[i].substring(index + 1);
-            result.put(trimItem ? k.trim() : k, trimItem ? v.trim() : v);
-         }
-         else if (arr[i].length() > 0)
-         {
-            if (trimItem)
-            {
-               String trimStr = arr[i].trim();
-               if (trimStr.length() > 0)
-               {
-                  result.put(trimStr, "");
-               }
-            }
-            else
-            {
-               result.put(arr[i], "");
-            }
-         }
-      }
-      return result;
-   }
+	/**
+	 * å°†å­—ç¬¦ä¸²æŒ‰ç…§ä¸€å®šçš„æ ¼å¼è½¬æ¢æˆMap. <p>
+	 *
+	 * @param str              è¦è½¬æ¢æˆMapçš„å­—ç¬¦ä¸²
+	 * @param itemDelimiter    Mapå…ƒç´ çš„åˆ†éš”ç¬¦é›†åˆ
+	 * @param kvDelimiter      keyå’Œvalueçš„åˆ†éš”ç¬¦
+	 * @param trimItem         æ˜¯å¦è¦å¯¹æ¯ä¸ªå…ƒç´ è¿›è¡Œtrim
+	 * @param needResolve      æ˜¯å¦è¦å¤„ç†æ–‡æœ¬ä¸­"${...}"çš„åŠ¨æ€å±æ€§
+	 * @param resolveRes       å¤„ç†åŠ¨æ€å±æ€§æ˜¯ç»‘å®šçš„èµ„æº
+	 * @param result           å°†è½¬æ¢çš„ç»“æœæ”¾å…¥æ­¤Mapä¸­
+	 * @return          è½¬æ¢åçš„Mapå¯¹è±¡
+	 */
+	public static Map string2Map(String str, String itemDelimiter, char kvDelimiter,
+			boolean trimItem, boolean needResolve, Map resolveRes, Map result)
+	{
+		if (str == null)
+		{
+			return null;
+		}
+		if (result == null)
+		{
+			result = new HashMap();
+		}
+		if (needResolve)
+		{
+			str = Utility.resolveDynamicPropnames(str, resolveRes);
+		}
+		String[] arr = StringTool.separateString(str, itemDelimiter, trimItem);
+		for (int i = 0; i < arr.length; i++)
+		{
+			int index = arr[i].indexOf(kvDelimiter);
+			if (index != -1)
+			{
+				String k = arr[i].substring(0, index);
+				String v = arr[i].substring(index + 1);
+				result.put(trimItem ? k.trim() : k, trimItem ? v.trim() : v);
+			}
+			else if (arr[i].length() > 0)
+			{
+				if (trimItem)
+				{
+					String trimStr = arr[i].trim();
+					if (trimStr.length() > 0)
+					{
+						result.put(trimStr, "");
+					}
+				}
+				else
+				{
+					result.put(arr[i], "");
+				}
+			}
+		}
+		return result;
+	}
 
-   /**
-    * Ïò<code>StringAppender</code>ÖĞÊä³öÒì³£µÄ¶ÑÕ»ĞÅÏ¢.
-    *
-    * @param ex    ÒªÊä³öµÄÒì³£ĞÅÏ¢
-    * @param sa    ĞÅÏ¢Êä³öµÄ<code>StringAppender</code>
-    */
-   public static void appendStackTrace(Throwable ex, StringAppender sa)
-   {
-      StringAppenderWriter sw = new StringAppenderWriter(sa);
-      PrintWriter pw = new PrintWriter(sw, true);
-      ex.printStackTrace(pw);
-      pw.flush();
-      pw.close();
-   }
+	/**
+	 * å‘<code>StringAppender</code>ä¸­è¾“å‡ºå¼‚å¸¸çš„å †æ ˆä¿¡æ¯.
+	 *
+	 * @param ex    è¦è¾“å‡ºçš„å¼‚å¸¸ä¿¡æ¯
+	 * @param sa    ä¿¡æ¯è¾“å‡ºçš„<code>StringAppender</code>
+	 */
+	public static void appendStackTrace(Throwable ex, StringAppender sa)
+	{
+		StringAppenderWriter sw = new StringAppenderWriter(sa);
+		PrintWriter pw = new PrintWriter(sw, true);
+		ex.printStackTrace(pw);
+		pw.flush();
+		pw.close();
+	}
 
-   /**
-    * ´´½¨Ò»¸ö×Ö·û´®Á¬½ÓÆ÷.
-    *
-    * @return    ×Ö·û´®Á¬½ÓÆ÷
-    */
-   public static StringAppender createStringAppender()
-   {
-      return createStringAppender(null, 16, false);
-   }
+	/**
+	 * åˆ›å»ºä¸€ä¸ªå­—ç¬¦ä¸²è¿æ¥å™¨.
+	 *
+	 * @return    å­—ç¬¦ä¸²è¿æ¥å™¨
+	 */
+	public static StringAppender createStringAppender()
+	{
+		return createStringAppender(null, 16, false);
+	}
 
-   /**
-    * ´´½¨Ò»¸ö×Ö·û´®Á¬½ÓÆ÷.
-    *
-    * @param size         ³õÊ¼×Ö·û»º´æµÄÈİÁ¿
-    * @return    ×Ö·û´®Á¬½ÓÆ÷
-    */
-   public static StringAppender createStringAppender(int size)
-   {
-      return createStringAppender(null, size, false);
-   }
+	/**
+	 * åˆ›å»ºä¸€ä¸ªå­—ç¬¦ä¸²è¿æ¥å™¨.
+	 *
+	 * @param size         åˆå§‹å­—ç¬¦ç¼“å­˜çš„å®¹é‡
+	 * @return    å­—ç¬¦ä¸²è¿æ¥å™¨
+	 */
+	public static StringAppender createStringAppender(int size)
+	{
+		return createStringAppender(null, size, false);
+	}
 
-   /**
-    * ´´½¨Ò»¸ö×Ö·û´®Á¬½ÓÆ÷.
-    *
-    * @param str              ĞèÒª³õÊ¼»¯½øÈ¥µÄ×Ö·û´®
-    * @param plusSize         »¹ĞèÒªÀ©Õ¹µÄÈİÁ¿
-    * @param needSynchronize  ÊÇ·ñĞèÒª±£Ö¤Ïß³Ì°²È«
-    * @return    ×Ö·û´®Á¬½ÓÆ÷
-    */
-   public static StringAppender createStringAppender(String str, int plusSize, boolean needSynchronize)
-   {
-      int initSize = isEmpty(str) ? plusSize : str.length() + plusSize;
-      StringAppender sa;
-      if (needSynchronize)
-      {
-         sa = stringBufferCreater.create(initSize);
-      }
-      else
-      {
-         if (stringAppendCreater == null)
-         {
-            if ("true".equalsIgnoreCase(Utility.getProperty(USE_QUICK_STRING_APPEND)))
-            {
-               stringAppendCreater = new QuickStringAppender();
-            }
-            else
-            {
-               ClassLoader cl = StringTool.class.getClassLoader();
-               if (cl.getResource("java/lang/StringBuilder.class") != null)
-               {
-                  stringAppendCreater = createStringBuilderCreater();
-               }
-               else
-               {
-                  stringAppendCreater = stringBufferCreater;
-               }
-            }
-         }
-         sa = stringAppendCreater.create(initSize);
-      }
-      if (!isEmpty(str))
-      {
-         sa.append(str);
-      }
-      return sa;
-   }
+	/**
+	 * åˆ›å»ºä¸€ä¸ªå­—ç¬¦ä¸²è¿æ¥å™¨.
+	 *
+	 * @param str              éœ€è¦åˆå§‹åŒ–è¿›å»çš„å­—ç¬¦ä¸²
+	 * @param plusSize         è¿˜éœ€è¦æ‰©å±•çš„å®¹é‡
+	 * @param needSynchronize  æ˜¯å¦éœ€è¦ä¿è¯çº¿ç¨‹å®‰å…¨
+	 * @return    å­—ç¬¦ä¸²è¿æ¥å™¨
+	 */
+	public static StringAppender createStringAppender(String str, int plusSize, boolean needSynchronize)
+	{
+		int initSize = isEmpty(str) ? plusSize : str.length() + plusSize;
+		StringAppender sa;
+		if (needSynchronize)
+		{
+			sa = stringBufferCreater.create(initSize);
+		}
+		else
+		{
+			if (stringAppendCreater == null)
+			{
+				if ("true".equalsIgnoreCase(Utility.getProperty(USE_QUICK_STRING_APPEND)))
+				{
+					stringAppendCreater = new QuickStringAppender();
+				}
+				else
+				{
+					ClassLoader cl = StringTool.class.getClassLoader();
+					if (cl.getResource("java/lang/StringBuilder.class") != null)
+					{
+						stringAppendCreater = createStringBuilderCreater();
+					}
+					else
+					{
+						stringAppendCreater = stringBufferCreater;
+					}
+				}
+			}
+			sa = stringAppendCreater.create(initSize);
+		}
+		if (!isEmpty(str))
+		{
+			sa.append(str);
+		}
+		return sa;
+	}
 
-   private static StringAppenderCreater stringBufferCreater = new StringTool$StringBufferCreater();
-   private static StringAppenderCreater stringAppendCreater;
+	private static StringAppenderCreater stringBufferCreater = new StringTool$StringBufferCreater();
+	private static StringAppenderCreater stringAppendCreater;
 
-   private static StringAppenderCreater createStringBuilderCreater()
-   {
-      try
-      {
-         Class c = Class.forName("self.micromagic.util.StringTool$StringBuilderCreater");
-         return (StringAppenderCreater) c.newInstance();
-      }
-      catch (Throwable ex)
-      {
-         return stringBufferCreater;
-      }
-   }
+	private static StringAppenderCreater createStringBuilderCreater()
+	{
+		try
+		{
+			Class c = Class.forName("self.micromagic.util.StringTool$StringBuilderCreater");
+			return (StringAppenderCreater) c.newInstance();
+		}
+		catch (Throwable ex)
+		{
+			return stringBufferCreater;
+		}
+	}
 
-   interface StringAppenderCreater
-   {
-      StringAppender create(int initSize);
+	interface StringAppenderCreater
+	{
+		StringAppender create(int initSize);
 
-   }
+	}
 
 	public static class StringAppenderWriter extends Writer
-   {
-      private StringAppender out;
+	{
+		private StringAppender out;
 
-      public StringAppenderWriter()
-      {
-         this(16);
-      }
+		public StringAppenderWriter()
+		{
+			this(16);
+		}
 
-      public StringAppenderWriter(int size)
-      {
-         this.out = createStringAppender(size);
-      }
+		public StringAppenderWriter(int size)
+		{
+			this.out = createStringAppender(size);
+		}
 
-      public StringAppenderWriter(StringAppender out)
-      {
-         this.out = out;
-      }
+		public StringAppenderWriter(StringAppender out)
+		{
+			this.out = out;
+		}
 
-      public void write(int c)
-      {
-         this.out.append((char) c);
-      }
+		public void write(int c)
+		{
+			this.out.append((char) c);
+		}
 
-      public void write(String str, int off, int len)
-      {
-         this.out.append(str, off, len);
-      }
+		public void write(String str, int off, int len)
+		{
+			this.out.append(str, off, len);
+		}
 
-      public void write(char[] cbuf, int off, int len)
-      {
-         this.out.append(cbuf, off, len);
-      }
+		public void write(char[] cbuf, int off, int len)
+		{
+			this.out.append(cbuf, off, len);
+		}
 
-      public StringAppender getStringAppender()
-      {
-         return this.out;
-      }
+		public StringAppender getStringAppender()
+		{
+			return this.out;
+		}
 
-      public String toString()
-      {
-         return this.out.toString();
-      }
+		public String toString()
+		{
+			return this.out.toString();
+		}
 
-      public void flush()
-      {
-      }
+		public void flush()
+		{
+		}
 
-      public void close()
-      {
-      }
+		public void close()
+		{
+		}
 
-   }
-
-
-   public static void printStringHaxcode(PrintStream out, String str, boolean endline)
-   {
-      if (str == null)
-      {
-         return;
-      }
-      int count = str.length();
-      for (int i = 0; i < count; i++)
-      {
-         out.print(Integer.toHexString(str.charAt(i)));
-      }
-      if (endline)
-      {
-         out.println();
-      }
-   }
+	}
 
 
-   /**
-    * ½«ISO8859-1¸ñÊ½µÄ×Ö·û´®<code>str</code>×ª»»ÎªUnicode±àÂë¸ñÊ½
-    * µÄ×Ö·û´®. <p>
-    * ÓÉÓÚJavaµÄ×Ö·û´®ÊÇUnicode±àÂë¸ñÊ½£¬¶ÔÓÚÆäËü¸ñÊ½µÄ×Ö·û´®ĞèÒª¶Ô
-    * Æä½øĞĞ¸ñÊ½×ª»»£¬·ñÔò¾Í»áÔÚ´æ´¢»òÏÔÊ¾µÄÊ±ºò²úÉúÂÒÂë¡£
-    *
-    * @param   str    Òª½øĞĞ±àÂë¸ñÊ½×ª»»µÄ×Ö·û´®
-    * @return  ×ª»»³ÉUnicode±àÂë¸ñÊ½µÄ×Ö·û´®
-    */
-   public static String decodeFrom8859_1(String str)
-   {
-      if (str == null)
-      {
-         return null;
-      }
+	public static void printStringHaxcode(PrintStream out, String str, boolean endline)
+	{
+		if (str == null)
+		{
+			return;
+		}
+		int count = str.length();
+		for (int i = 0; i < count; i++)
+		{
+			out.print(Integer.toHexString(str.charAt(i)));
+		}
+		if (endline)
+		{
+			out.println();
+		}
+	}
 
-      try
-      {
-         String decodeStr;
-         //½øĞĞ±àÂë¸ñÊ½µÄ×ª»»
-         byte[] temp = str.getBytes("8859_1");
-         decodeStr = new String(temp);
-         return decodeStr;
-      }
-      catch (UnsupportedEncodingException uee)
-      {
-         //²»¿ÉÄÜÅ×³öÕâ¸öÒì³££¬Ó¦ÎªÎÒÃÇÊ¹ÓÃµÄÊÇÕıÈ·µÄ±àÂëÃÇ³Æ
-         throw new InternalError();
-      }
-   }
 
-   /**
-    * ½«Ò»×éISO8859-1¸ñÊ½µÄ×Ö·û´®<code>str</code>×ª»»ÎªUnicode±àÂë¸ñÊ½
-    * µÄ×Ö·û´®. <p>
-    * ÓÉÓÚJavaµÄ×Ö·û´®ÊÇUnicode±àÂë¸ñÊ½£¬¶ÔÓÚÆäËü¸ñÊ½µÄ×Ö·û´®ĞèÒª¶Ô
-    * Æä½øĞĞ¸ñÊ½×ª»»£¬·ñÔò¾Í»áÔÚ´æ´¢»òÏÔÊ¾µÄÊ±ºò²úÉúÂÒÂë¡£
-    *
-    * @param   astr    Òª½øĞĞ±àÂë¸ñÊ½×ª»»µÄ×Ö·û´®Êı×é
-    * @return  ×ª»»³ÉUnicode±àÂë¸ñÊ½µÄ×Ö·û´®Êı×é
-    */
-   public static String[] decodeFrom8859_1(String[] astr)
-   {
-      String[] decodeValues = new String[astr.length];
+	/**
+	 * å°†ISO8859-1æ ¼å¼çš„å­—ç¬¦ä¸²<code>str</code>è½¬æ¢ä¸ºUnicodeç¼–ç æ ¼å¼
+	 * çš„å­—ç¬¦ä¸². <p>
+	 * ç”±äºJavaçš„å­—ç¬¦ä¸²æ˜¯Unicodeç¼–ç æ ¼å¼ï¼Œå¯¹äºå…¶å®ƒæ ¼å¼çš„å­—ç¬¦ä¸²éœ€è¦å¯¹
+	 * å…¶è¿›è¡Œæ ¼å¼è½¬æ¢ï¼Œå¦åˆ™å°±ä¼šåœ¨å­˜å‚¨æˆ–æ˜¾ç¤ºçš„æ—¶å€™äº§ç”Ÿä¹±ç ã€‚
+	 *
+	 * @param   str    è¦è¿›è¡Œç¼–ç æ ¼å¼è½¬æ¢çš„å­—ç¬¦ä¸²
+	 * @return  è½¬æ¢æˆUnicodeç¼–ç æ ¼å¼çš„å­—ç¬¦ä¸²
+	 */
+	public static String decodeFrom8859_1(String str)
+	{
+		if (str == null)
+		{
+			return null;
+		}
 
-      for (int i = 0; i < decodeValues.length; i++)
-      {
-         decodeValues[i] = decodeFrom8859_1(astr[i]);
-      }
+		try
+		{
+			String decodeStr;
+			//è¿›è¡Œç¼–ç æ ¼å¼çš„è½¬æ¢
+			byte[] temp = str.getBytes("8859_1");
+			decodeStr = new String(temp);
+			return decodeStr;
+		}
+		catch (UnsupportedEncodingException uee)
+		{
+			//ä¸å¯èƒ½æŠ›å‡ºè¿™ä¸ªå¼‚å¸¸ï¼Œåº”ä¸ºæˆ‘ä»¬ä½¿ç”¨çš„æ˜¯æ­£ç¡®çš„ç¼–ç ä»¬ç§°
+			throw new InternalError();
+		}
+	}
 
-      return decodeValues;
-   }
+	/**
+	 * å°†ä¸€ç»„ISO8859-1æ ¼å¼çš„å­—ç¬¦ä¸²<code>str</code>è½¬æ¢ä¸ºUnicodeç¼–ç æ ¼å¼
+	 * çš„å­—ç¬¦ä¸². <p>
+	 * ç”±äºJavaçš„å­—ç¬¦ä¸²æ˜¯Unicodeç¼–ç æ ¼å¼ï¼Œå¯¹äºå…¶å®ƒæ ¼å¼çš„å­—ç¬¦ä¸²éœ€è¦å¯¹
+	 * å…¶è¿›è¡Œæ ¼å¼è½¬æ¢ï¼Œå¦åˆ™å°±ä¼šåœ¨å­˜å‚¨æˆ–æ˜¾ç¤ºçš„æ—¶å€™äº§ç”Ÿä¹±ç ã€‚
+	 *
+	 * @param   astr    è¦è¿›è¡Œç¼–ç æ ¼å¼è½¬æ¢çš„å­—ç¬¦ä¸²æ•°ç»„
+	 * @return  è½¬æ¢æˆUnicodeç¼–ç æ ¼å¼çš„å­—ç¬¦ä¸²æ•°ç»„
+	 */
+	public static String[] decodeFrom8859_1(String[] astr)
+	{
+		String[] decodeValues = new String[astr.length];
 
-   /**
-    * ½«Unicode¸ñÊ½µÄ×Ö·û´®<code>str</code>×ª»»ÎªISO8859-1±àÂë¸ñÊ½
-    * µÄ×Ö·û´®. <p>
-    * ÓÉÓÚJavaµÄ×Ö·û´®ÊÇUnicode±àÂë¸ñÊ½£¬Èç¹ûÊä³öÉè±¸ĞèÒªISO8859-1
-    * ±àÂë¸ñÊ½µÄ»°£¬ÔòĞè¶ÔÆä½øĞĞ¸ñÊ½×ª»»£¬·ñÔò¾Í»áÔÚÏÔÊ¾ÖĞÎÄµÄÊ±ºò
-    * ²úÉúÂÒÂë¡£
-    *
-    * @param   str    Òª½øĞĞ±àÂë¸ñÊ½×ª»»µÄ×Ö·û´®
-    * @return  ×ª»»³ÉISO8859-1±àÂë¸ñÊ½µÄ×Ö·û´®
-    */
-   public static String encodeTo8859_1(String str)
-   {
-      if (str == null)
-      {
-         return null;
-      }
+		for (int i = 0; i < decodeValues.length; i++)
+		{
+			decodeValues[i] = decodeFrom8859_1(astr[i]);
+		}
 
-      try
-      {
-         String encodeStr;
-         //½øĞĞ±àÂë¸ñÊ½µÄ×ª»»
-         byte[] temp = str.getBytes();
-         encodeStr = new String(temp, "8859_1");
-         return encodeStr;
-      }
-      catch (UnsupportedEncodingException uee)
-      {
-         //²»¿ÉÄÜÅ×³öÕâ¸öÒì³££¬Ó¦ÎªÎÒÃÇÊ¹ÓÃµÄÊÇÕıÈ·µÄ±àÂëÃÇ³Æ
-         throw new InternalError();
-      }
-   }
+		return decodeValues;
+	}
 
-   /**
-    * ½«Ò»×éUnicode¸ñÊ½µÄ×Ö·û´®<code>str</code>×ª»»ÎªISO8859-1±àÂë¸ñÊ½
-    * µÄ×Ö·û´®. <p>
-    * ÓÉÓÚJavaµÄ×Ö·û´®ÊÇUnicode±àÂë¸ñÊ½£¬Èç¹ûÊä³öÉè±¸ĞèÒªISO8859-1
-    * ±àÂë¸ñÊ½µÄ»°£¬ÔòĞè¶ÔÆä½øĞĞ¸ñÊ½×ª»»£¬·ñÔò¾Í»áÔÚÏÔÊ¾ÖĞÎÄµÄÊ±ºò
-    * ²úÉúÂÒÂë¡£
-    *
-    * @param   astr    Òª½øĞĞ±àÂë¸ñÊ½×ª»»µÄ×Ö·û´®Êı×é
-    * @return  ×ª»»³ÉISO8859-1±àÂë¸ñÊ½µÄ×Ö·û´®Êı×é
-    */
-   public static String[] encodeTo8859_1(String[] astr)
-   {
-      String[] encodeValues = new String[astr.length];
+	/**
+	 * å°†Unicodeæ ¼å¼çš„å­—ç¬¦ä¸²<code>str</code>è½¬æ¢ä¸ºISO8859-1ç¼–ç æ ¼å¼
+	 * çš„å­—ç¬¦ä¸². <p>
+	 * ç”±äºJavaçš„å­—ç¬¦ä¸²æ˜¯Unicodeç¼–ç æ ¼å¼ï¼Œå¦‚æœè¾“å‡ºè®¾å¤‡éœ€è¦ISO8859-1
+	 * ç¼–ç æ ¼å¼çš„è¯ï¼Œåˆ™éœ€å¯¹å…¶è¿›è¡Œæ ¼å¼è½¬æ¢ï¼Œå¦åˆ™å°±ä¼šåœ¨æ˜¾ç¤ºä¸­æ–‡çš„æ—¶å€™
+	 * äº§ç”Ÿä¹±ç ã€‚
+	 *
+	 * @param   str    è¦è¿›è¡Œç¼–ç æ ¼å¼è½¬æ¢çš„å­—ç¬¦ä¸²
+	 * @return  è½¬æ¢æˆISO8859-1ç¼–ç æ ¼å¼çš„å­—ç¬¦ä¸²
+	 */
+	public static String encodeTo8859_1(String str)
+	{
+		if (str == null)
+		{
+			return null;
+		}
 
-      for (int i = 0; i < encodeValues.length; i++)
-      {
-         encodeValues[i] = encodeTo8859_1(astr[i]);
-      }
+		try
+		{
+			String encodeStr;
+			//è¿›è¡Œç¼–ç æ ¼å¼çš„è½¬æ¢
+			byte[] temp = str.getBytes();
+			encodeStr = new String(temp, "8859_1");
+			return encodeStr;
+		}
+		catch (UnsupportedEncodingException uee)
+		{
+			//ä¸å¯èƒ½æŠ›å‡ºè¿™ä¸ªå¼‚å¸¸ï¼Œåº”ä¸ºæˆ‘ä»¬ä½¿ç”¨çš„æ˜¯æ­£ç¡®çš„ç¼–ç ä»¬ç§°
+			throw new InternalError();
+		}
+	}
 
-      return encodeValues;
-   }
+	/**
+	 * å°†ä¸€ç»„Unicodeæ ¼å¼çš„å­—ç¬¦ä¸²<code>str</code>è½¬æ¢ä¸ºISO8859-1ç¼–ç æ ¼å¼
+	 * çš„å­—ç¬¦ä¸². <p>
+	 * ç”±äºJavaçš„å­—ç¬¦ä¸²æ˜¯Unicodeç¼–ç æ ¼å¼ï¼Œå¦‚æœè¾“å‡ºè®¾å¤‡éœ€è¦ISO8859-1
+	 * ç¼–ç æ ¼å¼çš„è¯ï¼Œåˆ™éœ€å¯¹å…¶è¿›è¡Œæ ¼å¼è½¬æ¢ï¼Œå¦åˆ™å°±ä¼šåœ¨æ˜¾ç¤ºä¸­æ–‡çš„æ—¶å€™
+	 * äº§ç”Ÿä¹±ç ã€‚
+	 *
+	 * @param   astr    è¦è¿›è¡Œç¼–ç æ ¼å¼è½¬æ¢çš„å­—ç¬¦ä¸²æ•°ç»„
+	 * @return  è½¬æ¢æˆISO8859-1ç¼–ç æ ¼å¼çš„å­—ç¬¦ä¸²æ•°ç»„
+	 */
+	public static String[] encodeTo8859_1(String[] astr)
+	{
+		String[] encodeValues = new String[astr.length];
+
+		for (int i = 0; i < encodeValues.length; i++)
+		{
+			encodeValues[i] = encodeTo8859_1(astr[i]);
+		}
+
+		return encodeValues;
+	}
 
 }

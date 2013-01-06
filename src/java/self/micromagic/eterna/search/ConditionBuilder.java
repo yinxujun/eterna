@@ -8,69 +8,69 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * SQLÓï¾äÌõ¼şµÄÉú³ÉÆ÷. <p>
- * {@link self.micromagic.eterna.search.ConditionBuilder.Condition}½«Í¨¹ı¸ÃÉú³ÉÆ÷À´Éú³ÉSQLÌõ¼ş¡£
+ * SQLè¯­å¥æ¡ä»¶çš„ç”Ÿæˆå™¨. <p>
+ * {@link self.micromagic.eterna.search.ConditionBuilder.Condition}å°†é€šè¿‡è¯¥ç”Ÿæˆå™¨æ¥ç”ŸæˆSQLæ¡ä»¶ã€‚
  *
  * @author  micromagic@sina.com
  */
 public interface ConditionBuilder
 {
-   public static final String[] OPERATOR_NAMES = {
-      "isNull", "notNull", "checkNull",
-      "equal", "notEqual", "large", "below", "notLarge", "notBelow",
-      "beginWith", "endWith", "include", "match"
-   };
+	public static final String[] OPERATOR_NAMES = {
+		"isNull", "notNull", "checkNull",
+		"equal", "notEqual", "large", "below", "notLarge", "notBelow",
+		"beginWith", "endWith", "include", "match"
+	};
 
-   public static ValuePreparer[] EMPTY_PREPARERS = new ValuePreparer[0];
+	public static ValuePreparer[] EMPTY_PREPARERS = new ValuePreparer[0];
 
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   public String getName() throws ConfigurationException;
+	public String getName() throws ConfigurationException;
 
-   public String getCaption() throws ConfigurationException;
+	public String getCaption() throws ConfigurationException;
 
-   /**
-    * Éú³ÉÒ»¸öSQLÌõ¼ş.
-    *
-    * @param colName  ÒªÉú³ÉµÄÌõ¼şµÄÃû³Æ.
-    * @param value    ÒªÉú³ÉµÄÌõ¼şµÄÖµ.
-    * @param cp       Óë´ËÌõ¼şÉú³ÉÆ÷µÄÏà¶ÔÓ¦µÄConditionProperty.
-    * @return         ËùÉú³ÉµÄÌõ¼ş, ¼°Ïà¹Ø²ÎÊı.
-    */
-   public Condition buildeCondition(String colName, String value, ConditionProperty cp)
-         throws ConfigurationException;
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªSQLæ¡ä»¶.
+	 *
+	 * @param colName  è¦ç”Ÿæˆçš„æ¡ä»¶çš„åç§°.
+	 * @param value    è¦ç”Ÿæˆçš„æ¡ä»¶çš„å€¼.
+	 * @param cp       ä¸æ­¤æ¡ä»¶ç”Ÿæˆå™¨çš„ç›¸å¯¹åº”çš„ConditionProperty.
+	 * @return         æ‰€ç”Ÿæˆçš„æ¡ä»¶, åŠç›¸å…³å‚æ•°.
+	 */
+	public Condition buildeCondition(String colName, String value, ConditionProperty cp)
+			throws ConfigurationException;
 
-   public static class Condition
-   {
-      public final String sqlPart;
-      public final ValuePreparer[] preparers;
+	public static class Condition
+	{
+		public final String sqlPart;
+		public final ValuePreparer[] preparers;
 
-      private String toStrBuf = null;
+		private String toStrBuf = null;
 
-      public Condition(String sqlPart)
-      {
-         this(sqlPart, null);
-      }
+		public Condition(String sqlPart)
+		{
+			this(sqlPart, null);
+		}
 
-      public Condition(String sqlPart, ValuePreparer[] preparers)
-      {
-         this.sqlPart = sqlPart;
-         this.preparers = preparers == null ? EMPTY_PREPARERS : preparers;
-      }
+		public Condition(String sqlPart, ValuePreparer[] preparers)
+		{
+			this.sqlPart = sqlPart;
+			this.preparers = preparers == null ? EMPTY_PREPARERS : preparers;
+		}
 
-      public String toString()
-      {
-         if (this.toStrBuf == null)
-         {
-            int count = this.sqlPart.length() + 39;
-            StringAppender buf = StringTool.createStringAppender(count);
-            buf.append("Condition[sqlPart:(").append(this.sqlPart);
-            buf.append("),preparerCount:").append(this.preparers.length).append(']');
-            this.toStrBuf = buf.toString();
-         }
-         return this.toStrBuf;
-      }
+		public String toString()
+		{
+			if (this.toStrBuf == null)
+			{
+				int count = this.sqlPart.length() + 39;
+				StringAppender buf = StringTool.createStringAppender(count);
+				buf.append("Condition[sqlPart:(").append(this.sqlPart);
+				buf.append("),preparerCount:").append(this.preparers.length).append(']');
+				this.toStrBuf = buf.toString();
+			}
+			return this.toStrBuf;
+		}
 
-   }
+	}
 
 }

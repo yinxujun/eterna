@@ -53,7 +53,7 @@ class ValueContainerMapEntrySet extends AbstractSet
 	}
 
 	/**
-	 * ÅĞ¶ÏentryÁĞ±íÊÇ·ñ±»³õÊ¼»¯ÁË.
+	 * åˆ¤æ–­entryåˆ—è¡¨æ˜¯å¦è¢«åˆå§‹åŒ–äº†.
 	 */
 	public boolean isEntryInitialized()
 	{
@@ -61,7 +61,7 @@ class ValueContainerMapEntrySet extends AbstractSet
 	}
 
 	/**
-	 * ÊÇ·ñĞèÒª±£´æentryÁĞ±í.
+	 * æ˜¯å¦éœ€è¦ä¿å­˜entryåˆ—è¡¨.
 	 */
 	public boolean isKeepEntry()
 	{
@@ -69,8 +69,8 @@ class ValueContainerMapEntrySet extends AbstractSet
 	}
 
 	/**
-	 * ÉèÖÃÊÇ·ñĞèÒª±£´æentryÁĞ±í.
-	 * Èç¹û²»±£´æ, ½«ÔÚÃ¿´ÎÊ¹ÓÃÊ±Éú³ÉĞÂµÄentryÁĞ±í.
+	 * è®¾ç½®æ˜¯å¦éœ€è¦ä¿å­˜entryåˆ—è¡¨.
+	 * å¦‚æœä¸ä¿å­˜, å°†åœ¨æ¯æ¬¡ä½¿ç”¨æ—¶ç”Ÿæˆæ–°çš„entryåˆ—è¡¨.
 	 */
 	public void setKeepEntry(boolean keepEntry)
 	{
@@ -78,7 +78,7 @@ class ValueContainerMapEntrySet extends AbstractSet
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñ°üº¬Ö¸¶¨µÄ¼üÖµ.
+	 * åˆ¤æ–­æ˜¯å¦åŒ…å«æŒ‡å®šçš„é”®å€¼.
 	 */
 	public boolean containsKey(Object key)
 	{

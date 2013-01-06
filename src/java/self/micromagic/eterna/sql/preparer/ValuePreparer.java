@@ -7,42 +7,42 @@ import self.micromagic.eterna.sql.PreparedStatementWrap;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * Öµ×¼±¸Æ÷.
+ * å€¼å‡†å¤‡å™¨.
  */
 public interface ValuePreparer
 {
-   /**
-    * »ñµÃÕâ¸öÖµ×¼±¸Æ÷µÄ´´½¨Õß.
-    */
-   ValuePreparerCreater getCreater() throws ConfigurationException;
+	/**
+	 * è·å¾—è¿™ä¸ªå€¼å‡†å¤‡å™¨çš„åˆ›å»ºè€….
+	 */
+	ValuePreparerCreater getCreater() throws ConfigurationException;
 
-   /**
-    * ½«²ÎÊıÉèÖÃµ½PreparedStatementWrapÖĞ.
-    *
-    * @param index      ÒªÉèÖÃµÄ²ÎÊıµÄË÷ÒıÖµ
-    * @param stmtWrap   PreparedStatementµÄÍâ¸½Àà
-    */
-   void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
-         throws SQLException;
+	/**
+	 * å°†å‚æ•°è®¾ç½®åˆ°PreparedStatementWrapä¸­.
+	 *
+	 * @param index      è¦è®¾ç½®çš„å‚æ•°çš„ç´¢å¼•å€¼
+	 * @param stmtWrap   PreparedStatementçš„å¤–é™„ç±»
+	 */
+	void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
+			throws SQLException;
 
-   /**
-    * ÉèÖÃ´Ë²ÎÊıµÄÃû³Æ.
-    */
-   public void setName(String name);
+	/**
+	 * è®¾ç½®æ­¤å‚æ•°çš„åç§°.
+	 */
+	public void setName(String name);
 
-   /**
-    * »ñÈ¡´Ë²ÎÊıµÄÃû³Æ.
-    */
-   public String getName();
+	/**
+	 * è·å–æ­¤å‚æ•°çš„åç§°.
+	 */
+	public String getName();
 
-   /**
-    * ÉèÖÃ´Ë²ÎÊıµÄÏà¶ÔË÷ÒıÖµ, ´ËÖµĞè¶ÔÓ¦SQLAdapter¶ÔÏóÖĞÅäÖÃµÄ²ÎÊıË÷ÒıÖµ.
-    */
-   public void setRelativeIndex(int index);
+	/**
+	 * è®¾ç½®æ­¤å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼, æ­¤å€¼éœ€å¯¹åº”SQLAdapterå¯¹è±¡ä¸­é…ç½®çš„å‚æ•°ç´¢å¼•å€¼.
+	 */
+	public void setRelativeIndex(int index);
 
-   /**
-    * »ñÈ¡´Ë²ÎÊıµÄÏà¶ÔË÷ÒıÖµ, SQLAdapter¶ÔÏó»áµ÷ÓÃËü, ½«ÆäÉèÖÃµ½ÏàÓ¦Î»ÖÃ.
-    */
-   public int getRelativeIndex();
+	/**
+	 * è·å–æ­¤å‚æ•°çš„ç›¸å¯¹ç´¢å¼•å€¼, SQLAdapterå¯¹è±¡ä¼šè°ƒç”¨å®ƒ, å°†å…¶è®¾ç½®åˆ°ç›¸åº”ä½ç½®.
+	 */
+	public int getRelativeIndex();
 
 }

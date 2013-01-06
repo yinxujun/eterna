@@ -2,27 +2,27 @@
 package self.micromagic.eterna.security;
 
 public class EmptyPermission
-      implements Permission
+		implements Permission
 {
-   private static Permission instance = new EmptyPermission();
+	private static Permission instance = new EmptyPermission();
 
-   private EmptyPermission()
-   {
-   }
+	private EmptyPermission()
+	{
+	}
 
-   public boolean hasPermission(String name)
-   {
-      return false;
-   }
+	public boolean hasPermission(String name)
+	{
+		return false;
+	}
 
-   public boolean hasPermission(int id)
-   {
-      return false;
-   }
+	public boolean hasPermission(int id)
+	{
+		return false;
+	}
 
-   public static Permission getInstance()
-   {
-      return EmptyPermission.instance;
-   }
+	public static Permission getInstance()
+	{
+		return EmptyPermission.instance;
+	}
 
 }

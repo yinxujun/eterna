@@ -5,73 +5,73 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface ResultMetaData
 {
-   /**
-    * »ñÈ¡<code>ResultIterator</code>¶ÔÓ¦µÄ<code>QueryAdapter</code>.
-    */
-   QueryAdapter getQuery() throws ConfigurationException;
+	/**
+	 * è·å–<code>ResultIterator</code>å¯¹åº”çš„<code>QueryAdapter</code>.
+	 */
+	QueryAdapter getQuery() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡<code>ResultIterator</code>¶ÔÓ¦µÄ<code>ResultReaderManager</code>.
-    */
-   ResultReaderManager getReaderManager() throws ConfigurationException;
+	/**
+	 * è·å–<code>ResultIterator</code>å¯¹åº”çš„<code>ResultReaderManager</code>.
+	 */
+	ResultReaderManager getReaderManager() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡<code>ResultIterator</code>¶ÔÓ¦µÄÃû³Æ.
-	 * ´ËÃû³Æ¿ÉÒÔÊÇ¶ÔÓ¦queryµÄÃû×Ö, Ò²¿ÉÒÔÊÇ¶ÔÓ¦reader-managerµÄÃû×Ö.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–<code>ResultIterator</code>å¯¹åº”çš„åç§°.
+	 * æ­¤åç§°å¯ä»¥æ˜¯å¯¹åº”queryçš„åå­—, ä¹Ÿå¯ä»¥æ˜¯å¯¹åº”reader-managerçš„åå­—.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡<code>ResultIterator</code>ÖĞÁĞµÄ¸öÊı.
-    */
-   int getColumnCount() throws ConfigurationException;
+	/**
+	 * è·å–<code>ResultIterator</code>ä¸­åˆ—çš„ä¸ªæ•°.
+	 */
+	int getColumnCount() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Ä³ÁĞµÄÏÔÊ¾¿í¶È.
-    *
-    * @param column µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   int getColumnWidth(int column) throws ConfigurationException;
+	/**
+	 * è·å–æŸåˆ—çš„æ˜¾ç¤ºå®½åº¦.
+	 *
+	 * @param column ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	int getColumnWidth(int column) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Ä³ÁĞµÄÏÔÊ¾±êÌâ.
-    *
-    * @param column µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   String getColumnCaption(int column) throws ConfigurationException;
+	/**
+	 * è·å–æŸåˆ—çš„æ˜¾ç¤ºæ ‡é¢˜.
+	 *
+	 * @param column ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	String getColumnCaption(int column) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Ä³ÁĞµÄÃû³Æ.
-    *
-    * @param column µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   String getColumnName(int column) throws ConfigurationException;
+	/**
+	 * è·å–æŸåˆ—çš„åç§°.
+	 *
+	 * @param column ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	String getColumnName(int column) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡ÓÃÓÚ¶ÁÈ¡¸ÃÁĞµÄResultReader¶ÔÏó.
-    *
-    * @param column µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   ResultReader getColumnReader(int column) throws ConfigurationException;
+	/**
+	 * è·å–ç”¨äºè¯»å–è¯¥åˆ—çš„ResultReaderå¯¹è±¡.
+	 *
+	 * @param column ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	ResultReader getColumnReader(int column) throws ConfigurationException;
 
-   /**
-    * ¸ù¾İÁĞÃû²éÕÒ´ËÁĞËùÔÚµÄË÷ÒıÖµ.
-    *
-    * @param columnName Ä³ÁĞµÄÃû³Æ
-	 * @return  ¸ÃÁĞËùÔÚµÄË÷ÒıÖµ
-	 *          µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   int findColumn(String columnName) throws ConfigurationException;
+	/**
+	 * æ ¹æ®åˆ—åæŸ¥æ‰¾æ­¤åˆ—æ‰€åœ¨çš„ç´¢å¼•å€¼.
+	 *
+	 * @param columnName æŸåˆ—çš„åç§°
+	 * @return  è¯¥åˆ—æ‰€åœ¨çš„ç´¢å¼•å€¼
+	 *          ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	int findColumn(String columnName) throws ConfigurationException;
 
-   /**
-    * ¸ù¾İÁĞÃû²éÕÒ´ËÁĞËùÔÚµÄË÷ÒıÖµ.
-    *
-    * @param columnName  Ä³ÁĞµÄÃû³Æ
-    * @param notThrow    ÉèÎª<code>true<code>Ê±, µ±¸ÃÁĞÃû²»´æÔÚÊ±²»»áÅ×³öÒì³£,
-	 *                    ¶øÖ»ÊÇ·µ»Ø-1
-    * @return  ¸ÃÁĞËùÔÚËùÔÚµÄË÷ÒıÖµ, »ò-1(µ±¸ÃÁĞÃû²»´æÔÚÊ±)
-	 *          µÚÒ»ÁĞÎª1, µÚ¶şÁĞÎª2, ...
-    */
-   int findColumn(String columnName, boolean notThrow) throws ConfigurationException;
+	/**
+	 * æ ¹æ®åˆ—åæŸ¥æ‰¾æ­¤åˆ—æ‰€åœ¨çš„ç´¢å¼•å€¼.
+	 *
+	 * @param columnName  æŸåˆ—çš„åç§°
+	 * @param notThrow    è®¾ä¸º<code>true<code>æ—¶, å½“è¯¥åˆ—åä¸å­˜åœ¨æ—¶ä¸ä¼šæŠ›å‡ºå¼‚å¸¸,
+	 *                    è€Œåªæ˜¯è¿”å›-1
+	 * @return  è¯¥åˆ—æ‰€åœ¨æ‰€åœ¨çš„ç´¢å¼•å€¼, æˆ–-1(å½“è¯¥åˆ—åä¸å­˜åœ¨æ—¶)
+	 *          ç¬¬ä¸€åˆ—ä¸º1, ç¬¬äºŒåˆ—ä¸º2, ...
+	 */
+	int findColumn(String columnName, boolean notThrow) throws ConfigurationException;
 
 }

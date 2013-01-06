@@ -11,109 +11,109 @@ import self.micromagic.eterna.share.EternaFactory;
 
 public interface Component
 {
-   /**
-    * ÔÚ<code>EternaFactory</code>ÖĞÉèÖÃviewÍâ¸²¿Ø¼şµÄÊôĞÔÃû³Æ.
-    */
-   public static final String VIEW_WRPA_TYPE_FLAG = "view.wrpa.type";
+	/**
+	 * åœ¨<code>EternaFactory</code>ä¸­è®¾ç½®viewå¤–è¦†æ§ä»¶çš„å±æ€§åç§°.
+	 */
+	public static final String VIEW_WRPA_TYPE_FLAG = "view.wrpa.type";
 
-   /**
-    * ÔÚ<code>EternaFactory</code>ÖĞÉèÖÃviewÍâ¸²¿Ø¼şÊÇ·ñĞèÒªÖ´ĞĞscriptµÄÊôĞÔÃû³Æ.
-    */
-   public static final String VIEW_WRPA_NEED_SCRIPT_FLAG = "view.wrpa.needScript";
+	/**
+	 * åœ¨<code>EternaFactory</code>ä¸­è®¾ç½®viewå¤–è¦†æ§ä»¶æ˜¯å¦éœ€è¦æ‰§è¡Œscriptçš„å±æ€§åç§°.
+	 */
+	public static final String VIEW_WRPA_NEED_SCRIPT_FLAG = "view.wrpa.needScript";
 
-   /**
-    * ²»ÓÃ´¦Àí×Ó½Úµã±êÊ¶µÄ±êÇ©.
-    */
-   public static final String NO_SUB_FLAG = "noSub";
+	/**
+	 * ä¸ç”¨å¤„ç†å­èŠ‚ç‚¹æ ‡è¯†çš„æ ‡ç­¾.
+	 */
+	public static final String NO_SUB_FLAG = "noSub";
 
-   /**
-    * ÆÕÍ¨µÄ½ÚµãÀàĞÍ: div.
-    */
-   public static final String NORMAL_TYPE_DIV = "div";
+	/**
+	 * æ™®é€šçš„èŠ‚ç‚¹ç±»å‹: div.
+	 */
+	public static final String NORMAL_TYPE_DIV = "div";
 
-   /**
-    * ÌØÊâµÄ½ÚµãÀàĞÍ: none. <p>
-    * Ò»¸ö¿Õ½Úµã, ´Ë½Úµã²»»áÉú³É, »á½«Æä×Ó½ÚµãÖ±½Ó¹Òµ½ËüµÄ¸¸½ÚµãÉÏ.
-    */
-   public static final String SPECIAL_TYPE_NONE = "none";
+	/**
+	 * ç‰¹æ®Šçš„èŠ‚ç‚¹ç±»å‹: none. <p>
+	 * ä¸€ä¸ªç©ºèŠ‚ç‚¹, æ­¤èŠ‚ç‚¹ä¸ä¼šç”Ÿæˆ, ä¼šå°†å…¶å­èŠ‚ç‚¹ç›´æ¥æŒ‚åˆ°å®ƒçš„çˆ¶èŠ‚ç‚¹ä¸Š.
+	 */
+	public static final String SPECIAL_TYPE_NONE = "none";
 
-   /**
-    * ÌØÊâµÄ½ÚµãÀàĞÍ: loop. <p>
-    * Ò»¸öÑ­»·½Úµã, ´Ë½Úµã²»»áÉú³É, »á½«Æä×Ó½ÚµãÑ­»·Éú³É²¢¹Òµ½Ëü
-    * µÄ¸¸½ÚµãÉÏ.
-    */
-   public static final String SPECIAL_TYPE_LOOP = "loop";
+	/**
+	 * ç‰¹æ®Šçš„èŠ‚ç‚¹ç±»å‹: loop. <p>
+	 * ä¸€ä¸ªå¾ªç¯èŠ‚ç‚¹, æ­¤èŠ‚ç‚¹ä¸ä¼šç”Ÿæˆ, ä¼šå°†å…¶å­èŠ‚ç‚¹å¾ªç¯ç”Ÿæˆå¹¶æŒ‚åˆ°å®ƒ
+	 * çš„çˆ¶èŠ‚ç‚¹ä¸Š.
+	 */
+	public static final String SPECIAL_TYPE_LOOP = "loop";
 
-   /**
-    * ÌØÊâµÄ½ÚµãÀàĞÍ: inherit. <p>
-    * ´Ë½ÚµãµÄÀàĞÍ»á×Ô¶¯ÉèÎªÄ£°å½ÚµãÖĞµÄ¶ÔÓ¦ÀàĞÍ.
-    */
-   public static final String SPECIAL_TYPE_INHERIT = "inherit";
+	/**
+	 * ç‰¹æ®Šçš„èŠ‚ç‚¹ç±»å‹: inherit. <p>
+	 * æ­¤èŠ‚ç‚¹çš„ç±»å‹ä¼šè‡ªåŠ¨è®¾ä¸ºæ¨¡æ¿èŠ‚ç‚¹ä¸­çš„å¯¹åº”ç±»å‹.
+	 */
+	public static final String SPECIAL_TYPE_INHERIT = "inherit";
 
-   /**
-    * ÓÃÓÚ´æ·Å±êÇ©Ãû³ÆµÄÊôĞÔ.
-    */
-   public static final String FLAG_TAG = "eFlag";
+	/**
+	 * ç”¨äºå­˜æ”¾æ ‡ç­¾åç§°çš„å±æ€§.
+	 */
+	public static final String FLAG_TAG = "eFlag";
 
-   /**
-    * ¶ÔÓÚinheritÀàĞÍ, ĞèÒª½øĞĞÈ«¾Ö²éÕÒÄ£°å½ÚµãµÄ±êÖ¾.
-    */
-   public static final String INHERIT_GLOBAL_SEARCH = "inheritGlobalSearch";
+	/**
+	 * å¯¹äºinheritç±»å‹, éœ€è¦è¿›è¡Œå…¨å±€æŸ¥æ‰¾æ¨¡æ¿èŠ‚ç‚¹çš„æ ‡å¿—.
+	 */
+	public static final String INHERIT_GLOBAL_SEARCH = "inheritGlobalSearch";
 
-   void initialize(EternaFactory factory, Component parent) throws ConfigurationException;
+	void initialize(EternaFactory factory, Component parent) throws ConfigurationException;
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   String getType() throws ConfigurationException;
+	String getType() throws ConfigurationException;
 
-   Component getParent() throws ConfigurationException;
+	Component getParent() throws ConfigurationException;
 
-   Iterator getSubComponents() throws ConfigurationException;
+	Iterator getSubComponents() throws ConfigurationException;
 
-   Iterator getEvents() throws ConfigurationException;
+	Iterator getEvents() throws ConfigurationException;
 
-   boolean isIgnoreGlobalParam() throws ConfigurationException;
+	boolean isIgnoreGlobalParam() throws ConfigurationException;
 
-   String getComponentParam() throws ConfigurationException;
+	String getComponentParam() throws ConfigurationException;
 
-   String getBeforeInit() throws ConfigurationException;
+	String getBeforeInit() throws ConfigurationException;
 
-   String getInitScript() throws ConfigurationException;
+	String getInitScript() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾ComponentÄ³¸öÉèÖÃµÄÊôĞÔ.
-    */
-   Object getAttribute(String name) throws ConfigurationException;
+	/**
+	 * è·å–æœ¬ComponentæŸä¸ªè®¾ç½®çš„å±æ€§.
+	 */
+	Object getAttribute(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾ComponentÉèÖÃµÄËùÓĞÊôĞÔµÄÃû³Æ.
-    */
-   String[] getAttributeNames() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬Componentè®¾ç½®çš„æ‰€æœ‰å±æ€§çš„åç§°.
+	 */
+	String[] getAttributeNames() throws ConfigurationException;
 
-   EternaFactory getFactory() throws ConfigurationException;
+	EternaFactory getFactory() throws ConfigurationException;
 
-   ViewAdapter.ViewRes getViewRes() throws ConfigurationException;
+	ViewAdapter.ViewRes getViewRes() throws ConfigurationException;
 
-   void print(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
+	void print(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
 
-   void printBody(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
+	void printBody(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
 
-   void printSpecialBody(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
+	void printSpecialBody(Writer out, AppData data, ViewAdapter view) throws IOException, ConfigurationException;
 
-   interface Event
-   {
-      void initialize(Component component) throws ConfigurationException;
+	interface Event
+	{
+		void initialize(Component component) throws ConfigurationException;
 
-      String getName() throws ConfigurationException;
+		String getName() throws ConfigurationException;
 
-      String getScriptParam() throws ConfigurationException;
+		String getScriptParam() throws ConfigurationException;
 
-      String getScriptBody() throws ConfigurationException;
+		String getScriptBody() throws ConfigurationException;
 
-      Component getComponent() throws ConfigurationException;
+		Component getComponent() throws ConfigurationException;
 
-      ViewAdapter.ViewRes getViewRes() throws ConfigurationException;
+		ViewAdapter.ViewRes getViewRes() throws ConfigurationException;
 
-   }
+	}
 
 }

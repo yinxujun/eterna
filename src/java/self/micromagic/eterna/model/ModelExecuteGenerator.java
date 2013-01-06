@@ -6,10 +6,10 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface ModelExecuteGenerator extends Generator
 {
-   void setExportName(String name) throws ConfigurationException;
+	void setExportName(String name) throws ConfigurationException;
 
-   void setTransactionType(String tType) throws ConfigurationException;
+	void setTransactionType(String tType) throws ConfigurationException;
 
-   Execute createExecute() throws ConfigurationException;
+	Execute createExecute() throws ConfigurationException;
 
 }

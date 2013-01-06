@@ -2,7 +2,7 @@
 package self.micromagic.cg;
 
 /**
- * 类的canonicalName的访问器.
+ * 绫荤殑canonicalName鐨勮闂櫒.
  *
  * @author micromagic.sina.com
  */

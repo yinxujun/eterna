@@ -12,60 +12,62 @@ import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.eterna.sql.ResultRow;
 
 /**
- * ¹ÜÀíÊı×éÏà¹ØµÄ×Ô¶¯´¦Àí´úÂë.
+ * ç®¡ç†æ•°ç»„ç›¸å…³çš„è‡ªåŠ¨å¤„ç†ä»£ç .
+ *
+ * @author micromagic@sina.com
  */
 public class ArrayTool
 {
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array)
 	{
 		return convertArray(arrayLevel, cellType, array, null, (Object) null);
 	}
 
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @param destArr    Ä¿±êÊı×é¶ÔÏó
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @param destArr     ç›®æ ‡æ•°ç»„å¯¹è±¡
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr)
 	{
 		return convertArray(arrayLevel, cellType, array, destArr, (Object) null);
 	}
 
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @param converer   ¶ÔÊı×éÔªËØ½øĞĞÀàĞÍ×ª»»µÄ¹¤¾ß
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @param converer    å¯¹æ•°ç»„å…ƒç´ è¿›è¡Œç±»å‹è½¬æ¢çš„å·¥å…·
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, ValueConverter converer)
 	{
 		return convertArray(arrayLevel, cellType, array, null, (Object) converer);
 	}
 
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @param destArr    Ä¿±êÊı×é¶ÔÏó
-	 * @param converer   ¶ÔÊı×éÔªËØ½øĞĞÀàĞÍ×ª»»µÄ¹¤¾ß
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @param destArr     ç›®æ ‡æ•°ç»„å¯¹è±¡
+	 * @param converer    å¯¹æ•°ç»„å…ƒç´ è¿›è¡Œç±»å‹è½¬æ¢çš„å·¥å…·
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
 			ValueConverter converer)
@@ -73,30 +75,30 @@ public class ArrayTool
 		return convertArray(arrayLevel, cellType, array, destArr, (Object) converer);
 	}
 
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @param destArr    Ä¿±êÊı×é¶ÔÏó
-	 * @param beanMap    ÀàĞÍ×ª»»Ê±ĞèÒªµÄbeanMap¶ÔÏó
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @param destArr     ç›®æ ‡æ•°ç»„å¯¹è±¡
+	 * @param beanMap     ç±»å‹è½¬æ¢æ—¶éœ€è¦çš„beanMapå¯¹è±¡
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr, BeanMap beanMap)
 	{
 		return convertArray(arrayLevel, cellType, array, destArr, (Object) beanMap);
 	}
 
-   /**
-	 * ½«Ò»¸öÊı×é×ª»»³ÉÖ¸¶¨ÀàĞÍµÄÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªæ•°ç»„è½¬æ¢æˆæŒ‡å®šç±»å‹çš„æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param cellType   ĞèÒª×ª»»³ÉµÄÄ¿±êÀàĞÍ
-	 * @param array      Êı×é¶ÔÏó
-	 * @param destArr    Ä¿±êÊı×é¶ÔÏó
-	 * @param converter  ÀàĞÍ×ª»»Æ÷, ¿ÉÒÔÊÇBeanMap»òValueConverter
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param cellType    éœ€è¦è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹
+	 * @param array       æ•°ç»„å¯¹è±¡
+	 * @param destArr     ç›®æ ‡æ•°ç»„å¯¹è±¡
+	 * @param converter   ç±»å‹è½¬æ¢å™¨, å¯ä»¥æ˜¯BeanMapæˆ–ValueConverter
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	private static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr, Object converter)
 	{
@@ -110,31 +112,31 @@ public class ArrayTool
 		}
 		ArrayConverter ac = null;
 		Integer levelObj = Utility.createInteger(arrayLevel);
-      Map acCache = (Map) arrayConverterCache.getProperty(cellType);
+		Map acCache = (Map) arrayConverterCache.getProperty(cellType);
 		if (acCache != null)
 		{
 			ac = (ArrayConverter) acCache.get(levelObj);
 		}
-      if (ac == null)
-      {
+		if (ac == null)
+		{
 			synchronized (arrayConverterCache)
 			{
-         	ac = getArrayConverter(levelObj, cellType);
+				ac = getArrayConverter(levelObj, cellType);
 			}
-      }
-      try
-      {
+		}
+		try
+		{
 			return ac == null ? null : destArr == null ?
 					ac.convertArray(array, converter) : ac.convertArray(array, destArr, converter);
-      }
-      catch (Exception ex)
-      {
-         throw new RuntimeException(ex);
-      }
+		}
+		catch (Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
 	}
 	private static ArrayConverter getArrayConverter(Integer arrayLevel, Class cellType)
 	{
-      Map acCache = (Map) arrayConverterCache.getProperty(cellType);
+		Map acCache = (Map) arrayConverterCache.getProperty(cellType);
 		if (acCache == null)
 		{
 			acCache = new HashMap(2);
@@ -149,7 +151,7 @@ public class ArrayTool
 				ClassGenerator.getPackageString(ValueConverter.class),
 				ClassGenerator.getPackageString(ResultRow.class)
 			};
-			ClassGenerator cg = ClassGenerator.createClassGenerator("_ArrayConverter" + arrayLevel, cellType,
+			ClassGenerator cg = ClassGenerator.createClassGenerator("ArrayConverter" + arrayLevel, cellType,
 					ArrayConverter.class, imports);;
 			cg.setClassLoader(cellType.getClassLoader());
 			createConvertArrayFn(cellType, arrayLevel.intValue(), cg);
@@ -164,24 +166,19 @@ public class ArrayTool
 					CG.log.error("Error in create PrimitiveArrayWrapper.", ex);
 				}
 			}
-         acCache.put(arrayLevel, ac);
+			acCache.put(arrayLevel, ac);
 		}
 		return ac;
 	}
 
 
 	/**
-	 * Éú³ÉÊı×éÀàĞÍ×ª»»µÄ´¦Àí·½·¨.
+	 * ç”Ÿæˆæ•°ç»„ç±»å‹è½¬æ¢çš„å¤„ç†æ–¹æ³•.
 	 */
 	private static void createConvertArrayFn(Class cellType, int level, ClassGenerator cg)
 	{
-		// ×¼±¸´úÂëÆ¬¶ÎµÄ²ÎÊı
-		StringAppender arrVL = StringTool.createStringAppender();
-		for (int i = 0; i < level; i++)
-		{
-			arrVL.append("[]");
-		}
-		String arrVLStr = arrVL.toString();
+		// å‡†å¤‡ä»£ç ç‰‡æ®µçš„å‚æ•°
+		String arrVLStr = ClassGenerator.getArrayDefine(level);;
 		Map tmpParam = new HashMap();
 		tmpParam.put("arrayLevel", new Integer(level));
 		tmpParam.put("srcType", "Object");
@@ -195,30 +192,47 @@ public class ArrayTool
 		tmpParam.put("dest", "destArr");
 		StringAppender fnCode;
 
+		// å®ç°æ¥å£ä¸­ä¸å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
+		fnCode = StringTool.createStringAppender();
+		fnCode.append("public Object convertArray(Object array, Object converter)").appendln()
+				.append("      throws Exception").appendln().append('{').appendln();
+		BeanTool.codeRes.printRes("convertArrayType", tmpParam, 0, fnCode)
+				.appendln().append('}');
+		cg.addMethod(fnCode.toString());
+
+		// å®ç°æ¥å£ä¸­å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
+		fnCode = StringTool.createStringAppender();
+		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter)").appendln()
+				.append("      throws Exception").appendln().append('{').appendln();
+		BeanTool.codeRes.printRes("convertArrayType.withDest", tmpParam, 0, fnCode)
+				.appendln().append('}');
+		cg.addMethod(fnCode.toString());
+
+		// å‡†å¤‡ç±»å‹è½¬æ¢éœ€è¦çš„å˜é‡
 		String wrapName = BeanTool.getPrimitiveWrapClassName(ClassGenerator.getClassName(cellType));
 		int vcIndex = BeanTool.converterManager.getConverterIndex(cellType);
 		boolean beanType = BeanTool.checkBean(cellType);
 
-		// Éú³É²»´øÄ¿±êÊı×éµÄ×ª»»·½·¨
+		// ç”Ÿæˆä¸å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
 		fnCode = StringTool.createStringAppender();
 		fnCode.append("private ").append(ClassGenerator.getClassName(cellType)).append(arrVLStr)
 				.append(" convertArray(Object").append(arrVLStr).append(" array0, Object converter)").appendln()
-            .append("      throws Exception").appendln().append('{').appendln();
-      fnCode.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" destArr0 = new ")
+				.append("      throws Exception").appendln().append('{').appendln();
+		fnCode.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" destArr0 = new ")
 				.append(ClassGenerator.getClassName(cellType)).append("[array0.length]")
 				.append(arrVLStr.substring(2)).append(';').appendln();
 		appendConvertArrayCode(fnCode, cellType, arrVLStr.substring(2), tmpParam, 0, level,
 				wrapName, vcIndex, beanType, false);
-      fnCode.append("return destArr0;").appendln().append('}');
-      cg.addMethod(fnCode.toString());
+		fnCode.append("return destArr0;").appendln().append('}');
+		cg.addMethod(fnCode.toString());
 
-		// Éú³É´øÄ¿±êÊı×éµÄ×ª»»·½·¨
+		// ç”Ÿæˆå¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
 		fnCode = StringTool.createStringAppender();
 		fnCode.append("private ").append(ClassGenerator.getClassName(cellType)).append(arrVLStr)
 				.append(" convertArray(Object").append(arrVLStr).append(" array0, ")
 				.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" destArr0, Object converter)")
 				.appendln()
-            .append("      throws Exception").appendln().append('{').appendln();
+				.append("      throws Exception").appendln().append('{').appendln();
 		fnCode.append("if (destArr0 == null)").appendln().append('{').appendln()
 				.append("return this.convertArray(array0, converter);").appendln().append('}')
 				.appendln();
@@ -230,31 +244,12 @@ public class ArrayTool
 				.append("destArr0 = tmpArr;").appendln().append('}').appendln();
 		appendConvertArrayCode(fnCode, cellType, arrVLStr.substring(2), tmpParam, 0, level,
 				wrapName, vcIndex, beanType, true);
-      fnCode.append("return destArr0;").appendln().append('}');
-      cg.addMethod(fnCode.toString());
-
-		// ÖØÉèÊı×é¶¨Òå×Ö·û´®
-		tmpParam.put("arrayDef", arrVLStr);
-
-		// ÊµÏÖ½Ó¿ÚÖĞ²»´øÄ¿±êÊı×éµÄ×ª»»·½·¨
-		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object converter)").appendln()
-				.append("      throws Exception").appendln().append('{').appendln();
-		BeanTool.codeRes.printRes("convertArrayType", tmpParam, 0, fnCode)
-				.appendln().append('}');
-		cg.addMethod(fnCode.toString());
-
-		// ÊµÏÖ½Ó¿ÚÖĞ´øÄ¿±êÊı×éµÄ×ª»»·½·¨
-		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter)").appendln()
-				.append("      throws Exception").appendln().append('{').appendln();
-		BeanTool.codeRes.printRes("convertArrayType.withDest", tmpParam, 0, fnCode)
-				.appendln().append('}');
+		fnCode.append("return destArr0;").appendln().append('}');
 		cg.addMethod(fnCode.toString());
 	}
 
 	/**
-	 * Éú³ÉÊı×éÀàĞÍ×ª»»µÄ·½·¨Ö÷Ìå.
+	 * ç”Ÿæˆæ•°ç»„ç±»å‹è½¬æ¢çš„æ–¹æ³•ä¸»ä½“.
 	 */
 	private static void appendConvertArrayCode(StringAppender bodyCode, Class cellType, String arrVLStr, Map params,
 			int levelIndex, int arrayLevel, String wrapName, int vcIndex, boolean beanType, boolean hasDest)
@@ -284,7 +279,7 @@ public class ArrayTool
 			if (wrapName != null)
 			{
 				String typeName = ClassGenerator.getClassName(cellType);
-      		params.put("converterType", "self.micromagic.util.converter." + wrapName + "Converter");
+				params.put("converterType", "self.micromagic.util.converter." + wrapName + "Converter");
 				params.put("vcIndex", new Integer(vcIndex));
 				params.put("converterMethod",
 						"convertTo" + Character.toUpperCase(typeName.charAt(0)) + typeName.substring(1));
@@ -308,17 +303,17 @@ public class ArrayTool
 	}
 
 	/**
-	 * Êı×éÔªËØÀàĞÍ×ª»»µÄ»º´æ.
+	 * æ•°ç»„å…ƒç´ ç±»å‹è½¬æ¢çš„ç¼“å­˜.
 	 */
-   private static ClassKeyCache arrayConverterCache = ClassKeyCache.getInstance();
+	private static ClassKeyCache arrayConverterCache = ClassKeyCache.getInstance();
 
-   /**
-	 * ½«Ò»¸ö»ù±¾ÀàĞÍµÄÊı×é×ª»»³ÉËüµÄÍâ¸²ÀàÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªåŸºæœ¬ç±»å‹çš„æ•°ç»„è½¬æ¢æˆå®ƒçš„å¤–è¦†ç±»æ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param array      »ù±¾ÀàĞÍÊı×é¶ÔÏó
-	 * @return  ×ª»»³ÉµÄÍâ¸²ÀàÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏó²»ÊÇ»ù±¾ÀàĞÍÊı×é»ò
-	 *          Êı×éµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param array       åŸºæœ¬ç±»å‹æ•°ç»„å¯¹è±¡
+	 * @return  è½¬æ¢æˆçš„å¤–è¦†ç±»æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡ä¸æ˜¯åŸºæœ¬ç±»å‹æ•°ç»„æˆ–
+	 *          æ•°ç»„çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object wrapPrimitiveArray(int arrayLevel, Object array)
 	{
@@ -327,27 +322,22 @@ public class ArrayTool
 			throw new IndexOutOfBoundsException("Error array level:" + arrayLevel + ".");
 		}
 		Integer levelObj = Utility.createInteger(arrayLevel);
-      PrimitiveArrayWrapper paw = (PrimitiveArrayWrapper) pawCache.get(levelObj);
+		PrimitiveArrayWrapper paw = (PrimitiveArrayWrapper) pawCache.get(levelObj);
 		if (paw == null)
 		{
-         synchronized (pawCache)
+			synchronized (pawCache)
 			{
-            paw = getPrimitiveArrayWrapper(levelObj);
+				paw = getPrimitiveArrayWrapper(levelObj);
 			}
 		}
-      return paw == null ? null : paw.doWrap(array);
+		return paw == null ? null : paw.doWrap(array);
 	}
 	private static PrimitiveArrayWrapper getPrimitiveArrayWrapper(Integer arrayLevel)
 	{
 		PrimitiveArrayWrapper paw = (PrimitiveArrayWrapper) pawCache.get(arrayLevel);
 		if (paw == null)
 		{
-			StringAppender arrVL = StringTool.createStringAppender();
-			for (int i = 0; i < arrayLevel.intValue(); i++)
-			{
-				arrVL.append("[]");
-			}
-			String arrVLStr = arrVL.toString();
+			String arrVLStr = ClassGenerator.getArrayDefine(arrayLevel.intValue());
 			ClassGenerator cg = new ClassGenerator();
 			cg.addClassPath(ArrayTool.class);
 			cg.setClassName(ClassGenerator.getClassName(ArrayTool.class) + "_ArrayWrapper" + arrayLevel);
@@ -380,11 +370,11 @@ public class ArrayTool
 			}
 			pawCache.put(arrayLevel, paw);
 		}
-      return paw;
+		return paw;
 	}
 
 	/**
-	 * Éú³É»ù±¾ÀàĞÍÊı×é×ªÍâ¸²ÀàµÄ´¦Àí·½·¨.
+	 * ç”ŸæˆåŸºæœ¬ç±»å‹æ•°ç»„è½¬å¤–è¦†ç±»çš„å¤„ç†æ–¹æ³•.
 	 */
 	private static void createPrimitiveArrayWrapFn(String primitiveType, String arrVLStr, int level, ClassGenerator cg)
 	{
@@ -401,7 +391,7 @@ public class ArrayTool
 	}
 
 	/**
-	 * Éú³É»ù±¾ÀàĞÍÊı×é×ªÍâ¸²ÀàµÄ·½·¨Ö÷Ìå.
+	 * ç”ŸæˆåŸºæœ¬ç±»å‹æ•°ç»„è½¬å¤–è¦†ç±»çš„æ–¹æ³•ä¸»ä½“.
 	 */
 	private static void appendPrimitiveArrayWrapCode(StringAppender bodyCode, String primitiveType, String arrVLStr,
 			int levelIndex, int arrayLevel, String wrapType)
@@ -431,16 +421,16 @@ public class ArrayTool
 	}
 
 	/**
-	 * »ù±¾ÀàĞÍÊı×éÍâ·óÀà°ü×°µÄ»º´æ.
+	 * åŸºæœ¬ç±»å‹æ•°ç»„å¤–æ•·ç±»åŒ…è£…çš„ç¼“å­˜.
 	 */
 	private static Map pawCache = new HashMap();
 
-   /**
-	 * ½«Ò»¸öbeanÊı×é×ª»»³ÉmapÊı×é.
+	/**
+	 * å°†ä¸€ä¸ªbeanæ•°ç»„è½¬æ¢æˆmapæ•°ç»„.
 	 *
-	 * @param arrayLevel Êı×éµÄÎ¬¶ÈµÈ¼¶
-	 * @param array      beanÀàĞÍÊı×é¶ÔÏó
-	 * @return  ×ª»»³ÉµÄÄ¿±êÀàĞÍÊı×é, Èç¹û¸ø³öµÄÊı×é¶ÔÏóµÄÎ¬¶ÈµÈ¼¶²»ÕıÈ·, Ôò·µ»Ønull
+	 * @param arrayLevel  æ•°ç»„çš„ç»´åº¦ç­‰çº§
+	 * @param array       beanç±»å‹æ•°ç»„å¯¹è±¡
+	 * @return  è½¬æ¢æˆçš„ç›®æ ‡ç±»å‹æ•°ç»„, å¦‚æœç»™å‡ºçš„æ•°ç»„å¯¹è±¡çš„ç»´åº¦ç­‰çº§ä¸æ­£ç¡®, åˆ™è¿”å›null
 	 */
 	public static Object beanArray2Map(int arrayLevel, Object array)
 	{
@@ -449,22 +439,22 @@ public class ArrayTool
 			throw new IndexOutOfBoundsException("Error array level:" + arrayLevel + ".");
 		}
 		Integer levelObj = Utility.createInteger(arrayLevel);
-      ArrayConverter ac = (ArrayConverter) bean2MapCache.get(levelObj);
-      if (ac == null)
-      {
+		ArrayConverter ac = (ArrayConverter) bean2MapCache.get(levelObj);
+		if (ac == null)
+		{
 			synchronized (bean2MapCache)
 			{
-         	ac = getArrayConverter(levelObj);
+				ac = getArrayConverter(levelObj);
 			}
-      }
-      try
-      {
+		}
+		try
+		{
 			return ac == null ? null : ac.convertArray(array, null);
-      }
-      catch (Exception ex)
-      {
-         throw new RuntimeException(ex);
-      }
+		}
+		catch (Exception ex)
+		{
+			throw new RuntimeException(ex);
+		}
 	}
 	private static ArrayConverter getArrayConverter(Integer arrayLevel)
 	{
@@ -490,24 +480,19 @@ public class ArrayTool
 					CG.log.error("Error in create PrimitiveArrayWrapper.", ex);
 				}
 			}
-         bean2MapCache.put(arrayLevel, ac);
+			bean2MapCache.put(arrayLevel, ac);
 		}
 		return ac;
 	}
 
 
 	/**
-	 * Éú³ÉbeanÊı×éÀàĞÍ×ª»»³ÉmapµÄ´¦Àí·½·¨.
+	 * ç”Ÿæˆbeanæ•°ç»„ç±»å‹è½¬æ¢æˆmapçš„å¤„ç†æ–¹æ³•.
 	 */
 	private static void createBeanArray2MapFn(int level, ClassGenerator cg)
 	{
-		// ×¼±¸´úÂëÆ¬¶ÎµÄ²ÎÊı
-		StringAppender arrVL = StringTool.createStringAppender();
-		for (int i = 0; i < level; i++)
-		{
-			arrVL.append("[]");
-		}
-		String arrVLStr = arrVL.toString();
+		// å‡†å¤‡ä»£ç ç‰‡æ®µçš„å‚æ•°
+		String arrVLStr = ClassGenerator.getArrayDefine(level);
 		Map tmpParam = new HashMap();
 		tmpParam.put("arrayLevel", new Integer(level));
 		tmpParam.put("srcType", "Object");
@@ -518,18 +503,18 @@ public class ArrayTool
 		tmpParam.put("dest", "destArr");
 		StringAppender fnCode;
 
-		// Éú³É²»´øÄ¿±êÊı×éµÄ×ª»»·½·¨
+		// ç”Ÿæˆä¸å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
 		fnCode = StringTool.createStringAppender();
 		fnCode.append("private Map").append(arrVLStr)
 				.append(" convertArray(Object").append(arrVLStr).append(" array0, Object converter)").appendln()
-            .append("      throws Exception").appendln().append('{').appendln();
-      fnCode.append("Map").append(arrVLStr).append(" destArr0 = new Map[array0.length]")
+				.append("      throws Exception").appendln().append('{').appendln();
+		fnCode.append("Map").append(arrVLStr).append(" destArr0 = new Map[array0.length]")
 				.append(arrVLStr.substring(2)).append(';').appendln();
 		appendBeanArray2MapCode(fnCode, arrVLStr.substring(2), tmpParam, 0, level);
-      fnCode.append("return destArr0;").appendln().append('}');
-      cg.addMethod(fnCode.toString());
+		fnCode.append("return destArr0;").appendln().append('}');
+		cg.addMethod(fnCode.toString());
 
-		// ÊµÏÖ½Ó¿ÚÖĞ²»´øÄ¿±êÊı×éµÄ×ª»»·½·¨
+		// å®ç°æ¥å£ä¸­ä¸å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
 		fnCode = StringTool.createStringAppender();
 		fnCode.append("public Object convertArray(Object array, Object converter)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln()
@@ -537,7 +522,7 @@ public class ArrayTool
 				.appendln().append('}');
 		cg.addMethod(fnCode.toString());
 
-		// ÊµÏÖ½Ó¿ÚÖĞ´øÄ¿±êÊı×éµÄ×ª»»·½·¨
+		// å®ç°æ¥å£ä¸­å¸¦ç›®æ ‡æ•°ç»„çš„è½¬æ¢æ–¹æ³•
 		fnCode = StringTool.createStringAppender();
 		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln()
@@ -546,7 +531,7 @@ public class ArrayTool
 	}
 
 	/**
-	 * Éú³ÉbeanÊı×éÀàĞÍ×ª»»³ÉmapµÄ·½·¨Ö÷Ìå.
+	 * ç”Ÿæˆbeanæ•°ç»„ç±»å‹è½¬æ¢æˆmapçš„æ–¹æ³•ä¸»ä½“.
 	 */
 	private static void appendBeanArray2MapCode(StringAppender bodyCode, String arrVLStr, Map params,
 			int levelIndex, int arrayLevel)
@@ -571,7 +556,7 @@ public class ArrayTool
 	}
 
 	/**
-	 * beanÀàĞÍÊı×é×ªmapµÄ»º´æ.
+	 * beanç±»å‹æ•°ç»„è½¬mapçš„ç¼“å­˜.
 	 */
 	private static Map bean2MapCache = new HashMap();
 

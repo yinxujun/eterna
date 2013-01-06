@@ -13,170 +13,170 @@ import self.micromagic.eterna.share.EternaFactory;
 
 public interface ViewAdapter
 {
-   /**
-    * Ä¬ÈÏµÄÊı¾İ¼¯Êä³öÆ÷µÄÃû³Æ
-    */
-   public static final String DEFAULT_DATA_PRINTER_NAME = "dataPrinter";
+	/**
+	 * é»˜è®¤çš„æ•°æ®é›†è¾“å‡ºå™¨çš„åç§°
+	 */
+	public static final String DEFAULT_DATA_PRINTER_NAME = "dataPrinter";
 
-   /**
-    * »ù±¾µÄdebugµÈ¼¶, Õâ¸öµÈ¼¶Ö®ÉÏµÄdebug²Å»áÊä³öĞÅÏ¢
-    */
-   public static final int ETERNA_VIEW_DEBUG_BASE = 0x10;
+	/**
+	 * åŸºæœ¬çš„debugç­‰çº§, è¿™ä¸ªç­‰çº§ä¹‹ä¸Šçš„debugæ‰ä¼šè¾“å‡ºä¿¡æ¯
+	 */
+	public static final int ETERNA_VIEW_DEBUG_BASE = 0x10;
 
-   /**
-    * view»º´æµÄÃû³Æ.
-    *
-    * @see    self.micromagic.eterna.model.AppData#getSpcialDataMap(String)
-    */
-   public static final String VIEW_CACHE = "view.cache";
+	/**
+	 * viewç¼“å­˜çš„åç§°.
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#getSpcialDataMap(String)
+	 */
+	public static final String VIEW_CACHE = "view.cache";
 
-   /**
-    * ÊÇ·ñÊÇ¶¯Ì¬ÊÓÍ¼µÄ±ê¼Ç. <p>
-    * Èç¹ûÊÇ¶¯Ì¬ÊÓÍ¼µÄ»°, ÇëÔÚComponentµÄÊµÏÖÀàµÄprint·½·¨ÖĞ,µ÷ÓÃ
-    * data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_VIEW, "1")
-    * ÓÃÓÚ±êÊ¶¸ÃÊÓÍ¼ÊÇ¶¯Ì¬µÄ²»¿É»º´æ.
-    *
-    * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    */
-   public static final String DYNAMIC_VIEW = "dynamic.view";
+	/**
+	 * æ˜¯å¦æ˜¯åŠ¨æ€è§†å›¾çš„æ ‡è®°. <p>
+	 * å¦‚æœæ˜¯åŠ¨æ€è§†å›¾çš„è¯, è¯·åœ¨Componentçš„å®ç°ç±»çš„printæ–¹æ³•ä¸­,è°ƒç”¨
+	 * data.addSpcialData(ViewAdapter.VIEW_CACHE, ViewAdapter.DYNAMIC_VIEW, "1")
+	 * ç”¨äºæ ‡è¯†è¯¥è§†å›¾æ˜¯åŠ¨æ€çš„ä¸å¯ç¼“å­˜.
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
+	 */
+	public static final String DYNAMIC_VIEW = "dynamic.view";
 
-   /**
-    * ¶¯Ì¬·½·¨mapµÄ±êÊ¶. <p>
-    * Èç¹ûÊÇ¶¯Ì¬ÊÓÍ¼µÄ»°ÇÒÓĞ¶¯Ì¬µÄ·½·¨µ÷ÓÃ, ÄÇĞèÒª°ÑÕâĞ©¶¯Ì¬·½·¨Ìí¼Óµ½Õâ¸ö±êÊ¶ÏÂµÄ
-    * mapÖĞ. ¿ÉÒÔµ÷ÓÃÈçÏÂ·½·¨½øĞĞÌí¼Ó:
-    * BaseManager.addDynamicFunction(Map)
-    *
-    * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicFunction(Map)
-    */
-   public static final String DYNAMIC_FUNCTIONS = "dynamic.functions";
+	/**
+	 * åŠ¨æ€æ–¹æ³•mapçš„æ ‡è¯†. <p>
+	 * å¦‚æœæ˜¯åŠ¨æ€è§†å›¾çš„è¯ä¸”æœ‰åŠ¨æ€çš„æ–¹æ³•è°ƒç”¨, é‚£éœ€è¦æŠŠè¿™äº›åŠ¨æ€æ–¹æ³•æ·»åŠ åˆ°è¿™ä¸ªæ ‡è¯†ä¸‹çš„
+	 * mapä¸­. å¯ä»¥è°ƒç”¨å¦‚ä¸‹æ–¹æ³•è¿›è¡Œæ·»åŠ :
+	 * BaseManager.addDynamicFunction(Map)
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
+	 * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicFunction(Map)
+	 */
+	public static final String DYNAMIC_FUNCTIONS = "dynamic.functions";
 
-   /**
-    * ¶¯Ì¬×ÊÔ´ÎÄ±¾setµÄ±êÊ¶. <p>
-    * Èç¹ûÊÇ¶¯Ì¬ÊÓÍ¼µÄ»°ÇÒÓĞ¶¯Ì¬µÄ×ÊÔ´ÎÄ±¾ÒıÓÃ, ÄÇĞèÒª°ÑÕâĞ©¶¯Ì¬×ÊÔ´ÎÄ±¾µÄÃû³ÆÌí¼Óµ½
-    * Õâ¸ö±êÊ¶ÏÂµÄsetÖĞ. ¿ÉÒÔµ÷ÓÃÈçÏÂ·½·¨½øĞĞÌí¼Ó:
-    * BaseManager.addDynamicResourceName(String)
-    *
-    * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicResourceName(String)
-    */
-   public static final String DYNAMIC_RESOURCE_NAMES = "dynamic.resource.names";
+	/**
+	 * åŠ¨æ€èµ„æºæ–‡æœ¬setçš„æ ‡è¯†. <p>
+	 * å¦‚æœæ˜¯åŠ¨æ€è§†å›¾çš„è¯ä¸”æœ‰åŠ¨æ€çš„èµ„æºæ–‡æœ¬å¼•ç”¨, é‚£éœ€è¦æŠŠè¿™äº›åŠ¨æ€èµ„æºæ–‡æœ¬çš„åç§°æ·»åŠ åˆ°
+	 * è¿™ä¸ªæ ‡è¯†ä¸‹çš„setä¸­. å¯ä»¥è°ƒç”¨å¦‚ä¸‹æ–¹æ³•è¿›è¡Œæ·»åŠ :
+	 * BaseManager.addDynamicResourceName(String)
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
+	 * @see    self.micromagic.eterna.view.impl.ViewTool#addDynamicResourceName(String)
+	 */
+	public static final String DYNAMIC_RESOURCE_NAMES = "dynamic.resource.names";
 
-   /**
-    * ÒÑÊ¹ÓÃµÄtypical¿Ø¼ş.
-    */
-   public static final String USED_TYPICAL_COMPONENTS = "used.TypicalComponents";
+	/**
+	 * å·²ä½¿ç”¨çš„typicalæ§ä»¶.
+	 */
+	public static final String USED_TYPICAL_COMPONENTS = "used.TypicalComponents";
 
-   /**
-    * µ±Ç°µÄtypical¿Ø¼ş.
-    */
-   public static final String TYPICAL_COMPONENTS_MAP = "TypicalComponents_MAP";
+	/**
+	 * å½“å‰çš„typicalæ§ä»¶.
+	 */
+	public static final String TYPICAL_COMPONENTS_MAP = "TypicalComponents_MAP";
 
 
-   /**
-    * Í¨¹ı²ÎÊıÉèÖÃdataTypeÖµÊ¹ÓÃµÄÃû³Æ.
-    */
-   public static final String DATA_TYPE = "___dataType";
+	/**
+	 * é€šè¿‡å‚æ•°è®¾ç½®dataTypeå€¼ä½¿ç”¨çš„åç§°.
+	 */
+	public static final String DATA_TYPE = "___dataType";
 
-   /**
-    * ½öĞèÒªÊä³öÊı¾İ²¿·ÖµÄÊı¾İÀàĞÍ.
-    * @deprecated
-    */
-   public static final String DATA_TYPE_ONLYRECORD = "data";
+	/**
+	 * ä»…éœ€è¦è¾“å‡ºæ•°æ®éƒ¨åˆ†çš„æ•°æ®ç±»å‹.
+	 * @deprecated
+	 */
+	public static final String DATA_TYPE_ONLYRECORD = "data";
 
-   /**
-    * ½öĞèÒªÊä³öÊı¾İ²¿·ÖµÄÊı¾İÀàĞÍ.
-    */
-   public static final String DATA_TYPE_DATA = "data";
+	/**
+	 * ä»…éœ€è¦è¾“å‡ºæ•°æ®éƒ¨åˆ†çš„æ•°æ®ç±»å‹.
+	 */
+	public static final String DATA_TYPE_DATA = "data";
 
-   /**
-    * È¥³ı¿ò¼ÜµÄÊı¾İ½á¹¹, ½ö±£ÁôÊı¾İ²¿·Ö, ¿ÉÒÔ×÷ÎªRESTµÄ·µ»ØÖµ.
-    */
-   public static final String DATA_TYPE_REST = "REST";
+	/**
+	 * å»é™¤æ¡†æ¶çš„æ•°æ®ç»“æ„, ä»…ä¿ç•™æ•°æ®éƒ¨åˆ†, å¯ä»¥ä½œä¸ºRESTçš„è¿”å›å€¼.
+	 */
+	public static final String DATA_TYPE_REST = "REST";
 
-   /**
-    * Êä³ö¿ò¼Ü½á¹¹µÄËùÓĞÊı¾İ.
-    */
-   public static final String DATA_TYPE_ALL = "all";
+	/**
+	 * è¾“å‡ºæ¡†æ¶ç»“æ„çš„æ‰€æœ‰æ•°æ®.
+	 */
+	public static final String DATA_TYPE_ALL = "all";
 
-   /**
-    * Êä³öÕ¹ÏÖµÄÒ³Ãæ.
-    */
-   public static final String DATA_TYPE_WEB = "web";
+	/**
+	 * è¾“å‡ºå±•ç°çš„é¡µé¢.
+	 */
+	public static final String DATA_TYPE_WEB = "web";
 
-   /**
-    * ·Ö¸ôjsonÊı¾İºÍºóÃæµÄhtmlÊı¾İµÄ±êÇ©.
-    */
-   public static final String JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
+	/**
+	 * åˆ†éš”jsonæ•°æ®å’Œåé¢çš„htmlæ•°æ®çš„æ ‡ç­¾.
+	 */
+	public static final String JSON_SPLIT_FLAG = "<!-- eterna json data split -->";
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   DataPrinter getDataPrinter() throws ConfigurationException;
+	DataPrinter getDataPrinter() throws ConfigurationException;
 
-   String getDefaultDataType() throws ConfigurationException;
+	String getDefaultDataType() throws ConfigurationException;
 
-   String getDataType(AppData data) throws ConfigurationException;
+	String getDataType(AppData data) throws ConfigurationException;
 
-   EternaFactory getFactory() throws ConfigurationException;
+	EternaFactory getFactory() throws ConfigurationException;
 
-   Iterator getComponents() throws ConfigurationException;
+	Iterator getComponents() throws ConfigurationException;
 
-   int getDebug() throws ConfigurationException;
+	int getDebug() throws ConfigurationException;
 
-   String getWidth() throws ConfigurationException;
+	String getWidth() throws ConfigurationException;
 
-   String getHeight() throws ConfigurationException;
+	String getHeight() throws ConfigurationException;
 
-   String getBeforeInit() throws ConfigurationException;
+	String getBeforeInit() throws ConfigurationException;
 
-   String getInitScript() throws ConfigurationException;
+	String getInitScript() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾viewÊÊÅäÆ÷Ä³¸öÉèÖÃµÄÊôĞÔ.
-    */
-   Object getAttribute(String name) throws ConfigurationException;
+	/**
+	 * è·å–æœ¬viewé€‚é…å™¨æŸä¸ªè®¾ç½®çš„å±æ€§.
+	 */
+	Object getAttribute(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾viewÊÊÅäÆ÷ÉèÖÃµÄËùÓĞÊôĞÔµÄÃû³Æ.
-    */
-   String[] getAttributeNames() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬viewé€‚é…å™¨è®¾ç½®çš„æ‰€æœ‰å±æ€§çš„åç§°.
+	 */
+	String[] getAttributeNames() throws ConfigurationException;
 
-   ViewRes getViewRes() throws ConfigurationException;
+	ViewRes getViewRes() throws ConfigurationException;
 
-   /**
-    * ½«½çÃæ¼°Êı¾İ¼¯ĞÅÏ¢Ğ´Èëµ½Êä³öÁ÷ÖĞ.
-    * »á¸ù¾İ<code>DATA_TYPE</code>ÀàĞÍÀ´Êä³öÊı¾İ.
-    *
-    * @param out    ĞÅÏ¢Ğ´ÈëµÄÊı¾İÁ÷
-    * @param data   Êı¾İ¼¯ËùÔÚµÄ<code>AppData</code>
-    */
-   void printView(Writer out, AppData data) throws IOException, ConfigurationException;
+	/**
+	 * å°†ç•Œé¢åŠæ•°æ®é›†ä¿¡æ¯å†™å…¥åˆ°è¾“å‡ºæµä¸­.
+	 * ä¼šæ ¹æ®<code>DATA_TYPE</code>ç±»å‹æ¥è¾“å‡ºæ•°æ®.
+	 *
+	 * @param out    ä¿¡æ¯å†™å…¥çš„æ•°æ®æµ
+	 * @param data   æ•°æ®é›†æ‰€åœ¨çš„<code>AppData</code>
+	 */
+	void printView(Writer out, AppData data) throws IOException, ConfigurationException;
 
-   /**
-    * ½«½çÃæ¼°Êı¾İ¼¯ĞÅÏ¢Ğ´Èëµ½Êä³öÁ÷ÖĞ.
-    * »á¸ù¾İ<code>DATA_TYPE</code>ÀàĞÍÀ´Êä³öÊı¾İ.
-    *
-    * @param out       ĞÅÏ¢Ğ´ÈëµÄÊı¾İÁ÷
-    * @param data      Êı¾İ¼¯ËùÔÚµÄ<code>AppData</code>
-    * @param cache     ĞèÒª³õÊ¼»¯µ½_eterna.cacheÖĞµÄÖµ
-    */
-   void printView(Writer out, AppData data, Map cache)
-         throws IOException, ConfigurationException;
+	/**
+	 * å°†ç•Œé¢åŠæ•°æ®é›†ä¿¡æ¯å†™å…¥åˆ°è¾“å‡ºæµä¸­.
+	 * ä¼šæ ¹æ®<code>DATA_TYPE</code>ç±»å‹æ¥è¾“å‡ºæ•°æ®.
+	 *
+	 * @param out       ä¿¡æ¯å†™å…¥çš„æ•°æ®æµ
+	 * @param data      æ•°æ®é›†æ‰€åœ¨çš„<code>AppData</code>
+	 * @param cache     éœ€è¦åˆå§‹åŒ–åˆ°_eterna.cacheä¸­çš„å€¼
+	 */
+	void printView(Writer out, AppData data, Map cache)
+			throws IOException, ConfigurationException;
 
-   /**
-    * Êä³ö¿Ø¼şµÄÊÂ¼ş¶¨Òå.
-    * ÓÉÓÚÒª¸ù¾İdebugµÄµÈ¼¶£¬ÔÚÊÂ¼ş½Å±¾ÖĞ¼ÓÈëµ÷ÊÔ´úÂë£¬ËùÒÔ´Ë¹¦ÄÜÔÚViewAdapterÖĞÊµÏÖ.
-    */
-   void printEvent(Writer out, AppData data, Component.Event event) throws IOException, ConfigurationException;
+	/**
+	 * è¾“å‡ºæ§ä»¶çš„äº‹ä»¶å®šä¹‰.
+	 * ç”±äºè¦æ ¹æ®debugçš„ç­‰çº§ï¼Œåœ¨äº‹ä»¶è„šæœ¬ä¸­åŠ å…¥è°ƒè¯•ä»£ç ï¼Œæ‰€ä»¥æ­¤åŠŸèƒ½åœ¨ViewAdapterä¸­å®ç°.
+	 */
+	void printEvent(Writer out, AppData data, Component.Event event) throws IOException, ConfigurationException;
 
-   interface ViewRes
-   {
-      public Map getFunctionMap() throws ConfigurationException;
+	interface ViewRes
+	{
+		public Map getFunctionMap() throws ConfigurationException;
 
-      public Set getTypicalComponentNames() throws ConfigurationException;
+		public Set getTypicalComponentNames() throws ConfigurationException;
 
-      public Set getResourceNames() throws ConfigurationException;
+		public Set getResourceNames() throws ConfigurationException;
 
-   }
+	}
 
 }

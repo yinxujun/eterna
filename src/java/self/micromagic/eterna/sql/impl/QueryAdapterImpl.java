@@ -18,9 +18,10 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.util.logging.TimeLogger;
 
 public class QueryAdapterImpl extends AbstractQueryAdapter
-      implements QueryAdapter
+		implements QueryAdapter
 {
 	public QueryAdapter createQueryAdapter()
 			throws ConfigurationException
@@ -30,77 +31,77 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
 		return other;
 	}
 
-   public ResultIterator executeQueryHoldConnection(Connection conn)
-         throws ConfigurationException, SQLException
-   {
-      long startTime = System.currentTimeMillis();
-      Statement stmt = null;
-      Throwable exception = null;
-      ResultIterator result = null;
-      try
-      {
-         ResultSet rs;
-         if (this.hasActiveParam())
-         {
-            PreparedStatement temp;
-            if (this.isForwardOnly())
-            {
-               temp = conn.prepareStatement(this.getPreparedSQL());
-            }
-            else
-            {
-               temp = conn.prepareStatement(this.getPreparedSQL(),
-                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            }
-            stmt = temp;
-            this.prepareValues(temp);
-            rs = temp.executeQuery();
-         }
-         else
-         {
-            if (this.isForwardOnly())
-            {
-               stmt = conn.createStatement();
-            }
-            else
-            {
-               stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY);
-            }
-            rs = stmt.executeQuery(this.getPreparedSQL());
-         }
-         List readerList = this.getReaderManager0(rs).getReaderList(this.getPermission0());
-         result = new ResultSetIteratorImpl(conn, stmt, rs, this.getReaderManager0(null), readerList);
-         // ²éÑ¯Ö´ĞĞÍê³É, ±íÊ¾ÒÑ½Ó¹ÜÁËÊı¾İ¿âÁ´½ÓµÄ¿ØÖÆ, ¿ÉÒÔÉèÖÃÁ´½Ó½Ó¹Ü±êÖ¾
-         AppData.getCurrentData().addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
-         return result;
-      }
-      catch (ConfigurationException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (SQLException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (RuntimeException ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      catch (Error ex)
-      {
-         exception = ex;
-         throw ex;
-      }
-      finally
-      {
-         if (this.logSQL(System.currentTimeMillis() - startTime, exception, conn))
-         {
-            if (result != null)
-            {
+	public ResultIterator executeQueryHoldConnection(Connection conn)
+			throws ConfigurationException, SQLException
+	{
+		long startTime = TimeLogger.getTime();
+		Statement stmt = null;
+		Throwable exception = null;
+		ResultIterator result = null;
+		try
+		{
+			ResultSet rs;
+			if (this.hasActiveParam())
+			{
+				PreparedStatement temp;
+				if (this.isForwardOnly())
+				{
+					temp = conn.prepareStatement(this.getPreparedSQL());
+				}
+				else
+				{
+					temp = conn.prepareStatement(this.getPreparedSQL(),
+							ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				}
+				stmt = temp;
+				this.prepareValues(temp);
+				rs = temp.executeQuery();
+			}
+			else
+			{
+				if (this.isForwardOnly())
+				{
+					stmt = conn.createStatement();
+				}
+				else
+				{
+					stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+							ResultSet.CONCUR_READ_ONLY);
+				}
+				rs = stmt.executeQuery(this.getPreparedSQL());
+			}
+			List readerList = this.getReaderManager0(rs).getReaderList(this.getPermission0());
+			result = new ResultSetIteratorImpl(conn, stmt, rs, this.getReaderManager0(null), readerList);
+			// æŸ¥è¯¢æ‰§è¡Œå®Œæˆ, è¡¨ç¤ºå·²æ¥ç®¡äº†æ•°æ®åº“é“¾æ¥çš„æ§åˆ¶, å¯ä»¥è®¾ç½®é“¾æ¥æ¥ç®¡æ ‡å¿—
+			AppData.getCurrentData().addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
+			return result;
+		}
+		catch (ConfigurationException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (SQLException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (RuntimeException ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		catch (Error ex)
+		{
+			exception = ex;
+			throw ex;
+		}
+		finally
+		{
+			if (this.logSQL(this, TimeLogger.getTime() - startTime, exception, conn))
+			{
+				if (result != null)
+				{
 					AppData data = AppData.getCurrentData();
 					if (data.getLogType() > 0)
 					{
@@ -110,61 +111,61 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
 							AppDataLogExecute.printObject(nowNode.addElement("result"), result);
 						}
 					}
-            }
-         }
-         // ÕâÀïĞèÒª±£³ÖÁ¬½Ó£¬ËùÒÔstmt²»¹Ø±Õ
-      }
-   }
+				}
+			}
+			// è¿™é‡Œéœ€è¦ä¿æŒè¿æ¥ï¼Œæ‰€ä»¥stmtä¸å…³é—­
+		}
+	}
 
-   protected ResultRow readResults(ResultReaderManager readerManager, Object[] row,
+	protected ResultRow readResults(ResultReaderManager readerManager, Object[] row,
 			ResultIterator resultIterator)
-         throws ConfigurationException, SQLException
-   {
-      ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator, this.getPermission0());
-      return rowSet;
-   }
+			throws ConfigurationException, SQLException
+	{
+		ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator, this.getPermission0());
+		return rowSet;
+	}
 
-   private class ResultSetIteratorImpl extends AbstractResultSetIterator
-   {
-      private ResultReaderManager readerManager;
-      private List readerList;
-      private ResultMetaData metaData = null;
+	private class ResultSetIteratorImpl extends AbstractResultSetIterator
+	{
+		private ResultReaderManager readerManager;
+		private List readerList;
+		private ResultMetaData metaData = null;
 
-      public ResultSetIteratorImpl(Connection conn, Statement stmt, ResultSet rs,
-            ResultReaderManager readerManager, List readerList)
-      {
-         super(conn, stmt, rs);
-         this.readerManager = readerManager;
-         this.readerList = readerList;
-      }
+		public ResultSetIteratorImpl(Connection conn, Statement stmt, ResultSet rs,
+				ResultReaderManager readerManager, List readerList)
+		{
+			super(conn, stmt, rs);
+			this.readerManager = readerManager;
+			this.readerList = readerList;
+		}
 
-      public ResultMetaData getMetaData()
+		public ResultMetaData getMetaData()
 				throws ConfigurationException
 		{
 			if (this.metaData == null)
 			{
-         	this.metaData = new ResultMetaDataImpl(
+				this.metaData = new ResultMetaDataImpl(
 						this.readerList, this.readerManager, QueryAdapterImpl.this);
 			}
 			return this.metaData;
-      }
+		}
 
-      protected ResultRow getResultRow(ResultSet rs)
-            throws SQLException
-      {
-         Object[] values;
-         try
-         {
-            values = getResults(QueryAdapterImpl.this, this.readerList, rs);
+		protected ResultRow getResultRow(ResultSet rs)
+				throws SQLException
+		{
+			Object[] values;
+			try
+			{
+				values = getResults(QueryAdapterImpl.this, this.readerList, rs);
 				return new ResultRowImpl(values, this, QueryAdapterImpl.this.getPermission0());
-         }
-         catch (ConfigurationException ex)
-         {
+			}
+			catch (ConfigurationException ex)
+			{
 				log.error("Error in get results.", ex);
-            throw new SQLException(ex.getMessage());
-         }
-      }
+				throw new SQLException(ex.getMessage());
+			}
+		}
 
-   }
+	}
 
 }

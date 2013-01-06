@@ -14,320 +14,320 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
 
 /**
- * Êı¾İ¼¯Êä³öÆ÷, ÓÃÓÚ½«Êı¾İ¼¯°´ÕÕÒ»¶¨µÄ¸ñÊ½½øĞĞÊä³ö.
- * ×¢: Êı¾İ¼¯ÖĞ²»¿ÉÓĞ×ÔÒıÓÃµÄÊı¾İ.
+ * æ•°æ®é›†è¾“å‡ºå™¨, ç”¨äºå°†æ•°æ®é›†æŒ‰ç…§ä¸€å®šçš„æ ¼å¼è¿›è¡Œè¾“å‡º.
+ * æ³¨: æ•°æ®é›†ä¸­ä¸å¯æœ‰è‡ªå¼•ç”¨çš„æ•°æ®.
  */
 public interface DataPrinter
 {
-   /**
-    * ³õÊ¼»¯´ËÊı¾İ¼¯Êä³öÆ÷.
-    */
-   public void initialize(EternaFactory factory) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡´ËÊı¾İ¼¯Êä³öÆ÷µÄÃû³Æ.
-    */
-   public String getName() throws ConfigurationException;
-
-   /**
-    * Êä³öÊı¾İ¼¯.
-    *
-    * @param out          Êä³öÁ÷
-    * @param data         Êı¾İ¼¯
-    * @param hasPreData   Êä³öµÄÊı¾İ¼¯Ç°ÊÇ·ñÓĞÆäËûÊı¾İ
-    */
-   void printData(Writer out, Map data, boolean hasPreData) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö²¼¶ûÀàĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param b           ²¼¶ûÖµ
-    */
-   void print(Writer out, boolean b) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö×Ö·ûÀàĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param c           ×Ö·ûÖµ
-    */
-   void print(Writer out, char c) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³öÕûĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param i           ÕûĞÍÖµ
-    */
-   void print(Writer out, int i) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö³¤ÕûĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param l           ³¤ÕûĞÍÖµ
-    */
-   void print(Writer out, long l) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö¸¡µãĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param f           ¸¡µãĞÍÖµ
-    */
-   void print(Writer out, float f) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³öË«¾«¶È¸¡µãĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param d           Ë«¾«¶È¸¡µãĞÍÖµ
-    */
-   void print(Writer out, double d) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö×Ö·û´®ÀàĞÍÖµ.
-    *
-    * @param out         Êä³öÁ÷
-    * @param s           ×Ö·û´®ÀàĞÍÖµ
-    */
-   void print(Writer out, String s) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³öÒ»¸öObject¶ÔÏó.
-    *
-    * @param out          Êä³öÁ÷
-    * @param value        ÒªÊä³öµÄObject¶ÔÏó
-    */
-   void print(Writer out, Object value) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³öÒ»¸öObject¶ÔÏóÊı×é.
-    *
-    * @param out          Êä³öÁ÷
-    * @param values       ÒªÊä³öµÄObject¶ÔÏóÊı×é
-    */
-   void print(Writer out, Object[] values) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³öÒ»¸öMap¶ÔÏó.
-    *
-    * @param out          Êä³öÁ÷
-    * @param map          ÒªÊä³öµÄMap¶ÔÏó
-    */
-   void printMap(Writer out, Map map) throws IOException, ConfigurationException;
-
-   /**
-    * Êä³ö½á¹û¼¯µü´úÆ÷µÄÄÚÈİ.
-    *
-    * @param out          Êä³öÁ÷
-    * @param ritr         ½á¹û¼¯µü´úÆ÷
-    */
-   void printResultIterator(Writer out, ResultIterator ritr)
-         throws IOException, ConfigurationException, SQLException;
-
-   /**
-    * Êä³öĞĞ½á¹û¼¯µÄÄÚÈİ.
-    *
-    * @param out          Êä³öÁ÷
-    * @param row          ĞĞ½á¹û¼¯
-    */
-   void printResultRow(Writer out, ResultRow row)
-         throws IOException, ConfigurationException, SQLException;
-
-   /**
-    * Êä³öµü´úÆ÷µÄÄÚÈİ.
-    *
-    * @param out          Êä³öÁ÷
-    * @param itr          µü´úÆ÷
-    */
-   void printIterator(Writer out, Iterator itr) throws IOException, ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æ­¤æ•°æ®é›†è¾“å‡ºå™¨.
+	 */
+	public void initialize(EternaFactory factory) throws ConfigurationException;
 
 	/**
-	 * Êä³ö¶ÔÏóµÄÆğÊ¼·û.
-    *
-    * @param out          Êä³öÁ÷
+	 * è·å–æ­¤æ•°æ®é›†è¾“å‡ºå™¨çš„åç§°.
+	 */
+	public String getName() throws ConfigurationException;
+
+	/**
+	 * è¾“å‡ºæ•°æ®é›†.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param data         æ•°æ®é›†
+	 * @param hasPreData   è¾“å‡ºçš„æ•°æ®é›†å‰æ˜¯å¦æœ‰å…¶ä»–æ•°æ®
+	 */
+	void printData(Writer out, Map data, boolean hasPreData) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºå¸ƒå°”ç±»å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param b           å¸ƒå°”å€¼
+	 */
+	void print(Writer out, boolean b) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºå­—ç¬¦ç±»å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param c           å­—ç¬¦å€¼
+	 */
+	void print(Writer out, char c) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºæ•´å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param i           æ•´å‹å€¼
+	 */
+	void print(Writer out, int i) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºé•¿æ•´å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param l           é•¿æ•´å‹å€¼
+	 */
+	void print(Writer out, long l) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºæµ®ç‚¹å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param f           æµ®ç‚¹å‹å€¼
+	 */
+	void print(Writer out, float f) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºåŒç²¾åº¦æµ®ç‚¹å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param d           åŒç²¾åº¦æµ®ç‚¹å‹å€¼
+	 */
+	void print(Writer out, double d) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºå­—ç¬¦ä¸²ç±»å‹å€¼.
+	 *
+	 * @param out         è¾“å‡ºæµ
+	 * @param s           å­—ç¬¦ä¸²ç±»å‹å€¼
+	 */
+	void print(Writer out, String s) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºä¸€ä¸ªObjectå¯¹è±¡.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param value        è¦è¾“å‡ºçš„Objectå¯¹è±¡
+	 */
+	void print(Writer out, Object value) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºä¸€ä¸ªObjectå¯¹è±¡æ•°ç»„.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param values       è¦è¾“å‡ºçš„Objectå¯¹è±¡æ•°ç»„
+	 */
+	void print(Writer out, Object[] values) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºä¸€ä¸ªMapå¯¹è±¡.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param map          è¦è¾“å‡ºçš„Mapå¯¹è±¡
+	 */
+	void printMap(Writer out, Map map) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºç»“æœé›†è¿­ä»£å™¨çš„å†…å®¹.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param ritr         ç»“æœé›†è¿­ä»£å™¨
+	 */
+	void printResultIterator(Writer out, ResultIterator ritr)
+			throws IOException, ConfigurationException, SQLException;
+
+	/**
+	 * è¾“å‡ºè¡Œç»“æœé›†çš„å†…å®¹.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param row          è¡Œç»“æœé›†
+	 */
+	void printResultRow(Writer out, ResultRow row)
+			throws IOException, ConfigurationException, SQLException;
+
+	/**
+	 * è¾“å‡ºè¿­ä»£å™¨çš„å†…å®¹.
+	 *
+	 * @param out          è¾“å‡ºæµ
+	 * @param itr          è¿­ä»£å™¨
+	 */
+	void printIterator(Writer out, Iterator itr) throws IOException, ConfigurationException;
+
+	/**
+	 * è¾“å‡ºå¯¹è±¡çš„èµ·å§‹ç¬¦.
+	 *
+	 * @param out          è¾“å‡ºæµ
 	 */
 	void printObjectBegin(Writer out) throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³ö¶ÔÏóµÄ½áÊø·û.
-    *
-    * @param out          Êä³öÁ÷
+	 * è¾“å‡ºå¯¹è±¡çš„ç»“æŸç¬¦.
+	 *
+	 * @param out          è¾“å‡ºæµ
 	 */
 	void printObjectEnd(Writer out) throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ²¼¶ûÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å¸ƒå°”å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, boolean value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ×Ö·ûÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å­—ç¬¦å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, char value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ÕûĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        æ•´å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, int value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô, ²»¼ì²é²ÎÊıkeyÊÇ·ñÎªnull, ÊÇ·ñ°üº¬ÌØÊâ×Ö·û.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹, ä¸æ£€æŸ¥å‚æ•°keyæ˜¯å¦ä¸ºnull, æ˜¯å¦åŒ…å«ç‰¹æ®Šå­—ç¬¦.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ÕûĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        æ•´å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPairWithoutCheck(Writer out, String key, int value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ³¤ÕûĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        é•¿æ•´å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, long value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô, ²»¼ì²é²ÎÊıkeyÊÇ·ñÎªnull, ÊÇ·ñ°üº¬ÌØÊâ×Ö·û.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹, ä¸æ£€æŸ¥å‚æ•°keyæ˜¯å¦ä¸ºnull, æ˜¯å¦åŒ…å«ç‰¹æ®Šå­—ç¬¦.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ³¤ÕûĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        é•¿æ•´å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPairWithoutCheck(Writer out, String key, long value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ¸¡µãĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        æµ®ç‚¹å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, float value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        Ë«¾«¶È¸¡µãĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        åŒç²¾åº¦æµ®ç‚¹å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, double value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô, ²»¼ì²é²ÎÊıkeyÊÇ·ñÎªnull, ÊÇ·ñ°üº¬ÌØÊâ×Ö·û.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹, ä¸æ£€æŸ¥å‚æ•°keyæ˜¯å¦ä¸ºnull, æ˜¯å¦åŒ…å«ç‰¹æ®Šå­—ç¬¦.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        Ë«¾«¶È¸¡µãĞÍÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        åŒç²¾åº¦æµ®ç‚¹å‹å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPairWithoutCheck(Writer out, String key, double value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ×Ö·û´®Öµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å­—ç¬¦ä¸²å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, String value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô, ²»¼ì²é²ÎÊıkeyÊÇ·ñÎªnull, ÊÇ·ñ°üº¬ÌØÊâ×Ö·û.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹, ä¸æ£€æŸ¥å‚æ•°keyæ˜¯å¦ä¸ºnull, æ˜¯å¦åŒ…å«ç‰¹æ®Šå­—ç¬¦.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ×Ö·û´®Öµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å­—ç¬¦ä¸²å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPairWithoutCheck(Writer out, String key, String value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ¶ÔÏóÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å¯¹è±¡å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPair(Writer out, String key, Object value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * Êä³öÒ»×ékey-value¶Ô, ²»¼ì²é²ÎÊıkeyÊÇ·ñÎªnull, ÊÇ·ñ°üº¬ÌØÊâ×Ö·û.
+	 * è¾“å‡ºä¸€ç»„key-valueå¯¹, ä¸æ£€æŸ¥å‚æ•°keyæ˜¯å¦ä¸ºnull, æ˜¯å¦åŒ…å«ç‰¹æ®Šå­—ç¬¦.
 	 *
-    * @param out          Êä³öÁ÷
-    * @param key          Ãû³Æ
-    * @param value        ¶ÔÏóÖµ
-    * @param first        ÊÇ·ñÎª¶ÔÏóÖĞµÄµÚÒ»×éÖµ
+	 * @param out          è¾“å‡ºæµ
+	 * @param key          åç§°
+	 * @param value        å¯¹è±¡å€¼
+	 * @param first        æ˜¯å¦ä¸ºå¯¹è±¡ä¸­çš„ç¬¬ä¸€ç»„å€¼
 	 */
 	void printPairWithoutCheck(Writer out, String key, Object value, boolean first)
 			throws IOException, ConfigurationException;
 
 	/**
-	 * ÉèÖÃÈÕÆÚÀàĞÍµÄÊı¾İÊ¹ÓÃµÄ¸ñÊ½»¯·½Ê½.
+	 * è®¾ç½®æ—¥æœŸç±»å‹çš„æ•°æ®ä½¿ç”¨çš„æ ¼å¼åŒ–æ–¹å¼.
 	 */
 	void setDateFormat(DateFormat format);
 
-   /**
-    * »ñÈ¡Ò»¸öbeanÊµÀıµÄÊä³öÆ÷.
-    *
-    * @param beanClass     beanµÄClass
-    * @return      beanÊµÀıµÄÊä³öÆ÷
-    */
-   BeanPrinter getBeanPrinter(Class beanClass) throws ConfigurationException;
+	/**
+	 * è·å–ä¸€ä¸ªbeanå®ä¾‹çš„è¾“å‡ºå™¨.
+	 *
+	 * @param beanClass     beançš„Class
+	 * @return      beanå®ä¾‹çš„è¾“å‡ºå™¨
+	 */
+	BeanPrinter getBeanPrinter(Class beanClass) throws ConfigurationException;
 
-   /**
-    * beanÊµÀıµÄÊä³öÆ÷.
-    */
-   interface BeanPrinter
-   {
-      /**
-       * Êä³öbeanÖĞµÄÊôĞÔ.
-       *
-       * @param p         Êı¾İ¼¯Êä³öÆ÷
-       * @param out       Êä³öÁ÷
-       * @param bean      beanµÄÊµÀı
-       */
-      void print(DataPrinter p, Writer out, Object bean) throws IOException, ConfigurationException;
+	/**
+	 * beanå®ä¾‹çš„è¾“å‡ºå™¨.
+	 */
+	interface BeanPrinter
+	{
+		/**
+		 * è¾“å‡ºbeanä¸­çš„å±æ€§.
+		 *
+		 * @param p         æ•°æ®é›†è¾“å‡ºå™¨
+		 * @param out       è¾“å‡ºæµ
+		 * @param bean      beançš„å®ä¾‹
+		 */
+		void print(DataPrinter p, Writer out, Object bean) throws IOException, ConfigurationException;
 
-   }
+	}
 
 }

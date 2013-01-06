@@ -19,102 +19,102 @@ import java.util.Set;
 import self.micromagic.util.Utility;
 
 /**
- * Ò»¸öÍ¬²½µÄHashMap, ´ó²¿·Ö´úÂë²Î¿¼jdk1.6µÄHashMapÀ´±àĞ´µÄ. <p>
- * ÕâÀïµÄÊµÏÖ·½Ê½ÊÇ, ¶Ô»áĞŞ¸ÄsizeµÄ·½·¨½øĞĞÍ¬²½, Èç: put removeµÈ, ¶Ô¶ÁÈ¡µÄ·½·¨
- * ²»½øĞĞÍ¬²½, Èç: get containsKey.
+ * ä¸€ä¸ªåŒæ­¥çš„HashMap, å¤§éƒ¨åˆ†ä»£ç å‚è€ƒjdk1.6çš„HashMapæ¥ç¼–å†™çš„. <p>
+ * è¿™é‡Œçš„å®ç°æ–¹å¼æ˜¯, å¯¹ä¼šä¿®æ”¹sizeçš„æ–¹æ³•è¿›è¡ŒåŒæ­¥, å¦‚: put removeç­‰, å¯¹è¯»å–çš„æ–¹æ³•
+ * ä¸è¿›è¡ŒåŒæ­¥, å¦‚: get containsKey.
  *
- * Ò»°ãµÄHashMap²»¶Ô¶ÁÈ¡·½·¨½øĞĞÍ¬²½ÊÇ»áÓĞÒÔÏÂ¼¸¸öÎÊÌâ:
+ * ä¸€èˆ¬çš„HashMapä¸å¯¹è¯»å–æ–¹æ³•è¿›è¡ŒåŒæ­¥æ˜¯ä¼šæœ‰ä»¥ä¸‹å‡ ä¸ªé—®é¢˜:
  *
- * 1. µ±hash±í¸Ä±äÊ±, »áÔì³É»ñÈ¡´æÔÚµÄkeyÊ±È´·µ»Ønull.
- * ÕâÀïµÄ´¦Àí·½·¨Îª, ÔÚËùÓĞµÄ¶ÁÈ¡·½·¨ÖĞ, ²»Ö±½ÓÒıÓÃÊµÀıhash±í, Í¨¹ıgetTable·½·¨»ñµÃ
- * ¶Ôhash±íµÄÒıÓÃ, ÕâÑùµ±ÊµÀıµÄhash±í¸Ä±äÊ±Ò²²»»áÓ°Ïìµ±Ç°·½·¨ÖĞÊ¹ÓÃµÄhash±í.
- * ÁíÍâ, ÖØ¹¹hash±íÊ±, Ã¿Ò»¸öEntryÒ²ÊÇcloneµÄ, ±£Ö¤²»¸Ä±äÔ­À´µÄÁ´±í½á¹¹.
+ * 1. å½“hashè¡¨æ”¹å˜æ—¶, ä¼šé€ æˆè·å–å­˜åœ¨çš„keyæ—¶å´è¿”å›null.
+ * è¿™é‡Œçš„å¤„ç†æ–¹æ³•ä¸º, åœ¨æ‰€æœ‰çš„è¯»å–æ–¹æ³•ä¸­, ä¸ç›´æ¥å¼•ç”¨å®ä¾‹hashè¡¨, é€šè¿‡getTableæ–¹æ³•è·å¾—
+ * å¯¹hashè¡¨çš„å¼•ç”¨, è¿™æ ·å½“å®ä¾‹çš„hashè¡¨æ”¹å˜æ—¶ä¹Ÿä¸ä¼šå½±å“å½“å‰æ–¹æ³•ä¸­ä½¿ç”¨çš„hashè¡¨.
+ * å¦å¤–, é‡æ„hashè¡¨æ—¶, æ¯ä¸€ä¸ªEntryä¹Ÿæ˜¯cloneçš„, ä¿è¯ä¸æ”¹å˜åŸæ¥çš„é“¾è¡¨ç»“æ„.
  *
- * 2. µ±²»Í¬µÄÏß³Ì½øĞĞ»ñÈ¡get¼°putÊ±, get·½·¨µÄ½á¹û»áÊÜÆäËûÏß³ÌµÄÓ°Ïì.
- * Èç: getÊ±±»´ò¶Ï, ÕâÊ±ÁíÒ»¸öÏß³ÌputÁËÒ»¸ökey, ÕâÑù»áÔì³Éget·½·¨Ó¦¸Ã·µ»ØnullµÄÈ´»ñ
- * µÃÁË·µ»ØÖµ.
- * ÕâÀï²¢²»½â¾öÕâ¸öÎÊÌâ, ÕâÑùµÄÇé¿ö¿ÉÒÔ¿´×÷put·½·¨ÏÈÖ´ĞĞÁË, Ö®ºóÔÚÖ´ĞĞÁËget.
+ * 2. å½“ä¸åŒçš„çº¿ç¨‹è¿›è¡Œè·å–getåŠputæ—¶, getæ–¹æ³•çš„ç»“æœä¼šå—å…¶ä»–çº¿ç¨‹çš„å½±å“.
+ * å¦‚: getæ—¶è¢«æ‰“æ–­, è¿™æ—¶å¦ä¸€ä¸ªçº¿ç¨‹putäº†ä¸€ä¸ªkey, è¿™æ ·ä¼šé€ æˆgetæ–¹æ³•åº”è¯¥è¿”å›nullçš„å´è·
+ * å¾—äº†è¿”å›å€¼.
+ * è¿™é‡Œå¹¶ä¸è§£å†³è¿™ä¸ªé—®é¢˜, è¿™æ ·çš„æƒ…å†µå¯ä»¥çœ‹ä½œputæ–¹æ³•å…ˆæ‰§è¡Œäº†, ä¹‹ååœ¨æ‰§è¡Œäº†get.
  *
- * Õâ¸öÀàÖ÷ÒªÓÃÔÚĞèÒª´óÁ¿µ÷ÓÃget, put·½·¨½ÏÉÙ·¢ÉúµÄÇé¿ö. ÆäÄ¿±êÊÇ±£Ö¤¶àÏß³Ì»·¾³ÏÂ,
- * get·½·¨Ö´ĞĞµÄ×ã¹»¿ì, ²¢·¢µÄput·½·¨²»»á¶ÔgetµÄ½á¹û¼°mapµÄ½á¹¹²úÉúÓ°Ïì.
- * ÁíÍâ, ÔÚ³õÊ¼»¯Ê±¿ÉÒÔÉèÖÃkeyÊ¹ÓÃµÄÒıÓÃ·½Ê½, Ó²ÒıÓÃ ÈíÒıÓÃ ÈõÒıÓÃ.
+ * è¿™ä¸ªç±»ä¸»è¦ç”¨åœ¨éœ€è¦å¤§é‡è°ƒç”¨get, putæ–¹æ³•è¾ƒå°‘å‘ç”Ÿçš„æƒ…å†µ. å…¶ç›®æ ‡æ˜¯ä¿è¯å¤šçº¿ç¨‹ç¯å¢ƒä¸‹,
+ * getæ–¹æ³•æ‰§è¡Œçš„è¶³å¤Ÿå¿«, å¹¶å‘çš„putæ–¹æ³•ä¸ä¼šå¯¹getçš„ç»“æœåŠmapçš„ç»“æ„äº§ç”Ÿå½±å“.
+ * å¦å¤–, åœ¨åˆå§‹åŒ–æ—¶å¯ä»¥è®¾ç½®keyä½¿ç”¨çš„å¼•ç”¨æ–¹å¼, ç¡¬å¼•ç”¨ è½¯å¼•ç”¨ å¼±å¼•ç”¨.
  */
 public class SynHashMap extends AbstractMap
 		implements Map, Cloneable, Serializable
 {
 	/**
-	 * keyÖµÊ¹ÓÃÓ²ÒıÓÃ.
+	 * keyå€¼ä½¿ç”¨ç¡¬å¼•ç”¨.
 	 */
 	public static final int HARD = 0;
 
 	/**
-	 * keyÖµÊ¹ÓÃÈíÒıÓÃ.
+	 * keyå€¼ä½¿ç”¨è½¯å¼•ç”¨.
 	 */
 	public static final int SOFT = 1;
 
 	/**
-	 * keyÖµÊ¹ÓÃÈõÒıÓÃ.
+	 * keyå€¼ä½¿ç”¨å¼±å¼•ç”¨.
 	 */
 	public static final int WEAK = 2;
 
 	/**
-	 * Ä¬ÈÏµÄ³õÊ¼ÈİÁ¿ - ±ØĞëÊÇ2µÄ³Ë·½.
+	 * é»˜è®¤çš„åˆå§‹å®¹é‡ - å¿…é¡»æ˜¯2çš„ä¹˜æ–¹.
 	 */
 	public static final int DEFAULT_INITIAL_CAPACITY = 16;
 
 	/**
-	 * ×î´óÈİÁ¿.
+	 * æœ€å¤§å®¹é‡.
 	 */
 	protected static final int MAXIMUM_CAPACITY = 1 << 30;
 
 	/**
-	 * Ä¬ÈÏµÄ¸ºÔØÒò×Ó.
+	 * é»˜è®¤çš„è´Ÿè½½å› å­.
 	 */
 	protected static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
 
-   /**
-    * keyÖµÊ¹ÓÃµÄÒıÓÃÀàĞÍ.
-    */
-   protected final int keyRefType;
+	/**
+	 * keyå€¼ä½¿ç”¨çš„å¼•ç”¨ç±»å‹.
+	 */
+	protected final int keyRefType;
 
 	/**
-	 * hash±í, ³¤¶È±ØĞëÊÇ2µÄ³Ë·½.
+	 * hashè¡¨, é•¿åº¦å¿…é¡»æ˜¯2çš„ä¹˜æ–¹.
 	 */
 	protected transient SynEntry[] table;
 
 	/**
-	 * ±£´æµÄÄÚÈİµÄ¸öÊı.
+	 * ä¿å­˜çš„å†…å®¹çš„ä¸ªæ•°.
 	 */
 	protected transient int size;
 
 	/**
-	 * ÏÂÒ»´ÎĞèÒªÖØ¹¹hash±íµÄÈİÁ¿.
+	 * ä¸‹ä¸€æ¬¡éœ€è¦é‡æ„hashè¡¨çš„å®¹é‡.
 	 */
 	protected int threshold;
 
 	/**
-	 * hash±íµÄ¸ºÔØÒò×Ó.
+	 * hashè¡¨çš„è´Ÿè½½å› å­.
 	 */
 	protected final float loadFactor;
 
 	/**
-	 * SynHashMap±»ĞŞ¸ÄµÄ´ÎÊı.
+	 * SynHashMapè¢«ä¿®æ”¹çš„æ¬¡æ•°.
 	 */
 	protected transient volatile int modCount;
 
-   /**
-    * ÓÃÓÚÇå³ıµÄÒıÓÃµÄ¶ÓÁĞ.
-    */
+	/**
+	 * ç”¨äºæ¸…é™¤çš„å¼•ç”¨çš„é˜Ÿåˆ—.
+	 */
 	protected final ReferenceQueue queue = new ReferenceQueue();
 
 	/**
-	 * ÔÚµ÷ÓÃgetºÍcontainsKey²Ù×÷Ê±ÊÇ·ñÒª¼ì²éÒıÓÃµÄ¶ÔÏóÊÇ·ñÒÑÊÍ·Å.
+	 * åœ¨è°ƒç”¨getå’ŒcontainsKeyæ“ä½œæ—¶æ˜¯å¦è¦æ£€æŸ¥å¼•ç”¨çš„å¯¹è±¡æ˜¯å¦å·²é‡Šæ”¾.
 	 */
 	protected boolean checkRefWhenGet = false;
 
 	/**
-	 * ´´½¨Ò»¸ö¿ÕµÄ<tt>SynHashMap</tt>.
+	 * åˆ›å»ºä¸€ä¸ªç©ºçš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap(int initialCapacity, int keyRefType, float loadFactor)
 	{
@@ -146,7 +146,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ´´½¨Ò»¸ö¿ÕµÄ<tt>SynHashMap</tt>.
+	 * åˆ›å»ºä¸€ä¸ªç©ºçš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap(int initialCapacity, int keyRefType)
 	{
@@ -154,7 +154,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ´´½¨Ò»¸ö¿ÕµÄ<tt>SynHashMap</tt>.
+	 * åˆ›å»ºä¸€ä¸ªç©ºçš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap(int initialCapacity)
 	{
@@ -162,7 +162,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ´´½¨Ò»¸ö¿ÕµÄ<tt>SynHashMap</tt>.
+	 * åˆ›å»ºä¸€ä¸ªç©ºçš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap()
 	{
@@ -174,7 +174,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Í¨¹ıÒ»¸öÏÖÓĞµÄ<tt>Map</tt>´´½¨Ò»¸öĞÂµÄ<tt>SynHashMap</tt>.
+	 * é€šè¿‡ä¸€ä¸ªç°æœ‰çš„<tt>Map</tt>åˆ›å»ºä¸€ä¸ªæ–°çš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap(Map m, int keyRefType)
 	{
@@ -184,7 +184,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Í¨¹ıÒ»¸öÏÖÓĞµÄ<tt>Map</tt>´´½¨Ò»¸öĞÂµÄ<tt>SynHashMap</tt>.
+	 * é€šè¿‡ä¸€ä¸ªç°æœ‰çš„<tt>Map</tt>åˆ›å»ºä¸€ä¸ªæ–°çš„<tt>SynHashMap</tt>.
 	 */
 	public SynHashMap(Map m)
 	{
@@ -194,7 +194,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÔÚµ÷ÓÃgetºÍcontainsKey²Ù×÷Ê±ÊÇ·ñÒª¼ì²éÒıÓÃµÄ¶ÔÏóÊÇ·ñÒÑÊÍ·Å.
+	 * åœ¨è°ƒç”¨getå’ŒcontainsKeyæ“ä½œæ—¶æ˜¯å¦è¦æ£€æŸ¥å¼•ç”¨çš„å¯¹è±¡æ˜¯å¦å·²é‡Šæ”¾.
 	 */
 	public boolean isCheckRefWhenGet()
 	{
@@ -202,13 +202,13 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÉèÖÃÔÚµ÷ÓÃgetºÍcontainsKey²Ù×÷Ê±ÊÇ·ñÒª¼ì²éÒıÓÃµÄ¶ÔÏóÊÇ·ñÒÑÊÍ·Å. <p>
-	 * ÒòÎªÒıÓÃµÄÊÍ·Å´ó²¿·ÖÇé¿öÊÇÓ¦ÓÃµÄÖØĞÂ¼ÓÔØ, ËùÒÔÖ®ºó¶¼»á°éËæput²Ù×÷,
-	 * Òò´Ë, get²Ù×÷Ê±¾Í¿ÉÒÔ²»ÓÃ¼ì²éÒıÓÃµÄÊÍ·Å, ÕâÑùÄÜ¹»¼Ó¿ìgetµÄĞ§ÂÊ.
+	 * è®¾ç½®åœ¨è°ƒç”¨getå’ŒcontainsKeyæ“ä½œæ—¶æ˜¯å¦è¦æ£€æŸ¥å¼•ç”¨çš„å¯¹è±¡æ˜¯å¦å·²é‡Šæ”¾. <p>
+	 * å› ä¸ºå¼•ç”¨çš„é‡Šæ”¾å¤§éƒ¨åˆ†æƒ…å†µæ˜¯åº”ç”¨çš„é‡æ–°åŠ è½½, æ‰€ä»¥ä¹‹åéƒ½ä¼šä¼´éšputæ“ä½œ,
+	 * å› æ­¤, getæ“ä½œæ—¶å°±å¯ä»¥ä¸ç”¨æ£€æŸ¥å¼•ç”¨çš„é‡Šæ”¾, è¿™æ ·èƒ½å¤ŸåŠ å¿«getçš„æ•ˆç‡.
 	 */
 	public void setCheckRefWhenGet(boolean checkRefWhenGet)
 	{
-		// ¶ÔÓÚÓ²ÒıÓÃµÄ·½Ê½, ²»ĞèÒª¼ì²éÊÇ·ñ±»ÊÍ·Å
+		// å¯¹äºç¡¬å¼•ç”¨çš„æ–¹å¼, ä¸éœ€è¦æ£€æŸ¥æ˜¯å¦è¢«é‡Šæ”¾
 		this.checkRefWhenGet = this.keyRefType == HARD ? false : checkRefWhenGet;
 	}
 
@@ -226,16 +226,16 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Èç¹ûkey²»ÊÇÓ²ÒıÓÃ, ÔòĞèÒª¼ì²é¹ıÆÚµÄÒıÓÃ.
+	 * å¦‚æœkeyä¸æ˜¯ç¡¬å¼•ç”¨, åˆ™éœ€è¦æ£€æŸ¥è¿‡æœŸçš„å¼•ç”¨.
 	 */
-   protected void expungeStaleEntries()
+	protected void expungeStaleEntries()
 	{
 		if (this.keyRefType > HARD)
 		{
 			this.expungeStaleEntries0();
 		}
-   }
-   protected void expungeStaleEntries0()
+	}
+	protected void expungeStaleEntries0()
 	{
 		SynEntry[] tmpTable = this.table;
 		Object r;
@@ -245,7 +245,7 @@ public class SynHashMap extends AbstractMap
 			SynEntry entry = ((Ref) r).getEntry();
 			hash = entry.hash;
 			int i = indexFor(hash, tmpTable.length);
-			// ÕâÀïĞèÒªĞŞ¸Äsize, ËùÒÔĞèÒª¼ÓÉÏÍ¬²½Ëø
+			// è¿™é‡Œéœ€è¦ä¿®æ”¹size, æ‰€ä»¥éœ€è¦åŠ ä¸ŠåŒæ­¥é”
 			synchronized (this)
 			{
 				SynEntry prev = tmpTable[i];
@@ -271,7 +271,7 @@ public class SynHashMap extends AbstractMap
 				}
 			}
 		}
-   }
+	}
 
 	protected static int hash(int h)
 	{
@@ -285,7 +285,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ·Å»Øµ±Ç°mapµÄÈİÁ¿.
+	 * æ”¾å›å½“å‰mapçš„å®¹é‡.
 	 */
 	public int size()
 	{
@@ -298,7 +298,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ·µ»Øµ±Ç°mapÊÇ·ñÎª¿Õ.
+	 * è¿”å›å½“å‰mapæ˜¯å¦ä¸ºç©º.
 	 */
 	public boolean isEmpty()
 	{
@@ -306,7 +306,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸ù¾İkey»ñÈ¡¶ÔÓ¦µÄÖµ.
+	 * æ ¹æ®keyè·å–å¯¹åº”çš„å€¼.
 	 */
 	public Object get(Object key)
 	{
@@ -342,7 +342,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * »ñÈ¡keyÎªnullµÄÖµ.
+	 * è·å–keyä¸ºnullçš„å€¼.
 	 */
 	protected Object getForNullKey()
 	{
@@ -371,7 +371,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñ°üº¬Ö¸¶¨µÄ¿ÉÒÔÖµ.
+	 * åˆ¤æ–­æ˜¯å¦åŒ…å«æŒ‡å®šçš„å¯ä»¥å€¼.
 	 */
 	public boolean containsKey(Object key)
 	{
@@ -379,7 +379,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸ù¾İkey»ñÈ¡Entry.
+	 * æ ¹æ®keyè·å–Entry.
 	 */
 	protected SynEntry getEntry(Object key)
 	{
@@ -415,7 +415,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * »ñÈ¡keyÎªnullµÄEntry.
+	 * è·å–keyä¸ºnullçš„Entry.
 	 */
 	protected SynEntry getEntryForNullKey()
 	{
@@ -444,7 +444,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸ökey value¶Ô.
+	 * æ·»åŠ ä¸€ä¸ªkey valueå¯¹.
 	 */
 	public synchronized Object put(Object key, Object value)
 	{
@@ -471,7 +471,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸ökeyÎªnullµÄvalue.
+	 * æ·»åŠ ä¸€ä¸ªkeyä¸ºnullçš„value.
 	 */
 	protected final Object putForNullKey(Object value)
 	{
@@ -491,7 +491,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÓÃÓÚÄÚ²¿Ê¹ÓÃµÄÌí¼Ókey value¶Ô.
+	 * ç”¨äºå†…éƒ¨ä½¿ç”¨çš„æ·»åŠ key valueå¯¹.
 	 */
 	protected final void putForCreate(Object key, Object value)
 	{
@@ -511,7 +511,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÓÃÓÚÄÚ²¿Ê¹ÓÃ, Ìí¼ÓmapÖĞµÄkey value¶Ô.
+	 * ç”¨äºå†…éƒ¨ä½¿ç”¨, æ·»åŠ mapä¸­çš„key valueå¯¹.
 	 */
 	protected synchronized void putAllForCreate(Map m)
 	{
@@ -523,13 +523,13 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸ù¾İĞÂµÄÈİÁ¿, ÖØĞÂ¹¹Ôìhash±í.
+	 * æ ¹æ®æ–°çš„å®¹é‡, é‡æ–°æ„é€ hashè¡¨.
 	 */
 	protected synchronized void resize(int newCapacity)
 	{
 		SynEntry[] oldTable = this.table;
 		int oldCapacity = oldTable.length;
-		// Èç¹ûĞÂÈİÁ¿Ã»ÓĞÏÖÔÚµÄ´ó, ÔòÖ±½ÓÍË³ö
+		// å¦‚æœæ–°å®¹é‡æ²¡æœ‰ç°åœ¨çš„å¤§, åˆ™ç›´æ¥é€€å‡º
 		if (newCapacity <= oldCapacity)
 		{
 			return;
@@ -546,7 +546,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ½«ËùÓĞµÄEntryÒÆµ½ĞÂµÄhash±íÖĞ.
+	 * å°†æ‰€æœ‰çš„Entryç§»åˆ°æ–°çš„hashè¡¨ä¸­.
 	 */
 	protected final void transfer(SynEntry[] newTable)
 	{
@@ -571,7 +571,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Ìí¼ÓmapÖĞµÄkey value¶Ô.
+	 * æ·»åŠ mapä¸­çš„key valueå¯¹.
 	 */
 	public void putAll(Map m)
 	{
@@ -581,7 +581,7 @@ public class SynHashMap extends AbstractMap
 			return;
 		}
 		/*
-		 * ¼ÆËãĞÂµÄÈİÁ¿
+		 * è®¡ç®—æ–°çš„å®¹é‡
 		 */
 		if (numKeysToBeAdded > threshold)
 		{
@@ -608,7 +608,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸ù¾İkeyÒÆ³ıÒ»¸övalue.
+	 * æ ¹æ®keyç§»é™¤ä¸€ä¸ªvalue.
 	 */
 	public Object remove(Object key)
 	{
@@ -617,7 +617,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸ù¾İkeyÒÆ³ıÒ»¸öEntry, ²¢½«Æä·µ»Ø.
+	 * æ ¹æ®keyç§»é™¤ä¸€ä¸ªEntry, å¹¶å°†å…¶è¿”å›.
 	 */
 	protected synchronized SynEntry removeEntryForKey(Object key)
 	{
@@ -651,7 +651,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ¸øEntrySetÊ¹ÓÃµÄÒÆ³ı.
+	 * ç»™EntrySetä½¿ç”¨çš„ç§»é™¤.
 	 */
 	protected synchronized SynEntry removeMapping(Object o)
 	{
@@ -691,7 +691,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÒÆ³ıËùÓĞµÄÄÚÈİ.
+	 * ç§»é™¤æ‰€æœ‰çš„å†…å®¹.
 	 */
 	public synchronized void clear()
 	{
@@ -704,13 +704,13 @@ public class SynHashMap extends AbstractMap
 		this.size = 0;
 		if (this.keyRefType > HARD)
 		{
-			// ÒÆ³ı¶ÓÁĞÖĞËùÓĞÊ§È¥ÒıÓÃµÄ¶ÔÏó
+			// ç§»é™¤é˜Ÿåˆ—ä¸­æ‰€æœ‰å¤±å»å¼•ç”¨çš„å¯¹è±¡
 			while (this.queue.poll() != null);
 		}
 	}
 
 	/**
-	 * ÊÇ·ñ°üº¬Ä³¸övalueÖµ.
+	 * æ˜¯å¦åŒ…å«æŸä¸ªvalueå€¼.
 	 */
 	public boolean containsValue(Object value)
 	{
@@ -733,7 +733,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñ°üº¬valueÎªnull.
+	 * åˆ¤æ–­æ˜¯å¦åŒ…å«valueä¸ºnull.
 	 */
 	protected boolean containsNullValue()
 	{
@@ -752,7 +752,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * clone´Ëmap.
+	 * cloneæ­¤map.
 	 */
 	public Object clone()
 	{
@@ -780,7 +780,7 @@ public class SynHashMap extends AbstractMap
 
 	protected static interface Ref
 	{
-	 	SynEntry getEntry();
+		 SynEntry getEntry();
 
 		Object get();
 
@@ -921,7 +921,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸öEntry.
+	 * æ·»åŠ ä¸€ä¸ªEntry.
 	 */
 	protected final void addEntry(int hash, Object key, Object value, int bucketIndex)
 	{
@@ -934,7 +934,7 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ´´½¨Ò»¸öEntry, ÔÚ³õÊ¼»¯ ·´ĞòÁĞ»¯ cloneÊ±Ê¹ÓÃ.
+	 * åˆ›å»ºä¸€ä¸ªEntry, åœ¨åˆå§‹åŒ– ååºåˆ—åŒ– cloneæ—¶ä½¿ç”¨.
 	 */
 	protected final void createEntry(int hash, Object key, Object value, int bucketIndex)
 	{
@@ -1023,6 +1023,7 @@ public class SynHashMap extends AbstractMap
 		{
 			return this.nextEntry().value;
 		}
+
 	}
 
 	protected static class KeyIterator extends EntryIterator
@@ -1036,6 +1037,7 @@ public class SynHashMap extends AbstractMap
 		{
 			return this.nextEntry().getKey();
 		}
+
 	}
 
 	// Subclass overrides these to alter behavior of views' iterator() method
@@ -1062,10 +1064,11 @@ public class SynHashMap extends AbstractMap
 	protected transient Collection values = null;
 
 	/**
-	 * »ñÈ¡keyµÄ¼¯ºÏ.
+	 * è·å–keyçš„é›†åˆ.
 	 */
 	public Set keySet()
 	{
+		this.expungeStaleEntries();
 		Set ks = this.keySet;
 		return (ks != null ? ks : (this.keySet = new KeySet(this)));
 	}
@@ -1106,10 +1109,11 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * »ñÈ¡valueµÄ¼¯ºÏ.
+	 * è·å–valueçš„é›†åˆ.
 	 */
 	public Collection values()
 	{
+		this.expungeStaleEntries();
 		Collection vs = this.values;
 		return (vs != null ? vs : (this.values = new Values(this)));
 	}
@@ -1145,10 +1149,11 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * »ñÈ¡Entry¼¯ºÏ.
+	 * è·å–Entryé›†åˆ.
 	 */
 	public Set entrySet()
 	{
+		this.expungeStaleEntries();
 		Set es = this.entrySet;
 		return es != null ? es : (this.entrySet = new EntrySet(this));
 	}
@@ -1195,20 +1200,20 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ½«´Ë¶ÔÏóĞòÁĞ»¯.
+	 * å°†æ­¤å¯¹è±¡åºåˆ—åŒ–.
 	 */
 	private synchronized void writeObject(java.io.ObjectOutputStream s)
 			throws IOException
 	{
 		this.expungeStaleEntries();
 		Iterator i = (this.size > 0) ? this.entrySet().iterator() : null;
-		// Êä³öÒ»Ğ©Ä¬ÈÏµÄÖµ
+		// è¾“å‡ºä¸€äº›é»˜è®¤çš„å€¼
 		s.defaultWriteObject();
-		// Êä³öhash±íµÄ´óĞ¡
+		// è¾“å‡ºhashè¡¨çš„å¤§å°
 		s.writeInt(this.table.length);
-		// Êä³öµ±Ç°µÄÈİÁ¿
+		// è¾“å‡ºå½“å‰çš„å®¹é‡
 		s.writeInt(this.size);
-		// Êä³öÃ¿¸öEntry
+		// è¾“å‡ºæ¯ä¸ªEntry
 		if (i != null)
 		{
 			while (i.hasNext())
@@ -1221,20 +1226,20 @@ public class SynHashMap extends AbstractMap
 	}
 
 	/**
-	 * ½«´Ë¶ÔÏó·´ĞòÁĞ»¯.
+	 * å°†æ­¤å¯¹è±¡ååºåˆ—åŒ–.
 	 */
 	private synchronized void readObject(java.io.ObjectInputStream s)
 			throws IOException, ClassNotFoundException
 	{
-		// ¶ÁÈëÄ¬ÈÏÖµ
+		// è¯»å…¥é»˜è®¤å€¼
 		s.defaultReadObject();
-		// ¶ÁÈëhash±íµÄ´óĞ¡
+		// è¯»å…¥hashè¡¨çš„å¤§å°
 		int numBuckets = s.readInt();
 		this.table = new SynEntry[numBuckets];
-		init();   // Ö´ĞĞ³õÊ¼»¯
-		// ¶ÁÈëÈİÁ¿
+		init();   // æ‰§è¡Œåˆå§‹åŒ–
+		// è¯»å…¥å®¹é‡
 		int size = s.readInt();
-		// ÉèÖÃÃ¿¸öEntry
+		// è®¾ç½®æ¯ä¸ªEntry
 		for (int i = 0; i < size; i++)
 		{
 			Object key = s.readObject();

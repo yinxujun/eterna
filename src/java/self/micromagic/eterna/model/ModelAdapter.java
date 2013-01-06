@@ -13,97 +13,97 @@ import self.micromagic.eterna.share.EternaFactory;
  */
 public interface ModelAdapter
 {
-   /**
-    * model»º´æµÄÃû³Æ.
-    *
-    * @see    self.micromagic.eterna.model.AppData#getSpcialDataMap(String)
-    */
-   public static final String MODEL_CACHE = "model.cache";
+	/**
+	 * modelç¼“å­˜çš„åç§°.
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#getSpcialDataMap(String)
+	 */
+	public static final String MODEL_CACHE = "model.cache";
 
-   /**
-    * model»º´æÖĞ´æ´¢µ±Ç°ÕıÔÚÊ¹ÓÃµÄÊı¾İ¿âÁ´½ÓµÄÃû³Æ.
-    */
-   public static final String PRE_CONN = "preConn";
+	/**
+	 * modelç¼“å­˜ä¸­å­˜å‚¨å½“å‰æ­£åœ¨ä½¿ç”¨çš„æ•°æ®åº“é“¾æ¥çš„åç§°.
+	 */
+	public static final String PRE_CONN = "preConn";
 
-   /**
-    * model»º´æÖĞ´æ´¢ÒµÎñÊÇ·ñÒÑ½Ó¹ÜÁËÊı¾İ¿âÁ´½ÓµÄ¿ØÖÆÈ¨. <p>
-    * ÉèÖÃÑùÀı:
-    * data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
-    *
-    * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
-    */
-   public static final String CONN_HOLDED = "connHolded";
+	/**
+	 * modelç¼“å­˜ä¸­å­˜å‚¨ä¸šåŠ¡æ˜¯å¦å·²æ¥ç®¡äº†æ•°æ®åº“é“¾æ¥çš„æ§åˆ¶æƒ. <p>
+	 * è®¾ç½®æ ·ä¾‹:
+	 * data.addSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.CONN_HOLDED, "1");
+	 *
+	 * @see    self.micromagic.eterna.model.AppData#addSpcialData(String, String, Object)
+	 */
+	public static final String CONN_HOLDED = "connHolded";
 
-   /**
-    * ÉèÖÃĞèÇ°ÖÃÖ´ĞĞµÄmodel.
-    * ÕâÊÇÒ»¸öfactoryµÄarrtibute, ËüµÄÖµÊÇÄÇ¸öÇ°ÖÃmodelµÄÃû³Æ.
-    */
-   public static final String FRONT_MODEL_ATTRIBUTE = "front.model.name";
+	/**
+	 * è®¾ç½®éœ€å‰ç½®æ‰§è¡Œçš„model.
+	 * è¿™æ˜¯ä¸€ä¸ªfactoryçš„arrtibute, å®ƒçš„å€¼æ˜¯é‚£ä¸ªå‰ç½®modelçš„åç§°.
+	 */
+	public static final String FRONT_MODEL_ATTRIBUTE = "front.model.name";
 
-   /**
-    * ĞèÒª¿ªÆôÒ»¸öÊÂÎñ£¬Èç¹ûÒÑÓĞÊÂÎñ£¬¼ÓÈëÏÖÓĞµÄÊÂÎñ
-    */
-   public static final int T_REQUARED = 0;
+	/**
+	 * éœ€è¦å¼€å¯ä¸€ä¸ªäº‹åŠ¡ï¼Œå¦‚æœå·²æœ‰äº‹åŠ¡ï¼ŒåŠ å…¥ç°æœ‰çš„äº‹åŠ¡
+	 */
+	public static final int T_REQUARED = 0;
 
-   /**
-    * Ç¿ÖÆ¿ªÆôÒ»¸öĞÂÊÂÎï£¬Èç¹ûÒÑÓĞÊÂÎñ£¬¹ÒÆğÏÖÓĞÊÂÎñ
-    */
-   public static final int T_NEW = 1;
+	/**
+	 * å¼ºåˆ¶å¼€å¯ä¸€ä¸ªæ–°äº‹ç‰©ï¼Œå¦‚æœå·²æœ‰äº‹åŠ¡ï¼ŒæŒ‚èµ·ç°æœ‰äº‹åŠ¡
+	 */
+	public static final int T_NEW = 1;
 
-   /**
-    * ²»ĞèÒªÊÂÎñ£¬Èç¹ûÒÑÓĞÊÂÎñ£¬¹ÒÆğÏÖÓĞÊÂÎñ
-    */
-   public static final int T_NONE = 2;
+	/**
+	 * ä¸éœ€è¦äº‹åŠ¡ï¼Œå¦‚æœå·²æœ‰äº‹åŠ¡ï¼ŒæŒ‚èµ·ç°æœ‰äº‹åŠ¡
+	 */
+	public static final int T_NONE = 2;
 
-   /**
-    * ²»ĞèÒªÊÂÎñ£¬²¢±£³ÖÁ¬½Ó£¬ÓÉÓ¦ÓÃ×Ô¼ºÊÍ·Å
-    */
-   public static final int T_HOLD = 3;
+	/**
+	 * ä¸éœ€è¦äº‹åŠ¡ï¼Œå¹¶ä¿æŒè¿æ¥ï¼Œç”±åº”ç”¨è‡ªå·±é‡Šæ”¾
+	 */
+	public static final int T_HOLD = 3;
 
-   /**
-    * ²»ĞèÁ¬½Ó£¬Èç¹ûÒÑÓĞÁ¬½ÓÊ¹ÓÃÏÖÓĞµÄÁ¬½Ó
-    */
-   public static final int T_NOTNEED  = 4;
+	/**
+	 * ä¸éœ€è¿æ¥ï¼Œå¦‚æœå·²æœ‰è¿æ¥ä½¿ç”¨ç°æœ‰çš„è¿æ¥
+	 */
+	public static final int T_NOTNEED  = 4;
 
-   /**
-    * ²»ÉèÖÃÊÂÎñ×´Ì¬£¬½áÊøºóÒ²²»½øĞĞÌá½»»ò»Ø¹ö
-    */
-   public static final int T_IDLE  = 5;
+	/**
+	 * ä¸è®¾ç½®äº‹åŠ¡çŠ¶æ€ï¼Œç»“æŸåä¹Ÿä¸è¿›è¡Œæäº¤æˆ–å›æ»š
+	 */
+	public static final int T_IDLE  = 5;
 
-   /**
-    * Ä¬ÈÏµÄ³ö´í³ö¿ÚµÄÃû³Æ
-    */
-   public static final String DEFAULT_ERROR_EXPORT_NAME = "defaultErrorExport";
+	/**
+	 * é»˜è®¤çš„å‡ºé”™å‡ºå£çš„åç§°
+	 */
+	public static final String DEFAULT_ERROR_EXPORT_NAME = "defaultErrorExport";
 
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   EternaFactory getFactory() throws ConfigurationException;
+	EternaFactory getFactory() throws ConfigurationException;
 
-   boolean isKeepCaches() throws ConfigurationException;
+	boolean isKeepCaches() throws ConfigurationException;
 
-   boolean isNeedFrontModel() throws ConfigurationException;
+	boolean isNeedFrontModel() throws ConfigurationException;
 
-   String getFrontModelName() throws ConfigurationException;
+	String getFrontModelName() throws ConfigurationException;
 
-   int getTransactionType() throws ConfigurationException;
+	int getTransactionType() throws ConfigurationException;
 
-   String getDataSourceName() throws ConfigurationException;
+	String getDataSourceName() throws ConfigurationException;
 
-   boolean checkPosition(AppData data) throws ConfigurationException;
+	boolean checkPosition(AppData data) throws ConfigurationException;
 
-   ModelExport getModelExport() throws ConfigurationException;
+	ModelExport getModelExport() throws ConfigurationException;
 
-   ModelExport getErrorExport() throws ConfigurationException;
+	ModelExport getErrorExport() throws ConfigurationException;
 
-   ModelExport doModel(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException;
+	ModelExport doModel(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException;
 
-   /**
-    * »ñµÃÒ»¸öÖ´ĞĞÕß.
-    *
-    * @param index   Ö´ĞĞÕßËùÔÚµÄË÷ÒıÖµ, ´Ó1¿ªÊ¼, Èç: µÚÒ»¸ö 1 µÚ¶ş¸ö 2
-    */
-   Execute getExecute(int index) throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ªæ‰§è¡Œè€….
+	 *
+	 * @param index   æ‰§è¡Œè€…æ‰€åœ¨çš„ç´¢å¼•å€¼, ä»1å¼€å§‹, å¦‚: ç¬¬ä¸€ä¸ª 1 ç¬¬äºŒä¸ª 2
+	 */
+	Execute getExecute(int index) throws ConfigurationException;
 
 }

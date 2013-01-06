@@ -6,24 +6,24 @@ import java.util.Enumeration;
 
 public interface ValueContainer
 {
-   /**
-    * Get the value at the key.
-    */
-   Object getValue(Object key);
+	/**
+	 * Get the value at the key.
+	 */
+	Object getValue(Object key);
 
-   /**
-    * Set the value to the key.
-    */
-   void setValue(Object key, Object value);
+	/**
+	 * Set the value to the key.
+	 */
+	void setValue(Object key, Object value);
 
-   /**
-    * Remove the value at the key.
-    */
-   void removeValue(Object key);
+	/**
+	 * Remove the value at the key.
+	 */
+	void removeValue(Object key);
 
-   /**
-    * Get the keys enumeration.
-    */
-   Enumeration getKeys();
+	/**
+	 * Get the keys enumeration.
+	 */
+	Enumeration getKeys();
 
 }

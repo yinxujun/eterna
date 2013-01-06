@@ -6,28 +6,31 @@ import java.sql.Connection;
 
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.util.logging.TimeLogger;
 import org.dom4j.Element;
 
 /**
- * ÓÃÓÚ¼ÇÂ¼ÌØÊâµÄSQLÈÕÖ¾.
+ * ç”¨äºè®°å½•ç‰¹æ®Šçš„SQLæ—¥å¿—.
  */
 public interface SpecialLog
 {
-   /**
-    * ³õÊ¼»¯Õâ¸öÈÕÖ¾¼ÇÂ¼Æ÷.
-    */
-   void initSpecialLog(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–è¿™ä¸ªæ—¥å¿—è®°å½•å™¨.
+	 */
+	void initSpecialLog(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * ¼ÇÂ¼ÈÕÖ¾.
-    *
-    * @param sql           ·¢ÉúÈÕÖ¾µÄ<code>SQLAdapter</code>
-    * @param xmlLog        ÒÑ¼ÇÂ¼ÈÕÖ¾ĞÅÏ¢µÄxml½Úµã
-    * @param usedTime      sqlÖ´ĞĞÓÃÊ±
-    * @param exception     ³ö´íÊ±Å×³öµÄÒì³£
-    * @param conn          Ö´ĞĞ<code>SQLAdapter</code>ËùÊ¹ÓÃµÄÊı¾İ¿âÁ¬½Ó
-    */
-   void logSQL(SQLAdapter sql, Element xmlLog, long usedTime, Throwable exception, Connection conn)
-         throws ConfigurationException, SQLException;
+	/**
+	 * è®°å½•æ—¥å¿—.
+	 *
+	 * @param sql        å‘ç”Ÿæ—¥å¿—çš„<code>SQLAdapter</code>
+	 * @param xmlLog     å·²è®°å½•æ—¥å¿—ä¿¡æ¯çš„xmlèŠ‚ç‚¹
+	 * @param usedTime   sqlæ‰§è¡Œç”¨æ—¶, ä¼šæ ¹æ®jdkç‰ˆæœ¬ç»™å‡ºæ¯«ç§’æˆ–çº³ç§’, è¯·ä½¿ç”¨
+	 *                   TimeLoggerçš„formatPassTimeæ–¹æ³•æ ¼å¼åŒ–
+	 * @param exception  å‡ºé”™æ—¶æŠ›å‡ºçš„å¼‚å¸¸
+	 * @param conn       æ‰§è¡Œ<code>SQLAdapter</code>æ‰€ä½¿ç”¨çš„æ•°æ®åº“è¿æ¥
+	 * @see TimeLogger#formatPassTime(long)
+	 */
+	void logSQL(SQLAdapter sql, Element xmlLog, long usedTime, Throwable exception, Connection conn)
+			throws ConfigurationException, SQLException;
 
 }

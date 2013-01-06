@@ -34,295 +34,302 @@ import self.micromagic.util.container.ThreadCache;
 import self.micromagic.eterna.share.Tool;
 import self.micromagic.util.Utility;
 import self.micromagic.util.FormatTool;
+import self.micromagic.util.logging.TimeLogger;
 import self.micromagic.util.container.RequestParameterMap;
 
+/**
+ * @author micromagic@sina.com
+ */
 public class AppData
 {
-   public static final String APP_LOG_PROPERTY = "self.micromagic.eterna.app.logType";
-   public static final String CACHE_NAME = "self.micromagic.eterna.model.APP_DATA";
-   public static final Log log = Tool.log;
+	public static final String APP_LOG_PROPERTY = "self.micromagic.eterna.app.logType";
+	public static final String CACHE_NAME = "self.micromagic.eterna.model.APP_DATA";
+	public static final Log log = Tool.log;
 
-   public static final int POSITION_NONE = 0;
-   public static final int POSITION_ALL = -1;
-   public static final int POSITION_FILTER = 0x2;
-   public static final int POSITION_SERVLET = 0x8;
-   public static final int POSITION_PORTLET_ACTION = 0x10;
-   public static final int POSITION_PORTLET_RENDER = 0x20;
-   public static final int POSITION_SPECIAL = 0x100;
-   public static final int POSITION_MODEL = 0x200;
-   public static final int POSITION_OTHER1 = 0x1000;
-   public static final int POSITION_OTHER2 = 0x2000;
-   public static final int POSITION_OTHER3 = 0x4000;
+	public static final int POSITION_NONE = 0;
+	public static final int POSITION_ALL = -1;
+	public static final int POSITION_FILTER = 0x2;
+	public static final int POSITION_SERVLET = 0x8;
+	public static final int POSITION_PORTLET_ACTION = 0x10;
+	public static final int POSITION_PORTLET_RENDER = 0x20;
+	public static final int POSITION_SPECIAL = 0x100;
+	public static final int POSITION_MODEL = 0x200;
+	public static final int POSITION_OTHER1 = 0x1000;
+	public static final int POSITION_OTHER2 = 0x2000;
+	public static final int POSITION_OTHER3 = 0x4000;
 
-   public static final String REQUEST_PARAMETER_MAP_NAME = "request-parameter";
-   public static final String REQUEST_PARAMETER_MAP_SHORT_NAME = "RP";
-   public static final int REQUEST_PARAMETER_MAP = 0;
-   public static final String REQUEST_ATTRIBUTE_MAP_NAME = "request-attribute";
-   public static final String REQUEST_ATTRIBUTE_MAP_SHORT_NAME = "RA";
-   public static final int REQUEST_ATTRIBUTE_MAP = 1;
-   public static final String SESSION_ATTRIBUTE_MAP_NAME = "session-attribute";
-   public static final String SESSION_ATTRIBUTE_MAP_SHORT_NAME = "SA";
-   public static final int SESSION_ATTRIBUTE_MAP = 2;
-   public static final String DATA_MAP_NAME = "data";
-   public static final int DATA_MAP = 3;
+	public static final String REQUEST_PARAMETER_MAP_NAME = "request-parameter";
+	public static final String REQUEST_PARAMETER_MAP_SHORT_NAME = "RP";
+	public static final int REQUEST_PARAMETER_MAP = 0;
+	public static final String REQUEST_ATTRIBUTE_MAP_NAME = "request-attribute";
+	public static final String REQUEST_ATTRIBUTE_MAP_SHORT_NAME = "RA";
+	public static final int REQUEST_ATTRIBUTE_MAP = 1;
+	public static final String SESSION_ATTRIBUTE_MAP_NAME = "session-attribute";
+	public static final String SESSION_ATTRIBUTE_MAP_SHORT_NAME = "SA";
+	public static final int SESSION_ATTRIBUTE_MAP = 2;
+	public static final String DATA_MAP_NAME = "data";
+	public static final int DATA_MAP = 3;
 
-   public static final String[] MAP_NAMES = {
-      REQUEST_PARAMETER_MAP_NAME, REQUEST_ATTRIBUTE_MAP_NAME,
-      SESSION_ATTRIBUTE_MAP_NAME, DATA_MAP_NAME
-   };
-   public static final String[] MAP_SHORT_NAMES = {
-      REQUEST_PARAMETER_MAP_SHORT_NAME, REQUEST_ATTRIBUTE_MAP_SHORT_NAME,
-      SESSION_ATTRIBUTE_MAP_SHORT_NAME
-   };
+	public static final String[] MAP_NAMES = {
+		REQUEST_PARAMETER_MAP_NAME, REQUEST_ATTRIBUTE_MAP_NAME,
+		SESSION_ATTRIBUTE_MAP_NAME, DATA_MAP_NAME
+	};
+	public static final String[] MAP_SHORT_NAMES = {
+		REQUEST_PARAMETER_MAP_SHORT_NAME, REQUEST_ATTRIBUTE_MAP_SHORT_NAME,
+		SESSION_ATTRIBUTE_MAP_SHORT_NAME
+	};
 
-   private static int APP_LOG_TYPE = 0;
-   private static Document logDocument = null;
-   private ArrayList nodeStack = null;
+	private static int APP_LOG_TYPE = 0;
+	private static Document logDocument = null;
+	private ArrayList nodeStack = null;
 
-   public int position;
-   private String app_id = null;
-   public String contextRoot = "";
-   public String modelName;
-   public ServletRequest request;
-   public ServletResponse response;
-   public FilterConfig filterConfig;
-   public ServletConfig servletConfig;
-   public RenderRequest renderRequest;
-   public RenderResponse renderResponse;
-   public ActionRequest actionRequest;
-   public ActionResponse actionResponse;
-   public PortletConfig portletConfig;
-   public ModelExport export;
+	public int position;
+	private String app_id = null;
+	public String contextRoot = "";
+	public String modelName;
+	public ServletRequest request;
+	public ServletResponse response;
+	public FilterConfig filterConfig;
+	public ServletConfig servletConfig;
+	public RenderRequest renderRequest;
+	public RenderResponse renderResponse;
+	public ActionRequest actionRequest;
+	public ActionResponse actionResponse;
+	public PortletConfig portletConfig;
+	public ModelExport export;
 	private int logType = APP_LOG_TYPE;
 
-   /**
-    * viewÖĞÊ¹ÓÃµÄÊı¾İ¼¯¶ÔÏó
-    */
-   public final Map dataMap = new HashMap();
+	/**
+	 * viewä¸­ä½¿ç”¨çš„æ•°æ®é›†å¯¹è±¡
+	 */
+	public final Map dataMap = new HashMap();
 
-   public final Object[] caches = new Object[16];
-   public final Map[] maps = new Map[4];
-   public final ArrayList stack = new ArrayList();
+	public final Object[] caches = new Object[16];
+	public final Map[] maps = new Map[4];
+	public final ArrayList stack = new ArrayList();
 
-   private Map spcialMap = new HashMap(2);
+	private Map spcialMap = new HashMap(2);
 
-   static
-   {
-      try
-      {
-         // ÕâÀïÍ¨¹ıAppDataLogExecuteÀàÀ´¼àÌı
-         // ÒòÎªÔÚAppDataÖĞ¿ÉÄÜ»áÓĞÀà²»´æÔÚÔì³É»ñÈ¡MethodÊ±·¢Éú´íÎó
-         Utility.addMethodPropertyManager(APP_LOG_PROPERTY, AppDataLogExecute.class,
-               "setAppLogType");
-      }
-      catch (Exception ex)
-      {
-         log.error("Error in init app log type.", ex);
-      }
-   }
+	static
+	{
+		try
+		{
+			// è¿™é‡Œé€šè¿‡AppDataLogExecuteç±»æ¥ç›‘å¬
+			// å› ä¸ºåœ¨AppDataä¸­å¯èƒ½ä¼šæœ‰ç±»ä¸å­˜åœ¨é€ æˆè·å–Methodæ—¶å‘ç”Ÿé”™è¯¯
+			Utility.addMethodPropertyManager(APP_LOG_PROPERTY, AppDataLogExecute.class,
+					"setAppLogType");
+		}
+		catch (Exception ex)
+		{
+			log.error("Error in init app log type.", ex);
+		}
+	}
 
-   {
-      this.maps[DATA_MAP] = this.dataMap;
-   }
+	{
+		this.maps[DATA_MAP] = this.dataMap;
+	}
 
-   /**
-    * ÉèÖÃappÔËĞĞÈÕÖ¾¼ÇÂ¼·½Ê½.
-    */
-   public static void setAppLogType(int type)
-   {
-      APP_LOG_TYPE = type;
-   }
+	/**
+	 * è®¾ç½®appè¿è¡Œæ—¥å¿—è®°å½•æ–¹å¼.
+	 */
+	public static void setAppLogType(int type)
+	{
+		APP_LOG_TYPE = type;
+	}
 
-   /**
-    * »ñÈ¡appÔËĞĞÈÕÖ¾¼ÇÂ¼·½Ê½.
-    */
-   public static int getAppLogType()
-   {
-      return APP_LOG_TYPE;
-   }
+	/**
+	 * è·å–appè¿è¡Œæ—¥å¿—è®°å½•æ–¹å¼.
+	 *
+	 * @deprecated
+	 * @see #getLogType()
+	 */
+	public static int getAppLogType()
+	{
+		return APP_LOG_TYPE;
+	}
 
-   /**
-    * »ñÈ¡µ±Ç°appÔËĞĞÈÕÖ¾¼ÇÂ¼·½Ê½.
-    */
-   public int getLogType()
-   {
-      return this.logType;
-   }
+	/**
+	 * è·å–å½“å‰appè¿è¡Œæ—¥å¿—è®°å½•æ–¹å¼.
+	 */
+	public int getLogType()
+	{
+		return this.logType;
+	}
 
-   /**
-    * ´òÓ¡appÔËĞĞÈÕÖ¾ĞÅÏ¢
-    */
-   public static synchronized void printLog(Writer out, boolean clear)
-         throws IOException
-   {
-      if (logDocument == null)
-      {
-         return;
-      }
-      XMLWriter writer = new XMLWriter(out);
-      writer.write(logDocument);
-      writer.flush();
-      if (clear)
-      {
-         logDocument = null;
-      }
-   }
+	/**
+	 * æ‰“å°appè¿è¡Œæ—¥å¿—ä¿¡æ¯
+	 */
+	public static synchronized void printLog(Writer out, boolean clear)
+			throws IOException
+	{
+		if (logDocument == null)
+		{
+			return;
+		}
+		XMLWriter writer = new XMLWriter(out);
+		writer.write(logDocument);
+		writer.flush();
+		if (clear)
+		{
+			logDocument = null;
+		}
+	}
 
-   /**
-    * »ñµÃappÈÕÖ¾ÖĞµÄµ±Ç°»î¶¯½Úµã.
-    * Èç¹ûÎ´ÔÚappÈÕÖ¾ÖĞÃ»ÓĞ»î¶¯µÄ½Úµã, Ôò·µ»Ønull.
-    */
-   public Element getCurrentNode()
-   {
-      if (this.logType == 0)
-      {
-         return null;
-      }
-      if (this.nodeStack == null || this.nodeStack.size() == 0)
-      {
-         return null;
-      }
-      return (Element) this.nodeStack.get(this.nodeStack.size() - 1);
-   }
+	/**
+	 * è·å¾—appæ—¥å¿—ä¸­çš„å½“å‰æ´»åŠ¨èŠ‚ç‚¹.
+	 * å¦‚æœæœªåœ¨appæ—¥å¿—ä¸­æ²¡æœ‰æ´»åŠ¨çš„èŠ‚ç‚¹, åˆ™è¿”å›null.
+	 */
+	public Element getCurrentNode()
+	{
+		if (this.logType == 0)
+		{
+			return null;
+		}
+		if (this.nodeStack == null || this.nodeStack.size() == 0)
+		{
+			return null;
+		}
+		return (Element) this.nodeStack.get(this.nodeStack.size() - 1);
+	}
 
-   /**
-    * ÔÚµ±Ç°½ÚµãÏÂÌí¼ÓÒ»ÌõÔËĞĞĞÅÏ¢
-    */
-   public void addAppMessage(String msg)
-   {
-      if (this.logType == 0)
-      {
-         // Èç¹ûÈÕÖ¾´¦ÓÚ¹Ø±Õ×´Ì¬²»×ö¼ÇÂ¼
-         return;
-      }
-      this.addAppMessage(msg, null);
-   }
+	/**
+	 * åœ¨å½“å‰èŠ‚ç‚¹ä¸‹æ·»åŠ ä¸€æ¡è¿è¡Œä¿¡æ¯
+	 */
+	public void addAppMessage(String msg)
+	{
+		if (this.logType == 0)
+		{
+			// å¦‚æœæ—¥å¿—å¤„äºå…³é—­çŠ¶æ€ä¸åšè®°å½•
+			return;
+		}
+		this.addAppMessage(msg, null);
+	}
 
-   /**
-    * ÔÚµ±Ç°½ÚµãÏÂÌí¼ÓÒ»ÌõÔËĞĞĞÅÏ¢
-    *
-    * @param msg    ÒªÌí¼ÓµÄĞÅÏ¢
-    * @param type   ĞÅÏ¢µÄÀàĞÍ
-    */
-   public void addAppMessage(String msg, String type)
-   {
-      if (this.logType == 0)
-      {
-         // Èç¹ûÈÕÖ¾´¦ÓÚ¹Ø±Õ×´Ì¬²»×ö¼ÇÂ¼
-         return;
-      }
-      if (this.nodeStack == null || this.nodeStack.size() == 0)
-      {
-         // ½Úµã¶ÑÕ»Îª¿Õ²»×ö¼ÇÂ¼
-         return;
-      }
-      Element nowNode = (Element) this.nodeStack.get(this.nodeStack.size() - 1);
-      Element msgNode = nowNode.addElement("message");
-      if (type != null)
-      {
-         msgNode.addAttribute("type", type);
-      }
-      if (msg != null)
-      {
-         msgNode.setText(msg);
-      }
-      msgNode.addAttribute("time", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
-   }
+	/**
+	 * åœ¨å½“å‰èŠ‚ç‚¹ä¸‹æ·»åŠ ä¸€æ¡è¿è¡Œä¿¡æ¯
+	 *
+	 * @param msg   è¦æ·»åŠ çš„ä¿¡æ¯
+	 * @param type	 ä¿¡æ¯çš„ç±»å‹
+	 */
+	public void addAppMessage(String msg, String type)
+	{
+		if (this.logType == 0)
+		{
+			// å¦‚æœæ—¥å¿—å¤„äºå…³é—­çŠ¶æ€ä¸åšè®°å½•
+			return;
+		}
+		if (this.nodeStack == null || this.nodeStack.size() == 0)
+		{
+			// èŠ‚ç‚¹å †æ ˆä¸ºç©ºä¸åšè®°å½•
+			return;
+		}
+		Element nowNode = (Element) this.nodeStack.get(this.nodeStack.size() - 1);
+		Element msgNode = nowNode.addElement("message");
+		if (type != null)
+		{
+			msgNode.addAttribute("type", type);
+		}
+		if (msg != null)
+		{
+			msgNode.setText(msg);
+		}
+		msgNode.addAttribute("time", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
+	}
 
-   /**
-    * ÔÚappÈÕÖ¾ÖĞ¼ÇÂ¼Ò»¸ö½ÚµãÆğÊ¼±ê¼Ç
-    */
-   public Element beginNode(String nodeType, String nodeName, String nodeDescription)
-   {
-      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
-      {
-         // Èç¹ûÈÕÖ¾´¦ÓÚ¹Ø±Õ×´Ì¬ÇÒ½Úµã¶ÑÕ»Îª¿ÕµÄ×´Ì¬²Å·µ»Ønull²»×ö¼ÇÂ¼
-         return null;
-      }
-      if (this.nodeStack == null)
-      {
-         this.nodeStack = new ArrayList();
-      }
-      Element node = DocumentHelper.createElement(nodeType);
-      if (nodeName != null)
-      {
-         node.addAttribute("name", nodeName);
-      }
-      if (nodeDescription != null)
-      {
-         node.addAttribute("description", nodeDescription);
-      }
-      if (this.nodeStack.size() > 0)
-      {
-         Element parent = (Element) this.nodeStack.get(this.nodeStack.size() - 1);
-         parent.add(node);
-      }
-      else
-      {
-         node.addAttribute("beginTime", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
-			node.addAttribute("_time", Long.toString(System.currentTimeMillis()));
-      }
-      this.nodeStack.add(node);
-      return node;
-   }
+	/**
+	 * åœ¨appæ—¥å¿—ä¸­è®°å½•ä¸€ä¸ªèŠ‚ç‚¹èµ·å§‹æ ‡è®°
+	 */
+	public Element beginNode(String nodeType, String nodeName, String nodeDescription)
+	{
+		if (this.logType == 0)
+		{
+			// å¦‚æœæ—¥å¿—å¤„äºå…³é—­çŠ¶æ€ä¸”èŠ‚ç‚¹å †æ ˆä¸ºç©ºçš„çŠ¶æ€æ‰è¿”å›nullä¸åšè®°å½•
+			return null;
+		}
+		if (this.nodeStack == null)
+		{
+			this.nodeStack = new ArrayList();
+		}
+		Element node = DocumentHelper.createElement(nodeType);
+		if (nodeName != null)
+		{
+			node.addAttribute("name", nodeName);
+		}
+		if (nodeDescription != null)
+		{
+			node.addAttribute("description", nodeDescription);
+		}
+		if (this.nodeStack.size() > 0)
+		{
+			Element parent = (Element) this.nodeStack.get(this.nodeStack.size() - 1);
+			parent.add(node);
+		}
+		else
+		{
+			node.addAttribute("beginTime", FormatTool.formatDatetime(new Date(System.currentTimeMillis())));
+			node.addAttribute("_time", Long.toString(TimeLogger.getTime()));
+		}
+		this.nodeStack.add(node);
+		return node;
+	}
 
-   /**
-    * ÔÚappÈÕÖ¾ÖĞ¼ÇÂ¼Ò»¸ö½Úµã½áÊø±ê¼Ç.
+	/**
+	 * åœ¨appæ—¥å¿—ä¸­è®°å½•ä¸€ä¸ªèŠ‚ç‚¹ç»“æŸæ ‡è®°.
 	 * @deprecated
 	 * @see #endNode(Element, Throwable, ModelExport)
-    */
-   public Element endNode(Throwable error, ModelExport export)
-   {
-      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
-      {
-         // Èç¹ûÈÕÖ¾´¦ÓÚ¹Ø±Õ×´Ì¬ÇÒ½Úµã¶ÑÕ»Îª¿ÕµÄ×´Ì¬²Å·µ»Ønull²»×ö¼ÇÂ¼
-         return null;
-      }
-      if (this.nodeStack == null || this.nodeStack.size() == 0)
-      {
-         log.error("You haven't begined a node in this app.");
-         return null;
-      }
-      Element node = (Element) this.nodeStack.remove(this.nodeStack.size() - 1);
-      if (error != null)
-      {
-         node.addAttribute("error", error.toString());
-      }
-      if (export != null)
-      {
-         node.addAttribute("export", export.getName());
-      }
-      if (this.nodeStack.size() == 0)
-      {
+	 */
+	public Element endNode(Throwable error, ModelExport export)
+	{
+		if (this.logType == 0)
+		{
+			// å¦‚æœæ—¥å¿—å¤„äºå…³é—­çŠ¶æ€ä¸”èŠ‚ç‚¹å †æ ˆä¸ºç©ºçš„çŠ¶æ€æ‰è¿”å›nullä¸åšè®°å½•
+			return null;
+		}
+		if (this.nodeStack == null || this.nodeStack.size() == 0)
+		{
+			log.error("You haven't begined a node in this app.");
+			return null;
+		}
+		Element node = (Element) this.nodeStack.remove(this.nodeStack.size() - 1);
+		if (error != null)
+		{
+			node.addAttribute("error", error.toString());
+		}
+		if (export != null)
+		{
+			node.addAttribute("export", export.getName());
+		}
+		if (this.nodeStack.size() == 0)
+		{
 			logNode(node);
-      }
-      return node;
-   }
+		}
+		return node;
+	}
 
-   /**
-    * ÔÚappÈÕÖ¾ÖĞ¼ÇÂ¼Ò»¸ö½Úµã½áÊø±ê¼Ç.
+	/**
+	 * åœ¨appæ—¥å¿—ä¸­è®°å½•ä¸€ä¸ªèŠ‚ç‚¹ç»“æŸæ ‡è®°.
 	 *
-	 * @param node    µ÷ÓÃbeginNode»ñµÃµÄElement¶ÔÏó
-	 * @param error   Ö´ĞĞ¹ı³ÌÖĞÅ×³öµÄÒì³£
-	 * @param export  Ö´ĞĞÍê³ÉºóĞèÒª×ªÏòµÄexport
-    */
-   public Element endNode(Element node, Throwable error, ModelExport export)
-   {
-      if (this.logType == 0 && (this.nodeStack == null || this.nodeStack.size() == 0))
-      {
-         // Èç¹ûÈÕÖ¾´¦ÓÚ¹Ø±Õ×´Ì¬ÇÒ½Úµã¶ÑÕ»Îª¿ÕµÄ×´Ì¬²Å·µ»Ønull²»×ö¼ÇÂ¼
-         return null;
-      }
-      if (this.nodeStack == null || this.nodeStack.size() == 0)
-      {
-         log.error("You haven't begined a node in this app.");
-         return null;
-      }
+	 * @param node    è°ƒç”¨beginNodeè·å¾—çš„Elementå¯¹è±¡
+	 * @param error   æ‰§è¡Œè¿‡ç¨‹ä¸­æŠ›å‡ºçš„å¼‚å¸¸
+	 * @param export  æ‰§è¡Œå®Œæˆåéœ€è¦è½¬å‘çš„export
+	 */
+	public Element endNode(Element node, Throwable error, ModelExport export)
+	{
+		if (this.logType == 0)
+		{
+			// å¦‚æœæ—¥å¿—å¤„äºå…³é—­çŠ¶æ€ä¸”èŠ‚ç‚¹å †æ ˆä¸ºç©ºçš„çŠ¶æ€æ‰è¿”å›nullä¸åšè®°å½•
+			return null;
+		}
+		if (this.nodeStack == null || this.nodeStack.size() == 0)
+		{
+			log.error("You haven't begined a node in this app.");
+			return null;
+		}
 		int nodePos = this.nodeStack.size() - 1;
 		Element current = null;
 		for (; nodePos >= 0; nodePos--)
 		{
-      	current = (Element) this.nodeStack.get(nodePos);
+			current = (Element) this.nodeStack.get(nodePos);
 			if (node == current)
 			{
 				break;
@@ -351,13 +358,28 @@ public class AppData
 			{
 				logNode(node);
 			}
+			else
+			{
+				Attribute _time = node.attribute("_time");
+				if (_time != null)
+				{
+					try
+					{
+						String beginTimeStr = _time.getValue();
+						node.remove(_time);
+						long beginTime = Long.parseLong(beginTimeStr);
+						node.addAttribute("usedTime", TimeLogger.formatPassTime(TimeLogger.getTime() - beginTime));
+					}
+					catch (Exception ex) {}
+				}
+			}
 		}
 		else
 		{
 			log.error("Not found the node:" + node.asXML());
 		}
-      return node;
-   }
+		return node;
+	}
 
 	private static synchronized void logNode(Element node)
 	{
@@ -368,7 +390,7 @@ public class AppData
 			String beginTimeStr = _time.getValue();
 			node.remove(_time);
 			long beginTime = Long.parseLong(beginTimeStr);
-			node.addAttribute("useTime", Long.toString(System.currentTimeMillis() - beginTime));
+			node.addAttribute("usedTime", TimeLogger.formatPassTime(TimeLogger.getTime() - beginTime));
 		}
 		catch (Exception ex) {}
 		Element logs;
@@ -385,7 +407,7 @@ public class AppData
 
 		if (logs.elements().size() > 256)
 		{
-			// µ±½Úµã¹ı¶àÊ±, Çå³ı×îÏÈÌí¼ÓµÄ¼¸¸ö½Úµã
+			// å½“èŠ‚ç‚¹è¿‡å¤šæ—¶, æ¸…é™¤æœ€å…ˆæ·»åŠ çš„å‡ ä¸ªèŠ‚ç‚¹
 			Iterator itr = logs.elementIterator();
 			try
 			{
@@ -397,7 +419,7 @@ public class AppData
 			}
 			catch (Exception ex)
 			{
-				// µ±È¥³ı½Úµã³ö´íÊ±, ÔòÇå¿ÕÈÕÖ¾
+				// å½“å»é™¤èŠ‚ç‚¹å‡ºé”™æ—¶, åˆ™æ¸…ç©ºæ—¥å¿—
 				log.warn("Remove app log error.", ex);
 				logDocument = DocumentHelper.createDocument();
 				Element root = logDocument.addElement("eterna");
@@ -407,170 +429,174 @@ public class AppData
 		logs.add(node);
 	}
 
-   /**
-    * »ñµÃµ±Ç°Ïß³ÌÖĞµÄAppData¶ÔÏó
-    */
-   public static AppData getCurrentData()
-   {
-      ThreadCache cache = ThreadCache.getInstance();
-      AppData data = (AppData) cache.getProperty(CACHE_NAME);
-      if (data == null)
-      {
-         data = new AppData();
-         cache.setProperty(CACHE_NAME, data);
-      }
-		data.logType = APP_LOG_TYPE;
-      return data;
-   }
+	/**
+	 * è·å¾—å½“å‰çº¿ç¨‹ä¸­çš„AppDataå¯¹è±¡
+	 */
+	public static AppData getCurrentData()
+	{
+		ThreadCache cache = ThreadCache.getInstance();
+		AppData data = (AppData) cache.getProperty(CACHE_NAME);
+		if (data == null)
+		{
+			data = new AppData();
+			data.logType = APP_LOG_TYPE;
+			cache.setProperty(CACHE_NAME, data);
+		}
+		return data;
+	}
 
-   public static String getRequestParameter(String name, Map rParamMap)
-   {
-      if (rParamMap == null)
-      {
-         return null;
-      }
-      Object obj = rParamMap.get(name);
-      return RequestParameterMap.getFirstParam(obj);
-   }
+	public static String getRequestParameter(String name, Map rParamMap)
+	{
+		if (rParamMap == null)
+		{
+			return null;
+		}
+		Object obj = rParamMap.get(name);
+		return RequestParameterMap.getFirstParam(obj);
+	}
 
-   public void clearData()
-   {
-      this.app_id = null;
-      this.clearStack();
-      this.dataMap.clear();
-      this.maps[AppData.DATA_MAP] = this.dataMap;
-      this.spcialMap.clear();
-      this.maps[AppData.REQUEST_ATTRIBUTE_MAP] = null;
-      this.maps[AppData.SESSION_ATTRIBUTE_MAP] = null;
-      this.maps[AppData.REQUEST_PARAMETER_MAP] = null;
-      for (int i = 0; i < this.caches.length; i++)
-      {
-         this.caches[i] = null;
-      }
-   }
+	public void clearData()
+	{
+		this.app_id = null;
+		this.clearStack();
+		this.dataMap.clear();
+		this.maps[AppData.DATA_MAP] = this.dataMap;
+		this.spcialMap.clear();
+		this.maps[AppData.REQUEST_ATTRIBUTE_MAP] = null;
+		this.maps[AppData.SESSION_ATTRIBUTE_MAP] = null;
+		this.maps[AppData.REQUEST_PARAMETER_MAP] = null;
+		for (int i = 0; i < this.caches.length; i++)
+		{
+			this.caches[i] = null;
+		}
+		// æ¢å¤Appæ—¥å¿—çŠ¶æ€å¹¶æ¸…ç©º
+		this.logType = APP_LOG_TYPE;
+		this.nodeStack.clear();
+	}
 
-   public Map setSpcialDataMap(String specialName, Map map)
-   {
-      return (Map) this.spcialMap.put(specialName, map);
-   }
+	public Map setSpcialDataMap(String specialName, Map map)
+	{
+		return (Map) this.spcialMap.put(specialName, map);
+	}
 
-   public Map getSpcialDataMap(String specialName)
-   {
-      return this.getSpcialDataMap(specialName, false);
-   }
+	public Map getSpcialDataMap(String specialName)
+	{
+		return this.getSpcialDataMap(specialName, false);
+	}
 
-   public Map getSpcialDataMap(String specialName, boolean remove)
-   {
-      Object tmp = this.spcialMap.get(specialName);
-      if (tmp == null)
-      {
-         return null;
-      }
-      if (remove)
-      {
-         this.spcialMap.remove(specialName);
-      }
-      if (tmp instanceof Map)
-      {
-         return (Map) tmp;
-      }
-      return null;
-   }
+	public Map getSpcialDataMap(String specialName, boolean remove)
+	{
+		Object tmp = this.spcialMap.get(specialName);
+		if (tmp == null)
+		{
+			return null;
+		}
+		if (remove)
+		{
+			this.spcialMap.remove(specialName);
+		}
+		if (tmp instanceof Map)
+		{
+			return (Map) tmp;
+		}
+		return null;
+	}
 
-   public Object addSpcialData(String specialName, String name, Object data)
-   {
-      Map tmp = (Map) this.spcialMap.get(specialName);
-      if (tmp == null)
-      {
-         tmp = new HashMap();
-         this.spcialMap.put(specialName, tmp);
-      }
-      return tmp.put(name, data);
-   }
+	public Object addSpcialData(String specialName, String name, Object data)
+	{
+		Map tmp = (Map) this.spcialMap.get(specialName);
+		if (tmp == null)
+		{
+			tmp = new HashMap();
+			this.spcialMap.put(specialName, tmp);
+		}
+		return tmp.put(name, data);
+	}
 
-   public Object getSpcialData(String specialName, String name)
-   {
-      Map tmp = (Map) this.spcialMap.get(specialName);
-      if (tmp == null)
-      {
-         return null;
-      }
-      return tmp.get(name);
-   }
+	public Object getSpcialData(String specialName, String name)
+	{
+		Map tmp = (Map) this.spcialMap.get(specialName);
+		if (tmp == null)
+		{
+			return null;
+		}
+		return tmp.get(name);
+	}
 
-   public String getAppId()
-   {
-      if (this.app_id == null)
-      {
-         this.app_id = Long.toString(System.currentTimeMillis(), 32).toUpperCase() + "_"
-               + Integer.toString(System.identityHashCode(this), 32).toUpperCase();
-      }
-      return this.app_id;
-   }
+	public String getAppId()
+	{
+		if (this.app_id == null)
+		{
+			this.app_id = Long.toString(System.currentTimeMillis(), 32).toUpperCase() + "_"
+					+ Integer.toString(System.identityHashCode(this), 32).toUpperCase();
+		}
+		return this.app_id;
+	}
 
-   /**
-    * »ñµÃrequestÖĞµÄ²ÎÊı
-    */
-   public String getRequestParameter(String name)
-   {
-      return getRequestParameter(name, this.getRequestParameterMap());
-   }
+	/**
+	 * è·å¾—requestä¸­çš„å‚æ•°
+	 */
+	public String getRequestParameter(String name)
+	{
+		return getRequestParameter(name, this.getRequestParameterMap());
+	}
 
-   /**
-    * »ñµÃrequestÖĞ²ÎÊıµÄmap¶ÔÏó
-    */
-   public Map getRequestParameterMap()
-   {
-      return this.maps[REQUEST_PARAMETER_MAP];
-   }
+	/**
+	 * è·å¾—requestä¸­å‚æ•°çš„mapå¯¹è±¡
+	 */
+	public Map getRequestParameterMap()
+	{
+		return this.maps[REQUEST_PARAMETER_MAP];
+	}
 
-   /**
-    * »ñµÃrequestÖĞattributeµÄmap¶ÔÏó
-    */
-   public Map getRequestAttributeMap()
-   {
-      return this.maps[REQUEST_ATTRIBUTE_MAP];
-   }
+	/**
+	 * è·å¾—requestä¸­attributeçš„mapå¯¹è±¡
+	 */
+	public Map getRequestAttributeMap()
+	{
+		return this.maps[REQUEST_ATTRIBUTE_MAP];
+	}
 
-   /**
-    * »ñµÃsessionÖĞattributeµÄmap¶ÔÏó
-    */
-   public Map getSessionAttributeMap()
-   {
-      return this.maps[SESSION_ATTRIBUTE_MAP];
-   }
+	/**
+	 * è·å¾—sessionä¸­attributeçš„mapå¯¹è±¡
+	 */
+	public Map getSessionAttributeMap()
+	{
+		return this.maps[SESSION_ATTRIBUTE_MAP];
+	}
 
-   public HttpServletRequest getHttpServletRequest()
-   {
-      if (this.request instanceof HttpServletRequest)
-      {
-         return (HttpServletRequest) this.request;
-      }
-      return null;
-   }
+	public HttpServletRequest getHttpServletRequest()
+	{
+		if (this.request instanceof HttpServletRequest)
+		{
+			return (HttpServletRequest) this.request;
+		}
+		return null;
+	}
 
-   /**
-    * »ñÈ¡¿Í»§¶ËµÄIPµØÖ·. <p>
-    * Èç¹ûÇ°¶ËÓĞHTTP·şÎñÆ÷×ª·¢µÄ»°, ¿ÉÒÔÉèÖÃ<code>agentNames</code>´úÀíÃû³ÆÁĞ±í,
-    * À´»ñÈ¡ÕæÕıµÄ¿Í»§¶ËIP.
-    *
-    * @param agentNames   ´úÀíÃû³ÆÁĞ±í, Èç¹ûÃ»ÓĞ¿ÉÒÔÉèÎª<code>null</code>
-	 *                     ¸ñÊ½Îª: Í·ĞÅÏ¢ÖĞµÄÃû³Æ[:¶à¸öipµÄ·Ö¸î·û¼°Ë³Ğò]
-	 *                     Ë³ĞòµÄÖµÉèÎªA±íÊ¾È¡µÚÒ»¸öip, ÉèÎªD±íÊ¾È¥×îºó¸öip
-    * @return    ¿Í»§¶ËµÄIPµØÖ·
-    */
-   public String getRemoteAddr(String[] agentNames)
-   {
-      HttpServletRequest request = this.getHttpServletRequest();
-      if (request == null)
-      {
-         return null;
-      }if (agentNames != null)
-      {
-         for (int i = 0; i < agentNames.length; i++)
-         {
+	/**
+	 * è·å–å®¢æˆ·ç«¯çš„IPåœ°å€. <p>
+	 * å¦‚æœå‰ç«¯æœ‰HTTPæœåŠ¡å™¨è½¬å‘çš„è¯, å¯ä»¥è®¾ç½®<code>agentNames</code>ä»£ç†åç§°åˆ—è¡¨,
+	 * æ¥è·å–çœŸæ­£çš„å®¢æˆ·ç«¯IP.
+	 *
+	 * @param agentNames  ä»£ç†åç§°åˆ—è¡¨, å¦‚æœæ²¡æœ‰å¯ä»¥è®¾ä¸º<code>null</code>
+	 *	                   æ ¼å¼ä¸º: å¤´ä¿¡æ¯ä¸­çš„åç§°[:å¤šä¸ªipçš„åˆ†å‰²ç¬¦åŠé¡ºåº]
+	 *                    é¡ºåºçš„å€¼è®¾ä¸ºAè¡¨ç¤ºå–ç¬¬ä¸€ä¸ªip, è®¾ä¸ºDè¡¨ç¤ºå»æœ€åä¸ªip
+	 * @return  å®¢æˆ·ç«¯çš„IPåœ°å€
+	 */
+	public String getRemoteAddr(String[] agentNames)
+	{
+		HttpServletRequest request = this.getHttpServletRequest();
+		if (request == null)
+		{
+			return null;
+		}
+		if (agentNames != null)
+		{
+			for (int i = 0; i < agentNames.length; i++)
+			{
 				String agentName = agentNames[i];
-				// ½âÎö´úÀíµÄÃû³ÆÖĞÊÇ·ñÓĞ·Ö¸ô·û¼°ipË³ĞòµÄÉèÖÃ
+				// è§£æä»£ç†çš„åç§°ä¸­æ˜¯å¦æœ‰åˆ†éš”ç¬¦åŠipé¡ºåºçš„è®¾ç½®
 				int flag = agentName.indexOf(':');
 				char split = ';';
 				boolean desc = false;
@@ -580,9 +606,9 @@ public class AppData
 					desc = agentName.charAt(flag + 2) == 'D';
 					agentName = agentName.substring(0, flag);
 				}
-            String ip = request.getHeader(agentName);
-            if (ip != null)
-            {
+				String ip = request.getHeader(agentName);
+				if (ip != null)
+				{
 					if (desc)
 					{
 						int index = ip.lastIndexOf(split);
@@ -593,106 +619,106 @@ public class AppData
 						int index = ip.indexOf(split);
 						return index == -1 ? ip : ip.substring(0, index).trim();
 					}
-            }
-         }
-      }
-      return request.getRemoteAddr();
-   }
+				}
+			}
+		}
+		return request.getRemoteAddr();
+	}
 
-   public HttpServletResponse getHttpServletResponse()
-   {
-      if (this.request instanceof HttpServletRequest)
-      {
-         return (HttpServletResponse) this.response;
-      }
-      return null;
-   }
+	public HttpServletResponse getHttpServletResponse()
+	{
+		if (this.request instanceof HttpServletRequest)
+		{
+			return (HttpServletResponse) this.response;
+		}
+		return null;
+	}
 
-   public ServletContext getServletContext()
-   {
-      if (this.servletConfig != null)
-      {
-         return this.servletConfig.getServletContext();
-      }
-      if (this.filterConfig != null)
-      {
-         return this.filterConfig.getServletContext();
-      }
-      return null;
-   }
+	public ServletContext getServletContext()
+	{
+		if (this.servletConfig != null)
+		{
+			return this.servletConfig.getServletContext();
+		}
+		if (this.filterConfig != null)
+		{
+			return this.filterConfig.getServletContext();
+		}
+		return null;
+	}
 
-   public PortletContext getPortletContext()
-   {
-      if (this.portletConfig != null)
-      {
-         return this.portletConfig.getPortletContext();
-      }
-      return null;
-   }
+	public PortletContext getPortletContext()
+	{
+		if (this.portletConfig != null)
+		{
+			return this.portletConfig.getPortletContext();
+		}
+		return null;
+	}
 
-   /**
-    * »ñµÃservlet»òportletµÄ³õÊ¼»¯²ÎÊı
-    */
-   public String getInitParameter(String name)
-   {
-      if (this.portletConfig != null)
-      {
-         return this.portletConfig.getInitParameter(name);
-      }
-      if (this.servletConfig != null)
-      {
-         return this.servletConfig.getInitParameter(name);
-      }
-      if (this.filterConfig != null)
-      {
-         return this.filterConfig.getInitParameter(name);
-      }
-      return null;
-   }
+	/**
+	 * è·å¾—servletæˆ–portletçš„åˆå§‹åŒ–å‚æ•°
+	 */
+	public String getInitParameter(String name)
+	{
+		if (this.portletConfig != null)
+		{
+			return this.portletConfig.getInitParameter(name);
+		}
+		if (this.servletConfig != null)
+		{
+			return this.servletConfig.getInitParameter(name);
+		}
+		if (this.filterConfig != null)
+		{
+			return this.filterConfig.getInitParameter(name);
+		}
+		return null;
+	}
 
-   /**
-    * »ñµÃresponseÖĞµÄOutputStream¶ÔÏó
-    */
-   public OutputStream getOutputStream()
-         throws IOException
-   {
-      if (this.renderResponse != null)
-      {
-         return this.renderResponse.getPortletOutputStream();
-      }
-      if (this.response != null)
-      {
-         return this.response.getOutputStream();
-      }
-      return null;
-   }
+	/**
+	 * è·å¾—responseä¸­çš„OutputStreamå¯¹è±¡
+	 */
+	public OutputStream getOutputStream()
+			throws IOException
+	{
+		if (this.renderResponse != null)
+		{
+			return this.renderResponse.getPortletOutputStream();
+		}
+		if (this.response != null)
+		{
+			return this.response.getOutputStream();
+		}
+		return null;
+	}
 
-   public void clearStack()
-   {
-      this.stack.clear();
-   }
+	public void clearStack()
+	{
+		this.stack.clear();
+	}
 
-   public Object pop()
-   {
-      if (this.stack.size() > 0)
-      {
-         return this.stack.remove(this.stack.size() - 1);
-      }
-      return null;
-   }
+	public Object pop()
+	{
+		if (this.stack.size() > 0)
+		{
+			return this.stack.remove(this.stack.size() - 1);
+		}
+		return null;
+	}
 
-   public void push(Object obj)
-   {
-      this.stack.add(obj);
-   }
+	public void push(Object obj)
+	{
+		this.stack.add(obj);
+	}
 
-   public Object peek(int index)
-   {
-      if (index < this.stack.size())
-      {
-         return this.stack.get(this.stack.size() - 1 - index);
-      }
-      return null;
-   }
+	public Object peek(int index)
+	{
+		if (index < this.stack.size())
+		{
+			return this.stack.get(this.stack.size() - 1 - index);
+		}
+		return null;
+	}
 
 }

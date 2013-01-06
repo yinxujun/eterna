@@ -14,146 +14,146 @@ import self.micromagic.eterna.share.EternaFactory;
  */
 public interface ResultReader
 {
-   /**
-    * ÔÚarrtibuteÖĞÉèÖÃÊäÈë¿òÀàĞÍÊ¹ÓÃµÄÃû³Æ.
-    */
-   public static final String INPUT_TYPE_FLAG = "inputType";
+	/**
+	 * åœ¨arrtibuteä¸­è®¾ç½®è¾“å…¥æ¡†ç±»å‹ä½¿ç”¨çš„åç§°.
+	 */
+	public static final String INPUT_TYPE_FLAG = "inputType";
 
-   /**
-    * ³õÊ¼»¯±¾reader¶ÔÏó, ÏµÍ³»áÔÚ³õÊ¼»¯Ê±µ÷ÓÃ´Ë·½·¨. <p>
-    * ¸Ã·½·¨µÄÖ÷Òª×÷ÓÃÊÇ¸ù¾İÉèÖÃµÄformatµÄÃû³ÆÀ´³õÊ¼»¯format¶ÔÏó.
-    *
-    * @param factory  EternaFactoryµÄÊµÀı, ¿ÉÒÔ´ÓÖĞ»ñµÃformat¶ÔÏó
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æœ¬readerå¯¹è±¡, ç³»ç»Ÿä¼šåœ¨åˆå§‹åŒ–æ—¶è°ƒç”¨æ­¤æ–¹æ³•. <p>
+	 * è¯¥æ–¹æ³•çš„ä¸»è¦ä½œç”¨æ˜¯æ ¹æ®è®¾ç½®çš„formatçš„åç§°æ¥åˆå§‹åŒ–formatå¯¹è±¡.
+	 *
+	 * @param factory  EternaFactoryçš„å®ä¾‹, å¯ä»¥ä»ä¸­è·å¾—formatå¯¹è±¡
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¸ÃreaderµÄÀàĞÍ.
-    *
-    * @return  Ò»¸ö´ú±í¸ÃreaderÀàĞÍµÄÕûÊı
-    * @see self.micromagic.eterna.share.TypeManager
-    */
-   int getType() throws ConfigurationException;
+	/**
+	 * è·å–è¯¥readerçš„ç±»å‹.
+	 *
+	 * @return  ä¸€ä¸ªä»£è¡¨è¯¥readerç±»å‹çš„æ•´æ•°
+	 * @see self.micromagic.eterna.share.TypeManager
+	 */
+	int getType() throws ConfigurationException;
 
-   /**
-    * ÊÇ·ñTypeµÄÀàĞÍÎªTYPE_IGNORE.
-    * Èç¹ûÎªtrueÔò±íÊ¾ºöÂÔ´ËResultReader, ¿ÉÒÔ½«ÆäÉ¾³ı, ÕâÑù¿ÉÒÔÔÚResultReaderManager
-    * ¼Ì³ĞÊ±È¥µô¸¸¶ÔÏóÖĞ²»ĞèÒªµÄResultReader.
-    */
-   boolean isIgnore() throws ConfigurationException;
+	/**
+	 * æ˜¯å¦Typeçš„ç±»å‹ä¸ºTYPE_IGNORE.
+	 * å¦‚æœä¸ºtrueåˆ™è¡¨ç¤ºå¿½ç•¥æ­¤ResultReader, å¯ä»¥å°†å…¶åˆ é™¤, è¿™æ ·å¯ä»¥åœ¨ResultReaderManager
+	 * ç»§æ‰¿æ—¶å»æ‰çˆ¶å¯¹è±¡ä¸­ä¸éœ€è¦çš„ResultReader.
+	 */
+	boolean isIgnore() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡formatµÄÃû³Æ.
-    */
-   String getFormatName() throws ConfigurationException;
+	/**
+	 * è·å–formatçš„åç§°.
+	 */
+	String getFormatName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡format¶ÔÏó.
-    */
-   ResultFormat getFormat() throws ConfigurationException;
+	/**
+	 * è·å–formatå¯¹è±¡.
+	 */
+	ResultFormat getFormat() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾readerµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬readerçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñµÃ×÷ÎªÅÅĞòÁĞ, ¼´³öÏÖÔÚ"ORDER BY"Ö®ºóµÄÁĞÃû.
-    * ÔÚ¶à¸ö±íÊ±, Ò²¿ÉÒÔÊÇ"[±íÃû].[ÁĞÃû]"µÄĞÎÊ½.
-    */
-   String getOrderName() throws ConfigurationException;
+	/**
+	 * è·å¾—ä½œä¸ºæ’åºåˆ—, å³å‡ºç°åœ¨"ORDER BY"ä¹‹åçš„åˆ—å.
+	 * åœ¨å¤šä¸ªè¡¨æ—¶, ä¹Ÿå¯ä»¥æ˜¯"[è¡¨å].[åˆ—å]"çš„å½¢å¼.
+	 */
+	String getOrderName() throws ConfigurationException;
 
-   /**
-    * ¶ÁÈ¡Êı¾İÊ±, ¶ÁÈ¡µÄÁĞÃû. <p>
-    * ¸Ã·½·¨ºÍ{@link #getColumnIndex}·½·¨Ö»ÓĞÒ»¸öÓĞĞ§, µ±Ë÷ÒıÖµÓĞĞ§
-    * Ê±£¬·µ»ØµÄÁĞÃûÎªnull.
-    */
-   String getColumnName() throws ConfigurationException;
+	/**
+	 * è¯»å–æ•°æ®æ—¶, è¯»å–çš„åˆ—å. <p>
+	 * è¯¥æ–¹æ³•å’Œ{@link #getColumnIndex}æ–¹æ³•åªæœ‰ä¸€ä¸ªæœ‰æ•ˆ, å½“ç´¢å¼•å€¼æœ‰æ•ˆ
+	 * æ—¶ï¼Œè¿”å›çš„åˆ—åä¸ºnull.
+	 */
+	String getColumnName() throws ConfigurationException;
 
-   /**
-    * ¶ÁÈ¡Êı¾İÊ±, ¶ÁÈ¡µÄÁĞË÷Òı. <p>
-    * ¸Ã·½·¨ºÍ{@link #getColumnName}·½·¨Ö»ÓĞÒ»¸öÓĞĞ§, µ±ÁĞÃûÓĞĞ§Ê±,
-    * ·µ»ØµÄË÷ÒıÖµÎª-1.
-    */
-   int getColumnIndex() throws ConfigurationException;
+	/**
+	 * è¯»å–æ•°æ®æ—¶, è¯»å–çš„åˆ—ç´¢å¼•. <p>
+	 * è¯¥æ–¹æ³•å’Œ{@link #getColumnName}æ–¹æ³•åªæœ‰ä¸€ä¸ªæœ‰æ•ˆ, å½“åˆ—åæœ‰æ•ˆæ—¶,
+	 * è¿”å›çš„ç´¢å¼•å€¼ä¸º-1.
+	 */
+	int getColumnIndex() throws ConfigurationException;
 
-   /**
-    * ÔÚÏòhtmlÒ³ÃæÊä³öÊ±, ÊÇ·ñĞèÒª½øĞĞÌØÊâ±êÇ©µÄ¹ıÂË.
-    */
-   boolean needHtmlFilter() throws ConfigurationException;
+	/**
+	 * åœ¨å‘htmlé¡µé¢è¾“å‡ºæ—¶, æ˜¯å¦éœ€è¦è¿›è¡Œç‰¹æ®Šæ ‡ç­¾çš„è¿‡æ»¤.
+	 */
+	boolean needHtmlFilter() throws ConfigurationException;
 
-   /**
-    * ¸ÃResultReaderÊÇ·ñ¿É¼û.
-    */
-   boolean isVisible() throws ConfigurationException;
+	/**
+	 * è¯¥ResultReaderæ˜¯å¦å¯è§.
+	 */
+	boolean isVisible() throws ConfigurationException;
 
-   /**
-    * ¸ÃResultReaderÊÇ·ñÓĞĞ§.
-    * ±ÈÈç¶ÔÓÚÎŞÈ¨·ÃÎÊµÄÁĞ, ¾Í»áÉú³ÉÒ»¸ö¿ÕµÄResultReaderÀ´Õ¼Î»,
-    * Õâ¸ö¿ÕµÄResultReaderµÄvalidÖµ¾ÍÎªfalse.
-    *
-    * ×¢: Èç¹û²»ÉèÖÃ¿ÕµÄResultReaderÕ¼Î»µÄ»°, ÓÃindex·ÃÎÊÊ±¾Í»á³ö´í.
-    */
-   boolean isValid() throws ConfigurationException;
+	/**
+	 * è¯¥ResultReaderæ˜¯å¦æœ‰æ•ˆ.
+	 * æ¯”å¦‚å¯¹äºæ— æƒè®¿é—®çš„åˆ—, å°±ä¼šç”Ÿæˆä¸€ä¸ªç©ºçš„ResultReaderæ¥å ä½,
+	 * è¿™ä¸ªç©ºçš„ResultReaderçš„validå€¼å°±ä¸ºfalse.
+	 *
+	 * æ³¨: å¦‚æœä¸è®¾ç½®ç©ºçš„ResultReaderå ä½çš„è¯, ç”¨indexè®¿é—®æ—¶å°±ä¼šå‡ºé”™.
+	 */
+	boolean isValid() throws ConfigurationException;
 
-   /**
-    * ÅĞ¶Ï¶ÁÈ¡Êı¾İÊ±, ÊÇ·ñÊÇÍ¨¹ıÁĞÃûÀ´¶ÁÈ¡.
-    */
-   boolean isUseColumnName() throws ConfigurationException;
+	/**
+	 * åˆ¤æ–­è¯»å–æ•°æ®æ—¶, æ˜¯å¦æ˜¯é€šè¿‡åˆ—åæ¥è¯»å–.
+	 */
+	boolean isUseColumnName() throws ConfigurationException;
 
-   /**
-    * ÅĞ¶Ï¶ÁÈ¡Êı¾İÊ±, ÊÇ·ñÊÇÍ¨¹ıË÷ÒıÖµÀ´¶ÁÈ¡.
-    */
-   boolean isUseColumnIndex() throws ConfigurationException;
+	/**
+	 * åˆ¤æ–­è¯»å–æ•°æ®æ—¶, æ˜¯å¦æ˜¯é€šè¿‡ç´¢å¼•å€¼æ¥è¯»å–.
+	 */
+	boolean isUseColumnIndex() throws ConfigurationException;
 
-   /**
-    * »ñµÃÒ»¸öattribute.
-    *
-    * @param name    Òª»ñµÃµÄattributeµÄÃû³Æ
-    */
-   Object getAttribute(String name) throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ªattribute.
+	 *
+	 * @param name    è¦è·å¾—çš„attributeçš„åç§°
+	 */
+	Object getAttribute(String name) throws ConfigurationException;
 
-   /**
-    * »ñµÃËùÓĞattributeµÄÃû³Æ.
-    */
-   String[] getAttributeNames() throws ConfigurationException;
+	/**
+	 * è·å¾—æ‰€æœ‰attributeçš„åç§°.
+	 */
+	String[] getAttributeNames() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¿É¶ÁÈ¡¸ÃÁĞµÄÈ¨ÏŞ¼¯ºÏ, Ö»ÓĞÓµÓĞ¼¯ºÏÖĞµÄÈÎÒâ1¸öÈ¨ÏŞ¾Í¿ÉÒÔ
-    * ¶ÁÈ¡¸ÃÁĞ. <p>
-    * Èç¹ûÃ»ÓĞÉèÖÃÈ¨ÏŞ¼¯ºÏ, Ôò·µ»Ønull, ±íÊ¾¶ÁÈ¡¸ÃÁĞ²»ĞèÒªÈ¨ÏŞ.
-    */
-   PermissionSet getPermissionSet() throws ConfigurationException;
+	/**
+	 * è·å–å¯è¯»å–è¯¥åˆ—çš„æƒé™é›†åˆ, åªæœ‰æ‹¥æœ‰é›†åˆä¸­çš„ä»»æ„1ä¸ªæƒé™å°±å¯ä»¥
+	 * è¯»å–è¯¥åˆ—. <p>
+	 * å¦‚æœæ²¡æœ‰è®¾ç½®æƒé™é›†åˆ, åˆ™è¿”å›null, è¡¨ç¤ºè¯»å–è¯¥åˆ—ä¸éœ€è¦æƒé™.
+	 */
+	PermissionSet getPermissionSet() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¸ÃÁĞµÄ±êÌâ.
-    */
-   String getCaption() throws ConfigurationException;
+	/**
+	 * è·å–è¯¥åˆ—çš„æ ‡é¢˜.
+	 */
+	String getCaption() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Ìî³äÍêµÄ±êÌâ. <p>
-    * Èç¹û±êÌâÎª¿Õ, Ôò»áÊ¹ÓÃÁĞÃûÀ´´úÌæ.
-    */
-   String getFilledCaption() throws ConfigurationException;
+	/**
+	 * è·å–å¡«å……å®Œçš„æ ‡é¢˜. <p>
+	 * å¦‚æœæ ‡é¢˜ä¸ºç©º, åˆ™ä¼šä½¿ç”¨åˆ—åæ¥ä»£æ›¿.
+	 */
+	String getFilledCaption() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¸ÃÁĞÏÔÊ¾Ê±µÄ¿í¶È.
-    */
-   int getWidth() throws ConfigurationException;
+	/**
+	 * è·å–è¯¥åˆ—æ˜¾ç¤ºæ—¶çš„å®½åº¦.
+	 */
+	int getWidth() throws ConfigurationException;
 
-   /**
-    * ´Ó<code>ResultSet</code>¶ÔÏóÖĞ¶ÁÈ¡Êı¾İ, ²¢ÒÔÏàÓ¦µÄ¶ÔÏó·µ»Ø.
-    */
-   Object readResult(ResultSet rs) throws SQLException;
+	/**
+	 * ä»<code>ResultSet</code>å¯¹è±¡ä¸­è¯»å–æ•°æ®, å¹¶ä»¥ç›¸åº”çš„å¯¹è±¡è¿”å›.
+	 */
+	Object readResult(ResultSet rs) throws SQLException;
 
-   /**
-    * ´Ó<code>CallableStatement</code>¶ÔÏóÖĞ¶ÁÈ¡Êı¾İ, ²¢ÒÔÏàÓ¦µÄ¶ÔÏó·µ»Ø.
-    */
-   Object readCall(CallableStatement call, int index) throws SQLException;
+	/**
+	 * ä»<code>CallableStatement</code>å¯¹è±¡ä¸­è¯»å–æ•°æ®, å¹¶ä»¥ç›¸åº”çš„å¯¹è±¡è¿”å›.
+	 */
+	Object readCall(CallableStatement call, int index) throws SQLException;
 
-   /**
-    * ´Ó<code>Object</code>¶ÔÏóÖĞ¶ÁÈ¡Êı¾İ, ²¢ÒÔÏàÓ¦µÄ¶ÔÏó·µ»Ø.
-    */
-   Object readObject(Object obj) throws ConfigurationException;
+	/**
+	 * ä»<code>Object</code>å¯¹è±¡ä¸­è¯»å–æ•°æ®, å¹¶ä»¥ç›¸åº”çš„å¯¹è±¡è¿”å›.
+	 */
+	Object readObject(Object obj) throws ConfigurationException;
 
 }

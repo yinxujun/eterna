@@ -12,159 +12,162 @@ import self.micromagic.dc.CodeClassTool;
 import self.micromagic.util.StringTool;
 
 /**
- * ¶¯Ì¬±àÒëjava´úÂëÀ´¹¹ÔìÒ»¸öFormat.
+ * åŠ¨æ€ç¼–è¯‘javaä»£ç æ¥æ„é€ ä¸€ä¸ªFormat.
  *
- * ĞèÉèÖÃµÄÊôĞÔ
- * code                  ´¦Àí¸ñÊ½»¯µÄjava´úÂë                                                     2Ñ¡1
- * attrCode              ´ÓfactoryµÄÊôĞÔÖĞ»ñÈ¡´¦Àí¸ñÊ½»¯µÄjava´úÂë                                2Ñ¡1
+ * éœ€è®¾ç½®çš„å±æ€§
+ * code                  å¤„ç†æ ¼å¼åŒ–çš„javaä»£ç                                                      2é€‰1
+ * attrCode              ä»factoryçš„å±æ€§ä¸­è·å–å¤„ç†æ ¼å¼åŒ–çš„javaä»£ç                                 2é€‰1
  *
- * imports               ĞèÒªÒıÈëµÄ°ü, Èç£ºjava.lang, Ö»Ğè¸ø³ö°üÂ·¾¶, ÒÔ","·Ö¸ô                   ¿ÉÑ¡
- * extends               ¼Ì³ĞµÄÀà                                                                 ¿ÉÑ¡
- * throwCompileError     ÊÇ·ñĞèÒª½«±àÒëµÄ´íÎóÅ×³ö, Å×³ö´íÎó»á´ò¶Ï³õÊ¼»¯µÄÖ´ĞĞ                     Ä¬ÈÏÎªfalse
+ * imports               éœ€è¦å¼•å…¥çš„åŒ…, å¦‚ï¼šjava.lang, åªéœ€ç»™å‡ºåŒ…è·¯å¾„, ä»¥","åˆ†éš”                   å¯é€‰
+ * extends               ç»§æ‰¿çš„ç±»                                                                 å¯é€‰
+ * throwCompileError     æ˜¯å¦éœ€è¦å°†ç¼–è¯‘çš„é”™è¯¯æŠ›å‡º, æŠ›å‡ºé”™è¯¯ä¼šæ‰“æ–­åˆå§‹åŒ–çš„æ‰§è¡Œ                     é»˜è®¤ä¸ºfalse
  *
  * otherParams
- * Ô¤±àÒë´¦ÀíÌõ¼şÉú³É´úÂëµÄ²ÎÊı, Ãû³ÆĞèÒªÓë´úÂëÖĞµÄ²ÎÊıÃû³ÆÆ¥Åä, ÖµÎª²ÎÊıÃû¶ÔÓ¦µÄ´úÂë
+ * é¢„ç¼–è¯‘å¤„ç†æ¡ä»¶ç”Ÿæˆä»£ç çš„å‚æ•°, åç§°éœ€è¦ä¸ä»£ç ä¸­çš„å‚æ•°åç§°åŒ¹é…, å€¼ä¸ºå‚æ•°åå¯¹åº”çš„ä»£ç 
+ *
+ *
+ * @author micromagic@sina.com
  */
 public class JavaCodeFormat extends AbstractGenerator
-      implements ResultFormat, ResultFormatGenerator
+		implements ResultFormat, ResultFormatGenerator
 {
-   private String type;
-   private String pattern;
-   private FormatCode formatCode;
+	private String type;
+	private String pattern;
+	private FormatCode formatCode;
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (this.formatCode != null)
-      {
-         return;
-      }
-      String code = CodeClassTool.getCode(this, factory, "code", "attrCode");
-      try
-      {
-         Class codeClass = this.createCodeClass(code);
-         this.formatCode = (FormatCode) codeClass.newInstance();
-         this.formatCode.setGenerator(this, factory);
-      }
-      catch (Exception ex)
-      {
-         if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
-         {
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            throw new ConfigurationException(ex);
-         }
-         else
-         {
-            String pos = "format:[" + this.getName() + "]";
-            CodeClassTool.logCodeError(code, pos, ex);
-         }
-      }
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (this.formatCode != null)
+		{
+			return;
+		}
+		String code = CodeClassTool.getCode(this, factory, "code", "attrCode");
+		try
+		{
+			Class codeClass = this.createCodeClass(code);
+			this.formatCode = (FormatCode) codeClass.newInstance();
+			this.formatCode.setGenerator(this, factory);
+		}
+		catch (Exception ex)
+		{
+			if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
+			{
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				throw new ConfigurationException(ex);
+			}
+			else
+			{
+				String pos = "format:[" + this.getName() + "]";
+				CodeClassTool.logCodeError(code, pos, ex);
+			}
+		}
+	}
 
-   public String format(Object obj, Permission permission)
-         throws ConfigurationException
-   {
-      return this.format(obj, null, permission);
-   }
+	public String format(Object obj, Permission permission)
+			throws ConfigurationException
+	{
+		return this.format(obj, null, permission);
+	}
 
-   public String format(Object obj, ResultRow row, Permission permission)
-         throws ConfigurationException
-   {
-      try
-      {
-         if (this.formatCode != null)
-         {
-            return this.formatCode.invoke(obj, row, permission);
-         }
-      }
-      catch (Exception ex)
-      {
-         if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         throw new ConfigurationException(ex);
-      }
-      return "";
-   }
+	public String format(Object obj, ResultRow row, Permission permission)
+			throws ConfigurationException
+	{
+		try
+		{
+			if (this.formatCode != null)
+			{
+				return this.formatCode.invoke(obj, row, permission);
+			}
+		}
+		catch (Exception ex)
+		{
+			if (ex instanceof ConfigurationException)
+			{
+				throw (ConfigurationException) ex;
+			}
+			throw new ConfigurationException(ex);
+		}
+		return "";
+	}
 
-   public String getType()
-   {
-      return this.type;
-   }
+	public String getType()
+	{
+		return this.type;
+	}
 
-   public void setType(String type)
-   {
-      this.type = type;
-   }
+	public void setType(String type)
+	{
+		this.type = type;
+	}
 
-   public String getPattern()
-   {
-      return this.pattern;
-   }
+	public String getPattern()
+	{
+		return this.pattern;
+	}
 
-   public void setPattern(String pattern)
-   {
-      this.pattern = pattern;
-   }
+	public void setPattern(String pattern)
+	{
+		this.pattern = pattern;
+	}
 
-   private Class createCodeClass(String code)
-         throws Exception
-   {
-      String extendsStr = (String) this.getAttribute("extends");
-      Class extendsClass = FormatCodeImpl.class;
-      if (extendsStr != null)
-      {
-         extendsClass = Class.forName(extendsStr);
-      }
-      String methodHead = "public String invoke(Object obj, ResultRow row, Permission permission)"
-            + "\n      throws Exception";
-      String[] iArr = null;
-      String imports = (String) this.getAttribute("imports");
-      if (imports != null)
-      {
-         iArr = StringTool.separateString(imports, ",", true);
-      }
-      return CodeClassTool.createJavaCodeClass(extendsClass, FormatCode.class, methodHead, code, iArr);
-   }
+	private Class createCodeClass(String code)
+			throws Exception
+	{
+		String extendsStr = (String) this.getAttribute("extends");
+		Class extendsClass = FormatCodeImpl.class;
+		if (extendsStr != null)
+		{
+			extendsClass = Class.forName(extendsStr);
+		}
+		String methodHead = "public String invoke(Object obj, ResultRow row, Permission permission)"
+				+ "\n      throws Exception";
+		String[] iArr = null;
+		String imports = (String) this.getAttribute("imports");
+		if (imports != null)
+		{
+			iArr = StringTool.separateString(imports, ",", true);
+		}
+		return CodeClassTool.createJavaCodeClass(extendsClass, FormatCode.class, methodHead, code, iArr);
+	}
 
-   public ResultFormat createFormat()
-         throws ConfigurationException
-   {
-      return this;
-   }
+	public ResultFormat createFormat()
+			throws ConfigurationException
+	{
+		return this;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createFormat();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createFormat();
+	}
 
-   public interface FormatCode
-   {
-      public void setGenerator(JavaCodeFormat generator, EternaFactory factory)
-            throws ConfigurationException;
+	public interface FormatCode
+	{
+		public void setGenerator(JavaCodeFormat generator, EternaFactory factory)
+				throws ConfigurationException;
 
-      public String invoke(Object obj, ResultRow row, Permission permission)
-            throws Exception;
+		public String invoke(Object obj, ResultRow row, Permission permission)
+				throws Exception;
 
-   }
+	}
 
-   public static abstract class FormatCodeImpl
-         implements FormatCode
-   {
-      protected JavaCodeFormat generator;
-      protected EternaFactory factory;
+	public static abstract class FormatCodeImpl
+			implements FormatCode
+	{
+		protected JavaCodeFormat generator;
+		protected EternaFactory factory;
 
-      public void setGenerator(JavaCodeFormat generator, EternaFactory factory)
-      {
-         this.factory = factory;
-         this.generator = generator;
-      }
+		public void setGenerator(JavaCodeFormat generator, EternaFactory factory)
+		{
+			this.factory = factory;
+			this.generator = generator;
+		}
 
-   }
+	}
 
 }

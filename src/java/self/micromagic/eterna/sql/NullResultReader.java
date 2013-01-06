@@ -11,131 +11,131 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.share.TypeManager;
 
 /**
- * 一个空的ResultReader, 主要用于替换没有权限的ResultReader.
+ * 涓�涓┖鐨凴esultReader, 涓昏鐢ㄤ簬鏇挎崲娌℃湁鏉冮檺鐨凴esultReader.
  */
 public class NullResultReader
-      implements ResultReader
+		implements ResultReader
 {
-   protected String name;
+	protected String name;
 
-   public NullResultReader(String name)
-   {
-      this.name = name;
-   }
+	public NullResultReader(String name)
+	{
+		this.name = name;
+	}
 
-   public void initialize(EternaFactory factory)
-   {
-   }
+	public void initialize(EternaFactory factory)
+	{
+	}
 
-   public int getType()
-   {
-      return TypeManager.TYPE_IGNORE;
-   }
+	public int getType()
+	{
+		return TypeManager.TYPE_IGNORE;
+	}
 
-   public boolean isIgnore()
-   {
-      return true;
-   }
+	public boolean isIgnore()
+	{
+		return true;
+	}
 
-   public ResultFormat getFormat()
-   {
-      return null;
-   }
+	public ResultFormat getFormat()
+	{
+		return null;
+	}
 
-   public String getFormatName()
-   {
-      return null;
-   }
+	public String getFormatName()
+	{
+		return null;
+	}
 
-   public String getName()
-   {
-      return this.name;
-   }
+	public String getName()
+	{
+		return this.name;
+	}
 
-   public String getOrderName()
-   {
-      return this.name;
-   }
+	public String getOrderName()
+	{
+		return this.name;
+	}
 
-   public String getColumnName()
-   {
-      return this.name;
-   }
+	public String getColumnName()
+	{
+		return this.name;
+	}
 
-   public boolean isUseColumnName()
-   {
-      return true;
-   }
+	public boolean isUseColumnName()
+	{
+		return true;
+	}
 
-   public int getColumnIndex()
-   {
-      return -1;
-   }
+	public int getColumnIndex()
+	{
+		return -1;
+	}
 
-   public boolean needHtmlFilter() throws ConfigurationException
-   {
-      return false;
-   }
+	public boolean needHtmlFilter() throws ConfigurationException
+	{
+		return false;
+	}
 
-   public boolean isValid() throws ConfigurationException
-   {
-      return false;
-   }
+	public boolean isValid() throws ConfigurationException
+	{
+		return false;
+	}
 
-   public boolean isUseColumnIndex()
-   {
-      return false;
-   }
+	public boolean isUseColumnIndex()
+	{
+		return false;
+	}
 
-   public PermissionSet getPermissionSet()
-   {
-      return null;
-   }
+	public PermissionSet getPermissionSet()
+	{
+		return null;
+	}
 
-   public String getCaption() throws ConfigurationException
-   {
-      return null;
-   }
+	public String getCaption() throws ConfigurationException
+	{
+		return null;
+	}
 
-   public String getFilledCaption() throws ConfigurationException
-   {
-      return null;
-   }
+	public String getFilledCaption() throws ConfigurationException
+	{
+		return null;
+	}
 
-   public int getWidth() throws ConfigurationException
-   {
-      return 0;
-   }
+	public int getWidth() throws ConfigurationException
+	{
+		return 0;
+	}
 
-   public boolean isVisible() throws ConfigurationException
-   {
-      return false;
-   }
+	public boolean isVisible() throws ConfigurationException
+	{
+		return false;
+	}
 
-   public Object getAttribute(String name) throws ConfigurationException
-   {
-      return null;
-   }
+	public Object getAttribute(String name) throws ConfigurationException
+	{
+		return null;
+	}
 
-   public String[] getAttributeNames() throws ConfigurationException
-   {
-      return null;
-   }
+	public String[] getAttributeNames() throws ConfigurationException
+	{
+		return null;
+	}
 
-   public Object readResult(ResultSet rs)
-         throws SQLException
-   {
-      return null;
-   }
+	public Object readResult(ResultSet rs)
+			throws SQLException
+	{
+		return null;
+	}
 
-   public Object readCall(CallableStatement call, int index)
-   {
-      return null;
-   }
+	public Object readCall(CallableStatement call, int index)
+	{
+		return null;
+	}
 
-   public Object readObject(Object obj) throws ConfigurationException
-   {
-      return null;
-   }
+	public Object readObject(Object obj) throws ConfigurationException
+	{
+		return null;
+	}
 
 }

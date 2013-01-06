@@ -13,67 +13,67 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
  */
 public interface ConditionProperty
 {
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   String getColumnName() throws ConfigurationException;
+	String getColumnName() throws ConfigurationException;
 
-   String getColumnCaption() throws ConfigurationException;
+	String getColumnCaption() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öConditionProperty¶ÔÓ¦ÁĞµÄÊı¾İÀàĞÍ.
-    */
-   int getColumnType() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªConditionPropertyå¯¹åº”åˆ—çš„æ•°æ®ç±»å‹.
+	 */
+	int getColumnType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öConditionProperty¶ÔÓ¦ÁĞµÄ´¿Êı¾İÀàĞÍ.
-    */
-   int getColumnPureType() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªConditionPropertyå¯¹åº”åˆ—çš„çº¯æ•°æ®ç±»å‹.
+	 */
+	int getColumnPureType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öConditionProperty¶ÔÓ¦ÁĞµÄÊı¾İÀàĞÍÃû³Æ.
-    */
-   String getColumnTypeName() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªConditionPropertyå¯¹åº”åˆ—çš„æ•°æ®ç±»å‹åç§°.
+	 */
+	String getColumnTypeName() throws ConfigurationException;
 
-   /**
-    * Í¨¹ıStringÀàĞÍµÄÊı¾İ¹¹³ÉÒ»¸öValuePreparer.
-    */
-   ValuePreparer createValuePreparer(String value) throws ConfigurationException;
+	/**
+	 * é€šè¿‡Stringç±»å‹çš„æ•°æ®æ„æˆä¸€ä¸ªValuePreparer.
+	 */
+	ValuePreparer createValuePreparer(String value) throws ConfigurationException;
 
-   /**
-    * Í¨¹ıObjectÀàĞÍµÄÊı¾İ¹¹³ÉÒ»¸öValuePreparer.
-    */
-   ValuePreparer createValuePreparer(Object value) throws ConfigurationException;
+	/**
+	 * é€šè¿‡Objectç±»å‹çš„æ•°æ®æ„æˆä¸€ä¸ªValuePreparer.
+	 */
+	ValuePreparer createValuePreparer(Object value) throws ConfigurationException;
 
-   /**
-    * ÊÇ·ñColumnTypeµÄÀàĞÍÎªTYPE_IGNORE.
-    * Èç¹ûÎªtrueÔò±íÊ¾ºöÂÔ´ËProperty, ¿ÉÒÔ½«ÆäÉ¾³ı, ÕâÑù¿ÉÒÔÔÚProperty
-    * ¼Ì³ĞÊ±È¥µô¸¸¶ÔÏóÖĞ²»ĞèÒªµÄProperty.
-    */
-   boolean isIgnore() throws ConfigurationException;
+	/**
+	 * æ˜¯å¦ColumnTypeçš„ç±»å‹ä¸ºTYPE_IGNORE.
+	 * å¦‚æœä¸ºtrueåˆ™è¡¨ç¤ºå¿½ç•¥æ­¤Property, å¯ä»¥å°†å…¶åˆ é™¤, è¿™æ ·å¯ä»¥åœ¨Property
+	 * ç»§æ‰¿æ—¶å»æ‰çˆ¶å¯¹è±¡ä¸­ä¸éœ€è¦çš„Property.
+	 */
+	boolean isIgnore() throws ConfigurationException;
 
-   /**
-    * ¸ÃConditionPropertyÊÇ·ñ¿É¼û.
-    */
-   boolean isVisible() throws ConfigurationException;
+	/**
+	 * è¯¥ConditionPropertyæ˜¯å¦å¯è§.
+	 */
+	boolean isVisible() throws ConfigurationException;
 
-   String getConditionInputType() throws ConfigurationException;
+	String getConditionInputType() throws ConfigurationException;
 
-   String getDefaultValue() throws ConfigurationException;
+	String getDefaultValue() throws ConfigurationException;
 
-   String getAttribute(String name) throws ConfigurationException;
+	String getAttribute(String name) throws ConfigurationException;
 
-   String[] getAttributeNames() throws ConfigurationException;
+	String[] getAttributeNames() throws ConfigurationException;
 
-   PermissionSet getPermissionSet() throws ConfigurationException;
+	PermissionSet getPermissionSet() throws ConfigurationException;
 
-   String getConditionBuilderListName() throws ConfigurationException;
+	String getConditionBuilderListName() throws ConfigurationException;
 
-   List getConditionBuilderList() throws ConfigurationException;
+	List getConditionBuilderList() throws ConfigurationException;
 
-   boolean isUseDefaultConditionBuilder() throws ConfigurationException;
+	boolean isUseDefaultConditionBuilder() throws ConfigurationException;
 
-   ConditionBuilder getDefaultConditionBuilder() throws ConfigurationException;
+	ConditionBuilder getDefaultConditionBuilder() throws ConfigurationException;
 
 }

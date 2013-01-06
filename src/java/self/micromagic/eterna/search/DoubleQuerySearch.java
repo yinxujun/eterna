@@ -27,29 +27,29 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * Á½´Î²éÑ¯µÄËÑË÷.
- * µÚÒ»´Î²éÑ¯, È¡³öËùÓĞµÄÖ÷¼ü; µÚ¶ş´Î²éÑ¯, ¸ù¾İÇ°Ò»´Î²éÑ¯
- * µÄÖ÷¼üÈ¡³öÕıÊ½µÄ½á¹û. <p>
+ * ä¸¤æ¬¡æŸ¥è¯¢çš„æœç´¢.
+ * ç¬¬ä¸€æ¬¡æŸ¥è¯¢, å–å‡ºæ‰€æœ‰çš„ä¸»é”®; ç¬¬äºŒæ¬¡æŸ¥è¯¢, æ ¹æ®å‰ä¸€æ¬¡æŸ¥è¯¢
+ * çš„ä¸»é”®å–å‡ºæ­£å¼çš„ç»“æœ. <p>
  *
- * ¿ÉÉèÖÃµÄÊôĞÔÃû³Æ:
+ * å¯è®¾ç½®çš„å±æ€§åç§°:
  *
- * nextQueryName(±ØÑ¡)             µÚ¶ş´Î²éÑ¯µÄqueryÃû³Æ
+ * nextQueryName(å¿…é€‰)             ç¬¬äºŒæ¬¡æŸ¥è¯¢çš„queryåç§°
  *
- * keyConditionIndex               ÉÏÃæÕâ¸öqueryÖĞÉèÖÃkeyÌõ¼şµÄË÷ÒıÖµ, Ä¬ÈÏÖµÎª1
+ * keyConditionIndex               ä¸Šé¢è¿™ä¸ªqueryä¸­è®¾ç½®keyæ¡ä»¶çš„ç´¢å¼•å€¼, é»˜è®¤å€¼ä¸º1
  *
- * keyNameList(±ØÑ¡)               Ö÷¼üÃû³ÆÁĞ±í, ¸ñÊ½Îª  name1,name2,... »ò name1:col1,name2,...
+ * keyNameList(å¿…é€‰)               ä¸»é”®åç§°åˆ—è¡¨, æ ¼å¼ä¸º  name1,name2,... æˆ– name1:col1,name2,...
  *
- * assistSearchName                ¸¨ÖúµÄsearchÃû³Æ, ÓÃÓÚÉèÖÃÆäËûµÄÌõ¼ş, ¿ÉÊ¹ÓÃ$same±íÊ¾Ê¹ÓÃ±¾search
+ * assistSearchName                è¾…åŠ©çš„searchåç§°, ç”¨äºè®¾ç½®å…¶ä»–çš„æ¡ä»¶, å¯ä½¿ç”¨$sameè¡¨ç¤ºä½¿ç”¨æœ¬search
  *
- * needAssistCondition             ÊÇ·ñĞèÒª¸¨ÖúsearchµÄÌõ¼ş, µ±assistSearchNameÎª$sameÊ±Ä¬ÈÏÖµÎªfalse
- *                                 µ±assistSearchNameÎªÆäËüsearchµÄÃû³ÆÊ±Ä¬ÈÏÖµÎªtrue
+ * needAssistCondition             æ˜¯å¦éœ€è¦è¾…åŠ©searchçš„æ¡ä»¶, å½“assistSearchNameä¸º$sameæ—¶é»˜è®¤å€¼ä¸ºfalse
+ *                                 å½“assistSearchNameä¸ºå…¶å®ƒsearchçš„åç§°æ—¶é»˜è®¤å€¼ä¸ºtrue
  *
  * @author micromagic@sina.com
  */
 public class DoubleQuerySearch extends SearchAdapterImpl
 		implements SearchAdapter, SearchAdapterGenerator
 {
-   private String sessionNextQueryTag;
+	private String sessionNextQueryTag;
 	private int nextQueryIndex;
 	private int keyConditionIndex = 1;
 	private int[] keyIndexs;
@@ -60,20 +60,20 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 	private boolean needAssistCondition = false;
 
 	/**
-	 * Ã¿¸öÌõ¼şµ¥ÔªËùÕ¼µÄ×Ö·ûÊı.
+	 * æ¯ä¸ªæ¡ä»¶å•å…ƒæ‰€å çš„å­—ç¬¦æ•°.
 	 */
 	private int conditionItemSize = 0;
 
-   private boolean initialized = false;
+	private boolean initialized = false;
 
 	public void initialize(EternaFactory factory)
 			throws ConfigurationException
 	{
-      if (this.initialized)
-      {
-         return;
-      }
-      this.initialized = true;
+		if (this.initialized)
+		{
+			return;
+		}
+		this.initialized = true;
 		super.initialize(factory);
 		String tmp;
 
@@ -227,7 +227,7 @@ public class DoubleQuerySearch extends SearchAdapterImpl
 	}
 
 	/**
-	 * »ñÈ¡Ö´ĞĞµÚ¶ş´Î²éÑ¯µÄquery¶ÔÏó.
+	 * è·å–æ‰§è¡Œç¬¬äºŒæ¬¡æŸ¥è¯¢çš„queryå¯¹è±¡.
 	 */
 	private void setNextQueryCondition(ResultIterator keyIterator, QueryAdapter nextQuery)
 			throws ConfigurationException, SQLException

@@ -7,49 +7,49 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
 
 public interface SQLParameter
 {
-   /**
-    * ³õÊ¼»¯±¾SQLParameter.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æœ¬SQLParameter.
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öSQLParameterµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªSQLParameterçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¶ÔÓ¦µÄÁĞÃû.
-    */
-   String getColumnName() throws ConfigurationException;
+	/**
+	 * è·å–å¯¹åº”çš„åˆ—å.
+	 */
+	String getColumnName() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öSQLParameterµÄÊı¾İÀàĞÍ.
-    */
-   int getType() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªSQLParameterçš„æ•°æ®ç±»å‹.
+	 */
+	int getType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öSQLParameterµÄ´¿Êı¾İÀàĞÍ.
-    */
-   int getPureType() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªSQLParameterçš„çº¯æ•°æ®ç±»å‹.
+	 */
+	int getPureType() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öSQLParameterµÄ²ÎÊıË÷ÒıÖµ.
-    */
-   int getIndex() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªSQLParameterçš„å‚æ•°ç´¢å¼•å€¼.
+	 */
+	int getIndex() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öSQLParameterµÄÊı¾İÀàĞÍÃû³Æ.
-    */
-   String getTypeName() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªSQLParameterçš„æ•°æ®ç±»å‹åç§°.
+	 */
+	String getTypeName() throws ConfigurationException;
 
-   /**
-    * Í¨¹ıStringÀàĞÍµÄÊı¾İ¹¹³ÉÒ»¸öValuePreparer.
-    */
-   ValuePreparer createValuePreparer(String value) throws ConfigurationException;
+	/**
+	 * é€šè¿‡Stringç±»å‹çš„æ•°æ®æ„æˆä¸€ä¸ªValuePreparer.
+	 */
+	ValuePreparer createValuePreparer(String value) throws ConfigurationException;
 
-   /**
-    * Í¨¹ıObjectÀàĞÍµÄÊı¾İ¹¹³ÉÒ»¸öValuePreparer.
-    */
-   ValuePreparer createValuePreparer(Object value) throws ConfigurationException;
+	/**
+	 * é€šè¿‡Objectç±»å‹çš„æ•°æ®æ„æˆä¸€ä¸ªValuePreparer.
+	 */
+	ValuePreparer createValuePreparer(Object value) throws ConfigurationException;
 
 }

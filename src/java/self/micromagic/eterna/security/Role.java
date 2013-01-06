@@ -3,12 +3,12 @@ package self.micromagic.eterna.security;
 
 public interface Role
 {
-   String getRoleId();
+	String getRoleId();
 
-   String getRoleName();
+	String getRoleName();
 
-   Object getAttribute(String name);
+	Object getAttribute(String name);
 
-   Permission getPermission();
+	Permission getPermission();
 
 }

@@ -9,14 +9,14 @@ import self.micromagic.eterna.share.Generator;
  */
 public interface ConditionBuilderGenerator extends Generator
 {
-   void setName(String name) throws ConfigurationException;
+	void setName(String name) throws ConfigurationException;
 
-   String getName() throws ConfigurationException;
+	String getName() throws ConfigurationException;
 
-   void setCaption(String caption) throws ConfigurationException;
+	void setCaption(String caption) throws ConfigurationException;
 
-   void setOperator(String operator) throws ConfigurationException;
+	void setOperator(String operator) throws ConfigurationException;
 
-   ConditionBuilder createConditionBuilder() throws ConfigurationException;
+	ConditionBuilder createConditionBuilder() throws ConfigurationException;
 
 }

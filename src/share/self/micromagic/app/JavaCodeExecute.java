@@ -4,16 +4,16 @@ package self.micromagic.app;
 
 
 /**
- * ¶¯Ì¬±àÒëjava´úÂëÀ´¹¹ÔìÒ»¸öÖ´ĞĞÆ÷.
+ * åŠ¨æ€ç¼–è¯‘javaä»£ç æ¥æ„é€ ä¸€ä¸ªæ‰§è¡Œå™¨.
  *
- * ĞèÉèÖÃµÄÊôĞÔ
- * code                  Ö´ĞĞµÄjava´úÂë                                                           2Ñ¡1
- * attrCode              ´ÓfactoryµÄÊôĞÔÖĞ»ñÈ¡Ö´ĞĞµÄjava´úÂë                                      2Ñ¡1
+ * éœ€è®¾ç½®çš„å±æ€§
+ * code                  æ‰§è¡Œçš„javaä»£ç                                                            2é€‰1
+ * attrCode              ä»factoryçš„å±æ€§ä¸­è·å–æ‰§è¡Œçš„javaä»£ç                                       2é€‰1
  *
- * imports               ĞèÒªÒıÈëµÄ°ü, Èç£ºjava.lang, Ö»Ğè¸ø³ö°üÂ·¾¶, ÒÔ","·Ö¸ô                   ¿ÉÑ¡
- * extends               ¼Ì³ĞµÄÀà                                                                 ¿ÉÑ¡
- * codeParam             Ô¤±àÒëÖ´ĞĞ´úÂëµÄ²ÎÊı, ¸ñÊ½Îª: key1=value1;key2=value2                    ¿ÉÑ¡
- * throwCompileError     ÊÇ·ñĞèÒª½«±àÒëµÄ´íÎóÅ×³ö, Å×³ö´íÎó»á´ò¶Ï³õÊ¼»¯µÄÖ´ĞĞ                     Ä¬ÈÏÎªfalse
+ * imports               éœ€è¦å¼•å…¥çš„åŒ…, å¦‚ï¼šjava.lang, åªéœ€ç»™å‡ºåŒ…è·¯å¾„, ä»¥","åˆ†éš”                   å¯é€‰
+ * extends               ç»§æ‰¿çš„ç±»                                                                 å¯é€‰
+ * codeParam             é¢„ç¼–è¯‘æ‰§è¡Œä»£ç çš„å‚æ•°, æ ¼å¼ä¸º: key1=value1;key2=value2                    å¯é€‰
+ * throwCompileError     æ˜¯å¦éœ€è¦å°†ç¼–è¯‘çš„é”™è¯¯æŠ›å‡º, æŠ›å‡ºé”™è¯¯ä¼šæ‰“æ–­åˆå§‹åŒ–çš„æ‰§è¡Œ                     é»˜è®¤ä¸ºfalse
  *
  * @deprecated
  * @see self.micromagic.dc.JavaCodeExecute

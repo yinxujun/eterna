@@ -18,51 +18,51 @@ import self.micromagic.eterna.sql.impl.ResultRowImpl;
  * @see self.micromagic.util.CustomResultIterator
  */
 public class CustomResultIterator extends AbstractResultIterator
-      implements ResultIterator
+		implements ResultIterator
 {
-   private int recordCount = 0;
-   private Permission permission;
+	private int recordCount = 0;
+	private Permission permission;
 
-   /**
-    * @deprecated
-    * @see #CustomResultIterator(ResultReaderManager, Permission)
-    */
-   public CustomResultIterator(List readerList)
-   {
-      super(readerList);
-      this.result = new LinkedList();
-   }
+	/**
+	 * @deprecated
+	 * @see #CustomResultIterator(ResultReaderManager, Permission)
+	 */
+	public CustomResultIterator(List readerList)
+	{
+		super(readerList);
+		this.result = new LinkedList();
+	}
 
-   public CustomResultIterator(ResultReaderManager rrm, Permission permission)
-         throws ConfigurationException
-   {
-      super(rrm, permission);
-      this.permission = permission;
-      this.result = new LinkedList();
-   }
+	public CustomResultIterator(ResultReaderManager rrm, Permission permission)
+			throws ConfigurationException
+	{
+		super(rrm, permission);
+		this.permission = permission;
+		this.result = new LinkedList();
+	}
 
 	private CustomResultIterator(Permission permission)
 	{
 		this.permission = permission;
 	}
 
-   public ResultRow createRow(Object[] values)
-         throws ConfigurationException
-   {
-      return this.createRow(values, true);
-   }
+	public ResultRow createRow(Object[] values)
+			throws ConfigurationException
+	{
+		return this.createRow(values, true);
+	}
 
-   public ResultRow createRow(Object[] values, boolean autoAdd)
-         throws ConfigurationException
-   {
-      if (this.readerManager == null)
-      {
-         throw new ConfigurationException("Must use [CustomResultIterator(ResultReaderManager, Permission)] "
-               + "to constructor this object.");
-      }
+	public ResultRow createRow(Object[] values, boolean autoAdd)
+			throws ConfigurationException
+	{
+		if (this.readerManager == null)
+		{
+			throw new ConfigurationException("Must use [CustomResultIterator(ResultReaderManager, Permission)] "
+					+ "to constructor this object.");
+		}
 		try
 		{
-      	ResultRow row = new ResultRowImpl(values, this, this.permission);
+			ResultRow row = new ResultRowImpl(values, this, this.permission);
 			if (autoAdd)
 			{
 				this.result.add(row);
@@ -73,42 +73,42 @@ public class CustomResultIterator extends AbstractResultIterator
 		{
 			throw new ConfigurationException(ex);
 		}
-   }
+	}
 
-   /**
-    * @deprecated
-    * @see #createRow(Object[])
-    */
-   public void addRow(ResultRow row)
-   {
-      this.result.add(row);
-   }
+	/**
+	 * @deprecated
+	 * @see #createRow(Object[])
+	 */
+	public void addRow(ResultRow row)
+	{
+		this.result.add(row);
+	}
 
-   public void addedOver()
-   {
-      this.resultItr = this.result.iterator();
-      this.recordCount = this.result.size();
-   }
+	public void addedOver()
+	{
+		this.resultItr = this.result.iterator();
+		this.recordCount = this.result.size();
+	}
 
-   public int getRealRecordCount()
-   {
-      return this.recordCount;
-   }
+	public int getRealRecordCount()
+	{
+		return this.recordCount;
+	}
 
-   public int getRecordCount()
-   {
-      return this.recordCount;
-   }
+	public int getRecordCount()
+	{
+		return this.recordCount;
+	}
 
-   public boolean isRealRecordCountAvailable()
-   {
-      return true;
-   }
+	public boolean isRealRecordCountAvailable()
+	{
+		return true;
+	}
 
-   public boolean isHasMoreRecord()
-   {
-      return false;
-   }
+	public boolean isHasMoreRecord()
+	{
+		return false;
+	}
 
 	public ResultIterator copy()
 			throws ConfigurationException

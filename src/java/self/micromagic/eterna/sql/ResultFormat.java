@@ -7,37 +7,37 @@ import self.micromagic.eterna.share.EternaFactory;
 
 public interface ResultFormat
 {
-   /**
-    * ³õÊ¼»¯format.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–format.
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öformatµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªformatçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * ¶ÔÒ»¸ö¶ÔÏó½øĞĞ¸ñÊ½»¯Êä³ö. <p>
-    * ×¢: ¸ñÊ½»¯µÄ½á¹û²»ÄÜ·µ»Ø<code>null</code>, Èç¹ûÎŞ·¨¸ñÊ½»¯, ÇëÅ×³öÒì³£.
-    *
-    * @param obj         Òª½øĞĞ¸ñÊ½»¯Êä³öµÄ¶ÔÏó
-    * @param permission  Ïà¹ØµÄÈ¨ÏŞĞÅÏ¢
-    * @return   ¸ñÊ½»¯ºóµÄ×Ö·û´®
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   String format(Object obj, Permission permission) throws ConfigurationException;
+	/**
+	 * å¯¹ä¸€ä¸ªå¯¹è±¡è¿›è¡Œæ ¼å¼åŒ–è¾“å‡º. <p>
+	 * æ³¨: æ ¼å¼åŒ–çš„ç»“æœä¸èƒ½è¿”å›<code>null</code>, å¦‚æœæ— æ³•æ ¼å¼åŒ–, è¯·æŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param obj         è¦è¿›è¡Œæ ¼å¼åŒ–è¾“å‡ºçš„å¯¹è±¡
+	 * @param permission  ç›¸å…³çš„æƒé™ä¿¡æ¯
+	 * @return   æ ¼å¼åŒ–åçš„å­—ç¬¦ä¸²
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	String format(Object obj, Permission permission) throws ConfigurationException;
 
-   /**
-    * ¶ÔÒ»¸ö¶ÔÏó½øĞĞ¸ñÊ½»¯Êä³ö. <p>
-    * ×¢: ¸ñÊ½»¯µÄ½á¹û²»ÄÜ·µ»Ø<code>null</code>, Èç¹ûÎŞ·¨¸ñÊ½»¯, ÇëÅ×³öÒì³£.
-    *
-    * @param obj         Òª½øĞĞ¸ñÊ½»¯Êä³öµÄ¶ÔÏó
-    * @param row         µ±Ç°¸ñÊ½»¯¶ÔÏóËùÔÚµÄĞĞ¶ÔÏó
-    * @param permission  Ïà¹ØµÄÈ¨ÏŞĞÅÏ¢
-    * @return   ¸ñÊ½»¯ºóµÄ×Ö·û´®
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´í»òÎŞ·¨¸ñÊ½»¯Ê±.
-    */
-   String format(Object obj, ResultRow row, Permission permission) throws ConfigurationException;
+	/**
+	 * å¯¹ä¸€ä¸ªå¯¹è±¡è¿›è¡Œæ ¼å¼åŒ–è¾“å‡º. <p>
+	 * æ³¨: æ ¼å¼åŒ–çš„ç»“æœä¸èƒ½è¿”å›<code>null</code>, å¦‚æœæ— æ³•æ ¼å¼åŒ–, è¯·æŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param obj         è¦è¿›è¡Œæ ¼å¼åŒ–è¾“å‡ºçš„å¯¹è±¡
+	 * @param row         å½“å‰æ ¼å¼åŒ–å¯¹è±¡æ‰€åœ¨çš„è¡Œå¯¹è±¡
+	 * @param permission  ç›¸å…³çš„æƒé™ä¿¡æ¯
+	 * @return   æ ¼å¼åŒ–åçš„å­—ç¬¦ä¸²
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æˆ–æ— æ³•æ ¼å¼åŒ–æ—¶.
+	 */
+	String format(Object obj, ResultRow row, Permission permission) throws ConfigurationException;
 
 }

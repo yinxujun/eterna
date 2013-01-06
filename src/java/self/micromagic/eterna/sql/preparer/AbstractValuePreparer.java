@@ -7,71 +7,71 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 public abstract class AbstractValuePreparer
-      implements ValuePreparer
+		implements ValuePreparer
 {
-   protected static final Log log = Tool.log;
+	protected static final Log log = Tool.log;
 
-   protected ValuePreparerCreater vpc;
-   protected int index;
-   protected String name;
+	protected ValuePreparerCreater vpc;
+	protected int index;
+	protected String name;
 
-   public AbstractValuePreparer(ValuePreparerCreater vpc)
-   {
-      this.vpc = vpc;
-   }
+	public AbstractValuePreparer(ValuePreparerCreater vpc)
+	{
+		this.vpc = vpc;
+	}
 
-   public ValuePreparerCreater getCreater()
-   {
-      return this.vpc;
-   }
+	public ValuePreparerCreater getCreater()
+	{
+		return this.vpc;
+	}
 
-   public void setName(String name)
-   {
-      this.name = name;
-   }
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 
-   public String getName()
-   {
-      return this.name;
-   }
+	public String getName()
+	{
+		return this.name;
+	}
 
-   public void setRelativeIndex(int index)
-   {
-      this.index = index;
-   }
+	public void setRelativeIndex(int index)
+	{
+		this.index = index;
+	}
 
-   public int getRelativeIndex()
-   {
-      return this.index;
-   }
+	public int getRelativeIndex()
+	{
+		return this.index;
+	}
 
-   static abstract class AbstractCreater
-         implements ValuePreparerCreater
-   {
-      protected ValuePreparerCreaterGenerator vpcg;
+	static abstract class AbstractCreater
+			implements ValuePreparerCreater
+	{
+		protected ValuePreparerCreaterGenerator vpcg;
 
-      public AbstractCreater(ValuePreparerCreaterGenerator vpcg)
-      {
-         this.vpcg = vpcg;
-      }
+		public AbstractCreater(ValuePreparerCreaterGenerator vpcg)
+		{
+			this.vpcg = vpcg;
+		}
 
-      public EternaFactory getFactory()
-            throws ConfigurationException
-      {
-         return this.vpcg.getFactory();
-      }
+		public EternaFactory getFactory()
+				throws ConfigurationException
+		{
+			return this.vpcg.getFactory();
+		}
 
-      public Object getAttribute(String name)
-            throws ConfigurationException
-      {
-         return this.vpcg.getAttribute(name);
-      }
+		public Object getAttribute(String name)
+				throws ConfigurationException
+		{
+			return this.vpcg.getAttribute(name);
+		}
 
-      public boolean isEmptyStringToNull()
-      {
-         return this.vpcg.isEmptyStringToNull();
-      }
+		public boolean isEmptyStringToNull()
+		{
+			return this.vpcg.isEmptyStringToNull();
+		}
 
-   }
+	}
 
 }

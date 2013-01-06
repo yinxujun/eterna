@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * ×ÊÔ´Êı¾İ¹ÜÀíÕß.
+ * èµ„æºæ•°æ®ç®¡ç†è€….
  */
 public class ResManager
 {
@@ -26,7 +26,7 @@ public class ResManager
 	private Map resCache = new HashMap();
 
 	/**
-	 * ¶Ô´úÂë½øĞĞËõ½ø´¦Àí.
+	 * å¯¹ä»£ç è¿›è¡Œç¼©è¿›å¤„ç†.
 	 */
 	public static String indentCode(String code, int indent)
 	{
@@ -71,8 +71,8 @@ public class ResManager
 	}
 
 	/**
-	 * ´¦Àí1ĞĞµÄËõ½ø.
-	 * ·µ»ØÁ½¸öÊı, ĞèÒª±ä¸üµÄËõ½øÊı ¼° µ±Ç°ĞĞµÄ¿Õ¸ñÊı
+	 * å¤„ç†1è¡Œçš„ç¼©è¿›.
+	 * è¿”å›ä¸¤ä¸ªæ•°, éœ€è¦å˜æ›´çš„ç¼©è¿›æ•° åŠ å½“å‰è¡Œçš„ç©ºæ ¼æ•°
 	 */
 	private static int[] doIndentLine(int indent, String line, StringAppender buf,
 			int preIndent, int preBeginSpace)
@@ -90,11 +90,11 @@ public class ResManager
 			}
 			else if (c == '\t')
 			{
-				// tab¼üËãÒ»¸öËõ½ø¾àÀë-1, ÒòÎª±¾ÉíÒÑ¾­ÓĞÒ»¸ö¿Õ¸ñÁË
+				// tabé”®ç®—ä¸€ä¸ªç¼©è¿›è·ç¦»-1, å› ä¸ºæœ¬èº«å·²ç»æœ‰ä¸€ä¸ªç©ºæ ¼äº†
 				plusCount += INDENT_SIZE - 1;
 			}
 		}
-		// Ã»ÓĞÕÒµ½·Ç¿Õ¸ñµÄÆäÊµ×Ö·û, ×÷Îª¿ÕĞĞ´¦Àí
+		// æ²¡æœ‰æ‰¾åˆ°éç©ºæ ¼çš„å…¶å®å­—ç¬¦, ä½œä¸ºç©ºè¡Œå¤„ç†
 		if (index == -1)
 		{
 			return new int[]{indent, -1};
@@ -124,7 +124,7 @@ public class ResManager
 	}
 
 	/**
-	 * »ñµÃ×îºóÒ»¸ö·Ç¿Õ¸ñ×Ö·û, Èç¹û¶¼ÊÇ¿Õ¸ñÔò·µ»Ø0
+	 * è·å¾—æœ€åä¸€ä¸ªéç©ºæ ¼å­—ç¬¦, å¦‚æœéƒ½æ˜¯ç©ºæ ¼åˆ™è¿”å›0
 	 */
 	private static char getLastValidChar(String line)
 	{
@@ -150,7 +150,7 @@ public class ResManager
 		while (true)
 		{
 			lineNum++;
-			// »ñÈ¡ÏÂÒ»ĞĞ
+			// è·å–ä¸‹ä¸€è¡Œ
 			String line = in.readLine();
 			if (line == null)
 			{
@@ -173,12 +173,12 @@ public class ResManager
 
 				if (firstChar == SPECIAL_FLAG && secondChar != SPECIAL_FLAG)
 				{
-					// Ò»¸ö¡°#¡±´ú±í×¢ÊÍ, ÎŞĞè´¦Àí
+					// ä¸€ä¸ªâ€œ#â€ä»£è¡¨æ³¨é‡Š, æ— éœ€å¤„ç†
 				}
 				else if (firstChar == SPECIAL_FLAG && secondChar == SPECIAL_FLAG
 						&& thirdChar != SPECIAL_FLAG)
 				{
-					// Á½¸ö¡°#¡±¿ªÊ¼´ú±í×ÊÔ´µÄ¿ªÊ¼, ºóÃæµÄÎÄ×ÖÈ¥³ı¿ØÖÆ×Ö·ûºóÎª×ÊÔ´µÄÃû³Æ
+					// ä¸¤ä¸ªâ€œ#â€å¼€å§‹ä»£è¡¨èµ„æºçš„å¼€å§‹, åé¢çš„æ–‡å­—å»é™¤æ§åˆ¶å­—ç¬¦åä¸ºèµ„æºçš„åç§°
 					nowKey = line.substring(2).trim();
 					List resList = new ArrayList();
 					if (initMap.put(nowKey, resList) != null)
@@ -188,7 +188,7 @@ public class ResManager
 				}
 				else
 				{
-					// ÆäËüÇé¿öÎª×ÊÔ´µÄÎÄ±¾
+					// å…¶å®ƒæƒ…å†µä¸ºèµ„æºçš„æ–‡æœ¬
 					if (nowKey == null)
 					{
 						throw new IOException("Hasn't res name at line:" + lineNum + ".");
@@ -196,7 +196,7 @@ public class ResManager
 					if (firstChar == SPECIAL_FLAG && secondChar == SPECIAL_FLAG
 							&& thirdChar == SPECIAL_FLAG)
 					{
-						// Á¬Ğø3¸ö¡°#¡±¿ªÊ¼´ú±íÒ»¸ö¡°#¡±
+						// è¿ç»­3ä¸ªâ€œ#â€å¼€å§‹ä»£è¡¨ä¸€ä¸ªâ€œ#â€
 						line = line.substring(2);
 					}
 					List resList = (List) initMap.get(nowKey);
@@ -205,7 +205,7 @@ public class ResManager
 			}
 			else if (!this.skipEmptyLine && nowKey != null)
 			{
-				// Èç¹û²»ºöÂÔ¿ÕĞĞ, ÇÒ¿ªÊ¼ÁË×ÊÔ´ÎÄ±¾, Ôò½«¿ÕĞĞ×÷Îª×ÊÔ´ÎÄ±¾µÄÒ»²¿·Ö
+				// å¦‚æœä¸å¿½ç•¥ç©ºè¡Œ, ä¸”å¼€å§‹äº†èµ„æºæ–‡æœ¬, åˆ™å°†ç©ºè¡Œä½œä¸ºèµ„æºæ–‡æœ¬çš„ä¸€éƒ¨åˆ†
 				List resList = (List) initMap.get(nowKey);
 				resList.add(line);
 			}
@@ -220,14 +220,14 @@ public class ResManager
 	}
 
 	/**
-	 * Êä³ö×ÊÔ´µÄÖµ.
+	 * è¾“å‡ºèµ„æºçš„å€¼.
 	 *
-	 * @param resName		ĞèÒªÊä³öµÄ×ÊÔ´µÄÃû³Æ
-	 * @param paramBind	 Êä³öµÄ×ÊÔ´ĞèÒª°ó¶¨µÄ²ÎÊı
-	 * @param indentCount  Êä³öµÄ×ÊÔ´Ã¿ĞĞĞèÒªËõ½øµÄÖµ
-	 * @param buf			 ÓÃÓÚÊä³ö×ÊÔ´µÄ»º´æ
-	 * @return	 Èç¹û¸ø³öÁËbuf²ÎÊı, Ôò·µ»Øbuf, Èç¹ûÎ´¸ø³öÔò·µ»Ø
-	 *				ĞÂÉú³ÉµÄ<code>StringAppender</code>
+	 * @param resName		éœ€è¦è¾“å‡ºçš„èµ„æºçš„åç§°
+	 * @param paramBind	 è¾“å‡ºçš„èµ„æºéœ€è¦ç»‘å®šçš„å‚æ•°
+	 * @param indentCount  è¾“å‡ºçš„èµ„æºæ¯è¡Œéœ€è¦ç¼©è¿›çš„å€¼
+	 * @param buf			 ç”¨äºè¾“å‡ºèµ„æºçš„ç¼“å­˜
+	 * @return	 å¦‚æœç»™å‡ºäº†bufå‚æ•°, åˆ™è¿”å›buf, å¦‚æœæœªç»™å‡ºåˆ™è¿”å›
+	 *				æ–°ç”Ÿæˆçš„<code>StringAppender</code>
 	 */
 	public StringAppender printRes(String resName, Map paramBind, int indentCount, StringAppender buf)
 	{
@@ -254,7 +254,7 @@ public class ResManager
 	}
 
 	/**
-	 * ´¦ÀíÃ¿ĞĞÆğÊ¼²¿·ÖµÄËõ½ø
+	 * å¤„ç†æ¯è¡Œèµ·å§‹éƒ¨åˆ†çš„ç¼©è¿›
 	 */
 	private static void dealIndent(int indentCount, StringAppender buf)
 	{
@@ -275,7 +275,7 @@ public class ResManager
 	}
 
 	/**
-	 * ½«ListÀàĞÍµÄ×ÊÔ´ÎÄ±¾×ª»»³É×Ö·û´®Êı×é.
+	 * å°†Listç±»å‹çš„èµ„æºæ–‡æœ¬è½¬æ¢æˆå­—ç¬¦ä¸²æ•°ç»„.
 	 */
 	private String[] transToArray(List resList)
 	{
@@ -284,7 +284,7 @@ public class ResManager
 	}
 
 	/**
-	 * »ñÈ¡¶ÁÈ¡×ÊÔ´Êı¾İÊ±Ê¹ÓÃµÄ×Ö·û¼¯.
+	 * è·å–è¯»å–èµ„æºæ•°æ®æ—¶ä½¿ç”¨çš„å­—ç¬¦é›†.
 	 */
 	public String getCharset()
 	{
@@ -292,7 +292,7 @@ public class ResManager
 	}
 
 	/**
-	 * ÉèÖÃ¶ÁÈ¡×ÊÔ´Êı¾İÊ±Ê¹ÓÃµÄ×Ö·û¼¯.
+	 * è®¾ç½®è¯»å–èµ„æºæ•°æ®æ—¶ä½¿ç”¨çš„å­—ç¬¦é›†.
 	 */
 	public void setCharset(String charset)
 	{

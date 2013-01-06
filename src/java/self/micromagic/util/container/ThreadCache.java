@@ -5,45 +5,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ¹ÜÀíÏß³ÌÖĞ»º´æµÄÊôĞÔ.
+ * ç®¡ç†çº¿ç¨‹ä¸­ç¼“å­˜çš„å±æ€§.
  */
 public class ThreadCache
 {
-   /**
-    * ´æ·Å<code>ThreadCache</code>ÊµÀıµÄ<code>ThreadLocal</code>µÄÊµÏÖ.
+	/**
+	 * å­˜æ”¾<code>ThreadCache</code>å®ä¾‹çš„<code>ThreadLocal</code>çš„å®ç°.
 	 *
-	 * ĞÂ°æ±¾ÖĞÈ¡ÏûÁËÕâÖÖÊµÏÖ·½Ê½.
-	 * ÒòÎªÔÚÓ¦ÓÃ·şÎñÆ÷»áÊ¹ÓÃÏß³Ì»º³å³Ø, ÕâÑùÏß³ÌÊÇ²»»á±»ÊÍ·ÅµÄ, ÄÇ»º´æÔÚÏß³Ì
-	 * ÖĞµÄ¶ÔÏóÒ²²»»á±»ÊÍ·Å. µ±Ó¦ÓÃ±»ÖØĞÂ¼ÓÔØµÄÊ±ºò, Ô­À´µÄÓ¦ÓÃ¾ÍÎŞ·¨±»ÊÍ·Å,
-	 * ÒòÎªĞÂµÄÓ¦ÓÃ²úÉúÁËĞÂµÄThreadLocal, ²»»á¸²¸ÇÔ­À´µÄ, ´Ó¶øÔì³ÉÄÚ´æµÄĞ¹Â©.
-    */
-   //private static final ThreadLocal localCache = new ThreadLocalCache();
+	 * æ–°ç‰ˆæœ¬ä¸­å–æ¶ˆäº†è¿™ç§å®ç°æ–¹å¼.
+	 * å› ä¸ºåœ¨åº”ç”¨æœåŠ¡å™¨ä¼šä½¿ç”¨çº¿ç¨‹ç¼“å†²æ± , è¿™æ ·çº¿ç¨‹æ˜¯ä¸ä¼šè¢«é‡Šæ”¾çš„, é‚£ç¼“å­˜åœ¨çº¿ç¨‹
+	 * ä¸­çš„å¯¹è±¡ä¹Ÿä¸ä¼šè¢«é‡Šæ”¾. å½“åº”ç”¨è¢«é‡æ–°åŠ è½½çš„æ—¶å€™, åŸæ¥çš„åº”ç”¨å°±æ— æ³•è¢«é‡Šæ”¾,
+	 * å› ä¸ºæ–°çš„åº”ç”¨äº§ç”Ÿäº†æ–°çš„ThreadLocal, ä¸ä¼šè¦†ç›–åŸæ¥çš„, ä»è€Œé€ æˆå†…å­˜çš„æ³„æ¼.
+	 */
+	//private static final ThreadLocal localCache = new ThreadLocalCache();
 
 	/**
-	 * ±£´æËùÓĞ´´½¨µÄÏß³Ì»º´æ.
+	 * ä¿å­˜æ‰€æœ‰åˆ›å»ºçš„çº¿ç¨‹ç¼“å­˜.
 	 */
 	private static final Map threadCaches = new SynHashMap(32, SynHashMap.WEAK);
 
 
-   private Map propertys;
+	private Map propertys;
 
-   private ThreadCache()
-   {
-      this.propertys = new HashMap();
-   }
+	private ThreadCache()
+	{
+		this.propertys = new HashMap();
+	}
 
-   /**
-    * »ñµÃÒ»¸ö<code>ThreadCache</code>µÄÊµÀı.
-    */
-   public static ThreadCache getInstance()
-   {
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>ThreadCache</code>çš„å®ä¾‹.
+	 */
+	public static ThreadCache getInstance()
+	{
 		/*
-      ThreadCache threadCache = (ThreadCache) localCache.get();
-      if (threadCache == null)
-      {
-         threadCache = new ThreadCache();
-         localCache.set(threadCache);
-      }
+		ThreadCache threadCache = (ThreadCache) localCache.get();
+		if (threadCache == null)
+		{
+			threadCache = new ThreadCache();
+			localCache.set(threadCache);
+		}
 		*/
 		Thread t = Thread.currentThread();
 		ThreadCache threadCache = (ThreadCache) threadCaches.get(t);
@@ -51,7 +51,7 @@ public class ThreadCache
 		{
 			synchronized (threadCaches)
 			{
-				// ÔÚÍ¬²½µÄ»·¾³ÏÂÔÙÅĞ¶ÏÊÇ·ñ´æÔÚ, ²»´æÔÚµÄ»°ÔÙÉú³É
+				// åœ¨åŒæ­¥çš„ç¯å¢ƒä¸‹å†åˆ¤æ–­æ˜¯å¦å­˜åœ¨, ä¸å­˜åœ¨çš„è¯å†ç”Ÿæˆ
 				threadCache = (ThreadCache) threadCaches.get(t);
 				if (threadCache == null)
 				{
@@ -60,74 +60,74 @@ public class ThreadCache
 				}
 			}
 		}
-      return threadCache;
-   }
+		return threadCache;
+	}
 
-   /**
-    * Ïòµ±Ç°µÄÏß³Ì»º´æÉèÖÃÒ»¸öÊôĞÔ.
-    *
-    * @param name        ÒªÉèÖÃµÄÊôĞÔµÄÃû³Æ
-    * @param property    ÒªÉèÖÃµÄÊôĞÔÖµ
-    */
-   public void setProperty(String name, Object property)
-   {
-      this.propertys.put(name, property);
-   }
+	/**
+	 * å‘å½“å‰çš„çº¿ç¨‹ç¼“å­˜è®¾ç½®ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param name        è¦è®¾ç½®çš„å±æ€§çš„åç§°
+	 * @param property    è¦è®¾ç½®çš„å±æ€§å€¼
+	 */
+	public void setProperty(String name, Object property)
+	{
+		this.propertys.put(name, property);
+	}
 
-   /**
-    * »ñÈ¡µ±Ç°µÄÏß³Ì»º´æÖĞÒ»¸öÊôĞÔµÄÖµ.
-    *
-    * @param name        Òª»ñÈ¡µÄÊôĞÔµÄÃû³Æ
-    */
-   public Object getProperty(String name)
-   {
+	/**
+	 * è·å–å½“å‰çš„çº¿ç¨‹ç¼“å­˜ä¸­ä¸€ä¸ªå±æ€§çš„å€¼.
+	 *
+	 * @param name        è¦è·å–çš„å±æ€§çš„åç§°
+	 */
+	public Object getProperty(String name)
+	{
 		return this.propertys.get(name);
-   }
+	}
 
-   /**
-    * ÒÆ³ıµ±Ç°µÄÏß³Ì»º´æÖĞµÄÒ»¸öÊôĞÔ.
-    *
-    * @param name        ÒªÒÆ³ıµÄÊôĞÔµÄÃû³Æ
-    */
-   public void removeProperty(String name)
-   {
+	/**
+	 * ç§»é™¤å½“å‰çš„çº¿ç¨‹ç¼“å­˜ä¸­çš„ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param name        è¦ç§»é™¤çš„å±æ€§çš„åç§°
+	 */
+	public void removeProperty(String name)
+	{
 		this.propertys.remove(name);
-   }
+	}
 
-   /**
-    * »ñµÃ»º´æµÄ¶ÔÏóÊı.
-    */
-   public int size()
-   {
-      return this.propertys.size();
-   }
+	/**
+	 * è·å¾—ç¼“å­˜çš„å¯¹è±¡æ•°.
+	 */
+	public int size()
+	{
+		return this.propertys.size();
+	}
 
-   /**
-    * Çå¿Õµ±Ç°Ïß³Ì»º´æÖĞµÄÊôĞÔÖµ.
-    */
-   public void clearPropertys()
-   {
+	/**
+	 * æ¸…ç©ºå½“å‰çº¿ç¨‹ç¼“å­˜ä¸­çš„å±æ€§å€¼.
+	 */
+	public void clearPropertys()
+	{
 		this.propertys.clear();
-   }
+	}
 
-   /**
-    * Çå¿ÕËùÓĞÏß³Ì»º´æÖĞµÄÊôĞÔÖµ.
-    */
-   public static void clearAllPropertys()
-   {
+	/**
+	 * æ¸…ç©ºæ‰€æœ‰çº¿ç¨‹ç¼“å­˜ä¸­çš„å±æ€§å€¼.
+	 */
+	public static void clearAllPropertys()
+	{
 		threadCaches.clear();
-   }
+	}
 
 	/*
-	È¡ÏûÁËThreadLocalµÄ·½Ê½»ñÈ¡Ïß³Ì»º´æ
-   private static class ThreadLocalCache extends ThreadLocal
-   {
-      protected Object initialValue()
-      {
-         return new ThreadCache();
-      }
+	å–æ¶ˆäº†ThreadLocalçš„æ–¹å¼è·å–çº¿ç¨‹ç¼“å­˜
+	private static class ThreadLocalCache extends ThreadLocal
+	{
+		protected Object initialValue()
+		{
+			return new ThreadCache();
+		}
 
-   }
+	}
 	*/
 
 }

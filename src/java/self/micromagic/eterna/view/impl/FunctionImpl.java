@@ -13,58 +13,58 @@ import self.micromagic.eterna.view.ViewAdapterGenerator;
  * @author micromagic@sina.com
  */
 public class FunctionImpl extends AbstractGenerator
-         implements Function, FunctionGenerator
+			implements Function, FunctionGenerator
 {
-   private String param = "";
-   private String scriptBody = "";
+	private String param = "";
+	private String scriptBody = "";
 
-   private ViewAdapterGenerator.ModifiableViewRes viewRes = null;
+	private ViewAdapterGenerator.ModifiableViewRes viewRes = null;
 
-   public String getParam()
-   {
-      return this.param;
-   }
+	public String getParam()
+	{
+		return this.param;
+	}
 
-   public void setParam(String param)
-   {
-      this.param = param;
-   }
+	public void setParam(String param)
+	{
+		this.param = param;
+	}
 
-   public String getBody()
-   {
-      return this.scriptBody;
-   }
+	public String getBody()
+	{
+		return this.scriptBody;
+	}
 
-   public void setBody(String body)
-   {
-      this.scriptBody = body;
-   }
+	public void setBody(String body)
+	{
+		this.scriptBody = body;
+	}
 
-   public EternaFactory getFactory()
-   {
-      return (EternaFactory) this.factory;
-   }
+	public EternaFactory getFactory()
+	{
+		return (EternaFactory) this.factory;
+	}
 
-   public ViewAdapter.ViewRes getViewRes()
-         throws ConfigurationException
-   {
-      if (this.viewRes == null)
-      {
-         this.viewRes = new ModifiableViewResImpl();
-         this.scriptBody = ViewTool.dealScriptPart(
-               this.viewRes, this.scriptBody, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
-      }
-      return this.viewRes;
-   }
+	public ViewAdapter.ViewRes getViewRes()
+			throws ConfigurationException
+	{
+		if (this.viewRes == null)
+		{
+			this.viewRes = new ModifiableViewResImpl();
+			this.scriptBody = ViewTool.dealScriptPart(
+					this.viewRes, this.scriptBody, ViewTool.GRAMMER_TYPE_EXPRESSION, this.getFactory());
+		}
+		return this.viewRes;
+	}
 
-   public Function createFunction()
-   {
-      return this;
-   }
+	public Function createFunction()
+	{
+		return this;
+	}
 
-   public Object create()
-   {
-      return this.createFunction();
-   }
+	public Object create()
+	{
+		return this.createFunction();
+	}
 
 }

@@ -8,197 +8,197 @@ import self.micromagic.util.Utility;
 import self.micromagic.cg.ClassGenerator;
 
 /**
- * Éú³ÉÒ»¸öÀàµÄÊµÀıµÄ³õÊ¼»¯¹æÔò.
- * ±»Éú³ÉµÄÀà±ØĞëÓĞÒ»¸öÎŞ²ÎµÄ¹¹Ôìº¯Êı.
+ * ç”Ÿæˆä¸€ä¸ªç±»çš„å®ä¾‹çš„åˆå§‹åŒ–è§„åˆ™.
+ * è¢«ç”Ÿæˆçš„ç±»å¿…é¡»æœ‰ä¸€ä¸ªæ— å‚çš„æ„é€ å‡½æ•°.
  *
  * @author micromagic@sina.com
  */
 public class ObjectCreateRule extends MyRule
 {
-   public static final Class[] defaultConstructorParamClass = new Class[0];
-   public static final Object[] defaultConstructorParam = new Object[0];
+	public static final Class[] defaultConstructorParamClass = new Class[0];
+	public static final Object[] defaultConstructorParam = new Object[0];
 
-   protected String attributeName = null;
-   protected String className = null;
-   protected Class classType = null;
+	protected String attributeName = null;
+	protected String className = null;
+	protected Class classType = null;
 
-   /**
-    * @param className           ÒªÉú³ÉÊµÀıµÄÀàÃû, Èç¹ûÅäÖÃÖĞÃ»ÓĞÖ¸¶¨»á½«´Ë×÷ÎªÄ¬ÈÏÖµ
-    * @param attributeName       ÅäÖÃÖĞÄÄ¸öÊôĞÔÃûÖ¸¶¨ÀàÃû
-    * @param classType           ÊµÏÖµÄ½Ó¿ÚÀà»ò¸¸Àà, Éú³ÉÍêºó»á½øĞĞÀàĞÍ¼ì²é
-    */
-   public ObjectCreateRule(String className, String attributeName, Class classType)
-   {
-      this.className = className;
-      this.attributeName = attributeName;
-      this.classType = classType;
-   }
+	/**
+	 * @param className           è¦ç”Ÿæˆå®ä¾‹çš„ç±»å, å¦‚æœé…ç½®ä¸­æ²¡æœ‰æŒ‡å®šä¼šå°†æ­¤ä½œä¸ºé»˜è®¤å€¼
+	 * @param attributeName       é…ç½®ä¸­å“ªä¸ªå±æ€§åæŒ‡å®šç±»å
+	 * @param classType           å®ç°çš„æ¥å£ç±»æˆ–çˆ¶ç±», ç”Ÿæˆå®Œåä¼šè¿›è¡Œç±»å‹æ£€æŸ¥
+	 */
+	public ObjectCreateRule(String className, String attributeName, Class classType)
+	{
+		this.className = className;
+		this.attributeName = attributeName;
+		this.classType = classType;
+	}
 
-   /**
-    * »ñµÃÒªÉú³ÉÊµÀıµÄÀàÃû.
-    *
-    * @param attributeName       ÅäÖÃÖĞÄÄ¸öÊôĞÔÃûÖ¸¶¨ÀàÃû
-    * @param className           ÒªÉú³ÉÊµÀıµÄÀàÃû, Èç¹ûÅäÖÃÖĞÃ»ÓĞÖ¸¶¨»á½«´Ë×÷ÎªÄ¬ÈÏÖµ
-    * @param attributes          µ±Ç°xmlÔªËØµÄÊôĞÔ¼¯
-    */
-   public static String getClassName(String attributeName, String className, Attributes attributes)
-   {
-      String realClassName = className;
-      if (attributeName != null)
-      {
-         String value = attributes.getValue(attributeName);
-         if (value != null)
-         {
-            realClassName = value;
-         }
-      }
-      return realClassName;
-   }
+	/**
+	 * è·å¾—è¦ç”Ÿæˆå®ä¾‹çš„ç±»å.
+	 *
+	 * @param attributeName       é…ç½®ä¸­å“ªä¸ªå±æ€§åæŒ‡å®šç±»å
+	 * @param className           è¦ç”Ÿæˆå®ä¾‹çš„ç±»å, å¦‚æœé…ç½®ä¸­æ²¡æœ‰æŒ‡å®šä¼šå°†æ­¤ä½œä¸ºé»˜è®¤å€¼
+	 * @param attributes          å½“å‰xmlå…ƒç´ çš„å±æ€§é›†
+	 */
+	public static String getClassName(String attributeName, String className, Attributes attributes)
+	{
+		String realClassName = className;
+		if (attributeName != null)
+		{
+			String value = attributes.getValue(attributeName);
+			if (value != null)
+			{
+				realClassName = value;
+			}
+		}
+		return realClassName;
+	}
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄÀàÃûÉú³ÉÊµÀı. <p>
-    * ÔÚ²»ÄÜÉú³ÉÊ±»áÅ×³öÒì³£.
-    *
-    * @param className    ÒªÉú³ÉÊµÀıµÄÀàÃû
-    */
-   public static Object createObject(String className)
-         throws ClassNotFoundException, InstantiationException, IllegalAccessException
-   {
-      return createObject(className, true);
-   }
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„ç±»åç”Ÿæˆå®ä¾‹. <p>
+	 * åœ¨ä¸èƒ½ç”Ÿæˆæ—¶ä¼šæŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param className    è¦ç”Ÿæˆå®ä¾‹çš„ç±»å
+	 */
+	public static Object createObject(String className)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException
+	{
+		return createObject(className, true);
+	}
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄÀàÃûÉú³ÉÊµÀı. <p>
-    * Èç¹û²»ÊÇ±ØĞëÉú³É, ÔÚ²»ÄÜÉú³ÉÊ±·µ»Ønull.
-    * Èç¹û±ØĞëÉú³É, ÔÚ²»ÄÜÉú³ÉÊ±»áÅ×³öÒì³£.
-    *
-    * @param className    ÒªÉú³ÉÊµÀıµÄÀàÃû
-    * @param mustCreate   ÊÇ·ñ±ØĞëÉú³É, Ä¬ÈÏÎªtrue.
-    */
-   public static Object createObject(String className, boolean mustCreate)
-         throws ClassNotFoundException, InstantiationException, IllegalAccessException
-   {
-      try
-      {
-         Class theClass;
-         if (className.startsWith("c|"))
-         {
-            theClass = (Class) FactoryManager.getCurrentInstance().getAttribute(className);
-         }
-         else
-         {
-            theClass = Class.forName(className);
-         }
-         Object instance;
-         try
-         {
-            Constructor constructor = theClass.getDeclaredConstructor(
-                  defaultConstructorParamClass);
-            if (!constructor.isAccessible())
-            {
-               constructor.setAccessible(true);
-               instance = constructor.newInstance(defaultConstructorParam);
-               constructor.setAccessible(false);
-            }
-            else
-            {
-               instance = theClass.newInstance();
-            }
-         }
-         catch (Exception ex)
-         {
-            instance = theClass.newInstance();
-         }
-         return instance;
-      }
-      catch (ClassNotFoundException ex)
-      {
-         return ObjectCreateRule.createObject(
-               className, Utility.getContextClassLoader(), mustCreate);
-      }
-   }
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„ç±»åç”Ÿæˆå®ä¾‹. <p>
+	 * å¦‚æœä¸æ˜¯å¿…é¡»ç”Ÿæˆ, åœ¨ä¸èƒ½ç”Ÿæˆæ—¶è¿”å›null.
+	 * å¦‚æœå¿…é¡»ç”Ÿæˆ, åœ¨ä¸èƒ½ç”Ÿæˆæ—¶ä¼šæŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param className    è¦ç”Ÿæˆå®ä¾‹çš„ç±»å
+	 * @param mustCreate   æ˜¯å¦å¿…é¡»ç”Ÿæˆ, é»˜è®¤ä¸ºtrue.
+	 */
+	public static Object createObject(String className, boolean mustCreate)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException
+	{
+		try
+		{
+			Class theClass;
+			if (className.startsWith("c|"))
+			{
+				theClass = (Class) FactoryManager.getCurrentInstance().getAttribute(className);
+			}
+			else
+			{
+				theClass = Class.forName(className);
+			}
+			Object instance;
+			try
+			{
+				Constructor constructor = theClass.getDeclaredConstructor(
+						defaultConstructorParamClass);
+				if (!constructor.isAccessible())
+				{
+					constructor.setAccessible(true);
+					instance = constructor.newInstance(defaultConstructorParam);
+					constructor.setAccessible(false);
+				}
+				else
+				{
+					instance = theClass.newInstance();
+				}
+			}
+			catch (Exception ex)
+			{
+				instance = theClass.newInstance();
+			}
+			return instance;
+		}
+		catch (ClassNotFoundException ex)
+		{
+			return ObjectCreateRule.createObject(
+					className, Utility.getContextClassLoader(), mustCreate);
+		}
+	}
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄÀàÃûÉú³ÉÊµÀı. <p>
-    * Èç¹û²»ÊÇ±ØĞëÉú³É, ÔÚ²»ÄÜÉú³ÉÊ±·µ»Ønull.
-    * Èç¹û±ØĞëÉú³É, ÔÚ²»ÄÜÉú³ÉÊ±»áÅ×³öÒì³£.
-    *
-    * @param className    ÒªÉú³ÉÊµÀıµÄÀàÃû
-    * @param loader       ÔØÈëÀàËùÊ¹ÓÃµÄClassLoader.
-    * @param mustCreate   ÊÇ·ñ±ØĞëÉú³É, Ä¬ÈÏÎªtrue.
-    */
-   public static Object createObject(String className, ClassLoader loader, boolean mustCreate)
-         throws ClassNotFoundException, InstantiationException, IllegalAccessException
-   {
-      try
-      {
-         Class theClass = Class.forName(className, true, loader);
-         Object instance;
-         try
-         {
-            Constructor constructor = theClass.getDeclaredConstructor(
-                  defaultConstructorParamClass);
-            if (!constructor.isAccessible())
-            {
-               constructor.setAccessible(true);
-               instance = constructor.newInstance(defaultConstructorParam);
-               constructor.setAccessible(false);
-            }
-            else
-            {
-               instance = theClass.newInstance();
-            }
-         }
-         catch (Exception ex)
-         {
-            instance = theClass.newInstance();
-         }
-         return instance;
-      }
-      catch (ClassNotFoundException ex)
-      {
-         if (mustCreate)
-         {
-            throw ex;
-         }
-         return null;
-      }
-   }
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„ç±»åç”Ÿæˆå®ä¾‹. <p>
+	 * å¦‚æœä¸æ˜¯å¿…é¡»ç”Ÿæˆ, åœ¨ä¸èƒ½ç”Ÿæˆæ—¶è¿”å›null.
+	 * å¦‚æœå¿…é¡»ç”Ÿæˆ, åœ¨ä¸èƒ½ç”Ÿæˆæ—¶ä¼šæŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param className    è¦ç”Ÿæˆå®ä¾‹çš„ç±»å
+	 * @param loader       è½½å…¥ç±»æ‰€ä½¿ç”¨çš„ClassLoader.
+	 * @param mustCreate   æ˜¯å¦å¿…é¡»ç”Ÿæˆ, é»˜è®¤ä¸ºtrue.
+	 */
+	public static Object createObject(String className, ClassLoader loader, boolean mustCreate)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException
+	{
+		try
+		{
+			Class theClass = Class.forName(className, true, loader);
+			Object instance;
+			try
+			{
+				Constructor constructor = theClass.getDeclaredConstructor(
+						defaultConstructorParamClass);
+				if (!constructor.isAccessible())
+				{
+					constructor.setAccessible(true);
+					instance = constructor.newInstance(defaultConstructorParam);
+					constructor.setAccessible(false);
+				}
+				else
+				{
+					instance = theClass.newInstance();
+				}
+			}
+			catch (Exception ex)
+			{
+				instance = theClass.newInstance();
+			}
+			return instance;
+		}
+		catch (ClassNotFoundException ex)
+		{
+			if (mustCreate)
+			{
+				throw ex;
+			}
+			return null;
+		}
+	}
 
-   /**
-    * ¼ì²éÊµÀıµÄÀàĞÍÊÇ·ñ·ûºÏÖ¸¶¨µÄ½Ó¿Ú»òÀà, Èç¹û²»·ûºÏÔò»áÅ×³öÒì³£.
-    *
-    * @param classType                      ĞèÒª·ûºÏµÄ½Ó¿Ú»òÀà
-    * @param instance                       ±»¼ì²éµÄÊµÀı
-    * @throws InvalidAttributesException    ÀàĞÍ²»·ûºÏÊ±Å×³öµÄÒì³£.
-    */
-   public static void checkType(Class classType, Object instance)
-         throws InvalidAttributesException
-   {
-      if (classType != null && !classType.isInstance(instance))
-      {
-         throw new InvalidAttributesException("The class '"
-               + ClassGenerator.getClassName(instance.getClass())
-               + "' is not instance of " + ClassGenerator.getClassName(classType));
-      }
-   }
+	/**
+	 * æ£€æŸ¥å®ä¾‹çš„ç±»å‹æ˜¯å¦ç¬¦åˆæŒ‡å®šçš„æ¥å£æˆ–ç±», å¦‚æœä¸ç¬¦åˆåˆ™ä¼šæŠ›å‡ºå¼‚å¸¸.
+	 *
+	 * @param classType                      éœ€è¦ç¬¦åˆçš„æ¥å£æˆ–ç±»
+	 * @param instance                       è¢«æ£€æŸ¥çš„å®ä¾‹
+	 * @throws InvalidAttributesException    ç±»å‹ä¸ç¬¦åˆæ—¶æŠ›å‡ºçš„å¼‚å¸¸.
+	 */
+	public static void checkType(Class classType, Object instance)
+			throws InvalidAttributesException
+	{
+		if (classType != null && !classType.isInstance(instance))
+		{
+			throw new InvalidAttributesException("The class '"
+					+ ClassGenerator.getClassName(instance.getClass())
+					+ "' is not instance of " + ClassGenerator.getClassName(classType));
+		}
+	}
 
-   public void myBegin(String namespace, String name, Attributes attributes)
-         throws Exception
-   {
-      String realClassName = ObjectCreateRule.getClassName(
-            this.attributeName, this.className, attributes);
-      this.digester.getLogger().debug("New " + realClassName);
-      Object instance = ObjectCreateRule.createObject(realClassName);
-      ObjectCreateRule.checkType(this.classType, instance);
-      this.digester.push(instance);
-   }
+	public void myBegin(String namespace, String name, Attributes attributes)
+			throws Exception
+	{
+		String realClassName = ObjectCreateRule.getClassName(
+				this.attributeName, this.className, attributes);
+		this.digester.getLogger().debug("New " + realClassName);
+		Object instance = ObjectCreateRule.createObject(realClassName);
+		ObjectCreateRule.checkType(this.classType, instance);
+		this.digester.push(instance);
+	}
 
-   public void myEnd(String namespace, String name)
-         throws Exception
-   {
-      Object top = this.digester.pop();
-      this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
-   }
+	public void myEnd(String namespace, String name)
+			throws Exception
+	{
+		Object top = this.digester.pop();
+		this.digester.getLogger().debug("Pop " + ClassGenerator.getClassName(top.getClass()));
+	}
 
 }

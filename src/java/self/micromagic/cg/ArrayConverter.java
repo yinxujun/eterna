@@ -2,26 +2,28 @@
 package self.micromagic.cg;
 
 /**
- * Êı×éÀàĞÍµÄ×ª»»Æ÷.
+ * æ•°ç»„ç±»å‹çš„è½¬æ¢å™¨.
+ *
+ * @author micromagic@sina.com
  */
 public interface ArrayConverter
 {
 	/**
-	 * ´¦ÀíÊı×éÀàĞÍµÄ×ª»».
+	 * å¤„ç†æ•°ç»„ç±»å‹çš„è½¬æ¢.
 	 *
-	 * @param array     ĞèÒª±»×ª»»µÄÊı×é
-	 * @param destArr   Ä¿±êÊı×é¶ÔÏó
-	 * @param converter ÀàĞÍ×ª»»Æ÷, ¿ÉÒÔÊÇBeanMap»òValueConverter
-	 * @return  ×ª»»ºóµÄÊı×é
+	 * @param array      éœ€è¦è¢«è½¬æ¢çš„æ•°ç»„
+	 * @param destArr    ç›®æ ‡æ•°ç»„å¯¹è±¡
+	 * @param converter  ç±»å‹è½¬æ¢å™¨, å¯ä»¥æ˜¯BeanMapæˆ–ValueConverter
+	 * @return  è½¬æ¢åçš„æ•°ç»„
 	 */
 	Object convertArray(Object array, Object destArr, Object converter) throws Exception;
 
 	/**
-	 * ´¦ÀíÊı×éÀàĞÍµÄ×ª»».
+	 * å¤„ç†æ•°ç»„ç±»å‹çš„è½¬æ¢.
 	 *
-	 * @param array     ĞèÒª±»×ª»»µÄÊı×é
-	 * @param converter ÀàĞÍ×ª»»Æ÷, ¿ÉÒÔÊÇBeanMap»òValueConverter
-	 * @return  ×ª»»ºóµÄÊı×é
+	 * @param array      éœ€è¦è¢«è½¬æ¢çš„æ•°ç»„
+	 * @param converter  ç±»å‹è½¬æ¢å™¨, å¯ä»¥æ˜¯BeanMapæˆ–ValueConverter
+	 * @return  è½¬æ¢åçš„æ•°ç»„
 	 */
 	Object convertArray(Object array, Object converter) throws Exception;
 

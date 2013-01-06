@@ -31,501 +31,503 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * Í¨¹ıant¶ÔÀà½øĞĞ±àÒëµÄ¹¤¾ß.
+ * é€šè¿‡antå¯¹ç±»è¿›è¡Œç¼–è¯‘çš„å·¥å…·.
+ *
+ * @author micromagic@sina.com
  */
 public class AntCG
-      implements CG
+		implements CG
 {
-   /**
-    * ÓÃant×÷Îª±àÒëÀàĞÍÊ±Ê¹ÓÃµÄÃû³Æ.
-    */
-   public static final String COMPILE_TYPE = "ant";
+	/**
+	 * ç”¨antä½œä¸ºç¼–è¯‘ç±»å‹æ—¶ä½¿ç”¨çš„åç§°.
+	 */
+	public static final String COMPILE_TYPE = "ant";
 
-   /**
-    * ÅäÖÃÎÄ¼şÖĞ¶ÔantÏà¹ØÊôĞÔ½øĞĞÅäÖÃµÄÇ°×º.
-    */
-   private static final String ANT_TOOL_CONFIG_PREFIX = "self.micromagic.compile.ant.";
+	/**
+	 * é…ç½®æ–‡ä»¶ä¸­å¯¹antç›¸å…³å±æ€§è¿›è¡Œé…ç½®çš„å‰ç¼€.
+	 */
+	private static final String ANT_TOOL_CONFIG_PREFIX = "self.micromagic.compile.ant.";
 
-   /**
-    * Ê¹ÓÃantÉú³ÉÒ»¸öÀà.
-    */
-   public Class createClass(ClassGenerator cg)
-         throws IOException, ClassNotFoundException
-   {
-      return createClass0(cg);
-   }
+	/**
+	 * ä½¿ç”¨antç”Ÿæˆä¸€ä¸ªç±».
+	 */
+	public Class createClass(ClassGenerator cg)
+			throws IOException, ClassNotFoundException
+	{
+		return createClass0(cg);
+	}
 
-   private static synchronized Class createClass0(ClassGenerator cg)
-         throws IOException, ClassNotFoundException
-   {
-      File destPath = new File(getDestPath());
-      Project p = new Project();
-      p.setName("cg.ant");
-      CompileLogger cl = new CompileLogger();
-      p.addBuildListener(cl);
-      MyJavac javac = new MyJavac();
-      javac.setProject(p);
-      javac.setDebug(getDebug());
-      javac.setSourcepath(new Path(p, getSrcPath()));
-      javac.setCompiler(getCompiler());
-      setClassPath(p, javac, cg);
-      javac.setDestdir(destPath);
-      javac.setSrcFile(createSrcFile(cg));
-      javac.setEncoding(getEncoding());
-      try
-      {
-         javac.compile();
-         CompileClassLoader ccl = getClassLoader(destPath, cg.getClassLoader());
-         ccl.addMessage(cg.getClassName(), cl.toString());
-         return ccl.findClass(cg.getClassName());
-      }
-      catch (Exception ex)
-      {
-         throw new ClassNotFoundException("message:" + cl, ex);
-      }
-   }
+	private static synchronized Class createClass0(ClassGenerator cg)
+			throws IOException, ClassNotFoundException
+	{
+		File destPath = new File(getDestPath());
+		Project p = new Project();
+		p.setName("cg.ant");
+		CompileLogger cl = new CompileLogger();
+		p.addBuildListener(cl);
+		MyJavac javac = new MyJavac();
+		javac.setProject(p);
+		javac.setDebug(getDebug());
+		javac.setSourcepath(new Path(p, getSrcPath()));
+		javac.setCompiler(getCompiler());
+		setClassPath(p, javac, cg);
+		javac.setDestdir(destPath);
+		javac.setSrcFile(createSrcFile(cg));
+		javac.setEncoding(getEncoding());
+		try
+		{
+			javac.compile();
+			CompileClassLoader ccl = getClassLoader(destPath, cg.getClassLoader());
+			ccl.addMessage(cg.getClassName(), cl.toString());
+			return ccl.findClass(cg.getClassName());
+		}
+		catch (Exception ex)
+		{
+			throw new ClassNotFoundException("message:" + cl, ex);
+		}
+	}
 
-   private static File createSrcFile(ClassGenerator cg)
-         throws IOException
-   {
-      String srcPath = getSrcPath();
-      String destPath = getDestPath();
-      String className = cg.getClassName();
-      int index = className.lastIndexOf('.');
-      String tmpPath = null;
-      String cName = className;
-      String pName = null;
-      if (index != -1)
-      {
-         pName = className.substring(0, index);
-         tmpPath = pName.replace('.', File.separatorChar);
-         cName = className.substring(index + 1);
-      }
-      File srcDir = tmpPath == null ? new File(srcPath) : new File(srcPath, tmpPath);
-      if (!srcDir.exists())
-      {
-         srcDir.mkdirs();
-      }
-      File destDir = tmpPath == null ? new File(destPath) : new File(destPath, tmpPath);
-      if (!destDir.exists())
-      {
-         destDir.mkdirs();
-      }
-      StringAppender out = StringTool.createStringAppender(256);
-      out.appendln();
-      if (pName != null)
-      {
-         out.append("package ").append(pName).append(';').appendln().appendln();
-      }
-      String[] packages = cg.getPackages();
-      for (int i = 0; i < packages.length; i++)
-      {
-         out.append("import ").append(packages[i]).append(".*;").appendln();
-      }
-      out.appendln().append("public class ").append(cName);
-      Class baseClass = cg.getSuperClass();
-      if (baseClass != null)
-      {
-         out.append(" extends ").append(ClassGenerator.getClassName(baseClass));
-      }
-      out.appendln();
-      Class[] interfaces = cg.getInterfaces();
-      for (int i = 0; i < interfaces.length; i++)
-      {
-         if (i == 0)
-         {
-            out.append("      ").append("implements ");
-         }
-         else
-         {
-            out.append(", ");
-         }
-         out.append(ClassGenerator.getClassName(interfaces[i]));
-      }
-      if (interfaces.length > 0)
-      {
-         out.appendln();
-      }
-      out.append('{').appendln();
-      String[] fields = cg.getFields();
-      for (int i = 0; i < fields.length; i++)
-      {
-         out.append(ResManager.indentCode(fields[i], 1)).appendln().appendln();
-      }
-      String[] constructors = cg.getConstructors();
-      for (int i = 0; i < constructors.length; i++)
-      {
-         out.append(ResManager.indentCode(constructors[i], 1)).appendln().appendln();
-      }
-      String[] methods = cg.getMethods();
-      for (int i = 0; i < methods.length; i++)
-      {
-         out.append(ResManager.indentCode(methods[i], 1)).appendln().appendln();
-      }
-      out.append('}');
-      if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
-      {
-         log.info(out.toString());
-      }
-      File srcFile = new File(srcDir, cName + ".java");
-      FileOutputStream fos = new FileOutputStream(srcFile);
-      fos.write(out.toString().getBytes(getEncoding()));
-      fos.close();
-      return srcFile;
-   }
+	private static File createSrcFile(ClassGenerator cg)
+			throws IOException
+	{
+		String srcPath = getSrcPath();
+		String destPath = getDestPath();
+		String className = cg.getClassName();
+		int index = className.lastIndexOf('.');
+		String tmpPath = null;
+		String cName = className;
+		String pName = null;
+		if (index != -1)
+		{
+			pName = className.substring(0, index);
+			tmpPath = pName.replace('.', File.separatorChar);
+			cName = className.substring(index + 1);
+		}
+		File srcDir = tmpPath == null ? new File(srcPath) : new File(srcPath, tmpPath);
+		if (!srcDir.exists())
+		{
+			srcDir.mkdirs();
+		}
+		File destDir = tmpPath == null ? new File(destPath) : new File(destPath, tmpPath);
+		if (!destDir.exists())
+		{
+			destDir.mkdirs();
+		}
+		StringAppender out = StringTool.createStringAppender(256);
+		out.appendln();
+		if (pName != null)
+		{
+			out.append("package ").append(pName).append(';').appendln().appendln();
+		}
+		String[] packages = cg.getPackages();
+		for (int i = 0; i < packages.length; i++)
+		{
+			out.append("import ").append(packages[i]).append(".*;").appendln();
+		}
+		out.appendln().append("public class ").append(cName);
+		Class baseClass = cg.getSuperClass();
+		if (baseClass != null)
+		{
+			out.append(" extends ").append(ClassGenerator.getClassName(baseClass));
+		}
+		out.appendln();
+		Class[] interfaces = cg.getInterfaces();
+		for (int i = 0; i < interfaces.length; i++)
+		{
+			if (i == 0)
+			{
+				out.append("      ").append("implements ");
+			}
+			else
+			{
+				out.append(", ");
+			}
+			out.append(ClassGenerator.getClassName(interfaces[i]));
+		}
+		if (interfaces.length > 0)
+		{
+			out.appendln();
+		}
+		out.append('{').appendln();
+		String[] fields = cg.getFields();
+		for (int i = 0; i < fields.length; i++)
+		{
+			out.append(ResManager.indentCode(fields[i], 1)).appendln().appendln();
+		}
+		String[] constructors = cg.getConstructors();
+		for (int i = 0; i < constructors.length; i++)
+		{
+			out.append(ResManager.indentCode(constructors[i], 1)).appendln().appendln();
+		}
+		String[] methods = cg.getMethods();
+		for (int i = 0; i < methods.length; i++)
+		{
+			out.append(ResManager.indentCode(methods[i], 1)).appendln().appendln();
+		}
+		out.append('}');
+		if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
+		{
+			log.info(out.toString());
+		}
+		File srcFile = new File(srcDir, cName + ".java");
+		FileOutputStream fos = new FileOutputStream(srcFile);
+		fos.write(out.toString().getBytes(getEncoding()));
+		fos.close();
+		return srcFile;
+	}
 
-   /**
-    * ÉèÖÃĞèÒªµÄclasspath.
-    */
-   public static void setClassPath(Project p, Javac javac, ClassGenerator cg)
-   {
-      Set paths = new HashSet();
-      parserClassPath(cg.getClassLoader(), paths);
-      Class[] arr = cg.getClassPaths();
-      for (int i = 0; i < arr.length; i++)
-      {
-         parserClassPath(arr[i].getClassLoader(), paths);
-      }
-      Iterator itr = paths.iterator();
-      while (itr.hasNext())
-      {
-         String path = (String) itr.next();
-         javac.setClasspath(new Path(p, path));
-         if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
-         {
-            log.info("Added classpath:" + path);
-         }
-      }
-   }
+	/**
+	 * è®¾ç½®éœ€è¦çš„classpath.
+	 */
+	public static void setClassPath(Project p, Javac javac, ClassGenerator cg)
+	{
+		Set paths = new HashSet();
+		parserClassPath(cg.getClassLoader(), paths);
+		Class[] arr = cg.getClassPaths();
+		for (int i = 0; i < arr.length; i++)
+		{
+			parserClassPath(arr[i].getClassLoader(), paths);
+		}
+		Iterator itr = paths.iterator();
+		while (itr.hasNext())
+		{
+			String path = (String) itr.next();
+			javac.setClasspath(new Path(p, path));
+			if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
+			{
+				log.info("Added classpath:" + path);
+			}
+		}
+	}
 
-   /**
-    * ½âÎö</code>ClassLoader</code>ÖĞµÄÂ·¾¶, ·Åµ½½á¹û¼¯ºÏÖĞ.
-    */
-   private static void parserClassPath(ClassLoader cl, Set result)
-   {
-      if (cl == null)
-      {
-         return;
-      }
-      if (cl instanceof URLClassLoader)
-      {
-         URLClassLoader ucl = (URLClassLoader) cl;
-         URL[] urls = ucl.getURLs();
-         for (int i = 0; i < urls.length; i++)
-         {
-            URL url = urls[i];
-            if ("file".equals(url.getProtocol()))
-            {
-               result.add(url.getFile());
-            }
-            else
-            {
-               result.add(url.toString());
-            }
-         }
-      }
-      parserClassPath(cl.getParent(), result);
-   }
+	/**
+	 * è§£æ</code>ClassLoader</code>ä¸­çš„è·¯å¾„, æ”¾åˆ°ç»“æœé›†åˆä¸­.
+	 */
+	private static void parserClassPath(ClassLoader cl, Set result)
+	{
+		if (cl == null)
+		{
+			return;
+		}
+		if (cl instanceof URLClassLoader)
+		{
+			URLClassLoader ucl = (URLClassLoader) cl;
+			URL[] urls = ucl.getURLs();
+			for (int i = 0; i < urls.length; i++)
+			{
+				URL url = urls[i];
+				if ("file".equals(url.getProtocol()))
+				{
+					result.add(url.getFile());
+				}
+				else
+				{
+					result.add(url.toString());
+				}
+			}
+		}
+		parserClassPath(cl.getParent(), result);
+	}
 
-   /**
-    * »ñµÃÎÄ¼şµÄ±àÂë¸ñÊ½.
-    */
-   public static String getEncoding()
-   {
-      String encoding = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "encoding");
-      if (encoding == null)
-      {
-         encoding = System.getProperty("file.encoding");
-      }
-      return encoding;
-   }
+	/**
+	 * è·å¾—æ–‡ä»¶çš„ç¼–ç æ ¼å¼.
+	 */
+	public static String getEncoding()
+	{
+		String encoding = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "encoding");
+		if (encoding == null)
+		{
+			encoding = System.getProperty("file.encoding");
+		}
+		return encoding;
+	}
 
-   /**
-    * »ñµÃÊÇ·ñĞèÒª±àÒëdebugĞÅÏ¢.
-    */
-   public static boolean getDebug()
-   {
-      String debug = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "debug");
-      if (debug == null)
-      {
-         return true;
-      }
-      return "true".equalsIgnoreCase(debug);
-   }
+	/**
+	 * è·å¾—æ˜¯å¦éœ€è¦ç¼–è¯‘debugä¿¡æ¯.
+	 */
+	public static boolean getDebug()
+	{
+		String debug = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "debug");
+		if (debug == null)
+		{
+			return true;
+		}
+		return "true".equalsIgnoreCase(debug);
+	}
 
-   /**
-    * »ñµÃÔ´ÎÄ¼şµÄÂ·¾¶.
-    */
-   public static String getSrcPath()
-   {
-      String srcPath = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "srcPath");
-      if (srcPath == null)
-      {
-         srcPath = System.getProperty("java.io.tmpdir");
-      }
-      return srcPath;
-   }
+	/**
+	 * è·å¾—æºæ–‡ä»¶çš„è·¯å¾„.
+	 */
+	public static String getSrcPath()
+	{
+		String srcPath = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "srcPath");
+		if (srcPath == null)
+		{
+			srcPath = System.getProperty("java.io.tmpdir");
+		}
+		return srcPath;
+	}
 
-   /**
-    * »ñµÃ±àÒëÎÄ¼şµÄÊä³öÂ·¾¶.
-    */
-   public static String getDestPath()
-   {
-      String destPath = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "destPath");
-      if (destPath == null)
-      {
-         destPath = System.getProperty("java.io.tmpdir");
-      }
-      return destPath;
-   }
+	/**
+	 * è·å¾—ç¼–è¯‘æ–‡ä»¶çš„è¾“å‡ºè·¯å¾„.
+	 */
+	public static String getDestPath()
+	{
+		String destPath = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "destPath");
+		if (destPath == null)
+		{
+			destPath = System.getProperty("java.io.tmpdir");
+		}
+		return destPath;
+	}
 
-   /**
-    * »ñµÃÊ¹ÓÃµÄ±àÒëÆ÷Ãû³Æ.
-    */
-   public static String getCompiler()
-   {
-      String compiler = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "compiler");
-      if (compiler == null)
-      {
-         compiler = "extJavac";
-      }
-      return compiler;
-   }
+	/**
+	 * è·å¾—ä½¿ç”¨çš„ç¼–è¯‘å™¨åç§°.
+	 */
+	public static String getCompiler()
+	{
+		String compiler = Utility.getProperty(ANT_TOOL_CONFIG_PREFIX + "compiler");
+		if (compiler == null)
+		{
+			compiler = "extJavac";
+		}
+		return compiler;
+	}
 
-   /**
-    * <code>CompileClassLoader</code>µÄ»º´æ, Ö÷¼üÎª±àÒëµÄÊä³öÄ¿Â¼+parent
-    */
-   private static Map cclCache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.WEAK);
+	/**
+	 * <code>CompileClassLoader</code>çš„ç¼“å­˜, ä¸»é”®ä¸ºç¼–è¯‘çš„è¾“å‡ºç›®å½•+parent
+	 */
+	private static Map cclCache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.WEAK);
 
-   /**
-    * ´Ó»º´æÖĞ»ñÈ¡<code>CompileClassLoader</code>, Èç¹ûÃ»ÓĞÔò´´½¨Ò»¸ö.
-    */
-   private static synchronized CompileClassLoader getClassLoader(
-         File basePath, ClassLoader parent)
-   {
-      CCL_KEY key = new CCL_KEY(basePath, parent);
-      CompileClassLoader ccl = (CompileClassLoader) cclCache.get(key);
-      if (ccl == null)
-      {
-         ccl = new CompileClassLoader(parent, basePath);
-         cclCache.put(key, ccl);
-      }
-      return ccl;
-   }
+	/**
+	 * ä»ç¼“å­˜ä¸­è·å–<code>CompileClassLoader</code>, å¦‚æœæ²¡æœ‰åˆ™åˆ›å»ºä¸€ä¸ª.
+	 */
+	private static synchronized CompileClassLoader getClassLoader(
+			File basePath, ClassLoader parent)
+	{
+		CCL_KEY key = new CCL_KEY(basePath, parent);
+		CompileClassLoader ccl = (CompileClassLoader) cclCache.get(key);
+		if (ccl == null)
+		{
+			ccl = new CompileClassLoader(parent, basePath);
+			cclCache.put(key, ccl);
+		}
+		return ccl;
+	}
 
-   private static class MyJavac extends Javac
-   {
-      public void setSrcFile(File file)
-      {
-         this.compileList = new File[]{file};
-      }
+	private static class MyJavac extends Javac
+	{
+		public void setSrcFile(File file)
+		{
+			this.compileList = new File[]{file};
+		}
 
-      public void compile()
-      {
-         super.compile();
-      }
+		public void compile()
+		{
+			super.compile();
+		}
 
-   }
+	}
 
-   /**
-    * <code>CompileClassLoader</code>»º´æµÄÖ÷¼üÀà
-    */
-   private static class CCL_KEY
-   {
-      private File basePath;
-      private int hashCode;
+	/**
+	 * <code>CompileClassLoader</code>ç¼“å­˜çš„ä¸»é”®ç±»
+	 */
+	private static class CCL_KEY
+	{
+		private File basePath;
+		private int hashCode;
 
-      /**
-       * ÕâÀïÊ¹ÓÃ<code>WeakReference</code>À´ÒıÓÃ¸¸ClassLoader, ÕâÑù¾Í²»»áÓ°ÏìÆäÕı³£µÄÊÍ·Å.
-       */
-      private WeakReference parent;
+		/**
+		 * è¿™é‡Œä½¿ç”¨<code>WeakReference</code>æ¥å¼•ç”¨çˆ¶ClassLoader, è¿™æ ·å°±ä¸ä¼šå½±å“å…¶æ­£å¸¸çš„é‡Šæ”¾.
+		 */
+		private WeakReference parent;
 
-      public CCL_KEY(File basePath, ClassLoader parent)
-      {
-         this.basePath = basePath;
-         this.parent = new WeakReference(parent);
-         this.hashCode = basePath == null ? 0 : basePath.hashCode();
-         this.hashCode ^= parent == null ? 0 : parent.hashCode();
-      }
+		public CCL_KEY(File basePath, ClassLoader parent)
+		{
+			this.basePath = basePath;
+			this.parent = new WeakReference(parent);
+			this.hashCode = basePath == null ? 0 : basePath.hashCode();
+			this.hashCode ^= parent == null ? 0 : parent.hashCode();
+		}
 
-      public int hashCode()
-      {
-         return this.hashCode;
-      }
+		public int hashCode()
+		{
+			return this.hashCode;
+		}
 
-      public boolean equals(Object obj)
-      {
-         if (this == obj)
-         {
-            return true;
-         }
-         if (obj instanceof CCL_KEY)
-         {
-            CCL_KEY other = (CCL_KEY) obj;
-            return Utility.objectEquals(this.basePath, other.basePath)
-                  && Utility.objectEquals(this.parent.get(), other.parent.get());
-         }
-         return false;
-      }
+		public boolean equals(Object obj)
+		{
+			if (this == obj)
+			{
+				return true;
+			}
+			if (obj instanceof CCL_KEY)
+			{
+				CCL_KEY other = (CCL_KEY) obj;
+				return Utility.objectEquals(this.basePath, other.basePath)
+						&& Utility.objectEquals(this.parent.get(), other.parent.get());
+			}
+			return false;
+		}
 
-   }
+	}
 
-   private static class CompileClassLoader extends ClassLoader
-   {
-      private File basePath;
-      private Map msgCache = new HashMap();
+	private static class CompileClassLoader extends ClassLoader
+	{
+		private File basePath;
+		private Map msgCache = new HashMap();
 
-      public CompileClassLoader(ClassLoader parent, File basePath)
-      {
-         super(parent);
-         this.basePath = basePath;
-      }
+		public CompileClassLoader(ClassLoader parent, File basePath)
+		{
+			super(parent);
+			this.basePath = basePath;
+		}
 
-      public void addMessage(String className, String msg)
-      {
-         this.msgCache.put(className, msg);
-      }
+		public void addMessage(String className, String msg)
+		{
+			this.msgCache.put(className, msg);
+		}
 
-      protected Class findClass(String name)
-            throws ClassNotFoundException
-      {
-         try
-         {
-            File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
-            if (f.isFile())
-            {
-               FileInputStream fis = new FileInputStream(f);
-               byte[] buf = new byte[(int) f.length()];
-               fis.read(buf);
-               Class c = this.defineClass(name, buf, 0, buf.length);
-               // ÀàÔØÈë³É¹¦, ¿ÉÒÔ½«»º´æµÄÏûÏ¢Çå³ı.
-               this.msgCache.remove(name);
-               return c;
-            }
-            else
-            {
-               Class c = super.findClass(name);
-               if (c == null)
-               {
-                  throw new ClassNotFoundException("name:" + name + ", file:" + f
-                        + ", message:" + this.msgCache.get(name));
-               }
-               return c;
-            }
-         }
-         catch (Exception ex)
-         {
-            throw new ClassNotFoundException("message:" + this.msgCache.get(name), ex);
-         }
-      }
+		protected Class findClass(String name)
+				throws ClassNotFoundException
+		{
+			try
+			{
+				File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
+				if (f.isFile())
+				{
+					FileInputStream fis = new FileInputStream(f);
+					byte[] buf = new byte[(int) f.length()];
+					fis.read(buf);
+					Class c = this.defineClass(name, buf, 0, buf.length);
+					// ç±»è½½å…¥æˆåŠŸ, å¯ä»¥å°†ç¼“å­˜çš„æ¶ˆæ¯æ¸…é™¤.
+					this.msgCache.remove(name);
+					return c;
+				}
+				else
+				{
+					Class c = super.findClass(name);
+					if (c == null)
+					{
+						throw new ClassNotFoundException("name:" + name + ", file:" + f
+								+ ", message:" + this.msgCache.get(name));
+					}
+					return c;
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new ClassNotFoundException("message:" + this.msgCache.get(name), ex);
+			}
+		}
 
-      public URL findResource(String name)
-      {
-         File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
-         if (f.isFile())
-         {
-            try
-            {
-               return f.toURL();
-            }
-            catch (MalformedURLException ex) {}
-         }
-         return super.getResource(name);
-      }
+		public URL findResource(String name)
+		{
+			File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
+			if (f.isFile())
+			{
+				try
+				{
+					return f.toURL();
+				}
+				catch (MalformedURLException ex) {}
+			}
+			return super.getResource(name);
+		}
 
-      protected Enumeration findResources(String name)
-            throws IOException
-      {
-         File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
-         if (f.isFile())
-         {
-            return Collections.enumeration(Arrays.asList(new URL[]{f.toURL()}));
-         }
-         return super.findResources(name);
-      }
+		protected Enumeration findResources(String name)
+				throws IOException
+		{
+			File f = new File(this.basePath, name.replace('.', File.separatorChar) + ".class");
+			if (f.isFile())
+			{
+				return Collections.enumeration(Arrays.asList(new URL[]{f.toURL()}));
+			}
+			return super.findResources(name);
+		}
 
-   }
+	}
 
-   private static class CompileLogger
-         implements BuildLogger
-   {
-      private StringAppender out = StringTool.createStringAppender();
+	private static class CompileLogger
+			implements BuildLogger
+	{
+		private StringAppender out = StringTool.createStringAppender();
 
-      public synchronized void messageLogged(BuildEvent event)
-      {
-         Throwable ex = event.getException();
-         int level = event.getPriority();
-         if (level <= Project.MSG_WARN || ex != null)
-         {
-            if (level == Project.MSG_ERR || ex != null)
-            {
-               this.out.append("Error:").appendln();
-            }
-            else
-            {
-               this.out.append("Warn:").appendln();
-            }
-            this.out.append(event.getMessage());
-            if (ex != null)
-            {
-               this.out.appendln().append("Exception:").appendln();
-               StringTool.appendStackTrace(ex, this.out);
-            }
-            this.out.appendln();
-         }
-      }
+		public synchronized void messageLogged(BuildEvent event)
+		{
+			Throwable ex = event.getException();
+			int level = event.getPriority();
+			if (level <= Project.MSG_WARN || ex != null)
+			{
+				if (level == Project.MSG_ERR || ex != null)
+				{
+					this.out.append("Error:").appendln();
+				}
+				else
+				{
+					this.out.append("Warn:").appendln();
+				}
+				this.out.append(event.getMessage());
+				if (ex != null)
+				{
+					this.out.appendln().append("Exception:").appendln();
+					StringTool.appendStackTrace(ex, this.out);
+				}
+				this.out.appendln();
+			}
+		}
 
-      public void buildStarted(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void buildStarted(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public void buildFinished(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void buildFinished(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public void targetStarted(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void targetStarted(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public void targetFinished(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void targetFinished(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public void taskStarted(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void taskStarted(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public void taskFinished(BuildEvent event)
-      {
-         this.messageLogged(event);
-      }
+		public void taskFinished(BuildEvent event)
+		{
+			this.messageLogged(event);
+		}
 
-      public String toString()
-      {
-         return this.out.toString();
-      }
+		public String toString()
+		{
+			return this.out.toString();
+		}
 
-      public void setMessageOutputLevel(int level)
-      {
-      }
+		public void setMessageOutputLevel(int level)
+		{
+		}
 
-      public void setEmacsMode(boolean emacsMode)
-      {
-      }
+		public void setEmacsMode(boolean emacsMode)
+		{
+		}
 
-      public void setOutputPrintStream(PrintStream output)
-      {
-      }
+		public void setOutputPrintStream(PrintStream output)
+		{
+		}
 
-      public void setErrorPrintStream(PrintStream err)
-      {
-      }
+		public void setErrorPrintStream(PrintStream err)
+		{
+		}
 
-   }
+	}
 
 }

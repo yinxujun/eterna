@@ -12,358 +12,366 @@ import self.micromagic.util.Utility;
 import self.micromagic.util.container.SynHashMap;
 
 /**
- * ÒÔ<code>Class</code>Îª¼üÖµ»º´æ¶ÔÏó, ÕâĞ©¶ÔÏóÔÚ¼üÖµ<code>Class</code>±»
- * ÊÍ·ÅÊ±, Ò²ĞèÒªÍ¬Ê±±»ÊÍ·Å. <p>
- * ½ö½öÊ¹ÓÃ<code>WeakHashMap</code>ÎŞ·¨Âú×ãÕâÑùµÄÒªÇó, ÒòÎª´æ´¢µÄÖµÖĞÒ²»áÒıÓÃ
- * ¼üÖµµÄ<code>Class</code>»òºÍÆäÓĞ¹ØÁªµÄ¶ÔÏó. ÕâÑù¾Í»áÔì³É¼üÖµ<code>Class</code>
- * ±¾ÉíÎŞ·¨±»ÊÍ·Å, Ò²¾ÍÎŞ·¨´ïµ½Ö®Ç°ÏëÒªµÄÄ¿µÄ. <p>
- * ÕâÀïµÄÊµÏÖ·½Ê½Îª: Í¨¹ıÔÚ¼üÖµ<code>Class</code>µÄ<code>ClassLoader</code>ÖĞÔØ
- * ÈëÒ»¸öÀà, ÔÚÕâ¸öÀàÖĞ´´½¨Ò»¸ö¾²Ì¬ÊôĞÔ, ÀàĞÍÎª<code>Map</code>, ÕâÑùÕâ¸ömapÖĞ
- * µÄËùÓĞµÄÖµ¶¼»áËæ×Å<code>ClassLoader</code>±»ÊÍ·Å¶øÊÍ·Åµô. <p>
+ * ä»¥<code>Class</code>ä¸ºé”®å€¼ç¼“å­˜å¯¹è±¡, è¿™äº›å¯¹è±¡åœ¨é”®å€¼<code>Class</code>è¢«
+ * é‡Šæ”¾æ—¶, ä¹Ÿéœ€è¦åŒæ—¶è¢«é‡Šæ”¾. <p>
+ * ä»…ä»…ä½¿ç”¨<code>WeakHashMap</code>æ— æ³•æ»¡è¶³è¿™æ ·çš„è¦æ±‚, å› ä¸ºå­˜å‚¨çš„å€¼ä¸­ä¹Ÿä¼šå¼•ç”¨
+ * é”®å€¼çš„<code>Class</code>æˆ–å’Œå…¶æœ‰å…³è”çš„å¯¹è±¡. è¿™æ ·å°±ä¼šé€ æˆé”®å€¼<code>Class</code>
+ * æœ¬èº«æ— æ³•è¢«é‡Šæ”¾, ä¹Ÿå°±æ— æ³•è¾¾åˆ°ä¹‹å‰æƒ³è¦çš„ç›®çš„. <p>
+ * è¿™é‡Œçš„å®ç°æ–¹å¼ä¸º: é€šè¿‡åœ¨é”®å€¼<code>Class</code>çš„<code>ClassLoader</code>ä¸­è½½
+ * å…¥ä¸€ä¸ªç±», åœ¨è¿™ä¸ªç±»ä¸­åˆ›å»ºä¸€ä¸ªé™æ€å±æ€§, ç±»å‹ä¸º<code>Map</code>, è¿™æ ·è¿™ä¸ªmapä¸­
+ * çš„æ‰€æœ‰çš„å€¼éƒ½ä¼šéšç€<code>ClassLoader</code>è¢«é‡Šæ”¾è€Œé‡Šæ”¾æ‰. <p>
+ *
+ * @author micromagic@sina.com
  */
 public class ClassKeyCache
 {
-   /**
-    * ÒÔ<code>ClassLoader</code>Îª¼üÖµ, ´æ·ÅµÄ<code>CacheCell</code>.
-    */
-   private Map caches;
+	/**
+	 * ä»¥<code>ClassLoader</code>ä¸ºé”®å€¼, å­˜æ”¾çš„<code>CacheCell</code>.
+	 */
+	private Map caches;
 
-   private ClassKeyCache()
-   {
-      this.caches = new SynHashMap(8, SynHashMap.WEAK);
-   }
+	private ClassKeyCache()
+	{
+		this.caches = new SynHashMap(8, SynHashMap.WEAK);
+	}
 
-   /**
-    * »ñµÃÒ»¸ö<code>ClassKeyCache</code>µÄÊµÀı.
-    */
-   public static ClassKeyCache getInstance()
-   {
-      return new ClassKeyCache();
-   }
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>ClassKeyCache</code>çš„å®ä¾‹.
+	 */
+	public static ClassKeyCache getInstance()
+	{
+		return new ClassKeyCache();
+	}
 
-   /**
-    * ÉèÖÃÒ»¸öÊôĞÔ.
-    *
-    * @param c         ×÷Îª¼üÖµµÄ<code>Class</code>
-    * @param property  ÒªÉèÖÃµÄÊôĞÔÖµ
-    */
-   public void setProperty(Class c, Object property)
-   {
-      CacheCell ccm = this.getCacheCell(c);
-      if (ccm != null)
-      {
-         ccm.put(c, property);
-      }
-   }
+	/**
+	 * è®¾ç½®ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param c         ä½œä¸ºé”®å€¼çš„<code>Class</code>
+	 * @param property  è¦è®¾ç½®çš„å±æ€§å€¼
+	 */
+	public void setProperty(Class c, Object property)
+	{
+		CacheCell ccm = this.getCacheCell(c);
+		if (ccm != null)
+		{
+			ccm.put(c, property);
+		}
+	}
 
-   /**
-    * ÉèÖÃÒ»¸öÊôĞÔ.
-    *
-    * @param cl        ×÷Îª¼üÖµµÄ<code>ClassLoader</code>
-    * @param property  ÒªÉèÖÃµÄÊôĞÔÖµ
-    */
-   public void setProperty(ClassLoader cl, Object property)
-   {
-      CacheCell ccm = this.getCacheCell(cl);
-      if (ccm != null)
-      {
-         ccm.put(null, property);
-      }
-   }
+	/**
+	 * è®¾ç½®ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param cl        ä½œä¸ºé”®å€¼çš„<code>ClassLoader</code>
+	 * @param property  è¦è®¾ç½®çš„å±æ€§å€¼
+	 */
+	public void setProperty(ClassLoader cl, Object property)
+	{
+		CacheCell ccm = this.getCacheCell(cl);
+		if (ccm != null)
+		{
+			ccm.put(null, property);
+		}
+	}
 
-   /**
-    * »ñÈ¡Ò»¸öÊôĞÔµÄÖµ.
-    *
-    * @param c     ×÷Îª¼üÖµµÄ<code>Class</code>
-    */
-   public Object getProperty(Class c)
-   {
-      CacheCell ccm = this.getCacheCell(c);
-      if (ccm != null)
-      {
-         return ccm.get(c);
-      }
-      return null;
-   }
+	/**
+	 * è·å–ä¸€ä¸ªå±æ€§çš„å€¼.
+	 *
+	 * @param c     ä½œä¸ºé”®å€¼çš„<code>Class</code>
+	 */
+	public Object getProperty(Class c)
+	{
+		CacheCell ccm = this.getCacheCell(c);
+		if (ccm != null)
+		{
+			return ccm.get(c);
+		}
+		return null;
+	}
 
-   /**
-    * »ñÈ¡Ò»¸öÊôĞÔµÄÖµ.
-    *
-    * @param cl     ×÷Îª¼üÖµµÄ<code>ClassLoader</code>
-    */
-   public Object getProperty(ClassLoader cl)
-   {
-      CacheCell ccm = this.getCacheCell(cl);
-      if (ccm != null)
-      {
-         return ccm.get(null);
-      }
-      return null;
-   }
+	/**
+	 * è·å–ä¸€ä¸ªå±æ€§çš„å€¼.
+	 *
+	 * @param cl     ä½œä¸ºé”®å€¼çš„<code>ClassLoader</code>
+	 */
+	public Object getProperty(ClassLoader cl)
+	{
+		CacheCell ccm = this.getCacheCell(cl);
+		if (ccm != null)
+		{
+			return ccm.get(null);
+		}
+		return null;
+	}
 
-   /**
-    * ÒÆ³ıÒ»¸öÊôĞÔ.
-    *
-    * @param c     ×÷Îª¼üÖµµÄ<code>Class</code>
-    */
-   public void removeProperty(Class c)
-   {
-      CacheCell ccm = this.getCacheCell(c);
-      if (ccm != null)
-      {
-         ccm.remove(c);
-      }
-   }
+	/**
+	 * ç§»é™¤ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param c     ä½œä¸ºé”®å€¼çš„<code>Class</code>
+	 */
+	public void removeProperty(Class c)
+	{
+		CacheCell ccm = this.getCacheCell(c);
+		if (ccm != null)
+		{
+			ccm.remove(c);
+		}
+	}
 
-   /**
-    * ÒÆ³ıÒ»¸öÊôĞÔ.
-    *
-    * @param cl     ×÷Îª¼üÖµµÄ<code>ClassLoader</code>
-    */
-   public void removeProperty(ClassLoader cl)
-   {
-      CacheCell ccm = this.getCacheCell(cl);
-      if (ccm != null)
-      {
-         ccm.remove(null);
-      }
-   }
+	/**
+	 * ç§»é™¤ä¸€ä¸ªå±æ€§.
+	 *
+	 * @param cl     ä½œä¸ºé”®å€¼çš„<code>ClassLoader</code>
+	 */
+	public void removeProperty(ClassLoader cl)
+	{
+		CacheCell ccm = this.getCacheCell(cl);
+		if (ccm != null)
+		{
+			ccm.remove(null);
+		}
+	}
 
-   /**
-    * »ñµÃ»º´æµÄ¶ÔÏóÊı.
-    */
-   public int size()
-   {
-      int result = 0;
-      Iterator itr = this.caches.values().iterator();
-      while (itr.hasNext())
-      {
-         CacheCell cc = (CacheCell) itr.next();
-         result += cc.size();
-      }
-      return result;
-   }
+	/**
+	 * è·å¾—ç¼“å­˜çš„å¯¹è±¡æ•°.
+	 */
+	public int size()
+	{
+		int result = 0;
+		Iterator itr = this.caches.values().iterator();
+		while (itr.hasNext())
+		{
+			CacheCell cc = (CacheCell) itr.next();
+			result += cc.size();
+		}
+		return result;
+	}
 
-   /**
-    * Çå¿ÕËùÓĞµÄÊôĞÔÖµ.
-    */
-   public void clearPropertys()
-   {
-      this.caches.clear();
-   }
+	/**
+	 * æ¸…ç©ºæ‰€æœ‰çš„å±æ€§å€¼.
+	 */
+	public void clearPropertys()
+	{
+		this.caches.clear();
+	}
 
-   /**
-    * »ñÈ¡»º´æµ¥Ôª.
-    *
-    * @param c     ×÷Îª¼üÖµµÄ<code>Class</code>
-    */
-   private CacheCell getCacheCell(Class c)
-   {
-      if (c == null)
-      {
-         return null;
-      }
-      ClassLoader cl = c.getClassLoader();
+	/**
+	 * è·å–ç¼“å­˜å•å…ƒ.
+	 *
+	 * @param c     ä½œä¸ºé”®å€¼çš„<code>Class</code>
+	 */
+	private CacheCell getCacheCell(Class c)
+	{
+		if (c == null)
+		{
+			return null;
+		}
+		ClassLoader cl = c.getClassLoader();
 		return this.getCacheCell(cl);
-   }
+	}
 
-   /**
-    * »ñÈ¡»º´æµ¥Ôª.
-    *
-    * @param cl     ×÷Îª»º´æµ¥ÔªµÄ±êÊ¶<code>ClassLoader</code>
-    */
-   private CacheCell getCacheCell(ClassLoader cl)
-   {
-      CacheCell cc = (CacheCell) this.caches.get(cl);
-      if (cc == null)
-      {
-         cc = getCacheCell0(cl, this.caches);
-      }
-      return cc;
-   }
+	/**
+	 * è·å–ç¼“å­˜å•å…ƒ.
+	 *
+	 * @param cl     ä½œä¸ºç¼“å­˜å•å…ƒçš„æ ‡è¯†<code>ClassLoader</code>
+	 */
+	private CacheCell getCacheCell(ClassLoader cl)
+	{
+		CacheCell cc = (CacheCell) this.caches.get(cl);
+		if (cc == null)
+		{
+			cc = getCacheCell0(cl, this.caches);
+		}
+		return cc;
+	}
 
-   private static synchronized CacheCell getCacheCell0(ClassLoader cl, Map caches)
-   {
-      CacheCell cc = (CacheCell) caches.get(cl);
-      if (cc == null)
-      {
-         if (cl == null)
-         {
-            cc = new CacheCellImpl0();
-         }
-         else
-         {
-            try
-            {
-               cc = new CacheCellImpl1(getCachesClass(cl));
-            }
-            catch (Throwable ex)
-            {
-               // Èç¹û¶¨ÒåClassµÄ¹ı³ÌÖĞ³öÏÖ´íÎó, ÔòÓÃÏµÍ³µÄ»º´æµ¥Ôª
-               cc = new CacheCellImpl0();
-            }
-         }
-         caches.put(cl, cc);
-      }
-      return cc;
-   }
+	private static synchronized CacheCell getCacheCell0(ClassLoader cl, Map caches)
+	{
+		CacheCell cc = (CacheCell) caches.get(cl);
+		if (cc == null)
+		{
+			if (cl == null)
+			{
+				cc = new CacheCellImpl0();
+			}
+			else
+			{
+				try
+				{
+					cc = new CacheCellImpl1(getCachesClass(cl));
+				}
+				catch (Throwable ex)
+				{
+					// å¦‚æœå®šä¹‰Classçš„è¿‡ç¨‹ä¸­å‡ºç°é”™è¯¯, åˆ™ç”¨ç³»ç»Ÿçš„ç¼“å­˜å•å…ƒ
+					cc = new CacheCellImpl0();
+				}
+			}
+			caches.put(cl, cc);
+		}
+		return cc;
+	}
 
-   private static Class getCachesClass(ClassLoader loader)
-         throws Exception
-   {
-      Class cachesClass = (Class) cachesClassCache.get(loader);
-      if (cachesClass != null)
-      {
-         return cachesClass;
-      }
-      byte[] b = cachesClassDef;
-      if (b == null)
-      {
-         return CacheCellImpl0.class;
-      }
-      Class cl = Class.forName("java.lang.ClassLoader");
-      Class[] paramTypes = { String.class, byte[].class, int.class, int.class};
-      Object[] args = {cachesClassName, b, new Integer(0), new Integer(b.length)};
-      java.lang.reflect.Method method = cl.getDeclaredMethod("defineClass", paramTypes);
-      try
-      {
-         method.setAccessible(true);
-         cachesClass = (Class) method.invoke(loader, args);
-         method.setAccessible(false);
-      }
-      catch (ClassFormatError ex)
-      {
-         cachesClass = loader.loadClass(cachesClassName);
-      }
-      cachesClassCache.put(loader, cachesClass);
-      return cachesClass;
-   }
+	private static Class getCachesClass(ClassLoader loader)
+			throws Exception
+	{
+		WeakReference cRef = (WeakReference) cachesClassCache.get(loader);
+		Class cachesClass = null;
+		if (cRef != null)
+		{
+			cachesClass = (Class) cRef.get();
+		}
+		if (cachesClass != null)
+		{
+			return cachesClass;
+		}
+		byte[] b = cachesClassDef;
+		if (b == null)
+		{
+			return CacheCellImpl0.class;
+		}
+		Class cl = Class.forName("java.lang.ClassLoader");
+		Class[] paramTypes = {String.class, byte[].class, int.class, int.class};
+		Object[] args = {cachesClassName, b, new Integer(0), new Integer(b.length)};
+		java.lang.reflect.Method method = cl.getDeclaredMethod("defineClass", paramTypes);
+		try
+		{
+			method.setAccessible(true);
+			cachesClass = (Class) method.invoke(loader, args);
+			method.setAccessible(false);
+		}
+		catch (ClassFormatError ex)
+		{
+			cachesClass = loader.loadClass(cachesClassName);
+		}
+		// è¿™é‡Œä¿å­˜çš„ç±»éœ€è¦ä½¿ç”¨å¼±å¼•ç”¨ä¿å­˜, ä»¥ä¾¿èƒ½æ­£å¸¸é‡Šæ”¾
+		cachesClassCache.put(loader, new WeakReference(cachesClass));
+		return cachesClass;
+	}
 
-   private static byte[] getCachesClassDef(String name)
-   {
-      try
-      {
-         String path = name.replace('.', '/') + ".class";
-         InputStream in = ClassKeyCache.class.getClassLoader().getResourceAsStream(path);
-         ByteArrayOutputStream bOut = new ByteArrayOutputStream(128);
-         Utility.copyStream(in, bOut);
-         in.close();
-         return bOut.toByteArray();
-      }
-      catch (Exception ex)
-      {
-         if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
-         {
-            CG.log.error("Init caches class def error.", ex);
-         }
-         return null;
-      }
-   }
+	private static byte[] getCachesClassDef(String name)
+	{
+		try
+		{
+			String path = name.replace('.', '/') + ".class";
+			InputStream in = ClassKeyCache.class.getClassLoader().getResourceAsStream(path);
+			ByteArrayOutputStream bOut = new ByteArrayOutputStream(128);
+			Utility.copyStream(in, bOut);
+			in.close();
+			return bOut.toByteArray();
+		}
+		catch (Exception ex)
+		{
+			if (ClassGenerator.COMPILE_LOG_TYPE > CG.COMPILE_LOG_TYPE_ERROR)
+			{
+				CG.log.error("Init caches class def error.", ex);
+			}
+			return null;
+		}
+	}
 
-   /**
-    * ´æ·Å»º´æÊı¾İµÄÀà µÄ»º´æ
-    */
-   private static Map cachesClassCache = new SynHashMap(8, SynHashMap.WEAK);
+	/**
+	 * å­˜æ”¾ç¼“å­˜æ•°æ®çš„ç±» çš„ç¼“å­˜
+	 */
+	private static Map cachesClassCache = new SynHashMap(8, SynHashMap.WEAK);
 
-   /**
-    * ´æ·Å»º´æÊı¾İµÄÀàÃû.
-    */
-   private static final String cachesClassName;
+	/**
+	 * å­˜æ”¾ç¼“å­˜æ•°æ®çš„ç±»å.
+	 */
+	private static final String cachesClassName;
 
-   /**
-    * ´æ·Å»º´æÊı¾İµÄÀà¶¨Òå.
-    */
-   private static final byte[] cachesClassDef;
+	/**
+	 * å­˜æ”¾ç¼“å­˜æ•°æ®çš„ç±»å®šä¹‰.
+	 */
+	private static final byte[] cachesClassDef;
 
-   static
-   {
-      cachesClassName = ClassKeyCache.class.getName() + "$Caches";
-      cachesClassDef = getCachesClassDef(cachesClassName);
-   }
+	static
+	{
+		cachesClassName = ClassKeyCache.class.getName() + "$Caches";
+		cachesClassDef = getCachesClassDef(cachesClassName);
+	}
 
-   /**
-    * »º´æµ¥Ôª.
-    */
-   private interface CacheCell
-   {
-      public Object get(Class c);
+	/**
+	 * ç¼“å­˜å•å…ƒ.
+	 */
+	private interface CacheCell
+	{
+		public Object get(Class c);
 
-      public Object put(Class c, Object value);
+		public Object put(Class c, Object value);
 
-      public Object remove(Class c);
+		public Object remove(Class c);
 
-      public int size();
+		public int size();
 
-   }
+	}
 
-   /**
-    * Õë¶ÔÏµÍ³ClassLoader(Îªnull)µÄ »º´æµ¥Ôª µÄÊµÏÖ
-    */
-   private static class CacheCellImpl0
-         implements CacheCell
-   {
-      private Map cache = new SynHashMap();
+	/**
+	 * é’ˆå¯¹ç³»ç»ŸClassLoader(ä¸ºnull)çš„ ç¼“å­˜å•å…ƒ çš„å®ç°
+	 */
+	private static class CacheCellImpl0
+			implements CacheCell
+	{
+		private Map cache = new SynHashMap();
 
-      public Object get(Class c)
-      {
-         return this.cache.get(c);
-      }
+		public Object get(Class c)
+		{
+			return this.cache.get(c);
+		}
 
-      public Object put(Class c, Object value)
-      {
-         return this.cache.put(c, value);
-      }
+		public Object put(Class c, Object value)
+		{
+			return this.cache.put(c, value);
+		}
 
-      public Object remove(Class c)
-      {
-         return this.cache.remove(c);
-      }
+		public Object remove(Class c)
+		{
+			return this.cache.remove(c);
+		}
 
-      public int size()
-      {
-         return this.cache.size();
-      }
+		public int size()
+		{
+			return this.cache.size();
+		}
 
-   }
+	}
 
-   /**
-    * Õë¶ÔÒ»°ãµÄClassLoaderµÄ »º´æµ¥Ôª µÄÊµÏÖ
-    */
-   private static class CacheCellImpl1
-         implements CacheCell
-   {
-      /**
-       * ÕâÀïÊ¹ÓÃ<code>WeakReference</code>À´ÒıÓÃ¶ÔÓ¦µÄÀàºÍ»º´æ, ÕâÑù¾Í²»»áÓ°ÏìÆäÕı³£µÄÊÍ·Å.
-       */
-      private WeakReference cellClass;
-      private WeakReference cacheObj;
+	/**
+	 * é’ˆå¯¹ä¸€èˆ¬çš„ClassLoaderçš„ ç¼“å­˜å•å…ƒ çš„å®ç°
+	 */
+	private static class CacheCellImpl1
+			implements CacheCell
+	{
+		/**
+		 * è¿™é‡Œä½¿ç”¨<code>WeakReference</code>æ¥å¼•ç”¨å¯¹åº”çš„ç±»å’Œç¼“å­˜, è¿™æ ·å°±ä¸ä¼šå½±å“å…¶æ­£å¸¸çš„é‡Šæ”¾.
+		 */
+		private WeakReference cellClass;
+		private WeakReference cacheObj;
 
-      public CacheCellImpl1(Class cellClass)
-      {
-         this.cellClass = new WeakReference(cellClass);
-      }
+		public CacheCellImpl1(Class cellClass)
+		{
+			this.cellClass = new WeakReference(cellClass);
+		}
 
-      private Map getCache()
-      {
-         Map cache = this.cacheObj == null ? null : (Map) this.cacheObj.get();
-         if (cache == null)
-         {
-            Class c = (Class) this.cellClass.get();
-            if (c == null)
-            {
-               return null;
-            }
-            cache = this.getCache0(c);
-         }
-         return cache;
-      }
+		private Map getCache()
+		{
+			Map cache = this.cacheObj == null ? null : (Map) this.cacheObj.get();
+			if (cache == null)
+			{
+				Class c = (Class) this.cellClass.get();
+				if (c == null)
+				{
+					return null;
+				}
+				cache = this.getCache0(c);
+			}
+			return cache;
+		}
 
-		private synchronized Map getCache0(Class c)
+		private synchronized Map getCache0(Class cellClass)
 		{
 			try
 			{
-				// Õâ¶Î´úÂëÓ¦¸ÃÖ»»áÖ´ĞĞÒ»´Î, Ö»ÒªÀà²»±»ÊÍ·Å, Õâ¸ö»º´æÒ²²»»á±»ÊÍ·Å
-				Field f = c.getField("caches");
+				// è¿™æ®µä»£ç åº”è¯¥åªä¼šæ‰§è¡Œä¸€æ¬¡, åªè¦ç±»ä¸è¢«é‡Šæ”¾, è¿™ä¸ªç¼“å­˜ä¹Ÿä¸ä¼šè¢«é‡Šæ”¾
+				Field f = cellClass.getField("caches");
 				Map caches = (Map) f.get(null);
 				Map cache = (Map) caches.get(this);
 				if (cache == null)
@@ -384,46 +392,46 @@ public class ClassKeyCache
 			}
 		}
 
-      public Object get(Class c)
-      {
-         Map cache = this.getCache();
-         if (cache != null)
-         {
-            return cache.get(c);
-         }
-         return null;
-      }
+		public Object get(Class c)
+		{
+			Map cache = this.getCache();
+			if (cache != null)
+			{
+				return cache.get(c);
+			}
+			return null;
+		}
 
-      public Object put(Class c, Object value)
-      {
-         Map cache = this.getCache();
-         if (cache != null)
-         {
-            return cache.put(c, value);
-         }
-         return null;
-      }
+		public Object put(Class c, Object value)
+		{
+			Map cache = this.getCache();
+			if (cache != null)
+			{
+				return cache.put(c, value);
+			}
+			return null;
+		}
 
-      public Object remove(Class c)
-      {
-         Map cache = this.getCache();
-         if (cache != null)
-         {
-            return cache.remove(c);
-         }
-         return null;
-      }
+		public Object remove(Class c)
+		{
+			Map cache = this.getCache();
+			if (cache != null)
+			{
+				return cache.remove(c);
+			}
+			return null;
+		}
 
-      public int size()
-      {
-         Map cache = this.getCache();
-         if (cache != null)
-         {
-            return cache.size();
-         }
-         return 0;
-      }
+		public int size()
+		{
+			Map cache = this.getCache();
+			if (cache != null)
+			{
+				return cache.size();
+			}
+			return 0;
+		}
 
-   }
+	}
 
 }

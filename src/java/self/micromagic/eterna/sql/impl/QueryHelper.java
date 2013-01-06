@@ -14,34 +14,34 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
 
 /**
- * ²éÑ¯Ö´ĞĞµÄ¸¨Öú¹¤¾ß.
- * 1 ÓÃÓÚ´¦Àí´ø¼ÇÂ¼ÊıÏŞÖÆµÄ²éÑ¯Óï¾äµÄÉú³É.
- * 2 »ñÈ¡ÏàÓ¦µÄ¼ÇÂ¼.
+ * æŸ¥è¯¢æ‰§è¡Œçš„è¾…åŠ©å·¥å…·.
+ * 1 ç”¨äºå¤„ç†å¸¦è®°å½•æ•°é™åˆ¶çš„æŸ¥è¯¢è¯­å¥çš„ç”Ÿæˆ.
+ * 2 è·å–ç›¸åº”çš„è®°å½•.
  */
 public class QueryHelper
 {
 	/**
-	 * mysqlÊı¾İ¿âÃû³Æ.
+	 * mysqlæ•°æ®åº“åç§°.
 	 */
 	public static final String DB_NAME_MYSQL = "MySQL";
 
 	/**
-	 * oracleÊı¾İ¿âÃû³Æ.
+	 * oracleæ•°æ®åº“åç§°.
 	 */
 	public static final String DB_NAME_ORACLE = "Oracle";
 
 	/**
-	 * ÆäËûÆÕÍ¨Êı¾İ¿âÃû³Æ
+	 * å…¶ä»–æ™®é€šæ•°æ®åº“åç§°
 	 */
 	public static final String DB_NAME_COMMON = "Common";
 
 	/**
-	 * »ñÈ¡Ò»¸ö²éÑ¯¸¨Öú¹¤¾ßµÄÊµÀı.
+	 * è·å–ä¸€ä¸ªæŸ¥è¯¢è¾…åŠ©å·¥å…·çš„å®ä¾‹.
 	 *
-	 * @param query      ²éÑ¯µÄ¶ÔÏó, ÓÃÓÚ¹¹Ôì²éÑ¯¸¨Öú¹¤¾ß
-	 * @param conn       Êı¾İ¿âÁ´½Ó, ÓÃÓÚ»ñÈ¡Êı¾İ¿âµÄÀàĞÍ
-	 * @param oldHelper  ¾ÉµÄ²éÑ¯¸¨Öú¹¤¾ß, Èç¹ûµ±Ç°Êı¾İ¿âÀàĞÍºÍ¾ÉµÄ²éÑ¯¸¨Öú¹¤¾ßµÄÀàĞÍÏàÍ¬,
-	 *                   Ôò·µ»ØÕâ¸ö¾ÉµÄ²éÑ¯¸¨Öú¹¤¾ß
+	 * @param query      æŸ¥è¯¢çš„å¯¹è±¡, ç”¨äºæ„é€ æŸ¥è¯¢è¾…åŠ©å·¥å…·
+	 * @param conn       æ•°æ®åº“é“¾æ¥, ç”¨äºè·å–æ•°æ®åº“çš„ç±»å‹
+	 * @param oldHelper  æ—§çš„æŸ¥è¯¢è¾…åŠ©å·¥å…·, å¦‚æœå½“å‰æ•°æ®åº“ç±»å‹å’Œæ—§çš„æŸ¥è¯¢è¾…åŠ©å·¥å…·çš„ç±»å‹ç›¸åŒ,
+	 *                   åˆ™è¿”å›è¿™ä¸ªæ—§çš„æŸ¥è¯¢è¾…åŠ©å·¥å…·
 	 */
 	public static QueryHelper getInstance(QueryAdapter query, Connection conn, QueryHelper oldHelper)
 			throws SQLException
@@ -50,12 +50,12 @@ public class QueryHelper
 		if (DB_NAME_ORACLE.equals(dbName))
 		{
 			return oldHelper != null && DB_NAME_ORACLE.equals(oldHelper.getType()) ?
-			 		oldHelper : new OracleQueryHelper(query);
+					 oldHelper : new OracleQueryHelper(query);
 		}
 		else if (DB_NAME_MYSQL.equals(dbName))
 		{
 			return oldHelper != null && DB_NAME_MYSQL.equals(oldHelper.getType()) ?
-			 		oldHelper : new MySqlQueryHelper(query);
+					 oldHelper : new MySqlQueryHelper(query);
 		}
 		return oldHelper != null && DB_NAME_COMMON.equals(oldHelper.getType()) ?
 				oldHelper : new QueryHelper(query);
@@ -65,9 +65,9 @@ public class QueryHelper
 	private QueryAdapter query;
 
 	/**
-	 * ¹¹Ôìº¯Êı.
+	 * æ„é€ å‡½æ•°.
 	 *
-	 * @param query    Ö´ĞĞ²éÑ¯µÄ¶ÔÏó
+	 * @param query    æ‰§è¡ŒæŸ¥è¯¢çš„å¯¹è±¡
 	 */
 	public QueryHelper(QueryAdapter query)
 	{
@@ -75,7 +75,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * »ñÈ¡Ö´ĞĞ²éÑ¯µÄ¶ÔÏó.
+	 * è·å–æ‰§è¡ŒæŸ¥è¯¢çš„å¯¹è±¡.
 	 */
 	protected QueryAdapter getQueryAdapter()
 	{
@@ -83,7 +83,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°²éÑ¯¹¤¾ßµÄÀàĞÍ.
+	 * è·å–å½“å‰æŸ¥è¯¢å·¥å…·çš„ç±»å‹.
 	 */
 	public String getType()
 	{
@@ -91,90 +91,90 @@ public class QueryHelper
 	}
 
 	/**
-	 * ¸ù¾İÔ­Ê¼Óï¾ä, Éú³É´¦ÀíºóµÄ, ´ø¼ÇÂ¼ÊıÏŞÖÆµÄ²éÑ¯Óï¾ä.
+	 * æ ¹æ®åŸå§‹è¯­å¥, ç”Ÿæˆå¤„ç†åçš„, å¸¦è®°å½•æ•°é™åˆ¶çš„æŸ¥è¯¢è¯­å¥.
 	 */
 	public String getQuerySQL(String preparedSQL)
-   		throws ConfigurationException
+			throws ConfigurationException
 	{
-      return preparedSQL;
+		return preparedSQL;
 	}
 
-   /**
-    * »ñÈ¡±¾´Î²éÑ¯´ÓµÚ¼¸Ìõ¼ÇÂ¼¿ªÊ¼¶ÁÈ¡, Ä¬ÈÏÖµÎª"1".
-    */
+	/**
+	 * è·å–æœ¬æ¬¡æŸ¥è¯¢ä»ç¬¬å‡ æ¡è®°å½•å¼€å§‹è¯»å–, é»˜è®¤å€¼ä¸º"1".
+	 */
 	public int getStartRow()
-   		throws SQLException
+			throws SQLException
 	{
 		return this.query.getStartRow();
 	}
 
-   /**
-    * »ñÈ¡±¾´Î²éÑ¯¶ÁÈ¡µÄ×î´ó¼ÇÂ¼Êı, Ä¬ÈÏÖµÎª"-1", ±íÊ¾È¡ÍêÎªÖ¹.
-    */
+	/**
+	 * è·å–æœ¬æ¬¡æŸ¥è¯¢è¯»å–çš„æœ€å¤§è®°å½•æ•°, é»˜è®¤å€¼ä¸º"-1", è¡¨ç¤ºå–å®Œä¸ºæ­¢.
+	 */
 	public int getMaxRows()
-   		throws SQLException
+			throws SQLException
 	{
 		return this.query.getMaxRows();
 	}
 
-   /**
-    * »ñÈ¡±¾´Î²éÑ¯ÉèÖÃµÄ×Ü¼ÇÂ¼Êı.
-    */
+	/**
+	 * è·å–æœ¬æ¬¡æŸ¥è¯¢è®¾ç½®çš„æ€»è®°å½•æ•°.
+	 */
 	public int getTotalCount()
-   		throws ConfigurationException
+			throws ConfigurationException
 	{
 		return this.query.getTotalCount();
 	}
 
-   /**
-    * »ñÈ¡¸Ã²éÑ¯¶ÔÏóÉèÖÃµÄ×Ü¼ÇÂ¼ÊıÀ©Õ¹ĞÅÏ¢.
-    */
-   public QueryAdapter.TotalCountExt getTotalCountExt()
+	/**
+	 * è·å–è¯¥æŸ¥è¯¢å¯¹è±¡è®¾ç½®çš„æ€»è®°å½•æ•°æ‰©å±•ä¿¡æ¯.
+	 */
+	public QueryAdapter.TotalCountExt getTotalCountExt()
 			throws ConfigurationException
 	{
 		return this.query.getTotalCountExt();
 	}
 
 	/**
-	 * ¶ÁÈ¡½á¹û¼¯ÖĞµÄÊı¾İ.
+	 * è¯»å–ç»“æœé›†ä¸­çš„æ•°æ®.
 	 *
-	 * @param rs           ±»¶ÁÈ¡Êı¾İµÄ½á¹û¼¯
-	 * @param readerList   ÃèÊöÒª¶ÁÈ¡µÄÊı¾İµÄResultReader¶ÔÏóÁĞ±í
-	 * @return     °üº¬Êı¾İ½á¹ûµÄList¶ÔÏó, ÀïÃæµÄÃ¿¸öÖµÎªObjectÊı×é
+	 * @param rs           è¢«è¯»å–æ•°æ®çš„ç»“æœé›†
+	 * @param readerList   æè¿°è¦è¯»å–çš„æ•°æ®çš„ResultReaderå¯¹è±¡åˆ—è¡¨
+	 * @return     åŒ…å«æ•°æ®ç»“æœçš„Listå¯¹è±¡, é‡Œé¢çš„æ¯ä¸ªå€¼ä¸ºObjectæ•°ç»„
 	 */
-   public List readResults(ResultSet rs, List readerList)
-         throws ConfigurationException, SQLException
-   {
-      int start = this.getStartRow() - 1;
-      int tmpRecordCount = 0;
-      this.recordCount = 0;
-      this.realRecordCount = 0;
-      this.realRecordCountAvailable = false;
-      this.hasMoreRecord = false;
+	public List readResults(ResultSet rs, List readerList)
+			throws ConfigurationException, SQLException
+	{
+		int start = this.getStartRow() - 1;
+		int tmpRecordCount = 0;
+		this.recordCount = 0;
+		this.realRecordCount = 0;
+		this.realRecordCountAvailable = false;
+		this.hasMoreRecord = false;
 		this.needCount = false;
-      boolean hasRecord = true;
-      boolean isForwardOnly = rs.getType() == ResultSet.TYPE_FORWARD_ONLY;
+		boolean hasRecord = true;
+		boolean isForwardOnly = rs.getType() == ResultSet.TYPE_FORWARD_ONLY;
 
-      if (start > 0)
-      {
-         if (!isForwardOnly)
-         {
-				// ÕâÀï²»ĞèÒª¼Ó1, ÒòÎªĞèÒª¶¨Î»µ½Ç°Ò»Ìõ
-            hasRecord = rs.absolute(start);
+		if (start > 0)
+		{
+			if (!isForwardOnly)
+			{
+				// è¿™é‡Œä¸éœ€è¦åŠ 1, å› ä¸ºéœ€è¦å®šä½åˆ°å‰ä¸€æ¡
+				hasRecord = rs.absolute(start);
 				if (!hasRecord)
 				{
 					rs.last();
 				}
 				tmpRecordCount = hasRecord ? rs.getRow() : rs.getRow() + 1;
-         }
-         else
-         {
-            for (; tmpRecordCount < start && hasRecord; tmpRecordCount++, hasRecord = rs.next());
-         }
-      }
-      ArrayList result;
-      if (!hasRecord)
-      {
+			}
+			else
+			{
+				for (; tmpRecordCount < start && hasRecord; tmpRecordCount++, hasRecord = rs.next());
+			}
+		}
+		ArrayList result;
+		if (!hasRecord)
+		{
 			int totalCount = this.getTotalCount();
 			if (totalCount >= 0)
 			{
@@ -182,24 +182,24 @@ public class QueryHelper
 			}
 			else
 			{
-				// Ã»ÓĞ¼ÇÂ¼Êı±íÊ¾ÒÑ¾­ÒÆµ½µÄ×îºóÒ»Ìõ, ÁÙÊ±¼ÇÂ¼Êı-1Îª×Ü¼ÇÂ¼Êı
+				// æ²¡æœ‰è®°å½•æ•°è¡¨ç¤ºå·²ç»ç§»åˆ°çš„æœ€åä¸€æ¡, ä¸´æ—¶è®°å½•æ•°-1ä¸ºæ€»è®°å½•æ•°
 				this.realRecordCount = tmpRecordCount - 1;
 				this.realRecordCountAvailable = true;
 				this.hasMoreRecord = false;
 			}
-         result = new ArrayList(0);
-      }
-      else
-      {
+			result = new ArrayList(0);
+		}
+		else
+		{
 			int maxRows = this.getMaxRows();
-         result = new ArrayList(maxRows == -1 ? 32 : maxRows);
-         if (maxRows == -1)
-         {
-            while (rs.next())
-            {
-               tmpRecordCount++;
-               result.add(QueryAdapterImpl.getResults(this.query, readerList, rs));
-            }
+			result = new ArrayList(maxRows == -1 ? 32 : maxRows);
+			if (maxRows == -1)
+			{
+				while (rs.next())
+				{
+					tmpRecordCount++;
+					result.add(QueryAdapterImpl.getResults(this.query, readerList, rs));
+				}
 				int totalCount = this.getTotalCount();
 				if (totalCount >= 0)
 				{
@@ -211,25 +211,25 @@ public class QueryHelper
 					this.realRecordCountAvailable = true;
 					this.hasMoreRecord = false;
 				}
-         }
-         else
-         {
-            int i = 0;
-            for (; i < maxRows && (this.hasMoreRecord = rs.next()); i++)
-            {
-               tmpRecordCount++;
-               result.add(QueryAdapterImpl.getResults(this.query, readerList, rs));
-            }
-            // ÕâÃ´ÅĞ¶ÏÊÇ·ÀÖ¹Ä³Ğ©jdbcÔÚµÚÒ»´ÎnextÎªfalseºó, ºóÃæµÄnextÓÖ±ä»Øtrue
-            if (this.hasMoreRecord && (this.hasMoreRecord = rs.next()))
-            {
-               tmpRecordCount++;
-               this.realRecordCountAvailable = false;
-            }
-            else
-            {
-               this.realRecordCountAvailable = true;
-            }
+			}
+			else
+			{
+				int i = 0;
+				for (; i < maxRows && (this.hasMoreRecord = rs.next()); i++)
+				{
+					tmpRecordCount++;
+					result.add(QueryAdapterImpl.getResults(this.query, readerList, rs));
+				}
+				// è¿™ä¹ˆåˆ¤æ–­æ˜¯é˜²æ­¢æŸäº›jdbcåœ¨ç¬¬ä¸€æ¬¡nextä¸ºfalseå, åé¢çš„nextåˆå˜å›true
+				if (this.hasMoreRecord && (this.hasMoreRecord = rs.next()))
+				{
+					tmpRecordCount++;
+					this.realRecordCountAvailable = false;
+				}
+				else
+				{
+					this.realRecordCountAvailable = true;
+				}
 
 				int totalCount = this.getTotalCount();
 				if (totalCount == QueryAdapter.TOTAL_COUNT_AUTO)
@@ -268,15 +268,15 @@ public class QueryHelper
 				{
 					this.setTotalCountInfo(totalCount, this.getTotalCountExt());
 				}
-         }
-      }
+			}
+		}
 
-      this.recordCount = result.size();
-      return result;
-   }
+		this.recordCount = result.size();
+		return result;
+	}
 
 	/**
-	 * µ±totalCountÎª0-NÊ±ÉèÖÃ×Ü¼ÇÂ¼ÊıµÈĞÅÏ¢.
+	 * å½“totalCountä¸º0-Næ—¶è®¾ç½®æ€»è®°å½•æ•°ç­‰ä¿¡æ¯.
 	 */
 	protected void setTotalCountInfo(int totalCount, QueryAdapter.TotalCountExt ext)
 	{
@@ -290,13 +290,13 @@ public class QueryHelper
 	}
 
 	protected int recordCount;
-   protected int realRecordCount;
-   protected boolean realRecordCountAvailable;
-   protected boolean hasMoreRecord;
+	protected int realRecordCount;
+	protected boolean realRecordCountAvailable;
+	protected boolean hasMoreRecord;
 	protected boolean needCount;
 
 	/**
-	 * ±¾´Î¶ÁÈ¡½á¹ûÖĞµÄ¼ÇÂ¼Êı.
+	 * æœ¬æ¬¡è¯»å–ç»“æœä¸­çš„è®°å½•æ•°.
 	 */
 	public int getRecordCount()
 	{
@@ -304,7 +304,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * Êµ¼Ê²éÑ¯½á¹ûÖĞµÄ×Ü¼ÇÂ¼Êı.
+	 * å®é™…æŸ¥è¯¢ç»“æœä¸­çš„æ€»è®°å½•æ•°.
 	 */
 	public int getRealRecordCount()
 	{
@@ -312,7 +312,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * ×Ü¼ÇÂ¼ÊıÖĞµÄÖµÊÇ·ñÓĞĞ§.
+	 * æ€»è®°å½•æ•°ä¸­çš„å€¼æ˜¯å¦æœ‰æ•ˆ.
 	 */
 	public boolean isRealRecordCountAvailable()
 	{
@@ -320,7 +320,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * Êµ¼Ê²éÑ¯½á¹ûÖĞÊÇ·ñ»¹ÓĞ¸ü¶àµÄ¼ÇÂ¼.
+	 * å®é™…æŸ¥è¯¢ç»“æœä¸­æ˜¯å¦è¿˜æœ‰æ›´å¤šçš„è®°å½•.
 	 */
 	public boolean isHasMoreRecord()
 	{
@@ -328,7 +328,7 @@ public class QueryHelper
 	}
 
 	/**
-	 * ÊÇ·ñĞèÒªÍ¨¹ı¼ÆÊı²éÑ¯»ñÈ¡×Ü¼ÇÂ¼Êı.
+	 * æ˜¯å¦éœ€è¦é€šè¿‡è®¡æ•°æŸ¥è¯¢è·å–æ€»è®°å½•æ•°.
 	 */
 	public boolean needCount()
 	{
@@ -351,7 +351,7 @@ public class QueryHelper
 		}
 
 		/**
-		 * ¹¹ÔìÌØÊâµÄÓÃÓÚ·ÖÒ³µÄSQLÓï¾ä.
+		 * æ„é€ ç‰¹æ®Šçš„ç”¨äºåˆ†é¡µçš„SQLè¯­å¥.
 		 */
 		protected abstract String createSpecialSQL(String preparedSQL);
 
@@ -449,7 +449,7 @@ public class QueryHelper
 					tmpRecordCount++;
 					result.add(QueryAdapterImpl.getResults(query, readerList, rs));
 				}
-				// ÕâÃ´ÅĞ¶ÏÊÇ·ÀÖ¹Ä³Ğ©jdbcÔÚµÚÒ»´ÎnextÎªfalseºó, ºóÃæµÄnextÓÖ±ä»Øtrue
+				// è¿™ä¹ˆåˆ¤æ–­æ˜¯é˜²æ­¢æŸäº›jdbcåœ¨ç¬¬ä¸€æ¬¡nextä¸ºfalseå, åé¢çš„nextåˆå˜å›true
 				if (this.hasMoreRecord && (this.hasMoreRecord = rs.next()))
 				{
 					tmpRecordCount += this.nowStartRow;
@@ -457,7 +457,7 @@ public class QueryHelper
 				}
 				else if (tmpRecordCount > 0)
 				{
-            	this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
+					this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
 					this.realRecordCountAvailable = true;
 				}
 
@@ -497,7 +497,7 @@ public class QueryHelper
 		}
 
 		/**
-		 * »ñÈ¡µ±Ç°²éÑ¯¹¤¾ßµÄÀàĞÍ.
+		 * è·å–å½“å‰æŸ¥è¯¢å·¥å…·çš„ç±»å‹.
 		 */
 		public String getType()
 		{
@@ -539,7 +539,7 @@ public class QueryHelper
 		}
 
 		/**
-		 * »ñÈ¡µ±Ç°²éÑ¯¹¤¾ßµÄÀàĞÍ.
+		 * è·å–å½“å‰æŸ¥è¯¢å·¥å…·çš„ç±»å‹.
 		 */
 		public String getType()
 		{

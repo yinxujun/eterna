@@ -2,22 +2,24 @@
 package self.micromagic.cg;
 
 /**
- * ¶ÁÈ¡Ò»¸öbeanÊôĞÔµÄ¹¤¾ß.
+ * è¯»å–ä¸€ä¸ªbeanå±æ€§çš„å·¥å…·.
+ *
+ * @author micromagic@sina.com
  */
 public interface BeanPropertyReader
 {
-   /**
-    * ¶ÁÈ¡Ò»¸öÊôĞÔµÄÖµ.
-    *
-    * @param cd            ÊôĞÔÃèÊöÀà
-    * @param indexs        Èç¹ûÊôĞÔÊÇ¸öÊı×é»òCollection, ¿ÉÍ¨¹ı´ËË÷ÒıÖµÀ´¿ØÖÆ¶ÁÈ¡ÄÄ¸öÖµ
-    * @param bean          ÊôĞÔËùÔÚµÄbean¶ÔÏó
-    * @param prefix        µ±Ç°µÄÃû³ÆÇ°×º
-    * @param beanMap       µ±Ç°µÄBeanMap¶ÔÏó
-    * @return              ¶ÔÓ¦µÄÊôĞÔµÄÖµ
-    */
-   public Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, String prefix,
-         BeanMap beanMap)
-         throws Exception;
+	/**
+	 * è¯»å–ä¸€ä¸ªå±æ€§çš„å€¼.
+	 *
+	 * @param cd            å±æ€§æè¿°ç±»
+	 * @param indexs        å¦‚æœå±æ€§æ˜¯ä¸ªæ•°ç»„æˆ–Collection, å¯é€šè¿‡æ­¤ç´¢å¼•å€¼æ¥æ§åˆ¶è¯»å–å“ªä¸ªå€¼
+	 * @param bean          å±æ€§æ‰€åœ¨çš„beanå¯¹è±¡
+	 * @param prefix        å½“å‰çš„åç§°å‰ç¼€
+	 * @param beanMap       å½“å‰çš„BeanMapå¯¹è±¡
+	 * @return              å¯¹åº”çš„å±æ€§çš„å€¼
+	 */
+	public Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, String prefix,
+			BeanMap beanMap)
+			throws Exception;
 
 }

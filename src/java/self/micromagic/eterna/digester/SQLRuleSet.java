@@ -28,406 +28,406 @@ import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGenerator;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreaterGeneratorImpl;
 
 /**
- * SQLÄ£¿é³õÊ¼»¯µÄ¹æÔò¼¯.
+ * SQLæ¨¡å—åˆå§‹åŒ–çš„è§„åˆ™é›†.
  *
  * @author micromagic@sina.com
  */
 public class SQLRuleSet extends RuleSetBase
 {
-   public SQLRuleSet()
-   {
-   }
+	public SQLRuleSet()
+	{
+	}
 
-   public void addRuleInstances(Digester digester)
-   {
-      PropertySetter setter;
-      PropertySetter[] setters;
-      Rule rule;
+	public void addRuleInstances(Digester digester)
+	{
+		PropertySetter setter;
+		PropertySetter[] setters;
+		Rule rule;
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ³£Á¿(constant)µÄ¶ÁÈ¡¹æÔò
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®å¸¸é‡(constant)çš„è¯»å–è§„åˆ™
 		AttributeSetRule constRule = new AttributeSetRule("addConstantValue", "name", "value", String.class);
 		constRule.setNeedResolve("resolve", true);
-      digester.addRule("eterna-config/factory/objs/constant", constRule);
+		digester.addRule("eterna-config/factory/objs/constant", constRule);
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃÊı¾İ×¼±¸Éú³ÉÆ÷(ValuePreparerCreate)µÄ¶ÁÈ¡¹æÔò
-      rule = new ObjectCreateRule(ValuePreparerCreaterGeneratorImpl.class.getName(),
-            "className", ValuePreparerCreaterGenerator.class);
-      digester.addRule("eterna-config/factory/objs/vpc", rule);
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®æ•°æ®å‡†å¤‡ç”Ÿæˆå™¨(ValuePreparerCreate)çš„è¯»å–è§„åˆ™
+		rule = new ObjectCreateRule(ValuePreparerCreaterGeneratorImpl.class.getName(),
+				"className", ValuePreparerCreaterGenerator.class);
+		digester.addRule("eterna-config/factory/objs/vpc", rule);
 
-      setter = new StackPropertySetter("registerValuePreparerGenerator", ValuePreparerCreaterGenerator.class, 1);
-      digester.addRule("eterna-config/factory/objs/vpc", new PropertySetRule(setter));
+		setter = new StackPropertySetter("registerValuePreparerGenerator", ValuePreparerCreaterGenerator.class, 1);
+		digester.addRule("eterna-config/factory/objs/vpc", new PropertySetRule(setter));
 
-      setters = new PropertySetter[] {
-         // ValuePreparerCreateµÄÃû³Æ
-         new StringPropertySetter("name", "setName", true)
-      };
-      digester.addRule("eterna-config/factory/objs/vpc",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/vpc",
-            new ObjectLogRule("name", "ValuePreparerCreaterGenerator"));
-      digester.addRule("eterna-config/factory/objs/vpc/attribute",
-            new AttributeSetRule());
-
-
-      //--------------------------------------------------------------------------------
-      // ¹¹ÔìSpecialLog
-      digester.addRule("eterna-config/factory/special-log",
-            new ObjectCreateRule(null, "className", SpecialLog.class));
-      setter = new StackPropertySetter("setSpecialLog", SpecialLog.class, 1);
-      digester.addRule("eterna-config/factory/special-log", new PropertySetRule(setter));
+		setters = new PropertySetter[] {
+			// ValuePreparerCreateçš„åç§°
+			new StringPropertySetter("name", "setName", true)
+		};
+		digester.addRule("eterna-config/factory/objs/vpc",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/vpc",
+				new ObjectLogRule("name", "ValuePreparerCreaterGenerator"));
+		digester.addRule("eterna-config/factory/objs/vpc/attribute",
+				new AttributeSetRule());
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ½á¹û¸ñÊ½»¯Æ÷(ResultFormat)µÄ¶ÁÈ¡¹æÔò
-      setter = new GeneratorPropertySetter("generator", "addFormat",
-            ResultFormatGeneratorImpl.class.getName(), ResultFormat.class, true);
-      digester.addRule("eterna-config/factory/objs/format",
-            new PropertySetRule(setter));
-      digester.addRule("eterna-config/factory/objs/format",
-            new ObjectLogRule("name", "ResultFormat"));
-
-      setters = new PropertySetter[] {
-         // ResultFormatµÄÃû³Æ
-         new StringPropertySetter("name", "setName", true),
-         // ResultFormatµÄÀàĞÍ
-         new StringPropertySetter("type", "setType", true),
-         // ResultFormatµÄ¸ñÊ½»¯Ä£Ê½
-         new StringPropertySetter("pattern", "setPattern", false)
-      };
-      digester.addRule("eterna-config/factory/objs/format",
-            new PropertySetRule(setters, false));
-      // ResultFormatµÄ¸ñÊ½»¯Ä£Ê½(ÔÚxmlµÄbodyÖĞÉèÖÃ)
-      setter = new BodyPropertySetter("trimLine", "setPattern", true);
-      digester.addRule("eterna-config/factory/objs/format/pattern",
-            new PropertySetRule(setter, false));
-      digester.addRule("eterna-config/factory/objs/format/attribute",
-            new AttributeSetRule());
+		//--------------------------------------------------------------------------------
+		// æ„é€ SpecialLog
+		digester.addRule("eterna-config/factory/special-log",
+				new ObjectCreateRule(null, "className", SpecialLog.class));
+		setter = new StackPropertySetter("setSpecialLog", SpecialLog.class, 1);
+		digester.addRule("eterna-config/factory/special-log", new PropertySetRule(setter));
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ½á¹û¶ÁÈ¡Õß¹ÜÀíÆ÷(ResultReaderManager)µÄ¶ÁÈ¡¹æÔò
-      setter = new GeneratorPropertySetter(null, "addReaderManager",
-            ReaderManagerGenerator.class.getName(), ResultReaderManager.class, true);
-      digester.addRule("eterna-config/factory/objs/reader-manager",
-            new PropertySetRule(setter));
-      digester.addRule("eterna-config/factory/objs/reader-manager",
-            new ObjectLogRule("name", "ResultReaderManager"));
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®ç»“æœæ ¼å¼åŒ–å™¨(ResultFormat)çš„è¯»å–è§„åˆ™
+		setter = new GeneratorPropertySetter("generator", "addFormat",
+				ResultFormatGeneratorImpl.class.getName(), ResultFormat.class, true);
+		digester.addRule("eterna-config/factory/objs/format",
+				new PropertySetRule(setter));
+		digester.addRule("eterna-config/factory/objs/format",
+				new ObjectLogRule("name", "ResultFormat"));
 
-      setters = new PropertySetter[] {
-         // ResultReaderManagerµÄÃû³Æ
-         new StringPropertySetter("name", "setName", true),
-         // ResultReaderManagerµÄ¸¸¶ÔÏó
-         new StringPropertySetter("parent", "setParentName", false),
-         // ResultReaderManagerµÄÅÅĞò·½Ê½
-         new StringPropertySetter("readerOrder", "setReaderOrder", false),
-         // ResultReaderManagerµÄÊµÏÖÀà
-         new StringPropertySetter("className", "setClassName", false)
-      };
-      digester.addRule("eterna-config/factory/objs/reader-manager",
-            new PropertySetRule(setters, false));
-
-      // ÉèÖÃResultReaderManagerµÄReader
-      this.setResultReaderRule(digester, "eterna-config/factory/objs/reader-manager/reader");
-
-
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ²ÎÊı×é(SQLParameterGroup)µÄ¶ÁÈ¡¹æÔò
-      setter = new GeneratorPropertySetter(null, "addParameterGroup",
-            ParameterGroupGenerator.class.getName(), SQLParameterGroup.class, true);
-      digester.addRule("eterna-config/factory/objs/parameter-group",
-            new PropertySetRule(setter));
-      digester.addRule("eterna-config/factory/objs/parameter-group",
-            new ObjectLogRule("name", "SQLParameterGroup"));
-
-      setter = new StringPropertySetter("name", "setName", true);
-      digester.addRule("eterna-config/factory/objs/parameter-group",
-            new PropertySetRule(setter, false));
-
-      // ÉèÖÃSQLParameterGroupµÄparameter
-      this.setParametersRule(digester, "eterna-config/factory/objs/parameter-group");
+		setters = new PropertySetter[] {
+			// ResultFormatçš„åç§°
+			new StringPropertySetter("name", "setName", true),
+			// ResultFormatçš„ç±»å‹
+			new StringPropertySetter("type", "setType", true),
+			// ResultFormatçš„æ ¼å¼åŒ–æ¨¡å¼
+			new StringPropertySetter("pattern", "setPattern", false)
+		};
+		digester.addRule("eterna-config/factory/objs/format",
+				new PropertySetRule(setters, false));
+		// ResultFormatçš„æ ¼å¼åŒ–æ¨¡å¼(åœ¨xmlçš„bodyä¸­è®¾ç½®)
+		setter = new BodyPropertySetter("trimLine", "setPattern", true);
+		digester.addRule("eterna-config/factory/objs/format/pattern",
+				new PropertySetRule(setter, false));
+		digester.addRule("eterna-config/factory/objs/format/attribute",
+				new AttributeSetRule());
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ²éÑ¯ÊÊÅäÆ÷¹¹ÔìÕß(QueryAdapterGenerator)µÄ¶ÁÈ¡¹æÔò
-      rule = new ObjectCreateRule(QueryAdapterImpl.class.getName(), "generator",
-            QueryAdapterGenerator.class);
-      digester.addRule("eterna-config/factory/objs/query", rule);
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®ç»“æœè¯»å–è€…ç®¡ç†å™¨(ResultReaderManager)çš„è¯»å–è§„åˆ™
+		setter = new GeneratorPropertySetter(null, "addReaderManager",
+				ReaderManagerGenerator.class.getName(), ResultReaderManager.class, true);
+		digester.addRule("eterna-config/factory/objs/reader-manager",
+				new PropertySetRule(setter));
+		digester.addRule("eterna-config/factory/objs/reader-manager",
+				new ObjectLogRule("name", "ResultReaderManager"));
 
-      setter = new StackPropertySetter("registerQueryAdapter", QueryAdapterGenerator.class, 1);
-      digester.addRule("eterna-config/factory/objs/query", new PropertySetRule(setter));
+		setters = new PropertySetter[] {
+			// ResultReaderManagerçš„åç§°
+			new StringPropertySetter("name", "setName", true),
+			// ResultReaderManagerçš„çˆ¶å¯¹è±¡
+			new StringPropertySetter("parent", "setParentName", false),
+			// ResultReaderManagerçš„æ’åºæ–¹å¼
+			new StringPropertySetter("readerOrder", "setReaderOrder", false),
+			// ResultReaderManagerçš„å®ç°ç±»
+			new StringPropertySetter("className", "setClassName", false)
+		};
+		digester.addRule("eterna-config/factory/objs/reader-manager",
+				new PropertySetRule(setters, false));
 
-      setters = new PropertySetter[] {
-         // QueryAdapterGeneratorµÄÃû³Æ
-         new StringPropertySetter("name", "setName", true),
-         // ÉèÖÃsqlÈÕÖ¾¼ÇÂ¼µÄ·½Ê½
-         new StringPropertySetter("logType", "setLogType", false),
-         // ½á¹û¼¯ÊÇ·ñÖ»ÄÜÏòÇ°¹ö¶¯(±ÈÈçsqlserver2000£¬¶ÁÈ¡textµÈÀàĞÍµÄ×Ö¶ÎÊ±ÓÎ±êÖ»ÄÜµ¥Ïò¹ö¶¯)
-         new BooleanPropertySetter("forwardOnly", "setForwardOnly", false),
-         // ÉèÖÃ order by ×Ó¾äËùÔÚµÄË÷ÒıÖµ
-         new IntegerPropertySetter("orderIndex", "setOrderIndex", false)
-      };
-      digester.addRule("eterna-config/factory/objs/query",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/query",
-            new ObjectLogRule("name", "QueryAdapter"));
-      digester.addRule("eterna-config/factory/objs/query/attribute",
-            new AttributeSetRule());
-
-      // ÉèÖÃQueryAdapterGeneratorµÄÔ¤±¸sqlÓï¾ä
-      setter = new BodyPropertySetter("trimLine", "setPreparedSQL");
-      digester.addRule("eterna-config/factory/objs/query/prepared-sql",
-            new PropertySetRule(setter, false));
-
-      // ÉèÖÃQueryAdapterGeneratorµÄReader
-      setters = new PropertySetter[] {
-         // ReaderÁĞ±í»ùÓÚResultReaderManager
-         new StringPropertySetter("baseReaderManager", "setReaderManagerName", false),
-         // ReaderÁĞ±íµÄÅÅĞò·½Ê½
-         new StringPropertySetter("readerOrder", "setReaderOrder", false)
-      };
-      digester.addRule("eterna-config/factory/objs/query/readers",
-            new PropertySetRule(setters, false));
-      this.setResultReaderRule(digester, "eterna-config/factory/objs/query/readers/reader");
-
-      // ÉèÖÃQueryAdapterGeneratorµÄparameter
-      this.setParametersRule(digester, "eterna-config/factory/objs/query/parameters");
+		// è®¾ç½®ResultReaderManagerçš„Reader
+		this.setResultReaderRule(digester, "eterna-config/factory/objs/reader-manager/reader");
 
 
-      //--------------------------------------------------------------------------------
-      // ÉèÖÃ¸üĞÂÊÊÅäÆ÷¹¹ÔìÕß(UpdateAdapterGenerator)µÄ¶ÁÈ¡¹æÔò
-      rule = new ObjectCreateRule(UpdateAdapterImpl.class.getName(), "generator",
-            UpdateAdapterGenerator.class);
-      digester.addRule("eterna-config/factory/objs/update", rule);
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®å‚æ•°ç»„(SQLParameterGroup)çš„è¯»å–è§„åˆ™
+		setter = new GeneratorPropertySetter(null, "addParameterGroup",
+				ParameterGroupGenerator.class.getName(), SQLParameterGroup.class, true);
+		digester.addRule("eterna-config/factory/objs/parameter-group",
+				new PropertySetRule(setter));
+		digester.addRule("eterna-config/factory/objs/parameter-group",
+				new ObjectLogRule("name", "SQLParameterGroup"));
 
-      setter = new StackPropertySetter("registerUpdateAdapter", UpdateAdapterGenerator.class, 1);
-      digester.addRule("eterna-config/factory/objs/update", new PropertySetRule(setter));
+		setter = new StringPropertySetter("name", "setName", true);
+		digester.addRule("eterna-config/factory/objs/parameter-group",
+				new PropertySetRule(setter, false));
 
-      setters = new PropertySetter[] {
-         // UpdateAdapterGeneratorµÄÃû³Æ
-         new StringPropertySetter("name", "setName", true),
-         // ÉèÖÃsqlÈÕÖ¾¼ÇÂ¼µÄ·½Ê½
-         new StringPropertySetter("logType", "setLogType", false)
-      };
-      digester.addRule("eterna-config/factory/objs/update",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/update",
-            new ObjectLogRule("name", "UpdateAdapter"));
-      digester.addRule("eterna-config/factory/objs/update/attribute",
-            new AttributeSetRule());
+		// è®¾ç½®SQLParameterGroupçš„parameter
+		this.setParametersRule(digester, "eterna-config/factory/objs/parameter-group");
 
-      // ÉèÖÃUpdateAdapterGeneratorµÄÔ¤±¸sqlÓï¾ä
-      setter = new BodyPropertySetter("trimLine", "setPreparedSQL");
-      digester.addRule("eterna-config/factory/objs/update/prepared-sql",
-            new PropertySetRule(setter));
 
-      // ÉèÖÃUpdateAdapterGeneratorµÄparameter
-      this.setParametersRule(digester, "eterna-config/factory/objs/update/parameters");
-   }
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®æŸ¥è¯¢é€‚é…å™¨æ„é€ è€…(QueryAdapterGenerator)çš„è¯»å–è§„åˆ™
+		rule = new ObjectCreateRule(QueryAdapterImpl.class.getName(), "generator",
+				QueryAdapterGenerator.class);
+		digester.addRule("eterna-config/factory/objs/query", rule);
 
-   private void setParametersRule(Digester digester, String path)
-   {
-      //eterna-config/factory/objs/query/parameters
-      //eterna-config/factory/objs/update/parameters
+		setter = new StackPropertySetter("registerQueryAdapter", QueryAdapterGenerator.class, 1);
+		digester.addRule("eterna-config/factory/objs/query", new PropertySetRule(setter));
 
-      PropertySetter setter;
-      PropertySetter[] setters;
-      Rule rule;
+		setters = new PropertySetter[] {
+			// QueryAdapterGeneratorçš„åç§°
+			new StringPropertySetter("name", "setName", true),
+			// è®¾ç½®sqlæ—¥å¿—è®°å½•çš„æ–¹å¼
+			new StringPropertySetter("logType", "setLogType", false),
+			// ç»“æœé›†æ˜¯å¦åªèƒ½å‘å‰æ»šåŠ¨(æ¯”å¦‚sqlserver2000ï¼Œè¯»å–textç­‰ç±»å‹çš„å­—æ®µæ—¶æ¸¸æ ‡åªèƒ½å•å‘æ»šåŠ¨)
+			new BooleanPropertySetter("forwardOnly", "setForwardOnly", false),
+			// è®¾ç½® order by å­å¥æ‰€åœ¨çš„ç´¢å¼•å€¼
+			new IntegerPropertySetter("orderIndex", "setOrderIndex", false)
+		};
+		digester.addRule("eterna-config/factory/objs/query",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/query",
+				new ObjectLogRule("name", "QueryAdapter"));
+		digester.addRule("eterna-config/factory/objs/query/attribute",
+				new AttributeSetRule());
 
-      rule = new ObjectCreateRule(SQLParameterGeneratorImpl.class.getName(), "generator",
-            SQLParameterGenerator.class);
-      digester.addRule(path + "/parameter", rule);
+		// è®¾ç½®QueryAdapterGeneratorçš„é¢„å¤‡sqlè¯­å¥
+		setter = new BodyPropertySetter("trimLine", "setPreparedSQL");
+		digester.addRule("eterna-config/factory/objs/query/prepared-sql",
+				new PropertySetRule(setter, false));
 
-      setter = new StackPropertySetter("addParameter", SQLParameterGenerator.class, 1);
-      digester.addRule(path + "/parameter", new PropertySetRule(setter));
+		// è®¾ç½®QueryAdapterGeneratorçš„Reader
+		setters = new PropertySetter[] {
+			// Readeråˆ—è¡¨åŸºäºResultReaderManager
+			new StringPropertySetter("baseReaderManager", "setReaderManagerName", false),
+			// Readeråˆ—è¡¨çš„æ’åºæ–¹å¼
+			new StringPropertySetter("readerOrder", "setReaderOrder", false)
+		};
+		digester.addRule("eterna-config/factory/objs/query/readers",
+				new PropertySetRule(setters, false));
+		this.setResultReaderRule(digester, "eterna-config/factory/objs/query/readers/reader");
 
-      setters = new PropertySetter[] {
-         new StringPropertySetter("name", "setName", true),
-         new StringPropertySetter("colName", "setColumnName", false),
-         new StringPropertySetter("type", "setParamType", false),
-         new StringPropertySetter("vpcName", "setParamVPC", false)
-      };
-      digester.addRule(path + "/parameter", new PropertySetRule(setters, false));
+		// è®¾ç½®QueryAdapterGeneratorçš„parameter
+		this.setParametersRule(digester, "eterna-config/factory/objs/query/parameters");
 
-      //setter = new StringPropertySetter("className", "setParameterSetterClass", false);
-      //digester.addRule(path + "/parameter/setter", new PropertySetRule(setter, false));
-      digester.addRule(path + "/parameter/attribute", new AttributeSetRule());
 
-      digester.addRule(path + "/parameter-ref",
-            new PropertySetRule(new ParamRefSetter("addParameterRef"), false));
-   }
+		//--------------------------------------------------------------------------------
+		// è®¾ç½®æ›´æ–°é€‚é…å™¨æ„é€ è€…(UpdateAdapterGenerator)çš„è¯»å–è§„åˆ™
+		rule = new ObjectCreateRule(UpdateAdapterImpl.class.getName(), "generator",
+				UpdateAdapterGenerator.class);
+		digester.addRule("eterna-config/factory/objs/update", rule);
 
-   private void setResultReaderRule(Digester digester, String path)
-   {
-      //eterna-config/factory/objs/query/readers/reader
-      //eterna-config/factory/objs/reader-manager/reader
+		setter = new StackPropertySetter("registerUpdateAdapter", UpdateAdapterGenerator.class, 1);
+		digester.addRule("eterna-config/factory/objs/update", new PropertySetRule(setter));
 
-      PropertySetter setter;
-      PropertySetter[] setters;
+		setters = new PropertySetter[] {
+			// UpdateAdapterGeneratorçš„åç§°
+			new StringPropertySetter("name", "setName", true),
+			// è®¾ç½®sqlæ—¥å¿—è®°å½•çš„æ–¹å¼
+			new StringPropertySetter("logType", "setLogType", false)
+		};
+		digester.addRule("eterna-config/factory/objs/update",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/update",
+				new ObjectLogRule("name", "UpdateAdapter"));
+		digester.addRule("eterna-config/factory/objs/update/attribute",
+				new AttributeSetRule());
 
-      setter = new GeneratorPropertySetter("generator", "addResultReader",
-            ResultReaderGeneratorImpl.class.getName(), ResultReader.class);
-      digester.addRule(path, new PropertySetRule(setter));
+		// è®¾ç½®UpdateAdapterGeneratorçš„é¢„å¤‡sqlè¯­å¥
+		setter = new BodyPropertySetter("trimLine", "setPreparedSQL");
+		digester.addRule("eterna-config/factory/objs/update/prepared-sql",
+				new PropertySetRule(setter));
 
-      setters = new PropertySetter[] {
-         new StringPropertySetter("name", "setName", true),
-         new StringPropertySetter("colName", "setColumnName", false),
-         new IntegerPropertySetter("colIndex", "setColumnIndex", false),
-         new StringPropertySetter("format", "setFormatName", false),
-         new StringPropertySetter("orderName", "setOrderName", false),
-         new StringPropertySetter("caption", "setCaption", false),
-         new IntegerPropertySetter("width", "setWidth", false),
-         new StringPropertySetter("permissions", "setPermissions", false),
-         new BooleanPropertySetter("htmlFilter", "setHtmlFilter", "true"),
-         new StringPropertySetter("type", "setType", false),
-         new BooleanPropertySetter("visible", "setVisible", "true")
-      };
-      digester.addRule(path, new PropertySetRule(setters, false));
-      digester.addRule(path + "/attribute", new AttributeSetRule());
-   }
+		// è®¾ç½®UpdateAdapterGeneratorçš„parameter
+		this.setParametersRule(digester, "eterna-config/factory/objs/update/parameters");
+	}
 
-   public static class ReaderManagerGenerator extends AbstractGenerator
-         implements Generator
-   {
-      private String className = "self.micromagic.eterna.sql.impl.ResultReaderManagerImpl";
-      private String parentName = null;
-      private String readerOrder = null;
-      private ArrayList readers = new ArrayList();
-      private HashMap readerNameMap = new HashMap();
+	private void setParametersRule(Digester digester, String path)
+	{
+		//eterna-config/factory/objs/query/parameters
+		//eterna-config/factory/objs/update/parameters
 
-      public void setParentName(String parentName)
-      {
-         this.parentName = parentName;
-      }
+		PropertySetter setter;
+		PropertySetter[] setters;
+		Rule rule;
 
-      public void setClassName(String className)
-      {
-         this.className = className;
-      }
+		rule = new ObjectCreateRule(SQLParameterGeneratorImpl.class.getName(), "generator",
+				SQLParameterGenerator.class);
+		digester.addRule(path + "/parameter", rule);
 
-      public void setReaderOrder(String readerOrder)
-      {
-         this.readerOrder = readerOrder;
-      }
+		setter = new StackPropertySetter("addParameter", SQLParameterGenerator.class, 1);
+		digester.addRule(path + "/parameter", new PropertySetRule(setter));
 
-      public void addResultReader(ResultReader reader)
-         throws ConfigurationException
-      {
-         if (this.readerNameMap.containsKey(reader.getName()))
-         {
-            throw new ConfigurationException(
-                  "Duplicate [ResultReader] name:" + reader.getName() + ".");
-         }
-         this.readers.add(reader);
-         this.readerNameMap.put(reader.getName(), reader);
-      }
+		setters = new PropertySetter[] {
+			new StringPropertySetter("name", "setName", true),
+			new StringPropertySetter("colName", "setColumnName", false),
+			new StringPropertySetter("type", "setParamType", false),
+			new StringPropertySetter("vpcName", "setParamVPC", false)
+		};
+		digester.addRule(path + "/parameter", new PropertySetRule(setters, false));
 
-      public Object create() throws ConfigurationException
-      {
-         ResultReaderManager rm;
-         try
-         {
-            rm = (ResultReaderManager) ObjectCreateRule.createObject(this.className);
-         }
-         catch (Exception ex)
-         {
-            throw new ConfigurationException(ex.getMessage());
-         }
-         rm.setName(this.name);
-         rm.setParentName(this.parentName);
-         rm.setReaderOrder(this.readerOrder);
-         Iterator itr = this.readers.iterator();
-         while (itr.hasNext())
-         {
-            rm.addReader((ResultReader) itr.next());
-         }
-         return rm;
-      }
+		//setter = new StringPropertySetter("className", "setParameterSetterClass", false);
+		//digester.addRule(path + "/parameter/setter", new PropertySetRule(setter, false));
+		digester.addRule(path + "/parameter/attribute", new AttributeSetRule());
 
-   }
+		digester.addRule(path + "/parameter-ref",
+				new PropertySetRule(new ParamRefSetter("addParameterRef"), false));
+	}
 
-   public static class ParameterGroupGenerator extends AbstractGenerator
-         implements Generator
-   {
-      private String className = "self.micromagic.eterna.sql.impl.SQLParameterGroupImpl";
-      private ArrayList params = new ArrayList();
-      private HashMap paramNameMap = new HashMap();
+	private void setResultReaderRule(Digester digester, String path)
+	{
+		//eterna-config/factory/objs/query/readers/reader
+		//eterna-config/factory/objs/reader-manager/reader
 
-      public void setClassName(String className)
-      {
-         this.className = className;
-      }
+		PropertySetter setter;
+		PropertySetter[] setters;
 
-      public void addParameter(SQLParameterGenerator paramGenerator)
-         throws ConfigurationException
-      {
-         if (this.paramNameMap.containsKey(paramGenerator.getName()))
-         {
-            throw new ConfigurationException(
-                  "Duplicate [SQLParameter] name:" + paramGenerator.getName() + ".");
-         }
-         this.params.add(paramGenerator);
-         this.paramNameMap.put(paramGenerator.getName(), paramGenerator);
-      }
+		setter = new GeneratorPropertySetter("generator", "addResultReader",
+				ResultReaderGeneratorImpl.class.getName(), ResultReader.class);
+		digester.addRule(path, new PropertySetRule(setter));
 
-      public void addParameterRef(String groupName, String ignoreList)
-            throws ConfigurationException
-      {
-         this.params.add(new String[]{groupName, ignoreList});
-      }
+		setters = new PropertySetter[] {
+			new StringPropertySetter("name", "setName", true),
+			new StringPropertySetter("colName", "setColumnName", false),
+			new IntegerPropertySetter("colIndex", "setColumnIndex", false),
+			new StringPropertySetter("format", "setFormatName", false),
+			new StringPropertySetter("orderName", "setOrderName", false),
+			new StringPropertySetter("caption", "setCaption", false),
+			new IntegerPropertySetter("width", "setWidth", false),
+			new StringPropertySetter("permissions", "setPermissions", false),
+			new BooleanPropertySetter("htmlFilter", "setHtmlFilter", "true"),
+			new StringPropertySetter("type", "setType", false),
+			new BooleanPropertySetter("visible", "setVisible", "true")
+		};
+		digester.addRule(path, new PropertySetRule(setters, false));
+		digester.addRule(path + "/attribute", new AttributeSetRule());
+	}
 
-      public Object create() throws ConfigurationException
-      {
-         SQLParameterGroup group;
-         try
-         {
-            group = (SQLParameterGroup) ObjectCreateRule.createObject(this.className);
-         }
-         catch (Exception ex)
-         {
-            throw new ConfigurationException(ex.getMessage());
-         }
-         group.setName(this.name);
-         Iterator itr = this.params.iterator();
-         while (itr.hasNext())
-         {
-            Object tmp = itr.next();
-            if (tmp instanceof SQLParameterGenerator)
-            {
-               group.addParameter((SQLParameterGenerator) tmp);
-            }
-            else
-            {
-               String[] arr = (String[]) tmp;
-               group.addParameterRef(arr[0], arr[1]);
-            }
-         }
-         return group;
-      }
+	public static class ReaderManagerGenerator extends AbstractGenerator
+			implements Generator
+	{
+		private String className = "self.micromagic.eterna.sql.impl.ResultReaderManagerImpl";
+		private String parentName = null;
+		private String readerOrder = null;
+		private ArrayList readers = new ArrayList();
+		private HashMap readerNameMap = new HashMap();
 
-   }
+		public void setParentName(String parentName)
+		{
+			this.parentName = parentName;
+		}
 
-   public static class ParamRefSetter extends SinglePropertySetter
-   {
-      public ParamRefSetter(String methodName)
-      {
-         super("groupName", methodName, null);
-         this.type = new Class[]{String.class, String.class};
-      }
+		public void setClassName(String className)
+		{
+			this.className = className;
+		}
 
-      public Object prepareProperty(String namespace, String name, Attributes attributes)
-            throws Exception
-      {
-         String groupName = this.getValue(namespace, name, attributes);
-         String ignoreList = attributes.getValue("ignoreList");
-         this.value = new String[]{groupName, ignoreList};
-         return this.value;
-      }
+		public void setReaderOrder(String readerOrder)
+		{
+			this.readerOrder = readerOrder;
+		}
 
-   }
+		public void addResultReader(ResultReader reader)
+			throws ConfigurationException
+		{
+			if (this.readerNameMap.containsKey(reader.getName()))
+			{
+				throw new ConfigurationException(
+						"Duplicate [ResultReader] name:" + reader.getName() + ".");
+			}
+			this.readers.add(reader);
+			this.readerNameMap.put(reader.getName(), reader);
+		}
+
+		public Object create() throws ConfigurationException
+		{
+			ResultReaderManager rm;
+			try
+			{
+				rm = (ResultReaderManager) ObjectCreateRule.createObject(this.className);
+			}
+			catch (Exception ex)
+			{
+				throw new ConfigurationException(ex.getMessage());
+			}
+			rm.setName(this.name);
+			rm.setParentName(this.parentName);
+			rm.setReaderOrder(this.readerOrder);
+			Iterator itr = this.readers.iterator();
+			while (itr.hasNext())
+			{
+				rm.addReader((ResultReader) itr.next());
+			}
+			return rm;
+		}
+
+	}
+
+	public static class ParameterGroupGenerator extends AbstractGenerator
+			implements Generator
+	{
+		private String className = "self.micromagic.eterna.sql.impl.SQLParameterGroupImpl";
+		private ArrayList params = new ArrayList();
+		private HashMap paramNameMap = new HashMap();
+
+		public void setClassName(String className)
+		{
+			this.className = className;
+		}
+
+		public void addParameter(SQLParameterGenerator paramGenerator)
+			throws ConfigurationException
+		{
+			if (this.paramNameMap.containsKey(paramGenerator.getName()))
+			{
+				throw new ConfigurationException(
+						"Duplicate [SQLParameter] name:" + paramGenerator.getName() + ".");
+			}
+			this.params.add(paramGenerator);
+			this.paramNameMap.put(paramGenerator.getName(), paramGenerator);
+		}
+
+		public void addParameterRef(String groupName, String ignoreList)
+				throws ConfigurationException
+		{
+			this.params.add(new String[]{groupName, ignoreList});
+		}
+
+		public Object create() throws ConfigurationException
+		{
+			SQLParameterGroup group;
+			try
+			{
+				group = (SQLParameterGroup) ObjectCreateRule.createObject(this.className);
+			}
+			catch (Exception ex)
+			{
+				throw new ConfigurationException(ex.getMessage());
+			}
+			group.setName(this.name);
+			Iterator itr = this.params.iterator();
+			while (itr.hasNext())
+			{
+				Object tmp = itr.next();
+				if (tmp instanceof SQLParameterGenerator)
+				{
+					group.addParameter((SQLParameterGenerator) tmp);
+				}
+				else
+				{
+					String[] arr = (String[]) tmp;
+					group.addParameterRef(arr[0], arr[1]);
+				}
+			}
+			return group;
+		}
+
+	}
+
+	public static class ParamRefSetter extends SinglePropertySetter
+	{
+		public ParamRefSetter(String methodName)
+		{
+			super("groupName", methodName, null);
+			this.type = new Class[]{String.class, String.class};
+		}
+
+		public Object prepareProperty(String namespace, String name, Attributes attributes)
+				throws Exception
+		{
+			String groupName = this.getValue(namespace, name, attributes);
+			String ignoreList = attributes.getValue("ignoreList");
+			this.value = new String[]{groupName, ignoreList};
+			return this.value;
+		}
+
+	}
 
 }
 

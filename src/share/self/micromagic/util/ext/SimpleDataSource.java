@@ -13,47 +13,47 @@ import self.micromagic.util.ext.SimpleConnection;
 import self.micromagic.util.Utility;
 
 /**
- * Ò»¸ö¼òÒ×µÄÊı¾İÔ´ÊµÏÖ, ²»Ê¹ÓÃÊı¾İ¿âÁ¬½Ó»º³å³Ø, ¹Ø±ÕºóÖ±½ÓÊÍ·Å.
+ * ä¸€ä¸ªç®€æ˜“çš„æ•°æ®æºå®ç°, ä¸ä½¿ç”¨æ•°æ®åº“è¿æ¥ç¼“å†²æ± , å…³é—­åç›´æ¥é‡Šæ”¾.
  */
 public class SimpleDataSource
-      implements DataSource
+		implements DataSource
 {
-   protected PrintWriter logWriter;
-   protected int loginTimeout;
+	protected PrintWriter logWriter;
+	protected int loginTimeout;
 
-   protected String description;
-   protected String url;
-   protected String driverClass;
-   protected String user;
-   protected String password;
-   protected boolean autoCommit = true;
-   protected boolean autoCommitSetted;
-
-   /**
-    * Êı¾İ¿âµÄÇı¶¯Àà.
-    */
-   protected Driver driver;
+	protected String description;
+	protected String url;
+	protected String driverClass;
+	protected String user;
+	protected String password;
+	protected boolean autoCommit = true;
+	protected boolean autoCommitSetted;
 
 	/**
-	 * Ä¬ÈÏµÄÁ¬½ÓÊôĞÔ.
+	 * æ•°æ®åº“çš„é©±åŠ¨ç±».
+	 */
+	protected Driver driver;
+
+	/**
+	 * é»˜è®¤çš„è¿æ¥å±æ€§.
 	 */
 	protected Properties defaultProperties;
 
-   /**
-    * »ñÈ¡Êı¾İ¿âÁ¬½Ó.
-    */
-   public Connection getConnection()
-         throws SQLException
-   {
-      return this.getConnection(null, null);
-   }
+	/**
+	 * è·å–æ•°æ®åº“è¿æ¥.
+	 */
+	public Connection getConnection()
+			throws SQLException
+	{
+		return this.getConnection(null, null);
+	}
 
-   /**
-    * ¸ù¾İÖ¸¶¨µÄÓÃ»§Ãû¼°ÃÜÂë»ñÈ¡Êı¾İ¿âÁ¬½Ó.
-    */
-   public Connection getConnection(String username, String password)
-         throws SQLException
-   {
+	/**
+	 * æ ¹æ®æŒ‡å®šçš„ç”¨æˆ·ååŠå¯†ç è·å–æ•°æ®åº“è¿æ¥.
+	 */
+	public Connection getConnection(String username, String password)
+			throws SQLException
+	{
 		if (this.url == null)
 		{
 			throw new SQLException("The connetion url hasn't setted!");
@@ -88,90 +88,90 @@ public class SimpleDataSource
 		}
 		conn.setAutoCommit(this.autoCommit);
 		return conn;
-   }
-
-   /**
-    * ÉèÖÃ»ñÈ¡µÄÊı¾İ¿âÁ¬½ÓÄ¬ÈÏÊÇ·ñĞèÒª×Ô¶¯Ìá½».
-    */
-   public void setAutoCommit(boolean autoCommit)
-   {
-      this.autoCommitSetted = true;
-      this.autoCommit = autoCommit;
-   }
-
-   /**
-    * ÉèÖÃÁ¬½ÓÊı¾İ¿âÊ¹ÓÃµÄÇı¶¯Àà.
-    */
-   public void setDriverClass(String driverClass)
-   {
-      this.driverClass = driverClass;
-   }
-
-   /**
-    * ÉèÖÃÁ¬½ÓÊı¾İ¿âÊ¹ÓÃµÄÁ¬½Ó×Ö·û´®.
-    */
-   public void setUrl(String url)
-   {
-      this.url = url;
-      if (this.description == null)
-      {
-         this.description = url;
-      }
-   }
-
-   /**
-    * ÉèÖÃÁ¬½ÓÊı¾İ¿âÊ¹ÓÃµÄÓÃ»§Ãû.
-    */
-   public void setUser(String user)
-   {
-      this.user = user;
-   }
-
-   /**
-    * ÉèÖÃÁ¬½ÓÊı¾İ¿âÊ¹ÓÃµÄÃÜÂë.
-    */
-   public void setPassword(String password)
-   {
-      this.password = password;
-   }
-
-   /**
-    * »ñÈ¡´ËÊı¾İÔ´µÄËµÃ÷.
-    */
-   public String getDescription()
-   {
-      return this.description;
-   }
-
-   /**
-    * ÉèÖÃ¶Ô´ËÊı¾İÔ´µÄËµÃ÷.
-    */
-   public void setDescription(String description)
-   {
-      this.description = description;
-   }
-
-   /**
-    * »ñÈ¡autoCommitÊôĞÔÊÇ·ñ±»ÉèÖÃ¹ı, <code>true</code>±íÊ¾ÉèÖÃ¹ı.
-    */
-   public boolean isAutoCommitSetted()
-   {
-      return autoCommitSetted;
-   }
+	}
 
 	/**
-	 * ¸ù¾İ¸ø³öµÄÀàÃû, ´´½¨Êı¾İ¿âµÄÇı¶¯Àà.
+	 * è®¾ç½®è·å–çš„æ•°æ®åº“è¿æ¥é»˜è®¤æ˜¯å¦éœ€è¦è‡ªåŠ¨æäº¤.
 	 */
-   private static Driver createDriver(String className)
-   		throws ClassNotFoundException, IllegalAccessException, InstantiationException
+	public void setAutoCommit(boolean autoCommit)
+	{
+		this.autoCommitSetted = true;
+		this.autoCommit = autoCommit;
+	}
+
+	/**
+	 * è®¾ç½®è¿æ¥æ•°æ®åº“ä½¿ç”¨çš„é©±åŠ¨ç±».
+	 */
+	public void setDriverClass(String driverClass)
+	{
+		this.driverClass = driverClass;
+	}
+
+	/**
+	 * è®¾ç½®è¿æ¥æ•°æ®åº“ä½¿ç”¨çš„è¿æ¥å­—ç¬¦ä¸².
+	 */
+	public void setUrl(String url)
+	{
+		this.url = url;
+		if (this.description == null)
+		{
+			this.description = url;
+		}
+	}
+
+	/**
+	 * è®¾ç½®è¿æ¥æ•°æ®åº“ä½¿ç”¨çš„ç”¨æˆ·å.
+	 */
+	public void setUser(String user)
+	{
+		this.user = user;
+	}
+
+	/**
+	 * è®¾ç½®è¿æ¥æ•°æ®åº“ä½¿ç”¨çš„å¯†ç .
+	 */
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+
+	/**
+	 * è·å–æ­¤æ•°æ®æºçš„è¯´æ˜.
+	 */
+	public String getDescription()
+	{
+		return this.description;
+	}
+
+	/**
+	 * è®¾ç½®å¯¹æ­¤æ•°æ®æºçš„è¯´æ˜.
+	 */
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	/**
+	 * è·å–autoCommitå±æ€§æ˜¯å¦è¢«è®¾ç½®è¿‡, <code>true</code>è¡¨ç¤ºè®¾ç½®è¿‡.
+	 */
+	public boolean isAutoCommitSetted()
+	{
+		return autoCommitSetted;
+	}
+
+	/**
+	 * æ ¹æ®ç»™å‡ºçš„ç±»å, åˆ›å»ºæ•°æ®åº“çš„é©±åŠ¨ç±».
+	 */
+	private static Driver createDriver(String className)
+			throws ClassNotFoundException, IllegalAccessException, InstantiationException
 	{
 		return (Driver) Utility.getContextClassLoader().loadClass(className).newInstance();
-   }
+	}
 
 	/**
-	 * »ñÈ¡Ä¬ÈÏµÄÁ¬½ÓÊôĞÔ.
+	 * è·å–é»˜è®¤çš„è¿æ¥å±æ€§.
 	 */
-   private Properties getDefaultProperties()
+	private Properties getDefaultProperties()
 	{
 		if (this.defaultProperties == null)
 		{
@@ -186,30 +186,30 @@ public class SimpleDataSource
 			}
 		}
 		return this.defaultProperties;
-   }
+	}
 
-   public PrintWriter getLogWriter()
-         throws SQLException
-   {
-      return this.logWriter;
-   }
+	public PrintWriter getLogWriter()
+			throws SQLException
+	{
+		return this.logWriter;
+	}
 
-   public void setLogWriter(PrintWriter out)
-         throws SQLException
-   {
-      this.logWriter = out;
-   }
+	public void setLogWriter(PrintWriter out)
+			throws SQLException
+	{
+		this.logWriter = out;
+	}
 
-   public void setLoginTimeout(int seconds)
-         throws SQLException
-   {
-      this.loginTimeout = seconds;
-   }
+	public void setLoginTimeout(int seconds)
+			throws SQLException
+	{
+		this.loginTimeout = seconds;
+	}
 
-   public int getLoginTimeout()
-         throws SQLException
-   {
-      return this.loginTimeout;
-   }
+	public int getLoginTimeout()
+			throws SQLException
+	{
+		return this.loginTimeout;
+	}
 
 }

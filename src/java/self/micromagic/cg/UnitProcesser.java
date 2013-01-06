@@ -6,33 +6,35 @@ import java.lang.reflect.Field;
 import self.micromagic.util.StringRef;
 
 /**
- * ¶ÔÒ»¸öÊôĞÔµ¥ÔªµÄ´úÂëÉú³ÉÆ÷.
+ * å¯¹ä¸€ä¸ªå±æ€§å•å…ƒçš„ä»£ç ç”Ÿæˆå™¨.
+ *
+ * @author micromagic@sina.com
  */
 public interface UnitProcesser
 {
-   /**
-    * »ñµÃ¶ÔÊôĞÔµÄ´¦Àí´úÂë.
-    *
-    * @param f              ÊôĞÔ¶ÔÏó
-    * @param type           ÊôĞÔµÄÀàĞÍ
-    * @param wrapName       Èç¹ûÊÇ»ù±¾ÀàĞÍµÄ»°, Íâ¸²ÀàµÄÃû³Æ
-    * @param processerType  ´¦ÀíÀàĞÍ, Ğ´»ò¶Á
-    * @param cg             Éú³É´¦ÀíÀàµÄ´úÂëÉú³ÉÆ÷
-    * @return   ¶ÔÕâ¸öÊôĞÔµÄ´¦Àí´úÂë
-    */
-   public String getFieldCode(Field f, Class type, String wrapName, int processerType, ClassGenerator cg);
+	/**
+	 * è·å¾—å¯¹å±æ€§çš„å¤„ç†ä»£ç .
+	 *
+	 * @param f              å±æ€§å¯¹è±¡
+	 * @param type           å±æ€§çš„ç±»å‹
+	 * @param wrapName       å¦‚æœæ˜¯åŸºæœ¬ç±»å‹çš„è¯, å¤–è¦†ç±»çš„åç§°
+	 * @param processerType  å¤„ç†ç±»å‹, å†™æˆ–è¯»
+	 * @param cg             ç”Ÿæˆå¤„ç†ç±»çš„ä»£ç ç”Ÿæˆå™¨
+	 * @return   å¯¹è¿™ä¸ªå±æ€§çš„å¤„ç†ä»£ç 
+	 */
+	public String getFieldCode(Field f, Class type, String wrapName, int processerType, ClassGenerator cg);
 
-   /**
-    * »ñµÃ¶Ô·½·¨µÄ´¦Àí´úÂë.
-    *
-    * @param m              ·½·¨ĞÅÏ¢
-    * @param type           ÊôĞÔµÄÀàĞÍ
-    * @param wrapName       Èç¹ûÊÇ»ù±¾ÀàĞÍµÄ»°, Íâ¸²ÀàµÄÃû³Æ
-    * @param processerType  ´¦ÀíÀàĞÍ, Ğ´»ò¶Á
-    * @param cg             Éú³É´¦ÀíÀàµÄ´úÂëÉú³ÉÆ÷
-    * @return   ¶ÔÕâ¸ö·½·¨µÄ´¦Àí´úÂë
-    */
-   public String getMethodCode(BeanMethodInfo m, Class type, String wrapName, int processerType,
-         ClassGenerator cg);
+	/**
+	 * è·å¾—å¯¹æ–¹æ³•çš„å¤„ç†ä»£ç .
+	 *
+	 * @param m              æ–¹æ³•ä¿¡æ¯
+	 * @param type           å±æ€§çš„ç±»å‹
+	 * @param wrapName       å¦‚æœæ˜¯åŸºæœ¬ç±»å‹çš„è¯, å¤–è¦†ç±»çš„åç§°
+	 * @param processerType  å¤„ç†ç±»å‹, å†™æˆ–è¯»
+	 * @param cg             ç”Ÿæˆå¤„ç†ç±»çš„ä»£ç ç”Ÿæˆå™¨
+	 * @return   å¯¹è¿™ä¸ªæ–¹æ³•çš„å¤„ç†ä»£ç 
+	 */
+	public String getMethodCode(BeanMethodInfo m, Class type, String wrapName, int processerType,
+			ClassGenerator cg);
 
 }

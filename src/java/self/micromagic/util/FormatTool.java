@@ -11,89 +11,89 @@ import java.util.Date;
 public class FormatTool
 {
 	/**
-	 * ÍêÕûµÄÈÕÆÚÀàĞÍµÄ¸ñÊ½»¯.
+	 * å®Œæ•´çš„æ—¥æœŸç±»å‹çš„æ ¼å¼åŒ–.
 	 */
 	public static final DateFormat dateFullFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S Z");
 
-   private static final DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-   private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-   private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-   private static final NumberFormat currencyFormat = new DecimalFormat("#0.00");
-   private static final NumberFormat currency2Format = new DecimalFormat("#,##0.00");
+	private static final DateFormat datetimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+	private static final NumberFormat currencyFormat = new DecimalFormat("#0.00");
+	private static final NumberFormat currency2Format = new DecimalFormat("#,##0.00");
 
-   /**
-    * ¸ñÊ½»¯Êä³öµ±Ç°µÄÈÕÆÚ-Ê±¼ä
-    */
-   public static String getCurrentDatetimeString()
-   {
-      return datetimeFormat.format(new Date());
-   }
+	/**
+	 * æ ¼å¼åŒ–è¾“å‡ºå½“å‰çš„æ—¥æœŸ-æ—¶é—´
+	 */
+	public static String getCurrentDatetimeString()
+	{
+		return datetimeFormat.format(new Date());
+	}
 
-   /**
-    * ½«Ò»¸ödouble°´»õ±ÒµÄ¸ñÊ½Êä³ö(±£Áô2Î»Ğ¡Êı)
-    */
-   public static String formatCurrency(double number)
-   {
-      return currencyFormat.format(number);
-   }
+	/**
+	 * å°†ä¸€ä¸ªdoubleæŒ‰è´§å¸çš„æ ¼å¼è¾“å‡º(ä¿ç•™2ä½å°æ•°)
+	 */
+	public static String formatCurrency(double number)
+	{
+		return currencyFormat.format(number);
+	}
 
-   /**
-    * ½«Ò»¸ödouble°´»õ±ÒµÄ¸ñÊ½Êä³ö(±£Áô2Î»Ğ¡Êı, ²¢¼ÓÉÏÇ§·ÖÎ»)
-    */
-   public static String formatCurrency2(double number)
-   {
-      return currency2Format.format(number);
-   }
+	/**
+	 * å°†ä¸€ä¸ªdoubleæŒ‰è´§å¸çš„æ ¼å¼è¾“å‡º(ä¿ç•™2ä½å°æ•°, å¹¶åŠ ä¸Šåƒåˆ†ä½)
+	 */
+	public static String formatCurrency2(double number)
+	{
+		return currency2Format.format(number);
+	}
 
-   /**
-    * ¸ñÊ½»¯Êä³öÄ³¸öÈÕÆÚ-Ê±¼ä
-    */
-   public static String formatDatetime(Object datetime)
-   {
-      return datetime == null ? "" : datetimeFormat.format(datetime);
-   }
+	/**
+	 * æ ¼å¼åŒ–è¾“å‡ºæŸä¸ªæ—¥æœŸ-æ—¶é—´
+	 */
+	public static String formatDatetime(Object datetime)
+	{
+		return datetime == null ? "" : datetimeFormat.format(datetime);
+	}
 
-   /**
-    * ¸ñÊ½»¯Êä³öÄ³¸öÈÕÆÚ
-    */
-   public static String formatDate(Object date)
-   {
-      return date == null ? "" : dateFormat.format(date);
-   }
+	/**
+	 * æ ¼å¼åŒ–è¾“å‡ºæŸä¸ªæ—¥æœŸ
+	 */
+	public static String formatDate(Object date)
+	{
+		return date == null ? "" : dateFormat.format(date);
+	}
 
-   /**
-    * ¸ñÊ½»¯Êä³öÄ³¸öÊ±¼ä
-    */
-   public static String formatTime(Object time)
-   {
-      return time == null ? "" : timeFormat.format(time);
-   }
+	/**
+	 * æ ¼å¼åŒ–è¾“å‡ºæŸä¸ªæ—¶é—´
+	 */
+	public static String formatTime(Object time)
+	{
+		return time == null ? "" : timeFormat.format(time);
+	}
 
-   /**
-    * ½«Ä³¸ö×Ö·û´®°´ÈÕÆÚ-Ê±¼äµÄ¸ñÊ½½âÎö³ÉDate
-    */
-   public static Date parseDatetime(String str)
-         throws ParseException
-   {
-      return str == null ? null : datetimeFormat.parse(str);
-   }
+	/**
+	 * å°†æŸä¸ªå­—ç¬¦ä¸²æŒ‰æ—¥æœŸ-æ—¶é—´çš„æ ¼å¼è§£ææˆDate
+	 */
+	public static Date parseDatetime(String str)
+			throws ParseException
+	{
+		return str == null ? null : datetimeFormat.parse(str);
+	}
 
-   /**
-    * ½«Ä³¸ö×Ö·û´®°´ÈÕÆÚµÄ¸ñÊ½½âÎö³ÉDate
-    */
-   public static Date parseDate(String str)
-         throws ParseException
-   {
-      return str == null ? null : dateFormat.parse(str);
-   }
+	/**
+	 * å°†æŸä¸ªå­—ç¬¦ä¸²æŒ‰æ—¥æœŸçš„æ ¼å¼è§£ææˆDate
+	 */
+	public static Date parseDate(String str)
+			throws ParseException
+	{
+		return str == null ? null : dateFormat.parse(str);
+	}
 
-   /**
-    * ½«Ä³¸ö×Ö·û´®°´Ê±¼äµÄ¸ñÊ½½âÎö³ÉDate
-    */
-   public static Date parseTime(String str)
-         throws ParseException
-   {
-      return str == null ? null : timeFormat.parse(str);
-   }
+	/**
+	 * å°†æŸä¸ªå­—ç¬¦ä¸²æŒ‰æ—¶é—´çš„æ ¼å¼è§£ææˆDate
+	 */
+	public static Date parseTime(String str)
+			throws ParseException
+	{
+		return str == null ? null : timeFormat.parse(str);
+	}
 
 }

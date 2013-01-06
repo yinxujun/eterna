@@ -9,270 +9,270 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * xmlÅäÖÃÖĞµÄbodyÎÄ±¾¶ÔÏó
+ * xmlé…ç½®ä¸­çš„bodyæ–‡æœ¬å¯¹è±¡
  *
  * @author micromagic@sina.com
  */
 public class BodyText
 {
-   private static final char NEW_LINE = '\n';
+	private static final char NEW_LINE = '\n';
 
-   private List elements = new ArrayList();
-   private int count = 0;
-   private CharElement preElement = null;
-   private String cacheStr = null;
-   private String cacheTrim = null;
+	private List elements = new ArrayList();
+	private int count = 0;
+	private CharElement preElement = null;
+	private String cacheStr = null;
+	private String cacheTrim = null;
 
-   /**
-    * Ìí¼ÓÒ»¶Î×Ö·û¿é.
-    *
-    * @param ch       ×Ö·û¿é
-    * @param start    ÆğÊ¼Î»ÖÃ
-    * @param length   È¡µÄ×Ö·û¸öÊı
-    * @return         ·µ»Ø±¾¶ÔÏó
-    */
-   public BodyText append(char[] ch, int start, int length)
-   {
-      this.append(ch, start, length, true);
-      return this;
-   }
+	/**
+	 * æ·»åŠ ä¸€æ®µå­—ç¬¦å—.
+	 *
+	 * @param ch       å­—ç¬¦å—
+	 * @param start    èµ·å§‹ä½ç½®
+	 * @param length   å–çš„å­—ç¬¦ä¸ªæ•°
+	 * @return         è¿”å›æœ¬å¯¹è±¡
+	 */
+	public BodyText append(char[] ch, int start, int length)
+	{
+		this.append(ch, start, length, true);
+		return this;
+	}
 
-   /**
-    * Ìí¼ÓÒ»¶Î×Ö·û¿é.
-    *
-    * @param ch            ×Ö·û¿é
-    * @param start         ÆğÊ¼Î»ÖÃ
-    * @param length        È¡µÄ×Ö·û¸öÊı
-    * @param unbindLine    ÊÇ·ñĞèÒª½«×Ö·û¿éÖĞµÄÃ¿Ò»ĞĞ²ğ·Ö¿ªÀ´
-    * @return              ·µ»Ø±¾¶ÔÏó
-    */
-   BodyText append(char[] ch, int start, int length, boolean unbindLine)
-   {
-      this.cacheStr = null;
-      this.cacheTrim = null;
-      CharElement temp;
-      if (unbindLine)
-      {
-         int preStart = start;
-         int end = start + length;
-         for (int i = start; i < end; i++)
-         {
-            if (ch[i] == BodyText.NEW_LINE)
-            {
-               temp = new CharElement(ch, preStart, i - preStart + 1, this.preElement);
-               this.elements.add(temp);
-               this.preElement = temp;
-               preStart = i + 1;
-            }
-         }
-         if (preStart < end)
-         {
-            temp = new CharElement(ch, preStart, end - preStart, this.preElement);
-            this.elements.add(temp);
-            this.preElement = temp;
-         }
-      }
-      else
-      {
-         this.elements.add(new CharElement(ch, start, length, null));
-         this.preElement = null;
-      }
-      this.count += length;
-      return this;
-   }
+	/**
+	 * æ·»åŠ ä¸€æ®µå­—ç¬¦å—.
+	 *
+	 * @param ch            å­—ç¬¦å—
+	 * @param start         èµ·å§‹ä½ç½®
+	 * @param length        å–çš„å­—ç¬¦ä¸ªæ•°
+	 * @param unbindLine    æ˜¯å¦éœ€è¦å°†å­—ç¬¦å—ä¸­çš„æ¯ä¸€è¡Œæ‹†åˆ†å¼€æ¥
+	 * @return              è¿”å›æœ¬å¯¹è±¡
+	 */
+	BodyText append(char[] ch, int start, int length, boolean unbindLine)
+	{
+		this.cacheStr = null;
+		this.cacheTrim = null;
+		CharElement temp;
+		if (unbindLine)
+		{
+			int preStart = start;
+			int end = start + length;
+			for (int i = start; i < end; i++)
+			{
+				if (ch[i] == BodyText.NEW_LINE)
+				{
+					temp = new CharElement(ch, preStart, i - preStart + 1, this.preElement);
+					this.elements.add(temp);
+					this.preElement = temp;
+					preStart = i + 1;
+				}
+			}
+			if (preStart < end)
+			{
+				temp = new CharElement(ch, preStart, end - preStart, this.preElement);
+				this.elements.add(temp);
+				this.preElement = temp;
+			}
+		}
+		else
+		{
+			this.elements.add(new CharElement(ch, start, length, null));
+			this.preElement = null;
+		}
+		this.count += length;
+		return this;
+	}
 
-   /**
-    * ½«ÎÄ±¾¿é×ªÎª×Ö·û´®, ´Ë·½·¨²»»áÈ¥³ıÃ¿Ò»ĞĞÁ½±ßµÄ¿Õ¸ñ.
-    */
-   public String toString()
-   {
-      if (this.cacheStr == null)
-      {
-         StringAppender sb = StringTool.createStringAppender(this.count);
-         int size = this.elements.size();
-         Iterator itr = this.elements.iterator();
-         for (int i = 0; i < size; i++)
-         {
-            ((CharElement) itr.next()).appendTo(sb);
-         }
-         this.cacheStr = sb.toString();
-      }
-      return this.cacheStr;
-   }
+	/**
+	 * å°†æ–‡æœ¬å—è½¬ä¸ºå­—ç¬¦ä¸², æ­¤æ–¹æ³•ä¸ä¼šå»é™¤æ¯ä¸€è¡Œä¸¤è¾¹çš„ç©ºæ ¼.
+	 */
+	public String toString()
+	{
+		if (this.cacheStr == null)
+		{
+			StringAppender sb = StringTool.createStringAppender(this.count);
+			int size = this.elements.size();
+			Iterator itr = this.elements.iterator();
+			for (int i = 0; i < size; i++)
+			{
+				((CharElement) itr.next()).appendTo(sb);
+			}
+			this.cacheStr = sb.toString();
+		}
+		return this.cacheStr;
+	}
 
-   /**
-    * ½«ÎÄ±¾¿é×ªÎª×Ö·û´®, ´Ë·½·¨»áÈ¥³ıÃ¿Ò»ĞĞÁ½±ßµÄ¿Õ¸ñ.
-    * µ«ÊÇ×îºóÒ»ĞĞÓÒ±ßµÄ¿Õ¸ñ²»»áÈ¥³ı.
-    *
-    * @param noLine     ÊÇ·ñ½«»»ĞĞ·ûÌæ»»Îª¿Õ¸ñ
-    */
-   public String trimEveryLineSpace(boolean noLine)
-   {
-      if (this.cacheTrim == null || noLine)
-      {
-         int size = this.elements.size();
-         Iterator itr = this.elements.iterator();
-         int tempCount = 0;
-         for (int i = 0; i < size; i++)
-         {
-            tempCount += ((CharElement) itr.next()).trimSpacelength();
-         }
-         StringAppender sb = StringTool.createStringAppender(tempCount);
-         itr = this.elements.iterator();
-         for (int i = 0; i < size; i++)
-         {
-            ((CharElement) itr.next()).trimSpaceAppendTo(sb, noLine);
-         }
-         if (noLine)
-         {
-            return sb.toString();
-         }
-         else
-         {
-            this.cacheTrim = sb.toString();
-         }
-      }
-      return this.cacheTrim;
-   }
+	/**
+	 * å°†æ–‡æœ¬å—è½¬ä¸ºå­—ç¬¦ä¸², æ­¤æ–¹æ³•ä¼šå»é™¤æ¯ä¸€è¡Œä¸¤è¾¹çš„ç©ºæ ¼.
+	 * ä½†æ˜¯æœ€åä¸€è¡Œå³è¾¹çš„ç©ºæ ¼ä¸ä¼šå»é™¤.
+	 *
+	 * @param noLine     æ˜¯å¦å°†æ¢è¡Œç¬¦æ›¿æ¢ä¸ºç©ºæ ¼
+	 */
+	public String trimEveryLineSpace(boolean noLine)
+	{
+		if (this.cacheTrim == null || noLine)
+		{
+			int size = this.elements.size();
+			Iterator itr = this.elements.iterator();
+			int tempCount = 0;
+			for (int i = 0; i < size; i++)
+			{
+				tempCount += ((CharElement) itr.next()).trimSpacelength();
+			}
+			StringAppender sb = StringTool.createStringAppender(tempCount);
+			itr = this.elements.iterator();
+			for (int i = 0; i < size; i++)
+			{
+				((CharElement) itr.next()).trimSpaceAppendTo(sb, noLine);
+			}
+			if (noLine)
+			{
+				return sb.toString();
+			}
+			else
+			{
+				this.cacheTrim = sb.toString();
+			}
+		}
+		return this.cacheTrim;
+	}
 
-   /**
-    * ÎÄ±¾¶ÔÏóµÄ×Ö·ûÔªËØ
-    */
-   private class CharElement
-   {
-      public final int length;
+	/**
+	 * æ–‡æœ¬å¯¹è±¡çš„å­—ç¬¦å…ƒç´ 
+	 */
+	private class CharElement
+	{
+		public final int length;
 
-      private CharElement preElement;
-      private char[] ch;
-      private int leftTrimCount = 0;
-      private int rightTrimCount = 0;
-      private boolean endNewLine = true;
+		private CharElement preElement;
+		private char[] ch;
+		private int leftTrimCount = 0;
+		private int rightTrimCount = 0;
+		private boolean endNewLine = true;
 
-      public CharElement(char[] ch, int start, int length, CharElement preElement)
-      {
-         this.preElement = preElement;
-         this.length = length;
-         this.parse(ch, start, length);
-         if (this.leftTrimCount + this.rightTrimCount == length)
-         {
-            this.ch = null;
-            // Èç¹ûÊÇÒÔĞÂĞĞ½áÊø, ÔòĞèÒª¼ì²éÇ°Ò»¸ö, Ìí¼ÓrightTrimÊı
-            if (this.endNewLine && this.preElement != null)
-            {
-               this.rightTrimCount = length;
-               this.leftTrimCount = 0;
-               this.preElement.addRightTrimCount();
-            }
-         }
-         else
-         {
-            this.ch = new char[length];
-            System.arraycopy(ch, start, this.ch, 0, length);
-         }
-      }
+		public CharElement(char[] ch, int start, int length, CharElement preElement)
+		{
+			this.preElement = preElement;
+			this.length = length;
+			this.parse(ch, start, length);
+			if (this.leftTrimCount + this.rightTrimCount == length)
+			{
+				this.ch = null;
+				// å¦‚æœæ˜¯ä»¥æ–°è¡Œç»“æŸ, åˆ™éœ€è¦æ£€æŸ¥å‰ä¸€ä¸ª, æ·»åŠ rightTrimæ•°
+				if (this.endNewLine && this.preElement != null)
+				{
+					this.rightTrimCount = length;
+					this.leftTrimCount = 0;
+					this.preElement.addRightTrimCount();
+				}
+			}
+			else
+			{
+				this.ch = new char[length];
+				System.arraycopy(ch, start, this.ch, 0, length);
+			}
+		}
 
-      private void parse(char[] ch, int start, int length)
-      {
-         if (this.preElement == null || this.preElement.endNewLine || this.preElement.ch == null)
-         {
-            // Ã»ÓĞÇ°Ò»¸öÔªËØ, Ç°Ò»¸öÔªËØÊÇÒÔĞÂĞĞ½áÊø, Ç°Ò»¸öÔªËØÈ«Îª¿Õ¸ñ
-            // ²Å´¦ÀíleftTrimÊı
-            int leftTrimCount = 0;
-            for (; leftTrimCount < length - 1 && ch[leftTrimCount + start] <= ' '; leftTrimCount++);
-            if (leftTrimCount == length - 1)
-            {
-               char c = ch[start + length - 1];
-               if (c != BodyText.NEW_LINE && c <= ' ')
-               {
-                  leftTrimCount++;
-               }
-            }
-            this.leftTrimCount = leftTrimCount;
-         }
-         if (ch[start + length - 1] == BodyText.NEW_LINE)
-         {
-            int rightTrimCount = 0;
-            int count = length - this.leftTrimCount;
-            for (; rightTrimCount < count && ch[start + length - rightTrimCount - 1] <= ' '; rightTrimCount++);
-            this.rightTrimCount = rightTrimCount;
-         }
-         else
-         {
-            this.endNewLine = false;
-         }
-      }
+		private void parse(char[] ch, int start, int length)
+		{
+			if (this.preElement == null || this.preElement.endNewLine || this.preElement.ch == null)
+			{
+				// æ²¡æœ‰å‰ä¸€ä¸ªå…ƒç´ , å‰ä¸€ä¸ªå…ƒç´ æ˜¯ä»¥æ–°è¡Œç»“æŸ, å‰ä¸€ä¸ªå…ƒç´ å…¨ä¸ºç©ºæ ¼
+				// æ‰å¤„ç†leftTrimæ•°
+				int leftTrimCount = 0;
+				for (; leftTrimCount < length - 1 && ch[leftTrimCount + start] <= ' '; leftTrimCount++);
+				if (leftTrimCount == length - 1)
+				{
+					char c = ch[start + length - 1];
+					if (c != BodyText.NEW_LINE && c <= ' ')
+					{
+						leftTrimCount++;
+					}
+				}
+				this.leftTrimCount = leftTrimCount;
+			}
+			if (ch[start + length - 1] == BodyText.NEW_LINE)
+			{
+				int rightTrimCount = 0;
+				int count = length - this.leftTrimCount;
+				for (; rightTrimCount < count && ch[start + length - rightTrimCount - 1] <= ' '; rightTrimCount++);
+				this.rightTrimCount = rightTrimCount;
+			}
+			else
+			{
+				this.endNewLine = false;
+			}
+		}
 
-      private void addRightTrimCount()
-      {
-         if (this.endNewLine)
-         {
-            // Èç¹ûÊÇÒÔĞÂĞĞ½áÊø, ¾Í²»ĞèÒª´¦ÀírightTrimÊıÁË
-            return;
-         }
-         if (this.ch == null || this.allBlank())
-         {
-            this.ch = null;
-            this.rightTrimCount = this.leftTrimCount;
-            this.leftTrimCount = 0;
-            if (this.preElement != null)
-            {
-               this.preElement.addRightTrimCount();
-            }
-            return;
-         }
-         int rightTrimCount = 0;
-         int count = this.length - this.leftTrimCount;
-         for (; rightTrimCount < count && this.ch[this.length - rightTrimCount - 1] <= ' '; rightTrimCount++);
-         this.rightTrimCount = rightTrimCount;
-      }
+		private void addRightTrimCount()
+		{
+			if (this.endNewLine)
+			{
+				// å¦‚æœæ˜¯ä»¥æ–°è¡Œç»“æŸ, å°±ä¸éœ€è¦å¤„ç†rightTrimæ•°äº†
+				return;
+			}
+			if (this.ch == null || this.allBlank())
+			{
+				this.ch = null;
+				this.rightTrimCount = this.leftTrimCount;
+				this.leftTrimCount = 0;
+				if (this.preElement != null)
+				{
+					this.preElement.addRightTrimCount();
+				}
+				return;
+			}
+			int rightTrimCount = 0;
+			int count = this.length - this.leftTrimCount;
+			for (; rightTrimCount < count && this.ch[this.length - rightTrimCount - 1] <= ' '; rightTrimCount++);
+			this.rightTrimCount = rightTrimCount;
+		}
 
-      private boolean allBlank()
-      {
-         for (int i = 0; i < this.ch.length; i++)
-         {
-            if (this.ch[i] > ' ') return false;
-         }
-         return true;
-      }
+		private boolean allBlank()
+		{
+			for (int i = 0; i < this.ch.length; i++)
+			{
+				if (this.ch[i] > ' ') return false;
+			}
+			return true;
+		}
 
-      public void appendTo(StringAppender sb)
-      {
-         if (this.ch != null)
-         {
-            sb.append(this.ch);
-            return;
-         }
-         for (int i = 0; i < this.length - 1; i++)
-         {
-            sb.append(' ');
-         }
-         sb.append(this.endNewLine ? BodyText.NEW_LINE : ' ');
-      }
+		public void appendTo(StringAppender sb)
+		{
+			if (this.ch != null)
+			{
+				sb.append(this.ch);
+				return;
+			}
+			for (int i = 0; i < this.length - 1; i++)
+			{
+				sb.append(' ');
+			}
+			sb.append(this.endNewLine ? BodyText.NEW_LINE : ' ');
+		}
 
-      public void trimSpaceAppendTo(StringAppender sb, boolean noLine)
-      {
-         if (this.ch == null)
-         {
-            if (this.endNewLine)
-            {
-               sb.append(noLine ? ' ' : BodyText.NEW_LINE);
-            }
-            return;
-         }
-         sb.append(this.ch, this.leftTrimCount,
-                   this.ch.length - this.leftTrimCount - this.rightTrimCount);
-         if (this.endNewLine)
-         {
-            sb.append(noLine ? ' ' : BodyText.NEW_LINE);
-         }
-      }
+		public void trimSpaceAppendTo(StringAppender sb, boolean noLine)
+		{
+			if (this.ch == null)
+			{
+				if (this.endNewLine)
+				{
+					sb.append(noLine ? ' ' : BodyText.NEW_LINE);
+				}
+				return;
+			}
+			sb.append(this.ch, this.leftTrimCount,
+						 this.ch.length - this.leftTrimCount - this.rightTrimCount);
+			if (this.endNewLine)
+			{
+				sb.append(noLine ? ' ' : BodyText.NEW_LINE);
+			}
+		}
 
-      public int trimSpacelength()
-      {
-         return this.length - this.leftTrimCount - this.rightTrimCount
-               + (this.endNewLine ? 1 : 0);
-      }
+		public int trimSpacelength()
+		{
+			return this.length - this.leftTrimCount - this.rightTrimCount
+					+ (this.endNewLine ? 1 : 0);
+		}
 
-   }
+	}
 
 }

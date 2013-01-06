@@ -10,212 +10,212 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.util.Utility;
 
 /**
- * ½«Ò»¸ö¶ÔÏó»òÊı¾İÀàĞÍÒÔjsonµÄ¸ñÊ½Êä³ö.
+ * å°†ä¸€ä¸ªå¯¹è±¡æˆ–æ•°æ®ç±»å‹ä»¥jsonçš„æ ¼å¼è¾“å‡º.
  *
  * @see DataPrinterImpl
  */
 public class JsonPrinter
 {
-   /**
-    * Ê¹ÓÃ<code>DataPrinterImpl</code>½øĞĞ¶ÔÏó->Json×Ö·û´®µÄ×ª»».
-    */
-   private static DataPrinterImpl printer = new DataPrinterImpl(new StringCoderImpl());
+	/**
+	 * ä½¿ç”¨<code>DataPrinterImpl</code>è¿›è¡Œå¯¹è±¡->Jsonå­—ç¬¦ä¸²çš„è½¬æ¢.
+	 */
+	private static DataPrinterImpl printer = new DataPrinterImpl(new StringCoderImpl());
 
-   /**
-    * json×Ö·û´®µÄÊä³öÁ÷.
-    */
-   private Writer out;
+	/**
+	 * jsonå­—ç¬¦ä¸²çš„è¾“å‡ºæµ.
+	 */
+	private Writer out;
 
-   /**
-    * ¹¹ÔìÒ»¸ö<code>JsonPrinter</code>¶ÔÏó.
-    *
-    * @param out   ×ª»»ºóµÄjson×Ö·û´®µÄÊä³öÁ÷.
-    */
-   public JsonPrinter(Writer out)
-   {
-      this.out = out;
-   }
+	/**
+	 * æ„é€ ä¸€ä¸ª<code>JsonPrinter</code>å¯¹è±¡.
+	 *
+	 * @param out   è½¬æ¢åçš„jsonå­—ç¬¦ä¸²çš„è¾“å‡ºæµ.
+	 */
+	public JsonPrinter(Writer out)
+	{
+		this.out = out;
+	}
 
-   /**
-    * Êä³ö²¼¶ûÀàĞÍÖµ.
-    *
-    * @param b           ²¼¶ûÖµ
-    */
-   public JsonPrinter print(boolean b)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, b);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºå¸ƒå°”ç±»å‹å€¼.
+	 *
+	 * @param b           å¸ƒå°”å€¼
+	 */
+	public JsonPrinter print(boolean b)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, b);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³ö×Ö·ûÀàĞÍÖµ.
-    *
-    * @param c           ×Ö·ûÖµ
-    */
-   public JsonPrinter print(char c)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, c);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºå­—ç¬¦ç±»å‹å€¼.
+	 *
+	 * @param c           å­—ç¬¦å€¼
+	 */
+	public JsonPrinter print(char c)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, c);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³öÕûĞÍÖµ.
-    *
-    * @param i           ÕûĞÍÖµ
-    */
-   public JsonPrinter print(int i)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, i);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºæ•´å‹å€¼.
+	 *
+	 * @param i           æ•´å‹å€¼
+	 */
+	public JsonPrinter print(int i)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, i);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³ö³¤ÕûĞÍÖµ.
-    *
-    * @param l           ³¤ÕûĞÍÖµ
-    */
-   public JsonPrinter print(long l)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, l);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºé•¿æ•´å‹å€¼.
+	 *
+	 * @param l           é•¿æ•´å‹å€¼
+	 */
+	public JsonPrinter print(long l)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, l);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³ö¸¡µãĞÍÖµ.
-    *
-    * @param f           ¸¡µãĞÍÖµ
-    */
-   public JsonPrinter print(float f)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, f);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºæµ®ç‚¹å‹å€¼.
+	 *
+	 * @param f           æµ®ç‚¹å‹å€¼
+	 */
+	public JsonPrinter print(float f)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, f);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³öË«¾«¶È¸¡µãĞÍÖµ.
-    *
-    * @param d           Ë«¾«¶È¸¡µãĞÍÖµ
-    */
-   public JsonPrinter print(double d)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, d);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºåŒç²¾åº¦æµ®ç‚¹å‹å€¼.
+	 *
+	 * @param d           åŒç²¾åº¦æµ®ç‚¹å‹å€¼
+	 */
+	public JsonPrinter print(double d)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, d);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
 
-   /**
-    * Êä³ö×Ö·û´®ÀàĞÍÖµ.
-    *
-    * @param s           ×Ö·û´®ÀàĞÍÖµ
-    */
-   public JsonPrinter print(String s)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, s);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºå­—ç¬¦ä¸²ç±»å‹å€¼.
+	 *
+	 * @param s           å­—ç¬¦ä¸²ç±»å‹å€¼
+	 */
+	public JsonPrinter print(String s)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, s);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³öÒ»¸öObject¶ÔÏó.
-    *
-    * @param value        ÒªÊä³öµÄObject¶ÔÏó
-    */
-   public JsonPrinter print(Object value)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, value);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºä¸€ä¸ªObjectå¯¹è±¡.
+	 *
+	 * @param value        è¦è¾“å‡ºçš„Objectå¯¹è±¡
+	 */
+	public JsonPrinter print(Object value)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, value);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³öÒ»¸öObject¶ÔÏóÊı×é.
-    *
-    * @param values       ÒªÊä³öµÄObject¶ÔÏóÊı×é
-    */
-   public JsonPrinter print(Object[] values)
-         throws IOException
-   {
-      try
-      {
-         printer.print(this.out, values);
-      }
-      catch (ConfigurationException ex)
-      {
-         throw new RuntimeException(ex);
-      }
-      return this;
-   }
+	/**
+	 * è¾“å‡ºä¸€ä¸ªObjectå¯¹è±¡æ•°ç»„.
+	 *
+	 * @param values       è¦è¾“å‡ºçš„Objectå¯¹è±¡æ•°ç»„
+	 */
+	public JsonPrinter print(Object[] values)
+			throws IOException
+	{
+		try
+		{
+			printer.print(this.out, values);
+		}
+		catch (ConfigurationException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+		return this;
+	}
 
-   /**
-    * Êä³öÒ»¸ö»»ĞĞ·û.
-    */
-   public JsonPrinter println()
-         throws IOException
-   {
-      this.out.write(Utility.LINE_SEPARATOR);
-      return this;
-   }
+	/**
+	 * è¾“å‡ºä¸€ä¸ªæ¢è¡Œç¬¦.
+	 */
+	public JsonPrinter println()
+			throws IOException
+	{
+		this.out.write(Utility.LINE_SEPARATOR);
+		return this;
+	}
 
 }

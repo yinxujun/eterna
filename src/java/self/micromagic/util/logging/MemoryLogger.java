@@ -17,12 +17,12 @@ import self.micromagic.cg.ClassGenerator;
 import self.micromagic.eterna.model.AppData;
 
 /**
- * ½«ÈÕÖ¾ÒÔXMLµÄĞÎÊ½¼ÇÂ¼ÔÚÄÚ´æÖĞ.
+ * å°†æ—¥å¿—ä»¥XMLçš„å½¢å¼è®°å½•åœ¨å†…å­˜ä¸­.
  */
 public class MemoryLogger
 {
 	/**
-	 * »ñÈ¡Ò»¸öÈ«¾ÖµÄÄÚ´æÈÕÖ¾ÊµÀı.
+	 * è·å–ä¸€ä¸ªå…¨å±€çš„å†…å­˜æ—¥å¿—å®ä¾‹.
 	 */
 	public static MemoryLogger getInstance()
 	{
@@ -31,7 +31,7 @@ public class MemoryLogger
 	private static MemoryLogger instance = new MemoryLogger();
 
 	/**
-	 * »ñÈ¡Ò»¸öÖµµÃÃû³ÆµÄÄÚ´æÈÕÖ¾ÊµÀı.
+	 * è·å–ä¸€ä¸ªå€¼å¾—åç§°çš„å†…å­˜æ—¥å¿—å®ä¾‹.
 	 */
 	public static MemoryLogger getInstance(String name)
 	{
@@ -57,7 +57,7 @@ public class MemoryLogger
 	private static Map instanceCache = new HashMap();
 
 	/**
-	 * ´æ·ÅÈÕÖ¾ĞÅÏ¢µÄdom½Úµã.
+	 * å­˜æ”¾æ—¥å¿—ä¿¡æ¯çš„domèŠ‚ç‚¹.
 	 */
 	private Document logDocument = null;
 	private Element logNodes = null;
@@ -67,7 +67,7 @@ public class MemoryLogger
 	}
 
 	/**
-	 * ÉèÖÃµ±Ç°ÄÚ´æÈÕÖ¾ÊÇ·ñÓĞĞ§.
+	 * è®¾ç½®å½“å‰å†…å­˜æ—¥å¿—æ˜¯å¦æœ‰æ•ˆ.
 	 */
 	public void setLogValid(boolean valid)
 	{
@@ -76,7 +76,7 @@ public class MemoryLogger
 	private boolean logValid;
 
 	/**
-	 * ¼ì²é²¢³õÊ¼»¯ÈÕÖ¾ĞÅÏ¢µÄdom½Úµã.
+	 * æ£€æŸ¥å¹¶åˆå§‹åŒ–æ—¥å¿—ä¿¡æ¯çš„domèŠ‚ç‚¹.
 	 */
 	private void checkNodeInit()
 	{
@@ -89,7 +89,7 @@ public class MemoryLogger
 
 		if (this.logNodes.elements().size() > 2048)
 		{
-			// µ±½Úµã¹ı¶àÊ±, Çå³ı×îÏÈÌí¼ÓµÄ¼¸¸ö½Úµã
+			// å½“èŠ‚ç‚¹è¿‡å¤šæ—¶, æ¸…é™¤æœ€å…ˆæ·»åŠ çš„å‡ ä¸ªèŠ‚ç‚¹
 			Iterator itr = this.logNodes.elementIterator();
 			try
 			{
@@ -101,7 +101,7 @@ public class MemoryLogger
 			}
 			catch (Exception ex)
 			{
-				// µ±È¥³ı½Úµã³ö´íÊ±, ÔòÇå¿ÕÈÕÖ¾
+				// å½“å»é™¤èŠ‚ç‚¹å‡ºé”™æ—¶, åˆ™æ¸…ç©ºæ—¥å¿—
 				this.logDocument = null;
 				this.checkNodeInit();
 			}
@@ -109,37 +109,37 @@ public class MemoryLogger
 	}
 
 	/**
-	 * Ìí¼ÓÒ»¸ö¼ÇÂ¼ÈÕÖ¾ĞÅÏ¢µÄ½Úµã.
+	 * æ·»åŠ ä¸€ä¸ªè®°å½•æ—¥å¿—ä¿¡æ¯çš„èŠ‚ç‚¹.
 	 */
 	private synchronized void addLogNode(Element logNode)
 	{
 		this.checkNodeInit();
-      this.logNodes.add(logNode);
+		this.logNodes.add(logNode);
 	}
 
 	/**
-	 * ´´½¨Ò»¸ö¼ÇÂ¼ÈÕÖ¾ĞÅÏ¢µÄ½Úµã.
+	 * åˆ›å»ºä¸€ä¸ªè®°å½•æ—¥å¿—ä¿¡æ¯çš„èŠ‚ç‚¹.
 	 *
-	 * @param nodeName  ½ÚµãµÄÃû³Æ
+	 * @param nodeName  èŠ‚ç‚¹çš„åç§°
 	 */
 	private Element createLogNode(String nodeName)
 	{
-      return DocumentHelper.createElement(nodeName);
+		return DocumentHelper.createElement(nodeName);
 	}
 
 	/**
-	 * Ìí¼ÓÒ»ÌõÈÕÖ¾ĞÅÏ¢.
+	 * æ·»åŠ ä¸€æ¡æ—¥å¿—ä¿¡æ¯.
 	 *
-	 * @param msg         ÈÕÖ¾µÄÎÄ±¾ĞÅÏ¢
-	 * @param ex          Òì³£ĞÅÏ¢
-	 * @param isCause     ÊÇ·ñÎª¼ÇÂ¼Òì³£µÄ²úÉúÕß, ¼°²úÉúÕâ¸öÒì³£µÄÒì³£
-	 * @param level       ÈÕÖ¾µÄµÈ¼¶
-	 * @param threadName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÏß³Ì
-	 * @param className   ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÀà
-	 * @param methodName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚ·½·¨
-	 * @param fileName    ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÎÄ¼ş
-	 * @param lineNumber  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚĞĞ
-	 * @param logNode     ÈÕÖ¾ĞÅÏ¢ËùÌí¼ÓµÄ½Úµã
+	 * @param msg         æ—¥å¿—çš„æ–‡æœ¬ä¿¡æ¯
+	 * @param ex          å¼‚å¸¸ä¿¡æ¯
+	 * @param isCause     æ˜¯å¦ä¸ºè®°å½•å¼‚å¸¸çš„äº§ç”Ÿè€…, åŠäº§ç”Ÿè¿™ä¸ªå¼‚å¸¸çš„å¼‚å¸¸
+	 * @param level       æ—¥å¿—çš„ç­‰çº§
+	 * @param threadName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨çº¿ç¨‹
+	 * @param className   è®°å½•æ—¥å¿—çš„æ‰€åœ¨ç±»
+	 * @param methodName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–¹æ³•
+	 * @param fileName    è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–‡ä»¶
+	 * @param lineNumber  è®°å½•æ—¥å¿—çš„æ‰€åœ¨è¡Œ
+	 * @param logNode     æ—¥å¿—ä¿¡æ¯æ‰€æ·»åŠ çš„èŠ‚ç‚¹
 	 */
 	private void addLog(String msg, Throwable ex, boolean isCause, String level, String threadName,
 			String className, String methodName, String fileName, String lineNumber, Element logNode)
@@ -176,16 +176,16 @@ public class MemoryLogger
 	}
 
 	/**
-	 * Ìí¼ÓÒ»ÌõÈÕÖ¾ĞÅÏ¢.
+	 * æ·»åŠ ä¸€æ¡æ—¥å¿—ä¿¡æ¯.
 	 *
-	 * @param msg         ÈÕÖ¾µÄÎÄ±¾ĞÅÏ¢
-	 * @param ex          Òì³£ĞÅÏ¢
-	 * @param level       ÈÕÖ¾µÄµÈ¼¶
-	 * @param threadName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÏß³Ì
-	 * @param className   ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÀà
-	 * @param methodName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚ·½·¨
-	 * @param fileName    ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÎÄ¼ş
-	 * @param lineNumber  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚĞĞ
+	 * @param msg         æ—¥å¿—çš„æ–‡æœ¬ä¿¡æ¯
+	 * @param ex          å¼‚å¸¸ä¿¡æ¯
+	 * @param level       æ—¥å¿—çš„ç­‰çº§
+	 * @param threadName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨çº¿ç¨‹
+	 * @param className   è®°å½•æ—¥å¿—çš„æ‰€åœ¨ç±»
+	 * @param methodName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–¹æ³•
+	 * @param fileName    è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–‡ä»¶
+	 * @param lineNumber  è®°å½•æ—¥å¿—çš„æ‰€åœ¨è¡Œ
 	 */
 	public void addLog(String msg, Throwable ex, String level, String threadName, String className,
 			String methodName, String fileName, String lineNumber)
@@ -217,15 +217,15 @@ public class MemoryLogger
 	}
 
 	/**
-	 * Ìí¼ÓÒ»ÌõÈÕÖ¾ĞÅÏ¢.
+	 * æ·»åŠ ä¸€æ¡æ—¥å¿—ä¿¡æ¯.
 	 *
-	 * @param msg         ÈÕÖ¾µÄÎÄ±¾ĞÅÏ¢
-	 * @param level       ÈÕÖ¾µÄµÈ¼¶
-	 * @param threadName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÏß³Ì
-	 * @param className   ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÀà
-	 * @param methodName  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚ·½·¨
-	 * @param fileName    ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚÎÄ¼ş
-	 * @param lineNumber  ¼ÇÂ¼ÈÕÖ¾µÄËùÔÚĞĞ
+	 * @param msg         æ—¥å¿—çš„æ–‡æœ¬ä¿¡æ¯
+	 * @param level       æ—¥å¿—çš„ç­‰çº§
+	 * @param threadName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨çº¿ç¨‹
+	 * @param className   è®°å½•æ—¥å¿—çš„æ‰€åœ¨ç±»
+	 * @param methodName  è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–¹æ³•
+	 * @param fileName    è®°å½•æ—¥å¿—çš„æ‰€åœ¨æ–‡ä»¶
+	 * @param lineNumber  è®°å½•æ—¥å¿—çš„æ‰€åœ¨è¡Œ
 	 */
 	public void addLog(String msg, String level, String threadName, String className, String methodName,
 			String fileName, String lineNumber)
@@ -234,10 +234,10 @@ public class MemoryLogger
 	}
 
 	/**
-	 * ´òÓ¡ÈÕÖ¾ĞÅÏ¢.
+	 * æ‰“å°æ—¥å¿—ä¿¡æ¯.
 	 *
-	 * @param out    ´òÓ¡ÈÕ×ÓµÄÊä³öÁ÷
-	 * @param clear  ÊÇ·ñĞèÒªÇå¿ÕÏÖÓĞµÄÈÕÖ¾
+	 * @param out    æ‰“å°æ—¥å­çš„è¾“å‡ºæµ
+	 * @param clear  æ˜¯å¦éœ€è¦æ¸…ç©ºç°æœ‰çš„æ—¥å¿—
 	 */
 	public void printLog(Writer out, boolean clear)
 			throws IOException

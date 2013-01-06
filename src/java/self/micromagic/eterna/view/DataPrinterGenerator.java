@@ -6,20 +6,20 @@ import self.micromagic.eterna.share.Generator;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * Êı¾İ¼¯Êä³öÆ÷µÄ¹¹ÔìÕß.
+ * æ•°æ®é›†è¾“å‡ºå™¨çš„æ„é€ è€….
  */
 public interface DataPrinterGenerator extends Generator
 {
-   /**
-    * ³õÊ¼»¯´Ë¹¹ÔìÕß.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æ­¤æ„é€ è€….
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * ´´½¨Ò»¸öÊı¾İ¼¯Êä³öÆ÷.
-    *
-    * @return    Êı¾İ¼¯Êä³öÆ÷
-    */
-   DataPrinter createDataPrinter() throws ConfigurationException;
+	/**
+	 * åˆ›å»ºä¸€ä¸ªæ•°æ®é›†è¾“å‡ºå™¨.
+	 *
+	 * @return    æ•°æ®é›†è¾“å‡ºå™¨
+	 */
+	DataPrinter createDataPrinter() throws ConfigurationException;
 
 }

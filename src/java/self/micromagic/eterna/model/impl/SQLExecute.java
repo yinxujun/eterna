@@ -16,93 +16,93 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.SQLAdapter;
 
 public abstract class SQLExecute extends AbstractExecute
-      implements Execute
+		implements Execute
 {
-   protected List binds = new LinkedList();
-   protected boolean pushResult = true;
-   protected int sqlCacheIndex = -1;
-   protected boolean doExecute = true;
-   protected EternaFactory factory;
+	protected List binds = new LinkedList();
+	protected boolean pushResult = true;
+	protected int sqlCacheIndex = -1;
+	protected boolean doExecute = true;
+	protected EternaFactory factory;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      this.factory = model.getFactory();
-      Iterator itr = this.binds.iterator();
-      while (itr.hasNext())
-      {
-         ((ParamBind) itr.next()).initialize(model, this);
-      }
-   }
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		this.factory = model.getFactory();
+		Iterator itr = this.binds.iterator();
+		while (itr.hasNext())
+		{
+			((ParamBind) itr.next()).initialize(model, this);
+		}
+	}
 
 	protected abstract SQLAdapter getSQL() throws ConfigurationException;
 
-   public boolean isPushResult()
-   {
-      return this.pushResult;
-   }
+	public boolean isPushResult()
+	{
+		return this.pushResult;
+	}
 
-   public void setPushResult(boolean push)
-   {
-      this.pushResult = push;
-   }
+	public void setPushResult(boolean push)
+	{
+		this.pushResult = push;
+	}
 
-   public void setCache(int cacheIndex)
-   {
-      this.sqlCacheIndex = cacheIndex;
-   }
+	public void setCache(int cacheIndex)
+	{
+		this.sqlCacheIndex = cacheIndex;
+	}
 
-   public void setDoExecute(boolean execute)
-   {
-      this.doExecute = execute;
-   }
+	public void setDoExecute(boolean execute)
+	{
+		this.doExecute = execute;
+	}
 
-   public void addParamBind(ParamBind bind)
-   {
-      this.binds.add(bind);
-   }
+	public void addParamBind(ParamBind bind)
+	{
+		this.binds.add(bind);
+	}
 
-   public int setParams(AppData data, ParamSetManager psm, int loopIndex)
-         throws ConfigurationException, SQLException
-   {
-      int loopCount = -1;
-      boolean hasLoop = false;
-      Iterator itr = this.binds.iterator();
-      while (itr.hasNext())
-      {
-         ParamBind bind = (ParamBind) itr.next();
-         if (loopIndex == 0 || bind.isLoop())
-         {
-            int temp = bind.setParam(data, psm, loopIndex);
-            if (bind.isLoop())
-            {
-               hasLoop = true;
-            }
+	public int setParams(AppData data, ParamSetManager psm, int loopIndex)
+			throws ConfigurationException, SQLException
+	{
+		int loopCount = -1;
+		boolean hasLoop = false;
+		Iterator itr = this.binds.iterator();
+		while (itr.hasNext())
+		{
+			ParamBind bind = (ParamBind) itr.next();
+			if (loopIndex == 0 || bind.isLoop())
+			{
+				int temp = bind.setParam(data, psm, loopIndex);
+				if (bind.isLoop())
+				{
+					hasLoop = true;
+				}
 
-            if (temp != -1)
-            {
-               if (loopCount == -1)
-               {
-                  loopCount = temp;
-               }
-               if (loopCount != temp)
-               {
-                  throw new ConfigurationException("The param count not same, "
-                        + loopCount + " and " + temp + ".");
-               }
-            }
-         }
-      }
-      if (hasLoop)
-      {
-         loopCount = loopCount == -1 ? 0 : loopCount;
-      }
-      return loopCount;
-   }
+				if (temp != -1)
+				{
+					if (loopCount == -1)
+					{
+						loopCount = temp;
+					}
+					if (loopCount != temp)
+					{
+						throw new ConfigurationException("The param count not same, "
+								+ loopCount + " and " + temp + ".");
+					}
+				}
+			}
+		}
+		if (hasLoop)
+		{
+			loopCount = loopCount == -1 ? 0 : loopCount;
+		}
+		return loopCount;
+	}
 
 }

@@ -7,34 +7,34 @@ import self.micromagic.util.Utility;
 import org.apache.commons.logging.Log;
 
 /**
- * Ä¬ÈÏµÄ¹¤³§ÊµÀı²éÑ¯Õß.
+ * é»˜è®¤çš„å·¥å‚å®ä¾‹æŸ¥è¯¢è€….
  *
  * @author micromagic@sina.com
  */
 public class DefaultFinder
-      implements InstanceFinder
+		implements InstanceFinder
 {
-   /**
-    * Ä¬ÈÏµÄ¹¤³§ÊµÀı²éÑ¯Õß, Èç¹ûÓĞ×Ô¼ºµÄÊµÏÖÀà, ¿ÉÒÔÖØĞÂ¶Ô´Ë±äÁ¿¸³Öµ.
-    */
-   public static InstanceFinder finder = new DefaultFinder();
+	/**
+	 * é»˜è®¤çš„å·¥å‚å®ä¾‹æŸ¥è¯¢è€…, å¦‚æœæœ‰è‡ªå·±çš„å®ç°ç±», å¯ä»¥é‡æ–°å¯¹æ­¤å˜é‡èµ‹å€¼.
+	 */
+	public static InstanceFinder finder = new DefaultFinder();
 
-   /**
-    * ÓÃÓÚ¼ÇÂ¼ÈÕÖ¾.
-    */
-   static final Log log = Utility.createLog("tag");
+	/**
+	 * ç”¨äºè®°å½•æ—¥å¿—.
+	 */
+	static final Log log = Utility.createLog("tag");
 
 
-   public FactoryManager.Instance findInstance(String name)
-   {
-      try
-      {
-         return FactoryManager.getFactoryManager(name);
-      }
-      catch (ConfigurationException ex)
-      {
-         return null;
-      }
-   }
+	public FactoryManager.Instance findInstance(String name)
+	{
+		try
+		{
+			return FactoryManager.getFactoryManager(name);
+		}
+		catch (ConfigurationException ex)
+		{
+			return null;
+		}
+	}
 
 }

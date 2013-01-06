@@ -14,114 +14,114 @@ import self.micromagic.util.converter.ConverterFinder;
 
 public class TypeManager
 {
-   public static final int TYPE_IGNORE = 0;
-   public static final int TYPE_STRING = 1;
-   public static final int TYPE_INTEGER = 2;
-   public static final int TYPE_DOUBLE = 3;
-   public static final int TYPE_BYTES = 4;
-   public static final int TYPE_BOOLEAN = 5;
-   public static final int TYPE_DATE = 6;
-   public static final int TYPE_TIMPSTAMP = 7;
-   public static final int TYPE_LONG = 8;
-   public static final int TYPE_TIME = 9;
-   public static final int TYPE_SHORT = 10;
-   public static final int TYPE_BYTE = 11;
-   public static final int TYPE_FLOAT = 12;
-   public static final int TYPE_OBJECT = 13;
-   public static final int TYPE_BIGSTRING = 14;
-   public static final int TYPE_STREAM = 15;
-   public static final int TYPE_READER = 16;
-   public static final int TYPE_DECIMAL = 17;
+	public static final int TYPE_IGNORE = 0;
+	public static final int TYPE_STRING = 1;
+	public static final int TYPE_INTEGER = 2;
+	public static final int TYPE_DOUBLE = 3;
+	public static final int TYPE_BYTES = 4;
+	public static final int TYPE_BOOLEAN = 5;
+	public static final int TYPE_DATE = 6;
+	public static final int TYPE_TIMPSTAMP = 7;
+	public static final int TYPE_LONG = 8;
+	public static final int TYPE_TIME = 9;
+	public static final int TYPE_SHORT = 10;
+	public static final int TYPE_BYTE = 11;
+	public static final int TYPE_FLOAT = 12;
+	public static final int TYPE_OBJECT = 13;
+	public static final int TYPE_BIGSTRING = 14;
+	public static final int TYPE_STREAM = 15;
+	public static final int TYPE_READER = 16;
+	public static final int TYPE_DECIMAL = 17;
 
-   public static final int TYPES_COUNT = 18;
+	public static final int TYPES_COUNT = 18;
 
-   private static Map paramMap = new HashMap();
+	private static Map paramMap = new HashMap();
 
-   private static int[] SQL_TYPES = new int[]{
-      Types.NULL,           //TYPE_IGNORE
-      Types.VARCHAR,        //TYPE_STRING
-      Types.INTEGER,        //TYPE_INTEGER
-      Types.DOUBLE,         //TYPE_DOUBLE
-      Types.BINARY,         //TYPE_BYTES
-      Types.BIT,            //TYPE_BOOLEAN
-      Types.DATE,           //TYPE_DATE
-      Types.TIMESTAMP,      //TYPE_TIMPSTAMP
-      Types.BIGINT,         //TYPE_LONG
-      Types.TIME,           //TYPE_TIME
-      Types.SMALLINT,       //TYPE_SHORT
-      Types.TINYINT,        //TYPE_BYTE
-      Types.FLOAT,          //TYPE_FLOAT
-      Types.OTHER,          //TYPE_OBJECT
-      Types.LONGVARCHAR,    //TYPE_BIGSTRING
-      Types.LONGVARBINARY,  //TYPE_STREAM
-      Types.LONGVARCHAR,    //TYPE_READER
-      Types.DECIMAL         //TYPE_DECIMAL
-   };
+	private static int[] SQL_TYPES = new int[]{
+		Types.NULL,           //TYPE_IGNORE
+		Types.VARCHAR,        //TYPE_STRING
+		Types.INTEGER,        //TYPE_INTEGER
+		Types.DOUBLE,         //TYPE_DOUBLE
+		Types.BINARY,         //TYPE_BYTES
+		Types.BIT,            //TYPE_BOOLEAN
+		Types.DATE,           //TYPE_DATE
+		Types.TIMESTAMP,      //TYPE_TIMPSTAMP
+		Types.BIGINT,         //TYPE_LONG
+		Types.TIME,           //TYPE_TIME
+		Types.SMALLINT,       //TYPE_SHORT
+		Types.TINYINT,        //TYPE_BYTE
+		Types.FLOAT,          //TYPE_FLOAT
+		Types.OTHER,          //TYPE_OBJECT
+		Types.LONGVARCHAR,    //TYPE_BIGSTRING
+		Types.LONGVARBINARY,  //TYPE_STREAM
+		Types.LONGVARCHAR,    //TYPE_READER
+		Types.DECIMAL         //TYPE_DECIMAL
+	};
 
-   private static String[] paramNames = {
-      "ignore",
-      "String",
-      "int",
-      "double",
-      "Bytes",
-      "boolean",
-      "Date",
-      "Timestamp",
-      "long",
-      "Time",
-      "short",
-      "byte",
-      "float",
-      "Object",
-      "BigString",
-      "Stream",
-      "Reader",
-      "Decimal"
-   };
+	private static String[] paramNames = {
+		"ignore",
+		"String",
+		"int",
+		"double",
+		"Bytes",
+		"boolean",
+		"Date",
+		"Timestamp",
+		"long",
+		"Time",
+		"short",
+		"byte",
+		"float",
+		"Object",
+		"BigString",
+		"Stream",
+		"Reader",
+		"Decimal"
+	};
 
-   private static ValueConverter[] converters;
-   private static Class[] javaTypes = {
-      null,
-      String.class,
-      int.class,
-      double.class,
-      byte[].class,
-      boolean.class,
-      java.sql.Date.class,
-      java.sql.Timestamp.class,
-      long.class,
-      java.sql.Time.class,
-      short.class,
-      byte.class,
-      float.class,
-      Object.class,
-      String.class,
-      InputStream.class,
-      Reader.class,
-      BigDecimal.class
-   };
+	private static ValueConverter[] converters;
+	private static Class[] javaTypes = {
+		null,
+		String.class,
+		int.class,
+		double.class,
+		byte[].class,
+		boolean.class,
+		java.sql.Date.class,
+		java.sql.Timestamp.class,
+		long.class,
+		java.sql.Time.class,
+		short.class,
+		byte.class,
+		float.class,
+		Object.class,
+		String.class,
+		InputStream.class,
+		Reader.class,
+		BigDecimal.class
+	};
 
-   static
-   {
-      paramMap.put("ignore", Utility.INTEGER_0);
-      paramMap.put("String", Utility.INTEGER_1);
-      paramMap.put("int", Utility.INTEGER_2);
-      paramMap.put("double", Utility.INTEGER_3);
-      paramMap.put("Bytes", Utility.INTEGER_4);
-      paramMap.put("boolean", Utility.INTEGER_5);
-      paramMap.put("Date", Utility.INTEGER_6);
-      paramMap.put("Timestamp", Utility.INTEGER_7);
-      paramMap.put("Datetime", Utility.INTEGER_7); // ¼æÈİDatetimeµÄÉèÖÃ
-      paramMap.put("long", Utility.INTEGER_8);
-      paramMap.put("Time", Utility.INTEGER_9);
-      paramMap.put("short", Utility.INTEGER_10);
-      paramMap.put("byte", Utility.INTEGER_11);
-      paramMap.put("float", Utility.INTEGER_12);
-      paramMap.put("Object", Utility.INTEGER_13);
-      paramMap.put("BigString", Utility.INTEGER_14);
-      paramMap.put("Stream", Utility.INTEGER_15);
-      paramMap.put("Reader", new Integer(16));
-      paramMap.put("Decimal", new Integer(17));
+	static
+	{
+		paramMap.put("ignore", Utility.INTEGER_0);
+		paramMap.put("String", Utility.INTEGER_1);
+		paramMap.put("int", Utility.INTEGER_2);
+		paramMap.put("double", Utility.INTEGER_3);
+		paramMap.put("Bytes", Utility.INTEGER_4);
+		paramMap.put("boolean", Utility.INTEGER_5);
+		paramMap.put("Date", Utility.INTEGER_6);
+		paramMap.put("Timestamp", Utility.INTEGER_7);
+		paramMap.put("Datetime", Utility.INTEGER_7); // å…¼å®¹Datetimeçš„è®¾ç½®
+		paramMap.put("long", Utility.INTEGER_8);
+		paramMap.put("Time", Utility.INTEGER_9);
+		paramMap.put("short", Utility.INTEGER_10);
+		paramMap.put("byte", Utility.INTEGER_11);
+		paramMap.put("float", Utility.INTEGER_12);
+		paramMap.put("Object", Utility.INTEGER_13);
+		paramMap.put("BigString", Utility.INTEGER_14);
+		paramMap.put("Stream", Utility.INTEGER_15);
+		paramMap.put("Reader", new Integer(16));
+		paramMap.put("Decimal", new Integer(17));
 
 		converters = new ValueConverter[javaTypes.length];
 		for (int i = 0; i < javaTypes.length; i++)
@@ -133,187 +133,187 @@ public class TypeManager
 				converters[i].setNeedThrow(false);
 			}
 		}
-   }
+	}
 
 	/**
-	 * ¸ù¾İÀàĞÍµÄÃû³Æ»ñµÃÀàĞÍµÄid.
+	 * æ ¹æ®ç±»å‹çš„åç§°è·å¾—ç±»å‹çš„id.
 	 *
-	 * @param name   ÀàĞÍµÄÃû³Æ
-	 * @return    ÓëÀàĞÍÃû³Æ¶ÔÓ¦µÄid, Èç¹û¸ÃÀàĞÍÃû³ÆÃ»ÓĞ¶ÔÓ¦µÄÀàĞÍidÔò
-	 *            ·µ»ØTYPE_IGNORE
+	 * @param name   ç±»å‹çš„åç§°
+	 * @return    ä¸ç±»å‹åç§°å¯¹åº”çš„id, å¦‚æœè¯¥ç±»å‹åç§°æ²¡æœ‰å¯¹åº”çš„ç±»å‹idåˆ™
+	 *            è¿”å›TYPE_IGNORE
 	 */
-   public static int getTypeId(String name)
-   {
-      if (name == null)
-      {
-         return TYPE_IGNORE;
-      }
-      int param = 0;
-      name = name.trim();
-      if (name.endsWith(")"))
-      {
-         int index = name.lastIndexOf('(');
-         String temp = name.substring(index + 1, name.length() - 1);
-         name = name.substring(0, index);
-         index = temp.indexOf(',');
-         try
-         {
-            if (index == -1)
-            {
-               param = Integer.parseInt(temp.trim()) << 8;
-            }
-            else
-            {
-               param = (Integer.parseInt(temp.substring(0, index).trim()) << 8)
-                     | (Integer.parseInt(temp.substring(index + 1).trim()) << 24);
-            }
-         }
-         catch (Exception ex){}
-      }
-      Integer i = (Integer) paramMap.get(name);
-      return i == null ? TYPE_IGNORE : i.intValue() | param;
-   }
+	public static int getTypeId(String name)
+	{
+		if (name == null)
+		{
+			return TYPE_IGNORE;
+		}
+		int param = 0;
+		name = name.trim();
+		if (name.endsWith(")"))
+		{
+			int index = name.lastIndexOf('(');
+			String temp = name.substring(index + 1, name.length() - 1);
+			name = name.substring(0, index);
+			index = temp.indexOf(',');
+			try
+			{
+				if (index == -1)
+				{
+					param = Integer.parseInt(temp.trim()) << 8;
+				}
+				else
+				{
+					param = (Integer.parseInt(temp.substring(0, index).trim()) << 8)
+							| (Integer.parseInt(temp.substring(index + 1).trim()) << 24);
+				}
+			}
+			catch (Exception ex){}
+		}
+		Integer i = (Integer) paramMap.get(name);
+		return i == null ? TYPE_IGNORE : i.intValue() | param;
+	}
 
 	/**
-	 * »ñÈ¡´¿ÀàĞÍid.
-	 * ´¿ÀàĞÍid±£´æÔÚÀàĞÍidµÄµÍ8Î», ÓĞĞ§ÀàĞÍid»¹°üÀ¨ÆäËü²ÎÊı,
-	 * Èç: ³¤¶È ¾«¶ÈµÈ.
+	 * è·å–çº¯ç±»å‹id.
+	 * çº¯ç±»å‹idä¿å­˜åœ¨ç±»å‹idçš„ä½8ä½, æœ‰æ•ˆç±»å‹idè¿˜åŒ…æ‹¬å…¶å®ƒå‚æ•°,
+	 * å¦‚: é•¿åº¦ ç²¾åº¦ç­‰.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return   ´¿ÀàĞÍid, Èç¹û¸ø³öµÄÀàĞÍidÎŞĞ§Ôò·µ»ØTYPE_IGNORE
+	 * @param id  ç±»å‹çš„id
+	 * @return   çº¯ç±»å‹id, å¦‚æœç»™å‡ºçš„ç±»å‹idæ— æ•ˆåˆ™è¿”å›TYPE_IGNORE
 	 */
-   public static int getPureType(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return TYPE_IGNORE;
-      }
-      return realId;
-   }
+	public static int getPureType(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return TYPE_IGNORE;
+		}
+		return realId;
+	}
 
 	/**
-	 * ¸ù¾İÀàĞÍid»ñÈ¡ÀàĞÍµÄÃû³Æ.
+	 * æ ¹æ®ç±»å‹idè·å–ç±»å‹çš„åç§°.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  Óë´ËÀàĞÍid¶ÔÓ¦µÄÀàĞÍÃû³Æ, Èç¹û¸ø³öµÄÀàĞÍidÎŞĞ§
-	 *          Ôò·µ»Ønull
+	 * @param id  ç±»å‹çš„id
+	 * @return  ä¸æ­¤ç±»å‹idå¯¹åº”çš„ç±»å‹åç§°, å¦‚æœç»™å‡ºçš„ç±»å‹idæ— æ•ˆ
+	 *          åˆ™è¿”å›null
 	 */
-   public static String getTypeName(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return null;
-      }
-      String temp = paramNames[realId];
-      if (id > 0xffffff || id < 0)
-      {
-         temp += "(" + ((id & 0xffff00) >> 8) + "," + ((id & 0xff000000) >>> 24) + ")";
-      }
-      else if (id > 0xff)
-      {
-         temp += "(" + ((id & 0xffff00) >> 8) + ")";
-      }
-      return temp;
-   }
+	public static String getTypeName(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return null;
+		}
+		String temp = paramNames[realId];
+		if (id > 0xffffff || id < 0)
+		{
+			temp += "(" + ((id & 0xffff00) >> 8) + "," + ((id & 0xff000000) >>> 24) + ")";
+		}
+		else if (id > 0xff)
+		{
+			temp += "(" + ((id & 0xffff00) >> 8) + ")";
+		}
+		return temp;
+	}
 
 	/**
-	 * »ñÈ¡ÀàĞÍid¶ÔÓ¦µÄSQLµÄÀàĞÍ.
+	 * è·å–ç±»å‹idå¯¹åº”çš„SQLçš„ç±»å‹.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  SQLµÄÀàĞÍ, Èç¹û¸ø³öµÄÀàĞÍidÎŞĞ§Ôò·µ»ØTypes.NULL
+	 * @param id  ç±»å‹çš„id
+	 * @return  SQLçš„ç±»å‹, å¦‚æœç»™å‡ºçš„ç±»å‹idæ— æ•ˆåˆ™è¿”å›Types.NULL
 	 */
-   public static int getSQLType(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return Types.NULL;
-      }
-      return SQL_TYPES[realId];
-   }
+	public static int getSQLType(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return Types.NULL;
+		}
+		return SQL_TYPES[realId];
+	}
 
 	/**
-	 * »ñÈ¡ÀàĞÍid¶ÔÓ¦µÄJavaµÄÀàĞÍ.
+	 * è·å–ç±»å‹idå¯¹åº”çš„Javaçš„ç±»å‹.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  JavaµÄÀàĞÍ, Èç¹û¸ø³öµÄÀàĞÍidÎŞĞ§Ôò·µ»Ønull
+	 * @param id  ç±»å‹çš„id
+	 * @return  Javaçš„ç±»å‹, å¦‚æœç»™å‡ºçš„ç±»å‹idæ— æ•ˆåˆ™è¿”å›null
 	 */
-   public static Class getJavaType(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= javaTypes.length)
-      {
-         return null;
-      }
-      return javaTypes[realId];
-   }
+	public static Class getJavaType(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= javaTypes.length)
+		{
+			return null;
+		}
+		return javaTypes[realId];
+	}
 
 	/**
-	 * »ñÈ¡ÀàĞÍid¶ÔÓ¦µÄÀàĞÍ×ª»»Æ÷.
+	 * è·å–ç±»å‹idå¯¹åº”çš„ç±»å‹è½¬æ¢å™¨.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  ÀàĞÍ×ª»»Æ÷, Èç¹û¸ø³öµÄÀàĞÍidÎŞĞ§Ôò·µ»Ønull
+	 * @param id  ç±»å‹çš„id
+	 * @return  ç±»å‹è½¬æ¢å™¨, å¦‚æœç»™å‡ºçš„ç±»å‹idæ— æ•ˆåˆ™è¿”å›null
 	 */
-   public static ValueConverter getConverter(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= converters.length)
-      {
-         return null;
-      }
-      return converters[realId];
-   }
+	public static ValueConverter getConverter(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= converters.length)
+		{
+			return null;
+		}
+		return converters[realId];
+	}
 
 	/**
-	 * ÅĞ¶Ï¸ø³öµÄÀàĞÍidÊÇ·ñÊÇÒ»¸öÊı×ÖÀàĞÍ.
+	 * åˆ¤æ–­ç»™å‡ºçš„ç±»å‹idæ˜¯å¦æ˜¯ä¸€ä¸ªæ•°å­—ç±»å‹.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  true±íÊ¾´ËÀàĞÍidÎªÒ»¸öÊı×ÖÀàĞÍ
+	 * @param id  ç±»å‹çš„id
+	 * @return  trueè¡¨ç¤ºæ­¤ç±»å‹idä¸ºä¸€ä¸ªæ•°å­—ç±»å‹
 	 */
-   public static boolean isTypeNumber(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return false;
-      }
-      return realId == TYPE_INTEGER || realId == TYPE_DOUBLE || realId == TYPE_LONG
-            || realId == TYPE_SHORT || realId == TYPE_BYTE || realId == TYPE_FLOAT
-            || realId == TYPE_DECIMAL;
-   }
+	public static boolean isTypeNumber(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return false;
+		}
+		return realId == TYPE_INTEGER || realId == TYPE_DOUBLE || realId == TYPE_LONG
+				|| realId == TYPE_SHORT || realId == TYPE_BYTE || realId == TYPE_FLOAT
+				|| realId == TYPE_DECIMAL;
+	}
 
 	/**
-	 * ÅĞ¶Ï¸ø³öµÄÀàĞÍidÊÇ·ñÊÇÒ»¸öÈÕÆÚÀàĞÍ.
+	 * åˆ¤æ–­ç»™å‡ºçš„ç±»å‹idæ˜¯å¦æ˜¯ä¸€ä¸ªæ—¥æœŸç±»å‹.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  true±íÊ¾´ËÀàĞÍidÎªÒ»¸öÈÕÆÚÀàĞÍ
+	 * @param id  ç±»å‹çš„id
+	 * @return  trueè¡¨ç¤ºæ­¤ç±»å‹idä¸ºä¸€ä¸ªæ—¥æœŸç±»å‹
 	 */
-   public static boolean isTypeDate(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return false;
-      }
-      return realId == TYPE_DATE || realId == TYPE_TIME || realId == TYPE_TIMPSTAMP;
-   }
+	public static boolean isTypeDate(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return false;
+		}
+		return realId == TYPE_DATE || realId == TYPE_TIME || realId == TYPE_TIMPSTAMP;
+	}
 
 	/**
-	 * ÅĞ¶Ï¸ø³öµÄÀàĞÍidÊÇ·ñÊÇÒ»¸ö×Ö·û´®ÀàĞÍ.
+	 * åˆ¤æ–­ç»™å‡ºçš„ç±»å‹idæ˜¯å¦æ˜¯ä¸€ä¸ªå­—ç¬¦ä¸²ç±»å‹.
 	 *
-	 * @param id  ÀàĞÍµÄid
-	 * @return  true±íÊ¾´ËÀàĞÍidÎªÒ»¸ö×Ö·û´®ÀàĞÍ
+	 * @param id  ç±»å‹çš„id
+	 * @return  trueè¡¨ç¤ºæ­¤ç±»å‹idä¸ºä¸€ä¸ªå­—ç¬¦ä¸²ç±»å‹
 	 */
-   public static boolean isTypeString(int id)
-   {
-      int realId = id & 0xff;
-      if (realId < 0 || realId >= paramNames.length)
-      {
-         return false;
-      }
-      return realId == TYPE_STRING || realId == TYPE_BIGSTRING;
-   }
+	public static boolean isTypeString(int id)
+	{
+		int realId = id & 0xff;
+		if (realId < 0 || realId >= paramNames.length)
+		{
+			return false;
+		}
+		return realId == TYPE_STRING || realId == TYPE_BIGSTRING;
+	}
 
 }

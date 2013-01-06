@@ -16,187 +16,190 @@ import self.micromagic.dc.CodeClassTool;
 import self.micromagic.util.StringTool;
 
 /**
- * ¶¯Ì¬±àÒëjava´úÂëÀ´¹¹ÔìÒ»¸öParamBind.
+ * åŠ¨æ€ç¼–è¯‘javaä»£ç æ¥æž„é€ ä¸€ä¸ªParamBind.
  *
- * ÐèÉèÖÃµÄÊôÐÔ
- * src        ¸ñÊ½Îª attrName[:throwCompileError][:extends]
- *            attrName               ´ÓfactoryµÄÊôÐÔÖÐ»ñÈ¡´¦Àí²ÎÊý°ó¶¨µÄjava´úÂë
- *            throwCompileError      ÊÇ·ñÐèÒª½«±àÒëµÄ´íÎóÅ×³ö, Å×³ö´íÎó»á´ò¶Ï³õÊ¼»¯µÄÖ´ÐÐ, Ä¬ÈÏÎªfalse
- *            extends                ¼Ì³ÐµÄÀà
+ * éœ€è®¾ç½®çš„å±žæ€§
+ * src        æ ¼å¼ä¸º attrName[:throwCompileError][:extends]
+ *            attrName               ä»Žfactoryçš„å±žæ€§ä¸­èŽ·å–å¤„ç†å‚æ•°ç»‘å®šçš„javaä»£ç 
+ *            throwCompileError      æ˜¯å¦éœ€è¦å°†ç¼–è¯‘çš„é”™è¯¯æŠ›å‡º, æŠ›å‡ºé”™è¯¯ä¼šæ‰“æ–­åˆå§‹åŒ–çš„æ‰§è¡Œ, é»˜è®¤ä¸ºfalse
+ *            extends                ç»§æ‰¿çš„ç±»
+ *
+ *
+ * @author micromagic@sina.com
  */
 public class JavaCodeParamBind extends AbstractGenerator
-      implements ParamBindGenerator, ParamBind
+		implements ParamBindGenerator, ParamBind
 {
-   protected String src = "";
-   protected String names = "";
-   protected boolean loop = false;
-   protected boolean subSQL = false;
-   private ParamBindCode paramBindCode;
+	protected String src = "";
+	protected String names = "";
+	protected boolean loop = false;
+	protected boolean subSQL = false;
+	private ParamBindCode paramBindCode;
 
-   public void initialize(ModelAdapter model, Execute execute)
-         throws ConfigurationException
-   {
-      if (this.paramBindCode != null)
-      {
-         return;
-      }
-      String[] tmpArr = StringTool.separateString(this.src, ":", true);
-      String attrCode = tmpArr[0];
-      String extendsStr = null;
-      boolean throwCompileError = false;
-      if (tmpArr.length >= 2)
-      {
-         throwCompileError = "true".equalsIgnoreCase(tmpArr[1]);
-      }
-      if (tmpArr.length >= 3)
-      {
-         extendsStr = tmpArr[2];
-      }
-      String code = (String) factory.getAttribute(attrCode);
-      if (code == null)
-      {
-         throw new ConfigurationException("Not found the [" + attrCode + "] in factory attribute.");
-      }
-      try
-      {
-         Class codeClass = this.createCodeClass(code, extendsStr);
-         this.paramBindCode = (ParamBindCode) codeClass.newInstance();
-         this.paramBindCode.setGenerator(this, model.getFactory());
-      }
-      catch (Exception ex)
-      {
-         if (throwCompileError)
-         {
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            throw new ConfigurationException(ex);
-         }
-         else
-         {
-            String pos = "model:[" + model.getName() + "], execute:[" + execute.getName()
-                  + "] type:[" + execute.getExecuteType() + "], src:[" + this.src + "]";
-            CodeClassTool.logCodeError(code, pos, ex);
-         }
-      }
-   }
+	public void initialize(ModelAdapter model, Execute execute)
+			throws ConfigurationException
+	{
+		if (this.paramBindCode != null)
+		{
+			return;
+		}
+		String[] tmpArr = StringTool.separateString(this.src, ":", true);
+		String attrCode = tmpArr[0];
+		String extendsStr = null;
+		boolean throwCompileError = false;
+		if (tmpArr.length >= 2)
+		{
+			throwCompileError = "true".equalsIgnoreCase(tmpArr[1]);
+		}
+		if (tmpArr.length >= 3)
+		{
+			extendsStr = tmpArr[2];
+		}
+		String code = (String) factory.getAttribute(attrCode);
+		if (code == null)
+		{
+			throw new ConfigurationException("Not found the [" + attrCode + "] in factory attribute.");
+		}
+		try
+		{
+			Class codeClass = this.createCodeClass(code, extendsStr);
+			this.paramBindCode = (ParamBindCode) codeClass.newInstance();
+			this.paramBindCode.setGenerator(this, model.getFactory());
+		}
+		catch (Exception ex)
+		{
+			if (throwCompileError)
+			{
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				throw new ConfigurationException(ex);
+			}
+			else
+			{
+				String pos = "model:[" + model.getName() + "], execute:[" + execute.getName()
+						+ "] type:[" + execute.getExecuteType() + "], src:[" + this.src + "]";
+				CodeClassTool.logCodeError(code, pos, ex);
+			}
+		}
+	}
 
-   public int setParam(AppData data, ParamSetManager psm, int loopIndex)
-         throws ConfigurationException, SQLException
-   {
-      try
-      {
-         if (this.paramBindCode != null)
-         {
-            return this.paramBindCode.invoke(data, psm, loopIndex);
-         }
-      }
-      catch (Exception ex)
-      {
-         if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         throw new ConfigurationException(ex);
-      }
-      return 1;
-   }
+	public int setParam(AppData data, ParamSetManager psm, int loopIndex)
+			throws ConfigurationException, SQLException
+	{
+		try
+		{
+			if (this.paramBindCode != null)
+			{
+				return this.paramBindCode.invoke(data, psm, loopIndex);
+			}
+		}
+		catch (Exception ex)
+		{
+			if (ex instanceof ConfigurationException)
+			{
+				throw (ConfigurationException) ex;
+			}
+			throw new ConfigurationException(ex);
+		}
+		return 1;
+	}
 
-   public String getSrc()
-   {
-      return this.src;
-   }
+	public String getSrc()
+	{
+		return this.src;
+	}
 
-   public void setSrc(String src)
-   {
-      this.src = src;
-   }
+	public void setSrc(String src)
+	{
+		this.src = src;
+	}
 
-   public String getNames()
-   {
-      return this.names;
-   }
+	public String getNames()
+	{
+		return this.names;
+	}
 
-   public void setNames(String names)
-   {
-      this.names = names;
-   }
+	public void setNames(String names)
+	{
+		this.names = names;
+	}
 
-   public boolean isLoop()
-   {
-      return this.loop;
-   }
+	public boolean isLoop()
+	{
+		return this.loop;
+	}
 
-   public void setLoop(boolean loop)
-   {
-      this.loop = loop;
-   }
+	public void setLoop(boolean loop)
+	{
+		this.loop = loop;
+	}
 
-   public boolean isSubSQL()
-   {
-      return this.subSQL;
-   }
+	public boolean isSubSQL()
+	{
+		return this.subSQL;
+	}
 
-   public void setSubSQL(boolean subSQL)
-   {
-      this.subSQL = subSQL;
-   }
+	public void setSubSQL(boolean subSQL)
+	{
+		this.subSQL = subSQL;
+	}
 
-   public ParamBind createParamBind()
-         throws ConfigurationException
-   {
-      return this;
-   }
+	public ParamBind createParamBind()
+			throws ConfigurationException
+	{
+		return this;
+	}
 
-   private Class createCodeClass(String code, String extendsStr)
-         throws Exception
-   {
-      Class extendsClass = ParamBindCodeImpl.class;
-      if (extendsStr != null)
-      {
-         extendsClass = Class.forName(extendsStr);
-      }
-      String methodHead = "public int invoke(AppData data, ParamSetManager psm, int loopIndex)"
-            + "\n      throws Exception";
-      String[] iArr = null;
-      String imports = (String) this.getAttribute("imports");
-      if (imports != null)
-      {
-         iArr = StringTool.separateString(imports, ",", true);
-      }
-      return CodeClassTool.createJavaCodeClass(extendsClass, ParamBindCode.class,
-            methodHead, code, iArr);
-   }
+	private Class createCodeClass(String code, String extendsStr)
+			throws Exception
+	{
+		Class extendsClass = ParamBindCodeImpl.class;
+		if (extendsStr != null)
+		{
+			extendsClass = Class.forName(extendsStr);
+		}
+		String methodHead = "public int invoke(AppData data, ParamSetManager psm, int loopIndex)"
+				+ "\n      throws Exception";
+		String[] iArr = null;
+		String imports = (String) this.getAttribute("imports");
+		if (imports != null)
+		{
+			iArr = StringTool.separateString(imports, ",", true);
+		}
+		return CodeClassTool.createJavaCodeClass(extendsClass, ParamBindCode.class,
+				methodHead, code, iArr);
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createParamBind();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createParamBind();
+	}
 
-   public interface ParamBindCode
-   {
-      public void setGenerator(JavaCodeParamBind generator, EternaFactory factory)
-            throws ConfigurationException;
+	public interface ParamBindCode
+	{
+		public void setGenerator(JavaCodeParamBind generator, EternaFactory factory)
+				throws ConfigurationException;
 
-      public int invoke(AppData data, ParamSetManager psm, int loopIndex)
-            throws Exception;
+		public int invoke(AppData data, ParamSetManager psm, int loopIndex)
+				throws Exception;
 
-   }
+	}
 
-   public static abstract class ParamBindCodeImpl
-         implements ParamBindCode
-   {
-      protected JavaCodeParamBind generator;
-      protected EternaFactory factory;
+	public static abstract class ParamBindCodeImpl
+			implements ParamBindCode
+	{
+		protected JavaCodeParamBind generator;
+		protected EternaFactory factory;
 
-      public void setGenerator(JavaCodeParamBind generator, EternaFactory factory)
-      {
-         this.factory = factory;
-         this.generator = generator;
-      }
+		public void setGenerator(JavaCodeParamBind generator, EternaFactory factory)
+		{
+			this.factory = factory;
+			this.generator = generator;
+		}
 
-   }
+	}
 
 }

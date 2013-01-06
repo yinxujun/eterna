@@ -2,142 +2,142 @@
 package self.micromagic.coder;
 
 public class ReturnGapXor extends AbstractCoder
-      implements Coder
+		implements Coder
 {
-   private byte[] enKey;
-   private int enGapCount;
+	private byte[] enKey;
+	private int enGapCount;
 
-   private Environment encodeEnv = new Environment();
-   private Environment decodeEnv = new Environment();
+	private Environment encodeEnv = new Environment();
+	private Environment decodeEnv = new Environment();
 
-   /**
-    * ×¢: ²»ÒªÔÙĞŞ¸Ä²ÎÊı<code>key</code>ÖĞµÄÖµ, ·ñÔò»áÓ°Ïì
-    * ±àÂë½âÂëµÄÕıÈ·ĞÔ.
-    */
-   public ReturnGapXor(byte[] key, int gapCount)
-   {
-      this.enKey = key;
-      this.enGapCount = gapCount;
-   }
+	/**
+	 * æ³¨: ä¸è¦å†ä¿®æ”¹å‚æ•°<code>key</code>ä¸­çš„å€¼, å¦åˆ™ä¼šå½±å“
+	 * ç¼–ç è§£ç çš„æ­£ç¡®æ€§.
+	 */
+	public ReturnGapXor(byte[] key, int gapCount)
+	{
+		this.enKey = key;
+		this.enGapCount = gapCount;
+	}
 
-   public Coder createNew()
-   {
-      return new ReturnGapXor(this.enKey, this.enGapCount);
-   }
+	public Coder createNew()
+	{
+		return new ReturnGapXor(this.enKey, this.enGapCount);
+	}
 
-   public void clear()
-   {
-      this.encodeEnv.clear();
-      this.decodeEnv.clear();
-   }
+	public void clear()
+	{
+		this.encodeEnv.clear();
+		this.decodeEnv.clear();
+	}
 
-   public byte[] encode(byte[] buf, boolean over)
-   {
-      byte[] result = encode(buf, this.enKey, this.enGapCount, this.encodeEnv);
-      if (over)
-      {
-         this.encodeEnv.clear();
-      }
-      return result;
-   }
+	public byte[] encode(byte[] buf, boolean over)
+	{
+		byte[] result = encode(buf, this.enKey, this.enGapCount, this.encodeEnv);
+		if (over)
+		{
+			this.encodeEnv.clear();
+		}
+		return result;
+	}
 
-   public byte[] decode(byte[] buf, boolean over)
-   {
-      byte[] result = decode(buf, this.enKey, this.enGapCount, this.decodeEnv);
-      if (over)
-      {
-         this.decodeEnv.clear();
-      }
-      return result;
-   }
+	public byte[] decode(byte[] buf, boolean over)
+	{
+		byte[] result = decode(buf, this.enKey, this.enGapCount, this.decodeEnv);
+		if (over)
+		{
+			this.decodeEnv.clear();
+		}
+		return result;
+	}
 
-   public static byte[] encode(byte[] src, byte[] key, int gapCount)
-   {
-      return encode(src, key, gapCount, null);
-   }
+	public static byte[] encode(byte[] src, byte[] key, int gapCount)
+	{
+		return encode(src, key, gapCount, null);
+	}
 
-   private static byte[] encode(byte[] src, byte[] key, int gapCount, Environment env)
-   {
-      int keyCount = key.length;
-      byte[] des = new byte[src.length]; //¼ÓÃÜµÄÊı¾İ
-      byte preByte = env == null ? 0 : env.preByte;
-      int count = src.length;
-      int nowGap = env == null ? 0 : env.nowGap;
-      int preCount = env == null ? 0 : env.preCount;
-      for (int i = 0; i < count; i++)
-      {
-         if (nowGap == gapCount)
-         {
-            // ¼ä¸ô1Î»²»¼ÓÃÜ
-            nowGap = 0;
-            des[i] = (byte) (src[i] ^ (preCount + i) ^ preByte);
-         }
-         else
-         {
-            des[i]= (byte) ((src[i] ^ key[(preCount + i) % keyCount] ^ preByte) & 0xff);
-            preByte = des[i];
-            nowGap++;
-         }
-      }
-      if (env != null)
-      {
-         env.preByte = preByte;
-         env.nowGap = nowGap;
-         env.preCount += count;
-      }
-      return des;
-   }
+	private static byte[] encode(byte[] src, byte[] key, int gapCount, Environment env)
+	{
+		int keyCount = key.length;
+		byte[] des = new byte[src.length]; //åŠ å¯†çš„æ•°æ®
+		byte preByte = env == null ? 0 : env.preByte;
+		int count = src.length;
+		int nowGap = env == null ? 0 : env.nowGap;
+		int preCount = env == null ? 0 : env.preCount;
+		for (int i = 0; i < count; i++)
+		{
+			if (nowGap == gapCount)
+			{
+				// é—´éš”1ä½ä¸åŠ å¯†
+				nowGap = 0;
+				des[i] = (byte) (src[i] ^ (preCount + i) ^ preByte);
+			}
+			else
+			{
+				des[i]= (byte) ((src[i] ^ key[(preCount + i) % keyCount] ^ preByte) & 0xff);
+				preByte = des[i];
+				nowGap++;
+			}
+		}
+		if (env != null)
+		{
+			env.preByte = preByte;
+			env.nowGap = nowGap;
+			env.preCount += count;
+		}
+		return des;
+	}
 
-   public static byte[] decode(byte[] des, byte[] key, int gapCount)
-   {
-      return decode(des, key, gapCount, null);
-   }
+	public static byte[] decode(byte[] des, byte[] key, int gapCount)
+	{
+		return decode(des, key, gapCount, null);
+	}
 
-   private static byte[] decode(byte[] des, byte[] key, int gapCount, Environment env)
-   {
-      int keyCount = key.length;
-      byte[] src = new byte[des.length]; //¼ÓÃÜµÄÊı¾İ
-      byte preByte = env == null ? 0 : env.preByte;
-      int count = src.length;
-      int nowGap = env == null ? 0 : env.nowGap;
-      int preCount = env == null ? 0 : env.preCount;
-      for (int i = 0; i < count; i++)
-      {
-         if (nowGap == gapCount)
-         {
-            // ¼ä¸ô1Î»²»½âÃÜ
-            nowGap = 0;
-            src[i] = (byte) (des[i] ^ (preCount + i) ^ preByte);
-         }
-         else
-         {
-            src[i] = (byte) ((des[i] ^ key[(preCount + i) % keyCount] ^ preByte) & 0xff);
-            preByte = des[i];
-            nowGap++;
-         }
-      }
-      if (env != null)
-      {
-         env.preByte = preByte;
-         env.nowGap = nowGap;
-         env.preCount += count;
-      }
-      return src;
-   }
+	private static byte[] decode(byte[] des, byte[] key, int gapCount, Environment env)
+	{
+		int keyCount = key.length;
+		byte[] src = new byte[des.length]; //åŠ å¯†çš„æ•°æ®
+		byte preByte = env == null ? 0 : env.preByte;
+		int count = src.length;
+		int nowGap = env == null ? 0 : env.nowGap;
+		int preCount = env == null ? 0 : env.preCount;
+		for (int i = 0; i < count; i++)
+		{
+			if (nowGap == gapCount)
+			{
+				// é—´éš”1ä½ä¸è§£å¯†
+				nowGap = 0;
+				src[i] = (byte) (des[i] ^ (preCount + i) ^ preByte);
+			}
+			else
+			{
+				src[i] = (byte) ((des[i] ^ key[(preCount + i) % keyCount] ^ preByte) & 0xff);
+				preByte = des[i];
+				nowGap++;
+			}
+		}
+		if (env != null)
+		{
+			env.preByte = preByte;
+			env.nowGap = nowGap;
+			env.preCount += count;
+		}
+		return src;
+	}
 
-   private class Environment
-   {
-      public byte preByte = 0;
-      public int nowGap = 0;
-      public int preCount = 0;
+	private class Environment
+	{
+		public byte preByte = 0;
+		public int nowGap = 0;
+		public int preCount = 0;
 
-      public void clear()
-      {
-         this.preByte = 0;
-         this.nowGap = 0;
-         this.preCount = 0;
-      }
+		public void clear()
+		{
+			this.preByte = 0;
+			this.nowGap = 0;
+			this.preCount = 0;
+		}
 
-   }
+	}
 
 }

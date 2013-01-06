@@ -6,75 +6,75 @@ import self.micromagic.eterna.share.Generator;
 
 public interface ResultReaderGenerator extends Generator
 {
-   /**
-    * ÉèÖÃreaderµÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®readerçš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃreader¶ÁÈ¡Êı¾İÊ±Ê¹ÓÃµÄÁĞÃû. <p>
-    * ¸Ã·½·¨ºÍ{@link #setColumnIndex(int)}·½·¨Ö»ÓĞÒ»¸öÓĞĞ§, µ±ÉèÖÃÁËÊ¹ÓÃ
-    * µÄÁĞÃûºó¾Í²»ÄÜÔÙÉèÖÃÊ¹ÓÃË÷ÒıÖµ.
-    */
-   void setColumnName(String columnName) throws ConfigurationException;
+	/**
+	 * è®¾ç½®readerè¯»å–æ•°æ®æ—¶ä½¿ç”¨çš„åˆ—å. <p>
+	 * è¯¥æ–¹æ³•å’Œ{@link #setColumnIndex(int)}æ–¹æ³•åªæœ‰ä¸€ä¸ªæœ‰æ•ˆ, å½“è®¾ç½®äº†ä½¿ç”¨
+	 * çš„åˆ—ååå°±ä¸èƒ½å†è®¾ç½®ä½¿ç”¨ç´¢å¼•å€¼.
+	 */
+	void setColumnName(String columnName) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃreader¶ÁÈ¡Êı¾İÊ±Ê¹ÓÃµÄË÷ÒıÖµ. <p>
-    * ¸Ã·½·¨ºÍ{@link #setColumnName(String)}·½·¨Ö»ÓĞÒ»¸öÓĞĞ§, µ±ÉèÖÃÁËÊ¹ÓÃ
-    * µÄË÷ÒıÖµºó¾Í²»ÄÜÔÙÉèÖÃÊ¹ÓÃÁĞÃû.
-    */
-   void setColumnIndex(int columnIndex) throws ConfigurationException;
+	/**
+	 * è®¾ç½®readerè¯»å–æ•°æ®æ—¶ä½¿ç”¨çš„ç´¢å¼•å€¼. <p>
+	 * è¯¥æ–¹æ³•å’Œ{@link #setColumnName(String)}æ–¹æ³•åªæœ‰ä¸€ä¸ªæœ‰æ•ˆ, å½“è®¾ç½®äº†ä½¿ç”¨
+	 * çš„ç´¢å¼•å€¼åå°±ä¸èƒ½å†è®¾ç½®ä½¿ç”¨åˆ—å.
+	 */
+	void setColumnIndex(int columnIndex) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ×÷ÎªÅÅĞòÁĞ, ¼´³öÏÖÔÚ"ORDER BY"Ö®ºóµÄÁĞÃû.
-    * ÔÚ¶à¸ö±íÊ±, Ò²¿ÉÒÔÊÇ"[±íÃû].[ÁĞÃû]"µÄĞÎÊ½.
-    */
-   void setOrderName(String orderName) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ä½œä¸ºæ’åºåˆ—, å³å‡ºç°åœ¨"ORDER BY"ä¹‹åçš„åˆ—å.
+	 * åœ¨å¤šä¸ªè¡¨æ—¶, ä¹Ÿå¯ä»¥æ˜¯"[è¡¨å].[åˆ—å]"çš„å½¢å¼.
+	 */
+	void setOrderName(String orderName) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃformatµÄÃû³Æ.
-    */
-   void setFormatName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®formatçš„åç§°.
+	 */
+	void setFormatName(String name) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃreaderµÄÀàĞÍ.
-    *
-    * @param type   ÀàĞÍµÄÃû³Æ
-    * @see self.micromagic.eterna.share.TypeManager
-    */
-   void setType(String type) throws ConfigurationException;
+	/**
+	 * è®¾ç½®readerçš„ç±»å‹.
+	 *
+	 * @param type   ç±»å‹çš„åç§°
+	 * @see self.micromagic.eterna.share.TypeManager
+	 */
+	void setType(String type) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¿É¶ÁÈ¡¸ÃÁĞµÄÈ¨ÏŞ¼¯ºÏ, Ö»ÓĞÓµÓĞ¼¯ºÏÖĞµÄÈÎÒâ1¸öÈ¨ÏŞ¾Í¿ÉÒÔ
-    * ¶ÁÈ¡¸ÃÁĞ.
-    *
-    * @param permissions  È¨ÏŞµÄÃû³Æ, ¶à¸öÃû³ÆÖ®¼äÓÃ","·Ö¸î
-    */
-   void setPermissions(String permissions) throws ConfigurationException;
+	/**
+	 * è®¾ç½®å¯è¯»å–è¯¥åˆ—çš„æƒé™é›†åˆ, åªæœ‰æ‹¥æœ‰é›†åˆä¸­çš„ä»»æ„1ä¸ªæƒé™å°±å¯ä»¥
+	 * è¯»å–è¯¥åˆ—.
+	 *
+	 * @param permissions  æƒé™çš„åç§°, å¤šä¸ªåç§°ä¹‹é—´ç”¨","åˆ†å‰²
+	 */
+	void setPermissions(String permissions) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃreaderµÄ±êÌâ.
-    */
-   void setCaption(String caption) throws ConfigurationException;
+	/**
+	 * è®¾ç½®readerçš„æ ‡é¢˜.
+	 */
+	void setCaption(String caption) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÏÔÊ¾Ê±µÄ¿í¶È.
-    */
-   void setWidth(int width) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¾ç¤ºæ—¶çš„å®½åº¦.
+	 */
+	void setWidth(int width) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÏòhtmlÒ³ÃæÊä³öÊ±ÊÇ·ñÒª¹ıÂËÌØÊâ±êÇ©.
-    */
-   void setHtmlFilter(boolean filter) throws ConfigurationException;
+	/**
+	 * è®¾ç½®å‘htmlé¡µé¢è¾“å‡ºæ—¶æ˜¯å¦è¦è¿‡æ»¤ç‰¹æ®Šæ ‡ç­¾.
+	 */
+	void setHtmlFilter(boolean filter) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÊÇ·ñ¿É¼û.
-    */
-   void setVisible(boolean visible) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¯å¦å¯è§.
+	 */
+	void setVisible(boolean visible) throws ConfigurationException;
 
-   /**
-    * ¸ù¾İÒÑÓĞµÄÉèÖÃ, ´´½¨Ò»¸öreader¶ÔÏó.
-    */
-   ResultReader createReader() throws ConfigurationException;
+	/**
+	 * æ ¹æ®å·²æœ‰çš„è®¾ç½®, åˆ›å»ºä¸€ä¸ªreaderå¯¹è±¡.
+	 */
+	ResultReader createReader() throws ConfigurationException;
 
 }

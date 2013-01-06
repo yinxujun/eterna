@@ -5,67 +5,69 @@ import org.apache.commons.logging.Log;
 import self.micromagic.util.Utility;
 
 /**
- * ÀàµÄ±àÒë½Ó¿Ú, ÓÃÓÚÊµÏÖ²»Í¬µÄ±àÒë·½Ê½.
+ * ç±»çš„ç¼–è¯‘æ¥å£, ç”¨äºå®ç°ä¸åŒçš„ç¼–è¯‘æ–¹å¼.
+ *
+ * @author micromagic@sina.com
  */
 public interface CG
 {
-   /**
-    * ÀàµÄÃû³Æ±äÁ¿Ãû. ÔÚ´úÂëÄÚ²¿, ĞèÒª¹¹ÔìÀà±¾Éí»òĞ´¹¹Ôìº¯ÊıÊ±, ĞèÒªÓÃµ½µÄÀàÃû. <p>
-    * Èç£º
-    * ¹¹Ôìº¯Êı   public ${thisName}()
-    * ¶¨Òå±¾Àà   ${thisName} value = new ${thisName}();
-    */
-   public static final String THIS_NAME = "thisName";
+	/**
+	 * ç±»çš„åç§°å˜é‡å. åœ¨ä»£ç å†…éƒ¨, éœ€è¦æ„é€ ç±»æœ¬èº«æˆ–å†™æ„é€ å‡½æ•°æ—¶, éœ€è¦ç”¨åˆ°çš„ç±»å. <p>
+	 * å¦‚ï¼š
+	 * æ„é€ å‡½æ•°   public ${thisName}()
+	 * å®šä¹‰æœ¬ç±»   ${thisName} value = new ${thisName}();
+	 */
+	public static final String THIS_NAME = "thisName";
 
-   /**
-    * ÅäÖÃ¶Ô´úÂë±àÒëµÄÀàĞÍ.
-    */
-   public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.compile.type";
+	/**
+	 * é…ç½®å¯¹ä»£ç ç¼–è¯‘çš„ç±»å‹.
+	 */
+	public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.compile.type";
 
-   /**
-    * ÓÃant×÷Îª±àÒëÀàĞÍÊ±Ê¹ÓÃµÄÃû³Æ.
-    */
-   public static final String COMPILE_TYPE_ANT = AntCG.COMPILE_TYPE;
+	/**
+	 * ç”¨antä½œä¸ºç¼–è¯‘ç±»å‹æ—¶ä½¿ç”¨çš„åç§°.
+	 */
+	public static final String COMPILE_TYPE_ANT = AntCG.COMPILE_TYPE;
 
-   /**
-    * ÓÃjavassist×÷Îª±àÒëÀàĞÍÊ±Ê¹ÓÃµÄÃû³Æ.
-    */
-   public static final String COMPILE_TYPE_JAVASSIST = JavassistCG.COMPILE_TYPE;
+	/**
+	 * ç”¨javassistä½œä¸ºç¼–è¯‘ç±»å‹æ—¶ä½¿ç”¨çš„åç§°.
+	 */
+	public static final String COMPILE_TYPE_JAVASSIST = JavassistCG.COMPILE_TYPE;
 
-   /**
-    * ÉèÖÃÊÇ·ñÒªÊä³ö´úÂë¶¯Ì¬±àÒëÏà¹ØµÄÈÕÖ¾ĞÅÏ¢.
-    * ¿ÉÉèÖÃµÄÖµÈçÏÂ:
-    * 1. Ö»¼ÇÂ¼³ö´íĞÅÏ¢
-    * 2. ¼ÇÂ¼±àÒë¹ı³ÌÖĞµÄÒ»Ğ©ĞÅÏ¢
-    * 3. ¼ÇÂ¼Éú³ÉµÄ´úÂëĞÅÏ¢
-    */
-   public static final String COMPILE_LOG_PROPERTY = "self.micromagic.compile.log";
+	/**
+	 * è®¾ç½®æ˜¯å¦è¦è¾“å‡ºä»£ç åŠ¨æ€ç¼–è¯‘ç›¸å…³çš„æ—¥å¿—ä¿¡æ¯.
+	 * å¯è®¾ç½®çš„å€¼å¦‚ä¸‹:
+	 * 1. åªè®°å½•å‡ºé”™ä¿¡æ¯
+	 * 2. è®°å½•ç¼–è¯‘è¿‡ç¨‹ä¸­çš„ä¸€äº›ä¿¡æ¯
+	 * 3. è®°å½•ç”Ÿæˆçš„ä»£ç ä¿¡æ¯
+	 */
+	public static final String COMPILE_LOG_PROPERTY = "self.micromagic.compile.log";
 
-   /**
-    * 1 (> 0). Ö»¼ÇÂ¼³ö´íĞÅÏ¢
-    */
-   public static final int COMPILE_LOG_TYPE_ERROR = 0;
+	/**
+	 * 1 (> 0). åªè®°å½•å‡ºé”™ä¿¡æ¯
+	 */
+	public static final int COMPILE_LOG_TYPE_ERROR = 0;
 
-   /**
-    * 2 (> 1). ¼ÇÂ¼±àÒë¹ı³ÌÖĞµÄÒ»Ğ©ĞÅÏ¢
-    */
-   public static final int COMPILE_LOG_TYPE_INFO = 1;
+	/**
+	 * 2 (> 1). è®°å½•ç¼–è¯‘è¿‡ç¨‹ä¸­çš„ä¸€äº›ä¿¡æ¯
+	 */
+	public static final int COMPILE_LOG_TYPE_INFO = 1;
 
-   /**
-    * 3 (> 2). ¼ÇÂ¼Éú³ÉµÄ´úÂëĞÅÏ¢
-    */
-   public static final int COMPILE_LOG_TYPE_DEBUG = 2;
+	/**
+	 * 3 (> 2). è®°å½•ç”Ÿæˆçš„ä»£ç ä¿¡æ¯
+	 */
+	public static final int COMPILE_LOG_TYPE_DEBUG = 2;
 
-   /**
-    * ÓÃÓÚ¼ÇÂ¼ÈÕÖ¾.
-    */
-   static final Log log = Utility.createLog("cg");
+	/**
+	 * ç”¨äºè®°å½•æ—¥å¿—.
+	 */
+	static final Log log = Utility.createLog("cg");
 
-   /**
-    * ´´½¨Ò»¸öÀà.
-    *
-    * @param cg   ´´½¨ÀàÊ±ĞèÒªÊ¹ÓÃµ½µÄÀà¹¹ÔìÆ÷.
-    */
-   Class createClass(ClassGenerator cg) throws Exception;
+	/**
+	 * åˆ›å»ºä¸€ä¸ªç±».
+	 *
+	 * @param cg   åˆ›å»ºç±»æ—¶éœ€è¦ä½¿ç”¨åˆ°çš„ç±»æ„é€ å™¨.
+	 */
+	Class createClass(ClassGenerator cg) throws Exception;
 
 }

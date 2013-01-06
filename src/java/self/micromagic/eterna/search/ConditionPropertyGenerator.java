@@ -9,36 +9,36 @@ import self.micromagic.eterna.digester.ConfigurationException;
  */
 public interface ConditionPropertyGenerator extends Generator
 {
-   void setName(String name) throws ConfigurationException;
+	void setName(String name) throws ConfigurationException;
 
-   void setColumnName(String name) throws ConfigurationException;
+	void setColumnName(String name) throws ConfigurationException;
 
-   void setColumnCaption(String caption) throws ConfigurationException;
+	void setColumnCaption(String caption) throws ConfigurationException;
 
-   void setColumnType(String type) throws ConfigurationException;
+	void setColumnType(String type) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¶ÔÓ¦ÁĞµÄÊı¾İ×¼±¸Éú³ÉÆ÷.
-    */
-   void setColumnVPC(String vpcName) throws ConfigurationException;
+	/**
+	 * è®¾ç½®å¯¹åº”åˆ—çš„æ•°æ®å‡†å¤‡ç”Ÿæˆå™¨.
+	 */
+	void setColumnVPC(String vpcName) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÊÇ·ñ¿É¼û.
-    */
-   void setVisible(boolean visible) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ˜¯å¦å¯è§.
+	 */
+	void setVisible(boolean visible) throws ConfigurationException;
 
-   void setConditionInputType(String type) throws ConfigurationException;
+	void setConditionInputType(String type) throws ConfigurationException;
 
-   void setDefaultValue(String value) throws ConfigurationException;
+	void setDefaultValue(String value) throws ConfigurationException;
 
-   void setPermissions(String permissions) throws ConfigurationException;
+	void setPermissions(String permissions) throws ConfigurationException;
 
-   void setUseDefaultConditionBuilder(boolean use) throws ConfigurationException;
+	void setUseDefaultConditionBuilder(boolean use) throws ConfigurationException;
 
-   void setDefaultConditionBuilderName(String name) throws ConfigurationException;
+	void setDefaultConditionBuilderName(String name) throws ConfigurationException;
 
-   void setConditionBuilderListName(String name) throws ConfigurationException;
+	void setConditionBuilderListName(String name) throws ConfigurationException;
 
-   ConditionProperty createConditionProperty() throws ConfigurationException;
+	ConditionProperty createConditionProperty() throws ConfigurationException;
 
 }

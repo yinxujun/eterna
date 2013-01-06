@@ -13,146 +13,149 @@ import self.micromagic.eterna.share.Factory;
 import self.micromagic.util.StringTool;
 
 /**
- * ¶¯Ì¬±àÒëjava´úÂëÀ´¹¹ÔìÒ»¸öParameterSetting.
+ * åŠ¨æ€ç¼–è¯‘javaä»£ç æ¥æ„é€ ä¸€ä¸ªParameterSetting.
  *
- * ĞèÔÚsearchÖĞÉèÖÃµÄÊôĞÔ
- * code                  ÉèÖÃ²ÎÊıÖ´ĞĞµÄjava´úÂë                                                   2Ñ¡1
- * attrCode              ´ÓfactoryµÄÊôĞÔÖĞ»ñÈ¡ÉèÖÃ²ÎÊıÖ´ĞĞµÄjava´úÂë                              2Ñ¡1
+ * éœ€åœ¨searchä¸­è®¾ç½®çš„å±æ€§
+ * code                  è®¾ç½®å‚æ•°æ‰§è¡Œçš„javaä»£ç                                                    2é€‰1
+ * attrCode              ä»factoryçš„å±æ€§ä¸­è·å–è®¾ç½®å‚æ•°æ‰§è¡Œçš„javaä»£ç                               2é€‰1
  *
- * imports               ĞèÒªÒıÈëµÄ°ü, Èç£ºjava.lang, Ö»Ğè¸ø³ö°üÂ·¾¶, ÒÔ","·Ö¸ô                   ¿ÉÑ¡
- * extends               ¼Ì³ĞµÄÀà                                                                 ¿ÉÑ¡
- * throwCompileError     ÊÇ·ñĞèÒª½«±àÒëµÄ´íÎóÅ×³ö, Å×³ö´íÎó»á´ò¶Ï³õÊ¼»¯µÄÖ´ĞĞ                     Ä¬ÈÏÎªfalse
+ * imports               éœ€è¦å¼•å…¥çš„åŒ…, å¦‚ï¼šjava.lang, åªéœ€ç»™å‡ºåŒ…è·¯å¾„, ä»¥","åˆ†éš”                   å¯é€‰
+ * extends               ç»§æ‰¿çš„ç±»                                                                 å¯é€‰
+ * throwCompileError     æ˜¯å¦éœ€è¦å°†ç¼–è¯‘çš„é”™è¯¯æŠ›å‡º, æŠ›å‡ºé”™è¯¯ä¼šæ‰“æ–­åˆå§‹åŒ–çš„æ‰§è¡Œ                     é»˜è®¤ä¸ºfalse
  *
  * otherParams
- * Ô¤±àÒë´¦ÀíÌõ¼şÉú³É´úÂëµÄ²ÎÊı, Ãû³ÆĞèÒªÓë´úÂëÖĞµÄ²ÎÊıÃû³ÆÆ¥Åä, ÖµÎª²ÎÊıÃû¶ÔÓ¦µÄ´úÂë
+ * é¢„ç¼–è¯‘å¤„ç†æ¡ä»¶ç”Ÿæˆä»£ç çš„å‚æ•°, åç§°éœ€è¦ä¸ä»£ç ä¸­çš„å‚æ•°åç§°åŒ¹é…, å€¼ä¸ºå‚æ•°åå¯¹åº”çš„ä»£ç 
+ *
+ *
+ * @author micromagic@sina.com
  */
 public class JavaCodeParameterSetting
-      implements ParameterSetting, Generator
+		implements ParameterSetting, Generator
 {
-   private SearchAdapter search;
-   private ParameterSettingCode parameterSettingCode;
+	private SearchAdapter search;
+	private ParameterSettingCode parameterSettingCode;
 
-   public void initParameterSetting(SearchAdapter search)
-         throws ConfigurationException
-   {
-      this.search = search;
-      if (this.parameterSettingCode != null)
-      {
-         return;
-      }
-      String code = CodeClassTool.getCode(this, search.getFactory(), "code", "attrCode");
-      try
-      {
-         Class codeClass = this.createCodeClass(search, code);
-         this.parameterSettingCode = (ParameterSettingCode) codeClass.newInstance();
-      }
-      catch (Exception ex)
-      {
-         if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
-         {
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            throw new ConfigurationException(ex);
-         }
-         else
-         {
-            String pos = "search:[" + search.getName() + "], ParameterSetting";
-            CodeClassTool.logCodeError(code, pos, ex);
-         }
-      }
-   }
+	public void initParameterSetting(SearchAdapter search)
+			throws ConfigurationException
+	{
+		this.search = search;
+		if (this.parameterSettingCode != null)
+		{
+			return;
+		}
+		String code = CodeClassTool.getCode(this, search.getFactory(), "code", "attrCode");
+		try
+		{
+			Class codeClass = this.createCodeClass(search, code);
+			this.parameterSettingCode = (ParameterSettingCode) codeClass.newInstance();
+		}
+		catch (Exception ex)
+		{
+			if ("true".equalsIgnoreCase((String) this.getAttribute("throwCompileError")))
+			{
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				throw new ConfigurationException(ex);
+			}
+			else
+			{
+				String pos = "search:[" + search.getName() + "], ParameterSetting";
+				CodeClassTool.logCodeError(code, pos, ex);
+			}
+		}
+	}
 
-   public void setParameter(QueryAdapter query, SearchAdapter search, boolean first,
-         AppData data, Connection conn)
-         throws ConfigurationException
-   {
-      try
-      {
-         if (this.parameterSettingCode != null)
-         {
-            this.parameterSettingCode.invoke(query, search, first, data, conn);
-         }
-      }
-      catch (Exception ex)
-      {
-         if (ex instanceof ConfigurationException)
-         {
-            throw (ConfigurationException) ex;
-         }
-         throw new ConfigurationException(ex);
-      }
-   }
+	public void setParameter(QueryAdapter query, SearchAdapter search, boolean first,
+			AppData data, Connection conn)
+			throws ConfigurationException
+	{
+		try
+		{
+			if (this.parameterSettingCode != null)
+			{
+				this.parameterSettingCode.invoke(query, search, first, data, conn);
+			}
+		}
+		catch (Exception ex)
+		{
+			if (ex instanceof ConfigurationException)
+			{
+				throw (ConfigurationException) ex;
+			}
+			throw new ConfigurationException(ex);
+		}
+	}
 
-   public Object getAttribute(String name)
-         throws ConfigurationException
-   {
-      return this.search.getAttribute(name);
-   }
+	public Object getAttribute(String name)
+			throws ConfigurationException
+	{
+		return this.search.getAttribute(name);
+	}
 
-   public String[] getAttributeNames()
-         throws ConfigurationException
-   {
-      return this.search.getAttributeNames();
-   }
+	public String[] getAttributeNames()
+			throws ConfigurationException
+	{
+		return this.search.getAttributeNames();
+	}
 
-   public String getName()
-         throws ConfigurationException
-   {
-      return this.search.getName();
-   }
+	public String getName()
+			throws ConfigurationException
+	{
+		return this.search.getName();
+	}
 
-   private Class createCodeClass(SearchAdapter search, String code)
-         throws Exception
-   {
-      String extendsStr = (String) search.getAttribute("extends");
-      Class extendsClass = null;
-      if (extendsStr != null)
-      {
-         extendsClass = Class.forName(extendsStr);
-      }
-      String methodHead = "public void invoke(QueryAdapter query, SearchAdapter search, boolean first, "
-            + "AppData data, Connection conn)\n      throws Exception";
-      String[] iArr = null;
-      String imports = (String) this.getAttribute("imports");
-      if (imports != null)
-      {
-         iArr = StringTool.separateString(imports, ",", true);
-      }
-      return CodeClassTool.createJavaCodeClass(extendsClass, ParameterSettingCode.class,
-            methodHead, code, iArr);
-   }
+	private Class createCodeClass(SearchAdapter search, String code)
+			throws Exception
+	{
+		String extendsStr = (String) search.getAttribute("extends");
+		Class extendsClass = null;
+		if (extendsStr != null)
+		{
+			extendsClass = Class.forName(extendsStr);
+		}
+		String methodHead = "public void invoke(QueryAdapter query, SearchAdapter search, boolean first, "
+				+ "AppData data, Connection conn)\n      throws Exception";
+		String[] iArr = null;
+		String imports = (String) this.getAttribute("imports");
+		if (imports != null)
+		{
+			iArr = StringTool.separateString(imports, ",", true);
+		}
+		return CodeClassTool.createJavaCodeClass(extendsClass, ParameterSettingCode.class,
+				methodHead, code, iArr);
+	}
 
-   public Object create()
-   {
-      return this;
-   }
+	public Object create()
+	{
+		return this;
+	}
 
-   public void setFactory(Factory factory)
-   {
-   }
+	public void setFactory(Factory factory)
+	{
+	}
 
-   public Object setAttribute(String name, Object value)
-   {
-      return null;
-   }
+	public Object setAttribute(String name, Object value)
+	{
+		return null;
+	}
 
-   public Object removeAttribute(String name)
-   {
-      return null;
-   }
+	public Object removeAttribute(String name)
+	{
+		return null;
+	}
 
-   public void setName(String name)
-   {
-   }
+	public void setName(String name)
+	{
+	}
 
-   public interface ParameterSettingCode
-   {
-      public void invoke(QueryAdapter query, SearchAdapter search, boolean first,
-            AppData data, Connection conn)
-            throws Exception;
+	public interface ParameterSettingCode
+	{
+		public void invoke(QueryAdapter query, SearchAdapter search, boolean first,
+				AppData data, Connection conn)
+				throws Exception;
 
-   }
+	}
 
 }

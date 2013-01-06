@@ -17,60 +17,60 @@ import self.micromagic.util.StringTool;
 import self.micromagic.util.container.RequestParameterMap;
 
 public class EditParameterMapExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   protected Map initValues = null;
+	protected Map initValues = null;
 
-   public void initialize(ModelAdapter model)
-            throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      String tmp;
+	public void initialize(ModelAdapter model)
+				throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		String tmp;
 
-      tmp = (String) this.getAttribute("initValues");
-      if (tmp != null)
-      {
-         this.initValues = StringTool.string2Map(tmp, ",;", '=');
-      }
-   }
+		tmp = (String) this.getAttribute("initValues");
+		if (tmp != null)
+		{
+			this.initValues = StringTool.string2Map(tmp, ",;", '=');
+		}
+	}
 
-   public String getExecuteType() throws ConfigurationException
-   {
-      return "editParameterMap";
-   }
+	public String getExecuteType() throws ConfigurationException
+	{
+		return "editParameterMap";
+	}
 
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      Map map = data.getRequestParameterMap();
-      boolean changeMap = true;
-      if (map instanceof RequestParameterMap)
-      {
-         RequestParameterMap rpm = (RequestParameterMap) map;
-         if (!rpm.isReadOnly())
-         {
-            changeMap = false;
-         }
-         else
-         {
-            map = rpm.getOriginParamMap();
-         }
-      }
-      if (changeMap)
-      {
-         Map tmp = RequestParameterMap.create(map, false);
-         data.maps[AppData.REQUEST_PARAMETER_MAP] = tmp;
-         map = tmp;
-      }
-      if (this.initValues != null)
-      {
-         map.putAll(this.initValues);
-      }
-      return null;
-   }
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		Map map = data.getRequestParameterMap();
+		boolean changeMap = true;
+		if (map instanceof RequestParameterMap)
+		{
+			RequestParameterMap rpm = (RequestParameterMap) map;
+			if (!rpm.isReadOnly())
+			{
+				changeMap = false;
+			}
+			else
+			{
+				map = rpm.getOriginParamMap();
+			}
+		}
+		if (changeMap)
+		{
+			Map tmp = RequestParameterMap.create(map, false);
+			data.maps[AppData.REQUEST_PARAMETER_MAP] = tmp;
+			map = tmp;
+		}
+		if (this.initValues != null)
+		{
+			map.putAll(this.initValues);
+		}
+		return null;
+	}
 
 }

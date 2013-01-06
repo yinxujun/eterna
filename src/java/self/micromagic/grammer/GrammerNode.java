@@ -11,137 +11,137 @@ import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 
 /**
- * Ò»¸öÓï·¨½Úµã.
+ * ä¸€ä¸ªè¯­æ³•èŠ‚ç‚¹.
  */
 public class GrammerNode extends AbstractElement
-      implements GrammerElement
+		implements GrammerElement
 {
-   /**
-    * ·µ»ØtrueµÄ¼ì²éÆ÷ÁĞ±í.
-    */
-   private List trueCheckers = null;
+	/**
+	 * è¿”å›trueçš„æ£€æŸ¥å™¨åˆ—è¡¨.
+	 */
+	private List trueCheckers = null;
 
-   /**
-    * ·µ»ØfalseµÄµÄ¼ì²éÆ÷ÁĞ±í.
-    */
-   private List falseCheckers = null;
+	/**
+	 * è¿”å›falseçš„çš„æ£€æŸ¥å™¨åˆ—è¡¨.
+	 */
+	private List falseCheckers = null;
 
-   /**
-    * µ±ÎªÆäËû×Ö·û¼¯Ê±, °´Ê²Ã´×´Ì¬´¦Àí.
-    */
-   private boolean otherCharType = false;
+	/**
+	 * å½“ä¸ºå…¶ä»–å­—ç¬¦é›†æ—¶, æŒ‰ä»€ä¹ˆçŠ¶æ€å¤„ç†.
+	 */
+	private boolean otherCharType = false;
 
-   /**
-    * µ±½áÊøÊ±, °´Ê²Ã´×´Ì¬´¦Àí.
-    */
-   private boolean endType = false;
+	/**
+	 * å½“ç»“æŸæ—¶, æŒ‰ä»€ä¹ˆçŠ¶æ€å¤„ç†.
+	 */
+	private boolean endType = false;
 
 
-   public void initialize(Map elements) {}
+	public void initialize(Map elements) {}
 
-   public boolean isTypeNone()
-   {
-      return this.getType() == TYPE_NONE;
-   }
+	public boolean isTypeNone()
+	{
+		return this.getType() == TYPE_NONE;
+	}
 
-   public boolean doVerify(ParserData pd)
-         throws GrammerException
-   {
-      if (pd.isEnd())
-      {
-         return this.endType;
-      }
-      char c = 0;
-      try
-      {
-         c = pd.getNextChar();
-      }
-      catch (GrammerException ex)
-      {
-         if (pd.isEnd())
-         {
-            return this.endType;
-         }
-         throw ex;
-      }
+	public boolean doVerify(ParserData pd)
+			throws GrammerException
+	{
+		if (pd.isEnd())
+		{
+			return this.endType;
+		}
+		char c = 0;
+		try
+		{
+			c = pd.getNextChar();
+		}
+		catch (GrammerException ex)
+		{
+			if (pd.isEnd())
+			{
+				return this.endType;
+			}
+			throw ex;
+		}
 
-      Checker checker;
+		Checker checker;
 
-      checker = this.checkList(this.falseCheckers, c);
-      if (checker != null)
-      {
-         return false;
-      }
+		checker = this.checkList(this.falseCheckers, c);
+		if (checker != null)
+		{
+			return false;
+		}
 
-      checker = this.checkList(this.trueCheckers, c);
-      if (checker != null)
-      {
-         return true;
-      }
-      return this.otherCharType;
-   }
+		checker = this.checkList(this.trueCheckers, c);
+		if (checker != null)
+		{
+			return true;
+		}
+		return this.otherCharType;
+	}
 
-   public String toString()
-   {
-      StringAppender buf = StringTool.createStringAppender();
-      buf.append("Node:").append(this.getName()).append(':')
-            .append(this.otherCharType).append(',').append(this.endType)
-            .append(':').append(GrammerManager.getGrammerElementTypeName(this.getType()));
-      if (this.trueCheckers != null)
-      {
-         buf.append(":T").append(Utils.dealString2EditCode(this.trueCheckers.toString()));
-      }
-      if (this.falseCheckers != null)
-      {
-         buf.append(":F").append(Utils.dealString2EditCode(this.falseCheckers.toString()));
-      }
-      return buf.toString();
-   }
+	public String toString()
+	{
+		StringAppender buf = StringTool.createStringAppender();
+		buf.append("Node:").append(this.getName()).append(':')
+				.append(this.otherCharType).append(',').append(this.endType)
+				.append(':').append(GrammerManager.getGrammerElementTypeName(this.getType()));
+		if (this.trueCheckers != null)
+		{
+			buf.append(":T").append(Utils.dealString2EditCode(this.trueCheckers.toString()));
+		}
+		if (this.falseCheckers != null)
+		{
+			buf.append(":F").append(Utils.dealString2EditCode(this.falseCheckers.toString()));
+		}
+		return buf.toString();
+	}
 
-   private Checker checkList(List list, char c)
-   {
-      if (list == null)
-      {
-         return null;
-      }
-      Iterator itr = list.iterator();
-      while (itr.hasNext())
-      {
-         OneChecker checker = (OneChecker) itr.next();
-         if (checker.verify(c))
-         {
-            return checker;
-         }
-      }
-      return null;
-   }
+	private Checker checkList(List list, char c)
+	{
+		if (list == null)
+		{
+			return null;
+		}
+		Iterator itr = list.iterator();
+		while (itr.hasNext())
+		{
+			OneChecker checker = (OneChecker) itr.next();
+			if (checker.verify(c))
+			{
+				return checker;
+			}
+		}
+		return null;
+	}
 
-   public void addTrueChecker(OneChecker checker)
-   {
-      if (this.trueCheckers == null)
-      {
-         this.trueCheckers = new ArrayList();
-      }
-      this.trueCheckers.add(checker);
-   }
+	public void addTrueChecker(OneChecker checker)
+	{
+		if (this.trueCheckers == null)
+		{
+			this.trueCheckers = new ArrayList();
+		}
+		this.trueCheckers.add(checker);
+	}
 
-   public void addFalseChecker(OneChecker checker)
-   {
-      if (this.falseCheckers == null)
-      {
-         this.falseCheckers = new ArrayList();
-      }
-      this.falseCheckers.add(checker);
-   }
+	public void addFalseChecker(OneChecker checker)
+	{
+		if (this.falseCheckers == null)
+		{
+			this.falseCheckers = new ArrayList();
+		}
+		this.falseCheckers.add(checker);
+	}
 
-   public void setOtherCharType(boolean otherCharType)
-   {
-      this.otherCharType = otherCharType;
-   }
+	public void setOtherCharType(boolean otherCharType)
+	{
+		this.otherCharType = otherCharType;
+	}
 
-   public void setEndType(boolean endType)
-   {
-      this.endType = endType;
-   }
+	public void setEndType(boolean endType)
+	{
+		this.endType = endType;
+	}
 
 }

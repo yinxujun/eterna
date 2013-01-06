@@ -2,12 +2,14 @@
 package self.micromagic.cg;
 
 /**
- * »ù±¾ÀàĞÍÊı×éµÄÍâ¸²Àà°ü×°½Ó¿Ú.
+ * åŸºæœ¬ç±»å‹æ•°ç»„çš„å¤–è¦†ç±»åŒ…è£…æ¥å£.
+ *
+ * @author micromagic@sina.com
  */
 public interface PrimitiveArrayWrapper
 {
 	/**
-	 * ´¦Àí¶Ô»ù±¾ÀàĞÍÊı×éµÄÍâ¸²Àà°ü×°.
+	 * å¤„ç†å¯¹åŸºæœ¬ç±»å‹æ•°ç»„çš„å¤–è¦†ç±»åŒ…è£….
 	 */
 	Object doWrap(Object obj);
 

@@ -21,137 +21,137 @@ import self.micromagic.util.container.PreFetchIterator;
  * @author micromagic@sina.com
  */
 public class ResourceImpl extends AbstractGenerator
-      implements Resource, ResourceGenerator
+		implements Resource, ResourceGenerator
 {
-   private static final String[] EMPTY_RESOURCE = {""};
+	private static final String[] EMPTY_RESOURCE = {""};
 
-   protected String text;
-   protected boolean trimLine = false;
-   protected Object[] resArray;
-   protected int estimateResSize = 128;
+	protected String text;
+	protected boolean trimLine = false;
+	protected Object[] resArray;
+	protected int estimateResSize = 128;
 
-   public void initialize(EternaFactory factory)
-         throws ConfigurationException
-   {
-      if (this.text == null)
-      {
-         this.resArray = EMPTY_RESOURCE;
-         return;
-      }
-      this.estimateResSize = this.text.length() + 32;
-      List resCelllist = ViewTool.parseResourceText(this.trimText(this.text));
-      List rList = new LinkedList();
-      this.parseResCell(resCelllist, rList);
-      this.resArray = rList.toArray();
-   }
+	public void initialize(EternaFactory factory)
+			throws ConfigurationException
+	{
+		if (this.text == null)
+		{
+			this.resArray = EMPTY_RESOURCE;
+			return;
+		}
+		this.estimateResSize = this.text.length() + 32;
+		List resCelllist = ViewTool.parseResourceText(this.trimText(this.text));
+		List rList = new LinkedList();
+		this.parseResCell(resCelllist, rList);
+		this.resArray = rList.toArray();
+	}
 
-   /**
-    * ¸ù¾ÝtrimLineµÄÉèÖÃÈ¥³ýÎÄ±¾Á½±ßµÄ¿Õ¸ñ.
-    */
-   private String trimText(String text)
-   {
-	   return this.trimLine ? text.trim() : text;
-   }
+	/**
+	 * æ ¹æ®trimLineçš„è®¾ç½®åŽ»é™¤æ–‡æœ¬ä¸¤è¾¹çš„ç©ºæ ¼.
+	 */
+	private String trimText(String text)
+	{
+		return this.trimLine ? text.trim() : text;
+	}
 
-   protected void parseResCell(List resCelllist, List rList)
-   {
-      Iterator itr = resCelllist.iterator();
-      while (itr.hasNext())
-      {
-         ParserData.GrammerCell cell = (ParserData.GrammerCell) itr.next();
-         if ("resource".equals(cell.grammerElement.getName()))
-         {
-            // resourceµÄ½á¹¹ ¿ªÊ¼±ê¼Ç"{"  ½áÊø±ê¼Ç"}" ÖÐ¼ä1»ò2Î»µÄÊý×Ö±íÊ¾²ÎÊýµÄË÷ÒýÖµ
-            // Õû¸ö½á¹¹ÖÐ¼ä²»ÄÜÓÐ¿Õ¸ñ, ·ñÔò½«ÊÓÎªÆÕÍ¨ÎÄ±¾
-            Integer index = Utility.createInteger(
-                  Integer.parseInt(((ParserData.GrammerCell) cell.subCells.get(1)).textBuf));
-            rList.add(index);
-            continue;
-         }
-         if (cell.subCells != null)
-         {
-            this.parseResCell(resCelllist, rList);
-         }
-         else if (cell.textBuf.length() > 0)
-         {
-            rList.add(cell.textBuf);
-         }
-      }
-   }
+	protected void parseResCell(List resCelllist, List rList)
+	{
+		Iterator itr = resCelllist.iterator();
+		while (itr.hasNext())
+		{
+			ParserData.GrammerCell cell = (ParserData.GrammerCell) itr.next();
+			if ("resource".equals(cell.grammerElement.getName()))
+			{
+				// resourceçš„ç»“æž„ å¼€å§‹æ ‡è®°"{"  ç»“æŸæ ‡è®°"}" ä¸­é—´1æˆ–2ä½çš„æ•°å­—è¡¨ç¤ºå‚æ•°çš„ç´¢å¼•å€¼
+				// æ•´ä¸ªç»“æž„ä¸­é—´ä¸èƒ½æœ‰ç©ºæ ¼, å¦åˆ™å°†è§†ä¸ºæ™®é€šæ–‡æœ¬
+				Integer index = Utility.createInteger(
+						Integer.parseInt(((ParserData.GrammerCell) cell.subCells.get(1)).textBuf));
+				rList.add(index);
+				continue;
+			}
+			if (cell.subCells != null)
+			{
+				this.parseResCell(resCelllist, rList);
+			}
+			else if (cell.textBuf.length() > 0)
+			{
+				rList.add(cell.textBuf);
+			}
+		}
+	}
 
-   public Iterator getParsedRessource()
-   {
-      return new PreFetchIterator(Arrays.asList(this.resArray).iterator(), false);
-   }
+	public Iterator getParsedRessource()
+	{
+		return new PreFetchIterator(Arrays.asList(this.resArray).iterator(), false);
+	}
 
-   public String getValue()
-   {
-      return this.getValue(null);
-   }
+	public String getValue()
+	{
+		return this.getValue(null);
+	}
 
-   public String getValue(Object[] params)
-   {
-      if (this.resArray.length == 1)
-      {
-         Object res = this.resArray[0];
-         if (res instanceof String)
-         {
-            return (String) res;
-         }
-         else
-         {
-            if (params == null)
-            {
-               return "";
-            }
-            int index = ((Integer) res).intValue();
-            if (index >= params.length)
-            {
-               return "";
-            }
-            return params[index] == null ? "" : String.valueOf(params[index]);
-         }
-      }
-      StringAppender buf = StringTool.createStringAppender(this.estimateResSize);
-      for (int i = 0; i < this.resArray.length; i++)
-      {
-         Object res = this.resArray[i];
-         if (res instanceof String)
-         {
-            buf.append(res);
-         }
-         else if (params != null)
-         {
-            int index = ((Integer) res).intValue();
-            if (index < params.length && params[index] != null)
-            {
-               buf.append(String.valueOf(params[index]));
-            }
-         }
-      }
-      return buf.toString();
-   }
+	public String getValue(Object[] params)
+	{
+		if (this.resArray.length == 1)
+		{
+			Object res = this.resArray[0];
+			if (res instanceof String)
+			{
+				return (String) res;
+			}
+			else
+			{
+				if (params == null)
+				{
+					return "";
+				}
+				int index = ((Integer) res).intValue();
+				if (index >= params.length)
+				{
+					return "";
+				}
+				return params[index] == null ? "" : String.valueOf(params[index]);
+			}
+		}
+		StringAppender buf = StringTool.createStringAppender(this.estimateResSize);
+		for (int i = 0; i < this.resArray.length; i++)
+		{
+			Object res = this.resArray[i];
+			if (res instanceof String)
+			{
+				buf.append(res);
+			}
+			else if (params != null)
+			{
+				int index = ((Integer) res).intValue();
+				if (index < params.length && params[index] != null)
+				{
+					buf.append(String.valueOf(params[index]));
+				}
+			}
+		}
+		return buf.toString();
+	}
 
-   public void setResourceText(String text)
-   {
-      this.text = text;
-   }
+	public void setResourceText(String text)
+	{
+		this.text = text;
+	}
 
-   public void setTrimLine(boolean trimLine)
-   {
-      this.trimLine = trimLine;
-   }
+	public void setTrimLine(boolean trimLine)
+	{
+		this.trimLine = trimLine;
+	}
 
-   public Resource createResource()
-         throws ConfigurationException
-   {
-      return this;
-   }
+	public Resource createResource()
+			throws ConfigurationException
+	{
+		return this;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createResource();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createResource();
+	}
 
 }

@@ -10,19 +10,19 @@ import java.util.Map;
 import java.util.Iterator;
 
 /**
- * ValueConverter¶ÔÏóµÄ²éÕÒÆ÷, ¿ÉÍ¨¹ı¸ø³öµÄClassÕÒÑ°¶ÔÓ¦µÄ
- * ValueConverter¶ÔÏó.
- * È¡³öµÄËùÓĞValueConverter¶ÔÏóµÄisNeedThrowÖµÄ¬ÈÏÎªtrue
+ * ValueConverterå¯¹è±¡çš„æŸ¥æ‰¾å™¨, å¯é€šè¿‡ç»™å‡ºçš„Classæ‰¾å¯»å¯¹åº”çš„
+ * ValueConverterå¯¹è±¡.
+ * å–å‡ºçš„æ‰€æœ‰ValueConverterå¯¹è±¡çš„isNeedThrowå€¼é»˜è®¤ä¸ºtrue
  *
  * @see ValueConverter#isNeedThrow
  */
 public class ConverterFinder
 {
 	/**
-	 * ²éÕÒÒ»¸ö¶ÔÓ¦µÄValueConverter¶ÔÏó.
+	 * æŸ¥æ‰¾ä¸€ä¸ªå¯¹åº”çš„ValueConverterå¯¹è±¡.
 	 *
-	 * @param c       ¶ÔÓ¦µÄClass
-	 * @return ²éµ½µÄValueConverter¶ÔÏó, Èç¹ûÎ´²éµ½Ôò·µ»Ønull
+	 * @param c       å¯¹åº”çš„Class
+	 * @return æŸ¥åˆ°çš„ValueConverterå¯¹è±¡, å¦‚æœæœªæŸ¥åˆ°åˆ™è¿”å›null
 	 */
 	public static ValueConverter findConverter(Class c)
 	{
@@ -30,11 +30,11 @@ public class ConverterFinder
 	}
 
 	/**
-	 * ²éÕÒÒ»¸ö¶ÔÓ¦µÄValueConverter¶ÔÏó.
-	 * ´ËValueConverter¶ÔÏóµÄisNeedThrowÖµÄ¬ÈÏÎªfalse
+	 * æŸ¥æ‰¾ä¸€ä¸ªå¯¹åº”çš„ValueConverterå¯¹è±¡.
+	 * æ­¤ValueConverterå¯¹è±¡çš„isNeedThrowå€¼é»˜è®¤ä¸ºfalse
 	 *
-	 * @param c       ¶ÔÓ¦µÄClass
-	 * @return ²éµ½µÄValueConverter¶ÔÏó, Èç¹ûÎ´²éµ½Ôò·µ»Ønull
+	 * @param c       å¯¹åº”çš„Class
+	 * @return æŸ¥åˆ°çš„ValueConverterå¯¹è±¡, å¦‚æœæœªæŸ¥åˆ°åˆ™è¿”å›null
 	 */
 	public static ValueConverter findConverterWithoutThrow(Class c)
 	{
@@ -42,11 +42,11 @@ public class ConverterFinder
 	}
 
 	/**
-	 * ²éÕÒÒ»¸ö¶ÔÓ¦µÄValueConverter¶ÔÏó.
+	 * æŸ¥æ‰¾ä¸€ä¸ªå¯¹åº”çš„ValueConverterå¯¹è±¡.
 	 *
-	 * @param c       ¶ÔÓ¦µÄClass
-	 * @param copy    ÊÇ·ñĞèÒª¸´ÖÆValueConverter¶ÔÏó
-	 * @return ²éµ½µÄValueConverter¶ÔÏó, Èç¹ûÎ´²éµ½Ôò·µ»Ønull
+	 * @param c       å¯¹åº”çš„Class
+	 * @param copy    æ˜¯å¦éœ€è¦å¤åˆ¶ValueConverterå¯¹è±¡
+	 * @return æŸ¥åˆ°çš„ValueConverterå¯¹è±¡, å¦‚æœæœªæŸ¥åˆ°åˆ™è¿”å›null
 	 */
 	public static ValueConverter findConverter(Class c, boolean copy)
 	{
@@ -59,12 +59,12 @@ public class ConverterFinder
 	}
 
 	/**
-	 * Ä¬ÈÏµÄValueConverter¶ÔÏó»º´æ.
+	 * é»˜è®¤çš„ValueConverterå¯¹è±¡ç¼“å­˜.
 	 */
 	private static Map converterCache = new HashMap();
 
 	/**
-	 * isNeedThrowÖµÎªfalseµÄValueConverter¶ÔÏó»º´æ.
+	 * isNeedThrowå€¼ä¸ºfalseçš„ValueConverterå¯¹è±¡ç¼“å­˜.
 	 */
 	private static Map withoutThrowCache = new HashMap();
 

@@ -9,180 +9,180 @@ import self.micromagic.eterna.share.EternaFactory;
 
 public interface ResultReaderManager
 {
-   /**
-    * ³õÊ¼»¯±¾ResultReaderManager¶ÔÏó, ÏµÍ³»áÔÚ³õÊ¼»¯Ê±µ÷ÓÃ´Ë·½·¨. <p>
-    * ¸Ã·½·¨µÄÖ÷Òª×÷ÓÃÊÇ³õÊ¼»¯Ã¿¸öResultReader¶ÔÏó, ²¢¸ù¾İ¸¸¶ÔÏóÀ´×é³É×Ô¼º
-    * ×Ô¼ºµÄreaderÁĞ±í.
-    *
-    * @param factory  EternaFactoryµÄÊµÀı, ¿ÉÒÔ´ÓÖĞ»ñµÃ¸¸¶ÔÏó
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æœ¬ResultReaderManagerå¯¹è±¡, ç³»ç»Ÿä¼šåœ¨åˆå§‹åŒ–æ—¶è°ƒç”¨æ­¤æ–¹æ³•. <p>
+	 * è¯¥æ–¹æ³•çš„ä¸»è¦ä½œç”¨æ˜¯åˆå§‹åŒ–æ¯ä¸ªResultReaderå¯¹è±¡, å¹¶æ ¹æ®çˆ¶å¯¹è±¡æ¥ç»„æˆè‡ªå·±
+	 * è‡ªå·±çš„readeråˆ—è¡¨.
+	 *
+	 * @param factory  EternaFactoryçš„å®ä¾‹, å¯ä»¥ä»ä¸­è·å¾—çˆ¶å¯¹è±¡
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ±¾ResultReaderManagerµÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æœ¬ResultReaderManagerçš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡±¾ResultReaderManagerµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–æœ¬ResultReaderManagerçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¸¸ResultReaderManagerµÄÃû³Æ.
-    */
-   void setParentName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®çˆ¶ResultReaderManagerçš„åç§°.
+	 */
+	void setParentName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡¸¸ResultReaderManagerµÄÃû³Æ.
-    */
-   String getParentName() throws ConfigurationException;
+	/**
+	 * è·å–çˆ¶ResultReaderManagerçš„åç§°.
+	 */
+	String getParentName() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ±¾ResultReaderManagerµÄÃû³Æ.
-    */
-   ResultReaderManager getParent() throws ConfigurationException;
+	/**
+	 * è®¾ç½®æœ¬ResultReaderManagerçš„åç§°.
+	 */
+	ResultReaderManager getParent() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Éú³É±¾ResultReaderManagerµÄ¹¤³§.
-    */
-   EternaFactory getFactory() throws ConfigurationException;
+	/**
+	 * è·å–ç”Ÿæˆæœ¬ResultReaderManagerçš„å·¥å‚.
+	 */
+	EternaFactory getFactory() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÁĞÃûÊÇ·ñÊÇ´óĞ¡Ğ´Ãô¸ĞµÄ, Ä¬ÈÏµÄÊÇÃô¸ĞµÄ. <p>
-    * ×¢: Ö»ÓĞÔÚÃ»ÓĞÌí¼ÓreaderµÄÊ±ºò²ÅÄÜÉèÖÃÕâ¸öÊôĞÔ.
-    */
-   void setColNameSensitive(boolean colNameSensitive) throws ConfigurationException;
+	/**
+	 * è®¾ç½®åˆ—åæ˜¯å¦æ˜¯å¤§å°å†™æ•æ„Ÿçš„, é»˜è®¤çš„æ˜¯æ•æ„Ÿçš„. <p>
+	 * æ³¨: åªæœ‰åœ¨æ²¡æœ‰æ·»åŠ readerçš„æ—¶å€™æ‰èƒ½è®¾ç½®è¿™ä¸ªå±æ€§.
+	 */
+	void setColNameSensitive(boolean colNameSensitive) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡ÁĞÃûÊÇ·ñ´óĞ¡Ğ´Ãô¸ĞµÄ. <p>
-    *
-	 * @return  trueÎª´óĞ¡Ğ´Ãô¸ĞµÄ, falseÎª²»Çø·Ö´óĞ¡Ğ´
-    */
-   boolean isColNameSensitive() throws ConfigurationException;
+	/**
+	 * è·å–åˆ—åæ˜¯å¦å¤§å°å†™æ•æ„Ÿçš„. <p>
+	 *
+	 * @return  trueä¸ºå¤§å°å†™æ•æ„Ÿçš„, falseä¸ºä¸åŒºåˆ†å¤§å°å†™
+	 */
+	boolean isColNameSensitive() throws ConfigurationException;
 
-   /**
-    * »ñµÃResultReaderµÄÅÅĞò·½Ê½×Ö·û´®.
-    */
-   String getReaderOrder() throws ConfigurationException;
+	/**
+	 * è·å¾—ResultReaderçš„æ’åºæ–¹å¼å­—ç¬¦ä¸².
+	 */
+	String getReaderOrder() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃResultReaderµÄÅÅĞò·½Ê½×Ö·û´®.
-    */
-   void setReaderOrder(String readerOrder) throws ConfigurationException;
+	/**
+	 * è®¾ç½®ResultReaderçš„æ’åºæ–¹å¼å­—ç¬¦ä¸².
+	 */
+	void setReaderOrder(String readerOrder) throws ConfigurationException;
 
-   /**
-    * »ñµÃResultReaderManagerÖĞµÄResultReader×Ü¸öÊı, Õâ¸öÊı×ÖÒ»°ãµÈÓÚ»ò´óÓÚ
-    * ReaderListÖĞµÄResultReader¸öÊı. <p>
-    *
-    * @see #getReaderList(Permission)
-    * @see #getReaderInList(int)
-    */
-   int getReaderCount() throws ConfigurationException;
+	/**
+	 * è·å¾—ResultReaderManagerä¸­çš„ResultReaderæ€»ä¸ªæ•°, è¿™ä¸ªæ•°å­—ä¸€èˆ¬ç­‰äºæˆ–å¤§äº
+	 * ReaderListä¸­çš„ResultReaderä¸ªæ•°. <p>
+	 *
+	 * @see #getReaderList(Permission)
+	 * @see #getReaderInList(int)
+	 */
+	int getReaderCount() throws ConfigurationException;
 
-   /**
-    * Í¨¹ıreaderµÄÃû³Æ»ñÈ¡Ò»¸öResultReader.
-    */
-   ResultReader getReader(String name) throws ConfigurationException;
+	/**
+	 * é€šè¿‡readerçš„åç§°è·å–ä¸€ä¸ªResultReader.
+	 */
+	ResultReader getReader(String name) throws ConfigurationException;
 
-   /**
-    * Ìí¼ÓÒ»¸ö<code>ResultReader</code>.
-    * <p>Èç¹û¸Ã<code>ResultReader</code>µÄÃû³ÆÒÑ¾­´æÔÚ, Ôò»á¸²¸ÇÔ­À´µÄreader.
-    *
-    * @param reader  ÒªÌí¼ÓµÄ<code>ResultReader</code>
-    * @return     µ±¸Ã<code>ResultReader</code>µÄÃû³ÆÒÑ¾­´æÔÚÊ±Ôò·µ»Ø±»¸²¸Çµô
-    *             µÄ<code>ResultReader</code>, ·ñÔò·µ»Ø<code>null</code>.
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
-    */
-   ResultReader addReader(ResultReader reader) throws ConfigurationException;
+	/**
+	 * æ·»åŠ ä¸€ä¸ª<code>ResultReader</code>.
+	 * <p>å¦‚æœè¯¥<code>ResultReader</code>çš„åç§°å·²ç»å­˜åœ¨, åˆ™ä¼šè¦†ç›–åŸæ¥çš„reader.
+	 *
+	 * @param reader  è¦æ·»åŠ çš„<code>ResultReader</code>
+	 * @return     å½“è¯¥<code>ResultReader</code>çš„åç§°å·²ç»å­˜åœ¨æ—¶åˆ™è¿”å›è¢«è¦†ç›–æ‰
+	 *             çš„<code>ResultReader</code>, å¦åˆ™è¿”å›<code>null</code>.
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
+	 */
+	ResultReader addReader(ResultReader reader) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ<code>ResultReader</code>µÄÅÅÁĞË³ĞòÒÔ¼°²éÑ¯µÄÅÅĞò¹æÔò.
-    *
-    * @param names     ´æ·Å<code>ResultReader</code>µÄÃû³Æ¼¶ÅÅĞòµÄÊı×é,
-    *                  <code>ResultReader</code>½«°´Õâ¸öÊı×éËùÖ¸¶¨µÄË³ĞòÅÅÁĞ,
-    *                  ²¢¸ù¾İËûÀ´ÉèÖÃÅÅĞò.
-    *                  ÁĞÃû¼°ÅÅĞòµÄ¸ñÊ½Îª[Ãû³Æ][ÅÅĞò(1¸ö×Ö·û)].
-    *                  ÅÅĞò·Ö±ğÎª: "-"ÎŞ, "A"ÉıĞò, "D"½µĞò.
-    *
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
-    */
-   void setReaderList(String[] names) throws ConfigurationException;
+	/**
+	 * è®¾ç½®<code>ResultReader</code>çš„æ’åˆ—é¡ºåºä»¥åŠæŸ¥è¯¢çš„æ’åºè§„åˆ™.
+	 *
+	 * @param names     å­˜æ”¾<code>ResultReader</code>çš„åç§°çº§æ’åºçš„æ•°ç»„,
+	 *                  <code>ResultReader</code>å°†æŒ‰è¿™ä¸ªæ•°ç»„æ‰€æŒ‡å®šçš„é¡ºåºæ’åˆ—,
+	 *                  å¹¶æ ¹æ®ä»–æ¥è®¾ç½®æ’åº.
+	 *                  åˆ—ååŠæ’åºçš„æ ¼å¼ä¸º[åç§°][æ’åº(1ä¸ªå­—ç¬¦)].
+	 *                  æ’åºåˆ†åˆ«ä¸º: "-"æ— , "A"å‡åº, "D"é™åº.
+	 *
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
+	 */
+	void setReaderList(String[] names) throws ConfigurationException;
 
-   /**
-    * Í¨¹ıreaderµÄÃû³Æ»ñÈ¡¸Ãreader¶ÔÏóËùÔÚµÄË÷ÒıÖµ.
-    *
-    * @param name      readerµÄÃû³Æ
-    * @param notThrow  ÉèÎª<code>true<code>Ê±, µ±¶ÔÓ¦Ãû³ÆµÄreader²»´æÔÚÊ±
-    *                  ²»»áÅ×³öÒì³£, ¶øÖ»ÊÇ·µ»Ø-1
-    * @return  readerËùÔÚµÄË÷ÒıÖµ, »ò-1(µ±¶ÔÓ¦Ãû³ÆµÄreader²»´æÔÚÊ±)
-	 *          µÚÒ»¸öÖµÎª1, µÚ¶ş¸öÖµÎª2, ...
-    */
-   int getIndexByName(String name, boolean notThrow) throws ConfigurationException;
+	/**
+	 * é€šè¿‡readerçš„åç§°è·å–è¯¥readerå¯¹è±¡æ‰€åœ¨çš„ç´¢å¼•å€¼.
+	 *
+	 * @param name      readerçš„åç§°
+	 * @param notThrow  è®¾ä¸º<code>true<code>æ—¶, å½“å¯¹åº”åç§°çš„readerä¸å­˜åœ¨æ—¶
+	 *                  ä¸ä¼šæŠ›å‡ºå¼‚å¸¸, è€Œåªæ˜¯è¿”å›-1
+	 * @return  readeræ‰€åœ¨çš„ç´¢å¼•å€¼, æˆ–-1(å½“å¯¹åº”åç§°çš„readerä¸å­˜åœ¨æ—¶)
+	 *          ç¬¬ä¸€ä¸ªå€¼ä¸º1, ç¬¬äºŒä¸ªå€¼ä¸º2, ...
+	 */
+	int getIndexByName(String name, boolean notThrow) throws ConfigurationException;
 
-   /**
-    * Í¨¹ıreaderµÄÃû³Æ»ñÈ¡¸Ãreader¶ÔÏóËùÔÚµÄË÷ÒıÖµ.
-    */
-   int getIndexByName(String name) throws ConfigurationException;
+	/**
+	 * é€šè¿‡readerçš„åç§°è·å–è¯¥readerå¯¹è±¡æ‰€åœ¨çš„ç´¢å¼•å€¼.
+	 */
+	int getIndexByName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡ÓÃÓÚÅÅĞòµÄsql×ÓÓï¾ä.
-    */
-   String getOrderByString() throws ConfigurationException;
+	/**
+	 * è·å–ç”¨äºæ’åºçš„sqlå­è¯­å¥.
+	 */
+	String getOrderByString() throws ConfigurationException;
 
-   /**
-    * »ñµÃÒ»¸ö<code>ResultReader</code>µÄÁĞ±í.
-    * ´Ë·½·¨ÁĞ³öµÄÊÇËùÓĞµÄ<code>ResultReader</code>.
-	 * ÎŞÂÛsetReaderListÉèÖÃÁËÔõÑùµÄÖµ, ¶¼ÊÇ·µ»ØËùÓĞµÄ.
-    *
-    * @return  ÓÃÓÚ¶ÁÈ¡Êı¾İµÄËùÓĞ<code>ResultReader</code>µÄÁĞ±í.
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * æ­¤æ–¹æ³•åˆ—å‡ºçš„æ˜¯æ‰€æœ‰çš„<code>ResultReader</code>.
+	 * æ— è®ºsetReaderListè®¾ç½®äº†æ€æ ·çš„å€¼, éƒ½æ˜¯è¿”å›æ‰€æœ‰çš„.
+	 *
+	 * @return  ç”¨äºè¯»å–æ•°æ®çš„æ‰€æœ‰<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
 	 * @see #setReaderList
-    */
-   List getReaderList() throws ConfigurationException;
+	 */
+	List getReaderList() throws ConfigurationException;
 
-   /**
-    * ¸ù¾İÈ¨ÏŞ, »ñµÃÒ»¸ö<code>ResultReader</code>µÄÁĞ±í.
-	 * Èç¹ûsetReaderListÉèÖÃÁËÏÔÊ¾µÄ<code>ResultReader</code>, ÄÇ·µ»ØµÄÁĞ±íÖ»»áÔÚ
-	 * ´Ë·¶Î§ÄÚ.
-    * Èç¹ûÄ³¸öÁĞÃ»ÓĞ¶ÁÈ¡È¨ÏŞµÄ»°, ÄÇÏàÓ¦µÄÁĞ»áÌæ»»Îª<code>NullResultReader</code>
-    * µÄÊµÀı.
-    *
-    * @return  ÕıÊ½ÓÃÓÚ¶ÁÈ¡Êı¾İµÄ<code>ResultReader</code>µÄÁĞ±í.
-    * @throws ConfigurationException  µ±Ïà¹ØÅäÖÃ³ö´íÊ±
+	/**
+	 * æ ¹æ®æƒé™, è·å¾—ä¸€ä¸ª<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * å¦‚æœsetReaderListè®¾ç½®äº†æ˜¾ç¤ºçš„<code>ResultReader</code>, é‚£è¿”å›çš„åˆ—è¡¨åªä¼šåœ¨
+	 * æ­¤èŒƒå›´å†….
+	 * å¦‚æœæŸä¸ªåˆ—æ²¡æœ‰è¯»å–æƒé™çš„è¯, é‚£ç›¸åº”çš„åˆ—ä¼šæ›¿æ¢ä¸º<code>NullResultReader</code>
+	 * çš„å®ä¾‹.
+	 *
+	 * @return  æ­£å¼ç”¨äºè¯»å–æ•°æ®çš„<code>ResultReader</code>çš„åˆ—è¡¨.
+	 * @throws ConfigurationException  å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶
 	 * @see #setReaderList
-    */
-   List getReaderList(Permission permission) throws ConfigurationException;
+	 */
+	List getReaderList(Permission permission) throws ConfigurationException;
 
-   /**
-    * ¸ù¾İË÷ÒıÖµ, ´ÓreaderÁĞ±íÖĞ»ñÈ¡Ò»¸öResultReader.
-    * readerÁĞ±í»áËæ×ÅÁĞÉèÖÃ¶ø¸Ä±ä.
-	 * µÚÒ»¸öÖµÎª0, µÚ¶ş¸öÖµÎª1, ...
-    */
-   ResultReader getReaderInList(int index) throws ConfigurationException;
+	/**
+	 * æ ¹æ®ç´¢å¼•å€¼, ä»readeråˆ—è¡¨ä¸­è·å–ä¸€ä¸ªResultReader.
+	 * readeråˆ—è¡¨ä¼šéšç€åˆ—è®¾ç½®è€Œæ”¹å˜.
+	 * ç¬¬ä¸€ä¸ªå€¼ä¸º0, ç¬¬äºŒä¸ªå€¼ä¸º1, ...
+	 */
+	ResultReader getReaderInList(int index) throws ConfigurationException;
 
-   /**
-    * Ëø×¡×Ô¼ºµÄËùÓĞÊôĞÔ, ÕâÑùÊ¹ÓÃÕßÖ»ÄÜ¶ÁÈ¡, ¶ø²»ÄÜĞŞ¸Ä. <p>
-    * Ò»°ãÓÃÔÚÍ¨¹ıxml×°ÔØºó, ÔÚEternaFactoryµÄ³õÊ¼»¯ÖĞµ÷ÓÃ´Ë·½·¨.
-    * ×¢:ÔÚµ÷ÓÃÁËcopy·½·¨ºó, ĞÂ¸´ÖÆµÄResultReaderManagerÊÇ²»±»Ëø×¡µÄ.
-    *
-    * @see #copy(String)
-    */
-   void lock() throws ConfigurationException;
+	/**
+	 * é”ä½è‡ªå·±çš„æ‰€æœ‰å±æ€§, è¿™æ ·ä½¿ç”¨è€…åªèƒ½è¯»å–, è€Œä¸èƒ½ä¿®æ”¹. <p>
+	 * ä¸€èˆ¬ç”¨åœ¨é€šè¿‡xmlè£…è½½å, åœ¨EternaFactoryçš„åˆå§‹åŒ–ä¸­è°ƒç”¨æ­¤æ–¹æ³•.
+	 * æ³¨:åœ¨è°ƒç”¨äº†copyæ–¹æ³•å, æ–°å¤åˆ¶çš„ResultReaderManageræ˜¯ä¸è¢«é”ä½çš„.
+	 *
+	 * @see #copy(String)
+	 */
+	void lock() throws ConfigurationException;
 
-   /**
-    * ÅĞ¶ÏÊÇ·ñÒÑËø×¡ËùÓĞÊôĞÔ, ÕâÑùÊ¹ÓÃÕßÖ»ÄÜ¶ÁÈ¡, ¶ø²»ÄÜĞŞ¸Ä. <p>
-    *
-	 * @return  true±íÊ¾ÒÑËø, false±íÊ¾Î´Ëø
-    * @see #lock
-    */
-   boolean isLocked() throws ConfigurationException;
+	/**
+	 * åˆ¤æ–­æ˜¯å¦å·²é”ä½æ‰€æœ‰å±æ€§, è¿™æ ·ä½¿ç”¨è€…åªèƒ½è¯»å–, è€Œä¸èƒ½ä¿®æ”¹. <p>
+	 *
+	 * @return  trueè¡¨ç¤ºå·²é”, falseè¡¨ç¤ºæœªé”
+	 * @see #lock
+	 */
+	boolean isLocked() throws ConfigurationException;
 
-   /**
-    * ¸´ÖÆ×ÔÉíµÄËùÓĞÊôĞÔ, ²¢·µ»Ø.
-    * µ±copyName²»ÎªnullÊ±, Ãû³Æ½«¸ÄÎª:"[Ô­name]+[copyName]".
-    * ·´Ö®Ãû³Æ½«²»»á¸Ä±ä.
-    */
-   ResultReaderManager copy(String copyName) throws ConfigurationException;
+	/**
+	 * å¤åˆ¶è‡ªèº«çš„æ‰€æœ‰å±æ€§, å¹¶è¿”å›.
+	 * å½“copyNameä¸ä¸ºnullæ—¶, åç§°å°†æ”¹ä¸º:"[åŸname]+[copyName]".
+	 * åä¹‹åç§°å°†ä¸ä¼šæ”¹å˜.
+	 */
+	ResultReaderManager copy(String copyName) throws ConfigurationException;
 
 }

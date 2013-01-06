@@ -12,60 +12,60 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 class DoublePreparer extends AbstractValuePreparer
 {
-   private double value;
+	private double value;
 
-   public DoublePreparer(ValuePreparerCreater vpc, double value)
-   {
-      super(vpc);
-      this.value = value;
-   }
+	public DoublePreparer(ValuePreparerCreater vpc, double value)
+	{
+		super(vpc);
+		this.value = value;
+	}
 
-   public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
-         throws SQLException
-   {
-      stmtWrap.setDouble(this.getName(), index, this.value);
-   }
+	public void setValueToStatement(int index, PreparedStatementWrap stmtWrap)
+			throws SQLException
+	{
+		stmtWrap.setDouble(this.getName(), index, this.value);
+	}
 
-   static class Creater extends AbstractCreater
-   {
-      DoubleConverter convert = new DoubleConverter();
-      NumberFormat format = null;
+	static class Creater extends AbstractCreater
+	{
+		DoubleConverter convert = new DoubleConverter();
+		NumberFormat format = null;
 
-      public Creater(ValuePreparerCreaterGenerator vpcg)
-      {
-         super(vpcg);
-      }
+		public Creater(ValuePreparerCreaterGenerator vpcg)
+		{
+			super(vpcg);
+		}
 
-      public void setFormat(String formatStr)
-      {
-         this.format = new DecimalFormat(formatStr);
-      }
+		public void setFormat(String formatStr)
+		{
+			this.format = new DecimalFormat(formatStr);
+		}
 
-      public ValuePreparer createPreparer(Object value)
-            throws ConfigurationException
-      {
-         if (value == null)
-         {
-            return this.vpcg.createNullPreparer(0, Types.DOUBLE);
-         }
-         return new DoublePreparer(this, this.convert.convertToDouble(value, this.format));
-      }
+		public ValuePreparer createPreparer(Object value)
+				throws ConfigurationException
+		{
+			if (value == null)
+			{
+				return this.vpcg.createNullPreparer(0, Types.DOUBLE);
+			}
+			return new DoublePreparer(this, this.convert.convertToDouble(value, this.format));
+		}
 
-      public ValuePreparer createPreparer(String value)
-            throws ConfigurationException
-      {
-         if (value == null)
-         {
-            return this.vpcg.createNullPreparer(0, Types.DOUBLE);
-         }
-         return new DoublePreparer(this, this.convert.convertToDouble(value, this.format));
-      }
+		public ValuePreparer createPreparer(String value)
+				throws ConfigurationException
+		{
+			if (value == null)
+			{
+				return this.vpcg.createNullPreparer(0, Types.DOUBLE);
+			}
+			return new DoublePreparer(this, this.convert.convertToDouble(value, this.format));
+		}
 
-      public ValuePreparer createPreparer(double value)
-      {
-         return new DoublePreparer(this, value);
-      }
+		public ValuePreparer createPreparer(double value)
+		{
+			return new DoublePreparer(this, value);
+		}
 
-   }
+	}
 
 }

@@ -11,119 +11,119 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
 import self.micromagic.eterna.sql.preparer.ValuePreparerCreater;
 
 public class SQLParameterGeneratorImpl extends AbstractGenerator
-      implements SQLParameterGenerator
+		implements SQLParameterGenerator
 {
-   private String colName;
-   private String type;
-   private String vpcName;
+	private String colName;
+	private String type;
+	private String vpcName;
 
-   public void setColumnName(String name)
-   {
-      this.colName = name;
-   }
+	public void setColumnName(String name)
+	{
+		this.colName = name;
+	}
 
-   public void setParamType(String type)
-   {
-      this.type = type;
-   }
+	public void setParamType(String type)
+	{
+		this.type = type;
+	}
 
-   public void setParamVPC(String vpcName)
-   {
-      this.vpcName = vpcName;
-   }
+	public void setParamVPC(String vpcName)
+	{
+		this.vpcName = vpcName;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      throw new ConfigurationException("You must use createParameter(int).");
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		throw new ConfigurationException("You must use createParameter(int).");
+	}
 
-   public SQLParameter createParameter(int paramIndex)
-         throws ConfigurationException
-   {
-      if (this.type == null)
-      {
-         this.type = TypeManager.getTypeName(TypeManager.TYPE_OBJECT);
-      }
-      return new SQLParameterImpl(this.getName(), this.colName, this.type, paramIndex, this.vpcName);
-   }
+	public SQLParameter createParameter(int paramIndex)
+			throws ConfigurationException
+	{
+		if (this.type == null)
+		{
+			this.type = TypeManager.getTypeName(TypeManager.TYPE_OBJECT);
+		}
+		return new SQLParameterImpl(this.getName(), this.colName, this.type, paramIndex, this.vpcName);
+	}
 
-   static class SQLParameterImpl
-         implements SQLParameter
-   {
-      protected String name;
-      private String colName;
-      protected String vpcName = null;
-      protected ValuePreparerCreater vpCreater;
-      protected int type;
-      protected int index;
+	static class SQLParameterImpl
+			implements SQLParameter
+	{
+		protected String name;
+		private String colName;
+		protected String vpcName = null;
+		protected ValuePreparerCreater vpCreater;
+		protected int type;
+		protected int index;
 
-      public SQLParameterImpl(String name, String colName, String typeName, int index, String vpaName)
-      {
-         this.name = name;
-         this.colName = colName == null ? name : colName;
-         this.type = TypeManager.getTypeId(typeName);
-         this.index = index;
-         this.vpcName = vpaName;
-      }
+		public SQLParameterImpl(String name, String colName, String typeName, int index, String vpaName)
+		{
+			this.name = name;
+			this.colName = colName == null ? name : colName;
+			this.type = TypeManager.getTypeId(typeName);
+			this.index = index;
+			this.vpcName = vpaName;
+		}
 
-      public void initialize(EternaFactory factory)
-            throws ConfigurationException
-      {
-         this.vpCreater = factory.createValuePreparerCreater(this.vpcName, this.getPureType());
-         if (this.vpCreater == null)
-         {
-            log.warn("The value preparer generator [" + this.vpcName + "] not found.");
-            this.vpCreater = factory.createValuePreparerCreater(this.getPureType());
-         }
-      }
+		public void initialize(EternaFactory factory)
+				throws ConfigurationException
+		{
+			this.vpCreater = factory.createValuePreparerCreater(this.vpcName, this.getPureType());
+			if (this.vpCreater == null)
+			{
+				log.warn("The value preparer generator [" + this.vpcName + "] not found.");
+				this.vpCreater = factory.createValuePreparerCreater(this.getPureType());
+			}
+		}
 
-      public String getName()
-      {
-         return this.name;
-      }
+		public String getName()
+		{
+			return this.name;
+		}
 
-      public String getColumnName()
-      {
-         return this.colName;
-      }
+		public String getColumnName()
+		{
+			return this.colName;
+		}
 
-      public int getType()
-      {
-         return this.type;
-      }
+		public int getType()
+		{
+			return this.type;
+		}
 
-      public int getPureType()
-      {
-         return TypeManager.getPureType(this.type);
-      }
+		public int getPureType()
+		{
+			return TypeManager.getPureType(this.type);
+		}
 
-      public int getIndex()
-      {
-         return this.index;
-      }
+		public int getIndex()
+		{
+			return this.index;
+		}
 
-      public String getTypeName()
-      {
-         return TypeManager.getTypeName(this.type);
-      }
+		public String getTypeName()
+		{
+			return TypeManager.getTypeName(this.type);
+		}
 
-      public ValuePreparer createValuePreparer(String value)
-            throws ConfigurationException
-      {
-         ValuePreparer vp = this.vpCreater.createPreparer(value);
-         vp.setRelativeIndex(this.index);
-         return vp;
-      }
+		public ValuePreparer createValuePreparer(String value)
+				throws ConfigurationException
+		{
+			ValuePreparer vp = this.vpCreater.createPreparer(value);
+			vp.setRelativeIndex(this.index);
+			return vp;
+		}
 
-      public ValuePreparer createValuePreparer(Object value)
-            throws ConfigurationException
-      {
-         ValuePreparer vp = this.vpCreater.createPreparer(value);
-         vp.setRelativeIndex(this.index);
-         return vp;
-      }
+		public ValuePreparer createValuePreparer(Object value)
+				throws ConfigurationException
+		{
+			ValuePreparer vp = this.vpCreater.createPreparer(value);
+			vp.setRelativeIndex(this.index);
+			return vp;
+		}
 
-   }
+	}
 
 }

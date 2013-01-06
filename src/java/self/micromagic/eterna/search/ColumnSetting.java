@@ -12,22 +12,22 @@ import self.micromagic.eterna.sql.QueryAdapter;
  */
 public interface ColumnSetting
 {
-   /**
-    * ³õÊ¼»¯, ¸Ã·½·¨»áÔÚËùÊôµÄsearch³õÊ¼»¯Ê±±»µ÷ÓÃ.
-    */
-   void initColumnSetting(SearchAdapter search) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–, è¯¥æ–¹æ³•ä¼šåœ¨æ‰€å±çš„searchåˆå§‹åŒ–æ—¶è¢«è°ƒç”¨.
+	 */
+	void initColumnSetting(SearchAdapter search) throws ConfigurationException;
 
-   /**
-    * ·µ»ØÒ»¸öÊı×é, ¸ÃÊı×é¿ÉÒÔÓÃÀ´ÉèÖÃ²éÑ¯µÄÁĞ.
-    *
-    * @param first     ±íÊ¾ÊÇ·ñÎªµÚÒ»´Î»ñÈ¡ÁĞÉèÖÃ, Èç¹û²»ÊÇµÚÒ»´Î, Ôò¿É¸ù¾İÇé¿ö,
-    *                  »òÖØĞÂ¸ø³öÁĞÉèÖÃ, »ò·µ»Ønull±íÊ¾Ê¹ÓÃÇ°Ò»´ÎµÄÁĞÉèÖÃ.
-    * @param data      Êı¾İ, ÀïÃæ°üº¬ÁËrequestµÄparameter, requestµÄattribute,
-    *                  sessionµÄattritute
-    *
-    * @see    self.micromagic.eterna.sql.ResultReaderManager#setReaderList(String[])
-    */
-   String[] getColumnSetting(String columnType, QueryAdapter query, SearchAdapter search,
-         boolean first, AppData data, Connection conn)
-         throws ConfigurationException;
+	/**
+	 * è¿”å›ä¸€ä¸ªæ•°ç»„, è¯¥æ•°ç»„å¯ä»¥ç”¨æ¥è®¾ç½®æŸ¥è¯¢çš„åˆ—.
+	 *
+	 * @param first     è¡¨ç¤ºæ˜¯å¦ä¸ºç¬¬ä¸€æ¬¡è·å–åˆ—è®¾ç½®, å¦‚æœä¸æ˜¯ç¬¬ä¸€æ¬¡, åˆ™å¯æ ¹æ®æƒ…å†µ,
+	 *                  æˆ–é‡æ–°ç»™å‡ºåˆ—è®¾ç½®, æˆ–è¿”å›nullè¡¨ç¤ºä½¿ç”¨å‰ä¸€æ¬¡çš„åˆ—è®¾ç½®.
+	 * @param data      æ•°æ®, é‡Œé¢åŒ…å«äº†requestçš„parameter, requestçš„attribute,
+	 *                  sessionçš„attritute
+	 *
+	 * @see    self.micromagic.eterna.sql.ResultReaderManager#setReaderList(String[])
+	 */
+	String[] getColumnSetting(String columnType, QueryAdapter query, SearchAdapter search,
+			boolean first, AppData data, Connection conn)
+			throws ConfigurationException;
 }

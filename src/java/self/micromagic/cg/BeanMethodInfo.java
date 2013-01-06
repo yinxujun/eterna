@@ -14,360 +14,362 @@ import java.util.Map;
 import org.apache.commons.collections.ReferenceMap;
 
 /**
- * ÃèÊöbeanµÄÒ»¸ö·½·¨µÄĞÅÏ¢Àà.
+ * æè¿°beançš„ä¸€ä¸ªæ–¹æ³•çš„ä¿¡æ¯ç±».
+ *
+ * @author micromagic@sina.com
  */
 public class BeanMethodInfo
 {
-   /**
-    * ·½·¨¶ÔÓ¦ÊôĞÔµÄÃû³Æ.
-    */
-   public final String name;
+	/**
+	 * æ–¹æ³•å¯¹åº”å±æ€§çš„åç§°.
+	 */
+	public final String name;
 
-   /**
-    * ÊôĞÔµÄÀàĞÍ.
-    */
-   public final Class type;
+	/**
+	 * å±æ€§çš„ç±»å‹.
+	 */
+	public final Class type;
 
-   /**
-    * ¶ÔÊôĞÔ²Ù×÷µÄ·½·¨.
-    */
-   public final Method method;
+	/**
+	 * å¯¹å±æ€§æ“ä½œçš„æ–¹æ³•.
+	 */
+	public final Method method;
 
-   /**
-    * ÊÇ·ñÎª¶ÁÈ¡µÄ·½·¨.
-    * <code>true</code>Îª¶ÁÈ¡, <code>false</code>ÎªÉèÖÃ.
-    */
-   public final boolean doGet;
+	/**
+	 * æ˜¯å¦ä¸ºè¯»å–çš„æ–¹æ³•.
+	 * <code>true</code>ä¸ºè¯»å–, <code>false</code>ä¸ºè®¾ç½®.
+	 */
+	public final boolean doGet;
 
-   /**
-    * ´øÓĞË÷ÒıÖµµÄÀàĞÍ.
-    */
-   public final Class indexedType;
+	/**
+	 * å¸¦æœ‰ç´¢å¼•å€¼çš„ç±»å‹.
+	 */
+	public final Class indexedType;
 
-   /**
-    * ´øÓĞË÷ÒıÖµµÄÊôĞÔ²Ù×÷µÄ·½·¨.
-    */
-   public final Method indexedMethod;
+	/**
+	 * å¸¦æœ‰ç´¢å¼•å€¼çš„å±æ€§æ“ä½œçš„æ–¹æ³•.
+	 */
+	public final Method indexedMethod;
 
-   /**
-    * Ò»°ãµÄ¹¹Ôìº¯Êı.
-    */
-   private BeanMethodInfo(String name, Method method, Class type, boolean doGet,
-         Method indexedMethod, Class indexedType)
-   {
-      this.name = name;
-      this.method = method;
-      this.type = type;
-      this.doGet = doGet;
-      this.indexedMethod = indexedMethod;
-      this.indexedType = indexedType;
-   }
+	/**
+	 * ä¸€èˆ¬çš„æ„é€ å‡½æ•°.
+	 */
+	private BeanMethodInfo(String name, Method method, Class type, boolean doGet,
+			Method indexedMethod, Class indexedType)
+	{
+		this.name = name;
+		this.method = method;
+		this.type = type;
+		this.doGet = doGet;
+		this.indexedMethod = indexedMethod;
+		this.indexedType = indexedType;
+	}
 
-   /**
-    * ½«Á½¸ö<code>BeanMethodInfo</code>ºÏ²¢µÄ¹¹Ôìº¯Êı.
-    */
-   private BeanMethodInfo(BeanMethodInfo info1, BeanMethodInfo info2)
-   {
+	/**
+	 * å°†ä¸¤ä¸ª<code>BeanMethodInfo</code>åˆå¹¶çš„æ„é€ å‡½æ•°.
+	 */
+	private BeanMethodInfo(BeanMethodInfo info1, BeanMethodInfo info2)
+	{
 
-      this.name = info1.name;
-      this.type = info1.type == null ? info2.type : info1.type;
-      this.doGet = info1.doGet;
-      if (this.type == boolean.class && this.doGet)
-      {
-         if (info1.method == null)
-         {
-            this.method = info2.method;
-         }
-         else if (info2.method == null)
-         {
-            this.method = info1.method;
-         }
-         // Èç¹ûÁ½¸ö·½·¨¶¼´æÔÚ, ÔòÈ¡is¿ªÍ·µÄ·½·¨
-         else if (info1.method.getName().startsWith(IS_PREFIX))
-         {
-            this.method = info1.method;
-         }
-         else
-         {
-            this.method = info2.method;
-         }
-      }
-      else
-      {
-         this.method = info1.method == null ? info2.method : info1.method;
-      }
-      // ´øÓĞË÷ÒıÖµµÄ·½·¨²»»áÓĞis¿ªÍ·µÄ
-      this.indexedType = info1.indexedType == null ? info2.indexedType : info1.indexedType;
-      this.indexedMethod = info1.indexedMethod == null ? info2.indexedMethod : info1.indexedMethod;
-   }
+		this.name = info1.name;
+		this.type = info1.type == null ? info2.type : info1.type;
+		this.doGet = info1.doGet;
+		if (this.type == boolean.class && this.doGet)
+		{
+			if (info1.method == null)
+			{
+				this.method = info2.method;
+			}
+			else if (info2.method == null)
+			{
+				this.method = info1.method;
+			}
+			// å¦‚æœä¸¤ä¸ªæ–¹æ³•éƒ½å­˜åœ¨, åˆ™å–iså¼€å¤´çš„æ–¹æ³•
+			else if (info1.method.getName().startsWith(IS_PREFIX))
+			{
+				this.method = info1.method;
+			}
+			else
+			{
+				this.method = info2.method;
+			}
+		}
+		else
+		{
+			this.method = info1.method == null ? info2.method : info1.method;
+		}
+		// å¸¦æœ‰ç´¢å¼•å€¼çš„æ–¹æ³•ä¸ä¼šæœ‰iså¼€å¤´çš„
+		this.indexedType = info1.indexedType == null ? info2.indexedType : info1.indexedType;
+		this.indexedMethod = info1.indexedMethod == null ? info2.indexedMethod : info1.indexedMethod;
+	}
 
-   /**
-    * beanÏà¹ØµÄ·½·¨ÁĞ±íµÄ»º´æ.
-    */
-   private static ReferenceMap beanMethodsCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.SOFT);
+	/**
+	 * beanç›¸å…³çš„æ–¹æ³•åˆ—è¡¨çš„ç¼“å­˜.
+	 */
+	private static ReferenceMap beanMethodsCache = new ReferenceMap(ReferenceMap.WEAK, ReferenceMap.SOFT);
 
-   /**
-    * »ñÈ¡ºÍÕâ¸öbeanÏà¹ØµÄ·½·¨.
-    *
-    * @param beanClass   beanÀà
-    * @return      beanÏà¹ØµÄ·½·¨ÁĞ±í
-    */
-   public static synchronized BeanMethodInfo[] getBeanMethods(Class beanClass)
-   {
-      BeanMethodInfo[] result = (BeanMethodInfo[]) beanMethodsCache.get(beanClass);
-      if (result != null)
-      {
-         return result;
-      }
+	/**
+	 * è·å–å’Œè¿™ä¸ªbeanç›¸å…³çš„æ–¹æ³•.
+	 *
+	 * @param beanClass   beanç±»
+	 * @return      beanç›¸å…³çš„æ–¹æ³•åˆ—è¡¨
+	 */
+	public static synchronized BeanMethodInfo[] getBeanMethods(Class beanClass)
+	{
+		BeanMethodInfo[] result = (BeanMethodInfo[]) beanMethodsCache.get(beanClass);
+		if (result != null)
+		{
+			return result;
+		}
 
-      Method[] methodList = beanClass.getMethods();
-      Map tmpMethodsCache = new LinkedHashMap();
-      for (int i = 0; i < methodList.length; i++)
-      {
-         Method method = methodList[i];
-         if (Modifier.isStatic(method.getModifiers()))
-         {
-            // ºöÂÔ¾²Ì¬·½·¨
-            continue;
-         }
+		Method[] methodList = beanClass.getMethods();
+		Map tmpMethodsCache = new LinkedHashMap();
+		for (int i = 0; i < methodList.length; i++)
+		{
+			Method method = methodList[i];
+			if (Modifier.isStatic(method.getModifiers()))
+			{
+				// å¿½ç•¥é™æ€æ–¹æ³•
+				continue;
+			}
 
-         String name = method.getName();
-         Class argTypes[] = method.getParameterTypes();
-         Class resultType = method.getReturnType();
-         int argCount = argTypes.length;
-         if (argCount == 0)
-         {
-            if (name.startsWith(GET_PREFIX) && !name.equals(GET_CLASS))
-            {
-               // Ò»°ãµÄget·½·¨
-               addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
-                     method, resultType, true, false);
-            }
-            else if (resultType == boolean.class && name.startsWith(IS_PREFIX))
-            {
-               // booleanÀàĞÍµÄget·½·¨
-               addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(2)),
-                     method, resultType, true, false);
-            }
-         }
-         else if (argCount == 1)
-         {
-            if (argTypes[0] == int.class && name.startsWith(GET_PREFIX))
-            {
-               // ´øË÷ÒıÖµµÄget·½·¨
-               addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
-                     method, resultType, true, true);
-            }
-            else if (resultType == void.class && name.startsWith(SET_PREFIX))
-            {
-               // Ò»°ãµÄset·½·¨
-               addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
-                     method, argTypes[0], false, false);
-            }
-         }
-         else if (argCount == 2)
-         {
-            if (argTypes[0] == int.class && name.startsWith(SET_PREFIX))
-            {
-               // ´øË÷ÒıÖµµÄset·½·¨
-               addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
-                     method, argTypes[1], false, true);
-            }
-         }
-      }
+			String name = method.getName();
+			Class argTypes[] = method.getParameterTypes();
+			Class resultType = method.getReturnType();
+			int argCount = argTypes.length;
+			if (argCount == 0)
+			{
+				if (name.startsWith(GET_PREFIX) && !name.equals(GET_CLASS))
+				{
+					// ä¸€èˆ¬çš„getæ–¹æ³•
+					addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
+							method, resultType, true, false);
+				}
+				else if (resultType == boolean.class && name.startsWith(IS_PREFIX))
+				{
+					// booleanç±»å‹çš„getæ–¹æ³•
+					addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(2)),
+							method, resultType, true, false);
+				}
+			}
+			else if (argCount == 1)
+			{
+				if (argTypes[0] == int.class && name.startsWith(GET_PREFIX))
+				{
+					// å¸¦ç´¢å¼•å€¼çš„getæ–¹æ³•
+					addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
+							method, resultType, true, true);
+				}
+				else if (resultType == void.class && name.startsWith(SET_PREFIX))
+				{
+					// ä¸€èˆ¬çš„setæ–¹æ³•
+					addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
+							method, argTypes[0], false, false);
+				}
+			}
+			else if (argCount == 2)
+			{
+				if (argTypes[0] == int.class && name.startsWith(SET_PREFIX))
+				{
+					// å¸¦ç´¢å¼•å€¼çš„setæ–¹æ³•
+					addBeanMethod(tmpMethodsCache, Introspector.decapitalize(name.substring(3)),
+							method, argTypes[1], false, true);
+				}
+			}
+		}
 
-      result = arrangeMethods(tmpMethodsCache);
-      beanMethodsCache.put(beanClass, result);
-      return result;
-   }
+		result = arrangeMethods(tmpMethodsCache);
+		beanMethodsCache.put(beanClass, result);
+		return result;
+	}
 
-   /**
-    * ÕûÀí»ñÈ¡µÄbean·½·¨.
-    */
-   private static BeanMethodInfo[] arrangeMethods(Map methodsCache)
-   {
-      List result = new ArrayList();
-      List list;
-      Iterator itr = methodsCache.values().iterator();
-      while (itr.hasNext())
-      {
-         list = (List) itr.next();
+	/**
+	 * æ•´ç†è·å–çš„beanæ–¹æ³•.
+	 */
+	private static BeanMethodInfo[] arrangeMethods(Map methodsCache)
+	{
+		List result = new ArrayList();
+		List list;
+		Iterator itr = methodsCache.values().iterator();
+		while (itr.hasNext())
+		{
+			list = (List) itr.next();
 
-         // Ã¿¸öbean·½·¨Ãû³Æ×î¶àÓĞ5¸ö·½·¨, is get set getI setI, ×î»µÇé¿ö
-         // ¾ÍÊÇÕâ5¸ö·½·¨µÄÀàĞÍ¶¼²»Ò»Ñù, Ã»Ò»×é·½·¨ºÏ²¢ÆğÀ´×î¶àÊÇÁ½ÖÖ.
-         // is/get ºÍ set
-         BeanMethodInfo[][] infos = new BeanMethodInfo[5][2];
+			// æ¯ä¸ªbeanæ–¹æ³•åç§°æœ€å¤šæœ‰5ä¸ªæ–¹æ³•, is get set getI setI, æœ€åæƒ…å†µ
+			// å°±æ˜¯è¿™5ä¸ªæ–¹æ³•çš„ç±»å‹éƒ½ä¸ä¸€æ ·, æ²¡ä¸€ç»„æ–¹æ³•åˆå¹¶èµ·æ¥æœ€å¤šæ˜¯ä¸¤ç§.
+			// is/get å’Œ set
+			BeanMethodInfo[][] infos = new BeanMethodInfo[5][2];
 
-         // ½«ËùÓĞµÄ·½·¨°´ÀàĞÍ·ÖÀà, ÕûÀíµ½ÉÏÃæµÄÊı×éÖĞ
-         for (int i = 0; i < list.size(); i++)
-         {
-            BeanMethodInfo info = (BeanMethodInfo) list.get(i);
-            for (int x = 0; x < infos.length; x++)
-            {
-               if (infos[x][0] != null)
-               {
-                  BeanMethodInfo tmp = infos[x][0];
-                  if (checkType(tmp, info))
-                  {
-                     if (tmp.doGet == info.doGet)
-                     {
-                        infos[x][0] = new BeanMethodInfo(tmp, info);
-                     }
-                     else if (infos[x][1] == null)
-                     {
-                        infos[x][1] = info;
-                     }
-                     else
-                     {
-                        infos[x][1] = new BeanMethodInfo(infos[x][1], info);;
-                     }
-                     break;
-                  }
-               }
-               else
-               {
-                  infos[x][0] = info;
-                  break;
-               }
-            }
-         }
+			// å°†æ‰€æœ‰çš„æ–¹æ³•æŒ‰ç±»å‹åˆ†ç±», æ•´ç†åˆ°ä¸Šé¢çš„æ•°ç»„ä¸­
+			for (int i = 0; i < list.size(); i++)
+			{
+				BeanMethodInfo info = (BeanMethodInfo) list.get(i);
+				for (int x = 0; x < infos.length; x++)
+				{
+					if (infos[x][0] != null)
+					{
+						BeanMethodInfo tmp = infos[x][0];
+						if (checkType(tmp, info))
+						{
+							if (tmp.doGet == info.doGet)
+							{
+								infos[x][0] = new BeanMethodInfo(tmp, info);
+							}
+							else if (infos[x][1] == null)
+							{
+								infos[x][1] = info;
+							}
+							else
+							{
+								infos[x][1] = new BeanMethodInfo(infos[x][1], info);;
+							}
+							break;
+						}
+					}
+					else
+					{
+						infos[x][0] = info;
+						break;
+					}
+				}
+			}
 
-         int rWeight = 0;
-         BeanMethodInfo[] r = null;
+			int rWeight = 0;
+			BeanMethodInfo[] r = null;
 
-         // ¼ÆËãÃ¿Ò»×éÕûÀí³öÀ´µÄÈ¨ÖØ, È¡×î¸ßµÄ
-         // È¨ÖØ¹æÔòÎª:
-         // ÓĞget                   +1
-         // ÓĞsetºÍget              +1
-         // ÓĞ»ù±¾·½·¨              +1
-         for (int i = 0; i < infos.length; i++)
-         {
-            if (infos[i][0] == null)
-            {
-               // Ã»ÓĞ·½·¨ĞÅÏ¢ÁËÔòÍË³ö
-               break;
-            }
-            int weitht = 0;
-            if (infos[i][1] != null)
-            {
-               // ÓĞsetºÍget
-               weitht++;
-               // ÓĞget  (Á½¸ö·½·¨¶¼´æÔÚ±Ø¶¨ÓĞget)
-               weitht++;
-               if (infos[i][1].method != null)
-               {
-                  // ÓĞ»ù±¾·½·¨
-                  weitht++;
-               }
-            }
-            else if (infos[i][0].doGet)
-            {
-               // ÓĞget
-               weitht++;
-            }
-            if (infos[i][0].method != null)
-            {
-               // ÓĞ»ù±¾·½·¨
-               weitht++;
-            }
+			// è®¡ç®—æ¯ä¸€ç»„æ•´ç†å‡ºæ¥çš„æƒé‡, å–æœ€é«˜çš„
+			// æƒé‡è§„åˆ™ä¸º:
+			// æœ‰get                   +1
+			// æœ‰setå’Œget              +1
+			// æœ‰åŸºæœ¬æ–¹æ³•              +1
+			for (int i = 0; i < infos.length; i++)
+			{
+				if (infos[i][0] == null)
+				{
+					// æ²¡æœ‰æ–¹æ³•ä¿¡æ¯äº†åˆ™é€€å‡º
+					break;
+				}
+				int weitht = 0;
+				if (infos[i][1] != null)
+				{
+					// æœ‰setå’Œget
+					weitht++;
+					// æœ‰get  (ä¸¤ä¸ªæ–¹æ³•éƒ½å­˜åœ¨å¿…å®šæœ‰get)
+					weitht++;
+					if (infos[i][1].method != null)
+					{
+						// æœ‰åŸºæœ¬æ–¹æ³•
+						weitht++;
+					}
+				}
+				else if (infos[i][0].doGet)
+				{
+					// æœ‰get
+					weitht++;
+				}
+				if (infos[i][0].method != null)
+				{
+					// æœ‰åŸºæœ¬æ–¹æ³•
+					weitht++;
+				}
 
-            if (weitht > rWeight)
-            {
-               // È¨ÖØ±ÈÔ­À´µÄ¸ßÔòÌæ»»Ô­À´µÄ
-               r = infos[i];
-               rWeight = weitht;
-            }
-         }
+				if (weitht > rWeight)
+				{
+					// æƒé‡æ¯”åŸæ¥çš„é«˜åˆ™æ›¿æ¢åŸæ¥çš„
+					r = infos[i];
+					rWeight = weitht;
+				}
+			}
 
-         if (r != null)
-         {
-            for (int i = 0; i < r.length; i++)
-            {
-               if (r[i] != null)
-               {
-                  result.add(r[i]);
-               }
-            }
-         }
-      }
-      return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
-   }
+			if (r != null)
+			{
+				for (int i = 0; i < r.length; i++)
+				{
+					if (r[i] != null)
+					{
+						result.add(r[i]);
+					}
+				}
+			}
+		}
+		return (BeanMethodInfo[]) result.toArray(new BeanMethodInfo[result.size()]);
+	}
 
-   /**
-    * ¼ì²éÁ½¸ö·½·¨ĞÅÏ¢µÄÀàĞÍÊÇ·ñÒ»ÖÂ.
-    */
-   private static boolean checkType(BeanMethodInfo info1, BeanMethodInfo info2)
-   {
-      if (info1.type != null && info2.type != null)
-      {
-         // Èç¹û»ù±¾ÀàĞÍ¶¼²»Îªnull, Ôò±ØĞëÏàÍ¬
-         return info1.type == info2.type;
-      }
-      if (info1.indexedType != null && info2.indexedType != null)
-      {
-         // Èç¹û´øË÷ÒıµÄÀàĞÍ¶¼²»Îªnull, Ôò±ØĞëÏàÍ¬
-         return info1.indexedType == info2.indexedType;
-      }
-      return checkIndexedType(info1.type, info2.indexedType)
-            || checkIndexedType(info2.type, info1.indexedType);
-   }
+	/**
+	 * æ£€æŸ¥ä¸¤ä¸ªæ–¹æ³•ä¿¡æ¯çš„ç±»å‹æ˜¯å¦ä¸€è‡´.
+	 */
+	private static boolean checkType(BeanMethodInfo info1, BeanMethodInfo info2)
+	{
+		if (info1.type != null && info2.type != null)
+		{
+			// å¦‚æœåŸºæœ¬ç±»å‹éƒ½ä¸ä¸ºnull, åˆ™å¿…é¡»ç›¸åŒ
+			return info1.type == info2.type;
+		}
+		if (info1.indexedType != null && info2.indexedType != null)
+		{
+			// å¦‚æœå¸¦ç´¢å¼•çš„ç±»å‹éƒ½ä¸ä¸ºnull, åˆ™å¿…é¡»ç›¸åŒ
+			return info1.indexedType == info2.indexedType;
+		}
+		return checkIndexedType(info1.type, info2.indexedType)
+				|| checkIndexedType(info2.type, info1.indexedType);
+	}
 
-   /**
-    * ¼ì²é´øË÷ÒıµÄÀàĞÍºÍ»ù±¾ÀàĞÍÊÇ·ñÊÇÒ»ÖÂµÄ.
-    */
-   private static boolean checkIndexedType(Class type, Class indexedType)
-   {
-      if (type == null || indexedType == null)
-      {
-         // ÈÎºÎÒ»¸öÎªnull, Ôò²»¿ÉÄÜÒ»ÖÂ
-         return false;
-      }
-      if (type == indexedType)
-      {
-         // Èç¹ûÁ½¸öÀàĞÍÏàÍ¬ÔòÒ»ÖÂ
-         return true;
-      }
-      if (type.isArray() && type.getComponentType() == indexedType)
-      {
-         // Èç¹û»ù±¾ÀàĞÍÎªÊı×é, ÇÒÊı×éÔªËØÀàĞÍºÍ´øË÷ÒıµÄÀàĞÍÏàÍ¬ÔòÒ»ÖÂ
-         return true;
-      }
-      if (Collection.class.isAssignableFrom(type))
-      {
-         // Èç¹û»ù±¾ÀàĞÍÊµÏÖÁËCollection, ÔòÈÏÎªÊÇÒ»ÖÂµÄ
-         return true;
-      }
-      // Ê£ÓàÇé¿ö¶¼Îª²»Ò»ÖÂ
-      return false;
-   }
+	/**
+	 * æ£€æŸ¥å¸¦ç´¢å¼•çš„ç±»å‹å’ŒåŸºæœ¬ç±»å‹æ˜¯å¦æ˜¯ä¸€è‡´çš„.
+	 */
+	private static boolean checkIndexedType(Class type, Class indexedType)
+	{
+		if (type == null || indexedType == null)
+		{
+			// ä»»ä½•ä¸€ä¸ªä¸ºnull, åˆ™ä¸å¯èƒ½ä¸€è‡´
+			return false;
+		}
+		if (type == indexedType)
+		{
+			// å¦‚æœä¸¤ä¸ªç±»å‹ç›¸åŒåˆ™ä¸€è‡´
+			return true;
+		}
+		if (type.isArray() && type.getComponentType() == indexedType)
+		{
+			// å¦‚æœåŸºæœ¬ç±»å‹ä¸ºæ•°ç»„, ä¸”æ•°ç»„å…ƒç´ ç±»å‹å’Œå¸¦ç´¢å¼•çš„ç±»å‹ç›¸åŒåˆ™ä¸€è‡´
+			return true;
+		}
+		if (Collection.class.isAssignableFrom(type))
+		{
+			// å¦‚æœåŸºæœ¬ç±»å‹å®ç°äº†Collection, åˆ™è®¤ä¸ºæ˜¯ä¸€è‡´çš„
+			return true;
+		}
+		// å‰©ä½™æƒ…å†µéƒ½ä¸ºä¸ä¸€è‡´
+		return false;
+	}
 
-   /**
-    * ÏòÁÙÊ±·½·¨»º´æÖĞÌí¼ÓÒ»¸ö·½·¨.
-    */
-   private static void addBeanMethod(Map methodsCache, String name, Method method, Class type,
-         boolean doGet, boolean withIndex)
-   {
-      BeanMethodInfo bmi;
-      if (withIndex)
-      {
-         bmi = new BeanMethodInfo(name, null, null, doGet, method, type);
-      }
-      else
-      {
-         bmi = new BeanMethodInfo(name, method, type, doGet, null, null);
-      }
-      List l = (List) methodsCache.get(name);
-      if (l == null)
-      {
-         l = new ArrayList();
-         methodsCache.put(name, l);
-      }
-      l.add(bmi);
-   }
+	/**
+	 * å‘ä¸´æ—¶æ–¹æ³•ç¼“å­˜ä¸­æ·»åŠ ä¸€ä¸ªæ–¹æ³•.
+	 */
+	private static void addBeanMethod(Map methodsCache, String name, Method method, Class type,
+			boolean doGet, boolean withIndex)
+	{
+		BeanMethodInfo bmi;
+		if (withIndex)
+		{
+			bmi = new BeanMethodInfo(name, null, null, doGet, method, type);
+		}
+		else
+		{
+			bmi = new BeanMethodInfo(name, method, type, doGet, null, null);
+		}
+		List l = (List) methodsCache.get(name);
+		if (l == null)
+		{
+			l = new ArrayList();
+			methodsCache.put(name, l);
+		}
+		l.add(bmi);
+	}
 
-   private static final String GET_CLASS = "getClass";
-   private static final String GET_PREFIX = "get";
-   private static final String SET_PREFIX = "set";
-   private static final String IS_PREFIX = "is";
+	private static final String GET_CLASS = "getClass";
+	private static final String GET_PREFIX = "get";
+	private static final String SET_PREFIX = "set";
+	private static final String IS_PREFIX = "is";
 
 }

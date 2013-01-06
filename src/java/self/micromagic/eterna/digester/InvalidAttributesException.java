@@ -2,20 +2,20 @@
 package self.micromagic.eterna.digester;
 
 /**
- * 当配置中没有设置需要的属性或子节点时, 会抛出此异常.
+ * 褰撻厤缃腑娌℃湁璁剧疆闇�瑕佺殑灞炴�ф垨瀛愯妭鐐规椂, 浼氭姏鍑烘寮傚父.
  *
  * @author micromagic@sina.com
  */
 public class InvalidAttributesException extends Exception
 {
-   public InvalidAttributesException()
-   {
-      super();
-   }
+	public InvalidAttributesException()
+	{
+		super();
+	}
 
-   public InvalidAttributesException(String message)
-   {
-      super(message);
-   }
+	public InvalidAttributesException(String message)
+	{
+		super(message);
+	}
 
 }

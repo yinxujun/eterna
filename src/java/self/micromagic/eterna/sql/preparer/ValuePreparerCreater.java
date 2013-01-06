@@ -5,55 +5,55 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 /**
- * Öµ×¼±¸Æ÷´´½¨Õß.
+ * å€¼å‡†å¤‡å™¨åˆ›å»ºè€….
  */
 public interface ValuePreparerCreater
 {
-   /**
-    * ÉèÖÃÄ¬ÈÏÊ¹ÓÃµÄValuePreparerCreater.
-    * ÕâÊÇÒ»¸öfactoryµÄarrtibute, ËüµÄÖµÊÇËù¶¨ÒåµÄvpcµÄÃû³Æ.
-    * Èç¹ûÃ»ÓĞÖ¸¶¨, factory»á×Ô¶¯Éú³ÉÒ»¸öÄ¬ÈÏµÄ.
-    */
-   public static final String DEFAULT_VPC_ATTRIBUTE = "default.vpc.name";
+	/**
+	 * è®¾ç½®é»˜è®¤ä½¿ç”¨çš„ValuePreparerCreater.
+	 * è¿™æ˜¯ä¸€ä¸ªfactoryçš„arrtibute, å®ƒçš„å€¼æ˜¯æ‰€å®šä¹‰çš„vpcçš„åç§°.
+	 * å¦‚æœæ²¡æœ‰æŒ‡å®š, factoryä¼šè‡ªåŠ¨ç”Ÿæˆä¸€ä¸ªé»˜è®¤çš„.
+	 */
+	public static final String DEFAULT_VPC_ATTRIBUTE = "default.vpc.name";
 
-   /**
-    * ÔÚvpc»òfactoryµÄÊôĞÔÖĞÉèÖÃ, ÊÇ·ñÒª½«¿Õ×Ö·û´®±äÎªnull, Ä¬ÈÏÖµÎªtrue.
-    * Èç¹ûvpcÖĞÉèÖÃÁËÖµ, ÔòºöÂÔfactoryÖĞµÄÉèÖÃ.
-    */
-   public static final String EMPTY_STRING_TO_NULL = "sql.emptyStringToNull";
+	/**
+	 * åœ¨vpcæˆ–factoryçš„å±æ€§ä¸­è®¾ç½®, æ˜¯å¦è¦å°†ç©ºå­—ç¬¦ä¸²å˜ä¸ºnull, é»˜è®¤å€¼ä¸ºtrue.
+	 * å¦‚æœvpcä¸­è®¾ç½®äº†å€¼, åˆ™å¿½ç•¥factoryä¸­çš„è®¾ç½®.
+	 */
+	public static final String EMPTY_STRING_TO_NULL = "sql.emptyStringToNull";
 
-   /**
-    * »ñÈ¡Éú³ÉÖµ×¼±¸Æ÷´´½¨ÕßµÄ¹¤³§.
-    */
-   EternaFactory getFactory() throws ConfigurationException;
+	/**
+	 * è·å–ç”Ÿæˆå€¼å‡†å¤‡å™¨åˆ›å»ºè€…çš„å·¥å‚.
+	 */
+	EternaFactory getFactory() throws ConfigurationException;
 
-   /**
-    * »ñµÃÒ»¸öÅäÖÃµÄÊôĞÔ.
-    *
-    * @param name    ÊôĞÔµÄÃû³Æ
-    * @return        ÊôĞÔµÄÖµ
-    */
-   Object getAttribute(String name) throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ªé…ç½®çš„å±æ€§.
+	 *
+	 * @param name    å±æ€§çš„åç§°
+	 * @return        å±æ€§çš„å€¼
+	 */
+	Object getAttribute(String name) throws ConfigurationException;
 
-   /**
-    * ÊÇ·ñÒª½«¿Õ×Ö·û´®±äÎªnull.
-    */
-   boolean isEmptyStringToNull();
+	/**
+	 * æ˜¯å¦è¦å°†ç©ºå­—ç¬¦ä¸²å˜ä¸ºnull.
+	 */
+	boolean isEmptyStringToNull();
 
-   /**
-    * ¸ù¾İÒ»¸öObjectÀàĞÍµÄÖµ´´½¨Ò»¸öÖµ×¼±¸Æ÷.
-    *
-    * @param value    Öµ
-    * @return      Öµ×¼±¸Æ÷
-    */
-   ValuePreparer createPreparer(Object value) throws ConfigurationException;
+	/**
+	 * æ ¹æ®ä¸€ä¸ªObjectç±»å‹çš„å€¼åˆ›å»ºä¸€ä¸ªå€¼å‡†å¤‡å™¨.
+	 *
+	 * @param value    å€¼
+	 * @return      å€¼å‡†å¤‡å™¨
+	 */
+	ValuePreparer createPreparer(Object value) throws ConfigurationException;
 
-   /**
-    * ¸ù¾İÒ»¸öStringÀàĞÍµÄÖµ´´½¨Ò»¸öÖµ×¼±¸Æ÷.
-    *
-    * @param value    Öµ
-    * @return      Öµ×¼±¸Æ÷
-    */
-   ValuePreparer createPreparer(String value) throws ConfigurationException;
+	/**
+	 * æ ¹æ®ä¸€ä¸ªStringç±»å‹çš„å€¼åˆ›å»ºä¸€ä¸ªå€¼å‡†å¤‡å™¨.
+	 *
+	 * @param value    å€¼
+	 * @return      å€¼å‡†å¤‡å™¨
+	 */
+	ValuePreparer createPreparer(String value) throws ConfigurationException;
 
 }

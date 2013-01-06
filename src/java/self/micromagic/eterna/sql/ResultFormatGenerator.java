@@ -6,34 +6,34 @@ import self.micromagic.eterna.share.Generator;
 
 public interface ResultFormatGenerator extends Generator
 {
-   /**
-    * ÉèÖÃÕâ¸öformatµÄÃû³Æ.
-    */
-   void setName(String name) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¿™ä¸ªformatçš„åç§°.
+	 */
+	void setName(String name) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Õâ¸öformatµÄÃû³Æ.
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–è¿™ä¸ªformatçš„åç§°.
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * ÉèÖÃÕâ¸öformatÒª¸ñÊ½»¯µÄ¶ÔÏóµÄÀàĞÍ.
-    */
-   void setType(String type) throws ConfigurationException;
+	/**
+	 * è®¾ç½®è¿™ä¸ªformatè¦æ ¼å¼åŒ–çš„å¯¹è±¡çš„ç±»å‹.
+	 */
+	void setType(String type) throws ConfigurationException;
 
-   /**
-    * ÉèÖÃ¸ñÊ½»¯Êä³öµÄÄ£°å.
-    * ¿ÉÒÔÉèÖÃÔÚpatternÊôĞÔÖĞ, Ò²¿ÉÒÔÉèÖÃÔÚpattern×Ó½ÚµãµÄbodyÖĞ.
-    * Èç¹ûÁ½¸ö¶¼ÉèÖÃ, ÄÇÈ¡patternÊôĞÔÖĞµÄÉèÖÃ.
-    */
-   void setPattern(String pattern) throws ConfigurationException;
+	/**
+	 * è®¾ç½®æ ¼å¼åŒ–è¾“å‡ºçš„æ¨¡æ¿.
+	 * å¯ä»¥è®¾ç½®åœ¨patternå±æ€§ä¸­, ä¹Ÿå¯ä»¥è®¾ç½®åœ¨patternå­èŠ‚ç‚¹çš„bodyä¸­.
+	 * å¦‚æœä¸¤ä¸ªéƒ½è®¾ç½®, é‚£å–patternå±æ€§ä¸­çš„è®¾ç½®.
+	 */
+	void setPattern(String pattern) throws ConfigurationException;
 
-   /**
-    * ´´½¨Ò»¸ö<code>ResultFormat</code>µÄÊµÀı. <p>
-    *
-    * @return <code>ResultFormat</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   ResultFormat createFormat() throws ConfigurationException;
+	/**
+	 * åˆ›å»ºä¸€ä¸ª<code>ResultFormat</code>çš„å®ä¾‹. <p>
+	 *
+	 * @return <code>ResultFormat</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	ResultFormat createFormat() throws ConfigurationException;
 
 }

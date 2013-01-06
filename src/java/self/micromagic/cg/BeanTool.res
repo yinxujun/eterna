@@ -1,3 +1,5 @@
+# @author micromagic@sina.com
+#
 # 获取map中的数据
 ## mapSet.getMapValue
 ${tmpStr} = ${prefixName}.length() == 0 ? "${pName}" : ${prefixName} + "${pName}";
@@ -163,117 +165,119 @@ if (${tmpObjName} != null)
 # BeanMap对bean类型进行转换
 ## beanMap.convertBeanType
 ${className} ${tempItemName} = null;
-if (${tmpObjName} == null)
+if (${tmpObjName} != null)
 {
-	${tempItemName} = null;
-}
-else if (${tmpObjName} instanceof ${className})
-{
-	${tempItemName} = (${className}) ${tmpObjName};
-	${settedCountName}++;
-}
-else if (${tmpObjName} instanceof Map)
-{
-	if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+	if (${tmpObjName} instanceof ${className})
 	{
-		${tempItemName} = (${className}) ${oldValueName};
+		${tempItemName} = (${className}) ${tmpObjName};
+		${settedCountName}++;
 	}
-	else
+	else if (${tmpObjName} instanceof Map)
 	{
-		${tempItemName} = new ${className}();
+		if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+		{
+			${tempItemName} = (${className}) ${oldValueName};
+		}
+		else
+		{
+			${tempItemName} = new ${className}();
+		}
+		int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues((Map) ${tmpObjName});
+		if (tempCount > 0)
+		{
+			${settedCountName} += tempCount;
+		}
+		else
+		{
+			${tempItemName} = null;
+		}
 	}
-	int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues((Map) ${tmpObjName});
-	if (tempCount > 0)
+	else if (${tmpObjName} instanceof ResultRow)
 	{
-		${settedCountName} += tempCount;
+		if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+		{
+			${tempItemName} = (${className}) ${oldValueName};
+		}
+		else
+		{
+			${tempItemName} = new ${className}();
+		}
+		int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues((ResultRow) ${tmpObjName});
+		if (tempCount > 0)
+		{
+			${settedCountName} += tempCount;
+		}
+		else
+		{
+			${tempItemName} = null;
+		}
 	}
-	else
+	else if (BeanTool.checkBean(${tmpObjName}.getClass()))
 	{
-		${tempItemName} = null;
-	}
-}
-else if (${tmpObjName} instanceof ResultRow)
-{
-	if (${oldValueName} != null && ${oldValueName} instanceof ${className})
-	{
-		${tempItemName} = (${className}) ${oldValueName};
-	}
-	else
-	{
-		${tempItemName} = new ${className}();
-	}
-	int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues((ResultRow) ${tmpObjName});
-	if (tempCount > 0)
-	{
-		${settedCountName} += tempCount;
-	}
-	else
-	{
-		${tempItemName} = null;
-	}
-}
-else if (${originObjName} instanceof Map)
-{
-	if (${oldValueName} != null && ${oldValueName} instanceof ${className})
-	{
-		${tempItemName} = (${className}) ${oldValueName};
-	}
-	else
-	{
-		${tempItemName} = new ${className}();
-	}
-	int tempCount = BeanTool.getBeanMap(${tempItemName}, ${prefixName} + "${pName}.")
-			.setValues((Map) ${originObjName});
-	if (tempCount > 0)
-	{
-		${settedCountName} += tempCount;
-	}
-	else
-	{
-		${tempItemName} = null;
-	}
-}
-else if (${originObjName} instanceof ResultRow)
-{
-	if (${oldValueName} != null && ${oldValueName} instanceof ${className})
-	{
-		${tempItemName} = (${className}) ${oldValueName};
-	}
-	else
-	{
-		${tempItemName} = new ${className}();
-	}
-	int tempCount = BeanTool.getBeanMap(${tempItemName}, ${prefixName} + "${pName}.")
-			.setValues((ResultRow) ${originObjName});
-	if (tempCount > 0)
-	{
-		${settedCountName} += tempCount;
-	}
-	else
-	{
-		${tempItemName} = null;
+		if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+		{
+			${tempItemName} = (${className}) ${oldValueName};
+		}
+		else
+		{
+			${tempItemName} = new ${className}();
+		}
+		BeanMap _beanMap = BeanTool.getBeanMap(${tmpObjName});
+		_beanMap.setBean2Map(true);
+		int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues(_beanMap);
+		if (tempCount > 0)
+		{
+			${settedCountName} += tempCount;
+		}
+		else
+		{
+			${tempItemName} = null;
+		}
 	}
 }
-else if (BeanTool.checkBean(${tmpObjName}.getClass()))
+if (${tempItemName} == null)
 {
-	if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+	if (${originObjName} instanceof Map)
 	{
-		${tempItemName} = (${className}) ${oldValueName};
+		if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+		{
+			${tempItemName} = (${className}) ${oldValueName};
+		}
+		else
+		{
+			${tempItemName} = new ${className}();
+		}
+		int tempCount = BeanTool.getBeanMap(${tempItemName}, ${prefixName} + "${pName}.")
+				.setValues((Map) ${originObjName});
+		if (tempCount > 0)
+		{
+			${settedCountName} += tempCount;
+		}
+		else
+		{
+			${tempItemName} = null;
+		}
 	}
-	else
+	else if (${originObjName} instanceof ResultRow)
 	{
-		${tempItemName} = new ${className}();
-	}
-	BeanMap _beanMap = BeanTool.getBeanMap(${tmpObjName});
-	_beanMap.setBean2Map(true);
-	int tempCount = BeanTool.getBeanMap(${tempItemName}).setValues(_beanMap);
-	if (tempCount > 0)
-	{
-		${settedCountName} += tempCount;
-	}
-	else
-	{
-		${tempItemName} = null;
+		if (${oldValueName} != null && ${oldValueName} instanceof ${className})
+		{
+			${tempItemName} = (${className}) ${oldValueName};
+		}
+		else
+		{
+			${tempItemName} = new ${className}();
+		}
+		int tempCount = BeanTool.getBeanMap(${tempItemName}, ${prefixName} + "${pName}.")
+				.setValues((ResultRow) ${originObjName});
+		if (tempCount > 0)
+		{
+			${settedCountName} += tempCount;
+		}
+		else
+		{
+			${tempItemName} = null;
+		}
 	}
 }
 
@@ -505,6 +509,11 @@ if (${arrayObj} instanceof int${arrayDef})
 	int${arrayDef} tmpArr = (int${arrayDef}) ${arrayObj};
 	return this.wrapArray(tmpArr);
 }
+else if (${arrayObj} instanceof byte${arrayDef})
+{
+	byte${arrayDef} tmpArr = (byte${arrayDef}) ${arrayObj};
+	return this.wrapArray(tmpArr);
+}
 else if (${arrayObj} instanceof double${arrayDef})
 {
 	double${arrayDef} tmpArr = (double${arrayDef}) ${arrayObj};
@@ -518,11 +527,6 @@ else if (${arrayObj} instanceof boolean${arrayDef})
 else if (${arrayObj} instanceof long${arrayDef})
 {
 	long${arrayDef} tmpArr = (long${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof byte${arrayDef})
-{
-	byte${arrayDef} tmpArr = (byte${arrayDef}) ${arrayObj};
 	return this.wrapArray(tmpArr);
 }
 else if (${arrayObj} instanceof char${arrayDef})

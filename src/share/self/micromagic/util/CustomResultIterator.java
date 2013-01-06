@@ -13,31 +13,31 @@ import self.micromagic.eterna.sql.impl.AbstractResultIterator;
 import self.micromagic.eterna.sql.impl.ResultRowImpl;
 
 public class CustomResultIterator extends AbstractResultIterator
-      implements ResultIterator
+		implements ResultIterator
 {
-   private int recordCount = 0;
-   private Permission permission;
+	private int recordCount = 0;
+	private Permission permission;
 
-   public CustomResultIterator(ResultReaderManager rrm, Permission permission)
-         throws ConfigurationException
-   {
-      super(rrm, permission);
-      this.permission = permission;
-      this.result = new LinkedList();
-   }
+	public CustomResultIterator(ResultReaderManager rrm, Permission permission)
+			throws ConfigurationException
+	{
+		super(rrm, permission);
+		this.permission = permission;
+		this.result = new LinkedList();
+	}
 
 	private CustomResultIterator(Permission permission)
 	{
 		this.permission = permission;
 	}
 
-   public ResultRow createRow(Object[] values)
-         throws ConfigurationException
-   {
-      if (values.length != this.readerManager.getReaderCount())
-      {
-         throw new ConfigurationException("The values count must same as the ResultReaderManager's readers count.");
-      }
+	public ResultRow createRow(Object[] values)
+			throws ConfigurationException
+	{
+		if (values.length != this.readerManager.getReaderCount())
+		{
+			throw new ConfigurationException("The values count must same as the ResultReaderManager's readers count.");
+		}
 		try
 		{
 			ResultRow row = new ResultRowImpl(values, this, this.permission);
@@ -48,33 +48,33 @@ public class CustomResultIterator extends AbstractResultIterator
 		{
 			throw new ConfigurationException(ex);
 		}
-   }
+	}
 
-   public void finishCreateRow()
-   {
-      this.resultItr = this.result.iterator();
-      this.recordCount = this.result.size();
-   }
+	public void finishCreateRow()
+	{
+		this.resultItr = this.result.iterator();
+		this.recordCount = this.result.size();
+	}
 
-   public int getRealRecordCount()
-   {
-      return this.recordCount;
-   }
+	public int getRealRecordCount()
+	{
+		return this.recordCount;
+	}
 
-   public int getRecordCount()
-   {
-      return this.recordCount;
-   }
+	public int getRecordCount()
+	{
+		return this.recordCount;
+	}
 
-   public boolean isRealRecordCountAvailable()
-   {
-      return true;
-   }
+	public boolean isRealRecordCountAvailable()
+	{
+		return true;
+	}
 
-   public boolean isHasMoreRecord()
-   {
-      return false;
-   }
+	public boolean isHasMoreRecord()
+	{
+		return false;
+	}
 
 	public ResultIterator copy()
 			throws ConfigurationException

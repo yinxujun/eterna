@@ -7,36 +7,36 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 
 /**
- * ÎÄ±¾×ÊÔ´
+ * æ–‡æœ¬èµ„æº
  */
 public interface Resource
 {
-   /**
-    * ³õÊ¼»¯´ËÎÄ±¾×ÊÔ´.
-    */
-   void initialize(EternaFactory factory) throws ConfigurationException;
+	/**
+	 * åˆå§‹åŒ–æ­¤æ–‡æœ¬èµ„æº.
+	 */
+	void initialize(EternaFactory factory) throws ConfigurationException;
 
-   /**
-    * »ñÈ¡´ËÎÄ±¾×ÊÔ´µÄÃû³Æ. <p>
-    */
-   String getName() throws ConfigurationException;
+	/**
+	 * è·å–æ­¤æ–‡æœ¬èµ„æºçš„åç§°. <p>
+	 */
+	String getName() throws ConfigurationException;
 
-   /**
-    * »ñµÃ½âÎöºóµÄ×ÊÔ´µü´úÁĞ±í.
-    */
-   Iterator getParsedRessource() throws ConfigurationException;
+	/**
+	 * è·å¾—è§£æåçš„èµ„æºè¿­ä»£åˆ—è¡¨.
+	 */
+	Iterator getParsedRessource() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡Ã»ÓĞ²ÎÊıµÄÎÄ±¾×ÊÔ´µÄÖµ. <p>
-    * Èç¹û¸ÃÎÄ±¾×ÊÔ´ÓĞ²ÎÊı, ÔòÄ¬ÈÏÎª¿Õ×Ö·û´®.
-    */
-   String getValue() throws ConfigurationException;
+	/**
+	 * è·å–æ²¡æœ‰å‚æ•°çš„æ–‡æœ¬èµ„æºçš„å€¼. <p>
+	 * å¦‚æœè¯¥æ–‡æœ¬èµ„æºæœ‰å‚æ•°, åˆ™é»˜è®¤ä¸ºç©ºå­—ç¬¦ä¸².
+	 */
+	String getValue() throws ConfigurationException;
 
-   /**
-    * »ñÈ¡´øÓĞ²ÎÊıµÄÎÄ±¾×ÊÔ´µÄÖµ. <p>
-    * Èç¹û¸ÃÎÄ±¾×ÊÔ´µÄ²ÎÊı³¬³öÁËÉèÖÃµÄ²ÎÊı, Ôò
-    * ¶à³öµÄ²ÎÊıÄ¬ÈÏÎª¿Õ×Ö·û´®.
-    */
-   String getValue(Object[] params) throws ConfigurationException;
+	/**
+	 * è·å–å¸¦æœ‰å‚æ•°çš„æ–‡æœ¬èµ„æºçš„å€¼. <p>
+	 * å¦‚æœè¯¥æ–‡æœ¬èµ„æºçš„å‚æ•°è¶…å‡ºäº†è®¾ç½®çš„å‚æ•°, åˆ™
+	 * å¤šå‡ºçš„å‚æ•°é»˜è®¤ä¸ºç©ºå­—ç¬¦ä¸².
+	 */
+	String getValue(Object[] params) throws ConfigurationException;
 
 }

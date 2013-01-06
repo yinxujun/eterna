@@ -18,180 +18,180 @@ import self.micromagic.util.ObjectRef;
 import org.apache.commons.logging.Log;
 
 /**
- * »ù´¡Ö´ĞĞÆ÷. <p>
- * ÊµÏÖÁË<code>self.micromagic.eterna.model.Execute</code>½Ó¿Ú.
- * ÌØÊâ³õÊ¼»¯ÄÚÈİ, ¿ÉÖØĞ´plusInit·½·¨.
- * ¾ßÌåµÄÒµÎñÂß¼­, ¿ÉÖØĞ´dealProcess·½·¨.
+ * åŸºç¡€æ‰§è¡Œå™¨. <p>
+ * å®ç°äº†<code>self.micromagic.eterna.model.Execute</code>æ¥å£.
+ * ç‰¹æ®Šåˆå§‹åŒ–å†…å®¹, å¯é‡å†™plusInitæ–¹æ³•.
+ * å…·ä½“çš„ä¸šåŠ¡é€»è¾‘, å¯é‡å†™dealProcessæ–¹æ³•.
  */
 public class BaseExecute extends AbstractExecute
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   /**
-    * ±êÊ¶ÊÇ·ñÊÇÊ¹ÓÃÊı¾İ¼¯ÖĞµÄÖ¸¶¨ÖµÀ´×÷ÎªÊôĞÔÖµ.
-    */
-   public static final String DATA_ATTRIBUTE_NAME_PREFIX = "$data.";
+	/**
+	 * æ ‡è¯†æ˜¯å¦æ˜¯ä½¿ç”¨æ•°æ®é›†ä¸­çš„æŒ‡å®šå€¼æ¥ä½œä¸ºå±æ€§å€¼.
+	 */
+	public static final String DATA_ATTRIBUTE_NAME_PREFIX = "$data.";
 
-   /**
-    * ´ËÊôĞÔ»áÔÚ³õÊ¼»¯Ê±¸³Öµ, ¿ÉÔÚĞèÒªÊ±Ê¹ÓÃ.
-    */
-   protected EternaFactory factory;
+	/**
+	 * æ­¤å±æ€§ä¼šåœ¨åˆå§‹åŒ–æ—¶èµ‹å€¼, å¯åœ¨éœ€è¦æ—¶ä½¿ç”¨.
+	 */
+	protected EternaFactory factory;
 
-   /**
-    * Ä¬ÈÏÖµÔÚ³õÊ¼»¯Ê±ÉèÖÃ, Îªµ±Ç°µÄÀàÃû.
-    */
-   protected String executeType;
+	/**
+	 * é»˜è®¤å€¼åœ¨åˆå§‹åŒ–æ—¶è®¾ç½®, ä¸ºå½“å‰çš„ç±»å.
+	 */
+	protected String executeType;
 
-   /**
-    * ÈÕÖ¾¼ÇÂ¼.
-    */
-   protected static final Log log = WebApp.log;
+	/**
+	 * æ—¥å¿—è®°å½•.
+	 */
+	protected static final Log log = WebApp.log;
 
-   /**
-    * ÊµÏÖÁË<code>self.micromagic.eterna.model.Execute</code>½Ó¿ÚµÄ³õÊ¼»¯·½·¨.
-    * Èç¹û»¹ÓĞÌØÊâ³õÊ¼»¯ÄÚÈİ, ¿ÉÖØĞ´plusInit·½·¨.
-    *
-    * @see #plusInit
-    */
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      if (this.initialized)
-      {
-         return;
-      }
-      super.initialize(model);
-      this.factory = model.getFactory();
-      this.executeType = "class:" + ClassGenerator.getClassName(this.getClass());
-      this.plusInit();
-   }
+	/**
+	 * å®ç°äº†<code>self.micromagic.eterna.model.Execute</code>æ¥å£çš„åˆå§‹åŒ–æ–¹æ³•.
+	 * å¦‚æœè¿˜æœ‰ç‰¹æ®Šåˆå§‹åŒ–å†…å®¹, å¯é‡å†™plusInitæ–¹æ³•.
+	 *
+	 * @see #plusInit
+	 */
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		if (this.initialized)
+		{
+			return;
+		}
+		super.initialize(model);
+		this.factory = model.getFactory();
+		this.executeType = "class:" + ClassGenerator.getClassName(this.getClass());
+		this.plusInit();
+	}
 
-   /**
-    * ÌØÊâ³õÊ¼»¯ÄÚÈİ¿ÉÖØĞ´´Ë·½·¨ÊµÏÖ.
-    */
-   protected void plusInit()
-         throws ConfigurationException
-   {
-   }
+	/**
+	 * ç‰¹æ®Šåˆå§‹åŒ–å†…å®¹å¯é‡å†™æ­¤æ–¹æ³•å®ç°.
+	 */
+	protected void plusInit()
+			throws ConfigurationException
+	{
+	}
 
-   /**
-    * ÊµÏÖÁË<code>self.micromagic.eterna.model.Execute</code>½Ó¿ÚµÄ·½·¨,
-    * ·µ»Øµ±Ç°Ö´ĞĞÆ÷µÄÀàĞÍ.
-    */
-   public String getExecuteType()
-         throws ConfigurationException
-   {
-      return this.executeType;
-   }
+	/**
+	 * å®ç°äº†<code>self.micromagic.eterna.model.Execute</code>æ¥å£çš„æ–¹æ³•,
+	 * è¿”å›å½“å‰æ‰§è¡Œå™¨çš„ç±»å‹.
+	 */
+	public String getExecuteType()
+			throws ConfigurationException
+	{
+		return this.executeType;
+	}
 
-   /**
-    * ÊµÏÖÁË<code>self.micromagic.eterna.model.Execute</code>½Ó¿ÚµÄÖ´ĞĞ·½·¨,
-    * ¾ßÌåµÄÒµÎñÂß¼­, ¿ÉÖØĞ´dealProcess·½·¨.
-    *
-    * @see #plusInit
-    */
-   public ModelExport execute(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException
-   {
-      try
-      {
-         return this.dealProcess(data, conn);
-      }
-      catch (InnerExport e)
-      {
-         return e.export;
-      }
-   }
+	/**
+	 * å®ç°äº†<code>self.micromagic.eterna.model.Execute</code>æ¥å£çš„æ‰§è¡Œæ–¹æ³•,
+	 * å…·ä½“çš„ä¸šåŠ¡é€»è¾‘, å¯é‡å†™dealProcessæ–¹æ³•.
+	 *
+	 * @see #plusInit
+	 */
+	public ModelExport execute(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException
+	{
+		try
+		{
+			return this.dealProcess(data, conn);
+		}
+		catch (InnerExport e)
+		{
+			return e.export;
+		}
+	}
 
-   /**
-    * ¾ßÌåµÄÒµÎñÂß¼­¿ÉÖØĞ´´Ë·½·¨ÊµÏÖ.
-    */
-   protected ModelExport dealProcess(AppData data, Connection conn)
-         throws ConfigurationException, SQLException, IOException, InnerExport
-   {
-      return null;
-   }
+	/**
+	 * å…·ä½“çš„ä¸šåŠ¡é€»è¾‘å¯é‡å†™æ­¤æ–¹æ³•å®ç°.
+	 */
+	protected ModelExport dealProcess(AppData data, Connection conn)
+			throws ConfigurationException, SQLException, IOException, InnerExport
+	{
+		return null;
+	}
 
-   /**
-    * Í¨¹ıÖ¸¶¨exportµÄÃû³ÆÀ´Ö´ĞĞÌø×ª.
-    *
-    * @param exportName    Ö´ĞĞÌø×ªµÄexportµÄÃû³Æ
-    */
-   protected ModelExport doExport(String exportName)
-         throws ConfigurationException, SQLException, IOException, InnerExport
-   {
-      ModelExport export = this.factory.getModelExport(exportName);
-      if (export == null)
-      {
-            log.warn("The ModelExport [" + exportName + "] not found.");
-      }
-      else
-      {
-         throw new InnerExport(export);
-      }
-      return export;
-   }
+	/**
+	 * é€šè¿‡æŒ‡å®šexportçš„åç§°æ¥æ‰§è¡Œè·³è½¬.
+	 *
+	 * @param exportName    æ‰§è¡Œè·³è½¬çš„exportçš„åç§°
+	 */
+	protected ModelExport doExport(String exportName)
+			throws ConfigurationException, SQLException, IOException, InnerExport
+	{
+		ModelExport export = this.factory.getModelExport(exportName);
+		if (export == null)
+		{
+				log.warn("The ModelExport [" + exportName + "] not found.");
+		}
+		else
+		{
+			throw new InnerExport(export);
+		}
+		return export;
+	}
 
-   /**
-    * Í¨¹ıÖ¸¶¨Ãû³ÆÀ´µ÷ÓÃÒ»¸ömodel.
-    *
-    * @param modelName    Òªµ÷ÓÃµÄmodelµÄÃû³Æ
-    */
-   protected ModelExport callModel(AppData data, Connection conn, String modelName)
-         throws ConfigurationException, SQLException, IOException, InnerExport
-   {
-      return this.callModel(data, conn, modelName, false);
-   }
+	/**
+	 * é€šè¿‡æŒ‡å®šåç§°æ¥è°ƒç”¨ä¸€ä¸ªmodel.
+	 *
+	 * @param modelName    è¦è°ƒç”¨çš„modelçš„åç§°
+	 */
+	protected ModelExport callModel(AppData data, Connection conn, String modelName)
+			throws ConfigurationException, SQLException, IOException, InnerExport
+	{
+		return this.callModel(data, conn, modelName, false);
+	}
 
-   /**
-    * Í¨¹ıÖ¸¶¨Ãû³ÆÀ´µ÷ÓÃÒ»¸ömodel.
-    *
-    * @param modelName    Òªµ÷ÓÃµÄmodelµÄÃû³Æ
-    * @param noJump       ÉèÎª<code>true</code>, ÔòÈÎºÎÇé¿ö¶¼²»»áÌø³ö
-    */
-   protected ModelExport callModel(AppData data, Connection conn, String modelName, boolean noJump)
-         throws ConfigurationException, SQLException, IOException, InnerExport
-   {
-      ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
-      ModelAdapter tmpModel = this.factory.createModelAdapter(modelName);
-      int tType = tmpModel.getTransactionType();
-      if (noJump)
-      {
-         try
-         {
-            return this.factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
-         }
-         catch (Throwable ex)
-         {
-            log.error("Error in call model", ex);
-            return null;
-         }
-      }
-      else
-      {
-         ModelExport export = this.factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
-         if (export != null)
-         {
-            throw new InnerExport(export);
-         }
-         return null;
-      }
-   }
+	/**
+	 * é€šè¿‡æŒ‡å®šåç§°æ¥è°ƒç”¨ä¸€ä¸ªmodel.
+	 *
+	 * @param modelName    è¦è°ƒç”¨çš„modelçš„åç§°
+	 * @param noJump       è®¾ä¸º<code>true</code>, åˆ™ä»»ä½•æƒ…å†µéƒ½ä¸ä¼šè·³å‡º
+	 */
+	protected ModelExport callModel(AppData data, Connection conn, String modelName, boolean noJump)
+			throws ConfigurationException, SQLException, IOException, InnerExport
+	{
+		ObjectRef preConn = (ObjectRef) data.getSpcialData(ModelAdapter.MODEL_CACHE, ModelAdapter.PRE_CONN);
+		ModelAdapter tmpModel = this.factory.createModelAdapter(modelName);
+		int tType = tmpModel.getTransactionType();
+		if (noJump)
+		{
+			try
+			{
+				return this.factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+			}
+			catch (Throwable ex)
+			{
+				log.error("Error in call model", ex);
+				return null;
+			}
+		}
+		else
+		{
+			ModelExport export = this.factory.getModelCaller().callModel(data, tmpModel, null, tType, preConn);
+			if (export != null)
+			{
+				throw new InnerExport(export);
+			}
+			return null;
+		}
+	}
 
-   /**
-    * Èç¹ûµ÷ÓÃmodelºóĞèÒªÁ¢¿Ì×ªÏòÒ»¸ö<code>ModelExport</code>, ¿ÉÒÔÅ×³ö´ËÒì³£.
-    */
-   protected static class InnerExport extends RuntimeException
-   {
-      /**
-       * ÒªÁ¢¿Ì×ªÏòµÄ<code>ModelExport</code>.
-       */
-      public final ModelExport export;
+	/**
+	 * å¦‚æœè°ƒç”¨modelåéœ€è¦ç«‹åˆ»è½¬å‘ä¸€ä¸ª<code>ModelExport</code>, å¯ä»¥æŠ›å‡ºæ­¤å¼‚å¸¸.
+	 */
+	protected static class InnerExport extends RuntimeException
+	{
+		/**
+		 * è¦ç«‹åˆ»è½¬å‘çš„<code>ModelExport</code>.
+		 */
+		public final ModelExport export;
 
-      public InnerExport(ModelExport export)
-      {
-         this.export = export;
-      }
+		public InnerExport(ModelExport export)
+		{
+			this.export = export;
+		}
 
-   }
+	}
 
 }

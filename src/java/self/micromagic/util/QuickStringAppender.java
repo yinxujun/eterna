@@ -4,253 +4,253 @@ package self.micromagic.util;
 import java.lang.reflect.Constructor;
 
 /**
- * Ò»¸ö¿ìËÙµÄ×Ö·û´®Æ´½Ó¹¤¾ß.
+ * ä¸€ä¸ªå¿«é€Ÿçš„å­—ç¬¦ä¸²æ‹¼æ¥å·¥å…·.
  */
 class QuickStringAppender
-      implements StringAppender, StringTool.StringAppenderCreater
+		implements StringAppender, StringTool.StringAppenderCreater
 {
-   /**
-    * ÓÃÓÚ´æ´¢×Ö·û.
-    */
-   private char value[];
+	/**
+	 * ç”¨äºå­˜å‚¨å­—ç¬¦.
+	 */
+	private char value[];
 
-   /**
-    * ×Ö·ûµÄ¸öÊı.
-    */
-   private int count;
+	/**
+	 * å­—ç¬¦çš„ä¸ªæ•°.
+	 */
+	private int count;
 
-   QuickStringAppender()
-   {
-   }
-
-   public QuickStringAppender(int length)
-   {
-	   this.value = new char[length];
-   }
-
-   public StringAppender create(int initSize)
-   {
-      return new QuickStringAppender(initSize);
-   }
-
-   /**
-    * ¶Ô×Ö·ûµÄ´æ´¢¿Õ¼ä½øĞĞÀ©Õ¹.
-    */
-   private void expandCapacity(int minimumCapacity)
-   {
-	   int newCapacity = (this.value.length + 1) * 2;
-      if (newCapacity < 0)
-      {
-         newCapacity = Integer.MAX_VALUE;
-      }
-      else if (minimumCapacity > newCapacity)
-      {
-	      newCapacity = minimumCapacity;
-      }
-      char[] newValue = new char[newCapacity];
-      System.arraycopy(this.value, 0, newValue, 0, this.count);
-      this.value = newValue;
+	QuickStringAppender()
+	{
 	}
 
-   public StringAppender append(Object obj)
-   {
-      return this.append(String.valueOf(obj));
-   }
+	public QuickStringAppender(int length)
+	{
+		this.value = new char[length];
+	}
 
-   public StringAppender append(String str)
-   {
-      if (str == null)
-      {
-	      str = String.valueOf(str);
-	   }
-      int len = str.length();
-      int newcount = this.count + len;
-      if (newcount > this.value.length)
-      {
-         this.expandCapacity(newcount);
-      }
-      str.getChars(0, len, this.value, this.count);
-      this.count = newcount;
-      return this;
-   }
+	public StringAppender create(int initSize)
+	{
+		return new QuickStringAppender(initSize);
+	}
 
-   public StringAppender append(String str, int startIndex, int length)
-   {
-      if (str == null)
-      {
-         return this.append(String.valueOf(str));
-      }
-      if (length > 0)
-      {
-	      int newcount = this.count + length;
-         if (newcount > this.value.length)
-         {
-            this.expandCapacity(newcount);
-         }
-         str.getChars(startIndex, startIndex + length, this.value, this.count);
-         this.count = newcount;
-      }
-      return this;
-   }
+	/**
+	 * å¯¹å­—ç¬¦çš„å­˜å‚¨ç©ºé—´è¿›è¡Œæ‰©å±•.
+	 */
+	private void expandCapacity(int minimumCapacity)
+	{
+		int newCapacity = (this.value.length + 1) * 2;
+		if (newCapacity < 0)
+		{
+			newCapacity = Integer.MAX_VALUE;
+		}
+		else if (minimumCapacity > newCapacity)
+		{
+			newCapacity = minimumCapacity;
+		}
+		char[] newValue = new char[newCapacity];
+		System.arraycopy(this.value, 0, newValue, 0, this.count);
+		this.value = newValue;
+	}
 
-   public StringAppender append(char[] chars)
-   {
-	   int len = chars.length;
-	   int newcount = this.count + len;
-	   if (newcount > this.value.length)
-      {
-	      this.expandCapacity(newcount);
-      }
-	   System.arraycopy(chars, 0, this.value, this.count, len);
-	   this.count = newcount;
-	   return this;
-   }
+	public StringAppender append(Object obj)
+	{
+		return this.append(String.valueOf(obj));
+	}
 
-   public StringAppender append(char[] chars, int startIndex, int length)
-   {
-      int newcount = this.count + length;
-	   if (newcount > this.value.length)
-      {
-	      this.expandCapacity(newcount);
-      }
-	   System.arraycopy(chars, startIndex, this.value, this.count, length);
-	   this.count = newcount;
-	   return this;
-   }
+	public StringAppender append(String str)
+	{
+		if (str == null)
+		{
+			str = String.valueOf(str);
+		}
+		int len = str.length();
+		int newcount = this.count + len;
+		if (newcount > this.value.length)
+		{
+			this.expandCapacity(newcount);
+		}
+		str.getChars(0, len, this.value, this.count);
+		this.count = newcount;
+		return this;
+	}
 
-   public StringAppender append(boolean value)
-   {
-	   return this.append(value ? "true" : "false");
-   }
+	public StringAppender append(String str, int startIndex, int length)
+	{
+		if (str == null)
+		{
+			return this.append(String.valueOf(str));
+		}
+		if (length > 0)
+		{
+			int newcount = this.count + length;
+			if (newcount > this.value.length)
+			{
+				this.expandCapacity(newcount);
+			}
+			str.getChars(startIndex, startIndex + length, this.value, this.count);
+			this.count = newcount;
+		}
+		return this;
+	}
 
-   public StringAppender append(char ch)
-   {
-      int newcount = this.count + 1;
-	   if (newcount > this.value.length)
-      {
-	      this.expandCapacity(newcount);
-      }
-	   this.value[this.count++] = ch;
-	   return this;
-   }
+	public StringAppender append(char[] chars)
+	{
+		int len = chars.length;
+		int newcount = this.count + len;
+		if (newcount > this.value.length)
+		{
+			this.expandCapacity(newcount);
+		}
+		System.arraycopy(chars, 0, this.value, this.count, len);
+		this.count = newcount;
+		return this;
+	}
 
-   public StringAppender append(int value)
-   {
-	   return this.append(Integer.toString(value, 10));
-   }
+	public StringAppender append(char[] chars, int startIndex, int length)
+	{
+		int newcount = this.count + length;
+		if (newcount > this.value.length)
+		{
+			this.expandCapacity(newcount);
+		}
+		System.arraycopy(chars, startIndex, this.value, this.count, length);
+		this.count = newcount;
+		return this;
+	}
 
-   public StringAppender append(long value)
-   {
-	   return this.append(Long.toString(value, 10));
-   }
+	public StringAppender append(boolean value)
+	{
+		return this.append(value ? "true" : "false");
+	}
 
-   public StringAppender append(float value)
-   {
-	   return this.append(Float.toString(value));
-   }
+	public StringAppender append(char ch)
+	{
+		int newcount = this.count + 1;
+		if (newcount > this.value.length)
+		{
+			this.expandCapacity(newcount);
+		}
+		this.value[this.count++] = ch;
+		return this;
+	}
 
-   public StringAppender append(double value)
-   {
-	   return this.append(Double.toString(value));
-   }
+	public StringAppender append(int value)
+	{
+		return this.append(Integer.toString(value, 10));
+	}
 
-   public StringAppender appendln()
-   {
-	   return this.append(Utility.LINE_SEPARATOR);
-   }
+	public StringAppender append(long value)
+	{
+		return this.append(Long.toString(value, 10));
+	}
 
-   public String substring(int beginIndex, int endIndex)
-   {
-	   if (beginIndex < 0)
-      {
-	      throw new StringIndexOutOfBoundsException("beginIndex:" + beginIndex);
-      }
-	   if (endIndex > this.count)
-      {
-	      throw new StringIndexOutOfBoundsException("endIndex:" + endIndex);
-      }
-	   if (beginIndex > endIndex)
-      {
-	      throw new StringIndexOutOfBoundsException("beginIndex - endIndex:" + (endIndex - beginIndex));
-      }
-      return this.createString(beginIndex, endIndex - beginIndex, this.value);
-   }
+	public StringAppender append(float value)
+	{
+		return this.append(Float.toString(value));
+	}
 
-   public String toString()
-   {
-      if (this.value.length - this.count > MAX_WASTE_COUNT)
-      {
-         // Èç¹ûÀË·ÑµÄ¿Õ¼ä¹ı´ó, Ôò²ÉÓÃ¸´ÖÆ×Ö·û´®µÄ·½Ê½
-         return new String(this.value, 0, this.count);
-      }
-      return this.createString(0, this.count, this.value);
-   }
+	public StringAppender append(double value)
+	{
+		return this.append(Double.toString(value));
+	}
 
-   public int length()
-   {
-      return this.count;
-   }
+	public StringAppender appendln()
+	{
+		return this.append(Utility.LINE_SEPARATOR);
+	}
 
-   public char charAt(int index)
-   {
-	   if ((index < 0) || (index >= this.count))
-      {
-	      throw new StringIndexOutOfBoundsException(index);
-	   }
-	   return this.value[index];
-   }
+	public String substring(int beginIndex, int endIndex)
+	{
+		if (beginIndex < 0)
+		{
+			throw new StringIndexOutOfBoundsException("beginIndex:" + beginIndex);
+		}
+		if (endIndex > this.count)
+		{
+			throw new StringIndexOutOfBoundsException("endIndex:" + endIndex);
+		}
+		if (beginIndex > endIndex)
+		{
+			throw new StringIndexOutOfBoundsException("beginIndex - endIndex:" + (endIndex - beginIndex));
+		}
+		return this.createString(beginIndex, endIndex - beginIndex, this.value);
+	}
 
-   public CharSequence subSequence(int start, int end)
-   {
-      return this.substring(start, end);
-   }
+	public String toString()
+	{
+		if (this.value.length - this.count > MAX_WASTE_COUNT)
+		{
+			// å¦‚æœæµªè´¹çš„ç©ºé—´è¿‡å¤§, åˆ™é‡‡ç”¨å¤åˆ¶å­—ç¬¦ä¸²çš„æ–¹å¼
+			return new String(this.value, 0, this.count);
+		}
+		return this.createString(0, this.count, this.value);
+	}
+
+	public int length()
+	{
+		return this.count;
+	}
+
+	public char charAt(int index)
+	{
+		if ((index < 0) || (index >= this.count))
+		{
+			throw new StringIndexOutOfBoundsException(index);
+		}
+		return this.value[index];
+	}
+
+	public CharSequence subSequence(int start, int end)
+	{
+		return this.substring(start, end);
+	}
 
 
-   /**
-    * µ±×Ö·ûÔÚ200ÒÔÉÏÊ±, Ê¹ÓÃ·´Éäµ÷ÓÃ²»¸´ÖÆ×Ö·û´®µÄ¹¹Ôìº¯Êı»á±È¸´ÖÆ×Ö·û´®¸ü¿ì.
-    */
-   private static final int REFLECT_CREATE_GAP = 200;
+	/**
+	 * å½“å­—ç¬¦åœ¨200ä»¥ä¸Šæ—¶, ä½¿ç”¨åå°„è°ƒç”¨ä¸å¤åˆ¶å­—ç¬¦ä¸²çš„æ„é€ å‡½æ•°ä¼šæ¯”å¤åˆ¶å­—ç¬¦ä¸²æ›´å¿«.
+	 */
+	private static final int REFLECT_CREATE_GAP = 200;
 
-   /**
-    * ×î´óÀË·Ñ¿Õ¼äµÄ×Ö½ÚÊı, Èç¹û³¬¹ıÕâ¸öÊı, ÔòÊ¹ÓÃ¸´ÖÆ×Ö·û´®µÄ·½Ê½.
-    */
-   private static final int MAX_WASTE_COUNT = 512;
+	/**
+	 * æœ€å¤§æµªè´¹ç©ºé—´çš„å­—èŠ‚æ•°, å¦‚æœè¶…è¿‡è¿™ä¸ªæ•°, åˆ™ä½¿ç”¨å¤åˆ¶å­—ç¬¦ä¸²çš„æ–¹å¼.
+	 */
+	private static final int MAX_WASTE_COUNT = 512;
 
-   private static Constructor strConstructor;
-   static
-   {
-      try
-      {
-         strConstructor = String.class.getDeclaredConstructor(
-               new Class[]{int.class, int.class, char[].class});
-         strConstructor.setAccessible(true);
-      }
-      catch (Throwable ex)
-      {
-         ex.printStackTrace();
-      }
-   }
+	private static Constructor strConstructor;
+	static
+	{
+		try
+		{
+			strConstructor = String.class.getDeclaredConstructor(
+					new Class[]{int.class, int.class, char[].class});
+			strConstructor.setAccessible(true);
+		}
+		catch (Throwable ex)
+		{
+			ex.printStackTrace();
+		}
+	}
 
-   private String createString(int offset, int count, char[] chars)
-   {
-      if (strConstructor == null || count < REFLECT_CREATE_GAP)
-      {
-         return new String(chars, offset, count);
-      }
-      else
-      {
-         try
-         {
-            return (String) strConstructor.newInstance(
-                  new Object[]{new Integer(offset), new Integer(count), chars});
-         }
-         catch (Throwable ex)
-         {
-            // Èç¹û³ö´í¾Í²»Ê¹ÓÃ·´ÉäÀ´Éú³É×Ö·û´®
-            strConstructor = null;
-            return new String(chars, offset, count);
-         }
-      }
-   }
+	private String createString(int offset, int count, char[] chars)
+	{
+		if (strConstructor == null || count < REFLECT_CREATE_GAP)
+		{
+			return new String(chars, offset, count);
+		}
+		else
+		{
+			try
+			{
+				return (String) strConstructor.newInstance(
+						new Object[]{new Integer(offset), new Integer(count), chars});
+			}
+			catch (Throwable ex)
+			{
+				// å¦‚æœå‡ºé”™å°±ä¸ä½¿ç”¨åå°„æ¥ç”Ÿæˆå­—ç¬¦ä¸²
+				strConstructor = null;
+				return new String(chars, offset, count);
+			}
+		}
+	}
 
 }

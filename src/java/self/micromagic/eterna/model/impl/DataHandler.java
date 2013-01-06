@@ -7,271 +7,271 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.AppData;
 
 /**
- * Êı¾İ´¦ÀíÕß.
+ * æ•°æ®å¤„ç†è€….
  */
 public class DataHandler
 {
-   /**
-    * ¶ÁÈ¡Êı¾İµÄÅäÖÃ.
-    */
-   private String config;
+	/**
+	 * è¯»å–æ•°æ®çš„é…ç½®.
+	 */
+	private String config;
 
 
-   /**
-    * ´ÓÄÄ¸ömapÖĞ¶ÁÈ¡/ÉèÖÃÊı¾İ.
-    */
-   private int mapIndex = -1;
+	/**
+	 * ä»å“ªä¸ªmapä¸­è¯»å–/è®¾ç½®æ•°æ®.
+	 */
+	private int mapIndex = -1;
 
-   /**
-    * ¶ÁÈ¡/ÉèÖÃmapÖĞÊı¾İµÄÃû³Æ.
-    */
-   private String mapDataName = null;
+	/**
+	 * è¯»å–/è®¾ç½®mapä¸­æ•°æ®çš„åç§°.
+	 */
+	private String mapDataName = null;
 
-   /**
-    * ´ÓÄÄ¸öcacheÖĞ¶ÁÈ¡/ÉèÖÃÊı¾İ.
-    */
-   private int cacheIndex = -1;
+	/**
+	 * ä»å“ªä¸ªcacheä¸­è¯»å–/è®¾ç½®æ•°æ®.
+	 */
+	private int cacheIndex = -1;
 
-   /**
-    * ÊÇ·ñ´Ó¶ÑÕ»ÖĞ¶ÁÈ¡Êı¾İ.
-    */
-   private boolean fromStack = false;
+	/**
+	 * æ˜¯å¦ä»å †æ ˆä¸­è¯»å–æ•°æ®.
+	 */
+	private boolean fromStack = false;
 
-   /**
-    * ÒÔpeek·½Ê½»ñÈ¡¶ÑÕ»ÖĞµÄÖµ.
-    */
-   private int peekIndex = -1;
+	/**
+	 * ä»¥peekæ–¹å¼è·å–å †æ ˆä¸­çš„å€¼.
+	 */
+	private int peekIndex = -1;
 
-   /**
-    * ¶ÁÈ¡µÄ³£Á¿Êı¾İµÄÖµ.
-    */
-   private String constValue = null;
+	/**
+	 * è¯»å–çš„å¸¸é‡æ•°æ®çš„å€¼.
+	 */
+	private String constValue = null;
 
-   private boolean needMapDataName = true;
-   private boolean readOnly = true;
-   private String caption = "config";
+	private boolean needMapDataName = true;
+	private boolean readOnly = true;
+	private String caption = "config";
 
-   /**
-    * @param caption           ÏÔÊ¾´íÎóĞÅÏ¢ÊÇÊ¹ÓÃµÄ±êÌâ
-    * @param needMapDataName   µ±¶ÁÈ¡mapÊı¾İÊ±, ÊÇ·ñĞèÒª¸ø³öÊı¾İµÄÃû³Æ
-    *                          µ±readOnlyµÄÖµÎªfalseÊ±, ´ËÖµ»á±»Ç¿ÖÆÉèÎªtrue
-    * @param readOnly          ÊÇ·ñÎªÖ»¶Á·½Ê½
-    */
-   public DataHandler(String caption, boolean needMapDataName, boolean readOnly)
-   {
-      this.caption = caption;
-      this.readOnly = readOnly;
-      this.needMapDataName = !readOnly || needMapDataName;
-   }
+	/**
+	 * @param caption           æ˜¾ç¤ºé”™è¯¯ä¿¡æ¯æ˜¯ä½¿ç”¨çš„æ ‡é¢˜
+	 * @param needMapDataName   å½“è¯»å–mapæ•°æ®æ—¶, æ˜¯å¦éœ€è¦ç»™å‡ºæ•°æ®çš„åç§°
+	 *                          å½“readOnlyçš„å€¼ä¸ºfalseæ—¶, æ­¤å€¼ä¼šè¢«å¼ºåˆ¶è®¾ä¸ºtrue
+	 * @param readOnly          æ˜¯å¦ä¸ºåªè¯»æ–¹å¼
+	 */
+	public DataHandler(String caption, boolean needMapDataName, boolean readOnly)
+	{
+		this.caption = caption;
+		this.readOnly = readOnly;
+		this.needMapDataName = !readOnly || needMapDataName;
+	}
 
-   /**
-    * Çå¿ÕÒÑÓĞµÄÅäÖÃ
-    */
-   private void clearConfig()
-   {
-      this.config = null;
-      this.mapIndex = -1;
-      this.mapDataName = null;
-      this.cacheIndex = -1;
-      this.fromStack = false;
-      this.peekIndex = -1;
-   }
+	/**
+	 * æ¸…ç©ºå·²æœ‰çš„é…ç½®
+	 */
+	private void clearConfig()
+	{
+		this.config = null;
+		this.mapIndex = -1;
+		this.mapDataName = null;
+		this.cacheIndex = -1;
+		this.fromStack = false;
+		this.peekIndex = -1;
+	}
 
-   /**
-    * »ñÈ¡´¦ÀíÅäÖÃ.
-    */
-   public String getConfig()
-   {
-      return this.config;
-   }
+	/**
+	 * è·å–å¤„ç†é…ç½®.
+	 */
+	public String getConfig()
+	{
+		return this.config;
+	}
 
-   /**
-    * ÉèÖÃ´¦ÀíÅäÖÃ.
-    */
-   public void setConfig(String config)
-         throws ConfigurationException
-   {
-      this.clearConfig();
-      this.config = config;
-      int index = config.indexOf(':');
-      String mainName = config;
-      String subName = null;
-      if (index != -1)
-      {
-         subName = config.substring(index + 1);
-         mainName = config.substring(0, index);
-      }
+	/**
+	 * è®¾ç½®å¤„ç†é…ç½®.
+	 */
+	public void setConfig(String config)
+			throws ConfigurationException
+	{
+		this.clearConfig();
+		this.config = config;
+		int index = config.indexOf(':');
+		String mainName = config;
+		String subName = null;
+		if (index != -1)
+		{
+			subName = config.substring(index + 1);
+			mainName = config.substring(0, index);
+		}
 
-      for (int i = 0; i < AppData.MAP_NAMES.length; i++)
-      {
-         if (AppData.MAP_NAMES[i].equals(mainName))
-         {
-            this.mapIndex = i;
-            break;
-         }
-      }
-      if (this.mapIndex == -1)
-      {
-         for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
-         {
-            if (AppData.MAP_SHORT_NAMES[i].equals(mainName))
-            {
-               this.mapIndex = i;
-               break;
-            }
-         }
-      }
-      if (this.mapIndex != -1)
-      {
-         if (subName != null)
-         {
-            this.mapDataName = subName;
-            return;
-         }
-         if (!this.needMapDataName)
-         {
-            // ×ÓÃû³ÆÎ´ÉèÖÃ²¢ÇÒ²»ÊÇ±ØĞèÊ±, ÔòÍË³ö²»ÓÃÅ×³öÒì³£.
-            return;
-         }
-      }
-      else if ("cache".equals(mainName))
-      {
-         this.cacheIndex = 0;
-         if (subName != null)
-         {
-            try
-            {
-               this.cacheIndex = Integer.parseInt(subName);
-               return;
-            }
-            catch (NumberFormatException ex) {}
-         }
-         else
-         {
-            return;
-         }
-      }
-      if (this.readOnly)
-      {
-         if ("stack".equals(mainName))
-         {
-            this.fromStack = true;
-            if ("pop".equals(subName) || subName == null)
-            {
-               return;
-            }
-            if (subName != null && subName.startsWith("peek"))
-            {
-               this.peekIndex = 0;
-               if (subName.length() > 4)
-               {
-                  if (subName.charAt(4) == '-')
-                  {
-                     try
-                     {
-                        this.peekIndex = Integer.parseInt(subName.substring(5));
-                        return;
-                     }
-                     catch (NumberFormatException ex) {}
-                  }
-               }
-               else
-               {
-                  return;
-               }
-            }
-         }
-         else if ("value".equals(mainName))
-         {
-            if (subName != null)
-            {
-               this.constValue = subName;
-               return;
-            }
-         }
-      }
+		for (int i = 0; i < AppData.MAP_NAMES.length; i++)
+		{
+			if (AppData.MAP_NAMES[i].equals(mainName))
+			{
+				this.mapIndex = i;
+				break;
+			}
+		}
+		if (this.mapIndex == -1)
+		{
+			for (int i = 0; i < AppData.MAP_SHORT_NAMES.length; i++)
+			{
+				if (AppData.MAP_SHORT_NAMES[i].equals(mainName))
+				{
+					this.mapIndex = i;
+					break;
+				}
+			}
+		}
+		if (this.mapIndex != -1)
+		{
+			if (subName != null)
+			{
+				this.mapDataName = subName;
+				return;
+			}
+			if (!this.needMapDataName)
+			{
+				// å­åç§°æœªè®¾ç½®å¹¶ä¸”ä¸æ˜¯å¿…éœ€æ—¶, åˆ™é€€å‡ºä¸ç”¨æŠ›å‡ºå¼‚å¸¸.
+				return;
+			}
+		}
+		else if ("cache".equals(mainName))
+		{
+			this.cacheIndex = 0;
+			if (subName != null)
+			{
+				try
+				{
+					this.cacheIndex = Integer.parseInt(subName);
+					return;
+				}
+				catch (NumberFormatException ex) {}
+			}
+			else
+			{
+				return;
+			}
+		}
+		if (this.readOnly)
+		{
+			if ("stack".equals(mainName))
+			{
+				this.fromStack = true;
+				if ("pop".equals(subName) || subName == null)
+				{
+					return;
+				}
+				if (subName != null && subName.startsWith("peek"))
+				{
+					this.peekIndex = 0;
+					if (subName.length() > 4)
+					{
+						if (subName.charAt(4) == '-')
+						{
+							try
+							{
+								this.peekIndex = Integer.parseInt(subName.substring(5));
+								return;
+							}
+							catch (NumberFormatException ex) {}
+						}
+					}
+					else
+					{
+						return;
+					}
+				}
+			}
+			else if ("value".equals(mainName))
+			{
+				if (subName != null)
+				{
+					this.constValue = subName;
+					return;
+				}
+			}
+		}
 
-      throw new ConfigurationException("Error " + this.caption + " [" + config + "].");
-   }
+		throw new ConfigurationException("Error " + this.caption + " [" + config + "].");
+	}
 
-   /**
-    * ¸ù¾İ´¦ÀíÅäÖÃ¶ÁÈ¡Êı¾İ.
-    *
-    * @param data       AppData¶ÔÏó, ¿É´ÓÖĞ»ñÈ¡Êı¾İ
-    * @param remove     »ñÈ¡Êı¾İºó, ÊÇ·ñ½«Ô´Í·µÄÊı¾İÒÆ³ı
-    */
-   public Object getData(AppData data, boolean remove)
-         throws ConfigurationException
-   {
-      Object value = null;
-      if (this.constValue != null)
-      {
-         value = this.constValue;
-      }
-      else if (this.mapIndex != -1)
-      {
-         Map tmpMap = data.maps[this.mapIndex];
-         if (this.mapDataName != null)
-         {
-            value = tmpMap.get(this.mapDataName);
-            if (remove)
-            {
-               tmpMap.remove(this.mapDataName);
-            }
-         }
-         else
-         {
-            value = tmpMap;
-         }
-      }
-      else if (this.cacheIndex != -1)
-      {
-         value = data.caches[this.cacheIndex];
-         if (remove)
-         {
-            data.caches[this.cacheIndex] = null;
-         }
-      }
-      else if (this.fromStack)
-      {
-         if (this.peekIndex != -1)
-         {
-            value = data.peek(this.peekIndex);
-         }
-         else
-         {
-            value = data.pop();
-         }
-      }
-      return value;
-   }
+	/**
+	 * æ ¹æ®å¤„ç†é…ç½®è¯»å–æ•°æ®.
+	 *
+	 * @param data       AppDataå¯¹è±¡, å¯ä»ä¸­è·å–æ•°æ®
+	 * @param remove     è·å–æ•°æ®å, æ˜¯å¦å°†æºå¤´çš„æ•°æ®ç§»é™¤
+	 */
+	public Object getData(AppData data, boolean remove)
+			throws ConfigurationException
+	{
+		Object value = null;
+		if (this.constValue != null)
+		{
+			value = this.constValue;
+		}
+		else if (this.mapIndex != -1)
+		{
+			Map tmpMap = data.maps[this.mapIndex];
+			if (this.mapDataName != null)
+			{
+				value = tmpMap.get(this.mapDataName);
+				if (remove)
+				{
+					tmpMap.remove(this.mapDataName);
+				}
+			}
+			else
+			{
+				value = tmpMap;
+			}
+		}
+		else if (this.cacheIndex != -1)
+		{
+			value = data.caches[this.cacheIndex];
+			if (remove)
+			{
+				data.caches[this.cacheIndex] = null;
+			}
+		}
+		else if (this.fromStack)
+		{
+			if (this.peekIndex != -1)
+			{
+				value = data.peek(this.peekIndex);
+			}
+			else
+			{
+				value = data.pop();
+			}
+		}
+		return value;
+	}
 
-   /**
-    * ¸ù¾İ´¦ÀíÅäÖÃÉèÖÃÊı¾İ
-    */
-   public void setData(AppData data, Object value)
-         throws ConfigurationException
-   {
-      if (this.readOnly)
-      {
-         throw new ConfigurationException("The [" + this.caption + "] is read only, can't be setted.");
-      }
-      if (this.mapIndex != -1)
-      {
-         Map tmpMap = data.maps[this.mapIndex];
-         if (value == null)
-         {
-            tmpMap.remove(this.mapDataName);
-         }
-         else
-         {
-            tmpMap.put(this.mapDataName, value);
-         }
-      }
-      else if (this.cacheIndex != -1)
-      {
-         data.caches[this.cacheIndex] = value;
-      }
-   }
+	/**
+	 * æ ¹æ®å¤„ç†é…ç½®è®¾ç½®æ•°æ®
+	 */
+	public void setData(AppData data, Object value)
+			throws ConfigurationException
+	{
+		if (this.readOnly)
+		{
+			throw new ConfigurationException("The [" + this.caption + "] is read only, can't be setted.");
+		}
+		if (this.mapIndex != -1)
+		{
+			Map tmpMap = data.maps[this.mapIndex];
+			if (value == null)
+			{
+				tmpMap.remove(this.mapDataName);
+			}
+			else
+			{
+				tmpMap.put(this.mapDataName, value);
+			}
+		}
+		else if (this.cacheIndex != -1)
+		{
+			data.caches[this.cacheIndex] = value;
+		}
+	}
 
 }

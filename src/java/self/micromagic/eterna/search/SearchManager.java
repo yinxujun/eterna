@@ -12,221 +12,221 @@ import self.micromagic.eterna.view.DataPrinter;
 
 public interface SearchManager
 {
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒªÇ¿ÖÆÇå¿ÕËùÓĞµÄÌõ¼ş. <p>
-    * ÓÉÓÚÊÇ·ñÒªÇå¿Õ»òÖØÖÃÌõ¼şÊÇ¸ù¾İrequestÖĞµÄ[queryTypeTag]µÄ
-    * ÖµÀ´È·¶¨µÄ, Èç¹ûĞèÒªÇ¿ÖÆÇå¿Õ, Ôò¿ÉÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchManager.FORCE_CLEAR_CONDITION, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.FORCE_CLEAR_CONDITION);
-    */
-   static final String FORCE_CLEAR_CONDITION = "ETERNA_FORCE_CLEAR_CONDITION";
-
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒªÇ¿ÖÆ´¦ÀírequestÖĞµÄÌõ¼ş. <p>
-    * ÓÉÓÚÎªÁËĞ§ÂÊ, ´¦ÀírequestÇ°»áÏÖÅĞ¶Ï´Ë´ÎµÄrequestÊÇ·ñÓëÇ°
-    * Ò»´ÎÏàÍ¬, ÏàÍ¬µÄ»°Ôò»á²»×÷´¦Àí. Èç¹ûĞèÒªÇ¿ÖÆ´¦Àírequest,
-    * Ôò¿ÉÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchManager.FORCE_DEAL_CONDITION, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.FORCE_DEAL_CONDITION);
-    */
-   static final String FORCE_DEAL_CONDITION = "ETERNA_FORCE_DEAL_CONDITION";
-
-   /**
-    * ÓÃÓÚ±êÖ¾ÊÇ·ñÒª½«ËùÓĞµÄCondition±£´æÏÂÀ´, ÒÔ±ãÊ¹ÓÃ. <p>
-    * ÓÉÓÚ±£´æConditionĞèÒª²»ÉÙ¿ªÏú, ËùÒÔÄ¬ÈÏÇé¿öÊÇ²»±£´æ.
-    * Èç¹ûĞèÒª±£´æCondition, Ôò¿ÉÔÚµ÷ÓÃÇ°°´ÈçÏÂ·½·¨ÉèÖÃ:
-    * request.setAttribute(SearchManager.SAVE_CONDITION, "1");
-    * ´ËÍâ, Èç¹ûĞèÒª°ÑÒÑÉèÖÃµÄ±êÖ¾È¥³ı, ¿ÉÒÔÊ¹ÓÃÈçÏÂ·½·¨:
-    * request.removeAttribute(SearchManager.SAVE_CONDITION);
-    */
-   static final String SAVE_CONDITION = "ETERNA_SAVE_CONDITION";
-
-   /**
-    * ±êÊ¶ÊÇ·ñÊÇÊ¹ÓÃÊı¾İ¼¯ÖĞµÄÖ¸¶¨ÖµÀ´×÷ÎªÌõ¼şµÄÄ¬ÈÏÖµ.
-    */
-   static final String DATA_DEFAULT_VALUE_PREFIX = "$data.";
-
-   /**
-    * ·ÖÒ³Ê±µ¥Ò³¿ÉÏÔÊ¾µÄ×î´ó¼ÇÂ¼Êı.
-    */
-   static final int MAX_PAGE_SIZE = 1024;
+	/**
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦å¼ºåˆ¶æ¸…ç©ºæ‰€æœ‰çš„æ¡ä»¶. <p>
+	 * ç”±äºæ˜¯å¦è¦æ¸…ç©ºæˆ–é‡ç½®æ¡ä»¶æ˜¯æ ¹æ®requestä¸­çš„[queryTypeTag]çš„
+	 * å€¼æ¥ç¡®å®šçš„, å¦‚æœéœ€è¦å¼ºåˆ¶æ¸…ç©º, åˆ™å¯åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchManager.FORCE_CLEAR_CONDITION, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.FORCE_CLEAR_CONDITION);
+	 */
+	static final String FORCE_CLEAR_CONDITION = "ETERNA_FORCE_CLEAR_CONDITION";
 
 	/**
-	 * Ä¬ÈÏµÄ²éÑ¯Ïà¹ØµÄÅäÖÃÊôĞÔ.
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦å¼ºåˆ¶å¤„ç†requestä¸­çš„æ¡ä»¶. <p>
+	 * ç”±äºä¸ºäº†æ•ˆç‡, å¤„ç†requestå‰ä¼šç°åˆ¤æ–­æ­¤æ¬¡çš„requestæ˜¯å¦ä¸å‰
+	 * ä¸€æ¬¡ç›¸åŒ, ç›¸åŒçš„è¯åˆ™ä¼šä¸ä½œå¤„ç†. å¦‚æœéœ€è¦å¼ºåˆ¶å¤„ç†request,
+	 * åˆ™å¯åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchManager.FORCE_DEAL_CONDITION, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.FORCE_DEAL_CONDITION);
 	 */
-   static final Attributes DEFAULT_PROPERTIES = new Attributes(
-         null, null, null, null, null, null);
-
-   /**
-    * »ñµÃµ±Ç°ËùÔÚµÄÒ³ºÅ.
-    */
-   int getPageNum();
-
-   /**
-    * »ñµÃµ±Ç°Ò³ÃæÏÔÊ¾µÄĞĞÊı.
-    */
-   int getPageSize(int defaultSize);
-
-   /**
-    * ÊÇ·ñ´æÔÚ²éÑ¯±êÖ¾.
-    */
-   boolean hasQueryType(AppData data) throws ConfigurationException;
-
-   /**
-    * »ñµÃµ±Ç°µÄÌõ¼ş°æ±¾, Ã¿¸üĞÂÒ»´ÎÌõ¼ş°æ±¾×Ô¶¯Ôö1, ÆğÊ¼°æ±¾ºÅÎª1.
-    */
-   int getConditionVersion() throws ConfigurationException;
-
-   /**
-    * ¸ù¾İrequestÖĞµÄĞÅÏ¢, ÉèÖÃÌõ¼şºÍÒ³ºÅ.
-    */
-   void setPageNumAndCondition(AppData data, SearchAdapter search)
-         throws ConfigurationException;
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´µÄPreparerManager.
-    */
-   PreparerManager getPreparerManager();
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´µÄPreparerManager×Ó¼¯.
-    */
-   PreparerManager getSpecialPreparerManager(SearchAdapter search)
-         throws ConfigurationException;
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´×öÎªÌõ¼şµÄsql×Ó¾ä.
-    */
-   String getConditionPart();
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´×öÎªÌõ¼şµÄsql×Ó¾ä.
-    *
-    * @param needWrap   ÊÇ·ñĞèÒªÔÚÌõ¼şÍâÃæ´øÉÏÀ¨ºÅ"(", ")".
-    */
-   String getConditionPart(boolean needWrap);
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´×öÎªÌõ¼şµÄsql×Ó¾äµÄ×Ó¼¯.
-    */
-   String getSpecialConditionPart(SearchAdapter search) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡ÕûÀí³öÀ´×öÎªÌõ¼şµÄsql×Ó¾äµÄ×Ó¼¯.
-    *
-    * @param needWrap   ÊÇ·ñĞèÒªÔÚÌõ¼şÍâÃæ´øÉÏÀ¨ºÅ"(", ")".
-    */
-   String getSpecialConditionPart(SearchAdapter search, boolean needWrap) throws ConfigurationException;
-
-   /**
-    * »ñÈ¡±¾SearchManagerµÄÅäÖÃÊôĞÔ.
-    */
-   Attributes getAttributes();
-
-   /**
-    * ÉèÖÃ±¾SearchManagerµÄÅäÖÃÊôĞÔ.
-    */
-   void setAttributes(Attributes attributes);
-
-   /**
-    * ¸ù¾İÌõ¼şµÄÃû³Æ»ñÈ¡Ä³¸ö¹¹ÔìºÃµÄÌõ¼ş.
-    * ×¢: ÕâÀïÖ»»ñÈ¡¸ÃÃû³ÆÏÂµÄµÚÒ»¸öÌõ¼ş.
-    */
-   Condition getCondition(String name);
-
-   /**
-    * ¸ù¾İÌõ¼şµÄÃû³Æ»ñÈ¡¸ÃÃû³ÆÏÂËùÓĞ¹¹ÔìºÃµÄÌõ¼ş.
-    */
-   List getConditions(String name);
-
-   /**
-    * »ñÈ¡ËùÓĞ¹¹ÔìºÃµÄÌõ¼ş.
-    */
-   List getConditions();
+	static final String FORCE_DEAL_CONDITION = "ETERNA_FORCE_DEAL_CONDITION";
 
 	/**
-	 * ±£´æµÄ²éÑ¯Ìõ¼şµ¥Ôª.
+	 * ç”¨äºæ ‡å¿—æ˜¯å¦è¦å°†æ‰€æœ‰çš„Conditionä¿å­˜ä¸‹æ¥, ä»¥ä¾¿ä½¿ç”¨. <p>
+	 * ç”±äºä¿å­˜Conditionéœ€è¦ä¸å°‘å¼€é”€, æ‰€ä»¥é»˜è®¤æƒ…å†µæ˜¯ä¸ä¿å­˜.
+	 * å¦‚æœéœ€è¦ä¿å­˜Condition, åˆ™å¯åœ¨è°ƒç”¨å‰æŒ‰å¦‚ä¸‹æ–¹æ³•è®¾ç½®:
+	 * request.setAttribute(SearchManager.SAVE_CONDITION, "1");
+	 * æ­¤å¤–, å¦‚æœéœ€è¦æŠŠå·²è®¾ç½®çš„æ ‡å¿—å»é™¤, å¯ä»¥ä½¿ç”¨å¦‚ä¸‹æ–¹æ³•:
+	 * request.removeAttribute(SearchManager.SAVE_CONDITION);
 	 */
-   static final class Condition
-   {
-      /**
-       * Ìõ¼şµÄÃû´Ê
-       */
-      public final String name;
-
-      /**
-       * Ìõ¼şËùÊôÌõ¼ş×éµÄÃû³Æ
-       */
-      public final String group;
-
-      /**
-       * ÉèÖÃÔÚ¸ÃÌõ¼şÉÏµÄÖµ
-       */
-      public final String value;
-
-      /**
-       * ¹¹³É¸ÃÌõ¼şËùÒªÊ¹ÓÃµÄConditionBuilder
-       */
-      public final ConditionBuilder builder;
-
-      public Condition(String name, String group, String value, ConditionBuilder builder)
-      {
-         this.name = name;
-         this.group = group;
-         this.value = value;
-         this.builder = builder;
-      }
-
-   }
+	static final String SAVE_CONDITION = "ETERNA_SAVE_CONDITION";
 
 	/**
-	 * ²éÑ¯Ïà¹ØµÄÅäÖÃÊôĞÔ.
+	 * æ ‡è¯†æ˜¯å¦æ˜¯ä½¿ç”¨æ•°æ®é›†ä¸­çš„æŒ‡å®šå€¼æ¥ä½œä¸ºæ¡ä»¶çš„é»˜è®¤å€¼.
 	 */
-   static final class Attributes
+	static final String DATA_DEFAULT_VALUE_PREFIX = "$data.";
+
+	/**
+	 * åˆ†é¡µæ—¶å•é¡µå¯æ˜¾ç¤ºçš„æœ€å¤§è®°å½•æ•°.
+	 */
+	static final int MAX_PAGE_SIZE = 1024;
+
+	/**
+	 * é»˜è®¤çš„æŸ¥è¯¢ç›¸å…³çš„é…ç½®å±æ€§.
+	 */
+	static final Attributes DEFAULT_PROPERTIES = new Attributes(
+			null, null, null, null, null, null);
+
+	/**
+	 * è·å¾—å½“å‰æ‰€åœ¨çš„é¡µå·.
+	 */
+	int getPageNum();
+
+	/**
+	 * è·å¾—å½“å‰é¡µé¢æ˜¾ç¤ºçš„è¡Œæ•°.
+	 */
+	int getPageSize(int defaultSize);
+
+	/**
+	 * æ˜¯å¦å­˜åœ¨æŸ¥è¯¢æ ‡å¿—.
+	 */
+	boolean hasQueryType(AppData data) throws ConfigurationException;
+
+	/**
+	 * è·å¾—å½“å‰çš„æ¡ä»¶ç‰ˆæœ¬, æ¯æ›´æ–°ä¸€æ¬¡æ¡ä»¶ç‰ˆæœ¬è‡ªåŠ¨å¢1, èµ·å§‹ç‰ˆæœ¬å·ä¸º1.
+	 */
+	int getConditionVersion() throws ConfigurationException;
+
+	/**
+	 * æ ¹æ®requestä¸­çš„ä¿¡æ¯, è®¾ç½®æ¡ä»¶å’Œé¡µå·.
+	 */
+	void setPageNumAndCondition(AppData data, SearchAdapter search)
+			throws ConfigurationException;
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥çš„PreparerManager.
+	 */
+	PreparerManager getPreparerManager();
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥çš„PreparerManagerå­é›†.
+	 */
+	PreparerManager getSpecialPreparerManager(SearchAdapter search)
+			throws ConfigurationException;
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥åšä¸ºæ¡ä»¶çš„sqlå­å¥.
+	 */
+	String getConditionPart();
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥åšä¸ºæ¡ä»¶çš„sqlå­å¥.
+	 *
+	 * @param needWrap   æ˜¯å¦éœ€è¦åœ¨æ¡ä»¶å¤–é¢å¸¦ä¸Šæ‹¬å·"(", ")".
+	 */
+	String getConditionPart(boolean needWrap);
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥åšä¸ºæ¡ä»¶çš„sqlå­å¥çš„å­é›†.
+	 */
+	String getSpecialConditionPart(SearchAdapter search) throws ConfigurationException;
+
+	/**
+	 * è·å–æ•´ç†å‡ºæ¥åšä¸ºæ¡ä»¶çš„sqlå­å¥çš„å­é›†.
+	 *
+	 * @param needWrap   æ˜¯å¦éœ€è¦åœ¨æ¡ä»¶å¤–é¢å¸¦ä¸Šæ‹¬å·"(", ")".
+	 */
+	String getSpecialConditionPart(SearchAdapter search, boolean needWrap) throws ConfigurationException;
+
+	/**
+	 * è·å–æœ¬SearchManagerçš„é…ç½®å±æ€§.
+	 */
+	Attributes getAttributes();
+
+	/**
+	 * è®¾ç½®æœ¬SearchManagerçš„é…ç½®å±æ€§.
+	 */
+	void setAttributes(Attributes attributes);
+
+	/**
+	 * æ ¹æ®æ¡ä»¶çš„åç§°è·å–æŸä¸ªæ„é€ å¥½çš„æ¡ä»¶.
+	 * æ³¨: è¿™é‡Œåªè·å–è¯¥åç§°ä¸‹çš„ç¬¬ä¸€ä¸ªæ¡ä»¶.
+	 */
+	Condition getCondition(String name);
+
+	/**
+	 * æ ¹æ®æ¡ä»¶çš„åç§°è·å–è¯¥åç§°ä¸‹æ‰€æœ‰æ„é€ å¥½çš„æ¡ä»¶.
+	 */
+	List getConditions(String name);
+
+	/**
+	 * è·å–æ‰€æœ‰æ„é€ å¥½çš„æ¡ä»¶.
+	 */
+	List getConditions();
+
+	/**
+	 * ä¿å­˜çš„æŸ¥è¯¢æ¡ä»¶å•å…ƒ.
+	 */
+	static final class Condition
+	{
+		/**
+		 * æ¡ä»¶çš„åè¯
+		 */
+		public final String name;
+
+		/**
+		 * æ¡ä»¶æ‰€å±æ¡ä»¶ç»„çš„åç§°
+		 */
+		public final String group;
+
+		/**
+		 * è®¾ç½®åœ¨è¯¥æ¡ä»¶ä¸Šçš„å€¼
+		 */
+		public final String value;
+
+		/**
+		 * æ„æˆè¯¥æ¡ä»¶æ‰€è¦ä½¿ç”¨çš„ConditionBuilder
+		 */
+		public final ConditionBuilder builder;
+
+		public Condition(String name, String group, String value, ConditionBuilder builder)
+		{
+			this.name = name;
+			this.group = group;
+			this.value = value;
+			this.builder = builder;
+		}
+
+	}
+
+	/**
+	 * æŸ¥è¯¢ç›¸å…³çš„é…ç½®å±æ€§.
+	 */
+	static final class Attributes
 			implements DataPrinter.BeanPrinter
-   {
-      /**
-       * ´æ´¢Ò³ºÅµÄ¿Ø¼şÃû³Æ
-       */
-      public final String pageNumTag;
+	{
+		/**
+		 * å­˜å‚¨é¡µå·çš„æ§ä»¶åç§°
+		 */
+		public final String pageNumTag;
 
-      /**
-       * ´æ´¢Ã¿Ò³ÏÔÊ¾¸öÊıµÄ¿Ø¼şÃû³Æ
-       */
-      public final String pageSizeTag;
+		/**
+		 * å­˜å‚¨æ¯é¡µæ˜¾ç¤ºä¸ªæ•°çš„æ§ä»¶åç§°
+		 */
+		public final String pageSizeTag;
 
-      /**
-       * ´æ´¢XML¸ñÊ½²éÑ¯Ìõ¼şµÄ¿Ø¼şÃû³Æ
-       */
-      public final String querySettingTag;
+		/**
+		 * å­˜å‚¨XMLæ ¼å¼æŸ¥è¯¢æ¡ä»¶çš„æ§ä»¶åç§°
+		 */
+		public final String querySettingTag;
 
-      /**
-       * ´æ´¢²éÑ¯·½Ê½µÄ¿Ø¼şÃû³Æ
-       */
-      public final String queryTypeTag;
+		/**
+		 * å­˜å‚¨æŸ¥è¯¢æ–¹å¼çš„æ§ä»¶åç§°
+		 */
+		public final String queryTypeTag;
 
-      /**
-       * Çå³ıÌõ¼şµÄ²éÑ¯·½Ê½
-       */
-      public final String queryTypeClear;
+		/**
+		 * æ¸…é™¤æ¡ä»¶çš„æŸ¥è¯¢æ–¹å¼
+		 */
+		public final String queryTypeClear;
 
-      /**
-       * ÉèÖÃÌõ¼şµÄ²éÑ¯·½Ê½
-       */
-      public final String queryTypeReset;
+		/**
+		 * è®¾ç½®æ¡ä»¶çš„æŸ¥è¯¢æ–¹å¼
+		 */
+		public final String queryTypeReset;
 
-      public Attributes(String pageNumTag, String pageSizeTag, String querySettingTag,
-            String queryTypeTag, String queryTypeClear, String queryTypeReset)
-      {
-         this.pageNumTag = pageNumTag == null ? "pageNum" : pageNumTag;
-         this.pageSizeTag = pageSizeTag == null ? "pageSize" : pageSizeTag;
-         this.querySettingTag = querySettingTag == null ? "querySetting" : querySettingTag;
-         this.queryTypeTag = queryTypeTag == null ? "queryType" : queryTypeTag;
-         this.queryTypeClear = queryTypeClear == null ? "clear" : queryTypeClear;
-         this.queryTypeReset = queryTypeReset == null ? "set" : queryTypeReset;
-      }
+		public Attributes(String pageNumTag, String pageSizeTag, String querySettingTag,
+				String queryTypeTag, String queryTypeClear, String queryTypeReset)
+		{
+			this.pageNumTag = pageNumTag == null ? "pageNum" : pageNumTag;
+			this.pageSizeTag = pageSizeTag == null ? "pageSize" : pageSizeTag;
+			this.querySettingTag = querySettingTag == null ? "querySetting" : querySettingTag;
+			this.queryTypeTag = queryTypeTag == null ? "queryType" : queryTypeTag;
+			this.queryTypeClear = queryTypeClear == null ? "clear" : queryTypeClear;
+			this.queryTypeReset = queryTypeReset == null ? "set" : queryTypeReset;
+		}
 
 		public void print(DataPrinter p, Writer out, Object bean)
 				throws IOException, ConfigurationException
@@ -241,6 +241,6 @@ public interface SearchManager
 			p.printObjectEnd(out);
 		}
 
-   }
+	}
 
 }

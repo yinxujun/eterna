@@ -11,27 +11,27 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * ÔÚJSPÖĞ, ¿ÉÍ¨¹ı´Ë±êÇ©ÔØÈëÒ»¸ö×ÊÔ´ÎÄ¼ş.
+ * åœ¨JSPä¸­, å¯é€šè¿‡æ­¤æ ‡ç­¾è½½å…¥ä¸€ä¸ªèµ„æºæ–‡ä»¶.
  *
  * @author micromagic@sina.com
  */
 public class EternaRes extends TagSupport
 {
-   /**
-    * ÔÚrequest·¶Î§ÄÚ, ´æ·ÅÔØÈë×ÊÔ´·½·¨ÒÑ³õÊ¼»¯µÄÃû³Æ.
-    */
-   public static final String LOAD_RES_INITED_FLAG = "___loadResInited";
+	/**
+	 * åœ¨requestèŒƒå›´å†…, å­˜æ”¾è½½å…¥èµ„æºæ–¹æ³•å·²åˆå§‹åŒ–çš„åç§°.
+	 */
+	public static final String LOAD_RES_INITED_FLAG = "___loadResInited";
 
-   private String url;
+	private String url;
 	private String charset;
-   private boolean jsResource = true;
-   private String scriptParam;
+	private boolean jsResource = true;
+	private String scriptParam;
 
-   public int doStartTag()
-         throws JspException
-   {
-      try
-      {
+	public int doStartTag()
+			throws JspException
+	{
+		try
+		{
 			JspWriter out = this.pageContext.getOut();
 			out.println("<script type=\"text/javascript\">");
 			String inited = (String) this.pageContext.getAttribute(
@@ -63,17 +63,17 @@ public class EternaRes extends TagSupport
 			out.println( "window.ef_loadResource(" + params + ");");
 			out.println("</script>");
 		}
-      catch (Throwable ex)
-      {
-         DefaultFinder.log.error("Other Error in service.", ex);
-      }
-      return SKIP_BODY;
-   }
+		catch (Throwable ex)
+		{
+			DefaultFinder.log.error("Other Error in service.", ex);
+		}
+		return SKIP_BODY;
+	}
 
 	protected void printLoadResScript(JspWriter out)
 			throws IOException
 	{
-		// ´´½¨ÔØÈë×ÊÔ´µÄ·½·¨
+		// åˆ›å»ºè½½å…¥èµ„æºçš„æ–¹æ³•
 		out.println("if (typeof eg_pageInitializedURL == \"undefined\")");
 		out.println('{');
 		out.println("window.eg_pageInitializedURL = {};");
@@ -120,14 +120,14 @@ public class EternaRes extends TagSupport
 		out.println('}'); // end if (typeof eg_pageInitializedURL == \"undefined\")
 	}
 
-   public void release()
-   {
-      this.url = null;
-      this.charset = null;
+	public void release()
+	{
+		this.url = null;
+		this.charset = null;
 		this.jsResource = true;
 		this.scriptParam = null;
-      super.release();
-   }
+		super.release();
+	}
 
 	public boolean isJsResource()
 	{

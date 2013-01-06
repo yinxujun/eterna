@@ -3,53 +3,53 @@ package self.micromagic.eterna.share;
 
 public class EternaException extends Exception
 {
-   /**
-    * ¹¹ÔìÒ»¸ö<code>EternaException</code>.
-    */
-   public EternaException()
-   {
-      super();
-   }
+	/**
+	 * æ„é€ ä¸€ä¸ª<code>EternaException</code>.
+	 */
+	public EternaException()
+	{
+		super();
+	}
 
-   /**
-    * Í¨¹ı²ÎÊı<code>message</code>À´¹¹ÔìÒ»¸ö<code>EternaException</code>.
-    *
-    * @param message   ³ö´íĞÅÏ¢
-    */
-   public EternaException(String message)
-   {
-      super(message);
-   }
+	/**
+	 * é€šè¿‡å‚æ•°<code>message</code>æ¥æ„é€ ä¸€ä¸ª<code>EternaException</code>.
+	 *
+	 * @param message   å‡ºé”™ä¿¡æ¯
+	 */
+	public EternaException(String message)
+	{
+		super(message);
+	}
 
-   /**
-    * Í¨¹ıÒ»¸öÅ×³öµÄ¶ÔÏóÀ´¹¹ÔìÒ»¸ö<code>EternaException</code>.
-    *
-    * @param origin    Òì³£»ò´íÎó
-    */
-   public EternaException(Throwable origin)
-   {
-      super(origin);
-   }
+	/**
+	 * é€šè¿‡ä¸€ä¸ªæŠ›å‡ºçš„å¯¹è±¡æ¥æ„é€ ä¸€ä¸ª<code>EternaException</code>.
+	 *
+	 * @param origin    å¼‚å¸¸æˆ–é”™è¯¯
+	 */
+	public EternaException(Throwable origin)
+	{
+		super(origin);
+	}
 
-   /**
-    * Í¨¹ı²ÎÊı<code>message</code>ºÍÒ»¸öÅ×³öµÄ¶ÔÏóÀ´¹¹ÔìÒ»¸ö<code>EternaException</code>.
-    *
-    * @param message   ³ö´íĞÅÏ¢
-    * @param origin    Òì³£»ò´íÎó
-    */
-   public EternaException(String message, Throwable origin)
-   {
-      super(message, origin);
-   }
+	/**
+	 * é€šè¿‡å‚æ•°<code>message</code>å’Œä¸€ä¸ªæŠ›å‡ºçš„å¯¹è±¡æ¥æ„é€ ä¸€ä¸ª<code>EternaException</code>.
+	 *
+	 * @param message   å‡ºé”™ä¿¡æ¯
+	 * @param origin    å¼‚å¸¸æˆ–é”™è¯¯
+	 */
+	public EternaException(String message, Throwable origin)
+	{
+		super(message, origin);
+	}
 
-   public String getMessage()
-   {
-      String msg = super.getMessage();
-      if (msg == null && this.getCause() != null)
-      {
-         msg = this.getCause().getMessage();
-      }
-      return msg;
-   }
+	public String getMessage()
+	{
+		String msg = super.getMessage();
+		if (msg == null && this.getCause() != null)
+		{
+			msg = this.getCause().getMessage();
+		}
+		return msg;
+	}
 
 }

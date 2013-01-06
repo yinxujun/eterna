@@ -8,11 +8,11 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface UpdateAdapter extends SQLAdapter
 {
-   /**
-    * Ö´ĞĞ±¾UpdaterÊÊÅäÆ÷.
-    *
-    * @return    ¸üĞÂµÄ¼ÇÂ¼Êı.
-    */
-   int executeUpdate(Connection conn) throws ConfigurationException, SQLException;
+	/**
+	 * æ‰§è¡Œæœ¬Updateré€‚é…å™¨.
+	 *
+	 * @return    æ›´æ–°çš„è®°å½•æ•°.
+	 */
+	int executeUpdate(Connection conn) throws ConfigurationException, SQLException;
 
 }

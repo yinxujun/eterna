@@ -20,167 +20,167 @@ import self.micromagic.eterna.search.impl.SearchManagerImpl;
 import self.micromagic.eterna.share.AbstractGenerator;
 
 /**
- * searchƒ£øÈ≥ı ºªØµƒπÊ‘ÚºØ.
+ * searchÊ®°ÂùóÂàùÂßãÂåñÁöÑËßÑÂàôÈõÜ.
  *
  * @author micromagic@sina.com
  */
 public class SearchRuleSet extends RuleSetBase
 {
-   public SearchRuleSet()
-   {
-   }
+	public SearchRuleSet()
+	{
+	}
 
-   public void addRuleInstances(Digester digester)
-   {
-      PropertySetter setter;
-      PropertySetter[] setters;
-      Rule rule;
-
-
-      //--------------------------------------------------------------------------------
-      // ππ‘ÏConditionBuilder∫ÕConditionBuilder¡–±Ì
-      setter = new GeneratorPropertySetter("generator", "addConditionBuilder",
-            ConditionBuilderGeneratorImpl.class.getName(), ConditionBuilder.class, true);
-      digester.addRule("eterna-config/factory/objs/builder",
-            new PropertySetRule(setter));
-
-      setters = new PropertySetter[] {
-         new StringPropertySetter("name", "setName", true),
-         new StringPropertySetter("caption", "setCaption", false),
-         new StringPropertySetter("operator", "setOperator", false)
-      };
-      digester.addRule("eterna-config/factory/objs/builder",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/builder",
-            new ObjectLogRule("name", "ConditionBuilder"));
-      digester.addRule("eterna-config/factory/objs/builder/attribute",
-            new AttributeSetRule());
-
-      // ππ‘ÏConditionBuilder¡–±Ì
-      setter = new GeneratorPropertySetter(null, "addConditionBuilderList",
-            ConditionBuilderListGenerator.class.getName(), List.class, true);
-      digester.addRule("eterna-config/factory/objs/builder-list",
-            new PropertySetRule(setter));
-
-      digester.addRule("eterna-config/factory/objs/builder-list",
-            new PropertySetRule("name", "setName", true, false));
-      digester.addRule("eterna-config/factory/objs/builder-list",
-            new ObjectLogRule("name", "ConditionBuilderList"));
-      digester.addRule("eterna-config/factory/objs/builder-list/builder-name",
-            new PropertySetRule("name", "addConditionBuilderName", true, false));
+	public void addRuleInstances(Digester digester)
+	{
+		PropertySetter setter;
+		PropertySetter[] setters;
+		Rule rule;
 
 
-      //--------------------------------------------------------------------------------
-      // ππ‘ÏSearchManager
-      rule = new ObjectCreateRule(SearchManagerImpl.class.getName(), "generator",
-            SearchManagerGenerator.class);
-      digester.addRule("eterna-config/factory/search-manager", rule);
-      setter = new StackPropertySetter("registerSearchManager", SearchManagerGenerator.class, 1);
-      digester.addRule("eterna-config/factory/search-manager",
-            new PropertySetRule(setter));
-      digester.addRule("eterna-config/factory/search-manager",
-            new ObjectLogRule("name", "SearchManager"));
-      digester.addRule("eterna-config/factory/search-manager/attribute",
-            new AttributeSetRule());
+		//--------------------------------------------------------------------------------
+		// ÊûÑÈÄ†ConditionBuilderÂíåConditionBuilderÂàóË°®
+		setter = new GeneratorPropertySetter("generator", "addConditionBuilder",
+				ConditionBuilderGeneratorImpl.class.getName(), ConditionBuilder.class, true);
+		digester.addRule("eterna-config/factory/objs/builder",
+				new PropertySetRule(setter));
+
+		setters = new PropertySetter[] {
+			new StringPropertySetter("name", "setName", true),
+			new StringPropertySetter("caption", "setCaption", false),
+			new StringPropertySetter("operator", "setOperator", false)
+		};
+		digester.addRule("eterna-config/factory/objs/builder",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/builder",
+				new ObjectLogRule("name", "ConditionBuilder"));
+		digester.addRule("eterna-config/factory/objs/builder/attribute",
+				new AttributeSetRule());
+
+		// ÊûÑÈÄ†ConditionBuilderÂàóË°®
+		setter = new GeneratorPropertySetter(null, "addConditionBuilderList",
+				ConditionBuilderListGenerator.class.getName(), List.class, true);
+		digester.addRule("eterna-config/factory/objs/builder-list",
+				new PropertySetRule(setter));
+
+		digester.addRule("eterna-config/factory/objs/builder-list",
+				new PropertySetRule("name", "setName", true, false));
+		digester.addRule("eterna-config/factory/objs/builder-list",
+				new ObjectLogRule("name", "ConditionBuilderList"));
+		digester.addRule("eterna-config/factory/objs/builder-list/builder-name",
+				new PropertySetRule("name", "addConditionBuilderName", true, false));
 
 
-      //--------------------------------------------------------------------------------
-      // ππ‘ÏSearchAdapter
-      rule = new ObjectCreateRule(SearchAdapterImpl.class.getName(), "generator",
-            SearchAdapterGenerator.class);
-      digester.addRule("eterna-config/factory/objs/search", rule);
+		//--------------------------------------------------------------------------------
+		// ÊûÑÈÄ†SearchManager
+		rule = new ObjectCreateRule(SearchManagerImpl.class.getName(), "generator",
+				SearchManagerGenerator.class);
+		digester.addRule("eterna-config/factory/search-manager", rule);
+		setter = new StackPropertySetter("registerSearchManager", SearchManagerGenerator.class, 1);
+		digester.addRule("eterna-config/factory/search-manager",
+				new PropertySetRule(setter));
+		digester.addRule("eterna-config/factory/search-manager",
+				new ObjectLogRule("name", "SearchManager"));
+		digester.addRule("eterna-config/factory/search-manager/attribute",
+				new AttributeSetRule());
 
-      setter = new StackPropertySetter("registerSearchAdapter", SearchAdapterGenerator.class, 1);
-      digester.addRule("eterna-config/factory/objs/search", new PropertySetRule(setter));
 
-      setters = new PropertySetter[] {
-         new StringPropertySetter("name", "setName", true),
-         new StringPropertySetter("queryName", "setQueryName", true),
-         new IntegerPropertySetter("pageSize", "setPageSize", false),
-         new StringPropertySetter("countType", "setCountType", false),
-         new StringPropertySetter("searchManager", "setSearchManagerName", false),
-         new BooleanPropertySetter("specialCondition", "setSpecialCondition", false),
-         new BooleanPropertySetter("needWrap", "setNeedWrap", false),
-         new IntegerPropertySetter("conditionIndex", "setConditionIndex", "1")
-      };
-      digester.addRule("eterna-config/factory/objs/search",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/search",
-            new ObjectLogRule("name", "SearchAdapter"));
-      digester.addRule("eterna-config/factory/objs/search/attribute",
-            new AttributeSetRule());
+		//--------------------------------------------------------------------------------
+		// ÊûÑÈÄ†SearchAdapter
+		rule = new ObjectCreateRule(SearchAdapterImpl.class.getName(), "generator",
+				SearchAdapterGenerator.class);
+		digester.addRule("eterna-config/factory/objs/search", rule);
 
-      //  …Ë÷√other-search-manager
-      setters = new PropertySetter[] {
-         new StringPropertySetter("otherName", "setOtherSearchManagerName", false),
-         new StringPropertySetter("propertyOrder", "setConditionPropertyOrderWithOther", false)
-      };
-      digester.addRule("eterna-config/factory/objs/search/other-search-manager",
-            new PropertySetRule(setters, false));
+		setter = new StackPropertySetter("registerSearchAdapter", SearchAdapterGenerator.class, 1);
+		digester.addRule("eterna-config/factory/objs/search", new PropertySetRule(setter));
 
-      //  …Ë÷√condition-propertysµƒparent
-      setters = new PropertySetter[] {
-         new StringPropertySetter("parent", "setParentConditionPropretyName", false),
-         new StringPropertySetter("propertyOrder", "setConditionPropertyOrder", false)
-      };
-      digester.addRule("eterna-config/factory/objs/search/condition-propertys",
-            new PropertySetRule(setters, false));
+		setters = new PropertySetter[] {
+			new StringPropertySetter("name", "setName", true),
+			new StringPropertySetter("queryName", "setQueryName", true),
+			new IntegerPropertySetter("pageSize", "setPageSize", false),
+			new StringPropertySetter("countType", "setCountType", false),
+			new StringPropertySetter("searchManager", "setSearchManagerName", false),
+			new BooleanPropertySetter("specialCondition", "setSpecialCondition", false),
+			new BooleanPropertySetter("needWrap", "setNeedWrap", false),
+			new IntegerPropertySetter("conditionIndex", "setConditionIndex", "1")
+		};
+		digester.addRule("eterna-config/factory/objs/search",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/search",
+				new ObjectLogRule("name", "SearchAdapter"));
+		digester.addRule("eterna-config/factory/objs/search/attribute",
+				new AttributeSetRule());
 
-      // ÃÌº”condition-property
-      setter = new GeneratorPropertySetter("generator", "addConditionProperty",
-            ConditionPropertyGeneratorImpl.class.getName(), ConditionProperty.class);
-      digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property",
-            new PropertySetRule(setter));
+		//  ËÆæÁΩÆother-search-manager
+		setters = new PropertySetter[] {
+			new StringPropertySetter("otherName", "setOtherSearchManagerName", false),
+			new StringPropertySetter("propertyOrder", "setConditionPropertyOrderWithOther", false)
+		};
+		digester.addRule("eterna-config/factory/objs/search/other-search-manager",
+				new PropertySetRule(setters, false));
 
-      setters = new PropertySetter[] {
-         new StringPropertySetter("name", "setName", true),
-         new StringPropertySetter("colName", "setColumnName", false),
-         new StringPropertySetter("caption", "setColumnCaption", false),
-         new StringPropertySetter("colType", "setColumnType", true),
-         new StringPropertySetter("vpcName", "setColumnVPC", false),
-         new StringPropertySetter("inputType", "setConditionInputType", false),
-         new StringPropertySetter("defaultValue", "setDefaultValue", false),
-         new StringPropertySetter("permissions", "setPermissions", false),
-         new BooleanPropertySetter("useDefaultBuilder", "setUseDefaultConditionBuilder", false),
-         new StringPropertySetter("defaultBuilder", "setDefaultConditionBuilderName", false),
-         new StringPropertySetter("builderList", "setConditionBuilderListName", false),
-         new BooleanPropertySetter("visible", "setVisible", "true")
-      };
-      digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property",
-            new PropertySetRule(setters, false));
-      digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property/attribute",
-            new AttributeSetRule());
+		//  ËÆæÁΩÆcondition-propertysÁöÑparent
+		setters = new PropertySetter[] {
+			new StringPropertySetter("parent", "setParentConditionPropretyName", false),
+			new StringPropertySetter("propertyOrder", "setConditionPropertyOrder", false)
+		};
+		digester.addRule("eterna-config/factory/objs/search/condition-propertys",
+				new PropertySetRule(setters, false));
 
-      // …Ë÷√column-setting
-      digester.addRule("eterna-config/factory/objs/search/column-setting",
-            new PropertySetRule("columnType", "setColumnSettingType", true, false));
-      setter = new ObjectPropertySetter("className", "setColumnSetting",
-            null, ColumnSetting.class);
-      digester.addRule("eterna-config/factory/objs/search/column-setting",
-            new PropertySetRule(setter));
+		// Ê∑ªÂä†condition-property
+		setter = new GeneratorPropertySetter("generator", "addConditionProperty",
+				ConditionPropertyGeneratorImpl.class.getName(), ConditionProperty.class);
+		digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property",
+				new PropertySetRule(setter));
 
-      // …Ë÷√parameter-setting
-      setter = new ObjectPropertySetter("className", "setParameterSetting",
-            null, ParameterSetting.class);
-      digester.addRule("eterna-config/factory/objs/search/parameter-setting",
-            new PropertySetRule(setter));
-   }
+		setters = new PropertySetter[] {
+			new StringPropertySetter("name", "setName", true),
+			new StringPropertySetter("colName", "setColumnName", false),
+			new StringPropertySetter("caption", "setColumnCaption", false),
+			new StringPropertySetter("colType", "setColumnType", true),
+			new StringPropertySetter("vpcName", "setColumnVPC", false),
+			new StringPropertySetter("inputType", "setConditionInputType", false),
+			new StringPropertySetter("defaultValue", "setDefaultValue", false),
+			new StringPropertySetter("permissions", "setPermissions", false),
+			new BooleanPropertySetter("useDefaultBuilder", "setUseDefaultConditionBuilder", false),
+			new StringPropertySetter("defaultBuilder", "setDefaultConditionBuilderName", false),
+			new StringPropertySetter("builderList", "setConditionBuilderListName", false),
+			new BooleanPropertySetter("visible", "setVisible", "true")
+		};
+		digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property",
+				new PropertySetRule(setters, false));
+		digester.addRule("eterna-config/factory/objs/search/condition-propertys/condition-property/attribute",
+				new AttributeSetRule());
 
-   public static class ConditionBuilderListGenerator extends AbstractGenerator
-   {
-      private List names = new ArrayList();
+		// ËÆæÁΩÆcolumn-setting
+		digester.addRule("eterna-config/factory/objs/search/column-setting",
+				new PropertySetRule("columnType", "setColumnSettingType", true, false));
+		setter = new ObjectPropertySetter("className", "setColumnSetting",
+				null, ColumnSetting.class);
+		digester.addRule("eterna-config/factory/objs/search/column-setting",
+				new PropertySetRule(setter));
 
-      public void addConditionBuilderName(String name)
-      {
-         this.names.add(name);
-      }
+		// ËÆæÁΩÆparameter-setting
+		setter = new ObjectPropertySetter("className", "setParameterSetting",
+				null, ParameterSetting.class);
+		digester.addRule("eterna-config/factory/objs/search/parameter-setting",
+				new PropertySetRule(setter));
+	}
 
-      public Object create() throws ConfigurationException
-      {
-         return this.names;
-      }
+	public static class ConditionBuilderListGenerator extends AbstractGenerator
+	{
+		private List names = new ArrayList();
 
-   }
+		public void addConditionBuilderName(String name)
+		{
+			this.names.add(name);
+		}
+
+		public Object create() throws ConfigurationException
+		{
+			return this.names;
+		}
+
+	}
 
 }
 

@@ -22,7 +22,7 @@ import self.micromagic.util.StringTool;
 class ConditionPropertyImpl
 		implements ConditionProperty
 {
-   private static final Log log = Tool.log;
+	private static final Log log = Tool.log;
 
 	String name;
 	String columnName;

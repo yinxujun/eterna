@@ -4,29 +4,29 @@ package self.micromagic.eterna.share;
 import self.micromagic.eterna.digester.FactoryManager;
 
 /**
- * EternaµÄ³õÊ¼»¯ÅäÖÃ. <p>
- * ¼ÙÈçÄãÏëÔÚEterna³õÊ¼»¯Íêºó, ³õÊ¼»¯ÄãµÄÀà, ÇëÊµÏÖ´Ë½Ó¿Ú, ²¢ÔÚÄãµÄÀàÖĞ¼ÓÉÏ
- * ÏÂÃæÕâĞ©·½·¨.
- * È»ºóÔÚÅäÖÃÎÄ¼şÖĞµÄself.micromagic.eterna.digester.initClasses
- * ÊôĞÔÖĞ¼ÓÈëÄãµÄÀàÃû(°üÀ¨ÀàÂ·¾¶), ÀàÖ®¼äÓÃ";"·Ö¸î.
- * Èç¹ûÄãÊ¹ÓÃµÄÊÇbase classÀ´³õÊ¼»¯, ÔòÖ»Ğèbase classÊµÏÖ´Ë½Ó¿Ú, ¶ø²»ĞèÒªÔÚ
- * ÅäÖÃÎÄ¼şÖĞÌí¼Ó¶¨Òå.
+ * Eternaçš„åˆå§‹åŒ–é…ç½®. <p>
+ * å‡å¦‚ä½ æƒ³åœ¨Eternaåˆå§‹åŒ–å®Œå, åˆå§‹åŒ–ä½ çš„ç±», è¯·å®ç°æ­¤æ¥å£, å¹¶åœ¨ä½ çš„ç±»ä¸­åŠ ä¸Š
+ * ä¸‹é¢è¿™äº›æ–¹æ³•.
+ * ç„¶ååœ¨é…ç½®æ–‡ä»¶ä¸­çš„self.micromagic.eterna.digester.initClasses
+ * å±æ€§ä¸­åŠ å…¥ä½ çš„ç±»å(åŒ…æ‹¬ç±»è·¯å¾„), ç±»ä¹‹é—´ç”¨";"åˆ†å‰².
+ * å¦‚æœä½ ä½¿ç”¨çš„æ˜¯base classæ¥åˆå§‹åŒ–, åˆ™åªéœ€base classå®ç°æ­¤æ¥å£, è€Œä¸éœ€è¦åœ¨
+ * é…ç½®æ–‡ä»¶ä¸­æ·»åŠ å®šä¹‰.
  *
- * ĞèÒª¶¨ÒåµÄ·½·¨ÈçÏÂ:
+ * éœ€è¦å®šä¹‰çš„æ–¹æ³•å¦‚ä¸‹:
  * private static void afterEternaInitialize(FactoryManager.Instance factoryManager)
  *
- * Èç¹û³õÊ¼»¯Íê³ÉµÄÍ¨ÖªĞèÒª·¢ËÍµ½ÀàµÄÊµÀı, Ôò²»Òª½«´Ë·½·¨¶¨Òå³É¾²Ì¬µÄ, Èç:
+ * å¦‚æœåˆå§‹åŒ–å®Œæˆçš„é€šçŸ¥éœ€è¦å‘é€åˆ°ç±»çš„å®ä¾‹, åˆ™ä¸è¦å°†æ­¤æ–¹æ³•å®šä¹‰æˆé™æ€çš„, å¦‚:
  * private void afterEternaInitialize(FactoryManager.Instance factoryManager)
  *
  * @see FactoryManager.Instance#createClassFactoryManager(Class)
  * @see FactoryManager.Instance#addInitializedListener(Object)
  *
  *
- * Èç¹ûÄãÊ¹ÓÃµÄÊÇbase classÀ´³õÊ¼»¯, ²¢ĞèÒª×Ô¶¯ÖØÔØµÄ¹¦ÄÜ.
+ * å¦‚æœä½ ä½¿ç”¨çš„æ˜¯base classæ¥åˆå§‹åŒ–, å¹¶éœ€è¦è‡ªåŠ¨é‡è½½çš„åŠŸèƒ½.
  *
- * ĞèÒª¶¨ÒåµÄ·½·¨ÈçÏÂ:
+ * éœ€è¦å®šä¹‰çš„æ–¹æ³•å¦‚ä¸‹:
  * private static long autoReloadTime()
- * ·µ»ØÖµÎª¼ì²éÖØÔØµÄ¼ä¸ôºÁÃëÊı, ÖÁÉÙÒª´óÓÚ200.
+ * è¿”å›å€¼ä¸ºæ£€æŸ¥é‡è½½çš„é—´éš”æ¯«ç§’æ•°, è‡³å°‘è¦å¤§äº200.
  */
 public interface EternaInitialize
 {

@@ -6,12 +6,12 @@ import self.micromagic.eterna.digester.ConfigurationException;
 
 public interface UpdateAdapterGenerator extends SQLAdapterGenerator
 {
-   /**
-    * »ñµÃÒ»¸ö<code>QueryAdapter</code>µÄÊµÀı. <p>
-    *
-    * @return <code>QueryAdapter</code>µÄÊµÀı.
-    * @throws ConfigurationException     µ±Ïà¹ØÅäÖÃ³ö´íÊ±.
-    */
-   UpdateAdapter createUpdateAdapter() throws ConfigurationException;
+	/**
+	 * è·å¾—ä¸€ä¸ª<code>QueryAdapter</code>çš„å®ä¾‹. <p>
+	 *
+	 * @return <code>QueryAdapter</code>çš„å®ä¾‹.
+	 * @throws ConfigurationException     å½“ç›¸å…³é…ç½®å‡ºé”™æ—¶.
+	 */
+	UpdateAdapter createUpdateAdapter() throws ConfigurationException;
 
 }

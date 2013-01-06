@@ -8,38 +8,38 @@ import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.digester.ConfigurationException;
 
 public abstract class AbstractExecute extends AbstractGenerator
-      implements Execute, Generator
+		implements Execute, Generator
 {
-   protected ModelAdapter model;
-   protected boolean initialized = false;
+	protected ModelAdapter model;
+	protected boolean initialized = false;
 
-   public void initialize(ModelAdapter model)
-         throws ConfigurationException
-   {
-      this.initialized = true;
-      this.model = model;
-   }
+	public void initialize(ModelAdapter model)
+			throws ConfigurationException
+	{
+		this.initialized = true;
+		this.model = model;
+	}
 
-   public Object create()
-         throws ConfigurationException
-   {
-      return this.createExecute();
-   }
+	public Object create()
+			throws ConfigurationException
+	{
+		return this.createExecute();
+	}
 
-   public Execute createExecute()
-         throws ConfigurationException
-   {
-      return this;
-   }
+	public Execute createExecute()
+			throws ConfigurationException
+	{
+		return this;
+	}
 
-   public ModelAdapter getModelAdapter()
-         throws ConfigurationException
-   {
-      return this.model;
-   }
+	public ModelAdapter getModelAdapter()
+			throws ConfigurationException
+	{
+		return this.model;
+	}
 
-   public void destroy()
-   {
-   }
+	public void destroy()
+	{
+	}
 
 }

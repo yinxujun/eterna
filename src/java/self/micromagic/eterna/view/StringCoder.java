@@ -8,68 +8,68 @@ import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.share.EternaFactory;
 
 /**
- * ÓÃÓÚ×Ö·û´®¸ñÊ½×ª»»µÄ±àÂëÆ÷.
+ * ç”¨äºå­—ç¬¦ä¸²æ ¼å¼è½¬æ¢çš„ç¼–ç å™¨.
  */
 public interface StringCoder
 {
 	/**
-	 * ³õÊ¼»¯.
+	 * åˆå§‹åŒ–.
 	 */
-   void initStringCoder(EternaFactory factory) throws ConfigurationException;
-
-   /**
-    * ½âÎöjsonÊ¹ÓÃÊôĞÔµÄÃû³Æ. <p>
-    * Èç¹ûÊÇ¸öºÏ·¨µÄÃû³Æ, ÔòÖ±½ÓÓÃ<code>.name</code>.
-    * Èç¹ûÊÇÓĞÌØÊâ×Ö·ûµÄÃû³Æ, ÔòÖ±Ê¹ÓÃ<code>["name"]</code>.
-    */
-   String parseJsonRefName(String str);
+	void initStringCoder(EternaFactory factory) throws ConfigurationException;
 
 	/**
-	 * ½«×Ö·û´®×ª»»³ÉHTML¸ñÊ½µÄ×Ö·û´®.
-	 *
-	 * @param str     Òª½øĞĞ×ª»»µÄ×Ö·û´®
+	 * è§£æjsonä½¿ç”¨å±æ€§çš„åç§°. <p>
+	 * å¦‚æœæ˜¯ä¸ªåˆæ³•çš„åç§°, åˆ™ç›´æ¥ç”¨<code>.name</code>.
+	 * å¦‚æœæ˜¯æœ‰ç‰¹æ®Šå­—ç¬¦çš„åç§°, åˆ™ç›´ä½¿ç”¨<code>["name"]</code>.
 	 */
-   String toHTML(String str);
+	String parseJsonRefName(String str);
 
 	/**
-	 * ½«×Ö·û´®×ª»»³ÉHTML¸ñÊ½µÄ×Ö·û´®, ²¢Ö±½ÓĞ´Èëµ½Êä³öÁ÷outÖĞ.
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢æˆHTMLæ ¼å¼çš„å­—ç¬¦ä¸².
 	 *
-	 * @param out     Êä³öÁ÷
-	 * @param str     Òª½øĞĞ×ª»»µÄ×Ö·û´®
+	 * @param str     è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦ä¸²
 	 */
-   void toHTML(Writer out, String str) throws IOException;
+	String toHTML(String str);
 
 	/**
-	 * ½«×Ö·û´®×ª»»³Éjson¸ñÊ½µÄ×Ö·û´®.
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢æˆHTMLæ ¼å¼çš„å­—ç¬¦ä¸², å¹¶ç›´æ¥å†™å…¥åˆ°è¾“å‡ºæµoutä¸­.
 	 *
-	 * @param str     Òª½øĞĞ×ª»»µÄ×Ö·û´®
+	 * @param out     è¾“å‡ºæµ
+	 * @param str     è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦ä¸²
 	 */
-   String toJsonString(String str);
+	void toHTML(Writer out, String str) throws IOException;
 
 	/**
-	 * ½«×Ö·û´®×ª»»³Éjson¸ñÊ½µÄ×Ö·û´®, ²¢Ö±½ÓĞ´Èëµ½Êä³öÁ÷outÖĞ.
-	 * Èç¹ûstr²ÎÊıÎªnull, Ôò²»Êä³ö.
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢æˆjsonæ ¼å¼çš„å­—ç¬¦ä¸².
 	 *
-	 * @param out     Êä³öÁ÷
-	 * @param str     Òª½øĞĞ×ª»»µÄ×Ö·û´®
+	 * @param str     è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦ä¸²
 	 */
-   void toJsonString(Writer out, String str) throws IOException;
+	String toJsonString(String str);
 
 	/**
-	 * ½«×Ö·û´®×ª»»³Éjson¸ñÊ½µÄ×Ö·û´®, ²¢Ö±½ÓĞ´Èëµ½Êä³öÁ÷outÖĞ,
-	 * ²»¼ì²éstrÊÇ·ñÎªnull.
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢æˆjsonæ ¼å¼çš„å­—ç¬¦ä¸², å¹¶ç›´æ¥å†™å…¥åˆ°è¾“å‡ºæµoutä¸­.
+	 * å¦‚æœstrå‚æ•°ä¸ºnull, åˆ™ä¸è¾“å‡º.
 	 *
-	 * @param out     Êä³öÁ÷
-	 * @param str     Òª½øĞĞ×ª»»µÄ×Ö·û´®
+	 * @param out     è¾“å‡ºæµ
+	 * @param str     è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦ä¸²
 	 */
-   void toJsonStringWithoutCheck(Writer out, String str) throws IOException;
+	void toJsonString(Writer out, String str) throws IOException;
 
 	/**
-	 * ½«×Ö·û×ª»»³Éjson¸ñÊ½µÄ×Ö·û´®, ²¢Ö±½ÓĞ´Èëµ½Êä³öÁ÷outÖĞ.
+	 * å°†å­—ç¬¦ä¸²è½¬æ¢æˆjsonæ ¼å¼çš„å­—ç¬¦ä¸², å¹¶ç›´æ¥å†™å…¥åˆ°è¾“å‡ºæµoutä¸­,
+	 * ä¸æ£€æŸ¥stræ˜¯å¦ä¸ºnull.
 	 *
-	 * @param out     Êä³öÁ÷
-	 * @param c       Òª½øĞĞ×ª»»µÄ×Ö·û
+	 * @param out     è¾“å‡ºæµ
+	 * @param str     è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦ä¸²
 	 */
-   void toJsonString(Writer out, int c) throws IOException;
+	void toJsonStringWithoutCheck(Writer out, String str) throws IOException;
+
+	/**
+	 * å°†å­—ç¬¦è½¬æ¢æˆjsonæ ¼å¼çš„å­—ç¬¦ä¸², å¹¶ç›´æ¥å†™å…¥åˆ°è¾“å‡ºæµoutä¸­.
+	 *
+	 * @param out     è¾“å‡ºæµ
+	 * @param c       è¦è¿›è¡Œè½¬æ¢çš„å­—ç¬¦
+	 */
+	void toJsonString(Writer out, int c) throws IOException;
 
 }

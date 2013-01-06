@@ -52,2070 +52,2070 @@ import self.micromagic.util.container.SynHashMap;
 import self.micromagic.util.container.ThreadCache;
 
 /**
- * ÅäÖÃËµÃ÷:
+ * é…ç½®è¯´æ˜:
  *
  * self.micromagic.eterna.digester.initfiles
- * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄÎÄ¼şÁĞ±í
+ * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„æ–‡ä»¶åˆ—è¡¨
  *
  * self.micromagic.eterna.digester.subinitfiles
- * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄ×ÓÎÄ¼şÁĞ±í,
- * ×ÓÎÄ¼şÁĞ±íÖĞµÄ¶ÔÏó»á¸²¸ÇµôÈ«¾Ö³õÊ¼»¯µÄÎÄ¼şÁĞ±íÖĞµÄÍ¬Ãû¶ÔÏó
+ * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„å­æ–‡ä»¶åˆ—è¡¨,
+ * å­æ–‡ä»¶åˆ—è¡¨ä¸­çš„å¯¹è±¡ä¼šè¦†ç›–æ‰å…¨å±€åˆå§‹åŒ–çš„æ–‡ä»¶åˆ—è¡¨ä¸­çš„åŒåå¯¹è±¡
  *
  * self.micromagic.eterna.digester.initClasses
- * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄÀàÃûÁĞ±í
+ * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„ç±»ååˆ—è¡¨
  *
  * self.micromagic.eterna.digester.loadDefaultConfig
- * È«¾Ö³õÊ¼»¯Ê±ÊÇ·ñÒªÔØÈëÄ¬ÈÏµÄÅäÖÃ
+ * å…¨å±€åˆå§‹åŒ–æ—¶æ˜¯å¦è¦è½½å…¥é»˜è®¤çš„é…ç½®
  * cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;
  *
  * @author micromagic@sina.com
  */
 public class FactoryManager
 {
-   public static final Log log = Tool.log;
-
-   /**
-    * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄÎÄ¼şÁĞ±í.
-    */
-   public static final String INIT_FILES_PROPERTY
-         = "self.micromagic.eterna.digester.initfiles";
-
-   /**
-    * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄ×ÓÎÄ¼şÁĞ±í, ×ÓÎÄ¼şÁĞ±íÖĞµÄ¶ÔÏó»á¸²¸ÇµôÈ«¾Ö³õÊ¼»¯
-    * µÄÎÄ¼şÁĞ±íÖĞµÄÍ¬Ãû¶ÔÏó.
-    */
-   public static final String INIT_SUBFILES_PROPERTY
-         = "self.micromagic.eterna.digester.subinitfiles";
-
-   /**
-    * Òª½øĞĞÈ«¾Ö³õÊ¼»¯µÄÀàÃûÁĞ±í.
-    */
-   public static final String INIT_CLASSES_PROPERTY
-         = "self.micromagic.eterna.digester.initClasses";
-
-   /**
-    * È«¾Ö³õÊ¼»¯Ê±ÊÇ·ñÒªÔØÈëÄ¬ÈÏµÄÅäÖÃ.
-    */
-   public static final String LOAD_DEFAULT_CONFIG
-         = "self.micromagic.eterna.digester.loadDefaultConfig";
-
-   /**
-    * È«¾Ö³õÊ¼»¯Ê±ÒªÔØÈëµÄÄ¬ÈÏÅäÖÃ.
-    */
-   public static final String DEFAULT_CONFIG_FILE
-         = "cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;";
-
-   /**
-    * ÊµÀı³õÊ¼»¯µÄÎÄ¼şÁĞ±í.
-    */
-   public static final String CONFIG_INIT_FILES = "initFiles";
-
-   /**
-    * ÊµÀı³õÊ¼»¯µÄ¸¸ÎÄ¼şÁĞ±í.
-    */
-   public static final String CONFIG_INIT_PARENTFILES = "parentFiles";
-
-   /**
-    * ÊµÀı³õÊ¼»¯µÄÅäÖÃÁĞ±í.
-    */
-   public static final String CONFIG_INIT_NAME = "initConfig";
-
-   /**
-    * ÊµÀı³õÊ¼»¯µÄ¸¸ÅäÖÃÁĞ±í.
-    */
-   public static final String CONFIG_INIT_PARENTNAME = "parentConfig";
-
-   /**
-    * ³õÊ¼»¯Ê±Ê¹ÓÃµÄÏß³Ì»º´æ.
-    */
-   public static final String ETERNA_INIT_CACHE = "eterna.init.cache";
-
-   /**
-    * ÔÚ³õÊ¼»¯µÄÏß³Ì»º´æÖĞ·ÅÖÃServletContextµÄÊôĞÔÃû.
-    */
-   public static final String SERVLET_CONTEXT = "eterna.servletContext";
-
-   /**
-    * Ä¬ÈÏĞèÒª¼ÓÔØµÄ¹¤³§EternaFactory.
-    */
-   public static final String ETERNA_FACTORY
-         = "self.micromagic.eterna.EternaFactory";
-
-   /**
-    * ³õÊ¼»¯Ê±ÊÇ·ñĞèÒª¶Ô½Å±¾ÓïÑÔ½øĞĞÓï·¨¼ì²é.
-    */
-   public static final String CHECK_GRAMMER_PROPERTY
-         = "self.micromagic.eterna.digester.checkGrammer";
-   private static boolean checkGrammer = true;
-
-   /**
-    * È«¾Ö¹¤³§ÊµÀıµÄid.
-    */
-   public static final String GLOBAL_INSTANCE_ID = "instance.global";
-
-   private static Document logDocument = null;
-   private static Element logs = null;
-   private static Map instanceMap = new SynHashMap();
-   private static GlobalImpl globalInstance;
-   private static Instance current;
-   private static Factory currentFactory;
-
-   /**
-    * ±êÊ¶µ±Ç°ÊÇ·ñÔÚ³õÊ¼»¯¸¸ÅäÖÃ
-    */
-   private static int superInitLevel = 0;
-
-   static
-   {
-      globalInstance = new GlobalImpl();
-      current = globalInstance;
-      try
-      {
-         Utility.addMethodPropertyManager(CHECK_GRAMMER_PROPERTY, FactoryManager.class,
-               "setCheckGrammer");
-         reInitEterna();
-      }
-      catch (Throwable ex)
-      {
-         log.error("Error in class init.", ex);
-      }
-   }
-
-   /**
-    * ÊÇ·ñÔÚ³õÊ¼»¯¸¸ÅäÖÃ
-    */
-   public static boolean isSuperInit()
-   {
-      return superInitLevel > 0;
-   }
-
-   /**
-    * ³õÊ¼»¯¸¸ÅäÖÃµÄlevelµÈ¼¶, 0Îª»ù±¾ÅäÖÃ 1ÎªµÚÒ»¼¶ 2ÎªµÚ¶ş¼¶ ...
-    */
-   public static int getSuperInitLevel()
-   {
-      return superInitLevel;
-   }
-
-   /**
-    * ³õÊ¼»¯Ê±ÊÇ·ñĞèÒª¶Ô½Å±¾ÓïÑÔ½øĞĞÓï·¨¼ì²é.
-    */
-   public static boolean isCheckGrammer()
-   {
-      return checkGrammer;
-   }
-
-   /**
-    * ÉèÖÃ³õÊ¼»¯Ê±ÊÇ·ñĞèÒª¶Ô½Å±¾ÓïÑÔ½øĞĞÓï·¨¼ì²é.
-    *
-    * @param check   Éè³ÉtrueÎªĞèÒª
-    */
-   public static void setCheckGrammer(String check)
-   {
-      checkGrammer = "true".equalsIgnoreCase(check);
-   }
-
-   /**
-    * Éú³ÉÒ»¸ö¼ÇÂ¼SQLÈÕÖ¾µÄ½Úµã.
-    *
-    * @param name   SQLµÄÀàĞÍÃû³Æ
-    */
-   public static synchronized Element createLogNode(String name)
-   {
-      if (logDocument == null)
-      {
-         logDocument = DocumentHelper.createDocument();
-         Element root = logDocument.addElement("eterna");
-         logs = root.addElement("logs");
-      }
-      if (logs.elements().size() > 2048)
-      {
-         // µ±½Úµã¹ı¶àÊ±, Çå³ı×îÏÈÌí¼ÓµÄ¼¸¸ö½Úµã
-         Iterator itr = logs.elementIterator();
-         try
-         {
-            for (int i = 0; i < 1536; i++)
-            {
-               itr.next();
-               itr.remove();
-            }
-         }
-         catch (Exception ex)
-         {
-            // µ±È¥³ı½Úµã³ö´íÊ±, ÔòÇå¿ÕÈÕÖ¾
-            log.warn("Remove sql log error.", ex);
-            logDocument = null;
-            return createLogNode(name);
-         }
-      }
-      return logs.addElement(name);
-   }
-
-   /**
-    * ½«¼ÇÂ¼µÄÈÕÖ¾Êä³ö.
-    *
-    * @param out     ÈÕÖ¾µÄÊä³öÁ÷
-    * @param clear   ÊÇ·ñÒªÔÚÊä³öÍêºóÇå¿ÕÈÕÖ¾
-    */
-   public static synchronized void printLog(Writer out, boolean clear)
-         throws IOException
-   {
-      if (logDocument == null)
-      {
-         return;
-      }
-      XMLWriter writer = new XMLWriter(out);
-      writer.write(logDocument);
-      writer.flush();
-      if (clear)
-      {
-         logDocument = null;
-         logs = null;
-      }
-   }
-
-   /**
-    * »ñµÃµ±Ç°ÕıÔÚ³õÊ¼»¯µÄFactory.
-    * Ö»ÓĞÔÚ³õÊ¼»¯Ê±²Å»á·µ»ØÖµ, ·ñÔò·µ»Ønull.
-    */
-   public static Factory getCurrentFactory()
-   {
-      return currentFactory;
-   }
-
-   /**
-    * »ñµÃµ±Ç°ÕıÔÚ³õÊ¼»¯µÄ¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    * Èç¹û²»ÔÚ³õÊ¼»¯Ê±£¬Ôò·µ»ØÈ«¾ÖµÄ¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    */
-   public static Instance getCurrentInstance()
-   {
-      return current;
-   }
-
-   /**
-    * »ñµÃÈ«¾ÖµÄ¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    */
-   public static Instance getGlobalFactoryManager()
-   {
-      return globalInstance;
-   }
-
-   /**
-    * @deprecated
-    * @see #getGlobalFactoryManager
-    */
-   public static Instance getGlobeFactoryManager()
-   {
-      return globalInstance;
-   }
-
-   /**
-    * ¸ù¾İ »ù´¡ÅäÖÃ ¸÷¼¶¸¸ÅäÖÃ Éú³ÉÅäÖÃ×Ö·û´®.
-    */
-   private static String getConfig(String initConfig, String[] parentConfig)
-   {
-      List result = new ArrayList();
-      if (initConfig != null)
-      {
-         parseConfig(initConfig, result);
-      }
-      if (result.size() == 0)
-      {
-         // ÕâÀïÌí¼ÓÒ»¸ö¿Õ´®ÓÃÓÚÕ¼Î»
-         result.add("");
-      }
-      if (parentConfig != null)
-      {
-         for (int i = 0; i < parentConfig.length; i++)
-         {
-            if (parentConfig[i] != null)
-            {
-               parseConfig(parentConfig[i], result);
-            }
-         }
-      }
-      if (result.size() <= 1 && initConfig == null)
-      {
-         return null;
-      }
-      StringAppender buf = StringTool.createStringAppender();
-      Iterator itr = result.iterator();
-      while (itr.hasNext())
-      {
-         buf.append(itr.next()).append('|');
-      }
-      return buf.toString();
-   }
-
-   /**
-    * ½âÎöÅäÖÃ.
-    *
-    * @param config    Òª½âÎöµÄÅäÖÃ
-    * @param result    ½âÎöÍêµÄ½á¹ûÁĞ±í, ±¾´Î½âÎöµÄ½á¹ûÒ²Òª·Å½øÈ¥
-    */
-   private static void parseConfig(String config, List result)
-   {
-      String temp;
-      List tmpSet = new ArrayList();
-      if (config != null)
-      {
-         StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
-         while (token.hasMoreTokens())
-         {
-            temp = token.nextToken().trim();
-            if (temp.length() == 0)
-            {
-               continue;
-            }
-            tmpSet.add(temp);
-         }
-      }
-      StringAppender buf = StringTool.createStringAppender();
-      Iterator itr = tmpSet.iterator();
-      while (itr.hasNext())
-      {
-         buf.append(itr.next()).append(';');
-      }
-      result.add(buf.toString());
-   }
-
-   /**
-    * ½«Ò»¸ö¹¤³§ĞòÁĞ»¯±£´æ.
-    *
-    * @param f         ÒªĞòÁĞ»¯±£´æµÄ¹¤³§
-    * @param oOut      ĞòÁĞ»¯Êä³öÁ÷
-    */
-   public static void writeFactory(Factory f, ObjectOutputStream oOut)
-         throws IOException, ConfigurationException
-   {
-	   oOut.writeUTF(f.getFactoryManager().getId());
-      oOut.writeUTF(f.getName());
-      oOut.writeUTF(ClassGenerator.getClassName(f.getClass()));
-   }
-
-   /**
-    * Í¨¹ı·´ĞòÁĞ»¯»ñµÃÒ»¸ö¹¤³§.
-    *
-    * @param oIn      ·´ĞòÁĞ»¯ÊäÈëÁ÷
-    * @return   ·´ĞòÁĞ»¯ºóµÄ¹¤³§
-    */
-   public static Factory readFactory(ObjectInputStream oIn)
-         throws IOException, ConfigurationException
-   {
-      String id = oIn.readUTF();
-      String fName = oIn.readUTF();
-      String cName = oIn.readUTF();
-	   Instance instance = getFactoryManager(id);
-      return instance.getFactory(fName, cName);
-   }
-
-   /**
-    * ¸ù¾İid»ñÈ¡¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param id    ¹¤³§¹ÜÀíÆ÷µÄid
-    * @return  ¹¤³§¹ÜÀíÆ÷µÄÊµÀı
-    * @throws ConfigurationException    Èç¹ûÃ»ÓĞ¶ÔÓ¦idµÄÊµÀı, ÔòÅ×³ö´ËÒì³£
-    */
-   public static Instance getFactoryManager(String id)
-         throws ConfigurationException
-   {
-      if (GLOBAL_INSTANCE_ID.equals(id))
-      {
-         return globalInstance;
-      }
-      Instance instance = (Instance) instanceMap.get(id);
-      if (instance == null)
-      {
-         throw new ConfigurationException("Not fount the instance [" + id + "] ["
-               + globalInstance.parseInstanceId(id) + "]");
-      }
-      return instance;
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    * »á½«[ÀàÃû.xml]×÷ÎªÅäÖÃÀ´¶ÁÈ¡.
-    *
-    * @param baseClass    ³õÊ¼»¯µÄ»ù´¡Àà
-    */
-   public static Instance createClassFactoryManager(Class baseClass)
-   {
-      return createClassFactoryManager(baseClass, null);
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà¼°ÅäÖÃ´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param baseClass    ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param initConfig   ³õÊ¼»¯µÄÅäÖÃ
-    */
-   public static Instance createClassFactoryManager(Class baseClass, String initConfig)
-   {
-      if (!Instance.class.isAssignableFrom(baseClass))
-      {
-         String id = globalInstance.createInstanceId(getConfig(initConfig, null),
-               ClassGenerator.getClassName(baseClass));
-         Object instance = instanceMap.get(id);
-         if (instance != null && instance instanceof ClassImpl)
-         {
-            ClassImpl ci = (ClassImpl) instance;
-            // Èç¹û»ùÓÚµÄÀàÏàÍ¬Ôò²»ÖØĞÂ¼ÓÔØ£¨µ±Ê¹ÓÃÁË²»Í¬µÄClassLoaderÊ±£¬»ùÓÚµÄÀà¾Í»á²»Í¬£©
-            if (ci.baseClass == baseClass)
-            {
-               return ci;
-            }
-         }
-      }
-      return createClassFactoryManager(baseClass, null, initConfig, null, false);
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà¼°ÅäÖÃ´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param baseClass    ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param initConfig   ³õÊ¼»¯µÄÅäÖÃ
-    * @param registry     ÊÇ·ñĞèÒªÖØĞÂ×¢²á´ËÊµÀı, ÉèÎªtrueÔò»á½«Ô­À´ÒÑ´æÔÚµÄÊµÀıÉ¾³ı
-    */
-   public static Instance createClassFactoryManager(Class baseClass, String initConfig, boolean registry)
-   {
-      return createClassFactoryManager(baseClass, null, initConfig, null, registry);
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà¼°ÅäÖÃ´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param baseClass    ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param baseObj      »ù´¡ÀàµÄÒ»¸öÊµÀı
-    * @param initConfig   ³õÊ¼»¯µÄÅäÖÃ
-    * @param registry     ÊÇ·ñĞèÒªÖØĞÂ×¢²á´ËÊµÀı, ÉèÎªtrueÔò»á½«Ô­À´ÒÑ´æÔÚµÄÊµÀıÉ¾³ı
-    */
-   public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
-         String initConfig, boolean registry)
-   {
-      return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà¼°ÅäÖÃ´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param baseClass        ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param baseObj          »ù´¡ÀàµÄÒ»¸öÊµÀı
-    * @param initConfig       ³õÊ¼»¯µÄÅäÖÃ
-    * @param parentConfig     ³õÊ¼»¯µÄ¸¸ÅäÖÃ
-    * @param registry         ÊÇ·ñĞèÒªÖØĞÂ×¢²á´ËÊµÀı, ÉèÎªtrueÔò»á½«Ô­À´ÒÑ´æÔÚµÄÊµÀıÉ¾³ı
-    */
-   public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
-         String initConfig, String[] parentConfig, boolean registry)
-   {
-      Class instanceClass = null;
-      if (Instance.class.isAssignableFrom(baseClass))
-      {
-         instanceClass = baseClass;
-      }
-      return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig,
-            instanceClass, registry);
-   }
-
-   /**
-    * ¸ù¾İÒ»¸öÀà¼°ÅäÖÃ´´½¨¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param baseClass        ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param baseObj          »ù´¡ÀàµÄÒ»¸öÊµÀı
-    * @param initConfig       ³õÊ¼»¯µÄÅäÖÃ
-    * @param parentConfig     ³õÊ¼»¯µÄ¸¸ÅäÖÃ
-    * @param instanceClass    ¹¤³§¹ÜÀíÆ÷µÄÊµÏÖÀà
-    * @param regist           ÊÇ·ñĞèÒªÖØĞÂ×¢²á´ËÊµÀı, ÉèÎªtrueÔò»á½«Ô­À´ÒÑ´æÔÚµÄÊµÀıÉ¾³ı
-    */
-   public static synchronized Instance createClassFactoryManager(Class baseClass, Object baseObj,
-         String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
-   {
-      Instance instance = null;
-      if (instanceClass != null)
-      {
-         if (Instance.class.isAssignableFrom(instanceClass))
-         {
-            try
-            {
-               ObjectRef ref = new ObjectRef();
-               Constructor constructor = findConstructor(instanceClass, ref,
-                     baseClass, baseObj, initConfig, parentConfig);
-               if (constructor != null)
-               {
-                  if (!constructor.isAccessible())
-                  {
-                     constructor.setAccessible(true);
-                     Object[] params = (Object[]) ref.getObject();
-                     instance = (Instance) constructor.newInstance(params);
-                     constructor.setAccessible(false);
-                  }
-                  else
-                  {
-                     Object[] params = (Object[]) ref.getObject();
-                     instance = (Instance) constructor.newInstance(params);
-                  }
-               }
-            }
-            catch (Throwable ex)
-            {
-               String msg = "Error in createClassFactoryManager, when create special instance class:"
-                     + instanceClass + ".";
-               log.error(msg, ex);
-               throw new RuntimeException(msg);
-            }
-         }
-         else
-         {
-            String msg = "Error in createClassFactoryManager, unexpected instance class type:"
-                  + instanceClass + ".";
-            throw new RuntimeException(msg);
-         }
-      }
-      if (instance == null)
-      {
-         if (EternaInitialize.class.isAssignableFrom(baseClass))
-         {
-            try
-            {
-               Method method = baseClass.getDeclaredMethod( "autoReloadTime", new Class[0]);
-               if (Modifier.isStatic(method.getModifiers()))
-               {
-                  Long autoReloadTime;
-                  if (!method.isAccessible())
-                  {
-                     method.setAccessible(true);
-                     autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
-                     method.setAccessible(false);
-                  }
-                  else
-                  {
-                     autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
-                  }
-                  instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
-                        autoReloadTime.longValue());
-               }
-            }
-            catch (Throwable ex)
-            {
-               log.info("At createClassFactoryManager, when invoke autoReloadTime:" + baseClass + ".");
-            }
-         }
-         if (instance == null)
-         {
-            instance = new ClassImpl(baseClass, baseObj, initConfig, parentConfig);
-         }
-      }
-      String id = instance.getId();
-      if (!regist)
-      {
-         Instance tmp = (Instance) instanceMap.get(id);
-         if (tmp != null)
-         {
-            if (tmp instanceof ClassImpl)
-            {
-               ClassImpl ci = (ClassImpl) tmp;
-               // Èç¹û»ùÓÚµÄÀàÏàÍ¬Ôò²»ÖØĞÂ¼ÓÔØ£¨µ±Ê¹ÓÃÁË²»Í¬µÄClassLoaderÊ±, »ùÓÚµÄÀà¾Í»á²»Í¬£©
-               if (ci.baseClass == baseClass)
-               {
-                  // Èç¹ûbaseObjÊÇÒ»¸ö¼àÌıÕß, ´Ë·½·¨»á½«Æä¼ÓÈëÁĞ±íÖĞ
-                  ci.addInitializedListener(baseObj);
-                  return ci;
-               }
-            }
-            else
-            {
-               tmp.addInitializedListener(baseObj);
-               return tmp;
-            }
-         }
-      }
-      current = instance;
-      instance.reInit(null);
-      current = globalInstance;
-      Instance old = (Instance) instanceMap.put(id, instance);
-      if (old != null)
-      {
-         old.destroy();
-      }
-      return instance;
-   }
-
-   /**
-    * ´Ó¹¤³§¹ÜÀíÆ÷µÄÊµÏÖÀàÖĞÑ°ÕÒÒ»¸öºÏÊÊµÄ¹¹Ôìº¯Êı.
-    *
-    * @param params           ³ö²Î, ¹¹ÔìÀàÊ±Ê¹ÓÃµÄ²ÎÊı
-    * @param baseClass        ³õÊ¼»¯µÄ»ù´¡Àà
-    * @param baseObj          »ù´¡ÀàµÄÒ»¸öÊµÀı
-    * @param initConfig       ³õÊ¼»¯µÄÅäÖÃ
-    * @param parentConfig     ³õÊ¼»¯µÄ¸¸ÅäÖÃ
-    * @param instanceClass    ¹¤³§¹ÜÀíÆ÷µÄÊµÏÖÀà
-    */
-   private static Constructor findConstructor(Class instanceClass, ObjectRef params, Class baseClass,
-         Object baseObj, String initConfig, String[] parentConfig)
-   {
-      Constructor[] constructors = instanceClass.getDeclaredConstructors();
-      Constructor constructor = null;
-      Class[] paramTypes = new Class[0];
-      CONSTRUCTOR_LOOP:
-      for (int i = 0; i < constructors.length; i++)
-      {
-         Constructor tmpC = constructors[i];
-         Class[] types = tmpC.getParameterTypes();
-         if (types.length >= paramTypes.length && types.length <= 4)
-         {
-            Object[] tmpParams = new Object[types.length];
-            for (int j = 0; j < types.length; j++)
-            {
-               if (Object.class == types[j])
-               {
-                  tmpParams[j] = baseObj;
-               }
-               else if (Class.class == types[j])
-               {
-                  tmpParams[j] = baseClass;
-               }
-               else if (String.class == types[j])
-               {
-                  tmpParams[j] = initConfig;
-               }
-               else if (String[].class == types[j])
-               {
-                  tmpParams[j] = parentConfig;
-               }
-               else
-               {
-                  continue CONSTRUCTOR_LOOP;
-               }
-            }
-            paramTypes = types;
-            constructor = tmpC;
-            params.setObject(tmpParams);
-         }
-      }
-      if (constructor == null)
-      {
-         log.error("In instance class type:" + instanceClass + ", can't find proper constructor.");
-      }
-      return constructor;
-   }
-
-   /**
-    * (ÖØĞÂ)³õÊ¼»¯ËùÓĞµÄ¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    */
-   public static void reInitEterna()
-   {
-      reInitEterna(null);
-   }
-
-   /**
-    * (ÖØĞÂ)³õÊ¼»¯ËùÓĞµÄ¹¤³§¹ÜÀíÆ÷µÄÊµÀı.
-    *
-    * @param msg        ³ö²Î, ³õÊ¼»¯¹ı³ÌÖĞ·µ»ØµÄĞÅÏ¢
-    */
-   public static synchronized void reInitEterna(StringRef msg)
-   {
-      current = globalInstance;
-      globalInstance.reInit(msg);
-      Iterator itr = instanceMap.values().iterator();
-      while (itr.hasNext())
-      {
-         Instance instance = (Instance) itr.next();
-         current = instance;
-         instance.reInit(msg);
-      }
-      current = globalInstance;
-   }
-
-   /**
-    * ´Óµ±Ç°¹¤³§¹ÜÀíÆ÷µÄÊµÀıÖĞ»ñÈ¡Ò»¸ö¹¤³§ÊµÀı.
-    *
-    * @param name          ¹¤³§µÄÃû³Æ
-    * @param className     ¹¤³§µÄÊµÏÖÀàÃû³Æ
-    */
-   public static synchronized Factory getFactory(String name, String className)
-         throws ConfigurationException
-   {
-      return current.getFactory(name, className);
-   }
-
-   /**
-    * ½«Ò»¸ö¹¤³§ÊµÀıÉèÖÃµ½µ±Ç°¹¤³§¹ÜÀíÆ÷µÄÊµÀıÖĞ.
-    *
-    * @param name          ¹¤³§µÄÃû³Æ
-    * @param factory       ¹¤³§ÊµÀı
-    */
-   static synchronized void addFactory(String name, Factory factory)
-         throws ConfigurationException
-   {
-      current.addFactory(name, factory);
-   }
-
-   /**
-    * ´ÓÈ«¾Ö¹¤³§ÀíÆ÷µÄÊµÀıÖĞ»ñÈ¡Ò»¸öEternaFactoryÊµÀı.
-    */
-   public static EternaFactory getEternaFactory()
-         throws ConfigurationException
-   {
-      return globalInstance.getEternaFactory();
-   }
-
-   /**
-    * »ñÈ¡³õÊ¼»¯µÄ»º´æ.
-    */
-   public static Map getInitCache()
-   {
-      Map cache = (Map) ThreadCache.getInstance().getProperty(ETERNA_INIT_CACHE);
-      return cache;
-   }
-
-   /**
-    * ÉèÖÃ³õÊ¼»¯µÄ»º´æ.
-    */
-   public static void setInitCache(Map cache)
-   {
-      if (cache == null)
-      {
-         ThreadCache.getInstance().removeProperty(ETERNA_INIT_CACHE);
-      }
-      else
-      {
-         ThreadCache.getInstance().setProperty(ETERNA_INIT_CACHE, cache);
-      }
-   }
-
-   /**
-    * ´¦ÀíÅäÖÃÖĞµÄÒıÓÃĞÅÏ¢.
-    */
-   private static String resolveLocate(String locate)
-   {
-      return Utility.resolveDynamicPropnames(locate);
-   }
-
-   /**
-    * »ñÈ¡xmlµÄ½âÎöÆ÷.
-    */
-   private static Digester createDigester()
-   {
-      Digester digester = new Digester();
-
-      // Register our local copy of the DTDs that we can find
-      URL url = FactoryManager.class.getClassLoader().getResource(
-            "self/micromagic/eterna/digester/eterna_1_5.dtd");
-      digester.register("eterna", url.toString());
-
-      digester.addRuleSet(new ShareSet());
-
-      // Configure the processing rules
-      digester.addRuleSet(new SQLRuleSet());
-      digester.addRuleSet(new SearchRuleSet());
-      digester.addRuleSet(new ModelRuleSet());
-      digester.addRuleSet(new ViewRuleSet());
-
-      return digester;
-   }
-
-   /**
-    * FactoryManagerÊµÀıËù°üº¬µÄ¶ÔÏóµÄÈİÆ÷.
-    */
-   public static class ContainObject
-   {
-      public final Instance shareInstance;
-      public final Object baseObj;
-      public final String name;
-
-      public ContainObject(Instance shareInstance, Object baseObj)
-      {
-         this.shareInstance = shareInstance;
-         this.baseObj = baseObj;
-         this.name = "";
-      }
-
-      public ContainObject(Instance shareInstance, Object baseObj, String name)
-      {
-         this.shareInstance = shareInstance;
-         this.baseObj = baseObj;
-         this.name = name;
-      }
-
-   }
-
-   /**
-    * FactoryManagerµÄÊµÀı½Ó¿Ú.
-    */
-   public interface Instance
-   {
-      /**
-       * »ñµÃ±¾¹¤³§¹ÜÀíÆ÷ÊµÀıµÄid.
-       */
-      String getId();
-
-      /**
-       * »ñµÃ±¾¹¤³§¹ÜÀíÆ÷µÄ³õÊ¼»¯ÅäÖÃ.
-       */
-      String getInitConfig();
-
-      /**
-       * (ÖØĞÂ)³õÊ¼»¯¹¤³§
-       * @param msg  ´æ·Å³õÊ¼»¯µÄ·µ»ØĞÅÏ¢
-       */
-      void reInit(StringRef msg);
-
-      /**
-       * ÉèÖÃ×Ô¶¨ÒåµÄÊôĞÔ. <p>
-       * ÕâĞ©ÊôĞÔ»áÔÚ(ÖØĞÂ)³õÊ¼»¯Ê±, ¸ù¾İinitCacheÖĞµÄÖµ½øĞĞ¸üĞÂ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       * @param attr   ÊôĞÔÖµ
-       */
-      void setAttribute(String name, Object attr);
-
-      /**
-       * ÒÆ³ı×Ô¶¨ÒåµÄÊôĞÔ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       */
-      void removeAttribute(String name);
-
-      /**
-       * »ñÈ¡×Ô¶¨ÒåµÄÊôĞÔ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       * @return   ÊôĞÔÖµ
-       */
-      Object getAttribute(String name);
-
-      /**
-       * Ìí¼ÓÒ»¸ö³õÊ¼»¯¼àÌıÕß. <p>
-       * ´Ë¶ÔÏó±ØĞëÊµÏÖ<code>self.micromagic.eterna.share.EternaInitialize</code>½Ó¿Ú,
-       * »¹±ØĞë¶¨ÒåafterEternaInitialize(FactoryManager.Instance)·½·¨, ÔÚ³õÊ¼»¯Íê±Ïºó
-       * »áµ÷ÓÃ´Ë·½·¨.
-       *
-       * @param obj    ³õÊ¼»¯¼àÌıÕß
-       * @see self.micromagic.eterna.share.EternaInitialize
-       */
-      void addInitializedListener(Object obj);
-
-      /**
-       * »ñµÃÒ»¸ö¹¤³§ÊµÀı.
-       *
-       * @param name       ¹¤³§·ÖÀàÃû
-       * @param className  ¹¤³§ÊµÏÖÀàÃû
-       * @return   ¹¤³§ÊµÀı
-       */
-      Factory getFactory(String name, String className)
-            throws ConfigurationException;
-
-      /**
-       * Ìí¼ÓÒ»¸ö¹¤³§ÊµÀı.
-       *
-       * @param name        ¹¤³§·ÖÀàÃû
-       * @param factory     ¹¤³§ÊµÀı
-       */
-      void addFactory(String name, Factory factory)
-            throws ConfigurationException;
-
-      /**
-       * »ñµÃ·ÖÀàÃûÎª"eterna"µÄ¹¤³§ÊµÀı.
-       */
-      EternaFactory getEternaFactory()
-            throws ConfigurationException;
-
-      /**
-       * µ±´Ë¹¤³§ÊµÀıµÄÉúÃüÖÜÆÚ½áÊøÊ±, »áµ÷ÓÃ´Ë·½·¨.
-       */
-      void destroy();
-
-   }
-
-   /**
-    * FactoryManagerµÄÊµÀı½Ó¿ÚµÄ³éÏóÊµÏÖÀà, ÊµÏÖÁËÒ»Ğ©¹«ÓÃµÄ·½·¨.
-    */
-   public static abstract class AbstractInstance
-         implements Instance
-   {
-      private static final Base64 ID_CODER = new Base64(
-            "0123456789abcedfghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ$_.".toCharArray());
-      private static final String CODER_PREFIX = "#ID:";
-
-      protected String prefixName = "";
-      protected Map listenerMap = null;
-      protected Map factoryMaps = new HashMap();
-      protected boolean initialized = false;
-      protected Throwable initException = null;
-      protected boolean initFactorys = false;
-      protected Factory defaultFactory = null;
-      protected Instance shareInstance = null;
-      protected AttributeManager attrs = new AttributeManager();
-
-      /**
-       * ÉèÖÃÓë´ËÊµÀı¹²ÏíµÄÊµÀı.
-       */
-      protected void setShareInstance(Instance shareInstance)
-      {
-         if (shareInstance == null)
-         {
-            this.shareInstance = globalInstance;
-         }
-         else
-         {
-            this.shareInstance = shareInstance;
-         }
-      }
-
-      /**
-       * ÉèÖÃ×Ô¶¨ÒåµÄÊôĞÔ. <p>
-       * ÕâĞ©ÊôĞÔ»áÔÚ(ÖØĞÂ)³õÊ¼»¯Ê±, ¸ù¾İinitCacheÖĞµÄÖµ½øĞĞ¸üĞÂ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       * @param attr   ÊôĞÔÖµ
-       * @see FactoryManager#getInitCache
-       */
-      public void setAttribute(String name, Object attr)
-      {
-         this.attrs.setAttribute(name, attr);
-      }
-
-      /**
-       * ÒÆ³ı×Ô¶¨ÒåµÄÊôĞÔ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       */
-      public void removeAttribute(String name)
-      {
-         this.attrs.removeAttribute(name);
-      }
-
-      /**
-       * »ñÈ¡×Ô¶¨ÒåµÄÊôĞÔ.
-       *
-       * @param name   ÊôĞÔµÄÃû³Æ
-       * @return   ÊôĞÔÖµ
-       */
-      public Object getAttribute(String name)
-      {
-         Object attr = this.attrs.getAttribute(name);
-         if (attr == null && this.shareInstance != null)
-         {
-            attr = this.shareInstance.getAttribute(name);
-         }
-         return attr;
-      }
-
-      /**
-       * ½âÎöInstanceµÄid.
-       */
-      protected String parseInstanceId(String id)
-      {
-         if (id != null && id.startsWith(CODER_PREFIX))
-         {
-            try
-            {
-
-               byte[] buf = ID_CODER.base64ToByteArray(id.substring(CODER_PREFIX.length()));
-               ByteArrayInputStream byteIn = new ByteArrayInputStream(buf);
-               InflaterInputStream in = new InflaterInputStream(byteIn);
-               ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
-               Utility.copyStream(in, byteOut);
-               in.close();
-               byte[] result = byteOut.toByteArray();
-               return new String(result, "UTF-8");
-            }
-            catch (IOException ex)
-            {
-               // ÕâÀï²»»á³öÏÖIOÒì³£ÒòÎªÈ«ÊÇÄÚ´æ²Ù×÷
-               throw new Error();
-            }
-         }
-         return id;
-      }
-
-      /**
-       * ¹¹½¨Ò»¸öInstanceµÄid.
-       */
-      protected String createInstanceId(String configString, String baseName)
-      {
-         try
-         {
-            String tmp;
-            if (configString == null)
-            {
-               tmp = baseName;
-            }
-            else
-            {
-               tmp = baseName + "+" + configString;
-            }
-            if (this.prefixName.length() > 0)
-            {
-               tmp = this.prefixName + "+" + tmp;
-            }
-            if (tmp.length() < 50)
-            {
-               // ²»×ã50¸ö×Ö·ûµÄ, ²»½øĞĞÑ¹Ëõ
-               return tmp;
-            }
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
-            DeflaterOutputStream out = new DeflaterOutputStream(byteOut);
-            byte[] buf = tmp.getBytes("UTF-8");
-            out.write(buf);
-            out.close();
-            byte[] result = byteOut.toByteArray();
-            return CODER_PREFIX + ID_CODER.byteArrayToBase64(result);
-         }
-         catch (IOException ex)
-         {
-            // ÕâÀï²»»á³öÏÖIOÒì³£ÒòÎªÈ«ÊÇÄÚ´æ²Ù×÷
-            throw new Error();
-         }
-      }
-
-      /**
-       * »ñµÃÕûºÏºÃµÄÅäÖÃ×Ö·û´®.
-       */
-      protected String getConfigString(String initConfig, String[] parentConfig)
-      {
-         return getConfig(initConfig, parentConfig);
-      }
-
-      /**
-       * ÉèÖÃ³õÊ¼»¯µÄµÈ¼¶.
-       */
-      protected void setSuperInitLevel(int level)
-      {
-         FactoryManager.superInitLevel = level;
-      }
-
-      /**
-       * ¸ù¾İµØÖ·¼°»ù´¡Àà»ñÈ¡ÅäÖÃµÄÊı¾İÁ÷.
-       *
-       * @param locate       ÅäÖÃµÄµØÖ·
-       * @param baseClass    ³õÊ¼»¯µÄ»ù´¡Àà
-       */
-      protected InputStream getConfigStream(String locate, Class baseClass)
-            throws IOException, ConfigurationException
-      {
-         if (locate.startsWith("cp:"))
-         {
-            URL url;
-            if (baseClass == null)
-            {
-               url = Utility.getContextClassLoader().getResource(locate.substring(3));
-            }
-            else
-            {
-               url = baseClass.getClassLoader().getResource(locate.substring(3));
-            }
-            if (url != null)
-            {
-               return url.openStream();
-            }
-            return null;
-         }
-         else if (locate.startsWith("web:"))
-         {
-            ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
-            if (sc != null)
-            {
-               URL url = sc.getResource(locate.substring(4));
-               if (url != null)
-               {
-                  return url.openStream();
-               }
-            }
-            return null;
-         }
-         else if (locate.startsWith("http:"))
-         {
-            URL url = new URL(locate);
-            return url.openStream();
-         }
-         else if (locate.startsWith("note:"))
-         {
-            return null;
-         }
-         else
-         {
-            File file = new File(locate);
-            return file.isFile() ? new FileInputStream(file) : null;
-         }
-      }
+	public static final Log log = Tool.log;
+
+	/**
+	 * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„æ–‡ä»¶åˆ—è¡¨.
+	 */
+	public static final String INIT_FILES_PROPERTY
+			= "self.micromagic.eterna.digester.initfiles";
+
+	/**
+	 * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„å­æ–‡ä»¶åˆ—è¡¨, å­æ–‡ä»¶åˆ—è¡¨ä¸­çš„å¯¹è±¡ä¼šè¦†ç›–æ‰å…¨å±€åˆå§‹åŒ–
+	 * çš„æ–‡ä»¶åˆ—è¡¨ä¸­çš„åŒåå¯¹è±¡.
+	 */
+	public static final String INIT_SUBFILES_PROPERTY
+			= "self.micromagic.eterna.digester.subinitfiles";
+
+	/**
+	 * è¦è¿›è¡Œå…¨å±€åˆå§‹åŒ–çš„ç±»ååˆ—è¡¨.
+	 */
+	public static final String INIT_CLASSES_PROPERTY
+			= "self.micromagic.eterna.digester.initClasses";
+
+	/**
+	 * å…¨å±€åˆå§‹åŒ–æ—¶æ˜¯å¦è¦è½½å…¥é»˜è®¤çš„é…ç½®.
+	 */
+	public static final String LOAD_DEFAULT_CONFIG
+			= "self.micromagic.eterna.digester.loadDefaultConfig";
+
+	/**
+	 * å…¨å±€åˆå§‹åŒ–æ—¶è¦è½½å…¥çš„é»˜è®¤é…ç½®.
+	 */
+	public static final String DEFAULT_CONFIG_FILE
+			= "cp:self/micromagic/eterna/share/eterna_share.xml;cp:eterna_global.xml;";
+
+	/**
+	 * å®ä¾‹åˆå§‹åŒ–çš„æ–‡ä»¶åˆ—è¡¨.
+	 */
+	public static final String CONFIG_INIT_FILES = "initFiles";
+
+	/**
+	 * å®ä¾‹åˆå§‹åŒ–çš„çˆ¶æ–‡ä»¶åˆ—è¡¨.
+	 */
+	public static final String CONFIG_INIT_PARENTFILES = "parentFiles";
+
+	/**
+	 * å®ä¾‹åˆå§‹åŒ–çš„é…ç½®åˆ—è¡¨.
+	 */
+	public static final String CONFIG_INIT_NAME = "initConfig";
+
+	/**
+	 * å®ä¾‹åˆå§‹åŒ–çš„çˆ¶é…ç½®åˆ—è¡¨.
+	 */
+	public static final String CONFIG_INIT_PARENTNAME = "parentConfig";
+
+	/**
+	 * åˆå§‹åŒ–æ—¶ä½¿ç”¨çš„çº¿ç¨‹ç¼“å­˜.
+	 */
+	public static final String ETERNA_INIT_CACHE = "eterna.init.cache";
+
+	/**
+	 * åœ¨åˆå§‹åŒ–çš„çº¿ç¨‹ç¼“å­˜ä¸­æ”¾ç½®ServletContextçš„å±æ€§å.
+	 */
+	public static final String SERVLET_CONTEXT = "eterna.servletContext";
+
+	/**
+	 * é»˜è®¤éœ€è¦åŠ è½½çš„å·¥å‚EternaFactory.
+	 */
+	public static final String ETERNA_FACTORY
+			= "self.micromagic.eterna.EternaFactory";
+
+	/**
+	 * åˆå§‹åŒ–æ—¶æ˜¯å¦éœ€è¦å¯¹è„šæœ¬è¯­è¨€è¿›è¡Œè¯­æ³•æ£€æŸ¥.
+	 */
+	public static final String CHECK_GRAMMER_PROPERTY
+			= "self.micromagic.eterna.digester.checkGrammer";
+	private static boolean checkGrammer = true;
+
+	/**
+	 * å…¨å±€å·¥å‚å®ä¾‹çš„id.
+	 */
+	public static final String GLOBAL_INSTANCE_ID = "instance.global";
+
+	private static Document logDocument = null;
+	private static Element logs = null;
+	private static Map instanceMap = new SynHashMap();
+	private static GlobalImpl globalInstance;
+	private static Instance current;
+	private static Factory currentFactory;
+
+	/**
+	 * æ ‡è¯†å½“å‰æ˜¯å¦åœ¨åˆå§‹åŒ–çˆ¶é…ç½®
+	 */
+	private static int superInitLevel = 0;
+
+	static
+	{
+		globalInstance = new GlobalImpl();
+		current = globalInstance;
+		try
+		{
+			Utility.addMethodPropertyManager(CHECK_GRAMMER_PROPERTY, FactoryManager.class,
+					"setCheckGrammer");
+			reInitEterna();
+		}
+		catch (Throwable ex)
+		{
+			log.error("Error in class init.", ex);
+		}
+	}
+
+	/**
+	 * æ˜¯å¦åœ¨åˆå§‹åŒ–çˆ¶é…ç½®
+	 */
+	public static boolean isSuperInit()
+	{
+		return superInitLevel > 0;
+	}
+
+	/**
+	 * åˆå§‹åŒ–çˆ¶é…ç½®çš„levelç­‰çº§, 0ä¸ºåŸºæœ¬é…ç½® 1ä¸ºç¬¬ä¸€çº§ 2ä¸ºç¬¬äºŒçº§ ...
+	 */
+	public static int getSuperInitLevel()
+	{
+		return superInitLevel;
+	}
+
+	/**
+	 * åˆå§‹åŒ–æ—¶æ˜¯å¦éœ€è¦å¯¹è„šæœ¬è¯­è¨€è¿›è¡Œè¯­æ³•æ£€æŸ¥.
+	 */
+	public static boolean isCheckGrammer()
+	{
+		return checkGrammer;
+	}
+
+	/**
+	 * è®¾ç½®åˆå§‹åŒ–æ—¶æ˜¯å¦éœ€è¦å¯¹è„šæœ¬è¯­è¨€è¿›è¡Œè¯­æ³•æ£€æŸ¥.
+	 *
+	 * @param check   è®¾æˆtrueä¸ºéœ€è¦
+	 */
+	public static void setCheckGrammer(String check)
+	{
+		checkGrammer = "true".equalsIgnoreCase(check);
+	}
+
+	/**
+	 * ç”Ÿæˆä¸€ä¸ªè®°å½•SQLæ—¥å¿—çš„èŠ‚ç‚¹.
+	 *
+	 * @param name   SQLçš„ç±»å‹åç§°
+	 */
+	public static synchronized Element createLogNode(String name)
+	{
+		if (logDocument == null)
+		{
+			logDocument = DocumentHelper.createDocument();
+			Element root = logDocument.addElement("eterna");
+			logs = root.addElement("logs");
+		}
+		if (logs.elements().size() > 2048)
+		{
+			// å½“èŠ‚ç‚¹è¿‡å¤šæ—¶, æ¸…é™¤æœ€å…ˆæ·»åŠ çš„å‡ ä¸ªèŠ‚ç‚¹
+			Iterator itr = logs.elementIterator();
+			try
+			{
+				for (int i = 0; i < 1536; i++)
+				{
+					itr.next();
+					itr.remove();
+				}
+			}
+			catch (Exception ex)
+			{
+				// å½“å»é™¤èŠ‚ç‚¹å‡ºé”™æ—¶, åˆ™æ¸…ç©ºæ—¥å¿—
+				log.warn("Remove sql log error.", ex);
+				logDocument = null;
+				return createLogNode(name);
+			}
+		}
+		return logs.addElement(name);
+	}
+
+	/**
+	 * å°†è®°å½•çš„æ—¥å¿—è¾“å‡º.
+	 *
+	 * @param out     æ—¥å¿—çš„è¾“å‡ºæµ
+	 * @param clear   æ˜¯å¦è¦åœ¨è¾“å‡ºå®Œåæ¸…ç©ºæ—¥å¿—
+	 */
+	public static synchronized void printLog(Writer out, boolean clear)
+			throws IOException
+	{
+		if (logDocument == null)
+		{
+			return;
+		}
+		XMLWriter writer = new XMLWriter(out);
+		writer.write(logDocument);
+		writer.flush();
+		if (clear)
+		{
+			logDocument = null;
+			logs = null;
+		}
+	}
+
+	/**
+	 * è·å¾—å½“å‰æ­£åœ¨åˆå§‹åŒ–çš„Factory.
+	 * åªæœ‰åœ¨åˆå§‹åŒ–æ—¶æ‰ä¼šè¿”å›å€¼, å¦åˆ™è¿”å›null.
+	 */
+	public static Factory getCurrentFactory()
+	{
+		return currentFactory;
+	}
+
+	/**
+	 * è·å¾—å½“å‰æ­£åœ¨åˆå§‹åŒ–çš„å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 * å¦‚æœä¸åœ¨åˆå§‹åŒ–æ—¶ï¼Œåˆ™è¿”å›å…¨å±€çš„å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 */
+	public static Instance getCurrentInstance()
+	{
+		return current;
+	}
+
+	/**
+	 * è·å¾—å…¨å±€çš„å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 */
+	public static Instance getGlobalFactoryManager()
+	{
+		return globalInstance;
+	}
+
+	/**
+	 * @deprecated
+	 * @see #getGlobalFactoryManager
+	 */
+	public static Instance getGlobeFactoryManager()
+	{
+		return globalInstance;
+	}
+
+	/**
+	 * æ ¹æ® åŸºç¡€é…ç½® å„çº§çˆ¶é…ç½® ç”Ÿæˆé…ç½®å­—ç¬¦ä¸².
+	 */
+	private static String getConfig(String initConfig, String[] parentConfig)
+	{
+		List result = new ArrayList();
+		if (initConfig != null)
+		{
+			parseConfig(initConfig, result);
+		}
+		if (result.size() == 0)
+		{
+			// è¿™é‡Œæ·»åŠ ä¸€ä¸ªç©ºä¸²ç”¨äºå ä½
+			result.add("");
+		}
+		if (parentConfig != null)
+		{
+			for (int i = 0; i < parentConfig.length; i++)
+			{
+				if (parentConfig[i] != null)
+				{
+					parseConfig(parentConfig[i], result);
+				}
+			}
+		}
+		if (result.size() <= 1 && initConfig == null)
+		{
+			return null;
+		}
+		StringAppender buf = StringTool.createStringAppender();
+		Iterator itr = result.iterator();
+		while (itr.hasNext())
+		{
+			buf.append(itr.next()).append('|');
+		}
+		return buf.toString();
+	}
+
+	/**
+	 * è§£æé…ç½®.
+	 *
+	 * @param config    è¦è§£æçš„é…ç½®
+	 * @param result    è§£æå®Œçš„ç»“æœåˆ—è¡¨, æœ¬æ¬¡è§£æçš„ç»“æœä¹Ÿè¦æ”¾è¿›å»
+	 */
+	private static void parseConfig(String config, List result)
+	{
+		String temp;
+		List tmpSet = new ArrayList();
+		if (config != null)
+		{
+			StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
+			while (token.hasMoreTokens())
+			{
+				temp = token.nextToken().trim();
+				if (temp.length() == 0)
+				{
+					continue;
+				}
+				tmpSet.add(temp);
+			}
+		}
+		StringAppender buf = StringTool.createStringAppender();
+		Iterator itr = tmpSet.iterator();
+		while (itr.hasNext())
+		{
+			buf.append(itr.next()).append(';');
+		}
+		result.add(buf.toString());
+	}
+
+	/**
+	 * å°†ä¸€ä¸ªå·¥å‚åºåˆ—åŒ–ä¿å­˜.
+	 *
+	 * @param f         è¦åºåˆ—åŒ–ä¿å­˜çš„å·¥å‚
+	 * @param oOut      åºåˆ—åŒ–è¾“å‡ºæµ
+	 */
+	public static void writeFactory(Factory f, ObjectOutputStream oOut)
+			throws IOException, ConfigurationException
+	{
+		oOut.writeUTF(f.getFactoryManager().getId());
+		oOut.writeUTF(f.getName());
+		oOut.writeUTF(ClassGenerator.getClassName(f.getClass()));
+	}
+
+	/**
+	 * é€šè¿‡ååºåˆ—åŒ–è·å¾—ä¸€ä¸ªå·¥å‚.
+	 *
+	 * @param oIn      ååºåˆ—åŒ–è¾“å…¥æµ
+	 * @return   ååºåˆ—åŒ–åçš„å·¥å‚
+	 */
+	public static Factory readFactory(ObjectInputStream oIn)
+			throws IOException, ConfigurationException
+	{
+		String id = oIn.readUTF();
+		String fName = oIn.readUTF();
+		String cName = oIn.readUTF();
+		Instance instance = getFactoryManager(id);
+		return instance.getFactory(fName, cName);
+	}
+
+	/**
+	 * æ ¹æ®idè·å–å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param id    å·¥å‚ç®¡ç†å™¨çš„id
+	 * @return  å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹
+	 * @throws ConfigurationException    å¦‚æœæ²¡æœ‰å¯¹åº”idçš„å®ä¾‹, åˆ™æŠ›å‡ºæ­¤å¼‚å¸¸
+	 */
+	public static Instance getFactoryManager(String id)
+			throws ConfigurationException
+	{
+		if (GLOBAL_INSTANCE_ID.equals(id))
+		{
+			return globalInstance;
+		}
+		Instance instance = (Instance) instanceMap.get(id);
+		if (instance == null)
+		{
+			throw new ConfigurationException("Not fount the instance [" + id + "] ["
+					+ globalInstance.parseInstanceId(id) + "]");
+		}
+		return instance;
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 * ä¼šå°†[ç±»å.xml]ä½œä¸ºé…ç½®æ¥è¯»å–.
+	 *
+	 * @param baseClass    åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 */
+	public static Instance createClassFactoryManager(Class baseClass)
+	{
+		return createClassFactoryManager(baseClass, null);
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åŠé…ç½®åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param baseClass    åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param initConfig   åˆå§‹åŒ–çš„é…ç½®
+	 */
+	public static Instance createClassFactoryManager(Class baseClass, String initConfig)
+	{
+		if (!Instance.class.isAssignableFrom(baseClass))
+		{
+			String id = globalInstance.createInstanceId(getConfig(initConfig, null),
+					ClassGenerator.getClassName(baseClass));
+			Object instance = instanceMap.get(id);
+			if (instance != null && instance instanceof ClassImpl)
+			{
+				ClassImpl ci = (ClassImpl) instance;
+				// å¦‚æœåŸºäºçš„ç±»ç›¸åŒåˆ™ä¸é‡æ–°åŠ è½½ï¼ˆå½“ä½¿ç”¨äº†ä¸åŒçš„ClassLoaderæ—¶ï¼ŒåŸºäºçš„ç±»å°±ä¼šä¸åŒï¼‰
+				if (ci.baseClass == baseClass)
+				{
+					return ci;
+				}
+			}
+		}
+		return createClassFactoryManager(baseClass, null, initConfig, null, false);
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åŠé…ç½®åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param baseClass    åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param initConfig   åˆå§‹åŒ–çš„é…ç½®
+	 * @param registry     æ˜¯å¦éœ€è¦é‡æ–°æ³¨å†Œæ­¤å®ä¾‹, è®¾ä¸ºtrueåˆ™ä¼šå°†åŸæ¥å·²å­˜åœ¨çš„å®ä¾‹åˆ é™¤
+	 */
+	public static Instance createClassFactoryManager(Class baseClass, String initConfig, boolean registry)
+	{
+		return createClassFactoryManager(baseClass, null, initConfig, null, registry);
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åŠé…ç½®åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param baseClass    åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param baseObj      åŸºç¡€ç±»çš„ä¸€ä¸ªå®ä¾‹
+	 * @param initConfig   åˆå§‹åŒ–çš„é…ç½®
+	 * @param registry     æ˜¯å¦éœ€è¦é‡æ–°æ³¨å†Œæ­¤å®ä¾‹, è®¾ä¸ºtrueåˆ™ä¼šå°†åŸæ¥å·²å­˜åœ¨çš„å®ä¾‹åˆ é™¤
+	 */
+	public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
+			String initConfig, boolean registry)
+	{
+		return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åŠé…ç½®åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param baseClass        åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param baseObj          åŸºç¡€ç±»çš„ä¸€ä¸ªå®ä¾‹
+	 * @param initConfig       åˆå§‹åŒ–çš„é…ç½®
+	 * @param parentConfig     åˆå§‹åŒ–çš„çˆ¶é…ç½®
+	 * @param registry         æ˜¯å¦éœ€è¦é‡æ–°æ³¨å†Œæ­¤å®ä¾‹, è®¾ä¸ºtrueåˆ™ä¼šå°†åŸæ¥å·²å­˜åœ¨çš„å®ä¾‹åˆ é™¤
+	 */
+	public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
+			String initConfig, String[] parentConfig, boolean registry)
+	{
+		Class instanceClass = null;
+		if (Instance.class.isAssignableFrom(baseClass))
+		{
+			instanceClass = baseClass;
+		}
+		return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig,
+				instanceClass, registry);
+	}
+
+	/**
+	 * æ ¹æ®ä¸€ä¸ªç±»åŠé…ç½®åˆ›å»ºå·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param baseClass        åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param baseObj          åŸºç¡€ç±»çš„ä¸€ä¸ªå®ä¾‹
+	 * @param initConfig       åˆå§‹åŒ–çš„é…ç½®
+	 * @param parentConfig     åˆå§‹åŒ–çš„çˆ¶é…ç½®
+	 * @param instanceClass    å·¥å‚ç®¡ç†å™¨çš„å®ç°ç±»
+	 * @param regist           æ˜¯å¦éœ€è¦é‡æ–°æ³¨å†Œæ­¤å®ä¾‹, è®¾ä¸ºtrueåˆ™ä¼šå°†åŸæ¥å·²å­˜åœ¨çš„å®ä¾‹åˆ é™¤
+	 */
+	public static synchronized Instance createClassFactoryManager(Class baseClass, Object baseObj,
+			String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
+	{
+		Instance instance = null;
+		if (instanceClass != null)
+		{
+			if (Instance.class.isAssignableFrom(instanceClass))
+			{
+				try
+				{
+					ObjectRef ref = new ObjectRef();
+					Constructor constructor = findConstructor(instanceClass, ref,
+							baseClass, baseObj, initConfig, parentConfig);
+					if (constructor != null)
+					{
+						if (!constructor.isAccessible())
+						{
+							constructor.setAccessible(true);
+							Object[] params = (Object[]) ref.getObject();
+							instance = (Instance) constructor.newInstance(params);
+							constructor.setAccessible(false);
+						}
+						else
+						{
+							Object[] params = (Object[]) ref.getObject();
+							instance = (Instance) constructor.newInstance(params);
+						}
+					}
+				}
+				catch (Throwable ex)
+				{
+					String msg = "Error in createClassFactoryManager, when create special instance class:"
+							+ instanceClass + ".";
+					log.error(msg, ex);
+					throw new RuntimeException(msg);
+				}
+			}
+			else
+			{
+				String msg = "Error in createClassFactoryManager, unexpected instance class type:"
+						+ instanceClass + ".";
+				throw new RuntimeException(msg);
+			}
+		}
+		if (instance == null)
+		{
+			if (EternaInitialize.class.isAssignableFrom(baseClass))
+			{
+				try
+				{
+					Method method = baseClass.getDeclaredMethod( "autoReloadTime", new Class[0]);
+					if (Modifier.isStatic(method.getModifiers()))
+					{
+						Long autoReloadTime;
+						if (!method.isAccessible())
+						{
+							method.setAccessible(true);
+							autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+							method.setAccessible(false);
+						}
+						else
+						{
+							autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
+						}
+						instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
+								autoReloadTime.longValue());
+					}
+				}
+				catch (Throwable ex)
+				{
+					log.info("At createClassFactoryManager, when invoke autoReloadTime:" + baseClass + ".");
+				}
+			}
+			if (instance == null)
+			{
+				instance = new ClassImpl(baseClass, baseObj, initConfig, parentConfig);
+			}
+		}
+		String id = instance.getId();
+		if (!regist)
+		{
+			Instance tmp = (Instance) instanceMap.get(id);
+			if (tmp != null)
+			{
+				if (tmp instanceof ClassImpl)
+				{
+					ClassImpl ci = (ClassImpl) tmp;
+					// å¦‚æœåŸºäºçš„ç±»ç›¸åŒåˆ™ä¸é‡æ–°åŠ è½½ï¼ˆå½“ä½¿ç”¨äº†ä¸åŒçš„ClassLoaderæ—¶, åŸºäºçš„ç±»å°±ä¼šä¸åŒï¼‰
+					if (ci.baseClass == baseClass)
+					{
+						// å¦‚æœbaseObjæ˜¯ä¸€ä¸ªç›‘å¬è€…, æ­¤æ–¹æ³•ä¼šå°†å…¶åŠ å…¥åˆ—è¡¨ä¸­
+						ci.addInitializedListener(baseObj);
+						return ci;
+					}
+				}
+				else
+				{
+					tmp.addInitializedListener(baseObj);
+					return tmp;
+				}
+			}
+		}
+		current = instance;
+		instance.reInit(null);
+		current = globalInstance;
+		Instance old = (Instance) instanceMap.put(id, instance);
+		if (old != null)
+		{
+			old.destroy();
+		}
+		return instance;
+	}
+
+	/**
+	 * ä»å·¥å‚ç®¡ç†å™¨çš„å®ç°ç±»ä¸­å¯»æ‰¾ä¸€ä¸ªåˆé€‚çš„æ„é€ å‡½æ•°.
+	 *
+	 * @param params           å‡ºå‚, æ„é€ ç±»æ—¶ä½¿ç”¨çš„å‚æ•°
+	 * @param baseClass        åˆå§‹åŒ–çš„åŸºç¡€ç±»
+	 * @param baseObj          åŸºç¡€ç±»çš„ä¸€ä¸ªå®ä¾‹
+	 * @param initConfig       åˆå§‹åŒ–çš„é…ç½®
+	 * @param parentConfig     åˆå§‹åŒ–çš„çˆ¶é…ç½®
+	 * @param instanceClass    å·¥å‚ç®¡ç†å™¨çš„å®ç°ç±»
+	 */
+	private static Constructor findConstructor(Class instanceClass, ObjectRef params, Class baseClass,
+			Object baseObj, String initConfig, String[] parentConfig)
+	{
+		Constructor[] constructors = instanceClass.getDeclaredConstructors();
+		Constructor constructor = null;
+		Class[] paramTypes = new Class[0];
+		CONSTRUCTOR_LOOP:
+		for (int i = 0; i < constructors.length; i++)
+		{
+			Constructor tmpC = constructors[i];
+			Class[] types = tmpC.getParameterTypes();
+			if (types.length >= paramTypes.length && types.length <= 4)
+			{
+				Object[] tmpParams = new Object[types.length];
+				for (int j = 0; j < types.length; j++)
+				{
+					if (Object.class == types[j])
+					{
+						tmpParams[j] = baseObj;
+					}
+					else if (Class.class == types[j])
+					{
+						tmpParams[j] = baseClass;
+					}
+					else if (String.class == types[j])
+					{
+						tmpParams[j] = initConfig;
+					}
+					else if (String[].class == types[j])
+					{
+						tmpParams[j] = parentConfig;
+					}
+					else
+					{
+						continue CONSTRUCTOR_LOOP;
+					}
+				}
+				paramTypes = types;
+				constructor = tmpC;
+				params.setObject(tmpParams);
+			}
+		}
+		if (constructor == null)
+		{
+			log.error("In instance class type:" + instanceClass + ", can't find proper constructor.");
+		}
+		return constructor;
+	}
+
+	/**
+	 * (é‡æ–°)åˆå§‹åŒ–æ‰€æœ‰çš„å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 */
+	public static void reInitEterna()
+	{
+		reInitEterna(null);
+	}
+
+	/**
+	 * (é‡æ–°)åˆå§‹åŒ–æ‰€æœ‰çš„å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹.
+	 *
+	 * @param msg        å‡ºå‚, åˆå§‹åŒ–è¿‡ç¨‹ä¸­è¿”å›çš„ä¿¡æ¯
+	 */
+	public static synchronized void reInitEterna(StringRef msg)
+	{
+		current = globalInstance;
+		globalInstance.reInit(msg);
+		Iterator itr = instanceMap.values().iterator();
+		while (itr.hasNext())
+		{
+			Instance instance = (Instance) itr.next();
+			current = instance;
+			instance.reInit(msg);
+		}
+		current = globalInstance;
+	}
+
+	/**
+	 * ä»å½“å‰å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹ä¸­è·å–ä¸€ä¸ªå·¥å‚å®ä¾‹.
+	 *
+	 * @param name          å·¥å‚çš„åç§°
+	 * @param className     å·¥å‚çš„å®ç°ç±»åç§°
+	 */
+	public static synchronized Factory getFactory(String name, String className)
+			throws ConfigurationException
+	{
+		return current.getFactory(name, className);
+	}
+
+	/**
+	 * å°†ä¸€ä¸ªå·¥å‚å®ä¾‹è®¾ç½®åˆ°å½“å‰å·¥å‚ç®¡ç†å™¨çš„å®ä¾‹ä¸­.
+	 *
+	 * @param name          å·¥å‚çš„åç§°
+	 * @param factory       å·¥å‚å®ä¾‹
+	 */
+	static synchronized void addFactory(String name, Factory factory)
+			throws ConfigurationException
+	{
+		current.addFactory(name, factory);
+	}
+
+	/**
+	 * ä»å…¨å±€å·¥å‚ç†å™¨çš„å®ä¾‹ä¸­è·å–ä¸€ä¸ªEternaFactoryå®ä¾‹.
+	 */
+	public static EternaFactory getEternaFactory()
+			throws ConfigurationException
+	{
+		return globalInstance.getEternaFactory();
+	}
+
+	/**
+	 * è·å–åˆå§‹åŒ–çš„ç¼“å­˜.
+	 */
+	public static Map getInitCache()
+	{
+		Map cache = (Map) ThreadCache.getInstance().getProperty(ETERNA_INIT_CACHE);
+		return cache;
+	}
+
+	/**
+	 * è®¾ç½®åˆå§‹åŒ–çš„ç¼“å­˜.
+	 */
+	public static void setInitCache(Map cache)
+	{
+		if (cache == null)
+		{
+			ThreadCache.getInstance().removeProperty(ETERNA_INIT_CACHE);
+		}
+		else
+		{
+			ThreadCache.getInstance().setProperty(ETERNA_INIT_CACHE, cache);
+		}
+	}
+
+	/**
+	 * å¤„ç†é…ç½®ä¸­çš„å¼•ç”¨ä¿¡æ¯.
+	 */
+	private static String resolveLocate(String locate)
+	{
+		return Utility.resolveDynamicPropnames(locate);
+	}
+
+	/**
+	 * è·å–xmlçš„è§£æå™¨.
+	 */
+	private static Digester createDigester()
+	{
+		Digester digester = new Digester();
+
+		// Register our local copy of the DTDs that we can find
+		URL url = FactoryManager.class.getClassLoader().getResource(
+				"self/micromagic/eterna/digester/eterna_1_5.dtd");
+		digester.register("eterna", url.toString());
+
+		digester.addRuleSet(new ShareSet());
+
+		// Configure the processing rules
+		digester.addRuleSet(new SQLRuleSet());
+		digester.addRuleSet(new SearchRuleSet());
+		digester.addRuleSet(new ModelRuleSet());
+		digester.addRuleSet(new ViewRuleSet());
+
+		return digester;
+	}
+
+	/**
+	 * FactoryManagerå®ä¾‹æ‰€åŒ…å«çš„å¯¹è±¡çš„å®¹å™¨.
+	 */
+	public static class ContainObject
+	{
+		public final Instance shareInstance;
+		public final Object baseObj;
+		public final String name;
+
+		public ContainObject(Instance shareInstance, Object baseObj)
+		{
+			this.shareInstance = shareInstance;
+			this.baseObj = baseObj;
+			this.name = "";
+		}
+
+		public ContainObject(Instance shareInstance, Object baseObj, String name)
+		{
+			this.shareInstance = shareInstance;
+			this.baseObj = baseObj;
+			this.name = name;
+		}
+
+	}
+
+	/**
+	 * FactoryManagerçš„å®ä¾‹æ¥å£.
+	 */
+	public interface Instance
+	{
+		/**
+		 * è·å¾—æœ¬å·¥å‚ç®¡ç†å™¨å®ä¾‹çš„id.
+		 */
+		String getId();
 
 		/**
-		 * ¿ªÊ¼(ÖØĞÂ)³õÊ¼»¯.
+		 * è·å¾—æœ¬å·¥å‚ç®¡ç†å™¨çš„åˆå§‹åŒ–é…ç½®.
+		 */
+		String getInitConfig();
+
+		/**
+		 * (é‡æ–°)åˆå§‹åŒ–å·¥å‚
+		 * @param msg  å­˜æ”¾åˆå§‹åŒ–çš„è¿”å›ä¿¡æ¯
+		 */
+		void reInit(StringRef msg);
+
+		/**
+		 * è®¾ç½®è‡ªå®šä¹‰çš„å±æ€§. <p>
+		 * è¿™äº›å±æ€§ä¼šåœ¨(é‡æ–°)åˆå§‹åŒ–æ—¶, æ ¹æ®initCacheä¸­çš„å€¼è¿›è¡Œæ›´æ–°.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 * @param attr   å±æ€§å€¼
+		 */
+		void setAttribute(String name, Object attr);
+
+		/**
+		 * ç§»é™¤è‡ªå®šä¹‰çš„å±æ€§.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 */
+		void removeAttribute(String name);
+
+		/**
+		 * è·å–è‡ªå®šä¹‰çš„å±æ€§.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 * @return   å±æ€§å€¼
+		 */
+		Object getAttribute(String name);
+
+		/**
+		 * æ·»åŠ ä¸€ä¸ªåˆå§‹åŒ–ç›‘å¬è€…. <p>
+		 * æ­¤å¯¹è±¡å¿…é¡»å®ç°<code>self.micromagic.eterna.share.EternaInitialize</code>æ¥å£,
+		 * è¿˜å¿…é¡»å®šä¹‰afterEternaInitialize(FactoryManager.Instance)æ–¹æ³•, åœ¨åˆå§‹åŒ–å®Œæ¯•å
+		 * ä¼šè°ƒç”¨æ­¤æ–¹æ³•.
+		 *
+		 * @param obj    åˆå§‹åŒ–ç›‘å¬è€…
+		 * @see self.micromagic.eterna.share.EternaInitialize
+		 */
+		void addInitializedListener(Object obj);
+
+		/**
+		 * è·å¾—ä¸€ä¸ªå·¥å‚å®ä¾‹.
+		 *
+		 * @param name       å·¥å‚åˆ†ç±»å
+		 * @param className  å·¥å‚å®ç°ç±»å
+		 * @return   å·¥å‚å®ä¾‹
+		 */
+		Factory getFactory(String name, String className)
+				throws ConfigurationException;
+
+		/**
+		 * æ·»åŠ ä¸€ä¸ªå·¥å‚å®ä¾‹.
+		 *
+		 * @param name        å·¥å‚åˆ†ç±»å
+		 * @param factory     å·¥å‚å®ä¾‹
+		 */
+		void addFactory(String name, Factory factory)
+				throws ConfigurationException;
+
+		/**
+		 * è·å¾—åˆ†ç±»åä¸º"eterna"çš„å·¥å‚å®ä¾‹.
+		 */
+		EternaFactory getEternaFactory()
+				throws ConfigurationException;
+
+		/**
+		 * å½“æ­¤å·¥å‚å®ä¾‹çš„ç”Ÿå‘½å‘¨æœŸç»“æŸæ—¶, ä¼šè°ƒç”¨æ­¤æ–¹æ³•.
+		 */
+		void destroy();
+
+	}
+
+	/**
+	 * FactoryManagerçš„å®ä¾‹æ¥å£çš„æŠ½è±¡å®ç°ç±», å®ç°äº†ä¸€äº›å…¬ç”¨çš„æ–¹æ³•.
+	 */
+	public static abstract class AbstractInstance
+			implements Instance
+	{
+		private static final Base64 ID_CODER = new Base64(
+				"0123456789abcedfghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ$_.".toCharArray());
+		private static final String CODER_PREFIX = "#ID:";
+
+		protected String prefixName = "";
+		protected Map listenerMap = null;
+		protected Map factoryMaps = new HashMap();
+		protected boolean initialized = false;
+		protected Throwable initException = null;
+		protected boolean initFactorys = false;
+		protected Factory defaultFactory = null;
+		protected Instance shareInstance = null;
+		protected AttributeManager attrs = new AttributeManager();
+
+		/**
+		 * è®¾ç½®ä¸æ­¤å®ä¾‹å…±äº«çš„å®ä¾‹.
+		 */
+		protected void setShareInstance(Instance shareInstance)
+		{
+			if (shareInstance == null)
+			{
+				this.shareInstance = globalInstance;
+			}
+			else
+			{
+				this.shareInstance = shareInstance;
+			}
+		}
+
+		/**
+		 * è®¾ç½®è‡ªå®šä¹‰çš„å±æ€§. <p>
+		 * è¿™äº›å±æ€§ä¼šåœ¨(é‡æ–°)åˆå§‹åŒ–æ—¶, æ ¹æ®initCacheä¸­çš„å€¼è¿›è¡Œæ›´æ–°.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 * @param attr   å±æ€§å€¼
+		 * @see FactoryManager#getInitCache
+		 */
+		public void setAttribute(String name, Object attr)
+		{
+			this.attrs.setAttribute(name, attr);
+		}
+
+		/**
+		 * ç§»é™¤è‡ªå®šä¹‰çš„å±æ€§.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 */
+		public void removeAttribute(String name)
+		{
+			this.attrs.removeAttribute(name);
+		}
+
+		/**
+		 * è·å–è‡ªå®šä¹‰çš„å±æ€§.
+		 *
+		 * @param name   å±æ€§çš„åç§°
+		 * @return   å±æ€§å€¼
+		 */
+		public Object getAttribute(String name)
+		{
+			Object attr = this.attrs.getAttribute(name);
+			if (attr == null && this.shareInstance != null)
+			{
+				attr = this.shareInstance.getAttribute(name);
+			}
+			return attr;
+		}
+
+		/**
+		 * è§£æInstanceçš„id.
+		 */
+		protected String parseInstanceId(String id)
+		{
+			if (id != null && id.startsWith(CODER_PREFIX))
+			{
+				try
+				{
+
+					byte[] buf = ID_CODER.base64ToByteArray(id.substring(CODER_PREFIX.length()));
+					ByteArrayInputStream byteIn = new ByteArrayInputStream(buf);
+					InflaterInputStream in = new InflaterInputStream(byteIn);
+					ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
+					Utility.copyStream(in, byteOut);
+					in.close();
+					byte[] result = byteOut.toByteArray();
+					return new String(result, "UTF-8");
+				}
+				catch (IOException ex)
+				{
+					// è¿™é‡Œä¸ä¼šå‡ºç°IOå¼‚å¸¸å› ä¸ºå…¨æ˜¯å†…å­˜æ“ä½œ
+					throw new Error();
+				}
+			}
+			return id;
+		}
+
+		/**
+		 * æ„å»ºä¸€ä¸ªInstanceçš„id.
+		 */
+		protected String createInstanceId(String configString, String baseName)
+		{
+			try
+			{
+				String tmp;
+				if (configString == null)
+				{
+					tmp = baseName;
+				}
+				else
+				{
+					tmp = baseName + "+" + configString;
+				}
+				if (this.prefixName.length() > 0)
+				{
+					tmp = this.prefixName + "+" + tmp;
+				}
+				if (tmp.length() < 50)
+				{
+					// ä¸è¶³50ä¸ªå­—ç¬¦çš„, ä¸è¿›è¡Œå‹ç¼©
+					return tmp;
+				}
+				ByteArrayOutputStream byteOut = new ByteArrayOutputStream(128);
+				DeflaterOutputStream out = new DeflaterOutputStream(byteOut);
+				byte[] buf = tmp.getBytes("UTF-8");
+				out.write(buf);
+				out.close();
+				byte[] result = byteOut.toByteArray();
+				return CODER_PREFIX + ID_CODER.byteArrayToBase64(result);
+			}
+			catch (IOException ex)
+			{
+				// è¿™é‡Œä¸ä¼šå‡ºç°IOå¼‚å¸¸å› ä¸ºå…¨æ˜¯å†…å­˜æ“ä½œ
+				throw new Error();
+			}
+		}
+
+		/**
+		 * è·å¾—æ•´åˆå¥½çš„é…ç½®å­—ç¬¦ä¸².
+		 */
+		protected String getConfigString(String initConfig, String[] parentConfig)
+		{
+			return getConfig(initConfig, parentConfig);
+		}
+
+		/**
+		 * è®¾ç½®åˆå§‹åŒ–çš„ç­‰çº§.
+		 */
+		protected void setSuperInitLevel(int level)
+		{
+			FactoryManager.superInitLevel = level;
+		}
+
+		/**
+		 * æ ¹æ®åœ°å€åŠåŸºç¡€ç±»è·å–é…ç½®çš„æ•°æ®æµ.
+		 *
+		 * @param locate       é…ç½®çš„åœ°å€
+		 * @param baseClass    åˆå§‹åŒ–çš„åŸºç¡€ç±»
+		 */
+		protected InputStream getConfigStream(String locate, Class baseClass)
+				throws IOException, ConfigurationException
+		{
+			if (locate.startsWith("cp:"))
+			{
+				URL url;
+				if (baseClass == null)
+				{
+					url = Utility.getContextClassLoader().getResource(locate.substring(3));
+				}
+				else
+				{
+					url = baseClass.getClassLoader().getResource(locate.substring(3));
+				}
+				if (url != null)
+				{
+					return url.openStream();
+				}
+				return null;
+			}
+			else if (locate.startsWith("web:"))
+			{
+				ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
+				if (sc != null)
+				{
+					URL url = sc.getResource(locate.substring(4));
+					if (url != null)
+					{
+						return url.openStream();
+					}
+				}
+				return null;
+			}
+			else if (locate.startsWith("http:"))
+			{
+				URL url = new URL(locate);
+				return url.openStream();
+			}
+			else if (locate.startsWith("note:"))
+			{
+				return null;
+			}
+			else
+			{
+				File file = new File(locate);
+				return file.isFile() ? new FileInputStream(file) : null;
+			}
+		}
+
+		/**
+		 * å¼€å§‹(é‡æ–°)åˆå§‹åŒ–.
 		 */
 		protected void beginReInit()
 		{
 		}
 
 		/**
-		 * ½áÊø(ÖØĞÂ)³õÊ¼»¯.
+		 * ç»“æŸ(é‡æ–°)åˆå§‹åŒ–.
 		 */
 		protected void endReInit()
 		{
 		}
 
-      /**
-       * (ÖØĞÂ)³õÊ¼»¯¹¤³§¹ÜÀíÆ÷
-       * @param msg  ´æ·Å³õÊ¼»¯µÄ·µ»ØĞÅÏ¢
-       */
-      public final void reInit(StringRef msg)
-      {
-         synchronized (FactoryManager.class)
-         {
+		/**
+		 * (é‡æ–°)åˆå§‹åŒ–å·¥å‚ç®¡ç†å™¨
+		 * @param msg  å­˜æ”¾åˆå§‹åŒ–çš„è¿”å›ä¿¡æ¯
+		 */
+		public final void reInit(StringRef msg)
+		{
+			synchronized (FactoryManager.class)
+			{
 				this.beginReInit();
-            // ¸ù¾İinitCacheÖĞµÄÖµ³õÊ¼»¯¹¤³§¹ÜÀíÆ÷ÊµÀıÖĞµÄÊôĞÔ
-            Map attrs = FactoryManager.getInitCache();
-            if (attrs != null)
-            {
-               Iterator itr = attrs.entrySet().iterator();
-               while (itr.hasNext())
-               {
-                  Map.Entry entry = (Map.Entry) itr.next();
-                  if (entry.getValue() == null)
-                  {
-                     this.removeAttribute((String) entry.getKey());
-                  }
-                  else
-                  {
-                     this.setAttribute((String) entry.getKey(), entry.getValue());
-                  }
-               }
-            }
-            // ³õÊ¼»¯ÖØ¸´¶ÔÏó¼ì²é¹æÔòÖĞµÄ¶ÔÏó»º´æ
-            SameCheckRule.initDealedObjMap();
-            Instance oldInstance = FactoryManager.current;
-            Factory oldCF = FactoryManager.currentFactory;
-            this.destroy();
-            FactoryManager.currentFactory = null;
-            FactoryManager.current = this;
-            this.initialized = false;
-            this.initException = null;
-            this.factoryMaps.clear();
-            this.defaultFactory = null;
+				// æ ¹æ®initCacheä¸­çš„å€¼åˆå§‹åŒ–å·¥å‚ç®¡ç†å™¨å®ä¾‹ä¸­çš„å±æ€§
+				Map attrs = FactoryManager.getInitCache();
+				if (attrs != null)
+				{
+					Iterator itr = attrs.entrySet().iterator();
+					while (itr.hasNext())
+					{
+						Map.Entry entry = (Map.Entry) itr.next();
+						if (entry.getValue() == null)
+						{
+							this.removeAttribute((String) entry.getKey());
+						}
+						else
+						{
+							this.setAttribute((String) entry.getKey(), entry.getValue());
+						}
+					}
+				}
+				// åˆå§‹åŒ–é‡å¤å¯¹è±¡æ£€æŸ¥è§„åˆ™ä¸­çš„å¯¹è±¡ç¼“å­˜
+				SameCheckRule.initDealedObjMap();
+				Instance oldInstance = FactoryManager.current;
+				Factory oldCF = FactoryManager.currentFactory;
+				this.destroy();
+				FactoryManager.currentFactory = null;
+				FactoryManager.current = this;
+				this.initialized = false;
+				this.initException = null;
+				this.factoryMaps.clear();
+				this.defaultFactory = null;
 
-            try
-            {
-               ThreadCache.getInstance().setProperty(ConfigurationException.IN_INITIALIZE, "1");
-               this.initializeXML(msg);
-               ConfigurationException.config = null;
-               ConfigurationException.objName = null;
-               this.initializeFactorys();
-               ConfigurationException.objName = null;
-               this.initializeElse();
-               this.initialized = true;
-            }
-            catch (Throwable ex)
-            {
-               this.initException = ex;
-               StringAppender temp = StringTool.createStringAppender();
-               if (ConfigurationException.config != null)
-               {
-                  temp.append("Config:").append(ConfigurationException.config).append("; ");
-               }
-               else
-               {
-                  temp.append("InitConfig:{").append(this.getInitConfig()).append("}; ");
-               }
-               if (ConfigurationException.objName != null)
-               {
-                  temp.append("Object:").append(ConfigurationException.objName).append("; ");
-               }
-               temp.append("Message:").append("When " + ClassGenerator.getClassName(this.getClass())
-                     + " initialize.");
-               log.error(temp.toString(), ex);
-               if (msg != null)
-               {
-                  if (msg.getString() != null)
-                  {
-                     StringAppender tmpBuf = StringTool.createStringAppender();
-                     tmpBuf.append(msg.getString());
-                     tmpBuf.append(Utility.LINE_SEPARATOR);
-                     tmpBuf.append(temp.toString());
-                     temp = tmpBuf;
-                  }
-                  msg.setString(temp.append('[').append(ex.getMessage()).append(']').toString());
-               }
-               ConfigurationException.config = null;
-               ConfigurationException.objName = null;
-            }
-            finally
-            {
-               ThreadCache.getInstance().removeProperty(ConfigurationException.IN_INITIALIZE);
-               FactoryManager.currentFactory = oldCF;
-               FactoryManager.current = oldInstance;
-               SameCheckRule.clearDealedObjMap();
+				try
+				{
+					ThreadCache.getInstance().setProperty(ConfigurationException.IN_INITIALIZE, "1");
+					this.initializeXML(msg);
+					ConfigurationException.config = null;
+					ConfigurationException.objName = null;
+					this.initializeFactorys();
+					ConfigurationException.objName = null;
+					this.initializeElse();
+					this.initialized = true;
+				}
+				catch (Throwable ex)
+				{
+					this.initException = ex;
+					StringAppender temp = StringTool.createStringAppender();
+					if (ConfigurationException.config != null)
+					{
+						temp.append("Config:").append(ConfigurationException.config).append("; ");
+					}
+					else
+					{
+						temp.append("InitConfig:{").append(this.getInitConfig()).append("}; ");
+					}
+					if (ConfigurationException.objName != null)
+					{
+						temp.append("Object:").append(ConfigurationException.objName).append("; ");
+					}
+					temp.append("Message:").append("When " + ClassGenerator.getClassName(this.getClass())
+							+ " initialize.");
+					log.error(temp.toString(), ex);
+					if (msg != null)
+					{
+						if (msg.getString() != null)
+						{
+							StringAppender tmpBuf = StringTool.createStringAppender();
+							tmpBuf.append(msg.getString());
+							tmpBuf.append(Utility.LINE_SEPARATOR);
+							tmpBuf.append(temp.toString());
+							temp = tmpBuf;
+						}
+						msg.setString(temp.append('[').append(ex.getMessage()).append(']').toString());
+					}
+					ConfigurationException.config = null;
+					ConfigurationException.objName = null;
+				}
+				finally
+				{
+					ThreadCache.getInstance().removeProperty(ConfigurationException.IN_INITIALIZE);
+					FactoryManager.currentFactory = oldCF;
+					FactoryManager.current = oldInstance;
+					SameCheckRule.clearDealedObjMap();
 					this.endReInit();
-            }
-         }
-      }
+				}
+			}
+		}
 
-      /**
-       * Éú³ÉxmlÁ÷²¢½øĞĞ³õÊ¼»¯. <p>
-       * ½«xmlÁ÷½»¸ø½âÎöÆ÷½øĞĞ³õÊ¼»¯, ½âÎöÆ÷Í¨¹ı
-       * <code>createDigester()</code>·½·¨»ñµÃ.
-       *
-       * @param msg  ´æ·Å³õÊ¼»¯µÄ·µ»ØĞÅÏ¢
-       *
-       * @see #createDigester()
-       */
-      protected abstract void initializeXML(StringRef msg) throws Throwable;
+		/**
+		 * ç”Ÿæˆxmlæµå¹¶è¿›è¡Œåˆå§‹åŒ–. <p>
+		 * å°†xmlæµäº¤ç»™è§£æå™¨è¿›è¡Œåˆå§‹åŒ–, è§£æå™¨é€šè¿‡
+		 * <code>createDigester()</code>æ–¹æ³•è·å¾—.
+		 *
+		 * @param msg  å­˜æ”¾åˆå§‹åŒ–çš„è¿”å›ä¿¡æ¯
+		 *
+		 * @see #createDigester()
+		 */
+		protected abstract void initializeXML(StringRef msg) throws Throwable;
 
-      /**
-       * ¸ù¾İÅäÖÃÉú³ÉxmlÁ÷²¢½øĞĞ³õÊ¼»¯.
-       *
-       * @param config       ÅäÖÃĞÅÏ¢
-       * @param baseClass    ³õÊ¼»¯Ê¹ÓÃµÄ»ù±¾Àà
-       * @param digester     ³õÊ¼»¯µÄ½âÎöÆ÷
-       *
-       * @throws IOException               Éú³ÉxmlÁ÷Ê±³öÏÖµÄÒì³£
-       * @throws ConfigurationException    ³õÊ¼»¯Ê±³öÏÖµÄÒì³£
-       * @throws SAXException              ½âÎöxmlÊ±³öÏÖµÄÒì³£
-       */
-      protected void dealXML(String config, Class baseClass, Digester digester)
-            throws IOException, ConfigurationException, SAXException
-      {
-         StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
-         while (token.hasMoreTokens())
-         {
-            String temp = token.nextToken().trim();
-            if (temp.length() == 0)
-            {
-               continue;
-            }
-            ConfigurationException.config = temp;
-            ConfigurationException.objName = null;
-            InputStream is = this.getConfigStream(temp, baseClass);
-            if (is != null)
-            {
-               log.debug("The XML locate is \"" + temp + "\".");
-               digester.parse(is);
-               is.close();
-            }
-            else if (!temp.startsWith("note:"))
-            {
-               log.info("The XML locate \"" + temp + "\" not avilable.");
-            }
-         }
-      }
+		/**
+		 * æ ¹æ®é…ç½®ç”Ÿæˆxmlæµå¹¶è¿›è¡Œåˆå§‹åŒ–.
+		 *
+		 * @param config       é…ç½®ä¿¡æ¯
+		 * @param baseClass    åˆå§‹åŒ–ä½¿ç”¨çš„åŸºæœ¬ç±»
+		 * @param digester     åˆå§‹åŒ–çš„è§£æå™¨
+		 *
+		 * @throws IOException               ç”Ÿæˆxmlæµæ—¶å‡ºç°çš„å¼‚å¸¸
+		 * @throws ConfigurationException    åˆå§‹åŒ–æ—¶å‡ºç°çš„å¼‚å¸¸
+		 * @throws SAXException              è§£æxmlæ—¶å‡ºç°çš„å¼‚å¸¸
+		 */
+		protected void dealXML(String config, Class baseClass, Digester digester)
+				throws IOException, ConfigurationException, SAXException
+		{
+			StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
+			while (token.hasMoreTokens())
+			{
+				String temp = token.nextToken().trim();
+				if (temp.length() == 0)
+				{
+					continue;
+				}
+				ConfigurationException.config = temp;
+				ConfigurationException.objName = null;
+				InputStream is = this.getConfigStream(temp, baseClass);
+				if (is != null)
+				{
+					log.debug("The XML locate is \"" + temp + "\".");
+					digester.parse(is);
+					is.close();
+				}
+				else if (!temp.startsWith("note:"))
+				{
+					log.info("The XML locate \"" + temp + "\" not avilable.");
+				}
+			}
+		}
 
-      /**
-       * ³õÊ¼»¯Íê³Éºó, ´¦ÀíÊ£ÓàÄÚÈİ.
-       * ÈçÍ¨Öª¼àÌıÕß.
-       */
-      protected void initializeElse()
-            throws ConfigurationException
-      {
-         if (this.listenerMap != null)
-         {
-            this.callAfterEternaInitialize(this.listenerMap.keySet());
-         }
-      }
+		/**
+		 * åˆå§‹åŒ–å®Œæˆå, å¤„ç†å‰©ä½™å†…å®¹.
+		 * å¦‚é€šçŸ¥ç›‘å¬è€….
+		 */
+		protected void initializeElse()
+				throws ConfigurationException
+		{
+			if (this.listenerMap != null)
+			{
+				this.callAfterEternaInitialize(this.listenerMap.keySet());
+			}
+		}
 
-      /**
-       * Ìí¼ÓÒ»¸ö³õÊ¼»¯¼àÌıÕß.
-       */
-      public void addInitializedListener(Object obj)
-      {
-         if (obj == null)
-         {
-            return;
-         }
-         Class theClass;
-         if (obj instanceof Class)
-         {
-            theClass = (Class) obj;
-         }
-         else
-         {
-            theClass = obj.getClass();
-         }
-         if (!EternaInitialize.class.isAssignableFrom(theClass))
-         {
-            return;
-         }
-         try
-         {
-            Method method = theClass.getDeclaredMethod("afterEternaInitialize",
-                  new Class[]{Instance.class});
-            if (this.listenerMap == null)
-            {
-               synchronized (this)
-               {
-                  if (this.listenerMap == null)
-                  {
-                     this.listenerMap = new SynHashMap(2, SynHashMap.WEAK);
-                  }
-               }
-            }
-            Object srcObj;
-            if (Modifier.isStatic(method.getModifiers()))
-            {
-               srcObj = theClass;
-               this.listenerMap.put(theClass, Boolean.TRUE);
-            }
-            else
-            {
-               srcObj = obj;
-            }
-            if (this.listenerMap.put(srcObj, Boolean.TRUE) != Boolean.TRUE)
-            {
-               if (this.initialized)
-               {
-                  // Èç¹ûÊÇĞÂµÄ¼àÌıÕßÇÒ±¾¹¤³§ÊµÀıÒÑ¾­³õÊ¼»¯Íê³É, Ôò´¥·¢Í¨Öª
-                  this.callAfterEternaInitialize(srcObj);
-               }
-            }
-         }
-         catch (NoSuchMethodException ex)
-         {
-            log.warn("The class [" + theClass + "] isn't InitializedListener.");
-         }
-         catch (Exception ex)
-         {
-            log.error("Add InitializedListener error, class [" + theClass + "].", ex);
-         }
-      }
+		/**
+		 * æ·»åŠ ä¸€ä¸ªåˆå§‹åŒ–ç›‘å¬è€….
+		 */
+		public void addInitializedListener(Object obj)
+		{
+			if (obj == null)
+			{
+				return;
+			}
+			Class theClass;
+			if (obj instanceof Class)
+			{
+				theClass = (Class) obj;
+			}
+			else
+			{
+				theClass = obj.getClass();
+			}
+			if (!EternaInitialize.class.isAssignableFrom(theClass))
+			{
+				return;
+			}
+			try
+			{
+				Method method = theClass.getDeclaredMethod("afterEternaInitialize",
+						new Class[]{Instance.class});
+				if (this.listenerMap == null)
+				{
+					synchronized (this)
+					{
+						if (this.listenerMap == null)
+						{
+							this.listenerMap = new SynHashMap(2, SynHashMap.WEAK);
+						}
+					}
+				}
+				Object srcObj;
+				if (Modifier.isStatic(method.getModifiers()))
+				{
+					srcObj = theClass;
+					this.listenerMap.put(theClass, Boolean.TRUE);
+				}
+				else
+				{
+					srcObj = obj;
+				}
+				if (this.listenerMap.put(srcObj, Boolean.TRUE) != Boolean.TRUE)
+				{
+					if (this.initialized)
+					{
+						// å¦‚æœæ˜¯æ–°çš„ç›‘å¬è€…ä¸”æœ¬å·¥å‚å®ä¾‹å·²ç»åˆå§‹åŒ–å®Œæˆ, åˆ™è§¦å‘é€šçŸ¥
+						this.callAfterEternaInitialize(srcObj);
+					}
+				}
+			}
+			catch (NoSuchMethodException ex)
+			{
+				log.warn("The class [" + theClass + "] isn't InitializedListener.");
+			}
+			catch (Exception ex)
+			{
+				log.error("Add InitializedListener error, class [" + theClass + "].", ex);
+			}
+		}
 
-      /**
-       * ³õÊ¼»¯Íê³Éºó, Í¨ÖªËùÓĞµÄ¼àÌıÕß.
-       */
-      protected void callAfterEternaInitialize(Object obj)
-            throws ConfigurationException
-      {
-         if (obj == null)
-         {
-            return;
-         }
-         Class theClass;
-         Object[] objs;
-         if (obj instanceof Class)
-         {
-            theClass = (Class) obj;
-            objs = null;
-         }
-         else if (obj instanceof Collection)
-         {
-            Iterator itr = ((Collection) obj).iterator();
-            while (itr.hasNext())
-            {
-               this.callAfterEternaInitialize(itr.next());
-            }
-            return;
-         }
-         else
-         {
-            theClass = obj.getClass();
-            if (theClass.isArray())
-            {
-               objs = (Object[]) obj;
-               theClass = theClass.getComponentType();
-            }
-            else
-            {
-               objs = new Object[]{obj};
-            }
-         }
-         if (!EternaInitialize.class.isAssignableFrom(theClass))
-         {
-            return;
-         }
-         try
-         {
-            Method method = theClass.getDeclaredMethod("afterEternaInitialize", new Class[]{Instance.class});
-            boolean aFlag = method.isAccessible();
-            if (!aFlag)
-            {
-               method.setAccessible(true);
-            }
-            Object[] params = new Object[]{this};
-            if (Modifier.isStatic(method.getModifiers()))
-            {
-               method.invoke(null, params);
-            }
-            else if (objs != null)
-            {
-               for (int i = 0; i < objs.length; i++)
-               {
-                  Object baseObj = objs[i];
-                  if (baseObj != null)
-                  {
-                     method.invoke(baseObj, params);
-                  }
-               }
-            }
-            if (!aFlag)
-            {
-               method.setAccessible(false);
-            }
-         }
-         catch (NoSuchMethodException ex)
-         {
-            log.warn("Not found method initializeElse, when invoke init:" + theClass + ".");
-         }
-         catch (Exception ex)
-         {
-            if (ex instanceof ConfigurationException)
-            {
-               throw (ConfigurationException) ex;
-            }
-            log.error("At initializeElse, when invoke init:" + theClass + ".", ex);
-         }
-      }
+		/**
+		 * åˆå§‹åŒ–å®Œæˆå, é€šçŸ¥æ‰€æœ‰çš„ç›‘å¬è€….
+		 */
+		protected void callAfterEternaInitialize(Object obj)
+				throws ConfigurationException
+		{
+			if (obj == null)
+			{
+				return;
+			}
+			Class theClass;
+			Object[] objs;
+			if (obj instanceof Class)
+			{
+				theClass = (Class) obj;
+				objs = null;
+			}
+			else if (obj instanceof Collection)
+			{
+				Iterator itr = ((Collection) obj).iterator();
+				while (itr.hasNext())
+				{
+					this.callAfterEternaInitialize(itr.next());
+				}
+				return;
+			}
+			else
+			{
+				theClass = obj.getClass();
+				if (theClass.isArray())
+				{
+					objs = (Object[]) obj;
+					theClass = theClass.getComponentType();
+				}
+				else
+				{
+					objs = new Object[]{obj};
+				}
+			}
+			if (!EternaInitialize.class.isAssignableFrom(theClass))
+			{
+				return;
+			}
+			try
+			{
+				Method method = theClass.getDeclaredMethod("afterEternaInitialize", new Class[]{Instance.class});
+				boolean aFlag = method.isAccessible();
+				if (!aFlag)
+				{
+					method.setAccessible(true);
+				}
+				Object[] params = new Object[]{this};
+				if (Modifier.isStatic(method.getModifiers()))
+				{
+					method.invoke(null, params);
+				}
+				else if (objs != null)
+				{
+					for (int i = 0; i < objs.length; i++)
+					{
+						Object baseObj = objs[i];
+						if (baseObj != null)
+						{
+							method.invoke(baseObj, params);
+						}
+					}
+				}
+				if (!aFlag)
+				{
+					method.setAccessible(false);
+				}
+			}
+			catch (NoSuchMethodException ex)
+			{
+				log.warn("Not found method initializeElse, when invoke init:" + theClass + ".");
+			}
+			catch (Exception ex)
+			{
+				if (ex instanceof ConfigurationException)
+				{
+					throw (ConfigurationException) ex;
+				}
+				log.error("At initializeElse, when invoke init:" + theClass + ".", ex);
+			}
+		}
 
-      /**
-       * ¹¹ÔìÒ»¸ö³õÊ¼»¯ÓÃµÄxmlÁ÷½âÎöÆ÷.
-       */
-      protected Digester createDigester()
-      {
-         return FactoryManager.createDigester();
-      }
+		/**
+		 * æ„é€ ä¸€ä¸ªåˆå§‹åŒ–ç”¨çš„xmlæµè§£æå™¨.
+		 */
+		protected Digester createDigester()
+		{
+			return FactoryManager.createDigester();
+		}
 
-      /**
-       * ³õÊ¼»¯Ö¸¶¨µÄ¹¤³§.
-       *
-       * @param factory   Ğè³õÊ¼»¯µÄ¹¤³§
-       */
-      protected void initFactory(Factory factory)
-            throws ConfigurationException
-      {
-         Factory shareFactory = null;
-         if (this.shareInstance != null)
-         {
-            try
-            {
-               String fName = factory.getName();
-               String cName = ClassGenerator.getClassName(factory.getClass());
-               shareFactory = this.shareInstance.getFactory(fName, cName);
-            }
-            catch (Exception ex) {}
-         }
-         factory.initialize(this, shareFactory);
-      }
+		/**
+		 * åˆå§‹åŒ–æŒ‡å®šçš„å·¥å‚.
+		 *
+		 * @param factory   éœ€åˆå§‹åŒ–çš„å·¥å‚
+		 */
+		protected void initFactory(Factory factory)
+				throws ConfigurationException
+		{
+			Factory shareFactory = null;
+			if (this.shareInstance != null)
+			{
+				try
+				{
+					String fName = factory.getName();
+					String cName = ClassGenerator.getClassName(factory.getClass());
+					shareFactory = this.shareInstance.getFactory(fName, cName);
+				}
+				catch (Exception ex) {}
+			}
+			factory.initialize(this, shareFactory);
+		}
 
-      /**
-       * »ñµÃÒ»¸ö¹¤³§map.
-       *
-       * @param name  ¹¤³§·ÖÀàÃû
-       * @return  ¹¤³§map
-       */
-      protected Map getFactoryMap(String name, boolean mustExists)
-            throws ConfigurationException
-      {
-         Map map = (Map) this.factoryMaps.get(name);
-         if (map == null && mustExists)
-         {
-            throw new ConfigurationException("Not found the factory name:" + name + ".");
-         }
-         return map;
-      }
+		/**
+		 * è·å¾—ä¸€ä¸ªå·¥å‚map.
+		 *
+		 * @param name  å·¥å‚åˆ†ç±»å
+		 * @return  å·¥å‚map
+		 */
+		protected Map getFactoryMap(String name, boolean mustExists)
+				throws ConfigurationException
+		{
+			Map map = (Map) this.factoryMaps.get(name);
+			if (map == null && mustExists)
+			{
+				throw new ConfigurationException("Not found the factory name:" + name + ".");
+			}
+			return map;
+		}
 
-      /**
-       * ³õÊ¼»¯ËùÓĞµÄ¹¤³§.
-       */
-      protected void initializeFactorys()
-            throws ConfigurationException
-      {
-         this.initFactorys = true;
-         try
-         {
-            Iterator itr1 = this.factoryMaps.values().iterator();
-            while (itr1.hasNext())
-            {
-               Map temp = (Map) itr1.next();
-               Iterator itr2 = temp.values().iterator();
-               while (itr2.hasNext())
-               {
-                  this.initFactory((Factory) itr2.next());
-               }
-            }
-         }
-         finally
-         {
-            this.initFactorys = false;
-         }
-      }
+		/**
+		 * åˆå§‹åŒ–æ‰€æœ‰çš„å·¥å‚.
+		 */
+		protected void initializeFactorys()
+				throws ConfigurationException
+		{
+			this.initFactorys = true;
+			try
+			{
+				Iterator itr1 = this.factoryMaps.values().iterator();
+				while (itr1.hasNext())
+				{
+					Map temp = (Map) itr1.next();
+					Iterator itr2 = temp.values().iterator();
+					while (itr2.hasNext())
+					{
+						this.initFactory((Factory) itr2.next());
+					}
+				}
+			}
+			finally
+			{
+				this.initFactorys = false;
+			}
+		}
 
-      /**
-       * »ñµÃÒ»¸ö¹¤³§ÊµÀı.
-       *
-       * @param name       ¹¤³§·ÖÀàÃû
-       * @param className  ¹¤³§ÊµÏÖÀàÃû
-       * @return   ¹¤³§ÊµÀı
-       */
-      public Factory getFactory(String name, String className)
-            throws ConfigurationException
-      {
-         Map map = this.getFactoryMap(name, !this.initialized);
-         if (map == null && this.shareInstance != null)
-         {
-            return this.shareInstance.getFactory(name, className);
-         }
-         Factory factory = (Factory) map.get(className);
-         if (this.initFactorys)
-         {
-            this.initFactory(factory);
-         }
-         if (!this.initialized)
-         {
-            FactoryManager.currentFactory = factory;
-         }
-         return factory;
-      }
+		/**
+		 * è·å¾—ä¸€ä¸ªå·¥å‚å®ä¾‹.
+		 *
+		 * @param name       å·¥å‚åˆ†ç±»å
+		 * @param className  å·¥å‚å®ç°ç±»å
+		 * @return   å·¥å‚å®ä¾‹
+		 */
+		public Factory getFactory(String name, String className)
+				throws ConfigurationException
+		{
+			Map map = this.getFactoryMap(name, !this.initialized);
+			if (map == null && this.shareInstance != null)
+			{
+				return this.shareInstance.getFactory(name, className);
+			}
+			Factory factory = (Factory) map.get(className);
+			if (this.initFactorys)
+			{
+				this.initFactory(factory);
+			}
+			if (!this.initialized)
+			{
+				FactoryManager.currentFactory = factory;
+			}
+			return factory;
+		}
 
-      /**
-       * Ìí¼ÓÒ»¸ö¹¤³§ÊµÀı.
-       *
-       * @param name        ¹¤³§·ÖÀàÃû
-       * @param factory     ¹¤³§ÊµÀı
-       */
-      public void addFactory(String name, Factory factory)
-            throws ConfigurationException
-      {
-         factory.setName(name);
-         if (this.initialized)
-         {
-            this.initFactory(factory);
-         }
-         else
-         {
-            FactoryManager.currentFactory = factory;
-         }
-         Map map = (Map) this.factoryMaps.get(name);
-         if (map == null)
-         {
-            map = new HashMap();
-            this.factoryMaps.put(name, map);
-         }
-         map.put(ClassGenerator.getClassName(factory.getClass()), factory);
-      }
+		/**
+		 * æ·»åŠ ä¸€ä¸ªå·¥å‚å®ä¾‹.
+		 *
+		 * @param name        å·¥å‚åˆ†ç±»å
+		 * @param factory     å·¥å‚å®ä¾‹
+		 */
+		public void addFactory(String name, Factory factory)
+				throws ConfigurationException
+		{
+			factory.setName(name);
+			if (this.initialized)
+			{
+				this.initFactory(factory);
+			}
+			else
+			{
+				FactoryManager.currentFactory = factory;
+			}
+			Map map = (Map) this.factoryMaps.get(name);
+			if (map == null)
+			{
+				map = new HashMap();
+				this.factoryMaps.put(name, map);
+			}
+			map.put(ClassGenerator.getClassName(factory.getClass()), factory);
+		}
 
-      /**
-       * »ñµÃ·ÖÀàÃûÎª"eterna"µÄ¹¤³§ÊµÀı.
-       */
-      public EternaFactory getEternaFactory()
-            throws ConfigurationException
-      {
-         if (this.defaultFactory == null)
-         {
-            this.defaultFactory = this.getFactory(ETERNA_FACTORY,
-                  ClassGenerator.getClassName(EternaFactoryImpl.class));
-         }
-         return (EternaFactory) this.defaultFactory;
-      }
+		/**
+		 * è·å¾—åˆ†ç±»åä¸º"eterna"çš„å·¥å‚å®ä¾‹.
+		 */
+		public EternaFactory getEternaFactory()
+				throws ConfigurationException
+		{
+			if (this.defaultFactory == null)
+			{
+				this.defaultFactory = this.getFactory(ETERNA_FACTORY,
+						ClassGenerator.getClassName(EternaFactoryImpl.class));
+			}
+			return (EternaFactory) this.defaultFactory;
+		}
 
-      /**
-       * µ±´Ë¹¤³§ÊµÀıµÄÉúÃüÖÜÆÚ½áÊøÊ±, »áµ÷ÓÃ´Ë·½·¨.
-       */
-      public void destroy()
-      {
-         Iterator itr1 = this.factoryMaps.values().iterator();
-         while (itr1.hasNext())
-         {
-            Map temp = (Map) itr1.next();
-            Iterator itr2 = temp.values().iterator();
-            while (itr2.hasNext())
-            {
-               ((Factory) itr2.next()).destroy();
-            }
-         }
-      }
+		/**
+		 * å½“æ­¤å·¥å‚å®ä¾‹çš„ç”Ÿå‘½å‘¨æœŸç»“æŸæ—¶, ä¼šè°ƒç”¨æ­¤æ–¹æ³•.
+		 */
+		public void destroy()
+		{
+			Iterator itr1 = this.factoryMaps.values().iterator();
+			while (itr1.hasNext())
+			{
+				Map temp = (Map) itr1.next();
+				Iterator itr2 = temp.values().iterator();
+				while (itr2.hasNext())
+				{
+					((Factory) itr2.next()).destroy();
+				}
+			}
+		}
 
-   }
+	}
 
-   /**
-    * È«¾ÖFactoryManagerµÄÊµÀıµÄÊµÏÖÀà.
-    */
-   private static class GlobalImpl extends AbstractInstance
-         implements Instance
-   {
-      public String getId()
-      {
-         return GLOBAL_INSTANCE_ID;
-      }
+	/**
+	 * å…¨å±€FactoryManagerçš„å®ä¾‹çš„å®ç°ç±».
+	 */
+	private static class GlobalImpl extends AbstractInstance
+			implements Instance
+	{
+		public String getId()
+		{
+			return GLOBAL_INSTANCE_ID;
+		}
 
-      public String getInitConfig()
-      {
-         String initFiles = Utility.getProperty(INIT_FILES_PROPERTY);
-         String subFiles = Utility.getProperty(INIT_SUBFILES_PROPERTY);
-         String[] parentConfig = null;
-         if (subFiles != null)
-         {
-            if (initFiles != null)
-            {
-               parentConfig = new String[]{initFiles};
-            }
-            initFiles = subFiles;
-         }
-         return getConfig(initFiles, parentConfig);
-      }
+		public String getInitConfig()
+		{
+			String initFiles = Utility.getProperty(INIT_FILES_PROPERTY);
+			String subFiles = Utility.getProperty(INIT_SUBFILES_PROPERTY);
+			String[] parentConfig = null;
+			if (subFiles != null)
+			{
+				if (initFiles != null)
+				{
+					parentConfig = new String[]{initFiles};
+				}
+				initFiles = subFiles;
+			}
+			return getConfig(initFiles, parentConfig);
+		}
 
-      public void setShareInstance(Instance shareInstance)
-      {
-      }
+		public void setShareInstance(Instance shareInstance)
+		{
+		}
 
-      protected void initializeXML(StringRef msg)
-            throws Throwable
-      {
-         Digester digester = this.createDigester();
-         try
-         {
-            String temp = Utility.getProperty(INIT_SUBFILES_PROPERTY);
-            if (temp != null)
-            {
-               this.dealXML(temp, null, digester);
-               FactoryManager.superInitLevel = 1;
-            }
+		protected void initializeXML(StringRef msg)
+				throws Throwable
+		{
+			Digester digester = this.createDigester();
+			try
+			{
+				String temp = Utility.getProperty(INIT_SUBFILES_PROPERTY);
+				if (temp != null)
+				{
+					this.dealXML(temp, null, digester);
+					FactoryManager.superInitLevel = 1;
+				}
 
-            String filenames = Utility.getProperty(INIT_FILES_PROPERTY);
-            if (filenames == null)
-            {
-               log.warn("The property " + INIT_FILES_PROPERTY + " not found.");
-            }
-            else
-            {
-               this.dealXML(filenames, null, digester);
-               FactoryManager.superInitLevel += 1;
-            }
+				String filenames = Utility.getProperty(INIT_FILES_PROPERTY);
+				if (filenames == null)
+				{
+					log.warn("The property " + INIT_FILES_PROPERTY + " not found.");
+				}
+				else
+				{
+					this.dealXML(filenames, null, digester);
+					FactoryManager.superInitLevel += 1;
+				}
 
-            temp = Utility.getProperty(LOAD_DEFAULT_CONFIG);
-            if (temp == null || "true".equalsIgnoreCase(temp))
-            {
-               temp = DEFAULT_CONFIG_FILE;
-               this.dealXML(temp, null, digester);
-            }
-         }
-         finally
-         {
-            FactoryManager.superInitLevel = 0;
-         }
-      }
+				temp = Utility.getProperty(LOAD_DEFAULT_CONFIG);
+				if (temp == null || "true".equalsIgnoreCase(temp))
+				{
+					temp = DEFAULT_CONFIG_FILE;
+					this.dealXML(temp, null, digester);
+				}
+			}
+			finally
+			{
+				FactoryManager.superInitLevel = 0;
+			}
+		}
 
-      protected void initializeElse()
-            throws ConfigurationException
-      {
-         Class[] initClasses;
-         String classNames = Utility.getProperty(INIT_CLASSES_PROPERTY);
-         if (classNames == null)
-         {
-            initClasses = new Class[0];
-         }
-         else
-         {
-            StringTokenizer token = new StringTokenizer(classNames, ";");
-            initClasses = new Class[token.countTokens()];
-            String temp;
-            int index = 0;
-            while (token.hasMoreTokens())
-            {
-               temp = token.nextToken().trim();
-               if (temp.length() == 0)
-               {
-                  continue;
-               }
-               try
-               {
-                  initClasses[index] = Class.forName(temp);
-               }
-               catch (Exception ex)
-               {
-                  log.warn("At initializeElse, when loadClass:" + temp + ".", ex);
-                  initClasses[index] = null;
-               }
-               index++;
-            }
-         }
-         for (int i = 0; i < initClasses.length; i++)
-         {
-            if (initClasses[i] == null)
-            {
-               continue;
-            }
-            this.addInitializedListener(initClasses[i]);
-         }
-         super.initializeElse();
-      }
+		protected void initializeElse()
+				throws ConfigurationException
+		{
+			Class[] initClasses;
+			String classNames = Utility.getProperty(INIT_CLASSES_PROPERTY);
+			if (classNames == null)
+			{
+				initClasses = new Class[0];
+			}
+			else
+			{
+				StringTokenizer token = new StringTokenizer(classNames, ";");
+				initClasses = new Class[token.countTokens()];
+				String temp;
+				int index = 0;
+				while (token.hasMoreTokens())
+				{
+					temp = token.nextToken().trim();
+					if (temp.length() == 0)
+					{
+						continue;
+					}
+					try
+					{
+						initClasses[index] = Class.forName(temp);
+					}
+					catch (Exception ex)
+					{
+						log.warn("At initializeElse, when loadClass:" + temp + ".", ex);
+						initClasses[index] = null;
+					}
+					index++;
+				}
+			}
+			for (int i = 0; i < initClasses.length; i++)
+			{
+				if (initClasses[i] == null)
+				{
+					continue;
+				}
+				this.addInitializedListener(initClasses[i]);
+			}
+			super.initializeElse();
+		}
 
-   }
+	}
 
-   /**
-    * »ùÓÚÀàµÄFactoryManagerµÄÊµÀıµÄÊµÏÖÀà.
-    */
-   private static class ClassImpl extends AbstractInstance
-         implements Instance
-   {
-      protected String instanceId = null;
-      protected String initConfig;
-      protected String[] parentConfig;
+	/**
+	 * åŸºäºç±»çš„FactoryManagerçš„å®ä¾‹çš„å®ç°ç±».
+	 */
+	private static class ClassImpl extends AbstractInstance
+			implements Instance
+	{
+		protected String instanceId = null;
+		protected String initConfig;
+		protected String[] parentConfig;
 
-      protected Class baseClass;
+		protected Class baseClass;
 
-      public ClassImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig)
-      {
-         this.baseClass = baseClass;
-         this.initConfig = initConfig;
-         this.parentConfig = parentConfig;
-         if (baseObj instanceof ContainObject)
-         {
-            ContainObject co = (ContainObject) baseObj;
-            this.setShareInstance(co.shareInstance);
-            this.addInitializedListener(co.baseObj);
-            this.prefixName = co.name;
-         }
-         else
-         {
-            this.setShareInstance(null);
-            if (baseObj == null)
-            {
-               this.addInitializedListener(baseClass);
-            }
-            else
-            {
-               this.addInitializedListener(baseObj);
-            }
-         }
-      }
+		public ClassImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig)
+		{
+			this.baseClass = baseClass;
+			this.initConfig = initConfig;
+			this.parentConfig = parentConfig;
+			if (baseObj instanceof ContainObject)
+			{
+				ContainObject co = (ContainObject) baseObj;
+				this.setShareInstance(co.shareInstance);
+				this.addInitializedListener(co.baseObj);
+				this.prefixName = co.name;
+			}
+			else
+			{
+				this.setShareInstance(null);
+				if (baseObj == null)
+				{
+					this.addInitializedListener(baseClass);
+				}
+				else
+				{
+					this.addInitializedListener(baseObj);
+				}
+			}
+		}
 
-      public String getId()
-      {
-         if (this.instanceId == null)
-         {
-            String conf = getConfig(this.initConfig, this.parentConfig);
-            String baseName = ClassGenerator.getClassName(this.baseClass);
-            this.instanceId = this.createInstanceId(conf, baseName);
-         }
-         return this.instanceId;
-      }
+		public String getId()
+		{
+			if (this.instanceId == null)
+			{
+				String conf = getConfig(this.initConfig, this.parentConfig);
+				String baseName = ClassGenerator.getClassName(this.baseClass);
+				this.instanceId = this.createInstanceId(conf, baseName);
+			}
+			return this.instanceId;
+		}
 
-      public String getInitConfig()
-      {
-         String tmp = getConfig(this.initConfig, this.parentConfig);
-         if (tmp == null)
-         {
-            tmp = "cp:" + this.baseClass.getName().replace('.', '/') + ".xml";
-         }
-         return tmp;
-      }
+		public String getInitConfig()
+		{
+			String tmp = getConfig(this.initConfig, this.parentConfig);
+			if (tmp == null)
+			{
+				tmp = "cp:" + this.baseClass.getName().replace('.', '/') + ".xml";
+			}
+			return tmp;
+		}
 
-      protected void initializeXML(StringRef msg)
-            throws Throwable
-      {
-         ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
-         Thread.currentThread().setContextClassLoader(this.baseClass.getClassLoader());
-         try
-         {
-            Digester digester = this.createDigester();
-            String filenames = this.initConfig == null ?
-                  "cp:" + this.baseClass.getName().replace('.', '/') + ".xml" : this.initConfig;
-            this.dealXML(filenames, this.baseClass, digester);
+		protected void initializeXML(StringRef msg)
+				throws Throwable
+		{
+			ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+			Thread.currentThread().setContextClassLoader(this.baseClass.getClassLoader());
+			try
+			{
+				Digester digester = this.createDigester();
+				String filenames = this.initConfig == null ?
+						"cp:" + this.baseClass.getName().replace('.', '/') + ".xml" : this.initConfig;
+				this.dealXML(filenames, this.baseClass, digester);
 
-            if (this.parentConfig != null)
-            {
-               // @old È¥µôÁË¶Ô¸¸ÅäÖÃÍêÕûĞÔµÄÅĞ¶Ï, ÒòÎªÃ»ÓĞÌ«´óÒâÒå
-               for (int i = 0; i < this.parentConfig.length; i++)
-               {
-                  if (this.parentConfig[i] != null)
-                  {
-                     // ´ò¿ª¸¸ÅäÖÃÕıÔÚ³õÊ¼»¯µÄ±êÖ¾, ½«¸¸ÅäÖÃ³õÊ¼»¯½øÀ´
-                     FactoryManager.superInitLevel = i + 1;
-                     try
-                     {
-                        this.dealXML(this.parentConfig[i], this.baseClass, digester);
-                     }
-                     finally
-                     {
-                        FactoryManager.superInitLevel = 0;
-                     }
-                  }
-               }
-            }
-         }
-         finally
-         {
-            Thread.currentThread().setContextClassLoader(oldCL);
-         }
-      }
+				if (this.parentConfig != null)
+				{
+					// @old å»æ‰äº†å¯¹çˆ¶é…ç½®å®Œæ•´æ€§çš„åˆ¤æ–­, å› ä¸ºæ²¡æœ‰å¤ªå¤§æ„ä¹‰
+					for (int i = 0; i < this.parentConfig.length; i++)
+					{
+						if (this.parentConfig[i] != null)
+						{
+							// æ‰“å¼€çˆ¶é…ç½®æ­£åœ¨åˆå§‹åŒ–çš„æ ‡å¿—, å°†çˆ¶é…ç½®åˆå§‹åŒ–è¿›æ¥
+							FactoryManager.superInitLevel = i + 1;
+							try
+							{
+								this.dealXML(this.parentConfig[i], this.baseClass, digester);
+							}
+							finally
+							{
+								FactoryManager.superInitLevel = 0;
+							}
+						}
+					}
+				}
+			}
+			finally
+			{
+				Thread.currentThread().setContextClassLoader(oldCL);
+			}
+		}
 
-   }
+	}
 
-   /**
-    * »ùÓÚÀàµÄFactoryManagerµÄÊµÀıµÄÊµÏÖÀà, Í¬Ê±»á¼ì²âÅäÖÃÊÇ·ñÓĞ¸üĞÂ,
-    * Èç¹û¸üĞÂ¹ı»á×Ô¶¯ÖØĞÂ³õÊ¼»¯.
-    */
-   private static class AutoReloadImpl extends ClassImpl
-         implements Instance
-   {
-      private long preInitTime;
-      private long preCheckTime;
-      private long autoReloadTime;
-      private ConfigMonitor[] monitors = null;
-      private boolean atInitialize = false;
+	/**
+	 * åŸºäºç±»çš„FactoryManagerçš„å®ä¾‹çš„å®ç°ç±», åŒæ—¶ä¼šæ£€æµ‹é…ç½®æ˜¯å¦æœ‰æ›´æ–°,
+	 * å¦‚æœæ›´æ–°è¿‡ä¼šè‡ªåŠ¨é‡æ–°åˆå§‹åŒ–.
+	 */
+	private static class AutoReloadImpl extends ClassImpl
+			implements Instance
+	{
+		private long preInitTime;
+		private long preCheckTime;
+		private long autoReloadTime;
+		private ConfigMonitor[] monitors = null;
+		private boolean atInitialize = false;
 
-      public AutoReloadImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig,
-            long autoReloadTime)
-      {
-         super(baseClass, baseObj, initConfig, parentConfig);
-         List tempList = new LinkedList(this.getFiles(initConfig));
-         if (parentConfig != null)
-         {
-            for (int i = 0; i < parentConfig.length; i++)
-            {
-               if (parentConfig[i] != null)
-               {
-                  tempList.addAll(this.getFiles(parentConfig[i]));
-               }
-            }
-         }
-         if (tempList.size() > 0)
-         {
-            this.monitors = new ConfigMonitor[tempList.size()];
-            tempList.toArray(this.monitors);
-         }
-         this.autoReloadTime = autoReloadTime < 200 ? 200 : autoReloadTime;
-      }
+		public AutoReloadImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig,
+				long autoReloadTime)
+		{
+			super(baseClass, baseObj, initConfig, parentConfig);
+			List tempList = new LinkedList(this.getFiles(initConfig));
+			if (parentConfig != null)
+			{
+				for (int i = 0; i < parentConfig.length; i++)
+				{
+					if (parentConfig[i] != null)
+					{
+						tempList.addAll(this.getFiles(parentConfig[i]));
+					}
+				}
+			}
+			if (tempList.size() > 0)
+			{
+				this.monitors = new ConfigMonitor[tempList.size()];
+				tempList.toArray(this.monitors);
+			}
+			this.autoReloadTime = autoReloadTime < 200 ? 200 : autoReloadTime;
+		}
 
-      private ConfigMonitor parseFileName(String fileName, URL url)
-      {
-         File file = new File(fileName);
-         if (file.isFile())
-         {
-            return new ConfigMonitor(file);
-         }
-         if (url != null)
-         {
-            return new ConfigMonitor(url);
-         }
-         return null;
-      }
+		private ConfigMonitor parseFileName(String fileName, URL url)
+		{
+			File file = new File(fileName);
+			if (file.isFile())
+			{
+				return new ConfigMonitor(file);
+			}
+			if (url != null)
+			{
+				return new ConfigMonitor(url);
+			}
+			return null;
+		}
 
-      private List getFiles(String config)
-      {
-         ConfigMonitor temp;
-         List result = new ArrayList();
-         if (config == null)
-         {
-            URL url = this.baseClass.getClassLoader().getResource(
-                  this.baseClass.getName().replace('.', '/') + ".xml");
-            if (url != null && "file".equals(url.getProtocol()))
-            {
-               temp = this.parseFileName(url.getFile(), url);
-               if (temp != null)
-               {
-                  result.add(temp);
-               }
-            }
-         }
-         else
-         {
-            StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
-            while (token.hasMoreTokens())
-            {
-               String tStr = token.nextToken().trim();
-               if (tStr.length() == 0)
-               {
-                  continue;
-               }
-               if (tStr.startsWith("cp:"))
-               {
-                  URL url = this.baseClass.getClassLoader().getResource(tStr.substring(3));
-                  if (url != null && "file".equals(url.getProtocol()))
-                  {
-                     temp = this.parseFileName(url.getFile(), url);
-                     if (temp != null)
-                     {
-                        result.add(temp);
-                     }
-                  }
-               }
-               else if (tStr.startsWith("web:"))
-               {
-                  ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
-                  if (sc != null)
-                  {
-                     try
-                     {
-                        URL url = sc.getResource(tStr.substring(4));
-                        if (url != null && "file".equals(url.getProtocol()))
-                        {
-                           temp = this.parseFileName(url.getFile(), url);
-                           if (temp != null)
-                           {
-                              result.add(temp);
-                           }
-                        }
+		private List getFiles(String config)
+		{
+			ConfigMonitor temp;
+			List result = new ArrayList();
+			if (config == null)
+			{
+				URL url = this.baseClass.getClassLoader().getResource(
+						this.baseClass.getName().replace('.', '/') + ".xml");
+				if (url != null && "file".equals(url.getProtocol()))
+				{
+					temp = this.parseFileName(url.getFile(), url);
+					if (temp != null)
+					{
+						result.add(temp);
+					}
+				}
+			}
+			else
+			{
+				StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
+				while (token.hasMoreTokens())
+				{
+					String tStr = token.nextToken().trim();
+					if (tStr.length() == 0)
+					{
+						continue;
+					}
+					if (tStr.startsWith("cp:"))
+					{
+						URL url = this.baseClass.getClassLoader().getResource(tStr.substring(3));
+						if (url != null && "file".equals(url.getProtocol()))
+						{
+							temp = this.parseFileName(url.getFile(), url);
+							if (temp != null)
+							{
+								result.add(temp);
+							}
+						}
+					}
+					else if (tStr.startsWith("web:"))
+					{
+						ServletContext sc = (ServletContext) this.getAttribute(SERVLET_CONTEXT);
+						if (sc != null)
+						{
+							try
+							{
+								URL url = sc.getResource(tStr.substring(4));
+								if (url != null && "file".equals(url.getProtocol()))
+								{
+									temp = this.parseFileName(url.getFile(), url);
+									if (temp != null)
+									{
+										result.add(temp);
+									}
+								}
 								else
 								{
 									temp = this.parseFileName(sc.getRealPath(tStr.substring(4)), null);
-                           if (temp != null)
-                           {
-                              result.add(temp);
-                           }
+									if (temp != null)
+									{
+										result.add(temp);
+									}
 								}
-                     }
-                     catch (IOException ex) {}
-                  }
-               }
-               else if (tStr.startsWith("http:"))
-               {
-                  try
-                  {
-                     result.add(new URL(tStr));
-                  }
-                  catch (IOException ex) {}
-               }
-               else
-               {
-                  temp = this.parseFileName(tStr, null);
-                  if (temp != null)
-                  {
-                     result.add(temp);
-                  }
-               }
-            }
-         }
-         return result;
-      }
+							}
+							catch (IOException ex) {}
+						}
+					}
+					else if (tStr.startsWith("http:"))
+					{
+						try
+						{
+							result.add(new URL(tStr));
+						}
+						catch (IOException ex) {}
+					}
+					else
+					{
+						temp = this.parseFileName(tStr, null);
+						if (temp != null)
+						{
+							result.add(temp);
+						}
+					}
+				}
+			}
+			return result;
+		}
 
 		protected void beginReInit()
 		{
-         this.atInitialize = true;
+			this.atInitialize = true;
 		}
 
 		protected void endReInit()
 		{
-         this.atInitialize = false;
+			this.atInitialize = false;
 		}
 
-      protected void initializeElse()
-            throws ConfigurationException
-      {
-         super.initializeElse();
-         long time = System.currentTimeMillis();
-         if (this.preInitTime < time)
-         {
-            this.preInitTime = time;
-            this.preCheckTime = this.preInitTime;
-         }
-      }
+		protected void initializeElse()
+				throws ConfigurationException
+		{
+			super.initializeElse();
+			long time = System.currentTimeMillis();
+			if (this.preInitTime < time)
+			{
+				this.preInitTime = time;
+				this.preCheckTime = this.preInitTime;
+			}
+		}
 
-      private void checkReload()
-      {
-         // ÅĞ¶ÏÊÇ·ñÔÚ³õÊ¼»¯×´Ì¬
-         if (this.atInitialize)
-         {
-            // ·ÀÖ¹³õÊ¼»¯Ê±ÆäËûÏß³ÌÒ²½øÀ´, ÈÃÆäËûÏß³ÌµÈ´ı³õÊ¼»¯,
-            synchronized (this)
-            {
-               if (this.atInitialize)
-               {
-                  return;
-               }
-            }
-         }
-         if (System.currentTimeMillis() - this.autoReloadTime > this.preCheckTime
-               && this.monitors != null)
-         {
-            boolean needReload = false;
-            for (int i = 0; i < this.monitors.length; i++)
-            {
-               long lm = this.monitors[i].getLastModified();
-               if (lm > this.preInitTime)
-               {
-                  needReload = true;
-                  this.preInitTime = lm;
-                  break;
-               }
-            }
-            if (needReload)
-            {
-               synchronized (this)
-               {
-                  // ÔÙ´Î¼ì²éÇ°Ò»´Î¼ì²âÊ±¼ä, Èç¹ûÎ´µ½ËµÃ÷ÒÑÔÚÆäËûÏß³ÌÖĞÖØÔØÁË
-                  if (System.currentTimeMillis() - this.autoReloadTime > this.preCheckTime)
-                  {
-                     StringRef sr = new StringRef();
-                     this.reInit(sr);
-                     if (log.isInfoEnabled())
-                     {
-                        log.info("Auto reload at time:" + FormatTool.getCurrentDatetimeString()
-                              + ". with message:");
-                        log.info(sr.toString());
-                     }
-                     // ÔÚinitializeElseÖĞÖØÉè¹ı¼ì²âÊ±¼ä, ÕâÀï¾Í²»ÓÃÔÙÉèÁË
-                  }
-               }
-            }
-            this.preCheckTime = System.currentTimeMillis();
-         }
-      }
+		private void checkReload()
+		{
+			// åˆ¤æ–­æ˜¯å¦åœ¨åˆå§‹åŒ–çŠ¶æ€
+			if (this.atInitialize)
+			{
+				// é˜²æ­¢åˆå§‹åŒ–æ—¶å…¶ä»–çº¿ç¨‹ä¹Ÿè¿›æ¥, è®©å…¶ä»–çº¿ç¨‹ç­‰å¾…åˆå§‹åŒ–,
+				synchronized (this)
+				{
+					if (this.atInitialize)
+					{
+						return;
+					}
+				}
+			}
+			if (System.currentTimeMillis() - this.autoReloadTime > this.preCheckTime
+					&& this.monitors != null)
+			{
+				boolean needReload = false;
+				for (int i = 0; i < this.monitors.length; i++)
+				{
+					long lm = this.monitors[i].getLastModified();
+					if (lm > this.preInitTime)
+					{
+						needReload = true;
+						this.preInitTime = lm;
+						break;
+					}
+				}
+				if (needReload)
+				{
+					synchronized (this)
+					{
+						// å†æ¬¡æ£€æŸ¥å‰ä¸€æ¬¡æ£€æµ‹æ—¶é—´, å¦‚æœæœªåˆ°è¯´æ˜å·²åœ¨å…¶ä»–çº¿ç¨‹ä¸­é‡è½½äº†
+						if (System.currentTimeMillis() - this.autoReloadTime > this.preCheckTime)
+						{
+							StringRef sr = new StringRef();
+							this.reInit(sr);
+							if (log.isInfoEnabled())
+							{
+								log.info("Auto reload at time:" + FormatTool.getCurrentDatetimeString()
+										+ ". with message:");
+								log.info(sr.toString());
+							}
+							// åœ¨initializeElseä¸­é‡è®¾è¿‡æ£€æµ‹æ—¶é—´, è¿™é‡Œå°±ä¸ç”¨å†è®¾äº†
+						}
+					}
+				}
+				this.preCheckTime = System.currentTimeMillis();
+			}
+		}
 
-      public Factory getFactory(String name, String className)
-            throws ConfigurationException
-      {
-         this.checkReload();
-         return super.getFactory(name, className);
-      }
+		public Factory getFactory(String name, String className)
+				throws ConfigurationException
+		{
+			this.checkReload();
+			return super.getFactory(name, className);
+		}
 
-      public EternaFactory getEternaFactory()
-            throws ConfigurationException
-      {
-         this.checkReload();
-         return super.getEternaFactory();
-      }
+		public EternaFactory getEternaFactory()
+				throws ConfigurationException
+		{
+			this.checkReload();
+			return super.getEternaFactory();
+		}
 
-   }
+	}
 
-   /**
-    * ÅäÖÃ¸üĞÂµÄ¼ì²âÆ÷.
-    */
-   private static class ConfigMonitor
-   {
-      private File configFile = null;
-      private URL configURL = null;
-      private boolean valid = true;
+	/**
+	 * é…ç½®æ›´æ–°çš„æ£€æµ‹å™¨.
+	 */
+	private static class ConfigMonitor
+	{
+		private File configFile = null;
+		private URL configURL = null;
+		private boolean valid = true;
 
-      public ConfigMonitor(File configFile)
-      {
-         this.configFile = configFile;
-      }
+		public ConfigMonitor(File configFile)
+		{
+			this.configFile = configFile;
+		}
 
-      public ConfigMonitor(URL configURL)
-      {
-         this.configURL = configURL;
-      }
+		public ConfigMonitor(URL configURL)
+		{
+			this.configURL = configURL;
+		}
 
-      public boolean isValid()
-      {
-         return this.valid;
-      }
+		public boolean isValid()
+		{
+			return this.valid;
+		}
 
-      public long getLastModified()
-      {
-         if (this.valid)
-         {
-            try
-            {
-               if (this.configFile == null)
-               {
-                  return this.configURL.openConnection().getLastModified();
-               }
-               else
-               {
-                  return this.configFile.lastModified();
-               }
-            }
-            catch (Throwable ex)
-            {
-               StringAppender buf = StringTool.createStringAppender(128);
-               buf.append("Error in check configFile:[").append(this.configFile)
-                     .append("], configURL:[").append(this.configURL).append("].");
-               log.error(buf, ex);
-               this.configFile = null;
-               this.configURL = null;
-               this.valid = false;
-            }
-         }
-         return 0L;
-      }
+		public long getLastModified()
+		{
+			if (this.valid)
+			{
+				try
+				{
+					if (this.configFile == null)
+					{
+						return this.configURL.openConnection().getLastModified();
+					}
+					else
+					{
+						return this.configFile.lastModified();
+					}
+				}
+				catch (Throwable ex)
+				{
+					StringAppender buf = StringTool.createStringAppender(128);
+					buf.append("Error in check configFile:[").append(this.configFile)
+							.append("], configURL:[").append(this.configURL).append("].");
+					log.error(buf, ex);
+					this.configFile = null;
+					this.configURL = null;
+					this.valid = false;
+				}
+			}
+			return 0L;
+		}
 
-   }
+	}
 
 }
