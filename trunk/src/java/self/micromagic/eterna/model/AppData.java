@@ -471,7 +471,10 @@ public class AppData
 		}
 		// 恢复App日志状态并清空
 		this.logType = APP_LOG_TYPE;
-		this.nodeStack.clear();
+		if (this.nodeStack != null)
+		{
+			this.nodeStack.clear();
+		}
 	}
 
 	public Map setSpcialDataMap(String specialName, Map map)

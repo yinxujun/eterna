@@ -137,18 +137,22 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
 		}
 		logNode.addElement("prepared-sql").addText(sql.getPreparedSQL());
 		Element params = logNode.addElement("parameters");
-		ReadPreparedValue rpv = new ReadPreparedValue(params);
+		PreparedValueReader rpv = new PreparedValueReader(params);
 		sql.prepareValues(rpv);
 	}
 
 	/**
-	 * 记录sql日志
+	 * 记录sql日志.
 	 *
-	 * @param sql           要记录的sql适配器对象
-	 * @param usedTime      sql执行所用的时间, 单位为毫秒
-	 * @param exception     执行时出现的异常
-	 * @param conn          执行此sql使用的数据库连接
-	 * @return              是否保存了sql日志
+	 * @param sql        要记录的sql适配器对象
+	 * @param usedTime   sql执行用时, 会根据jdk版本给出毫秒或纳秒, 请使用
+	 *                   TimeLogger的formatPassTime方法格式化
+	 *                   执行时间可使用TimeLogger的getTime方法, 并计算其差值
+	 * @param exception  执行时出现的异常
+	 * @param conn       执行此sql使用的数据库连接
+	 * @return  是否保存了sql日志
+	 * @see TimeLogger#formatPassTime(long)
+	 * @see TimeLogger#getTime()
 	 */
 	protected static boolean logSQL(SQLAdapter sql, long usedTime, Throwable exception,
 			Connection conn)
@@ -194,12 +198,16 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
 	}
 
 	/**
-	 * 记录sql日志
+	 * 记录sql日志.
 	 *
-	 * @param usedTime      sql执行所用的时间, 单位为毫秒
-	 * @param exception     执行时出现的异常
-	 * @param conn          执行此sql使用的数据库连接
-	 * @return              是否保存了sql日志
+	 * @param usedTime   sql执行用时, 会根据jdk版本给出毫秒或纳秒, 请使用
+	 *                   TimeLogger的formatPassTime方法格式化
+	 *                   执行时间可使用TimeLogger的getTime方法, 并计算其差值
+	 * @param exception  执行时出现的异常
+	 * @param conn       执行此sql使用的数据库连接
+	 * @return  是否保存了sql日志
+	 * @see TimeLogger#formatPassTime(long)
+	 * @see TimeLogger#getTime()
 	 */
 	protected boolean logSQL(long usedTime, Throwable exception, Connection conn)
 			throws SQLException, ConfigurationException
@@ -429,13 +437,13 @@ public class SQLAdapterImpl extends AbstractSQLAdapter
 	}
 	*/
 
-	private static class ReadPreparedValue
+	private static class PreparedValueReader
 			implements PreparedStatementWrap
 	{
 		private Element paramsRoot;
 		private Base64 base64;
 
-		public ReadPreparedValue(Element paramsRoot)
+		public PreparedValueReader(Element paramsRoot)
 		{
 			this.paramsRoot = paramsRoot;
 		}

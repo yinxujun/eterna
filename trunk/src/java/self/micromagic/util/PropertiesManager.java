@@ -41,7 +41,17 @@ public class PropertiesManager
 	/**
 	 * 存放父配置文件名的属性.
 	 */
-	public static final String PARENT_PROPERTIES = "self.micromagic.parent.properties";
+	public static final String PARENT_PROPERTIES_OLD = "self.micromagic.parent.properties";
+
+	/**
+	 * 存放父配置文件名的属性.
+	 */
+	public static final String PARENT_PROPERTIES = "_parent.properties";
+
+	/**
+	 * 存放子配置文件名的属性.
+	 */
+	public static final String CHILD_PROPERTIES = "_child.properties";
 
 	/**
 	 * 配置文件名.
@@ -123,7 +133,12 @@ public class PropertiesManager
 			InputStream inStream = url.openStream();
 			temp.load(inStream);
 			inStream.close();
-			this.loadParentProperties(temp);
+			this.loadChildProperties(temp, this.properties.getProperty(CHILD_PROPERTIES));
+			String oldParent = this.properties.getProperty(PARENT_PROPERTIES_OLD);
+			this.loadParentProperties(temp, this.properties.getProperty(PARENT_PROPERTIES, oldParent));
+			temp.remove(CHILD_PROPERTIES);
+			temp.remove(PARENT_PROPERTIES);
+			temp.remove(PARENT_PROPERTIES_OLD);
 			Iterator itr = temp.entrySet().iterator();
 			while (itr.hasNext())
 			{
@@ -383,13 +398,45 @@ public class PropertiesManager
 	}
 
 	/**
-	 * 载入父配置
+	 * 载子父配置
 	 */
-	private void loadParentProperties(Properties props)
+	private void loadChildProperties(Properties props, String nowName)
 			throws IOException
 	{
-		String pName = props.getProperty(PARENT_PROPERTIES);
-		if (pName == null)
+		String cName = nowName != null ? nowName : props.getProperty(CHILD_PROPERTIES);
+		if (cName == null)
+		{
+			return;
+		}
+		URL url = this.classLoader.getResource(cName);
+		if (url == null)
+		{
+			return;
+		}
+		InputStream is = url.openStream();
+		if (is != null)
+		{
+			Properties tmpProps = new Properties();
+			tmpProps.load(is);
+			is.close();
+			this.loadChildProperties(tmpProps, null);
+			Iterator itr = tmpProps.entrySet().iterator();
+			while (itr.hasNext())
+			{
+				Map.Entry entry = (Map.Entry) itr.next();
+				props.put(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	/**
+	 * 载入父配置
+	 */
+	private void loadParentProperties(Properties props, String nowName)
+			throws IOException
+	{
+		String pName = nowName != null ? nowName : props.getProperty(PARENT_PROPERTIES);
+		if (pName == null && (pName = props.getProperty(PARENT_PROPERTIES_OLD)) == null)
 		{
 			return;
 		}
@@ -404,7 +451,7 @@ public class PropertiesManager
 			Properties tmpProps = new Properties();
 			tmpProps.load(is);
 			is.close();
-			this.loadParentProperties(tmpProps);
+			this.loadParentProperties(tmpProps, null);
 			Iterator itr = tmpProps.entrySet().iterator();
 			while (itr.hasNext())
 			{
@@ -417,6 +464,10 @@ public class PropertiesManager
 		}
 	}
 
+	public String toString()
+	{
+		return this.properties.toString();
+	}
 
 
 	/**

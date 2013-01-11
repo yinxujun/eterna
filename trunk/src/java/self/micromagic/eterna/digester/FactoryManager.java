@@ -306,7 +306,7 @@ public class FactoryManager
 	 */
 	public static Instance getGlobeFactoryManager()
 	{
-		return globalInstance;
+		return getGlobalFactoryManager();
 	}
 
 	/**
@@ -421,7 +421,7 @@ public class FactoryManager
 	{
 		if (GLOBAL_INSTANCE_ID.equals(id))
 		{
-			return globalInstance;
+			return getGlobalFactoryManager();
 		}
 		Instance instance = (Instance) instanceMap.get(id);
 		if (instance == null)
@@ -640,6 +640,20 @@ public class FactoryManager
 	}
 
 	/**
+	 * 注销一个工厂管理器的实例.
+	 *
+	 * @return 当此实例存在且成功注销则返回true.
+	 */
+	public static boolean deregisterClassFactoryManager(Instance factoryManager)
+	{
+		if (factoryManager == null)
+		{
+			return false;
+		}
+      return instanceMap.remove(factoryManager.getId()) != null;
+	}
+
+	/**
 	 * 从工厂管理器的实现类中寻找一个合适的构造函数.
 	 *
 	 * @param params           出参, 构造类时使用的参数
@@ -755,7 +769,7 @@ public class FactoryManager
 	public static EternaFactory getEternaFactory()
 			throws ConfigurationException
 	{
-		return globalInstance.getEternaFactory();
+		return getGlobalFactoryManager().getEternaFactory();
 	}
 
 	/**
