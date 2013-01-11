@@ -23,6 +23,7 @@ public class H2Test
 		// 获取数据库文件所在的目录, test//WebContent/WEB-INF/db
 		String baseDir = projectPath + "/WebContent/WEB-INF/db";
 		Connection conn1 = DriverManager.getConnection("jdbc:h2:" + baseDir + "/test", "sa", "sa"); 
+		System.out.println(conn1.getMetaData().getDatabaseProductName());
 		conn1.setAutoCommit(false);
 		ResultSet rs = conn1.createStatement().executeQuery("select * from my_table");
 		while (rs.next())
