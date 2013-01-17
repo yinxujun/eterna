@@ -1,3 +1,18 @@
+/*
+ * Copyright 2009-2015 xinjunli (micromagic@sina.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package self.micromagic.eterna.model;
 
@@ -100,6 +115,11 @@ public class AppData
 	private int logType = APP_LOG_TYPE;
 
 	/**
+	 * 标识AppData是否已执行了clearData方法.
+	 */
+	private boolean cleared;
+
+	/**
 	 * view中使用的数据集对象
 	 */
 	public final Map dataMap = new HashMap();
@@ -132,7 +152,7 @@ public class AppData
 	/**
 	 * 设置app运行日志记录方式.
 	 */
-	public static void setAppLogType(int type)
+	static void setAppLogType(int type)
 	{
 		APP_LOG_TYPE = type;
 	}
@@ -142,6 +162,7 @@ public class AppData
 	 *
 	 * @deprecated
 	 * @see #getLogType()
+	 * @see AppDataLogExecute#getAppLogType()
 	 */
 	public static int getAppLogType()
 	{
@@ -439,8 +460,12 @@ public class AppData
 		if (data == null)
 		{
 			data = new AppData();
-			data.logType = APP_LOG_TYPE;
 			cache.setProperty(CACHE_NAME, data);
+		}
+		else if (data.cleared)
+		{
+			data.cleared = false;
+			data.logType = APP_LOG_TYPE;
 		}
 		return data;
 	}
@@ -475,6 +500,7 @@ public class AppData
 		{
 			this.nodeStack.clear();
 		}
+		this.cleared = true;
 	}
 
 	public Map setSpcialDataMap(String specialName, Map map)
