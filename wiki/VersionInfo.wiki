@@ -1,6 +1,12 @@
 #summary 版本更新日志
 #labels Phase-Requirements
 
+==1.5.7==
+在使用jdk1.5及以上版本时，运行日志中记录的时间可精确到千分之一毫秒。<br>
+self.micromagic.eterna.sql.SpecialLog:中的logSQL方法的usedTime参数进行的调整，此参数将会根据当前的jdk版本表示毫秒值或纳秒值，可使用self.micromagic.util.logging.TimeLogger.getPassTime(long)方法获取毫秒值。<br>
+修复了select控件在局部更新时无法加载选项的问题。<br>
+修复了在初始化过程中执行了reloadWebObj而造成eterna_doInitObjs提前执行的bug。<br>
+----
 ==1.5.6==
 修复了对java.util.Iterator或java.util.Enumeration进行app日志记录时造成游标移到最后的bug。<br>
 增加了对自适应网页设计（Responsive Web Design）的处理。<br>
