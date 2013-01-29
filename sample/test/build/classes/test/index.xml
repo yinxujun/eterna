@@ -71,6 +71,11 @@
 						<init-script>webObj.attr("href", {$ef:getHeadURL}("codeManage.index"));</init-script>
 					</component>
 				</component>
+				<component name="8" type="div" comParam="css:{'margin-top':'5px'}">
+					<component name="a" type="a" comParam="text:'自动ajax的样例，可在各个地址栏里输入上面各个例子中的地址看效果。'">
+						<init-script>webObj.attr("href", {$ef:getHeadURL}("autoAJAX"));</init-script>
+					</component>
+				</component>
 			</view>
 
 		</objs>
