@@ -224,7 +224,7 @@ var EG_KEEP_BASE_OBJ = "keepBaseObj";
 var EG_OLD_BASE_OBJ = "oldBaseObj";
 var EG_KEEP_OBJ_WHEN_USE = "keepObjWhenUse";
 var EG_TEMPLATE_OBJ_FLAG = "templateObj";
-var EG_BINDED_ETERNA = "binded.eterna";
+window.EG_BINDED_ETERNA = "binded.eterna";
 
 
 window.eg_cache = {
@@ -1847,8 +1847,16 @@ Eterna.prototype.ajaxVisit = function(url, param, logHistory)
 		if (tmpData != null)
 		{
 			this.changeEternaData(tmpData);
-			eg_temp = {};
-			this.reInit();
+			var oldTemp = eg_temp;
+			try
+			{
+				eg_temp = {};
+				this.reInit();
+			}
+			finally
+			{
+				eg_temp = oldTemp;
+			}
 		}
 		else
 		{
@@ -1873,6 +1881,7 @@ Eterna.prototype.ajaxVisit = function(url, param, logHistory)
 
 Eterna.prototype.changeLocation = function(url)
 {
+	var oldURL = this.cache.currentURL;
 	this.cache.currentURL = url;
 	url = eterna_getPurePath(url);
 	if (url != "")
@@ -1883,13 +1892,88 @@ Eterna.prototype.changeLocation = function(url)
 	{
 		this.cache.location = null;
 	}
+	this.fireLocationChange(oldURL, this.cache.currentURL);
+}
+Eterna.prototype.fireLocationChange = function(oldURL, url)
+{
+	if (this.cache.locationListeners == null)
+	{
+		return;
+	}
+	for (var i = 0; i < this.cache.locationListeners.length; i++)
+	{
+		if (this.cache.locationListeners[i] != null)
+		{
+			this.cache.locationListeners[i](this, oldURL, url);
+		}
+	}
+}
+
+/**
+ * 添加一个地址变化的监听者.
+ * l  监听的方法, 需要3个参数, 第一个为eterna对象, 第二个为原来的地址,
+ *    第三个为修改后的地址
+ */
+Eterna.prototype.addLocationListener = function(l)
+{
+	if (l == null)
+	{
+		return;
+	}
+	var firstNull = -1;
+	if (this.cache.locationListeners == null)
+	{
+		this.cache.locationListeners = [l];
+	}
+	else
+	{
+		for (var i = 0; i < this.cache.locationListeners.length; i++)
+		{
+			if (this.cache.locationListeners[i] == null)
+			{
+				firstNull = i;
+			}
+			else if (this.cache.locationListeners[i] == l)
+			{
+				firstNull = i;
+				break;
+			}
+		}
+		if (firstNull == -1)
+		{
+			this.cache.locationListeners.push(l);
+		}
+		else
+		{
+			this.cache.locationListeners[firstNull] = l;
+		}
+	}
+}
+
+/**
+ * 移除一个地址变化的监听者.
+ */
+Eterna.prototype.removeLocationListener = function(l)
+{
+	if (l == null || this.cache.locationListeners == null)
+	{
+		return;
+	}
+	for (var i = 0; i < this.cache.locationListeners.length; i++)
+	{
+		if (this.cache.locationListeners[i] == l)
+		{
+			this.cache.locationListeners[i] = null;
+			break;
+		}
+	}
 }
 
 /**
  * 通过ajax方式重载部分区域.
- * url	 重载的地址
+ * url    重载的地址
  * param  传递的参数
- * objs	需要重载的控件列表
+ * objs   需要重载的控件列表
  * datas  需要更新的数据集名称列表
  */
 Eterna.prototype.partReload = function(url, param, objs, datas)
@@ -4551,7 +4635,12 @@ function eterna_specialEventHandler(event)
 			if (specialType == "a:click")
 			{
 				var url = webObj.attr("href");
-				if (url == null || url == "#")
+				if (url == null || (url == "" && document.all))
+				{
+					// 未设置href时返回true触发事件的冒泡
+					return true;
+				}
+				if (url == "#")
 				{
 					return false;
 				}
@@ -4924,8 +5013,16 @@ window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 					var str = eterna_dealRemoteData(_eterna, textData);
 					var tmpData = eval("(" + str + ")");
 					_eterna.changeEternaData(tmpData);
-					eg_temp = {};
-					_eterna.reInit();
+					var oldTemp = eg_temp;
+					try
+					{
+						eg_temp = {};
+						_eterna.reInit();
+					}
+					finally
+					{
+						eg_temp = oldTemp;
+					}
 				}
 				else
 				{
@@ -4953,8 +5050,16 @@ window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 						var str = eterna_dealRemoteData(_eterna, result);
 						var tmpData = eval("(" + str + ")");
 						_eterna.changeEternaData(tmpData);
-						eg_temp = {};
-						_eterna.reInit();
+						var oldTemp = eg_temp;
+						try
+						{
+							eg_temp = {};
+							_eterna.reInit();
+						}
+						finally
+						{
+							eg_temp = oldTemp;
+						}
 					}
 					else
 					{

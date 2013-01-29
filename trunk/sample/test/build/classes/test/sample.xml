@@ -253,7 +253,7 @@
 						<cells cellOrder="title">
 							<cell name="title" caption="[script]:eg_temp.tempData.title" 
 								titleSize="-1" containerSize="0" titleParam="css:{'text-align':'left'}" />
-							<cell name="submit" titleSize="0" containerSize="-1" typicalComponentName="buttons" initParam="returnBtn:1" />
+							<cell name="submit" titleSize="0" containerSize="-1" typicalComponentName="buttons" initParam="returnBtn:1,returnModel:'list'" />
 						</cells>
 					</table-form>
 				</replacement>

@@ -54,37 +54,7 @@
 						<events>
 							<event name="click">
 								var btnConfig = webObj.data("btnConfig");
-								if (btnConfig.model != null)
-								{
-									if (btnConfig.confirmMsg != null)
-									{
-										if (!confirm(btnConfig.confirmMsg))
-										{
-											return;
-										}
-									}
-									var optURL = btnConfig.params == null ? {$ef:getHeadURL}(btnConfig.model)
-											: {$ef:getHeadURL}(btnConfig.model, btnConfig.params);
-									if (btnConfig.newWindowName == null)
-									{
-										{$ef:doVisit}(optURL);
-									}
-									else
-									{
-										if (btnConfig.newWindowParam == null)
-										{
-											_eterna.openWindow(optURL, btnConfig.newWindowName);
-										}
-										else
-										{
-											_eterna.openWindow(optURL, btnConfig.newWindowName, btnConfig.newWindowParam);
-										}
-									}
-								}
-								else if (btnConfig.click != null)
-								{
-									btnConfig.click(event);
-								}
+								{$ef:toolbar_buttonClick}(btnConfig, event);
 							</event>
 							<event name="mouseover">
 								webObj.removeClass("toolbutton");
@@ -123,6 +93,39 @@
 					]]></init-script>
 				</component>
 			</typical-component>
+			<function name="toolbar_buttonClick" param="btnConfig, event">
+				if (btnConfig.model != null)
+				{
+					if (btnConfig.confirmMsg != null)
+					{
+						if (!confirm(btnConfig.confirmMsg))
+						{
+							return;
+						}
+					}
+					var optURL = btnConfig.params == null ? {$ef:getHeadURL}(btnConfig.model)
+							: {$ef:getHeadURL}(btnConfig.model, btnConfig.params);
+					if (btnConfig.newWindowName == null)
+					{
+						{$ef:doVisit}(optURL);
+					}
+					else
+					{
+						if (btnConfig.newWindowParam == null)
+						{
+							_eterna.openWindow(optURL, btnConfig.newWindowName);
+						}
+						else
+						{
+							_eterna.openWindow(optURL, btnConfig.newWindowName, btnConfig.newWindowParam);
+						}
+					}
+				}
+				else if (btnConfig.click != null)
+				{
+					btnConfig.click(event, btnConfig);
+				}
+			</function>
 
 			<typical-component name="eternaToolbarStyle" type="div" generator="self.micromagic.util.AttributeComponent"
 					attributes="attrName=_eterna_toolbarStyle;autoSet=false;"/>
