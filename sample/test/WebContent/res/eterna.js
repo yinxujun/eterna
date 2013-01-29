@@ -1692,9 +1692,9 @@ Eterna.prototype.popFunctionStack = function()
 
 /**
  * 在框架外(或非初始化时)创建一个控件.
- * tName	  typical-component的名称
- * parent	 性创建的控件所在的父节点, 可以是节点id 也可以是节点对象,
- *			  如果未给出此参数, 则直接放到body中
+ * tName   typical-component的名称
+ * parent  性创建的控件所在的父节点, 可以是节点id 也可以是节点对象,
+ *	        如果未给出此参数, 则直接放到body中
  * 例子:
  * var newObj = _eterna.newComponent("templateId", "parentId");
  */
@@ -1750,8 +1750,8 @@ Eterna.prototype.newComponent = function(tName, parent)
 
 /**
  * 在框架外调用一个方法.
- * fnName	 要调用的方法的名称
- * ...		 调用方法需要的参数
+ * fnName  要调用的方法的名称
+ * ...     调用方法需要的参数
  * 例子:
  * _eterna.callFunction("getData_value", "userInfo", "id", 0);
  */
@@ -1778,7 +1778,7 @@ Eterna.prototype.callFunction = function(fnName)
 
 /**
  * 在框架外获得一个方法对象.
- * fnName	 要获得的方法的名称
+ * fnName  要获得的方法的名称
  * 例子:
  * var fn = _eterna.getFunction("getData_value");
  * fn("userInfo", "id", 0);
@@ -1791,7 +1791,7 @@ Eterna.prototype.getFunction = function(fnName)
 /**
  * 在框架外获取或设置数据集中的值.
  * dataName  获取或设置的值的名称
- * value	  要设置的值
+ * value     要设置的值
  * 例子:
  * var value = _eterna.data("data1");
  * _eterna.data("data2", value);
@@ -1809,7 +1809,7 @@ Eterna.prototype.data = function(dataName, value)
 /**
  * 执行一次页面访问, 会根据_eterna.cache.useAJAX的设置,
  * 进行页面跳转或ajax方式访问.
- * url	 访问的地址
+ * url  访问的地址
  */
 Eterna.prototype.doVisit = function(url)
 {
@@ -1825,8 +1825,8 @@ Eterna.prototype.doVisit = function(url)
 
 /**
  * 通过ajax获取数据并更新整个区域.
- * url			获取数据的地址
- * param		 传递的参数
+ * url         获取数据的地址
+ * param       传递的参数
  * logHistory  是否要记录历史
  */
 Eterna.prototype.ajaxVisit = function(url, param, logHistory)
@@ -4956,12 +4956,12 @@ function eterna_dealRemoteData(_eterna, str)
 
 /**
  * 动态载入一个Ererna对象.
- * url		  初始化此Ererna对象的url
- * param		请求url地址时需要传递的参数
+ * url        初始化此Ererna对象的url
+ * param      请求url地址时需要传递的参数
  * parentObj  生成的界面所在的父节点, 必须是jQuery对象
- * useAJAX	 是否需要自动将请求转为ajax的方式
- * debug		调试信息的输出等级
- * recall	  如果需要异步加载, 要给出回调函数
+ * useAJAX    是否需要自动将请求转为ajax的方式
+ * debug      调试信息的输出等级
+ * recall     如果需要异步加载, 要给出回调函数
  */
 window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 {
@@ -5045,7 +5045,7 @@ window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 				var eternaData = $E;
 				try
 				{
-					if (eterna_checkRemoteData(textData))
+					if (eterna_checkRemoteData(result))
 					{
 						var str = eterna_dealRemoteData(_eterna, result);
 						var tmpData = eval("(" + str + ")");
@@ -5088,9 +5088,9 @@ window.ef_loadEterna = function(url, param, parentObj, useAJAX, debug, recall)
 
 /**
  * 判断字符串是否为空.
- * null	:	true
- * ""	  :	true
- * " "	 :	false
+ * null : true
+ * ""   : true
+ * " "  : false
  */
 window.ef_isEmpty = function(str)
 {
