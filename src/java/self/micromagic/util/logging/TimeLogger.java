@@ -122,6 +122,17 @@ public class TimeLogger
 		return instance.formatMillionSecond(time, precision);
 	}
 
+	/**
+	 * 获取经过的时间, 单位为毫秒.
+	 *
+	 * @param time  要格式化的时间
+	 *              此参数必须是通过getTime方法获取的两个时间之差
+	 */
+	public static long getPassTime(long time)
+	{
+		return instance.getMillionSecond(time);
+	}
+
 	private static TimeGetter instance;
 
 	static

@@ -28,19 +28,28 @@ import self.micromagic.eterna.digester.ObjectLogRule;
 
 public class FactoryGeneratorManager
 {
-	private Map generatorMap = new HashMap();
-	private List generatorList = new ArrayList();
+	private Map generatorMap;
+	private List generatorList;
 
 	private String managerName;
-	private EternaFactory factory;
+	protected EternaFactory factory;
 
 	private FactoryGeneratorManager shareFGM;
-	private boolean initialized = false;
+	private boolean initialized;
 
 	public FactoryGeneratorManager(String managerName, EternaFactory factory)
 	{
 		this.managerName = managerName;
 		this.factory = factory;
+		this.generatorMap = new HashMap();
+		this.generatorList = new ArrayList();
+	}
+
+	protected FactoryGeneratorManager(EternaFactory otherFactory)
+	{
+		this.managerName = "otherShare";
+		this.factory = otherFactory;
+		this.initialized = true;
 	}
 
 	public void initialize(FactoryGeneratorManager shareFGM)
@@ -181,7 +190,7 @@ public class FactoryGeneratorManager
 		container.generator = null;
 	}
 
-	private class GeneratorContainer
+	private static class GeneratorContainer
 	{
 		public final int id;
 		public AdapterGenerator generator;
@@ -192,6 +201,178 @@ public class FactoryGeneratorManager
 			this.generator = generator;
 		}
 
+	}
+
+	/**
+	 * 对于其它类型的ShareFactory的抽象实现.
+	 */
+	static abstract class AbstractOtherShare extends FactoryGeneratorManager
+	{
+		public AbstractOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public void initialize(FactoryGeneratorManager shareFGM) {}
+		public void destroy() {}
+		public void register(AdapterGenerator generator) {}
+		public void deregister(String name) {}
+
+	}
+
+	static class QueryOtherShare extends AbstractOtherShare
+	{
+		public QueryOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public Object create(String name)
+			throws ConfigurationException
+		{
+			return this.factory.createQueryAdapter(name);
+		}
+
+		public Object create(int id)
+			throws ConfigurationException
+		{
+			return this.factory.createQueryAdapter(id);
+		}
+
+		public int getIdByName(String name)
+			throws ConfigurationException
+		{
+			return this.factory.getQueryAdapterId(name);
+		}
+
+	}
+	static FactoryGeneratorManager createQueryFGM(EternaFactory factory)
+	{
+		return factory == null ? null : new QueryOtherShare(factory);
+	}
+
+	static class UpdateOtherShare extends AbstractOtherShare
+	{
+		public UpdateOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public Object create(String name)
+			throws ConfigurationException
+		{
+			return this.factory.createUpdateAdapter(name);
+		}
+
+		public Object create(int id)
+			throws ConfigurationException
+		{
+			return this.factory.createUpdateAdapter(id);
+		}
+
+		public int getIdByName(String name)
+			throws ConfigurationException
+		{
+			return this.factory.getUpdateAdapterId(name);
+		}
+
+	}
+	static FactoryGeneratorManager createUpdateFGM(EternaFactory factory)
+	{
+		return factory == null ? null : new UpdateOtherShare(factory);
+	}
+
+	static class SearchOtherShare extends AbstractOtherShare
+	{
+		public SearchOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public Object create(String name)
+			throws ConfigurationException
+		{
+			return this.factory.createSearchAdapter(name);
+		}
+
+		public Object create(int id)
+			throws ConfigurationException
+		{
+			return this.factory.createSearchAdapter(id);
+		}
+
+		public int getIdByName(String name)
+			throws ConfigurationException
+		{
+			return this.factory.getSearchAdapterId(name);
+		}
+
+	}
+	static FactoryGeneratorManager createSearchFGM(EternaFactory factory)
+	{
+		return factory == null ? null : new SearchOtherShare(factory);
+	}
+
+	static class ModelOtherShare extends AbstractOtherShare
+	{
+		public ModelOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public Object create(String name)
+			throws ConfigurationException
+		{
+			return this.factory.createModelAdapter(name);
+		}
+
+		public Object create(int id)
+			throws ConfigurationException
+		{
+			return this.factory.createModelAdapter(id);
+		}
+
+		public int getIdByName(String name)
+			throws ConfigurationException
+		{
+			return this.factory.getModelAdapterId(name);
+		}
+
+	}
+	static FactoryGeneratorManager createModelFGM(EternaFactory factory)
+	{
+		return factory == null ? null : new ModelOtherShare(factory);
+	}
+
+	static class ViewOtherShare extends AbstractOtherShare
+	{
+		public ViewOtherShare(EternaFactory factory)
+		{
+			super(factory);
+		}
+
+		public Object create(String name)
+			throws ConfigurationException
+		{
+			return this.factory.createViewAdapter(name);
+		}
+
+		public Object create(int id)
+			throws ConfigurationException
+		{
+			return this.factory.createViewAdapter(id);
+		}
+
+		public int getIdByName(String name)
+			throws ConfigurationException
+		{
+			return this.factory.getViewAdapterId(name);
+		}
+
+	}
+	static FactoryGeneratorManager createViewFGM(EternaFactory factory)
+	{
+		return factory == null ? null : new ViewOtherShare(factory);
 	}
 
 }

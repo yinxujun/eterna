@@ -250,6 +250,14 @@ public interface EternaFactory extends Factory
 	ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator();
 
 	/**
+	 * 获得一个指定名称<code>ValuePreparerCreaterGenerator</code>.
+	 *
+	 * @param name       ValuePreparerCreaterGenerator的名称.
+	 */
+	ValuePreparerCreaterGenerator getValuePreparerCreaterGenerator(String name)
+			throws ConfigurationException;
+
+	/**
 	 * 生成一个<code>VPGenerator</code>的实例.
 	 * 如果name为null, 则使用默认的ValuePreparerGenerator.
 	 *
