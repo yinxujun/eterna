@@ -898,11 +898,11 @@
 
 			<!-- 检查选择项的数据是否存在, 是否需要加载, true表示加载完成, 可以继续 -->
 			<function name="select_options_data_check" param="theObj"><![CDATA[
-				var optionsCache = {$data:_optionsCache};
+				var optionsCache = {$data:___optionsCache};
 				if (optionsCache == null)
 				{
 					optionsCache = {initDataFlag:{},waitObjs:{}};
-					{$data:_optionsCache} = optionsCache;
+					{$data:___optionsCache} = optionsCache;
 				}
 				if (eg_temp.param != null && eg_temp.param.optionsList != null)
 				{

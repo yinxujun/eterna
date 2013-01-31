@@ -1694,7 +1694,7 @@ Eterna.prototype.popFunctionStack = function()
  * 在框架外(或非初始化时)创建一个控件.
  * tName   typical-component的名称
  * parent  性创建的控件所在的父节点, 可以是节点id 也可以是节点对象,
- *	        如果未给出此参数, 则直接放到body中
+ *         如果未给出此参数, 则直接放到body中
  * 例子:
  * var newObj = _eterna.newComponent("templateId", "parentId");
  */
@@ -4630,7 +4630,9 @@ function eterna_specialEventHandler(event)
 	event.handleObj = oldHandleObj;
 	if (needExecute)
 	{
-		if (_eterna.cache.useAJAX && !event[EG_STOP_AJAX] && webObj.attr(EG_STOP_AJAX) == null)
+		var target = webObj.attr("target");
+		if (_eterna.cache.useAJAX && !event[EG_STOP_AJAX] && webObj.attr(EG_STOP_AJAX) == null
+				&& (target == null || target == ""))
 		{
 			if (specialType == "a:click")
 			{

@@ -230,10 +230,9 @@ public class EternaFactoryImpl extends AbstractFactory
 			{
 				// 如果指定了默认的vpc, 则获取这个vpc
 				this.defaultVPCG = (ValuePreparerCreaterGenerator) this.valuePreparerMap.get(dName);
-				if (this.defaultVPCG == null && this.sameShare != null)
+				if (this.defaultVPCG == null && this.shareEternaFactory != null)
 				{
-					this.defaultVPCG
-							= (ValuePreparerCreaterGenerator) this.sameShare.valuePreparerMap.get(dName);
+					this.defaultVPCG = this.shareEternaFactory.getValuePreparerCreaterGenerator(dName);
 				}
 				if (this.defaultVPCG == null)
 				{
@@ -307,8 +306,8 @@ public class EternaFactoryImpl extends AbstractFactory
 			}
 			else
 			{
-				this.queryManager.initialize(null);
-				this.updateManager.initialize(null);
+				this.queryManager.initialize(FactoryGeneratorManager.createQueryFGM(this.shareEternaFactory));
+				this.updateManager.initialize(FactoryGeneratorManager.createUpdateFGM(this.shareEternaFactory));
 			}
 
 			// 初始化, userManager
@@ -352,7 +351,7 @@ public class EternaFactoryImpl extends AbstractFactory
 			}
 			else
 			{
-				this.searchAdapterManager.initialize(null);
+				this.searchAdapterManager.initialize(FactoryGeneratorManager.createSearchFGM(this.shareEternaFactory));
 			}
 
 			// 初始化, model-caller
@@ -366,7 +365,7 @@ public class EternaFactoryImpl extends AbstractFactory
 			}
 			else
 			{
-				this.modelManager.initialize(null);
+				this.modelManager.initialize(FactoryGeneratorManager.createModelFGM(this.shareEternaFactory));
 			}
 
 			// 初始化, string-coder
@@ -398,7 +397,7 @@ public class EternaFactoryImpl extends AbstractFactory
 			}
 			else
 			{
-				this.viewManager.initialize(null);
+				this.viewManager.initialize(FactoryGeneratorManager.createViewFGM(this.shareEternaFactory));
 			}
 		}
 	}
@@ -581,61 +580,19 @@ public class EternaFactoryImpl extends AbstractFactory
 	public QueryAdapter createQueryAdapter(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (QueryAdapter) this.queryManager.create(name);
-		}
-		else
-		{
-			try
-			{
-				return (QueryAdapter) this.queryManager.create(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.createQueryAdapter(name);
-			}
-		}
+		return (QueryAdapter) this.queryManager.create(name);
 	}
 
 	public QueryAdapter createQueryAdapter(int id)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (QueryAdapter) this.queryManager.create(id);
-		}
-		else
-		{
-			if (id < Factory.MAX_ADAPTER_COUNT)
-			{
-				return (QueryAdapter) this.queryManager.create(id);
-			}
-			else
-			{
-				return this.shareEternaFactory.createQueryAdapter(id - Factory.MAX_ADAPTER_COUNT);
-			}
-		}
+		return (QueryAdapter) this.queryManager.create(id);
 	}
 
 	public int getQueryAdapterId(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return this.queryManager.getIdByName(name);
-		}
-		else
-		{
-			try
-			{
-				return this.queryManager.getIdByName(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.getQueryAdapterId(name) + Factory.MAX_ADAPTER_COUNT;
-			}
-		}
+		return this.queryManager.getIdByName(name);
 	}
 
 	public void registerQueryAdapter(QueryAdapterGenerator generator)
@@ -653,61 +610,19 @@ public class EternaFactoryImpl extends AbstractFactory
 	public UpdateAdapter createUpdateAdapter(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (UpdateAdapter) this.updateManager.create(name);
-		}
-		else
-		{
-			try
-			{
-				return (UpdateAdapter) this.updateManager.create(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.createUpdateAdapter(name);
-			}
-		}
+		return (UpdateAdapter) this.updateManager.create(name);
 	}
 
 	public UpdateAdapter createUpdateAdapter(int id)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (UpdateAdapter) this.updateManager.create(id);
-		}
-		else
-		{
-			if (id < Factory.MAX_ADAPTER_COUNT)
-			{
-				return (UpdateAdapter) this.updateManager.create(id);
-			}
-			else
-			{
-				return this.shareEternaFactory.createUpdateAdapter(id - Factory.MAX_ADAPTER_COUNT);
-			}
-		}
+		return (UpdateAdapter) this.updateManager.create(id);
 	}
 
 	public int getUpdateAdapterId(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return this.updateManager.getIdByName(name);
-		}
-		else
-		{
-			try
-			{
-				return this.updateManager.getIdByName(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.getUpdateAdapterId(name) + Factory.MAX_ADAPTER_COUNT;
-			}
-		}
+		return this.updateManager.getIdByName(name);
 	}
 
 	public void registerUpdateAdapter(UpdateAdapterGenerator generator)
@@ -749,6 +664,26 @@ public class EternaFactoryImpl extends AbstractFactory
 	public ValuePreparerCreaterGenerator getDefaultValuePreparerCreaterGenerator()
 	{
 		return this.defaultVPCG;
+	}
+
+	public ValuePreparerCreaterGenerator getValuePreparerCreaterGenerator(String name)
+			throws ConfigurationException
+	{
+		if (name == null)
+		{
+			return this.defaultVPCG;
+		}
+		ValuePreparerCreaterGenerator vpcg = (ValuePreparerCreaterGenerator) this.valuePreparerMap.get(name);
+		if (vpcg == null)
+		{
+			if (this.shareEternaFactory != null)
+			{
+				return this.shareEternaFactory.getValuePreparerCreaterGenerator(name);
+			}
+			throw new ConfigurationException(
+					"Not found [ValuePreparerCreaterGenerator] name:" + name + ".");
+		}
+		return vpcg;
 	}
 
 	public ValuePreparerCreater createValuePreparerCreater(int type)
@@ -886,61 +821,19 @@ public class EternaFactoryImpl extends AbstractFactory
 	public SearchAdapter createSearchAdapter(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (SearchAdapter) this.searchAdapterManager.create(name);
-		}
-		else
-		{
-			try
-			{
-				return (SearchAdapter) this.searchAdapterManager.create(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.createSearchAdapter(name);
-			}
-		}
+		return (SearchAdapter) this.searchAdapterManager.create(name);
 	}
 
 	public SearchAdapter createSearchAdapter(int id)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (SearchAdapter) this.searchAdapterManager.create(id);
-		}
-		else
-		{
-			if (id < Factory.MAX_ADAPTER_COUNT)
-			{
-				return (SearchAdapter) this.searchAdapterManager.create(id);
-			}
-			else
-			{
-				return this.shareEternaFactory.createSearchAdapter(id - Factory.MAX_ADAPTER_COUNT);
-			}
-		}
+		return (SearchAdapter) this.searchAdapterManager.create(id);
 	}
 
 	public int getSearchAdapterId(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return this.searchAdapterManager.getIdByName(name);
-		}
-		else
-		{
-			try
-			{
-				return this.searchAdapterManager.getIdByName(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.getSearchAdapterId(name) + Factory.MAX_ADAPTER_COUNT;
-			}
-		}
+		return this.searchAdapterManager.getIdByName(name);
 	}
 
 	public void registerSearchAdapter(SearchAdapterGenerator generator)
@@ -1093,61 +986,19 @@ public class EternaFactoryImpl extends AbstractFactory
 	public ModelAdapter createModelAdapter(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (ModelAdapter) this.modelManager.create(name);
-		}
-		else
-		{
-			try
-			{
-				return (ModelAdapter) this.modelManager.create(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.createModelAdapter(name);
-			}
-		}
+		return (ModelAdapter) this.modelManager.create(name);
 	}
 
 	public ModelAdapter createModelAdapter(int id)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (ModelAdapter) this.modelManager.create(id);
-		}
-		else
-		{
-			if (id < Factory.MAX_ADAPTER_COUNT)
-			{
-				return (ModelAdapter) this.modelManager.create(id);
-			}
-			else
-			{
-				return this.shareEternaFactory.createModelAdapter(id - Factory.MAX_ADAPTER_COUNT);
-			}
-		}
+		return (ModelAdapter) this.modelManager.create(id);
 	}
 
 	public int getModelAdapterId(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return this.modelManager.getIdByName(name);
-		}
-		else
-		{
-			try
-			{
-				return this.modelManager.getIdByName(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.getModelAdapterId(name) + Factory.MAX_ADAPTER_COUNT;
-			}
-		}
+		return this.modelManager.getIdByName(name);
 	}
 
 	public void registerModelAdapter(ModelAdapterGenerator generator)
@@ -1309,61 +1160,19 @@ public class EternaFactoryImpl extends AbstractFactory
 	public ViewAdapter createViewAdapter(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (ViewAdapter) this.viewManager.create(name);
-		}
-		else
-		{
-			try
-			{
-				return (ViewAdapter) this.viewManager.create(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.createViewAdapter(name);
-			}
-		}
+		return (ViewAdapter) this.viewManager.create(name);
 	}
 
 	public ViewAdapter createViewAdapter(int id)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return (ViewAdapter) this.viewManager.create(id);
-		}
-		else
-		{
-			if (id < Factory.MAX_ADAPTER_COUNT)
-			{
-				return (ViewAdapter) this.viewManager.create(id);
-			}
-			else
-			{
-				return this.shareEternaFactory.createViewAdapter(id - Factory.MAX_ADAPTER_COUNT);
-			}
-		}
+		return (ViewAdapter) this.viewManager.create(id);
 	}
 
 	public int getViewAdapterId(String name)
 			throws ConfigurationException
 	{
-		if (this.sameShare != null || this.shareEternaFactory == null)
-		{
-			return this.viewManager.getIdByName(name);
-		}
-		else
-		{
-			try
-			{
-				return this.viewManager.getIdByName(name);
-			}
-			catch (ConfigurationException ex)
-			{
-				return this.shareEternaFactory.getViewAdapterId(name) + Factory.MAX_ADAPTER_COUNT;
-			}
-		}
+		return this.viewManager.getIdByName(name);
 	}
 
 	public void registerViewAdapter(ViewAdapterGenerator generator)
