@@ -4,6 +4,7 @@
 %>
 <html>
 <head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 </head>
 <body>
 
@@ -17,6 +18,7 @@
 <br />
 <a href="<%= root %>/autoAJAX/first.jsp" onclick="alert('not go!');return false;">不会跳转到第一个页面!</a> |
 <a href="<%= root %>/autoAJAX/first.jsp" stopAJAX>整个页面跳转到第一个页面，不发生AJAX</a> |
+<a href="<%= root %>/autoAJAX/first.jsp" target="_blank">在新窗口打开第一个页面</a> |
 <br />
 
 
