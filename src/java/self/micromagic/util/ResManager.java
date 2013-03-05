@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import self.micromagic.util.container.UnmodifiableIterator;
+
 /**
  * 资源数据管理者.
  */
@@ -230,18 +232,27 @@ public class ResManager
 		while (itr.hasNext())
 		{
 			Map.Entry entry = (Map.Entry) itr.next();
-			this.resCache.put(entry.getKey(), this.transToArray((List) entry.getValue()));
+			this.resCache.put(entry.getKey(), transToArray((List) entry.getValue()));
 		}
+	}
+
+	/**
+	 * 将List类型的资源文本转换成字符串数组.
+	 */
+	private static String[] transToArray(List resList)
+	{
+		String[] arr = new String[resList.size()];
+		return (String[]) resList.toArray(arr);
 	}
 
 	/**
 	 * 输出资源的值.
 	 *
-	 * @param resName		需要输出的资源的名称
-	 * @param paramBind	 输出的资源需要绑定的参数
+	 * @param resName      需要输出的资源的名称
+	 * @param paramBind    输出的资源需要绑定的参数
 	 * @param indentCount  输出的资源每行需要缩进的值
-	 * @param buf			 用于输出资源的缓存
-	 * @return	 如果给出了buf参数, 则返回buf, 如果未给出则返回
+	 * @param buf          用于输出资源的缓存
+	 * @return  如果给出了buf参数, 则返回buf, 如果未给出则返回
 	 *				新生成的<code>StringAppender</code>
 	 */
 	public StringAppender printRes(String resName, Map paramBind, int indentCount, StringAppender buf)
@@ -269,6 +280,30 @@ public class ResManager
 	}
 
 	/**
+	 * 获取资源的值.
+	 *
+	 * @param resName      资源的名称
+	 * @param paramBind    资源需要绑定的参数
+	 * @param indentCount  资源每行需要缩进的值
+	 */
+	public String getRes(String resName, Map paramBind, int indentCount)
+	{
+      StringAppender buf = this.printRes(resName, paramBind, indentCount, null);
+		return buf.toString();
+	}
+
+	/**
+	 * 获取资源的值.
+	 *
+	 * @param resName  需要输出的资源的名称
+	 */
+	public String getRes(String resName)
+	{
+      StringAppender buf = this.printRes(resName, null, 0, null);
+		return buf.toString();
+	}
+
+	/**
 	 * 处理每行起始部分的缩进
 	 */
 	private static void dealIndent(int indentCount, StringAppender buf)
@@ -290,12 +325,11 @@ public class ResManager
 	}
 
 	/**
-	 * 将List类型的资源文本转换成字符串数组.
+	 * 获取所有资源的名称.
 	 */
-	private String[] transToArray(List resList)
+	public Iterator getResNames()
 	{
-		String[] arr = new String[resList.size()];
-		return (String[]) resList.toArray(arr);
+		return new UnmodifiableIterator(this.resCache.keySet().iterator());
 	}
 
 	/**
