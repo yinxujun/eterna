@@ -15,7 +15,7 @@
  */
 
 /**
-  * version: 1.5.7
+  * version: 1.5.8
   */
 
 (function(window) {
@@ -29,7 +29,7 @@ else
 	return;
 }
 
-var ___ETERNA_VERSION = "1.5.7";
+var ___ETERNA_VERSION = "1.5.8";
 // ED = ETERNA_DEBUG, FN = FUNCTION, FNC = FUNCTION_CALLED, COM = COMPONENT
 window.ED_GET_VALUE = 0x1;
 window.ED_EXECUTE_SCRIPT = 0x2;
@@ -5165,23 +5165,46 @@ window.ef_toScriptString = function(str)
 }
 
 /**
- * 动态加载脚本
+ * 可动态加载脚本的方法
  */
 if (typeof eg_pageInitializedURL == "undefined")
 {
 	window.eg_pageInitializedURL = {};
 }
 
-window.ef_loadResource = function (jsResource, url, charset)
+window.ef_loadResource = function (jsResource, url, charset, callback)
 {
 	if (window.eg_pageInitializedURL[url])
 	{
 		if (!jsResource || !jsResource.alwaysExecute)
 		{
+			if (callback)
+			{
+				if (window.eg_pageInitializedURL[url].loaded)
+				{
+					callback();
+				}
+				else
+				{
+					setTimeout(function() {ef_loadResource(jsResource, url, charset, callback);}, 50);
+				}
+			}
 			return;
 		}
+		else
+		{
+			if (window.eg_pageInitializedURL[url].loaded)
+			{
+				// 需要重新载入, 则将loaded设为0
+				window.eg_pageInitializedURL[url].loaded = 0;
+			}
+			else
+			{
+				return;
+			}
+		}
 	}
-	window.eg_pageInitializedURL[url] = 1;
+	window.eg_pageInitializedURL[url] = {loaded:0};
 	if (typeof eg_resVersion != "undefined")
 	{
 		if (url.indexOf("?") == -1)
@@ -5196,7 +5219,7 @@ window.ef_loadResource = function (jsResource, url, charset)
 	var resObj;
 	if (jsResource)
 	{
-		if (typeof jQuery != 'undefined' && jsResource.async != true)
+		if (typeof jQuery != 'undefined' && jsResource.async === false)
 		{
 			// 注: 除非返回数据里有编码格式头, 否则默认使用utf-8编码格式
 			var opt = {type:"GET",global:false,url:url,async:false,dataType:"script",cache:true};
@@ -5205,6 +5228,7 @@ window.ef_loadResource = function (jsResource, url, charset)
 				opt.cache = jsResource.cache;
 			}
 			jQuery.ajax(opt);
+			window.eg_pageInitializedURL[url].loaded = 1;
 			// 同步加载完成后直接退出, 不执行后面的代码
 			return;
 		}
@@ -5212,6 +5236,27 @@ window.ef_loadResource = function (jsResource, url, charset)
 		resObj.type = "text/javascript";
 		resObj.async = true;
 		resObj.src = url;
+		resObj.onload = resObj.onreadystatechange = function()
+		{
+			if (!this.readyState || this.readyState === "loaded" || this.readyState == "complete")
+			{
+				window.eg_pageInitializedURL[url].loaded = 1;
+				if (callback)
+				{
+					callback();
+				}
+				resObj.onload = resObj.onreadystatechange = null;
+			}
+		};
+		resObj.onerror = function()
+		{
+			window.eg_pageInitializedURL[url].loaded = -1;
+			if (callback)
+			{
+				callback();
+			}
+			resObj.onerror = null;
+		};
 	}
 	else
 	{
@@ -5219,6 +5264,7 @@ window.ef_loadResource = function (jsResource, url, charset)
 		resObj.type = "text/css";
 		resObj.rel = "stylesheet";
 		resObj.href = url;
+		window.eg_pageInitializedURL[url].loaded = 1;
 	}
 	if (charset != null)
 	{
