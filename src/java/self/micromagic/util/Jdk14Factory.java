@@ -59,7 +59,7 @@ public class Jdk14Factory extends LogFactory
 {
 	public static final String USE_ETERNA_LOG = "self.micromagic.useEternaLog";
 
-	private static ConsoleFlushTimer consoleFlushTimer = new ConsoleFlushTimer();
+	private static ConsoleFlushTimer consoleFlushTimer;
 	private static int consoleFlushDelay = 5000;
 	private static StreamHandler consoleLoggerHander;
 	private static Logger defaultLogger;
@@ -156,25 +156,26 @@ public class Jdk14Factory extends LogFactory
 
 		if (isDefault)
 		{
-			Jdk14Factory.consoleLoggerHander = new StreamHandler(System.out, new SimpleFormatter());
 			//是否关闭控制台的log
-			if ("true".equalsIgnoreCase(Utility.getProperty("self.micromagic.defaultLogger.console.off")))
+			if (!("true".equalsIgnoreCase(Utility.getProperty("self.micromagic.defaultLogger.console.off"))))
 			{
-				Jdk14Factory.consoleLoggerHander.setLevel(Level.OFF);
-			}
-			else
-			{
+				consoleLoggerHander = new StreamHandler(System.out, new SimpleFormatter());
 				try
 				{
 					int delay = Integer.parseInt(
 							Utility.getProperty("self.micromagic.defaultLogger.console.delay_time"));
-					Jdk14Factory.consoleFlushDelay = delay >= 0 && delay < 500 ? 500 : delay;
+					consoleFlushDelay = delay >= 0 && delay < 500 ? 500 : delay;
 				}
 				catch (Throwable ex) {}
-				Jdk14Factory.consoleLoggerHander.setLevel(Level.ALL);
-				if (Jdk14Factory.consoleFlushDelay != -1)
+				try
 				{
-					Jdk14Factory.consoleFlushTimer.start();
+					consoleLoggerHander.setLevel(Level.ALL);
+				}
+				catch (Throwable ex) {}  // 防止安全方面的异常
+				if (consoleFlushDelay != -1)
+				{
+					consoleFlushTimer = new ConsoleFlushTimer();
+					consoleFlushTimer.start();
 				}
 			}
 		}
@@ -248,10 +249,14 @@ public class Jdk14Factory extends LogFactory
 				logName = name;
 			}
 			Logger logger = Logger.getLogger(logName);
-			logger.setUseParentHandlers(false);
-			if (isDefault)
+			try
 			{
-				logger.addHandler(Jdk14Factory.consoleLoggerHander);
+				logger.setUseParentHandlers(false);
+			}
+			catch (Throwable ex) {}  // 防止安全方面的异常
+			if (isDefault && consoleLoggerHander != null)
+			{
+				logger.addHandler(consoleLoggerHander);
 			}
 			if (fileHander != null)
 			{
@@ -290,7 +295,7 @@ public class Jdk14Factory extends LogFactory
 			catch (Throwable ex) {}
 			if (isDefault)
 			{
-				Jdk14Factory.defaultLogger = logger;
+				defaultLogger = logger;
 			}
 			else
 			{
@@ -316,16 +321,18 @@ public class Jdk14Factory extends LogFactory
 
 	public static void stopFlushConsale()
 	{
-		Jdk14Factory.consoleFlushTimer.consoleFlushOver = true;
+		if (consoleFlushTimer != null)
+		{
+			consoleFlushTimer.consoleFlushOver = true;
+		}
 	}
 
 	public static void startFlushConsale()
 	{
-		if (Jdk14Factory.consoleLoggerHander.getLevel() != Level.OFF
-				&& Jdk14Factory.consoleFlushTimer.consoleFlushOver)
+		if (consoleLoggerHander != null && (consoleFlushTimer == null || consoleFlushTimer.consoleFlushOver))
 		{
-			Jdk14Factory.consoleFlushTimer = new ConsoleFlushTimer();
-			Jdk14Factory.consoleFlushTimer.start();
+			consoleFlushTimer = new ConsoleFlushTimer();
+			consoleFlushTimer.start();
 		}
 	}
 
@@ -551,7 +558,7 @@ public class Jdk14Factory extends LogFactory
 				try
 				{
 					Thread.sleep(Jdk14Factory.consoleFlushDelay);
-					Jdk14Factory.consoleLoggerHander.flush();
+					consoleLoggerHander.flush();
 				}
 				catch (InterruptedException ex)
 				{

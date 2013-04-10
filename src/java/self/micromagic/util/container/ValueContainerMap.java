@@ -339,7 +339,7 @@ public class ValueContainerMap extends AbstractMap
 			if (o instanceof SessionAttributeContainer)
 			{
 				SessionAttributeContainer other = (SessionAttributeContainer) o;
-				if (this.request == null && this.request == other.request)
+				if (this.request != null && this.request == other.request)
 				{
 					return true;
 				}

@@ -123,7 +123,7 @@ public class RequestParameterMap
 	/**
 	 * 通过request来构造一个request.parameter的map.
 	 *
-	 * @param readOnly   是否为只读, 如果设为ture, 表示不可以设置属性.
+	 * @param readOnly   是否为只读, 如果设为true, 表示不可以设置属性.
 	 */
 	public static RequestParameterMap create(ServletRequest request, boolean readOnly)
 	{
@@ -143,7 +143,7 @@ public class RequestParameterMap
 	 * 通过map来构造一个request.parameter的map. <p>
 	 * 一般在portlet或单元测试的环境中使用.
 	 *
-	 * @param readOnly   是否为只读, 如果设为ture, 表示不可以设置属性.
+	 * @param readOnly   是否为只读, 如果设为true, 表示不可以设置属性.
 	 */
 	public static RequestParameterMap create(Map requestMap, boolean readOnly)
 	{

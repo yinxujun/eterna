@@ -16,14 +16,14 @@
 
 package self.micromagic.eterna.tag;
 
-import java.io.IOException;
-
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import self.micromagic.util.ResManager;
 
 /**
  * 在JSP中, 可通过此标签载入一个资源文件.
@@ -36,6 +36,26 @@ public class EternaRes extends TagSupport
 	 * 在request范围内, 存放载入资源方法已初始化的名称.
 	 */
 	public static final String LOAD_RES_INITED_FLAG = "___loadResInited";
+
+   /**
+	 * 初始化的JS脚本.
+	 */
+	private static final String RES_JS;
+	static
+	{
+		String js = "";
+		try
+		{
+			ResManager res = new ResManager();
+			res.load(EternaInit.class.getResourceAsStream("js.res"));
+			js = res.getRes("res.js");
+		}
+		catch (Exception ex)
+		{
+			DefaultFinder.log.error("Error in get js res.", ex);
+		}
+		RES_JS = js;
+	}
 
 	private String url;
 	private String charset;
@@ -54,7 +74,8 @@ public class EternaRes extends TagSupport
 			if (inited == null)
 			{
 				this.pageContext.setAttribute(LOAD_RES_INITED_FLAG, "1", PageContext.REQUEST_SCOPE);
-				this.printLoadResScript(out);
+				//this.printLoadResScript(out);
+				out.println(RES_JS);
 			}
 			String charsetDef = this.charset == null ? "" : ", \"" + this.charset + "\"";
 			String tmpURL = this.url;
@@ -83,56 +104,6 @@ public class EternaRes extends TagSupport
 			DefaultFinder.log.error("Other Error in service.", ex);
 		}
 		return SKIP_BODY;
-	}
-
-	protected void printLoadResScript(JspWriter out)
-			throws IOException
-	{
-		// 创建载入资源的方法
-		out.println("if (typeof eg_pageInitializedURL == \"undefined\")");
-		out.println('{');
-		out.println("window.eg_pageInitializedURL = {};");
-		out.println("window.ef_loadResource = function (jsResource, url, charset)");
-		out.println('{');
-		out.println("if (window.eg_pageInitializedURL[url])");
-		out.println('{');
-		out.println("return;");
-		out.println('}');
-		out.println("window.eg_pageInitializedURL[url] = 1;");
-		out.println("if (typeof eg_resVersion != \"undefined\")");
-		out.println("{");
-		out.println("if (url.indexOf(\"?\") == -1)");
-		out.println("{");
-		out.println("url += \"?_v=\" + eg_resVersion;");
-		out.println("}");
-		out.println("else");
-		out.println("{");
-		out.println("url += \"&_v=\" + eg_resVersion;");
-		out.println("}");
-		out.println("}");
-		out.println("var resObj;");
-		out.println("if (jsResource)");
-		out.println('{');
-		out.println("resObj = document.createElement(\"script\");");
-		out.println("resObj.type = \"text/javascript\";");
-		out.println("resObj.async = true;");
-		out.println("resObj.src = url;");
-		out.println('}');
-		out.println("else");
-		out.println('{');
-		out.println("resObj = document.createElement(\"link\");");
-		out.println("resObj.type = \"text/css\";");
-		out.println("resObj.rel = \"stylesheet\";");
-		out.println("resObj.href = url;");
-		out.println('}');
-		out.println("if (charset != null)");
-		out.println('{');
-		out.println("resObj.charset = charset;");
-		out.println('}');
-		out.println("var s = document.getElementsByTagName('script')[0];");
-		out.println("s.parentNode.insertBefore(resObj, s);");
-		out.println("};");
-		out.println('}'); // end if (typeof eg_pageInitializedURL == \"undefined\")
 	}
 
 	public void release()

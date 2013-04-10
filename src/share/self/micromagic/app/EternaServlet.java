@@ -18,7 +18,11 @@ package self.micromagic.app;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,7 +37,6 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.ModelCaller;
 import self.micromagic.eterna.model.ModelExport;
 import self.micromagic.eterna.view.ViewAdapter;
-import self.micromagic.util.Utility;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.container.ValueContainerMap;
@@ -63,10 +66,11 @@ import self.micromagic.util.container.RequestParameterMap;
 public class EternaServlet extends HttpServlet
 		implements WebApp
 {
-	protected FactoryManager.Instance factoryManager = null;
+	protected FactoryManager.Instance factoryManager;
 	protected String defaultModel = ModelCaller.DEFAULT_MODEL_NAME;
 	private String charset = "UTF-8";
 	protected boolean initFactoryManager = true;
+	protected boolean checkMultipart;
 
 	public void init(ServletConfig config)
 			throws ServletException
@@ -95,6 +99,8 @@ public class EternaServlet extends HttpServlet
 		{
 			this.charset = CharsetFilter.getConfigCharset(this.charset);
 		}
+
+		this.checkMultipart = "true".equalsIgnoreCase(config.getInitParameter("checkMultipart"));
 	}
 
 	protected FactoryManager.Instance getFactoryManager()
@@ -116,6 +122,74 @@ public class EternaServlet extends HttpServlet
 		return serverRoot;
 	}
 
+	/**
+	 * 检查提交的请求是否为multipart.
+	 */
+	public static boolean isMultipartContent(HttpServletRequest request)
+	{
+		if (!"post".equals(request.getMethod().toLowerCase()))
+		{
+			return false;
+		}
+		String contentType = request.getContentType();
+		if (contentType == null)
+		{
+			return false;
+		}
+		if (contentType.toLowerCase().startsWith("multipart/"))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 将请求的URL中的参数字符串解析成map对象.
+	 */
+	public static Map parseQueryString(String queryString, String charset)
+			throws IOException
+	{
+		if (StringTool.isEmpty(queryString))
+		{
+			return Collections.EMPTY_MAP;
+		}
+		String[] items = StringTool.separateString(queryString, "&");
+		Map params = new HashMap();
+		for (int i = 0; i < items.length; i++)
+		{
+			String item = items[i];
+			if (item.length() == 0)
+			{
+				continue;
+			}
+			int index = item.indexOf('=');
+			String key, value;
+			if (index == -1)
+			{
+				key = URLDecoder.decode(item, charset);
+				value = "";
+			}
+			else
+			{
+				key = URLDecoder.decode(item.substring(0, index), charset);
+				value = URLDecoder.decode(item.substring(index + 1), charset);
+			}
+			String[] values = (String[]) params.get(key);
+			if (values == null)
+			{
+				params.put(key, new String[]{value});
+			}
+			else
+			{
+            String[] newValues = new String[values.length + 1];
+				newValues[newValues.length - 1] = value;
+				System.arraycopy(values, 0, newValues, 0, values.length);
+				params.put(key, newValues);
+			}
+		}
+		return params;
+	}
+
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException
 	{
@@ -132,11 +206,18 @@ public class EternaServlet extends HttpServlet
 		data.position = AppData.POSITION_SERVLET;
 		try
 		{
-			data.maps[AppData.REQUEST_PARAMETER_MAP] = RequestParameterMap.create(request);
+			String queryStr = request.getQueryString();
+			if (this.checkMultipart && isMultipartContent(request))
+			{
+				data.maps[AppData.REQUEST_PARAMETER_MAP]
+						= RequestParameterMap.create(parseQueryString(queryStr, this.charset));
+			}
+			else
+			{
+				data.maps[AppData.REQUEST_PARAMETER_MAP] = RequestParameterMap.create(request);
+			}
 			data.maps[AppData.REQUEST_ATTRIBUTE_MAP] = ValueContainerMap.createRequestAttributeMap(request);
 			data.maps[AppData.SESSION_ATTRIBUTE_MAP] = ValueContainerMap.createSessionAttributeMap(request);
-
-			String queryStr = request.getQueryString();
 			if (queryStr != null)
 			{
 				String modelNameTag = this.getFactoryManager().getEternaFactory().getModelNameTag();
