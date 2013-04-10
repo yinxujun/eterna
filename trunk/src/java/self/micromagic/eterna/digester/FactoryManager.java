@@ -1574,9 +1574,9 @@ public class FactoryManager
 				throws ConfigurationException
 		{
 			Map map = this.getFactoryMap(name, !this.initialized);
-			if (map == null && this.shareInstance != null)
+			if (map == null)
 			{
-				return this.shareInstance.getFactory(name, className);
+				return this.shareInstance == null ? null : this.shareInstance.getFactory(name, className);
 			}
 			Factory factory = (Factory) map.get(className);
 			if (this.initFactorys)

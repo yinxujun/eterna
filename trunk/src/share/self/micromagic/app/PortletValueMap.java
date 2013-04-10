@@ -147,7 +147,11 @@ public class PortletValueMap
 			if (o instanceof SessionAttributeContainer)
 			{
 				SessionAttributeContainer other = (SessionAttributeContainer) o;
-				return this.session.equals(other.session);
+				if (this.request != null && this.request == other.request)
+				{
+					return true;
+				}
+				return this.session == other.session;
 			}
 			return false;
 		}

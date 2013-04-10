@@ -14,20 +14,31 @@
  * limitations under the License.
  */
 
-package self.micromagic.cg;
+package self.micromagic.util.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * 类的canonicalName的访问器.
- *
- * @author micromagic.sina.com
+ * 将类中的一个静态变量或静态方法与配置中的值进行
+ * 绑定的标注.
+ * 
+ * @see self.micromagic.util.PropertiesManager#autoBind(Class)
  */
-class ClassGenerator$ClassCanonicalNameAccessor
-		implements ClassGenerator.NameAccessor
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface Config
 {
-	@SuppressWarnings("rawtypes")
-	public String getName(Class c)
-	{
-		return c.getCanonicalName();
-	}
+	/**
+	 * 对应的配置的名称.
+	 */
+	String name();
+
+	/**
+	 * 配置信息的描述.
+	 */
+	String description() default "";
 
 }

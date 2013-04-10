@@ -63,16 +63,37 @@ public class EternaFilter
 			data.filterConfig = this.config;
 			data.position = AppData.POSITION_FILTER;
 			data.export = null;
+			Throwable err = null;
 			try
 			{
 				this.beginChain(data);
 				filterChain.doFilter(data.request, data.response);
 			}
+			catch (Throwable ex)
+			{
+				err = ex;
+				if (ex instanceof IOException)
+				{
+					throw (IOException) ex;
+				}
+				else if (ex instanceof ServletException)
+				{
+					throw (ServletException) ex;
+				}
+				else if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				else if (ex instanceof Error)
+				{
+					throw (Error) ex;
+				}
+			}
 			finally
 			{
 				try
 				{
-					this.endChain(data);
+					this.endChain(data, err);
 				}
 				catch (Throwable ex) {}
 				data.export = null;
@@ -92,14 +113,31 @@ public class EternaFilter
 	 * 开始调用过滤链表时会调用此方法.
 	 */
 	protected void beginChain(AppData data)
+			throws IOException, ServletException
+	{
+	}
+
+	/**
+	 * 过滤链表调用完成后会调用此方法.
+	 *
+	 * @deprecated
+	 * @see #endChain(AppData, Throwable)
+	 */
+	protected void endChain(AppData data)
 	{
 	}
 
 	/**
 	 * 过滤链表调用完成后会调用此方法.
 	 */
-	protected void endChain(AppData data)
+	protected void endChain(AppData data, Throwable err)
+			throws IOException, ServletException
 	{
+		if (err != null)
+		{
+			WebApp.log.error("Error in EternaFilter.", err);
+		}
+		this.endChain(data);
 	}
 
 	public void destroy()

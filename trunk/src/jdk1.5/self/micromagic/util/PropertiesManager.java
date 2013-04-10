@@ -87,7 +87,7 @@ public class PropertiesManager
 	/**
 	 * 属性变化监听者列表.
 	 */
-	private List plList = new LinkedList();
+	private List<PropertyListener> plList = new LinkedList<PropertyListener>();
 
 	/**
 	 * 配置属性的管理器中, 默认的属性变化监听者.
@@ -192,14 +192,14 @@ public class PropertiesManager
 			temp.remove(CHILD_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES_OLD);
-			Iterator itr = temp.entrySet().iterator();
+			Iterator<Map.Entry<Object, Object>> itr = temp.entrySet().iterator();
 			while (itr.hasNext())
 			{
-				Map.Entry entry = (Map.Entry) itr.next();
+				Map.Entry<Object, Object> entry = itr.next();
 				this.setProperty((String) entry.getKey(), (String) entry.getValue());
 			}
 			// 设置被删除的属性
-			Enumeration e = this.properties.propertyNames();
+			Enumeration<?> e = this.properties.propertyNames();
 			while (e.hasMoreElements())
 			{
 				String name = (String) e.nextElement();
@@ -324,10 +324,10 @@ public class PropertiesManager
 	 */
 	private void firePropertyChanged(String key, String oldValue, String newValue)
 	{
-		Iterator itr = this.plList.iterator();
+		Iterator<PropertyListener> itr = this.plList.iterator();
 		while (itr.hasNext())
 		{
-			if (!((PropertyListener) itr.next()).propertyChanged(key, oldValue, newValue))
+			if (!itr.next().propertyChanged(key, oldValue, newValue))
 			{
 				// 返回false, 表示需要删除此Listener
 				itr.remove();
@@ -367,7 +367,7 @@ public class PropertiesManager
 	 * @param theClass       被修改的属性所在的类
 	 * @param fieldName      需要被修改的静态属性名称
 	 */
-	public void addFieldPropertyManager(String key, Class theClass, String fieldName)
+	public void addFieldPropertyManager(String key, Class<?> theClass, String fieldName)
 			throws NoSuchFieldException
 	{
 		this.addFieldPropertyManager(key, theClass, fieldName, null);
@@ -382,7 +382,7 @@ public class PropertiesManager
 	 * @param fieldName      需要被修改的静态属性名称
 	 * @param defaultValue   当配置中不存在指定的键值时使用的默认值
 	 */
-	public void addFieldPropertyManager(String key, Class theClass, String fieldName,
+	public void addFieldPropertyManager(String key, Class<?> theClass, String fieldName,
 			String defaultValue)
 			throws NoSuchFieldException
 	{
@@ -399,7 +399,7 @@ public class PropertiesManager
 	 * @param theClass       被修改的属性所在的类
 	 * @param fieldName      需要被修改的静态属性名称
 	 */
-	public void removeFieldPropertyManager(String key, Class theClass, String fieldName)
+	public void removeFieldPropertyManager(String key, Class<?> theClass, String fieldName)
 			throws NoSuchFieldException
 	{
 		PropertyManager pm = new PropertyManager(key, theClass,
@@ -415,7 +415,7 @@ public class PropertiesManager
 	 * @param theClass       被调用的方法所在的类
 	 * @param methodName     需要被调用的静态方法名称
 	 */
-	public void addMethodPropertyManager(String key, Class theClass, String methodName)
+	public void addMethodPropertyManager(String key, Class<?> theClass, String methodName)
 			throws NoSuchMethodException
 	{
 		this.addMethodPropertyManager(key, theClass, methodName, null);
@@ -430,7 +430,7 @@ public class PropertiesManager
 	 * @param methodName     需要被调用的静态方法名称
 	 * @param defaultValue   当配置中不存在指定的键值时使用的默认值
 	 */
-	public void addMethodPropertyManager(String key, Class theClass, String methodName,
+	public void addMethodPropertyManager(String key, Class<?> theClass, String methodName,
 			String defaultValue)
 			throws NoSuchMethodException
 	{
@@ -447,7 +447,7 @@ public class PropertiesManager
 	 * @param theClass       被调用的方法所在的类
 	 * @param methodName     需要被调用的静态方法名称
 	 */
-	public void removeMethodPropertyManager(String key, Class theClass, String methodName)
+	public void removeMethodPropertyManager(String key, Class<?> theClass, String methodName)
 			throws NoSuchMethodException
 	{
 		PropertyManager pm = new PropertyManager(key, theClass,
@@ -497,10 +497,10 @@ public class PropertiesManager
 			tmpProps.load(is);
 			is.close();
 			this.loadChildProperties(tmpProps, null);
-			Iterator itr = tmpProps.entrySet().iterator();
+			Iterator<Map.Entry<Object, Object>> itr = tmpProps.entrySet().iterator();
 			while (itr.hasNext())
 			{
-				Map.Entry entry = (Map.Entry) itr.next();
+				Map.Entry<Object, Object> entry = itr.next();
 				props.put(entry.getKey(), entry.getValue());
 			}
 		}
@@ -529,10 +529,10 @@ public class PropertiesManager
 			tmpProps.load(is);
 			is.close();
 			this.loadParentProperties(tmpProps, null);
-			Iterator itr = tmpProps.entrySet().iterator();
+			Iterator<Map.Entry<Object, Object>> itr = tmpProps.entrySet().iterator();
 			while (itr.hasNext())
 			{
-				Map.Entry entry = (Map.Entry) itr.next();
+				Map.Entry<Object, Object> entry = itr.next();
 				if (!props.containsKey(entry.getKey()))
 				{
 					props.put(entry.getKey(), entry.getValue());
@@ -575,8 +575,8 @@ public class PropertiesManager
 	 * @param text      要处理的文本
 	 * @param bindRes   绑定的资源, 会先在bindRes寻找对应的值
 	 * @return 处理完的文本
-	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public String resolveDynamicPropnames(String text, Map bindRes)
 	{
 		return this.resolveDynamicPropnames(text, bindRes, false);
@@ -592,8 +592,8 @@ public class PropertiesManager
 	 *                  <code>false</code>时, 如果绑定的资源中不存在对应的值会再到
 	 *                  本配置对象 或 System.property中寻找
 	 * @return 处理完的文本
-	 *
 	 */
+	@SuppressWarnings("rawtypes")
 	public String resolveDynamicPropnames(String text, Map bindRes, boolean onlyRes)
 	{
 		if (text == null)
@@ -704,16 +704,16 @@ public class PropertiesManager
 		/**
 		 * 当前的配置属性管理器.
 		 */
-		private WeakReference nowPM;
+		private WeakReference<PropertiesManager> nowPM;
 
       public ParentPropertyListener(PropertiesManager pm)
 		{
-			this.nowPM = new WeakReference(pm);
+			this.nowPM = new WeakReference<PropertiesManager>(pm);
 		}
 
 		public boolean propertyChanged(String key, String oldValue, String newValue)
 		{
-			PropertiesManager tmp = (PropertiesManager) this.nowPM.get();
+			PropertiesManager tmp = this.nowPM.get();
 			if (tmp == null)
 			{
 				return false;
@@ -736,11 +736,11 @@ public class PropertiesManager
 	private static class DefaultPropertyListener
 			implements PropertyListener
 	{
-		private Map propertyMap = new HashMap();
+		private Map<String, PropertyManager[]> propertyMap = new HashMap<String, PropertyManager[]>();
 
 		public synchronized void addPropertyManager(String key, PropertyManager pm)
 		{
-			PropertyManager[] pms = (PropertyManager[]) this.propertyMap.get(key);
+			PropertyManager[] pms = this.propertyMap.get(key);
 			if (pms == null)
 			{
 				pms = new PropertyManager[]{pm};
@@ -843,7 +843,7 @@ public class PropertiesManager
 		/**
 		 * 用于清楚weak方式的引用队列.
 		 */
-		private final ReferenceQueue queue = new ReferenceQueue();
+		private final ReferenceQueue<Class<?>> queue = new ReferenceQueue<Class<?>>();
 
 		/**
 		 * 对应属性的键值.
@@ -853,12 +853,12 @@ public class PropertiesManager
 		/**
 		 * 这里使用<code>WeakReference</code>来引用对应的类, 并在其释放时删除本属性管理者.
 		 */
-		private WeakReference baseClass;
+		private WeakReference<Class<?>> baseClass;
 
 		/**
 		 * 这里使用<code>WeakReference</code>来引用对应的成员, 这样不会影响类的正常释放.
 		 */
-		private Reference optMember;
+		private Reference<Member> optMember;
 
 		/**
 		 * 要操作的成员名称.
@@ -875,7 +875,7 @@ public class PropertiesManager
 		 */
 		private DefaultPropertyListener listener;
 
-		private PropertyManager(String key, boolean fieldMember, Class baseClass, Member optMember,
+		private PropertyManager(String key, boolean fieldMember, Class<?> baseClass, Member optMember,
 				DefaultPropertyListener listener)
 		{
 			expunge();
@@ -898,7 +898,7 @@ public class PropertiesManager
 		/**
 		 * 构造一个触发方法调用的配置管理器.
 		 */
-		PropertyManager(String key, Class theClass, Method theMethod, DefaultPropertyListener listener)
+		PropertyManager(String key, Class<?> theClass, Method theMethod, DefaultPropertyListener listener)
 		{
 			this(key, false, theClass, theMethod, listener);
 		}
@@ -906,7 +906,7 @@ public class PropertiesManager
 		/**
 		 * 构造一个触发属性值修改的配置管理器.
 		 */
-		PropertyManager(String key, Class theClass, Field theField, DefaultPropertyListener listener)
+		PropertyManager(String key, Class<?> theClass, Field theField, DefaultPropertyListener listener)
 		{
 			this(key, true, theClass, theField, listener);
 			if (Modifier.isFinal(theField.getModifiers()))
@@ -923,7 +923,7 @@ public class PropertiesManager
 			{
 				return m;
 			}
-			Class c = (Class) this.baseClass.get();
+			Class<?> c = this.baseClass.get();
 			if (c == null)
 			{
 				return null;
@@ -940,15 +940,15 @@ public class PropertiesManager
 			return m;
 		}
 
-		private static Reference makeMemberRef(Member m)
+		private static Reference<Member> makeMemberRef(Member m)
 		{
 			if (weakRefMember)
 			{
-				return new WeakReference(m);
+				return new WeakReference<Member>(m);
 			}
 			else
 			{
-				return new SoftReference(m);
+				return new SoftReference<Member>(m);
 			}
 		}
 
@@ -1053,7 +1053,7 @@ public class PropertiesManager
 		public String toString()
 		{
 			StringAppender temp = StringTool.createStringAppender(128);
-			Class baseClass = (Class) this.baseClass.get();
+			Class<?> baseClass = this.baseClass.get();
 			temp.append("PropertyManager[class:").append(
 					baseClass == null ? "<released>" : ClassGenerator.getClassName(baseClass));
 			Member member = (Member) this.optMember.get();
@@ -1071,11 +1071,11 @@ public class PropertiesManager
 
 	}
 
-	private static class BaseClassRef extends WeakReference
+	private static class BaseClassRef extends WeakReference<Class<?>>
 	{
 		private PropertyManager pm;
 
-		public BaseClassRef(PropertyManager pm, Object baseClass, ReferenceQueue q)
+		public BaseClassRef(PropertyManager pm, Class<?> baseClass, ReferenceQueue<Class<?>> q)
 		{
 			super(baseClass, q);
 			this.pm = pm;
@@ -1085,6 +1085,315 @@ public class PropertiesManager
 		{
 			return this.pm;
 		}
+
+	}
+
+	/**
+	 * 对一个类的成员进行自动绑定.
+	 * 
+	 * @param c  需要自动绑定的成员所在的类
+	 * @return  自动绑定过程中的出错信息, 如果没有出错信息则返回空的列表
+	 * @see self.micromagic.util.annotation.Config
+	 */
+	public List<BindingError> autoBind(Class<?> c)
+	{
+		List<BindingError> result = new LinkedList<BindingError>();
+		if (c == null)
+		{
+			return result;
+		}
+		self.micromagic.util.annotation.Config config;
+		Field[] fields = c.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++)
+		{
+			Field f = fields[i];
+			config = f.getAnnotation(self.micromagic.util.annotation.Config.class);
+			if (config != null)
+			{
+				int mod = f.getModifiers();
+				if (!Modifier.isStatic(mod))
+				{
+					result.add(new BindingError(c, f, "static", "The field must be static."));
+					continue;
+				}
+				if (Modifier.isFinal(mod))
+				{
+					result.add(new BindingError(c, f, "final", "The field can't be final."));
+					continue;
+				}
+				try
+				{
+					this.addFieldPropertyManager(config.name(), c, f.getName());
+				}
+				catch (Throwable ex)
+				{
+					result.add(new BindingError(c, f, "error", ex.getMessage()));
+				}
+			}
+		}
+		Method[] methods = c.getDeclaredMethods();
+		for (int i = 0; i < methods.length; i++)
+		{
+			Method m = methods[i];
+			config = m.getAnnotation(self.micromagic.util.annotation.Config.class);
+			if (config != null)
+			{
+				int mod = m.getModifiers();
+				if (!Modifier.isStatic(mod))
+				{
+					result.add(new BindingError(c, m, "static", "The method must be static."));
+					continue;
+				}
+				if (Modifier.isAbstract(mod))
+				{
+					result.add(new BindingError(c, m, "final", "The method can't be abstract."));
+					continue;
+				}
+				Class<?>[] types = m.getParameterTypes();
+				if (types.length != 1 || types[0] != String.class)
+				{
+					result.add(new BindingError(c, m, "param", "The method parameter must be String."));
+					continue;
+				}
+				try
+				{
+					this.addMethodPropertyManager(config.name(), c, m.getName());
+				}
+				catch (Throwable ex)
+				{
+					result.add(new BindingError(c, m, "error", ex.getMessage()));
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 列出与当前配置管理器绑定的所有的类成员的信息.
+	 */
+	public List<BindingInfo> listBindingInfo()
+	{
+		List<BindingInfo> result = new LinkedList<BindingInfo>();
+		Iterator<Map.Entry<String, PropertyManager[]>>  itr
+				= this.defaultPL.propertyMap.entrySet().iterator();
+		while (itr.hasNext())
+		{
+			Map.Entry<String, PropertyManager[]> entry = itr.next();
+			String key = entry.getKey();
+			String value = this.getProperty(key, "<null>");
+			PropertyManager[] pms = entry.getValue();
+			for (int i = 0; i < pms.length; i++)
+			{
+				PropertyManager pm = pms[i];
+				Class<?> c = pm.baseClass.get();
+				if (c == null)
+				{
+					continue;
+				}
+				try
+				{
+					Member m = pm.getOptMember();
+					if (m != null)
+					{
+						self.micromagic.util.annotation.Config config;
+						if (pm.fieldMember)
+						{
+							config = ((Field) m).getAnnotation(self.micromagic.util.annotation.Config.class);
+						}
+						else
+						{
+							config = ((Method) m).getAnnotation(self.micromagic.util.annotation.Config.class);
+						}
+						String desc = "";
+						if (config != null)
+						{
+							desc = config.description();
+						}
+						result.add(new BindingInfo(c, m, key, value, desc));
+					}
+				}
+				catch (Throwable ex) {}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 自动配置绑定时的出错信息.
+	 */
+	public static class BindingError
+	{
+		private Class<?> c;
+		private Member m;
+		private String code;
+		private String msg;
+		private boolean fieldType;
+
+		BindingError(Class<?> c, Member m, String code, String msg)
+		{
+			this.c = c;
+			this.m = m;
+			this.code = code;
+			this.msg = msg;
+			this.fieldType = m instanceof Field;
+		}
+
+		/**
+		 * 获取与配置绑定的类.
+		 */
+		public Class<?> getType()
+		{
+			return this.c;
+		}
+
+		/**
+		 * 获取与配置绑定的成员.
+		 */
+		public Member getMember()
+		{
+			return this.m;
+		}
+
+		/**
+		 * 获取与配置绑定的成员是否为属性.
+		 * true表示为属性, false表示为方法.
+		 */
+		public boolean isField()
+		{
+			return this.fieldType;
+		}
+
+		/**
+		 * 获取错误信息的代码.
+		 */
+		public String getCode()
+		{
+			return this.code;
+		}
+
+		/**
+		 * 获取错误的信息.
+		 */
+		public String getMessage()
+		{
+			return this.msg;
+		}
+
+		@Override
+		public String toString()
+		{
+			if (this.strValue == null)
+			{
+				this.strValue = "class:" + this.c.getCanonicalName() + ", ";
+				if (this.fieldType)
+				{
+					this.strValue += "field:" + this.m.getName() + ", type:" 
+							+ ((Field) this.m).getType().getCanonicalName();
+				}
+				else
+				{
+					this.strValue += "method:" + this.m.getName();
+				}
+				this.strValue += ", code:" + this.code + ", message:[" + this.msg + "]";
+			}
+			return this.strValue;
+		}
+		private String strValue;
+
+	}
+
+	/**
+	 * 与配置管理器绑定的类成员的信息.
+	 */
+	public static class BindingInfo
+	{
+		private Class<?> c;
+		private Member m;
+		private String configName;
+		private String configValue;
+		private String description;
+		private boolean fieldType;
+
+		BindingInfo(Class<?> c, Member m, String name, String value, String description)
+		{
+			this.c = c;
+			this.m = m;
+			this.configName = name;
+			this.configValue = value;
+			this.description = description;
+			this.fieldType = m instanceof Field;
+		}
+
+		/**
+		 * 获取与配置绑定的类.
+		 */
+		public Class<?> getType()
+		{
+			return this.c;
+		}
+
+		/**
+		 * 获取与配置绑定的成员.
+		 */
+		public Member getMember()
+		{
+			return this.m;
+		}
+
+		/**
+		 * 获取与配置绑定的成员是否为属性.
+		 * true表示为属性, false表示为方法.
+		 */
+		public boolean isField()
+		{
+			return this.fieldType;
+		}
+
+		/**
+		 * 获取绑定的配置名称.
+		 */
+		public String getConfigName()
+		{
+			return this.configName;
+		}
+
+		/**
+		 * 获取配置的值.
+		 */
+		public String getConfigValue()
+		{
+			return this.configValue;
+		}
+
+		/**
+		 * 获取与配置绑定的描述.
+		 */
+		public String getDescription()
+		{
+			return this.description;
+		}
+
+		@Override
+		public String toString()
+		{
+			if (this.strValue == null)
+			{
+				this.strValue = "config:[" + this.configName + "], value:[" + this.configValue 
+						+ "], class:" + this.c.getCanonicalName() + ", ";
+				if (this.fieldType)
+				{
+					this.strValue += "field:" + this.m.getName() + ", type:" 
+							+ ((Field) this.m).getType().getCanonicalName();
+				}
+				else
+				{
+					this.strValue += "method:" + this.m.getName();
+				}
+				this.strValue += ", description:[" + this.description + "]";
+			}
+			return this.strValue;
+		}
+		private String strValue;
 
 	}
 

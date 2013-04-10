@@ -279,7 +279,7 @@ class QuickStringAppender
 	 */
 	private static final int MAX_WASTE_COUNT = 512;
 
-	private static Constructor strConstructor;
+	private static Constructor<String> strConstructor;
 	static
 	{
 		try
@@ -304,7 +304,7 @@ class QuickStringAppender
 		{
 			try
 			{
-				return (String) strConstructor.newInstance(
+				return strConstructor.newInstance(
 						new Object[]{new Integer(offset), new Integer(count), chars});
 			}
 			catch (Throwable ex)
