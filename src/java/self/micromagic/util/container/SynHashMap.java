@@ -130,6 +130,10 @@ public class SynHashMap extends AbstractMap
 
 	/**
 	 * 创建一个空的<tt>SynHashMap</tt>.
+	 *
+	 * @param initialCapacity  初始的存储空间
+	 * @param keyRefType       键值的存储方式, 弱引用 软引用 硬引用
+	 * @param loadFactor       负荷因子
 	 */
 	public SynHashMap(int initialCapacity, int keyRefType, float loadFactor)
 	{
@@ -162,6 +166,9 @@ public class SynHashMap extends AbstractMap
 
 	/**
 	 * 创建一个空的<tt>SynHashMap</tt>.
+	 *
+	 * @param initialCapacity  初始的存储空间
+	 * @param keyRefType       键值的存储方式, 弱引用 软引用 硬引用
 	 */
 	public SynHashMap(int initialCapacity, int keyRefType)
 	{
@@ -170,6 +177,8 @@ public class SynHashMap extends AbstractMap
 
 	/**
 	 * 创建一个空的<tt>SynHashMap</tt>.
+	 *
+	 * @param initialCapacity  初始的存储空间
 	 */
 	public SynHashMap(int initialCapacity)
 	{

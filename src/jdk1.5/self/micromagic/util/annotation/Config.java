@@ -41,4 +41,9 @@ public @interface Config
 	 */
 	String description() default "";
 
+	/**
+	 * 当配置未设置时使用的默认值.
+	 */
+	String defaultValue() default "";
+
 }

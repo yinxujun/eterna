@@ -138,7 +138,7 @@ public class DecimalConverter extends ObjectConverter
 	{
 		if (value instanceof BigDecimal)
 		{
-			return (BigDecimal) value;
+			return value;
 		}
 		try
 		{

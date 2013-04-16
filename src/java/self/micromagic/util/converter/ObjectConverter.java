@@ -24,7 +24,7 @@ import self.micromagic.util.StringRef;
 import self.micromagic.util.ObjectRef;
 
 public class ObjectConverter
-		implements ValueConverter
+		implements ValueConverter, Cloneable
 {
 	protected boolean needThrow = false;
 	protected PropertyEditor propertyEditor;

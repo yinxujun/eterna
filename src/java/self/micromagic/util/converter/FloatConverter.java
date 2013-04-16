@@ -118,7 +118,7 @@ public class FloatConverter extends ObjectConverter
 	{
 		if (value instanceof Float)
 		{
-			return (Float) value;
+			return value;
 		}
 		try
 		{

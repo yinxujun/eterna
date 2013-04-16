@@ -164,7 +164,7 @@ public class CalendarConverter extends ObjectConverter
 	{
 		if (value instanceof Calendar)
 		{
-			return (Calendar) value;
+			return value;
 		}
 		try
 		{

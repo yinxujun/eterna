@@ -118,7 +118,7 @@ public class ByteConverter extends ObjectConverter
 	{
 		if (value instanceof Byte)
 		{
-			return (Byte) value;
+			return value;
 		}
 		try
 		{

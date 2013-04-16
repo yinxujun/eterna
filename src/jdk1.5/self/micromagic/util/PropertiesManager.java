@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 
 import org.apache.commons.logging.Log;
+import self.micromagic.util.converter.BooleanConverter;
 import self.micromagic.util.converter.ConverterFinder;
 import self.micromagic.cg.ClassGenerator;
 
@@ -69,6 +70,21 @@ public class PropertiesManager
 	public static final String CHILD_PROPERTIES = "_child.properties";
 
 	/**
+	 * 设置是否需要将系统的properties的值作为默认值.
+	 * 当本配置管理器中的值不存在时, 会再读取系统的properties中的值. 如果
+	 * 父配置管理器中设置为true, 那当前的值就会默认为false.
+	 * 当未设置此属性时, 默认值为true.
+	 * 注: 系统的properties中的值的修改不会触发当前配置管理器的事件, 只是
+	 * 能够在读取时被取到.
+	 */
+	public static final String SYSTEM_DEFAULT = "_system.default";
+
+	/**
+	 * 日志的名称.
+	 */
+	private static final String LOGGER_NAME = "eterna.util";
+
+	/**
 	 * 配置文件名.
 	 * 注: 配置文件都必须在classpath下.
 	 */
@@ -93,6 +109,11 @@ public class PropertiesManager
 	 * 配置属性的管理器中, 默认的属性变化监听者.
 	 */
 	private DefaultPropertyListener defaultPL = new DefaultPropertyListener();
+
+	/**
+	 * 是否需要将系统的properties的值作为默认值.
+	 */
+	private boolean systemDefault;
 
 	/**
 	 * 父配置管理器.
@@ -140,6 +161,15 @@ public class PropertiesManager
 		{
 			this.parent.addPropertyListener(new ParentPropertyListener(this));
 		}
+	}
+
+	/**
+	 * 判断当前的配置管理器是否将系统的properties的值作为默认值.
+	 */
+	public boolean isSystemDefault()
+	{
+		// 如果父配置为true, 那就为true, 否则获取当前配置中的值
+		return (this.parent != null && this.parent.isSystemDefault()) || this.systemDefault;
 	}
 
 	/**
@@ -192,6 +222,16 @@ public class PropertiesManager
 			temp.remove(CHILD_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES_OLD);
+			String sd = (String) temp.remove(SYSTEM_DEFAULT);
+			if (sd != null)
+			{
+				BooleanConverter converter = new BooleanConverter();
+				this.systemDefault = converter.convertToBoolean(sd);
+			}
+			else
+			{
+				this.systemDefault = true;
+			}
 			Iterator<Map.Entry<Object, Object>> itr = temp.entrySet().iterator();
 			while (itr.hasNext())
 			{
@@ -230,7 +270,22 @@ public class PropertiesManager
 	public String getProperty(String key)
 	{
 		String value = this.properties.getProperty(key);
-		return value == null && this.parent != null ? this.parent.getProperty(key) : value;
+		if (value == null)
+		{
+			if (this.parent != null)
+			{
+				value = this.parent.getProperty(key);
+				if (value == null && !this.parent.isSystemDefault() && this.systemDefault)
+				{
+					value = System.getProperty(key);
+				}
+			}
+			else if (this.systemDefault)
+			{
+				value = System.getProperty(key);
+			}
+		}
+		return value;
 	}
 
 	/**
@@ -356,7 +411,11 @@ public class PropertiesManager
 				pm.changeProperty(temp);
 			}
 		}
-		catch (Throwable ex) {}
+		catch (Throwable ex)
+		{
+			Log log = Utility.createLog(LOGGER_NAME);
+			log.warn("Error when change property.", ex);
+		}
 	}
 
 	/**
@@ -590,7 +649,7 @@ public class PropertiesManager
 	 * @param bindRes   绑定的资源, 会先在bindRes寻找对应的值
 	 * @param onlyRes   设置为<code>true</code>时, 只对绑定的资源进行处理, 设置为
 	 *                  <code>false</code>时, 如果绑定的资源中不存在对应的值会再到
-	 *                  本配置对象 或 System.property中寻找
+	 *                  本配置对象中寻找
 	 * @return 处理完的文本
 	 */
 	@SuppressWarnings("rawtypes")
@@ -608,13 +667,14 @@ public class PropertiesManager
 
 		String tempStr = text;
 		StringAppender result = StringTool.createStringAppender(text.length() + 32);
+		int prefixLength = DYNAMIC_PROPNAME_PREFIX.length();
 		while (startIndex != -1)
 		{
 			result.append(tempStr.substring(0, startIndex));
-			int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + DYNAMIC_PROPNAME_PREFIX.length());
+			int endIndex = tempStr.indexOf(DYNAMIC_PROPNAME_SUFFIX, startIndex + prefixLength);
 			if (endIndex != -1)
 			{
-				String dName = tempStr.substring(startIndex + DYNAMIC_PROPNAME_PREFIX.length(), endIndex);
+				String dName = tempStr.substring(startIndex + prefixLength, endIndex);
 				try
 				{
 					String pValue = null;
@@ -630,13 +690,8 @@ public class PropertiesManager
 					{
 						if (pValue == null)
 						{
-							// 如果bindRes为null或其中不存在, 则到micromagic_config.properties中查找
+							// 如果bindRes为null或其中不存在需要的值, 则到当前的属性管理器中查找
 							pValue = this.getProperty(dName);
-						}
-						if (pValue == null)
-						{
-							// 如果micromagic_config.properties中不存在, 则到系统属性中查找
-							pValue = System.getProperty(dName);
 						}
 					}
 					if (pValue != null)
@@ -648,8 +703,8 @@ public class PropertiesManager
 						result.append(tempStr.substring(startIndex, endIndex + 1));
 						if (Utility.SHOW_RDP_FAIL)
 						{
-							Utility.createLog("util").warn("Could not resolve dynamic name '" + dName
-									+ "' in [" + text + "] as config property.");
+							Utility.createLog(LOGGER_NAME).warn("Could not resolve dynamic name '"
+									+ dName + "' in [" + text + "] as config property.");
 						}
 					}
 				}
@@ -659,7 +714,7 @@ public class PropertiesManager
 					{
 						String msg = "Could not resolve dynamic name '" + dName
 								+ "' in [" + text + "] as config property.";
-						Utility.createLog("util").warn(msg, ex);
+						Utility.createLog(LOGGER_NAME).warn(msg, ex);
 					}
 				}
 				tempStr = tempStr.substring(endIndex + DYNAMIC_PROPNAME_SUFFIX.length());
@@ -706,7 +761,7 @@ public class PropertiesManager
 		 */
 		private WeakReference<PropertiesManager> nowPM;
 
-      public ParentPropertyListener(PropertiesManager pm)
+		public ParentPropertyListener(PropertiesManager pm)
 		{
 			this.nowPM = new WeakReference<PropertiesManager>(pm);
 		}
@@ -718,7 +773,7 @@ public class PropertiesManager
 			{
 				return false;
 			}
-         if (tmp.properties.getProperty(key) == null)
+			if (tmp.properties.getProperty(key) == null)
 			{
 				// 如果当前的配置属性管理器中没有此键值, 则说明是需要使用父配置属性管理器中
 				// 的值, 当父配置中的属性变化时, 需要触发事件
@@ -811,17 +866,17 @@ public class PropertiesManager
 				return true;
 			}
 
-			try
+			for (int i = 0; i < pms.length; i++)
 			{
-				for (int i = 0; i < pms.length; i++)
+				try
 				{
 					pms[i].changeProperty(newValue);
 				}
-			}
-			catch (Exception ex)
-			{
-				Log log = Utility.createLog("Utility");
-				log.warn("Error when change property.", ex);
+				catch (Throwable ex)
+				{
+					Log log = Utility.createLog(LOGGER_NAME);
+					log.warn("Error when change property.", ex);
+				}
 			}
 			return true;
 		}
@@ -974,8 +1029,15 @@ public class PropertiesManager
 					}
 					catch (Throwable ex)
 					{
-						String typeName = ClassGenerator.getClassName(theField.getType());
-						Utility.createLog("util").warn("Type convert error for:[" + typeName + "].", ex);
+						Class<?> theClass = this.baseClass.get();
+						if (theClass != null)
+						{
+							String typeName = ClassGenerator.getClassName(theField.getType());
+							String msg = "Type convert error for value:[" + value + "] to [" + typeName
+									+ "] in class:[" + ClassGenerator.getClassName(theClass)
+									+ "] field:[" + this.optMemberName + "].";
+							Utility.createLog(LOGGER_NAME).warn(msg, ex);
+						}
 						return;
 					}
 				}
@@ -1113,21 +1175,31 @@ public class PropertiesManager
 				int mod = f.getModifiers();
 				if (!Modifier.isStatic(mod))
 				{
-					result.add(new BindingError(c, f, "static", "The field must be static."));
+					result.add(new BindingError(c, f, "bindingError.static", 
+							"The field must be static."));
 					continue;
 				}
 				if (Modifier.isFinal(mod))
 				{
-					result.add(new BindingError(c, f, "final", "The field can't be final."));
+					result.add(new BindingError(c, f, "bindingError.final", 
+							"The field can't be final."));
 					continue;
 				}
 				try
 				{
-					this.addFieldPropertyManager(config.name(), c, f.getName());
+					if (StringTool.isEmpty(config.defaultValue()))
+					{
+						this.addFieldPropertyManager(config.name(), c, f.getName());
+					}
+					else
+					{
+						this.addFieldPropertyManager(config.name(), c, f.getName(),
+								config.defaultValue());
+					}
 				}
 				catch (Throwable ex)
 				{
-					result.add(new BindingError(c, f, "error", ex.getMessage()));
+					result.add(new BindingError(c, f, "bindingError.error", ex.getMessage()));
 				}
 			}
 		}
@@ -1141,27 +1213,32 @@ public class PropertiesManager
 				int mod = m.getModifiers();
 				if (!Modifier.isStatic(mod))
 				{
-					result.add(new BindingError(c, m, "static", "The method must be static."));
-					continue;
-				}
-				if (Modifier.isAbstract(mod))
-				{
-					result.add(new BindingError(c, m, "final", "The method can't be abstract."));
+					result.add(new BindingError(c, m, "bindingError.static", 
+							"The method must be static."));
 					continue;
 				}
 				Class<?>[] types = m.getParameterTypes();
 				if (types.length != 1 || types[0] != String.class)
 				{
-					result.add(new BindingError(c, m, "param", "The method parameter must be String."));
+					result.add(new BindingError(c, m, "bindingError.param", 
+							"The method parameter must be String."));
 					continue;
 				}
 				try
 				{
-					this.addMethodPropertyManager(config.name(), c, m.getName());
+					if (StringTool.isEmpty(config.defaultValue()))
+					{
+						this.addMethodPropertyManager(config.name(), c, m.getName());
+					}
+					else
+					{
+						this.addMethodPropertyManager(config.name(), c, m.getName(),
+								config.defaultValue());
+					}
 				}
 				catch (Throwable ex)
 				{
-					result.add(new BindingError(c, m, "error", ex.getMessage()));
+					result.add(new BindingError(c, m, "bindingError.error", ex.getMessage()));
 				}
 			}
 		}
@@ -1174,7 +1251,7 @@ public class PropertiesManager
 	public List<BindingInfo> listBindingInfo()
 	{
 		List<BindingInfo> result = new LinkedList<BindingInfo>();
-		Iterator<Map.Entry<String, PropertyManager[]>>  itr
+		Iterator<Map.Entry<String, PropertyManager[]>> itr
 				= this.defaultPL.propertyMap.entrySet().iterator();
 		while (itr.hasNext())
 		{
@@ -1205,11 +1282,16 @@ public class PropertiesManager
 							config = ((Method) m).getAnnotation(self.micromagic.util.annotation.Config.class);
 						}
 						String desc = "";
+						String defaultValue = null;
 						if (config != null)
 						{
 							desc = config.description();
+							if (!StringTool.isEmpty(config.defaultValue()))
+							{
+								defaultValue = config.defaultValue();
+							}
 						}
-						result.add(new BindingInfo(c, m, key, value, desc));
+						result.add(new BindingInfo(c, m, key, value, desc, defaultValue));
 					}
 				}
 				catch (Throwable ex) {}
@@ -1284,7 +1366,7 @@ public class PropertiesManager
 		{
 			if (this.strValue == null)
 			{
-				this.strValue = "class:" + this.c.getCanonicalName() + ", ";
+				this.strValue = "BindingError:{class:" + this.c.getCanonicalName() + ", ";
 				if (this.fieldType)
 				{
 					this.strValue += "field:" + this.m.getName() + ", type:" 
@@ -1294,7 +1376,7 @@ public class PropertiesManager
 				{
 					this.strValue += "method:" + this.m.getName();
 				}
-				this.strValue += ", code:" + this.code + ", message:[" + this.msg + "]";
+				this.strValue += ", code:" + this.code + ", message:[" + this.msg + "]}";
 			}
 			return this.strValue;
 		}
@@ -1312,9 +1394,11 @@ public class PropertiesManager
 		private String configName;
 		private String configValue;
 		private String description;
+		private String defaultValue;
 		private boolean fieldType;
 
-		BindingInfo(Class<?> c, Member m, String name, String value, String description)
+		BindingInfo(Class<?> c, Member m, String name, String value, String description,
+				String defaultValue)
 		{
 			this.c = c;
 			this.m = m;
@@ -1322,6 +1406,7 @@ public class PropertiesManager
 			this.configValue = value;
 			this.description = description;
 			this.fieldType = m instanceof Field;
+			this.defaultValue = defaultValue;
 		}
 
 		/**
@@ -1350,6 +1435,39 @@ public class PropertiesManager
 		}
 
 		/**
+		 * 获取属性中的值.
+		 * 只有当绑定的成员类型为属性时才有效, 如果绑定
+		 * 的为方法, 那只会返回null.
+		 */
+		public Object getFieldValue()
+		{
+			if (!this.fieldType)
+			{
+				return null;
+			}
+			try
+			{
+				Field f = (Field) this.m;
+				Object r;
+				if (!f.isAccessible())
+				{
+					f.setAccessible(true);
+					r = f.get(null);
+					f.setAccessible(false);
+				}
+				else
+				{
+					r = f.get(null);
+				}
+				return r;
+			}
+			catch (Throwable ex)
+			{
+				return null;
+			}
+		}
+
+		/**
 		 * 获取绑定的配置名称.
 		 */
 		public String getConfigName()
@@ -1366,6 +1484,14 @@ public class PropertiesManager
 		}
 
 		/**
+		 * 获取配置的默认值.
+		 */
+		public String getDefaultValue()
+		{
+			return this.defaultValue;
+		}
+
+		/**
 		 * 获取与配置绑定的描述.
 		 */
 		public String getDescription()
@@ -1378,18 +1504,23 @@ public class PropertiesManager
 		{
 			if (this.strValue == null)
 			{
-				this.strValue = "config:[" + this.configName + "], value:[" + this.configValue 
-						+ "], class:" + this.c.getCanonicalName() + ", ";
+				this.strValue = "BindingInfo:{config:[" + this.configName + "], value:[" 
+						+ this.configValue + "], class:" + this.c.getCanonicalName() + ", ";
 				if (this.fieldType)
 				{
 					this.strValue += "field:" + this.m.getName() + ", type:" 
-							+ ((Field) this.m).getType().getCanonicalName();
+							+ ((Field) this.m).getType().getCanonicalName()
+							+ ", val:[" + this.getFieldValue() + "]";
 				}
 				else
 				{
 					this.strValue += "method:" + this.m.getName();
 				}
-				this.strValue += ", description:[" + this.description + "]";
+				if (this.defaultValue != null)
+				{
+					this.strValue += ", default:[" + this.defaultValue + "]";
+				}
+				this.strValue += ", description:[" + this.description + "]}";
 			}
 			return this.strValue;
 		}

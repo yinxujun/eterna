@@ -23,11 +23,14 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * ValueConverter对象的查找器, 可通过给出的Class找寻对应的
  * ValueConverter对象.
- * 取出的所有ValueConverter对象的isNeedThrow值默认为true
+ * 通过findConverter方法取出的所有ValueConverter对象的
+ * isNeedThrow值默认为true, 如果需要无法转换是不抛出异常,
+ * 可使用findConverterWithoutThrow方法来获取.
  *
  * @see ValueConverter#isNeedThrow
  */
@@ -36,8 +39,8 @@ public class ConverterFinder
 	/**
 	 * 查找一个对应的ValueConverter对象.
 	 *
-	 * @param c       对应的Class
-	 * @return 查到的ValueConverter对象, 如果未查到则返回null
+	 * @param c  对应的Class
+	 * @return  查到的ValueConverter对象, 如果未查到则返回null
 	 */
 	public static ValueConverter findConverter(Class c)
 	{
@@ -48,20 +51,26 @@ public class ConverterFinder
 	 * 查找一个对应的ValueConverter对象.
 	 * 此ValueConverter对象的isNeedThrow值默认为false
 	 *
-	 * @param c       对应的Class
-	 * @return 查到的ValueConverter对象, 如果未查到则返回null
+	 * @param c     对应的Class
+	 * @param copy  是否需要复制ValueConverter对象
+	 * @return  查到的ValueConverter对象, 如果未查到则返回null
 	 */
-	public static ValueConverter findConverterWithoutThrow(Class c)
+	public static ValueConverter findConverterWithoutThrow(Class c, boolean copy)
 	{
-		return findConverter(c, true);
+		ValueConverter vc = (ValueConverter) withoutThrowCache.get(c);
+		if (vc == null)
+		{
+			return null;
+		}
+		return copy ? vc.copy() : vc;
 	}
 
 	/**
 	 * 查找一个对应的ValueConverter对象.
 	 *
-	 * @param c       对应的Class
-	 * @param copy    是否需要复制ValueConverter对象
-	 * @return 查到的ValueConverter对象, 如果未查到则返回null
+	 * @param c     对应的Class
+	 * @param copy  是否需要复制ValueConverter对象
+	 * @return  查到的ValueConverter对象, 如果未查到则返回null
 	 */
 	public static ValueConverter findConverter(Class c, boolean copy)
 	{
@@ -71,6 +80,31 @@ public class ConverterFinder
 			return null;
 		}
 		return copy ? vc.copy() : vc;
+	}
+
+	/**
+	 * 注册一个ValueConverter对象.
+	 *
+	 * @param c          对应的Class
+	 * @param converter  ValueConverter对象, 如果给出的值为null, 表示
+	 *                   删除已注册的ValueConverter对象
+	 */
+	public static void registerConverter(Class c, ValueConverter converter)
+	{
+		if (converter == null)
+		{
+			withoutThrowCache.remove(c);
+			converterCache.remove(c);
+			return;
+		}
+		// 将isNeedThrow值设为false注册
+		ValueConverter vc1 = converter.copy();
+		converter.setNeedThrow(false);
+		withoutThrowCache.put(c, vc1);
+		// 将isNeedThrow值设为true注册
+		ValueConverter vc2 = converter.copy();
+		converter.setNeedThrow(true);
+		converterCache.put(c, vc2);
 	}
 
 	/**
@@ -156,6 +190,9 @@ public class ConverterFinder
 		converter = new ReaderConverter();
 		converter.setNeedThrow(true);
 		converterCache.put(Reader.class, converter);
+		converter = new LocaleConverter();
+		converter.setNeedThrow(true);
+		converterCache.put(Locale.class, converter);
 
 		Iterator itr = converterCache.entrySet().iterator();
 		while (itr.hasNext())

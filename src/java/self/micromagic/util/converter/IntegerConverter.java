@@ -141,7 +141,7 @@ public class IntegerConverter extends ObjectConverter
 	{
 		if (value instanceof Integer)
 		{
-			return (Integer) value;
+			return value;
 		}
 		try
 		{

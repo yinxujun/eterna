@@ -151,7 +151,7 @@ public class UtilDateConverter extends ObjectConverter
 	{
 		if (value instanceof java.util.Date)
 		{
-			return (java.util.Date) value;
+			return value;
 		}
 		try
 		{

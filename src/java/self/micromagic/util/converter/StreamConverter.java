@@ -135,7 +135,7 @@ public class StreamConverter extends ObjectConverter
 	{
 		if (value instanceof InputStream)
 		{
-			return (InputStream) value;
+			return value;
 		}
 		try
 		{

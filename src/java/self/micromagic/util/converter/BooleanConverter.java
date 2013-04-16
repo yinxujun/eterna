@@ -139,7 +139,7 @@ public class BooleanConverter extends ObjectConverter
 	{
 		if (value instanceof Boolean)
 		{
-			return (Boolean) value;
+			return value;
 		}
 		try
 		{

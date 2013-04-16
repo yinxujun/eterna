@@ -16,93 +16,90 @@
 
 package self.micromagic.util.converter;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
+import java.util.Locale;
 
-import self.micromagic.eterna.digester.ConfigurationException;
-import self.micromagic.eterna.share.TypeManager;
-import self.micromagic.util.MemoryChars;
 import self.micromagic.util.StringRef;
-import self.micromagic.util.ObjectRef;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.container.RequestParameterMap;
+import self.micromagic.eterna.share.TypeManager;
 
-public class ReaderConverter extends ObjectConverter
+public class LocaleConverter extends ObjectConverter
 {
 	public int getConvertType(StringRef typeName)
 	{
 		if (typeName != null)
 		{
-			typeName.setString("Reader");
+			typeName.setString("Locale");
 		}
-		return TypeManager.TYPE_READER;
+		return TypeManager.TYPE_OBJECT;
 	}
 
-	public Reader getResult(Object result)
-			throws ConfigurationException
-	{
-		try
-		{
-			return this.convertToReader(result);
-		}
-		catch (Exception ex)
-		{
-			throw getErrorTypeException(result, "Reader");
-		}
-	}
-
-	public Reader convertToReader(Object value)
+	public Locale convertToLocale(Object value)
 	{
 		if (value == null)
 		{
 			return null;
 		}
-		if (value instanceof Reader)
+		if (value instanceof Locale)
 		{
-			return (Reader) value;
-		}
-		if (value instanceof MemoryChars)
-		{
-			return ((MemoryChars) value).getReader();
-		}
-		if (value instanceof char[])
-		{
-			return new StringReader(new String((char[]) value));
+			return (Locale) value;
 		}
 		if (value instanceof String)
 		{
-			return new StringReader((String) value);
+			return this.convertToLocale((String) value);
 		}
 		if (value instanceof String[])
 		{
-			String str = StringTool.linkStringArr((String[]) value, ",");
-			return new StringReader(str);
+			String str = RequestParameterMap.getFirstParam(value);
+			return this.convertToLocale(str);
 		}
 		if (value instanceof ObjectRef)
 		{
-			return this.convertToReader(((ObjectRef) value).getObject());
+			return this.convertToLocale(((ObjectRef) value).getObject());
 		}
-		throw new ClassCastException(getCastErrorMessage(value, "Reader"));
+		throw new ClassCastException(getCastErrorMessage(value, "Locale"));
 	}
 
-	public Reader convertToReader(String value)
+	public Locale convertToLocale(String value)
 	{
-		if (value == null)
+		if (StringTool.isEmpty(value))
 		{
 			return null;
 		}
-		return new StringReader(value);
+		int idx = value.indexOf('_');
+		if (idx == -1)
+		{
+			return new Locale(value);
+		}
+		else
+		{
+			int idx2 = value.indexOf('_', idx + 1);
+			if (idx2 == -1)
+			{
+				String language = value.substring(0, idx);
+				String country = value.substring(idx + 1);
+				return new Locale(language, country);
+			}
+			else
+			{
+				String language = value.substring(0, idx);
+				String country = value.substring(idx + 1, idx2);
+				String variant = value.substring(idx2 + 1);
+				return new Locale(language, country, variant);
+			}
+		}
 	}
 
 	public Object convert(Object value)
 	{
-		if (value instanceof Reader)
+		if (value instanceof Locale)
 		{
 			return value;
 		}
 		try
 		{
-			return this.convertToReader(value);
+			return this.convertToLocale(value);
 		}
 		catch (Exception ex)
 		{
@@ -112,7 +109,7 @@ public class ReaderConverter extends ObjectConverter
 				{
 					throw (RuntimeException) ex;
 				}
-				throw new ClassCastException(getCastErrorMessage(value, "Reader"));
+				throw new ClassCastException(getCastErrorMessage(value, "Locale"));
 			}
 			else
 			{
@@ -125,7 +122,7 @@ public class ReaderConverter extends ObjectConverter
 	{
 		try
 		{
-			return this.convertToReader(value);
+			return this.convertToLocale(value);
 		}
 		catch (Exception ex)
 		{
@@ -135,7 +132,7 @@ public class ReaderConverter extends ObjectConverter
 				{
 					throw (RuntimeException) ex;
 				}
-				throw new ClassCastException(getCastErrorMessage(value, "Reader"));
+				throw new ClassCastException(getCastErrorMessage(value, "Locale"));
 			}
 			else
 			{

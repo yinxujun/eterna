@@ -126,7 +126,7 @@ public class TimestampConverter extends ObjectConverter
 	{
 		if (value instanceof java.sql.Timestamp)
 		{
-			return (java.sql.Timestamp) value;
+			return value;
 		}
 		try
 		{
