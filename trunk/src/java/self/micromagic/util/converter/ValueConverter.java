@@ -23,7 +23,7 @@ import self.micromagic.util.StringRef;
 /**
  * 值转换器.
  */
-public interface ValueConverter extends Cloneable
+public interface ValueConverter
 {
 	/**
 	 * 在无法转换时是否需要抛出异常.

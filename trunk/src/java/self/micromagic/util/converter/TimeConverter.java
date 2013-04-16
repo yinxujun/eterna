@@ -126,7 +126,7 @@ public class TimeConverter extends ObjectConverter
 	{
 		if (value instanceof java.sql.Time)
 		{
-			return (java.sql.Time) value;
+			return value;
 		}
 		try
 		{

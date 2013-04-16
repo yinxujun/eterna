@@ -103,7 +103,7 @@ public class MapConverter extends ObjectConverter
 	{
 		if (value instanceof Map)
 		{
-			return (Map) value;
+			return value;
 		}
 		try
 		{

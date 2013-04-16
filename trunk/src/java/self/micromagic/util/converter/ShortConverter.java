@@ -118,7 +118,7 @@ public class ShortConverter extends ObjectConverter
 	{
 		if (value instanceof Short)
 		{
-			return (Short) value;
+			return value;
 		}
 		try
 		{

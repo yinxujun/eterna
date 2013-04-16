@@ -142,7 +142,7 @@ public class BigIntegerConverter extends ObjectConverter
 	{
 		if (value instanceof BigInteger)
 		{
-			return (BigInteger) value;
+			return value;
 		}
 		try
 		{

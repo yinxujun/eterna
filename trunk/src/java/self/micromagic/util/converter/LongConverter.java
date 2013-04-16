@@ -140,7 +140,7 @@ public class LongConverter extends ObjectConverter
 	{
 		if (value instanceof Long)
 		{
-			return (Long) value;
+			return value;
 		}
 		try
 		{

@@ -126,7 +126,7 @@ public class DateConverter extends ObjectConverter
 	{
 		if (value instanceof java.sql.Date)
 		{
-			return (java.sql.Date) value;
+			return value;
 		}
 		try
 		{

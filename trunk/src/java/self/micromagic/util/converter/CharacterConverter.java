@@ -88,7 +88,7 @@ public class CharacterConverter extends ObjectConverter
 	{
 		if (value instanceof Character)
 		{
-			return (Character) value;
+			return value;
 		}
 		try
 		{

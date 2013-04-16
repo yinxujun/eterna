@@ -199,6 +199,10 @@ public class ClassKeyCache
 		return cc;
 	}
 
+	/**
+	 * 根据<code>ClassLoader</code>获取缓存的<code>CacheCell</code>, 如果
+	 * 缓存中没有, 则创建一个.
+	 */
 	private static synchronized CacheCell getCacheCell0(ClassLoader cl, Map caches)
 	{
 		CacheCell cc = (CacheCell) caches.get(cl);
@@ -225,6 +229,9 @@ public class ClassKeyCache
 		return cc;
 	}
 
+	/**
+	 * 生成<code>CacheCell</code>实际存放数据的类.
+	 */
 	private static Class getCachesClass(ClassLoader loader)
 			throws Exception
 	{
@@ -262,6 +269,9 @@ public class ClassKeyCache
 		return cachesClass;
 	}
 
+	/**
+	 * 获取定义<code>CacheCell</code>实际存放数据类的二进制流.
+	 */
 	private static byte[] getCachesClassDef(String name)
 	{
 		try
@@ -309,18 +319,37 @@ public class ClassKeyCache
 	 */
 	private interface CacheCell
 	{
+		/**
+		 * 获取一个缓存的值.
+		 *
+		 * @param c     作为键值的<code>Class</code>
+		 */
 		public Object get(Class c);
 
+		/**
+		 * 设置一个缓存的值.
+		 *
+		 * @param c      作为键值的<code>Class</code>
+		 * @param value  设置的值
+		 */
 		public Object put(Class c, Object value);
 
+		/**
+		 * 删除一个缓存的值.
+		 *
+		 * @param c     作为键值的<code>Class</code>
+		 */
 		public Object remove(Class c);
 
+		/**
+		 * 获取缓存的值的个数.
+		 */
 		public int size();
 
 	}
 
 	/**
-	 * 针对系统ClassLoader(为null)的 缓存单元 的实现
+	 * 针对系统<code>ClassLoader</code>(为null)的 缓存单元 的实现
 	 */
 	private static class CacheCellImpl0
 			implements CacheCell
@@ -356,7 +385,8 @@ public class ClassKeyCache
 			implements CacheCell
 	{
 		/**
-		 * 这里使用<code>WeakReference</code>来引用对应的类和缓存, 这样就不会影响其正常的释放.
+		 * 这里使用<code>WeakReference</code>来引用对应的类和缓存,
+		 * 这样就不会影响其正常的释放.
 		 */
 		private WeakReference cellClass;
 		private WeakReference cacheObj;
@@ -385,7 +415,7 @@ public class ClassKeyCache
 		{
 			try
 			{
-				// 这段代码应该只会执行一次, 只要类不被释放, 这个缓存也不会被释放
+				// 这段代码只会执行一次, 只要类不被释放, 这个缓存也不会被释放
 				Field f = cellClass.getField("caches");
 				Map caches = (Map) f.get(null);
 				Map cache = (Map) caches.get(this);

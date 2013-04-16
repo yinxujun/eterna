@@ -135,7 +135,7 @@ public class BytesConverter extends ObjectConverter
 	{
 		if (value instanceof byte[])
 		{
-			return (byte[]) value;
+			return value;
 		}
 		try
 		{

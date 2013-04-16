@@ -140,7 +140,7 @@ public class DoubleConverter extends ObjectConverter
 	{
 		if (value instanceof Double)
 		{
-			return (Double) value;
+			return value;
 		}
 		try
 		{

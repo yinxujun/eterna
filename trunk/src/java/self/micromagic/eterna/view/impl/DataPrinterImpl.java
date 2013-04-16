@@ -782,6 +782,9 @@ public class DataPrinterImpl extends AbstractGenerator
 	 */
 	private static ClassKeyCache beanPrinterCache = ClassKeyCache.getInstance();
 
+	/**
+	 * 根据需要打印对象的类型获取一个BeanPrinter对象.
+	 */
 	public BeanPrinter getBeanPrinter(Class beanClass)
 	{
 		BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
@@ -790,6 +793,17 @@ public class DataPrinterImpl extends AbstractGenerator
 			bp = getBeanPrinter0(beanClass);
 		}
 		return bp;
+	}
+
+	/**
+	 * 注册一个BeanPrinter对象.
+	 */
+	public static synchronized void registerBeanPrinter(Class beanClass, BeanPrinter p)
+	{
+      if (beanClass != null && p != null)
+		{
+			beanPrinterCache.setProperty(beanClass, p);
+		}
 	}
 
 	private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)

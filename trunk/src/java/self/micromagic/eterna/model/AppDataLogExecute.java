@@ -150,21 +150,36 @@ public class AppDataLogExecute extends AbstractExecute
 
 
 	/**
-	 * BeanPrinter生成
+	 * 根据需要打印对象的类型获取一个BeanPrinter对象.
 	 */
-	private static ClassKeyCache beanPrinterMap = ClassKeyCache.getInstance();
-	private static BeanPrinter getBeanPrinter(Class beanClass)
+	public static BeanPrinter getBeanPrinter(Class beanClass)
 	{
-		BeanPrinter bp = (BeanPrinter) beanPrinterMap.getProperty(beanClass);
+		BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
 		if (bp == null)
 		{
 			bp = getBeanPrinter0(beanClass);
 		}
 		return bp;
 	}
+
+	/**
+	 * 注册一个BeanPrinter对象.
+	 */
+	public static synchronized void registerBeanPrinter(Class beanClass, BeanPrinter p)
+	{
+      if (beanClass != null && p != null)
+		{
+			beanPrinterCache.setProperty(beanClass, p);
+		}
+	}
+
+	private static ClassKeyCache beanPrinterCache = ClassKeyCache.getInstance();
+	/**
+	 * BeanPrinter生成.
+	 */
 	private static synchronized BeanPrinter getBeanPrinter0(Class beanClass)
 	{
-		BeanPrinter bp = (BeanPrinter) beanPrinterMap.getProperty(beanClass);
+		BeanPrinter bp = (BeanPrinter) beanPrinterCache.getProperty(beanClass);
 		if (bp == null)
 		{
 			try
@@ -194,7 +209,7 @@ public class AppDataLogExecute extends AbstractExecute
 			{
 				bp = new BeanPrinterImpl(beanClass);
 			}
-			beanPrinterMap.setProperty(beanClass, bp);
+			beanPrinterCache.setProperty(beanClass, bp);
 		}
 		return bp;
 	}
