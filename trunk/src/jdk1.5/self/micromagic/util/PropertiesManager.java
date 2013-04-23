@@ -198,8 +198,8 @@ public class PropertiesManager
 		}
 		try
 		{
-			URL url = this.classLoader.getResource(this.propName);
-			if (url == null)
+			Properties temp = this.loadProperties();
+			if (temp == null)
 			{
 				if (msg != null)
 				{
@@ -212,13 +212,6 @@ public class PropertiesManager
 				}
 				return;
 			}
-			Properties temp = new Properties();
-			InputStream inStream = url.openStream();
-			temp.load(inStream);
-			inStream.close();
-			this.loadChildProperties(temp, this.properties.getProperty(CHILD_PROPERTIES));
-			String oldParent = this.properties.getProperty(PARENT_PROPERTIES_OLD);
-			this.loadParentProperties(temp, this.properties.getProperty(PARENT_PROPERTIES, oldParent));
 			temp.remove(CHILD_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES);
 			temp.remove(PARENT_PROPERTIES_OLD);
@@ -260,6 +253,28 @@ public class PropertiesManager
 				msg.setString(preMsg + "Reload properties error:" + ex.getMessage());
 			}
 		}
+	}
+
+	/**
+	 * 载入配置信息并构造成Properties返回.
+	 * 如果所指定的配置资源不存在, 则返回null.
+	 */
+	protected Properties loadProperties()
+			throws IOException
+	{
+		URL url = this.classLoader.getResource(this.propName);
+		if (url == null)
+		{
+			return null;
+		}
+		Properties temp = new Properties();
+		InputStream inStream = url.openStream();
+		temp.load(inStream);
+		inStream.close();
+		this.loadChildProperties(temp, this.properties.getProperty(CHILD_PROPERTIES));
+		String oldParent = this.properties.getProperty(PARENT_PROPERTIES_OLD);
+		this.loadParentProperties(temp, this.properties.getProperty(PARENT_PROPERTIES, oldParent));
+		return temp;
 	}
 
 	/**
