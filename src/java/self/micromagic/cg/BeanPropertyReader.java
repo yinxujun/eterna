@@ -16,6 +16,8 @@
 
 package self.micromagic.cg;
 
+import java.lang.reflect.Member;
+
 /**
  * 读取一个bean属性的工具.
  *
@@ -23,6 +25,11 @@ package self.micromagic.cg;
  */
 public interface BeanPropertyReader
 {
+	/**
+	 * 获取此属性对应的成员.
+	 */
+	Member getMember();
+
 	/**
 	 * 读取一个属性的值.
 	 *
@@ -33,8 +40,7 @@ public interface BeanPropertyReader
 	 * @param beanMap       当前的BeanMap对象
 	 * @return              对应的属性的值
 	 */
-	public Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, String prefix,
-			BeanMap beanMap)
-			throws Exception;
+	Object getBeanValue(CellDescriptor cd, int[] indexs, Object bean, String prefix,
+			BeanMap beanMap) throws Exception;
 
 }

@@ -148,7 +148,8 @@ class BeanPropertyReadProcesser
 			}
 			BeanTool.codeRes.printRes(tmpResName, this.paramCache, 0, bodyCode).appendln();
 			Object defObj = BeanTool.createPropertyProcesser("P_arr_" + pName, this.beanClass,
-					BeanPropertyReader.class, beginCode, bodyCode.toString(), endCode, imports);
+					UnitProcesser.BeanProperty.class, BeanPropertyReader.class,
+					beginCode, bodyCode.toString(), endCode, imports);
 			arrInit.append("this.").append(BeanTool.PROCESSER_ARRAY_NAME).append('[').append(i)
 					.append("] = new ").append(ClassGenerator.getClassName(defObj.getClass()))
 					.append("();").appendln();

@@ -16,6 +16,8 @@
 
 package self.micromagic.cg;
 
+import java.lang.reflect.Member;
+
 /**
  * 设置一个bean属性的工具.
  *
@@ -23,6 +25,11 @@ package self.micromagic.cg;
  */
 public interface BeanPropertyWriter
 {
+	/**
+	 * 获取此属性对应的成员.
+	 */
+	Member getMember();
+
 	/**
 	 * 设置一个属性的值.
 	 *
@@ -37,8 +44,7 @@ public interface BeanPropertyWriter
 	 * @param oldValue      该属性的原始值
 	 * @return              成功设置了值的属性的个数
 	 */
-	public int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, Object value,
-			String prefix, BeanMap beanMap, Object originObj, Object oldValue)
-			throws Exception;
+	int setBeanValue(CellDescriptor cd, int[] indexs, Object bean, Object value, String prefix,
+			BeanMap beanMap, Object originObj, Object oldValue) throws Exception;
 
 }
