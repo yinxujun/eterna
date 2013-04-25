@@ -225,20 +225,23 @@ public class PropertiesManager
 			{
 				this.systemDefault = true;
 			}
-			Iterator<Map.Entry<Object, Object>> itr = temp.entrySet().iterator();
-			while (itr.hasNext())
+			synchronized (this)
 			{
-				Map.Entry<Object, Object> entry = itr.next();
-				this.setProperty((String) entry.getKey(), (String) entry.getValue());
-			}
-			// 设置被删除的属性
-			Enumeration<?> e = this.properties.propertyNames();
-			while (e.hasMoreElements())
-			{
-				String name = (String) e.nextElement();
-				if (temp.getProperty(name) == null)
+				Iterator<Map.Entry<Object, Object>> itr = temp.entrySet().iterator();
+				while (itr.hasNext())
 				{
-					this.setProperty(name, null);
+					Map.Entry<Object, Object> entry = itr.next();
+					this.setProperty0((String) entry.getKey(), (String) entry.getValue());
+				}
+				// 设置被删除的属性
+				Enumeration<?> e = this.properties.propertyNames();
+				while (e.hasMoreElements())
+				{
+					String name = (String) e.nextElement();
+					if (temp.getProperty(name) == null)
+					{
+						this.setProperty0(name, this.defaultValues.get(name));
+					}
 				}
 			}
 			// 由于上面已经设置了属性 所以不用对properties赋值;
@@ -254,6 +257,11 @@ public class PropertiesManager
 			}
 		}
 	}
+
+	/**
+	 * 存放属性绑定时设置的默认值.
+	 */
+	protected Map<String, String> defaultValues = new HashMap<String, String>();
 
 	/**
 	 * 载入配置信息并构造成Properties返回.
@@ -342,7 +350,14 @@ public class PropertiesManager
 	 * @param key    属性所在的键值
 	 * @param value  需要设置的值
 	 */
-	public void setProperty(String key, String value)
+	public synchronized void setProperty(String key, String value)
+	{
+		this.setProperty0(key, value);
+	}
+	/**
+	 * 给内部调用设置属性的方法, 不加同步锁.
+	 */
+	private void setProperty0(String key, String value)
 	{
 		String oldValue = this.properties.getProperty(key);
 		// 判断新的值和原值是否相等
@@ -415,7 +430,11 @@ public class PropertiesManager
 		if (temp == null && defaultValue != null)
 		{
 			temp = defaultValue;
-			this.setProperty(key, defaultValue);
+			synchronized (this)
+			{
+				this.defaultValues.put(key, defaultValue);
+				this.setProperty0(key, defaultValue);
+			}
 			setted = true;
 		}
 		try

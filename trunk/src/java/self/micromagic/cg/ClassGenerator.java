@@ -349,7 +349,7 @@ public class ClassGenerator
 	public static ClassGenerator createClassGenerator(Class baseClass, Class interfaceClass,
 			String[] imports)
 	{
-		return createClassGenerator(null, baseClass, interfaceClass, imports);
+		return createClassGenerator(null, baseClass, null, interfaceClass, imports);
 	}
 
 	/**
@@ -366,7 +366,29 @@ public class ClassGenerator
 	public static ClassGenerator createClassGenerator(String suffix, Class baseClass, Class interfaceClass,
 			String[] imports)
 	{
+		return createClassGenerator(suffix, baseClass, null, interfaceClass, imports);
+	}
+
+	/**
+	 * 创建一个类生成工具. <p>
+	 * 新的类名为：eterna.[baseClass]$suffix$$EBP_[序列号]
+	 *
+	 * @param suffix          生成类名的后缀
+	 * @param baseClass       生成的类所使用的基础类,
+	 *                        会使用此类的ClassLoader来载入新生成的类
+	 * @param superClass      需要继承的类
+	 * @param interfaceClass  需要实现的接口
+	 * @param imports         需要引用的包列表
+	 * @return  <code>ClassGenerator</code>的实例.
+	 */
+	public static ClassGenerator createClassGenerator(String suffix, Class baseClass, Class superClass,
+			Class interfaceClass, String[] imports)
+	{
 		ClassGenerator cg = new ClassGenerator();
+		if (superClass != null)
+		{
+			cg.setSuperClass(superClass);
+		}
 		cg.addClassPath(baseClass);
 		cg.addClassPath(interfaceClass);
 		cg.addClassPath(ClassGenerator.class);

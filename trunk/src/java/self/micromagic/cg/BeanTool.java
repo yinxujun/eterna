@@ -326,7 +326,9 @@ public class BeanTool
 				String bodyCode = "return new " + ClassGenerator.getClassName(beanClass) + "();";
 				BeanPropertyReader tmpBPR;
 				tmpBPR = (BeanPropertyReader) createPropertyProcesser("P_init",
-						beanClass, BeanPropertyReader.class, beginCode, bodyCode, endCode, imports);
+						beanClass, UnitProcesser.BeanProperty.class, BeanPropertyReader.class,
+						beginCode, bodyCode, endCode, imports);
+				((UnitProcesser.BeanProperty) tmpBPR).setMember(beanClass.getConstructor(new Class[0]));
 				CellDescriptor tmpBMC = new CellDescriptor();
 				tmpBMC.setName("<init>");
 				tmpBMC.setReadProcesser(tmpBPR);
@@ -711,9 +713,10 @@ public class BeanTool
 				wrapName = (String) BeanTool.primitiveWrapClass.get(ClassGenerator.getClassName(f.getType()));
 			}
 			ClassGenerator cg = ClassGenerator.createClassGenerator("P_" + f.getName(),
-					beanClass, interfaceClass, imports);
+					beanClass, UnitProcesser.BeanProperty.class, interfaceClass, imports);
 			code = unitProcesser.getFieldCode(f, f.getType(), wrapName, processerType, cg);
 			Object p = createPropertyProcesser(cg, beanClass, beginCode0, code, endCode0);
+			((UnitProcesser.BeanProperty) p).setMember(f);
 			result.put(f.getName(), new ProcesserInfo(f.getName(), f.getType(), p));
 		}
 		BeanMethodInfo[] methods = processerType == BEAN_PROCESSER_TYPE_W ?
@@ -728,11 +731,12 @@ public class BeanTool
 				wrapName = (String) BeanTool.primitiveWrapClass.get(ClassGenerator.getClassName(m.type));
 			}
 			ClassGenerator cg = ClassGenerator.createClassGenerator("P_" + m.name,
-					beanClass, interfaceClass, imports);
+					beanClass, UnitProcesser.BeanProperty.class, interfaceClass, imports);
 			code = unitProcesser.getMethodCode(m, m.type, wrapName, processerType, cg);
 			if (!StringTool.isEmpty(code))
 			{
 				Object p = createPropertyProcesser(cg, beanClass, beginCode0, code, endCode0);
+				((UnitProcesser.BeanProperty) p).setMember(m.method == null ? m.indexedMethod : m.method);
 				result.put(m.name, new ProcesserInfo(m.name, m.type, p));
 			}
 		}
@@ -788,7 +792,28 @@ public class BeanTool
 	static Object createPropertyProcesser(String suffix, Class beanClass, Class interfaceClass,
 			String beginCode, String bodyCode, String endCode, String[] imports)
 	{
-		ClassGenerator cg = ClassGenerator.createClassGenerator(suffix, beanClass, interfaceClass, imports);
+      return createPropertyProcesser(suffix, beanClass, null, interfaceClass,
+				beginCode, bodyCode, endCode, imports);
+	}
+
+	/**
+	 * 生成一个属性的处理类.
+	 *
+	 * @param suffix          生成类名的后缀
+	 * @param beanClass       bean类
+	 * @param superClass      需要继承的类
+	 * @param interfaceClass  处理类的接口
+	 * @param beginCode       方法起始部分的代码
+	 * @param bodyCode        方法主题部分的代码
+	 * @param endCode         方法结束部分的代码
+	 * @param imports         要引入的包
+	 * @return  返回相应的处理类
+	 */
+	static Object createPropertyProcesser(String suffix, Class beanClass, Class superClass,
+			Class interfaceClass, String beginCode, String bodyCode, String endCode, String[] imports)
+	{
+		ClassGenerator cg = ClassGenerator.createClassGenerator(
+				suffix, beanClass, superClass, interfaceClass, imports);
 		StringAppender function = StringTool.createStringAppender(256);
 		function.append(beginCode).appendln()
 				.append(bodyCode).appendln()

@@ -91,8 +91,11 @@ public class ObjectConverter
 		}
 		try
 		{
-			this.propertyEditor.setValue(value);
-			return this.propertyEditor.getValue();
+			synchronized (this.propertyEditor)
+			{
+				this.propertyEditor.setValue(value);
+				return this.propertyEditor.getValue();
+			}
 		}
 		catch (RuntimeException ex)
 		{
@@ -115,8 +118,11 @@ public class ObjectConverter
 		}
 		try
 		{
-			this.propertyEditor.setAsText(value);
-			return this.propertyEditor.getValue();
+			synchronized (this.propertyEditor)
+			{
+				this.propertyEditor.setAsText(value);
+				return this.propertyEditor.getValue();
+			}
 		}
 		catch (RuntimeException ex)
 		{
@@ -139,8 +145,11 @@ public class ObjectConverter
 		}
 		try
 		{
-			this.propertyEditor.setValue(value);
-			return this.propertyEditor.getAsText();
+			synchronized (this.propertyEditor)
+			{
+				this.propertyEditor.setValue(value);
+				return this.propertyEditor.getAsText();
+			}
 		}
 		catch (RuntimeException ex)
 		{
