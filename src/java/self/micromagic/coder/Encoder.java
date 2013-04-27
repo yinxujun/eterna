@@ -26,7 +26,7 @@ import self.micromagic.util.StringTool;
 
 public abstract class Encoder
 {
-	protected static final Log log = Utility.createLog("coder");
+	protected static final Log log = Utility.createLog("eterna.coder");
 
 	/*
 	private static final char[] hexDigits = {

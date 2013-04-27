@@ -40,7 +40,7 @@ public class GrammerManager
 
 	public static int id = 1;
 
-	protected static final Log log = Utility.createLog("grammer");
+	protected static final Log log = Utility.createLog("eterna.grammer");
 
 	private Map grammerElementMap = new HashMap();
 
