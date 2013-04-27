@@ -173,7 +173,7 @@ public class MemoryStream
 		}
 		catch (Exception ex)
 		{
-			Utility.createLog("io").error("Error in create file:" + this.diskCacheFile + ".", ex);
+			Utility.createLog("eterna.memory.io").error("Error in create file:" + this.diskCacheFile + ".", ex);
 		}
 		this.inMemory = false;
 		this.blockList = null;

@@ -37,7 +37,7 @@ public class DefaultFinder
 	/**
 	 * 用于记录日志.
 	 */
-	static final Log log = Utility.createLog("tag");
+	static final Log log = Utility.createLog("eterna.tag");
 
 
 	public FactoryManager.Instance findInstance(String name)

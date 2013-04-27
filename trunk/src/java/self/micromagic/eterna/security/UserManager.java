@@ -25,7 +25,7 @@ import self.micromagic.util.Utility;
 
 public interface UserManager
 {
-	public static final Log log = Utility.createLog("user");
+	public static final Log log = Utility.createLog("eterna.security");
 	public static final String ETERNA_USER = "self.micromagic.eterna.user";
 
 	/**

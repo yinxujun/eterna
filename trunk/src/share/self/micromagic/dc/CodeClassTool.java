@@ -49,16 +49,6 @@ public class CodeClassTool
 	public static final String CODE_ERRORS_FLAG = "codeErrors";
 
 	/**
-	 * 设置动态代码生成时, 对代码编译的类型.
-	 */
-	public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.dc.compile.type";
-
-	/**
-	 * 动态代码生成时, 对代码编译的类型.
-	 */
-	private static String DC_COMPILE_TYPE = null;
-
-	/**
 	 * 生成的代码的编号序列.
 	 */
 	private static volatile int CODE_ID = 1;
@@ -68,15 +58,6 @@ public class CodeClassTool
 	 * 以baseClass为主键进行缓存, 值为一个map, 为继承这个类的代码集.
 	 */
 	private static ClassKeyCache codeCache = ClassKeyCache.getInstance();
-
-	static
-	{
-		try
-		{
-			Utility.addFieldPropertyManager(COMPILE_TYPE_PROPERTY, CodeClassTool.class, "DC_COMPILE_TYPE");
-		}
-		catch (Throwable ex) {}
-	}
 
 	/**
 	 * 根据动态代码生成一个类.
@@ -144,9 +125,9 @@ public class CodeClassTool
 		tmpCode.append(bodyCode);
 		tmpCode.appendln().append('}');
 		cg.addMethod(tmpCode.toString());
-		if (DC_COMPILE_TYPE != null)
+		if (DynamicTool.DC_COMPILE_TYPE != null)
 		{
-			cg.setCompileType(DC_COMPILE_TYPE);
+			cg.setCompileType(DynamicTool.DC_COMPILE_TYPE);
 		}
 		codeClass = cg.createClass();
 		cache.put(key, codeClass);

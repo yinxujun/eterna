@@ -36,7 +36,7 @@ public class Tool
 	/**
 	 * 用于记录日志.
 	 */
-	public static final Log log = Utility.createLog("eterna");
+	public static final Log log = Utility.createLog("eterna.share");
 
 	public static final String CAPTION_TRANSLATE_TAG = "caption.translate";
 	public static final String CAPTION_TRANSLATE_MAP_TAG = "caption.translate.map";

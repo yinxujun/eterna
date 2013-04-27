@@ -48,7 +48,7 @@ import self.micromagic.util.container.ValueContainerMap;
 
 public interface WebApp
 {
-	public static final Log log = Utility.createLog("app");
+	public static final Log log = Utility.createLog("eterna.app");
 
 	public static final String DEFAULT_MODEL_TAG = "defaultModel";
 	public static final String VIEW_TAG = "self.micromagic.view";

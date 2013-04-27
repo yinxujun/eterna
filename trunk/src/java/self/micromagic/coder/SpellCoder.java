@@ -335,7 +335,7 @@ public class SpellCoder
 		}
 		catch (Throwable ex)
 		{
-			Utility.createLog("spell").error("Error in init.", ex);
+			Utility.createLog("eterna.spell").error("Error in init.", ex);
 		}
 		return (short[][]) indexArr.toArray(new short[0][0]);
 	}

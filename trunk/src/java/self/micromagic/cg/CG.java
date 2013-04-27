@@ -76,7 +76,7 @@ public interface CG
 	/**
 	 * 用于记录日志.
 	 */
-	static final Log log = Utility.createLog("cg");
+	static final Log log = Utility.createLog("eterna.cg");
 
 	/**
 	 * 创建一个类.
