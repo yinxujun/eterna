@@ -13,12 +13,12 @@
 # limitations under the License.
 # @author micromagic@sina.com
 #
-# ´úÀí·½·¨µÄ¶¨Òå
+# ä»£ç†æ–¹æ³•çš„å®šä¹‰
 ## methodProxy.invoke.declare
 public Object invoke(Object target, Object[] args)
 		throws Throwable
 
-# ¼ì²éÄ¿±ê¶ÔÏóµÄÀàĞÍ
+# æ£€æŸ¥ç›®æ ‡å¯¹è±¡çš„ç±»å‹
 ## methodProxy.check.target
 if (target == null)
 {
@@ -29,7 +29,7 @@ if (!(target instanceof ${type}))
 	throw new IllegalArgumentException("The param target (" + target.getClass() + ") isn't wanted type.");
 }
 
-# ¼ì²éÄ¿±ê²ÎÊıµÄ¸öÊı
+# æ£€æŸ¥ç›®æ ‡å‚æ•°çš„ä¸ªæ•°
 ## methodProxy.check.args
 if (args == null)
 {
@@ -40,24 +40,24 @@ if (args.length != ${paramCount})
 	throw new IllegalArgumentException("Wrong number of arguments " + args.length + ", wanted ${paramCount}.");
 }
 
-# Ä¿±ê·½·¨µÄµ÷ÓÃ ÎŞ·µ»ØÖµ
+# ç›®æ ‡æ–¹æ³•çš„è°ƒç”¨ æ— è¿”å›å€¼
 ## methodProxy.doInvoke.void
 ${target}.${method}(${params});
 return null;
 
-# Ä¿±ê·½·¨µÄµ÷ÓÃ »ù±¾ÀàĞÍ
+# ç›®æ ‡æ–¹æ³•çš„è°ƒç”¨ åŸºæœ¬ç±»å‹
 ## methodProxy.doInvoke.primitive
 return new ${wrapType}(${target}.${method}(${params}));
 
-# Ä¿±ê·½·¨µÄµ÷ÓÃ
+# ç›®æ ‡æ–¹æ³•çš„è°ƒç”¨
 ## methodProxy.doInvoke
 return ${target}.${method}(${params});
 
-# ²ÎÊıµÄÇ¿ÖÆÀàĞÍ×ª»» ´ø¶¨Òå
+# å‚æ•°çš„å¼ºåˆ¶ç±»å‹è½¬æ¢ å¸¦å®šä¹‰
 ## methodProxy.param.cast.withDeclare
 ${type} param${index} = (${type}) args[${index}];
 
-# ²ÎÊıµÄÇ¿ÖÆÀàĞÍ×ª»» ´ø¼ì²é
+# å‚æ•°çš„å¼ºåˆ¶ç±»å‹è½¬æ¢ å¸¦æ£€æŸ¥
 ## methodProxy.param.cast.withCheck
 if (args[${index}] != null && !(args[${index}] instanceof ${type}))
 {
@@ -65,11 +65,11 @@ if (args[${index}] != null && !(args[${index}] instanceof ${type}))
 }
 ${type} param${index} = (${type}) args[${index}];
 
-# ²ÎÊıµÄÇ¿ÖÆÀàĞÍ×ª»» »ù±¾ÀàĞÍ ´ø¶¨Òå
+# å‚æ•°çš„å¼ºåˆ¶ç±»å‹è½¬æ¢ åŸºæœ¬ç±»å‹ å¸¦å®šä¹‰
 ## methodProxy.param.cast.primitive.withDeclare
 ${type} param${index} = ((${wrapType}) args[${index}]).${type}Value();
 
-# ²ÎÊıµÄÇ¿ÖÆÀàĞÍ×ª»» »ù±¾ÀàĞÍ ´ø¼ì²é
+# å‚æ•°çš„å¼ºåˆ¶ç±»å‹è½¬æ¢ åŸºæœ¬ç±»å‹ å¸¦æ£€æŸ¥
 ## methodProxy.param.cast.primitive.withCheck
 if (args[${index}] == null)
 {
