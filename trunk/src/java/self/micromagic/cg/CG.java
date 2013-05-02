@@ -20,7 +20,7 @@ import org.apache.commons.logging.Log;
 import self.micromagic.util.Utility;
 
 /**
- * 类的编译接口, 用于实现不同的编译方式.
+ * 将代码生成类的接口, 用于实现不同的生成方式.
  *
  * @author micromagic@sina.com
  */

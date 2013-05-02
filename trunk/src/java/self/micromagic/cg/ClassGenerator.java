@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
@@ -171,10 +172,7 @@ public class ClassGenerator
 		{
 			return;
 		}
-		if (!this.classPathCache.containsKey(cl))
-		{
-			this.classPathCache.put(pathClass.getClassLoader(), pathClass);
-		}
+		this.classPathCache.put(pathClass, cl);
 	}
 
 	/**
@@ -182,8 +180,48 @@ public class ClassGenerator
 	 */
 	public Class[] getClassPaths()
 	{
-		Collection values = this.classPathCache.values();
-		return (Class[]) values.toArray(new Class[values.size()]);
+		Set tmpCheck = new HashSet();
+		List result = new ArrayList();
+		Iterator itr = this.classPathCache.entrySet().iterator();
+		while (itr.hasNext())
+		{
+			Map.Entry entry = (Map.Entry) itr.next();
+			ClassLoader cl = (ClassLoader) entry.getValue();
+         if (tmpCheck.add(cl))
+			{
+				result.add(entry.getKey());
+			}
+		}
+		return (Class[]) result.toArray(new Class[result.size()]);
+	}
+
+	/**
+	 * 获得所有已设置的类列表.
+	 * 但不包括系统类(ClassLoader == null)
+	 */
+	public Class[] getAllClasses()
+	{
+		Set result = new HashSet();
+		Iterator itr = this.classPathCache.entrySet().iterator();
+		while (itr.hasNext())
+		{
+			Map.Entry entry = (Map.Entry) itr.next();
+			result.add(entry.getKey());
+		}
+		if (this.superClass != null && this.superClass.getClassLoader() != null)
+		{
+			result.add(this.superClass);
+		}
+		itr = this.interfaces.iterator();
+		while (itr.hasNext())
+		{
+			Class c = (Class) itr.next();
+			if (c.getClassLoader() != null)
+			{
+				result.add(c);
+			}
+		}
+		return (Class[]) result.toArray(new Class[result.size()]);
 	}
 
 	/**
@@ -325,9 +363,13 @@ public class ClassGenerator
 				return cg.createClass(this);
 			}
 		}
+		catch (RuntimeException ex)
+		{
+			throw ex;
+		}
 		catch (Exception ex)
 		{
-			throw new RuntimeException(ex);
+			throw new CGException(ex);
 		}
 		throw new IllegalArgumentException("Error compile type:" + type + ".");
 	}

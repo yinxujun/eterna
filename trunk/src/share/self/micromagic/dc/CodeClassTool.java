@@ -125,9 +125,9 @@ public class CodeClassTool
 		tmpCode.append(bodyCode);
 		tmpCode.appendln().append('}');
 		cg.addMethod(tmpCode.toString());
-		if (DynamicTool.DC_COMPILE_TYPE != null)
+		if (DC_COMPILE_TYPE != null)
 		{
-			cg.setCompileType(DynamicTool.DC_COMPILE_TYPE);
+			cg.setCompileType(DC_COMPILE_TYPE);
 		}
 		codeClass = cg.createClass();
 		cache.put(key, codeClass);
@@ -222,6 +222,25 @@ public class CodeClassTool
 		{
 			((List) obj).add(new CodeErrorInfo(code, position, error));
 		}
+	}
+
+	/**
+	 * 设置动态代码生成时, 对代码编译的类型.
+	 */
+	public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.dc.compile.type";
+
+	/**
+	 * 动态代码生成时, 对代码编译的类型.
+	 */
+	static String DC_COMPILE_TYPE = null;
+
+	static
+	{
+		try
+		{
+			Utility.addFieldPropertyManager(COMPILE_TYPE_PROPERTY, CodeClassTool.class, "DC_COMPILE_TYPE");
+		}
+		catch (Throwable ex) {}
 	}
 
 	private static class CodeKey

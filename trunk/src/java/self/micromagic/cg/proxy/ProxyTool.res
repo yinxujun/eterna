@@ -75,8 +75,17 @@ if (args[${index}] == null)
 {
 	throw new NullPointerException("The arg${index} is null.");
 }
-if (!(args[${index}] instanceof ${wrapType}))
+${type} param${index};
+${primitiveTypeCheck}
+else
 {
 	throw new IllegalArgumentException("The arg${index} (" + args[${index}].getClass() + ") isn't wanted type.");
 }
-${type} param${index} = ((${wrapType}) args[${index}]).${type}Value();
+
+# 参数的强制类型转换 基本类型 带检查 分段检查部分
+## methodProxy.param.cast.primitive.withCheck.doCheck
+${elseKey}if (args[${index}] instanceof ${wrapType})
+{
+	param${index} = ((${wrapType}) args[${index}]).${tempType}Value();
+}
+

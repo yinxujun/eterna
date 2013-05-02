@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package self.micromagic.dc;
+package self.micromagic.cg.proxy;
 
 /**
  * 一个方法调用的代理, 通过动态生成的代码进行调用, 不使用反射.

@@ -93,9 +93,13 @@ public class BeanTool
 		{
 			return p.setBeanValues(bean, values, prefix);
 		}
+		catch (RuntimeException ex)
+		{
+			throw ex;
+		}
 		catch (Exception ex)
 		{
-			throw new RuntimeException(ex);
+			throw new CGException(ex);
 		}
 	}
 
@@ -340,6 +344,15 @@ public class BeanTool
 			catch (Throwable ex)
 			{
 				CG.log.error("Error in create MapToBean.", ex);
+				if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				else if (ex instanceof Error)
+				{
+					throw (Error) ex;
+				}
+				throw new CGException(ex);
 			}
 		}
 		if (bd != null)
@@ -399,6 +412,15 @@ public class BeanTool
 			catch (Throwable ex)
 			{
 				CG.log.error("Error in create MapToBean.", ex);
+				if (ex instanceof RuntimeException)
+				{
+					throw (RuntimeException) ex;
+				}
+				else if (ex instanceof Error)
+				{
+					throw (Error) ex;
+				}
+				throw new CGException(ex);
 			}
 		}
 		if (obj != null)
@@ -584,7 +606,15 @@ public class BeanTool
 			{
 				CG.log.error("Error in create bean processer.", ex);
 			}
-			return null;
+			if (ex instanceof RuntimeException)
+			{
+				throw (RuntimeException) ex;
+			}
+			else if (ex instanceof Error)
+			{
+				throw (Error) ex;
+			}
+			throw new CGException(ex);
 		}
 	}
 
@@ -668,7 +698,15 @@ public class BeanTool
 			{
 				CG.log.error("Error in create bean processer.", ex);
 			}
-			return null;
+			if (ex instanceof RuntimeException)
+			{
+				throw (RuntimeException) ex;
+			}
+			else if (ex instanceof Error)
+			{
+				throw (Error) ex;
+			}
+			throw new CGException(ex);
 		}
 	}
 
@@ -773,7 +811,15 @@ public class BeanTool
 			{
 				CG.log.error("Error in create bean processer.", ex);
 			}
-			return null;
+			if (ex instanceof RuntimeException)
+			{
+				throw (RuntimeException) ex;
+			}
+			else if (ex instanceof Error)
+			{
+				throw (Error) ex;
+			}
+			throw new CGException(ex);
 		}
 	}
 
@@ -830,7 +876,15 @@ public class BeanTool
 			{
 				CG.log.error("Error in create bean processer.", ex);
 			}
-			return null;
+			if (ex instanceof RuntimeException)
+			{
+				throw (RuntimeException) ex;
+			}
+			else if (ex instanceof Error)
+			{
+				throw (Error) ex;
+			}
+			throw new CGException(ex);
 		}
 	}
 

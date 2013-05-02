@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildLogger;
@@ -391,11 +392,23 @@ public class AntCG
 	{
 		private File basePath;
 		private Map msgCache = new HashMap();
+		private Method defineMethod;
 
 		public CompileClassLoader(ClassLoader parent, File basePath)
 		{
 			super(parent);
 			this.basePath = basePath;
+			try
+			{
+				Class cl = Class.forName("java.lang.ClassLoader");
+				Class[] paramTypes = {String.class, byte[].class, int.class, int.class};
+				this.defineMethod = cl.getDeclaredMethod("defineClass", paramTypes);
+				this.defineMethod.setAccessible(true);
+			}
+			catch (Throwable ex)
+			{
+				this.defineMethod = null;
+			}
 		}
 
 		public void addMessage(String className, String msg)
@@ -414,7 +427,23 @@ public class AntCG
 					FileInputStream fis = new FileInputStream(f);
 					byte[] buf = new byte[(int) f.length()];
 					fis.read(buf);
-					Class c = this.defineClass(name, buf, 0, buf.length);
+					Class c = null;
+					if (this.defineMethod != null)
+					{
+						try
+						{
+							Object[] args = {name, buf, new Integer(0), new Integer(buf.length)};
+							c = (Class) this.defineMethod.invoke(this.getParent(), args);
+						}
+						catch (Throwable ex)
+						{
+							c = this.defineClass(name, buf, 0, buf.length);
+						}
+					}
+					else
+					{
+						c = this.defineClass(name, buf, 0, buf.length);
+					}
 					// 类载入成功, 可以将缓存的消息清除.
 					this.msgCache.remove(name);
 					return c;
