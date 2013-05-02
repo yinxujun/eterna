@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package self.micromagic.dc;
+package self.micromagic.cg.proxy;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -29,12 +29,13 @@ import self.micromagic.util.StringTool;
 import self.micromagic.cg.ClassKeyCache;
 import self.micromagic.cg.ClassGenerator;
 import self.micromagic.cg.BeanTool;
+import self.micromagic.cg.CGException;
 
 /**
- * 动态代码生成的工具.
+ * 动态代理类的生成工具.
  * 如生成MethodProxy等.
  */
-public class DynamicTool
+public class ProxyTool
 {
 	/**
 	 * 创建一个方法调用的代理.
@@ -43,7 +44,7 @@ public class DynamicTool
 	 * @return  方法调用的代理
 	 */
    public static MethodProxy createMethodProxy(Method method)
-			throws DynamicCodeException
+			throws CGException
 	{
 		return createMethodProxy(method, true);
 	}
@@ -56,36 +57,62 @@ public class DynamicTool
 	 * @return  方法调用的代理
 	 */
    public static MethodProxy createMethodProxy(Method method, boolean paramCheck)
-			throws DynamicCodeException
+			throws CGException
 	{
-		if (!Modifier.isPublic(method.getModifiers()))
-		{
-			throw new DynamicCodeException("The method [" + method + "] isn't public.");
-		}
       Class c = method.getDeclaringClass();
-		if (!Modifier.isPublic(c.getModifiers()))
-		{
-			throw new DynamicCodeException("The method [" + method + "]'s declaring type [" + c + "] isn't public.");
-		}
-		Class[] params = method.getParameterTypes();
-		for (int i = 0; i < params.length; i++)
-		{
-			if (!Modifier.isPublic(params[i].getModifiers()))
-			{
-				throw new DynamicCodeException("The method [" + method + "]'s param(" + i + ") [" + c + "] isn't public.");
-			}
-		}
       MethodProxy proxy = getCachedMethodProxy(c, method, paramCheck);
-		if (proxy == null)
+		if (proxy != null)
 		{
-			synchronized (methodProxyCache)
+			return proxy;
+		}
+		// 判断目标类是否在当前ClassLoader或子ClassLoader中
+      boolean subClass = checkClassLoader(c.getClassLoader());
+		if (subClass)
+		{
+			if (Modifier.isPrivate(method.getModifiers()))
 			{
-				proxy = createMethodProxy0(c, method, paramCheck);
+				throw new CGException("The method [" + method + "] is private.");
 			}
+			if (Modifier.isPrivate(c.getModifiers()))
+			{
+				throw new CGException("The method [" + method + "]'s declaring type [" + c + "] is private.");
+			}
+			Class[] params = method.getParameterTypes();
+			for (int i = 0; i < params.length; i++)
+			{
+				if (Modifier.isPrivate(params[i].getModifiers()))
+				{
+					throw new CGException("The method [" + method + "]'s param(" + i + ") [" + c + "] is private.");
+				}
+			}
+		}
+		else
+		{
+			if (!Modifier.isPublic(method.getModifiers()))
+			{
+				throw new CGException("The method [" + method + "] isn't public.");
+			}
+			if (!Modifier.isPublic(c.getModifiers()))
+			{
+				throw new CGException("The method [" + method + "]'s declaring type [" + c + "] isn't public.");
+			}
+			Class[] params = method.getParameterTypes();
+			for (int i = 0; i < params.length; i++)
+			{
+				if (!Modifier.isPublic(params[i].getModifiers()))
+				{
+					throw new CGException("The method [" + method + "]'s param(" + i + ") [" + c + "] isn't public.");
+				}
+			}
+		}
+		synchronized (methodProxyCache)
+		{
+			proxy = createMethodProxy0(c, method, paramCheck, !subClass);
 		}
 		return proxy;
 	}
-	private static MethodProxy createMethodProxy0(Class c, Method method, boolean paramCheck)
+	private static MethodProxy createMethodProxy0(Class c, Method method, boolean paramCheck,
+			boolean useThisClassLoader)
 	{
 		MethodProxy proxy = getCachedMethodProxy(c, method, paramCheck);
 		if (proxy != null)
@@ -96,13 +123,18 @@ public class DynamicTool
 		Class[] params = method.getParameterTypes();
 
       ClassGenerator cg = new ClassGenerator();
-		cg.setClassLoader(c.getClassLoader());
-		cg.setClassName(c.getName() + "$$" + method.getName() + "$Proxy" + METHOD_PROXY_ID++);
+		cg.setClassLoader(useThisClassLoader ? MethodProxy.class.getClassLoader() : c.getClassLoader());
+		String namePrefix = c.getName();
+		if (namePrefix.startsWith("java."))
+		{
+			namePrefix = "cg." + namePrefix;
+		}
+		cg.setClassName(namePrefix + "_$" + method.getName() + "$Proxy" + METHOD_PROXY_ID++);
 		cg.addInterface(MethodProxy.class);
 		cg.addClassPath(c);
 		cg.addClassPath(MethodProxy.class);
 		StringAppender buf = StringTool.createStringAppender(128);
-		codeRes.printRes("methodProxy.invoke.declare", null, 0, buf).appendln().append('{');
+		codeRes.printRes("methodProxy.invoke.declare", null, 0, buf).appendln().append('{').appendln();
 
 		// 生成参数的转换
 		String paramCode, paramCodePrimitive;
@@ -134,6 +166,31 @@ public class DynamicTool
 			paramCodeParams.put("index", Integer.toString(i));
 			if (type.isPrimitive())
 			{
+				if (paramCheck)
+				{
+					// 处理基本类型的检查代码
+					String[] types = (String[]) primitiveCheckCache.get(type.getName());
+					StringAppender checkBuf = StringTool.createStringAppender(80);
+					for (int j = 0; j < types.length; j++)
+					{
+						if (j == 0)
+						{
+							paramCodeParams.put("elseKey", "");
+						}
+						else
+						{
+							paramCodeParams.put("elseKey", "else ");
+						}
+						paramCodeParams.put("wrapType", BeanTool.getPrimitiveWrapClassName(types[j]));
+						paramCodeParams.put("tempType", types[j]);
+						codeRes.printRes("methodProxy.param.cast.primitive.withCheck.doCheck", paramCodeParams, 0, checkBuf);
+						if (j < types.length - 1)
+						{
+							checkBuf.appendln();
+						}
+					}
+					paramCodeParams.put("primitiveTypeCheck", checkBuf.toString());
+				}
 				paramCodeParams.put("wrapType", BeanTool.getPrimitiveWrapClassName(type.getName()));
 				codeRes.printRes(paramCodePrimitive, paramCodeParams, 1, buf).appendln();
 			}
@@ -183,16 +240,42 @@ public class DynamicTool
 		cg.addMethod(buf.toString());
 		try
 		{
-			proxy = (MethodProxy) cg.createClass().newInstance();
+			Object obj = cg.createClass().newInstance();
+			proxy = (MethodProxy) obj;
 			putMethodProxy(c, method, paramCheck, proxy);
+		}
+		catch (RuntimeException ex)
+		{
+			throw ex;
 		}
 		catch (Exception ex)
 		{
-			throw new DynamicCodeException(ex);
+			throw new CGException(ex);
 		}
 		return proxy;
 	}
 	private static int METHOD_PROXY_ID = 1;
+
+	/**
+	 * 检查目标类的ClassLoader是否在当前的ClassLoader之下或相同.
+	 */
+	private static boolean checkClassLoader(ClassLoader cl)
+	{
+		if (cl == null)
+		{
+			return false;
+		}
+		ClassLoader thisCL = MethodProxy.class.getClassLoader();
+		do
+		{
+			if (cl == thisCL)
+			{
+				return true;
+			}
+			cl = cl.getParent();
+		} while (cl != null);
+		return false;
+	}
 
 	/**
 	 * 获取缓存的方法调用代理.
@@ -281,14 +364,9 @@ public class DynamicTool
 	static final Log log = Utility.createLog("eterna.dc");
 
 	/**
-	 * 设置动态代码生成时, 对代码编译的类型.
+	 * 基本类型需要检查的类型的对应表.
 	 */
-	public static final String COMPILE_TYPE_PROPERTY = "self.micromagic.dc.compile.type";
-
-	/**
-	 * 动态代码生成时, 对代码编译的类型.
-	 */
-	static String DC_COMPILE_TYPE = null;
+   static final Map primitiveCheckCache = new HashMap();
 
 	/**
 	 * 代码段资源.
@@ -302,17 +380,20 @@ public class DynamicTool
 	{
 		try
 		{
-			codeRes.load(DynamicTool.class.getResourceAsStream("DynamicTool.res"));
+			codeRes.load(ProxyTool.class.getResourceAsStream("ProxyTool.res"));
 		}
 		catch (Exception ex)
 		{
 			log.error("Error in get code res.", ex);
 		}
-		try
-		{
-			Utility.addFieldPropertyManager(COMPILE_TYPE_PROPERTY, CodeClassTool.class, "DC_COMPILE_TYPE");
-		}
-		catch (Throwable ex) {}
+		primitiveCheckCache.put("boolean", new String[]{"boolean"});
+		primitiveCheckCache.put("char", new String[]{"char"});
+		primitiveCheckCache.put("byte", new String[]{"byte"});
+		primitiveCheckCache.put("short", new String[]{"short", "byte"});
+		primitiveCheckCache.put("int", new String[]{"int", "char", "short", "byte"});
+		primitiveCheckCache.put("long", new String[]{"long", "int", "char", "short", "byte"});
+		primitiveCheckCache.put("float", new String[]{"float", "int", "long", "char", "short", "byte"});
+		primitiveCheckCache.put("double", new String[]{"double", "float", "int", "long", "char", "short", "byte"});
 	}
 
 }

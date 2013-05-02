@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package self.micromagic.dc;
+package self.micromagic.cg;
 
 /**
- * 无法创建动态代码时抛出的异常.
+ * 将代码生成类时抛出的异常.
  */
-public class DynamicCodeException extends RuntimeException
+public class CGException extends RuntimeException
 {
-	public DynamicCodeException(String message)
+	public CGException(String message)
 	{
 		super(message);
 	}
 
-	public DynamicCodeException(String message, Throwable cause)
+	public CGException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 
-	public DynamicCodeException(Throwable cause)
+	public CGException(Throwable cause)
 	{
 		super(cause);
 	}

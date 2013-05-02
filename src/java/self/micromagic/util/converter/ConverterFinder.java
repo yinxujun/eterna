@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Locale;
 
+import self.micromagic.cg.BeanTool;
+
 /**
  * ValueConverter对象的查找器, 可通过给出的Class找寻对应的
  * ValueConverter对象.
@@ -91,11 +93,29 @@ public class ConverterFinder
 	 */
 	public static void registerConverter(Class c, ValueConverter converter)
 	{
+		registerConverter(c, converter, false);
+	}
+
+	/**
+	 * 注册一个ValueConverter对象.
+	 *
+	 * @param c           对应的Class
+	 * @param converter   ValueConverter对象, 如果给出的值为null, 表示
+	 *                    删除已注册的ValueConverter对象
+	 * @param toBeanTool  是否需要同时注册到BeanTool中
+	 * @see BeanTool#registerConverter(Class, ValueConverter)
+	 */
+	public static void registerConverter(Class c, ValueConverter converter, boolean toBeanTool)
+	{
 		if (converter == null)
 		{
 			withoutThrowCache.remove(c);
 			converterCache.remove(c);
 			return;
+		}
+		if (toBeanTool)
+		{
+			BeanTool.registerConverter(c, converter.copy());
 		}
 		// 将isNeedThrow值设为false注册
 		ValueConverter vc1 = converter.copy();

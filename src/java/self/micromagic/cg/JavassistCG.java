@@ -96,12 +96,12 @@ public class JavassistCG
 			Class[] interfaces = cg.getInterfaces();
 			for (int i = 0; i < interfaces.length; i++)
 			{
-				cc.addInterface(pool.getClass(interfaces[i]));
+				cc.addInterface(pool.getClass(interfaces[i], true));
 			}
 			Class baseClass = cg.getSuperClass();
 			if (baseClass != null)
 			{
-				cc.setSuperclass(pool.getClass(baseClass));
+				cc.setSuperclass(pool.getClass(baseClass, true));
 			}
 			if (ClassGenerator.COMPILE_LOG_TYPE > COMPILE_LOG_TYPE_DEBUG)
 			{
@@ -322,10 +322,14 @@ public class JavassistCG
 		 * 获取一个CtClass.
 		 * 先在缓存里查找, 如果未找到再根据类的文件流构造CtClass.
 		 */
-		CtClass getClass(Class c)
+		CtClass getClass(Class c, boolean checkCache)
 				throws NotFoundException
 		{
-			CtClass cc = this.getCached(c.getName());
+			CtClass cc = null;
+			if (checkCache)
+			{
+				cc = this.getCached(c.getName());
+			}
 			if (cc != null)
 			{
 				return cc;
