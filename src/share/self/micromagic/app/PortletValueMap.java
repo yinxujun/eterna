@@ -91,20 +91,22 @@ public class PortletValueMap
 
 		public Object getValue(Object key)
 		{
-			return this.request.getAttribute(
-					key == null ? null : key.toString());
+			return this.request.getAttribute(key == null ? null : key.toString());
+		}
+
+		public boolean containsKey(Object key)
+		{
+			return this.getValue(key) != null;
 		}
 
 		public void setValue(Object key, Object value)
 		{
-			this.request.setAttribute(
-					key == null ? null : key.toString(), value);
+			this.request.setAttribute(key == null ? null : key.toString(), value);
 		}
 
 		public void removeValue(Object key)
 		{
-			this.request.removeAttribute(
-					key == null ? null : key.toString());
+			this.request.removeAttribute(key == null ? null : key.toString());
 		}
 
 		public Enumeration getKeys()
@@ -172,6 +174,11 @@ public class PortletValueMap
 				return null;
 			}
 			return this.session.getAttribute(key == null ? null : key.toString(), this.scope);
+		}
+
+		public boolean containsKey(Object key)
+		{
+			return this.getValue(key) != null;
 		}
 
 		public void setValue(Object key, Object value)

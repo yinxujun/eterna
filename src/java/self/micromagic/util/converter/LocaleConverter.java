@@ -49,6 +49,11 @@ public class LocaleConverter extends ObjectConverter
 		{
 			return this.convertToLocale((String) value);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Locale)
+		{
+			return (Locale) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -66,6 +71,11 @@ public class LocaleConverter extends ObjectConverter
 		if (StringTool.isEmpty(value))
 		{
 			return null;
+		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Locale)
+		{
+			return (Locale) tmpObj;
 		}
 		int idx = value.indexOf('_');
 		if (idx == -1)

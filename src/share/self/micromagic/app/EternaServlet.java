@@ -181,7 +181,7 @@ public class EternaServlet extends HttpServlet
 			}
 			else
 			{
-            String[] newValues = new String[values.length + 1];
+				String[] newValues = new String[values.length + 1];
 				newValues[newValues.length - 1] = value;
 				System.arraycopy(values, 0, newValues, 0, values.length);
 				params.put(key, newValues);

@@ -18,6 +18,9 @@ package self.micromagic.app;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.io.OutputStream;
+import java.io.IOException;
+import java.io.Writer;
 
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.Execute;
@@ -78,9 +81,26 @@ public abstract class AbstractExportExecute extends AbstractExecute
 	protected int queryCacheIndex = 5;
 	protected ResultReaderManager otherReaderManager = null;
 	protected String fileName = "export";
+
+	/**
+	 * 导出文本形式的文件时使用的编码格式.
+	 */
 	protected String encodeName = "UTF-8";
+
+	/**
+	 * 导出的文件名使用的编码格式.
+	 */
 	protected String fileNameEncode = "UTF-8";
-	protected boolean saveExport = false;
+
+	/**
+	 * 是否需要将导出的数据保存下来.
+	 */
+	protected boolean saveExport;
+
+	/**
+	 * 导出完毕后是否需要关闭输出流.
+	 */
+	protected boolean needClose;
 
 	public void initialize(ModelAdapter model)
 			throws ConfigurationException
@@ -111,6 +131,11 @@ public abstract class AbstractExportExecute extends AbstractExecute
 		{
 			this.saveExport = "true".equalsIgnoreCase(temp);
 		}
+		temp = (String) this.getAttribute("needClose");
+		if (temp != null)
+		{
+			this.needClose = "true".equalsIgnoreCase(temp);
+		}
 		temp = (String) this.getAttribute("queryCacheIndex");
 		if (temp != null)
 		{
@@ -126,6 +151,39 @@ public abstract class AbstractExportExecute extends AbstractExecute
 			}
 		}
 		this.holdConnection = model.getTransactionType() ==  ModelAdapter.T_HOLD;
+	}
+
+	/**
+	 * 关闭输出流.
+	 */
+	protected void closeOutput(Object out)
+			throws IOException
+	{
+		if (out != null)
+		{
+			if (this.needClose)
+			{
+				if (out instanceof OutputStream)
+				{
+					((OutputStream) out).close();
+				}
+				else if (out instanceof Writer)
+				{
+					((Writer) out).close();
+				}
+			}
+			else
+			{
+				if (out instanceof OutputStream)
+				{
+					((OutputStream) out).flush();
+				}
+				else if (out instanceof Writer)
+				{
+					((Writer) out).flush();
+				}
+			}
+		}
 	}
 
 	protected String getFileName(AppData data)

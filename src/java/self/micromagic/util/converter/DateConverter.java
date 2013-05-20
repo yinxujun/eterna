@@ -84,6 +84,11 @@ public class DateConverter extends ObjectConverter
 		{
 			return this.convertToDate((String) value, format);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof java.sql.Date)
+		{
+			return (java.sql.Date) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -111,6 +116,11 @@ public class DateConverter extends ObjectConverter
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof java.sql.Date)
+				{
+					return (java.sql.Date) tmpObj;
+				}
 				return new java.sql.Date(FormatTool.parseDate(value).getTime());
 			}
 			else

@@ -99,6 +99,11 @@ public class CalendarConverter extends ObjectConverter
 		{
 			return this.convertToCalendar((String) value, formats);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Calendar)
+		{
+			return (Calendar) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -131,6 +136,11 @@ public class CalendarConverter extends ObjectConverter
 		{
 			if (formats == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof Calendar)
+				{
+					return (Calendar) tmpObj;
+				}
 				Calendar c = Calendar.getInstance();
 				try
 				{

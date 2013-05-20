@@ -17,6 +17,7 @@
 package self.micromagic.util.converter;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import self.micromagic.util.StringTool;
 import self.micromagic.util.ObjectRef;
@@ -27,6 +28,7 @@ public class MapConverter extends ObjectConverter
 {
 	private String itemDelimiter = ";\n";
 	private char kvDelimiter = '=';
+	private boolean beanToMap = true;
 
 	/**
 	 * 获取字符串中每个元素的分割符.
@@ -60,6 +62,25 @@ public class MapConverter extends ObjectConverter
 		this.kvDelimiter = kvDelimiter;
 	}
 
+	/**
+	 * 当对象为bean时, 转换时使用的beanToMap的值.
+	 *
+	 * @see BeanMap#setBean2Map(boolean)
+	 */
+	public boolean isBeanToMap()
+	{
+		return this.beanToMap;
+	}
+
+	/**
+	 * 设置当对象为bean时, 转换时使用的beanToMap的值.
+	 *
+	 * @see BeanMap#setBean2Map(boolean)
+	 */
+	public void setBeanToMap(boolean beanToMap)
+	{
+		this.beanToMap = beanToMap;
+	}
 
 	public Map convertToMap(Object value)
 	{
@@ -73,8 +94,28 @@ public class MapConverter extends ObjectConverter
 		}
 		if (value instanceof String)
 		{
-			return StringTool.string2Map((String) value, this.itemDelimiter, this.kvDelimiter,
-					true, false, null, null);
+			return this.convertToMap((String) value);
+		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Map)
+		{
+			return (Map) tmpObj;
+		}
+		if (value instanceof Object[])
+		{
+			Object[] arr = (Object[]) value;
+			Map result = new HashMap();
+			for (int i = 0; i < arr.length; i += 2)
+			{
+				if (i + 1 < arr.length)
+				{
+					result.put(arr[i], arr[i + 1]);
+				}
+				else
+				{
+					result.put(arr[i], null);
+				}
+			}
 		}
 		if (value instanceof ObjectRef)
 		{
@@ -83,7 +124,7 @@ public class MapConverter extends ObjectConverter
 		if (BeanTool.checkBean(value.getClass()))
 		{
 			BeanMap map = BeanTool.getBeanMap(value);
-			map.setBean2Map(true);
+			map.setBean2Map(this.beanToMap);
 			return map;
 		}
 		throw new ClassCastException(getCastErrorMessage(value, "Map"));
@@ -94,6 +135,11 @@ public class MapConverter extends ObjectConverter
 		if (value == null)
 		{
 			return null;
+		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Map)
+		{
+			return (Map) tmpObj;
 		}
 		return StringTool.string2Map(value, this.itemDelimiter, this.kvDelimiter,
 				true, false, null, null);

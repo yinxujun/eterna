@@ -89,7 +89,7 @@ class RequestParameterMapEntrySet extends AbstractSet
 
 		public Object next()
 		{
-			if (onlyValue)
+			if (this.onlyValue)
 			{
 				return RequestParameterMap.getFirstParam(
 						((Map.Entry) this.itr.next()).getValue());

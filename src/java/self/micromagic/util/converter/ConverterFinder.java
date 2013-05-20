@@ -119,11 +119,11 @@ public class ConverterFinder
 		}
 		// 将isNeedThrow值设为false注册
 		ValueConverter vc1 = converter.copy();
-		converter.setNeedThrow(false);
+		vc1.setNeedThrow(false);
 		withoutThrowCache.put(c, vc1);
 		// 将isNeedThrow值设为true注册
 		ValueConverter vc2 = converter.copy();
-		converter.setNeedThrow(true);
+		vc2.setNeedThrow(true);
 		converterCache.put(c, vc2);
 	}
 

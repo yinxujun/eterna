@@ -68,7 +68,7 @@ public class ExportExcelExecute extends AbstractExportExecute
 			WritableWorkbook workbook;
 			if (!saveExport && response != null)
 			{
-				response.setContentType("application/excel");
+				response.setContentType("application/vnd.ms-excel");
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ Utils.dealString2URL(this.getFileName(data) + ".xls", this.fileNameEncode));
 				out = data.getOutputStream();
@@ -80,7 +80,7 @@ public class ExportExcelExecute extends AbstractExportExecute
 				out = ms.getOutputStream();
 				workbook = this.createWorkBook(data, out);
 				Map raMap = data.getRequestAttributeMap();
-				raMap.put(DOWNLOAD_CONTENTTYPE, "application/excel");
+				raMap.put(DOWNLOAD_CONTENTTYPE, "application/vnd.ms-excel");
 				raMap.put(DOWNLOAD_FILENAME, Utils.dealString2URL(this.getFileName(data) + ".xls", this.fileNameEncode));
 				raMap.put(DOWNLOAD_STREAM, ms.getInputStream());
 			}
@@ -97,10 +97,7 @@ public class ExportExcelExecute extends AbstractExportExecute
 				// 这里可能是需要接管数据库链接, 所以使用完后需要自行释放
 				ritr.close();
 			}
-			if (out != null)
-			{
-				out.close();
-			}
+			this.closeOutput(out);
 		}
 		return null;
 	}

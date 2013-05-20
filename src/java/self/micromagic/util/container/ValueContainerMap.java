@@ -228,6 +228,22 @@ public class ValueContainerMap extends AbstractMap
 			}
 		}
 
+		public boolean containsKey(Object key)
+		{
+			try
+			{
+				return this.row.findColumn(key == null ? null : key.toString(), true) != -1;
+			}
+			catch (SQLException ex)
+			{
+				return false;
+			}
+			catch (ConfigurationException ex)
+			{
+				return false;
+			}
+		}
+
 		public void setValue(Object key, Object value)
 		{
 			throw new UnsupportedOperationException();
@@ -297,6 +313,11 @@ public class ValueContainerMap extends AbstractMap
 			return this.request.getAttribute(key == null ? null : key.toString());
 		}
 
+		public boolean containsKey(Object key)
+		{
+			return this.getValue(key) != null;
+		}
+
 		public void setValue(Object key, Object value)
 		{
 			this.request.setAttribute(key == null ? null : key.toString(), value);
@@ -364,6 +385,11 @@ public class ValueContainerMap extends AbstractMap
 				return null;
 			}
 			return this.session.getAttribute(key == null ? null : key.toString());
+		}
+
+		public boolean containsKey(Object key)
+		{
+			return this.getValue(key) != null;
 		}
 
 		public void setValue(Object key, Object value)
@@ -450,6 +476,11 @@ public class ValueContainerMap extends AbstractMap
 		public Object getValue(Object key)
 		{
 			return this.context.getAttribute(key == null ? null : key.toString());
+		}
+
+		public boolean containsKey(Object key)
+		{
+			return this.getValue(key) != null;
 		}
 
 		public void setValue(Object key, Object value)

@@ -23,6 +23,7 @@ import java.util.Iterator;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.Utility;
+import self.micromagic.util.IntegerRef;
 import self.micromagic.util.converter.ValueConverter;
 import self.micromagic.eterna.sql.ResultRow;
 
@@ -39,11 +40,41 @@ public class ArrayTool
 	 * @param arrayLevel  数组的维度等级
 	 * @param cellType    需要转换成的目标类型
 	 * @param array       数组对象
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
+	 */
+	public static Object convertArray(int arrayLevel, Class cellType, Object array, boolean needThrow)
+	{
+		return convertArray(arrayLevel, cellType, array, null, (Object) null, needThrow);
+	}
+
+	/**
+	 * 将一个数组转换成指定类型的数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param cellType    需要转换成的目标类型
+	 * @param array       数组对象
 	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array)
 	{
-		return convertArray(arrayLevel, cellType, array, null, (Object) null);
+		return convertArray(arrayLevel, cellType, array, null, (Object) null, false);
+	}
+
+	/**
+	 * 将一个数组转换成指定类型的数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param cellType    需要转换成的目标类型
+	 * @param array       数组对象
+	 * @param destArr     目标数组对象
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
+	 */
+	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
+			boolean needThrow)
+	{
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) null, needThrow);
 	}
 
 	/**
@@ -57,7 +88,23 @@ public class ArrayTool
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr)
 	{
-		return convertArray(arrayLevel, cellType, array, destArr, (Object) null);
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) null, false);
+	}
+
+	/**
+	 * 将一个数组转换成指定类型的数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param cellType    需要转换成的目标类型
+	 * @param array       数组对象
+	 * @param converer    对数组元素进行类型转换的工具
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
+	 */
+	public static Object convertArray(int arrayLevel, Class cellType, Object array,
+			ValueConverter converer, boolean needThrow)
+	{
+		return convertArray(arrayLevel, cellType, array, null, (Object) converer, needThrow);
 	}
 
 	/**
@@ -71,7 +118,24 @@ public class ArrayTool
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, ValueConverter converer)
 	{
-		return convertArray(arrayLevel, cellType, array, null, (Object) converer);
+		return convertArray(arrayLevel, cellType, array, null, (Object) converer, false);
+	}
+
+	/**
+	 * 将一个数组转换成指定类型的数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param cellType    需要转换成的目标类型
+	 * @param array       数组对象
+	 * @param destArr     目标数组对象
+	 * @param converer    对数组元素进行类型转换的工具
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
+	 */
+	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
+			ValueConverter converer, boolean needThrow)
+	{
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) converer, needThrow);
 	}
 
 	/**
@@ -87,7 +151,24 @@ public class ArrayTool
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
 			ValueConverter converer)
 	{
-		return convertArray(arrayLevel, cellType, array, destArr, (Object) converer);
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) converer, false);
+	}
+
+	/**
+	 * 将一个数组转换成指定类型的数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param cellType    需要转换成的目标类型
+	 * @param array       数组对象
+	 * @param destArr     目标数组对象
+	 * @param beanMap     类型转换时需要的beanMap对象
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
+	 */
+	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
+			BeanMap beanMap, boolean needThrow)
+	{
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) beanMap, needThrow);
 	}
 
 	/**
@@ -102,7 +183,7 @@ public class ArrayTool
 	 */
 	public static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr, BeanMap beanMap)
 	{
-		return convertArray(arrayLevel, cellType, array, destArr, (Object) beanMap);
+		return convertArray(arrayLevel, cellType, array, destArr, (Object) beanMap, false);
 	}
 
 	/**
@@ -113,13 +194,15 @@ public class ArrayTool
 	 * @param array       数组对象
 	 * @param destArr     目标数组对象
 	 * @param converter   类型转换器, 可以是BeanMap或ValueConverter
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
 	 * @return  转换成的目标类型数组, 如果给出的数组对象的维度等级不正确, 则返回null
 	 */
-	private static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr, Object converter)
+	private static Object convertArray(int arrayLevel, Class cellType, Object array, Object destArr,
+			Object converter, boolean needThrow)
 	{
 		if (arrayLevel <= 0)
 		{
-			throw new IndexOutOfBoundsException("Error array level:" + arrayLevel + ".");
+			throw new IllegalArgumentException("Error array level:" + arrayLevel + ".");
 		}
 		if (cellType == null)
 		{
@@ -141,12 +224,27 @@ public class ArrayTool
 		}
 		try
 		{
-			return ac == null ? null : destArr == null ?
-					ac.convertArray(array, converter) : ac.convertArray(array, destArr, converter);
+			Object result = null;
+			if (ac != null)
+			{
+				result = destArr == null ? ac.convertArray(array, converter, needThrow)
+						: ac.convertArray(array, destArr, converter, needThrow);
+			}
+			if (result == null && array != null && needThrow)
+			{
+				throw new CGException("The param array(" + ClassGenerator.getClassName(array.getClass())
+						+ "）can't cast to (" + ClassGenerator.getClassName(cellType)
+						+ ClassGenerator.getArrayDefine(arrayLevel) + ").");
+			}
+			return result;
+		}
+		catch (RuntimeException ex)
+		{
+			throw ex;
 		}
 		catch (Exception ex)
 		{
-			throw new RuntimeException(ex);
+			throw new CGException(ex);
 		}
 	}
 	private static ArrayConverter getArrayConverter(Integer arrayLevel, Class cellType)
@@ -166,10 +264,22 @@ public class ArrayTool
 				ClassGenerator.getPackageString(ValueConverter.class),
 				ClassGenerator.getPackageString(ResultRow.class)
 			};
-			ClassGenerator cg = ClassGenerator.createClassGenerator("ArrayConverter" + arrayLevel, cellType,
-					ArrayConverter.class, imports);;
+			ClassGenerator cg;
+			if (ClassGenerator.isArray(cellType))
+			{
+				IntegerRef tmpLevel = new IntegerRef();
+				Class tmpType = ClassGenerator.getArrayElementType(cellType, tmpLevel);
+				cg = ClassGenerator.createClassGenerator("ArrayConverter" + arrayLevel + "_" + tmpLevel,
+						tmpType, ArrayConverter.class, imports);
+				createConvertArrayFn(cellType, arrayLevel.intValue(), cg, tmpType, tmpLevel.value);
+			}
+			else
+			{
+				cg = ClassGenerator.createClassGenerator("ArrayConverter" + arrayLevel, cellType,
+						ArrayConverter.class, imports);
+				createConvertArrayFn(cellType, arrayLevel.intValue(), cg, null, 0);
+			}
 			cg.setClassLoader(cellType.getClassLoader());
-			createConvertArrayFn(cellType, arrayLevel.intValue(), cg);
 			try
 			{
 				ac = (ArrayConverter) cg.createClass().newInstance();
@@ -190,26 +300,44 @@ public class ArrayTool
 	/**
 	 * 生成数组类型转换的处理方法.
 	 */
-	private static void createConvertArrayFn(Class cellType, int level, ClassGenerator cg)
+	private static void createConvertArrayFn(Class cellType, int level, ClassGenerator cg,
+			Class realCellType, int cellLevel)
 	{
 		// 准备代码片段的参数
-		String arrVLStr = ClassGenerator.getArrayDefine(level);;
+		String destVLStr;
+		String srcVLStr;
+		String destType;
 		Map tmpParam = new HashMap();
 		tmpParam.put("arrayLevel", new Integer(level));
 		tmpParam.put("srcType", "Object");
-		tmpParam.put("destType", ClassGenerator.getClassName(cellType));
+		if (realCellType == null)
+		{
+			destVLStr = ClassGenerator.getArrayDefine(level);
+			srcVLStr = destVLStr;
+			destType = ClassGenerator.getClassName(cellType);
+			tmpParam.put("destType", destType);
+		}
+		else
+		{
+			srcVLStr = ClassGenerator.getArrayDefine(level);
+			destVLStr = ClassGenerator.getArrayDefine(level + cellLevel);
+			destType = ClassGenerator.getClassName(realCellType);
+			tmpParam.put("destType", destType);
+		}
 		tmpParam.put("cellType", ClassGenerator.getClassName(cellType));
 		tmpParam.put("arrayObj", "array");
 		tmpParam.put("destArr", "destArr");
-		tmpParam.put("arrayDef", arrVLStr);
+		tmpParam.put("destArrayDef", destVLStr);
+		tmpParam.put("srcArrayDef", srcVLStr);
 		tmpParam.put("converter", "converter");
 		tmpParam.put("src", "array");
 		tmpParam.put("dest", "destArr");
+		tmpParam.put("needThrow", "needThrow");
 		StringAppender fnCode;
 
 		// 实现接口中不带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object converter)").appendln()
+		fnCode.append("public Object convertArray(Object array, Object converter, boolean needThrow)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln();
 		BeanTool.codeRes.printRes("convertArrayType", tmpParam, 0, fnCode)
 				.appendln().append('}');
@@ -217,7 +345,8 @@ public class ArrayTool
 
 		// 实现接口中带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter)").appendln()
+		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter, boolean needThrow)")
+				.appendln()
 				.append("      throws Exception").appendln().append('{').appendln();
 		BeanTool.codeRes.printRes("convertArrayType.withDest", tmpParam, 0, fnCode)
 				.appendln().append('}');
@@ -230,35 +359,32 @@ public class ArrayTool
 
 		// 生成不带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("private ").append(ClassGenerator.getClassName(cellType)).append(arrVLStr)
-				.append(" convertArray(Object").append(arrVLStr).append(" array0, Object converter)").appendln()
+		fnCode.append("private ").append(destType).append(destVLStr).append(" convertArray(Object").append(srcVLStr)
+				.append(" array0, Object converter, boolean needThrow)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln();
-		fnCode.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" destArr0 = new ")
-				.append(ClassGenerator.getClassName(cellType)).append("[array0.length]")
-				.append(arrVLStr.substring(2)).append(';').appendln();
-		appendConvertArrayCode(fnCode, cellType, arrVLStr.substring(2), tmpParam, 0, level,
-				wrapName, vcIndex, beanType, false);
+		fnCode.append(destType).append(destVLStr).append(" destArr0 = new ")
+				.append(destType).append("[array0.length]").append(destVLStr.substring(2)).append(';').appendln();
+		appendConvertArrayCode(fnCode, cellType, srcVLStr.substring(2), destVLStr.substring(2),
+				tmpParam, 0, level, wrapName, vcIndex, beanType, false);
 		fnCode.append("return destArr0;").appendln().append('}');
 		cg.addMethod(fnCode.toString());
 
 		// 生成带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("private ").append(ClassGenerator.getClassName(cellType)).append(arrVLStr)
-				.append(" convertArray(Object").append(arrVLStr).append(" array0, ")
-				.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" destArr0, Object converter)")
-				.appendln()
+		fnCode.append("private ").append(destType).append(destVLStr).append(" convertArray(Object").append(srcVLStr)
+				.append(" array0, ").append(destType).append(destVLStr)
+				.append(" destArr0, Object converter, boolean needThrow)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln();
 		fnCode.append("if (destArr0 == null)").appendln().append('{').appendln()
-				.append("return this.convertArray(array0, converter);").appendln().append('}')
+				.append("return this.convertArray(array0, converter, needThrow);").appendln().append('}')
 				.appendln();
 		fnCode.append("else if (destArr0.length < array0.length)").appendln().append('{').appendln()
-				.append(ClassGenerator.getClassName(cellType)).append(arrVLStr).append(" tmpArr = new ")
-				.append(ClassGenerator.getClassName(cellType)).append("[array0.length]")
-				.append(arrVLStr.substring(2)).append(';').appendln()
+				.append(destType).append(destVLStr).append(" tmpArr = new ")
+				.append(destType).append("[array0.length]").append(destVLStr.substring(2)).append(';').appendln()
 				.append("System.arraycopy(tmpArr, 0, destArr0, 0, destArr0.length);").appendln()
 				.append("destArr0 = tmpArr;").appendln().append('}').appendln();
-		appendConvertArrayCode(fnCode, cellType, arrVLStr.substring(2), tmpParam, 0, level,
-				wrapName, vcIndex, beanType, true);
+		appendConvertArrayCode(fnCode, cellType, srcVLStr.substring(2), destVLStr.substring(2),
+				tmpParam, 0, level, wrapName, vcIndex, beanType, true);
 		fnCode.append("return destArr0;").appendln().append('}');
 		cg.addMethod(fnCode.toString());
 	}
@@ -266,8 +392,8 @@ public class ArrayTool
 	/**
 	 * 生成数组类型转换的方法主体.
 	 */
-	private static void appendConvertArrayCode(StringAppender bodyCode, Class cellType, String arrVLStr, Map params,
-			int levelIndex, int arrayLevel, String wrapName, int vcIndex, boolean beanType, boolean hasDest)
+	private static void appendConvertArrayCode(StringAppender bodyCode, Class cellType, String srcVLStr, String destVLStr,
+			Map params, int levelIndex, int arrayLevel, String wrapName, int vcIndex, boolean beanType, boolean hasDest)
 	{
 		params.put("levelIndex", Integer.toString(levelIndex));
 		params.put("nextIndex", Integer.toString(levelIndex + 1));
@@ -277,7 +403,8 @@ public class ArrayTool
 		bodyCode.append('{').appendln();
 		if (levelIndex < arrayLevel - 1)
 		{
-			params.put("arrayDef", arrVLStr.substring(2));
+			params.put("destArrayDef", destVLStr.substring(2));
+			params.put("srcArrayDef", srcVLStr.substring(2));
 			if (hasDest)
 			{
 				BeanTool.codeRes.printRes("array2array_def_withDest", params, 0, bodyCode).appendln();
@@ -286,8 +413,8 @@ public class ArrayTool
 			{
 				BeanTool.codeRes.printRes("array2array_def", params, 0, bodyCode).appendln();
 			}
-			appendConvertArrayCode(bodyCode, cellType, arrVLStr.substring(2), params, levelIndex + 1, arrayLevel,
-					wrapName, vcIndex, beanType, hasDest);
+			appendConvertArrayCode(bodyCode, cellType, srcVLStr.substring(2), destVLStr.substring(2),
+					params, levelIndex + 1, arrayLevel, wrapName, vcIndex, beanType, hasDest);
 		}
 		else
 		{
@@ -332,6 +459,20 @@ public class ArrayTool
 	 */
 	public static Object wrapPrimitiveArray(int arrayLevel, Object array)
 	{
+		return wrapPrimitiveArray(arrayLevel, array, false);
+	}
+
+	/**
+	 * 将一个基本类型的数组转换成它的外覆类数组.
+	 *
+	 * @param arrayLevel  数组的维度等级
+	 * @param array       基本类型数组对象
+	 * @param needThrow   当给出的数组不是基本类型数组时, 是否要抛出异常
+	 * @return  转换成的外覆类数组, 如果给出的数组对象不是基本类型数组或
+	 *          数组的维度等级不正确, 则返回null
+	 */
+	public static Object wrapPrimitiveArray(int arrayLevel, Object array, boolean needThrow)
+	{
 		if (arrayLevel <= 0)
 		{
 			throw new IndexOutOfBoundsException("Error array level:" + arrayLevel + ".");
@@ -345,7 +486,13 @@ public class ArrayTool
 				paw = getPrimitiveArrayWrapper(levelObj);
 			}
 		}
-		return paw == null ? null : paw.doWrap(array);
+		Object result = paw == null ? null : paw.doWrap(array);
+		if (result == null && array != null && needThrow)
+		{
+			throw new CGException("The param array(" + ClassGenerator.getClassName(array.getClass())
+					+ "） isn't primitive array.");
+		}
+		return result;
 	}
 	private static PrimitiveArrayWrapper getPrimitiveArrayWrapper(Integer arrayLevel)
 	{
@@ -364,6 +511,7 @@ public class ArrayTool
 			Map tmpParam = new HashMap();
 			tmpParam.put("arrayObj", "obj");
 			tmpParam.put("arrayDef", arrVLStr);
+			tmpParam.put("arrayLevel", arrayLevel);
 			BeanTool.codeRes.printRes("checkAndConvertPrimitiveArrayType", tmpParam, 0, fnCode)
 					.appendln().append('}');
 			Iterator itr = BeanTool.primitiveWrapClass.keySet().iterator();
@@ -401,7 +549,7 @@ public class ArrayTool
 				.append(wrapType).append("[array0.length]")
 				.append(arrVLStr.substring(2)).append(';').appendln();
 		appendPrimitiveArrayWrapCode(fnCode, primitiveType, arrVLStr.substring(2), 0, level, wrapType);
-		fnCode.appendln().append("return wrapArr0;").appendln().append('}');
+		fnCode.append("return wrapArr0;").appendln().append('}');
 		cg.addMethod(fnCode.toString());
 	}
 
@@ -422,7 +570,8 @@ public class ArrayTool
 		bodyCode.append('{').appendln();
 		if (levelIndex < arrayLevel - 1)
 		{
-			tmpParam.put("arrayDef", arrVLStr.substring(2));
+			tmpParam.put("srcArrayDef", arrVLStr.substring(2));
+			tmpParam.put("destArrayDef", arrVLStr.substring(2));
 			BeanTool.codeRes.printRes("array2array_def", tmpParam, 0, bodyCode).appendln();
 			appendPrimitiveArrayWrapCode(bodyCode, primitiveType, arrVLStr.substring(2),
 					levelIndex + 1, arrayLevel, wrapType);
@@ -464,7 +613,7 @@ public class ArrayTool
 		}
 		try
 		{
-			return ac == null ? null : ac.convertArray(array, null);
+			return ac == null ? null : ac.convertArray(array, null, false);
 		}
 		catch (Exception ex)
 		{
@@ -531,7 +680,7 @@ public class ArrayTool
 
 		// 实现接口中不带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object converter)").appendln()
+		fnCode.append("public Object convertArray(Object array, Object converter, boolean needThrow)").appendln()
 				.append("      throws Exception").appendln().append('{').appendln()
 				.append("return this.convertArray((Object").append(arrVLStr).append(") array, converter);")
 				.appendln().append('}');
@@ -539,7 +688,8 @@ public class ArrayTool
 
 		// 实现接口中带目标数组的转换方法
 		fnCode = StringTool.createStringAppender();
-		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter)").appendln()
+		fnCode.append("public Object convertArray(Object array, Object destArr, Object converter, boolean needThrow)")
+				.appendln()
 				.append("      throws Exception").appendln().append('{').appendln()
 				.append("return null;").appendln().append('}');
 		cg.addMethod(fnCode.toString());
@@ -559,7 +709,8 @@ public class ArrayTool
 		bodyCode.append('{').appendln();
 		if (levelIndex < arrayLevel - 1)
 		{
-			params.put("arrayDef", arrVLStr.substring(2));
+			params.put("destArrayDef", arrVLStr.substring(2));
+			params.put("srcArrayDef", arrVLStr.substring(2));
 			BeanTool.codeRes.printRes("array2array_def", params, 0, bodyCode).appendln();
 			appendBeanArray2MapCode(bodyCode, arrVLStr.substring(2), params, levelIndex + 1, arrayLevel);
 		}

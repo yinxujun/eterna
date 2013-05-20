@@ -116,13 +116,13 @@ public class BooleanConverter extends ObjectConverter
 
 	public boolean convertToBoolean(String value, String[] trueValues)
 	{
-		Object tmpObj = this.changeByPropertyEditor(value);
-		if (tmpObj instanceof Boolean)
-		{
-			return ((Boolean) tmpObj).booleanValue();
-		}
 		if (trueValues == null)
 		{
+			Object tmpObj = this.changeByPropertyEditor(value);
+			if (tmpObj instanceof Boolean)
+			{
+				return ((Boolean) tmpObj).booleanValue();
+			}
 			return "true".equalsIgnoreCase(value) || "1".equals(value);
 		}
 		for (int i = 0; i < trueValues.length; i++)

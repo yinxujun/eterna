@@ -43,7 +43,7 @@ public class ProxyTool
 	 * @param method      需要创建方法调用代理的目标方法
 	 * @return  方法调用的代理
 	 */
-   public static MethodProxy createMethodProxy(Method method)
+	public static MethodProxy createMethodProxy(Method method)
 			throws CGException
 	{
 		return createMethodProxy(method, true);
@@ -56,17 +56,17 @@ public class ProxyTool
 	 * @param paramCheck  是否需要检查参数类型
 	 * @return  方法调用的代理
 	 */
-   public static MethodProxy createMethodProxy(Method method, boolean paramCheck)
+	public static MethodProxy createMethodProxy(Method method, boolean paramCheck)
 			throws CGException
 	{
-      Class c = method.getDeclaringClass();
-      MethodProxy proxy = getCachedMethodProxy(c, method, paramCheck);
+		Class c = method.getDeclaringClass();
+		MethodProxy proxy = getCachedMethodProxy(c, method, paramCheck);
 		if (proxy != null)
 		{
 			return proxy;
 		}
 		// 判断目标类是否在当前ClassLoader或子ClassLoader中
-      boolean subClass = checkClassLoader(c.getClassLoader());
+		boolean subClass = checkClassLoader(c.getClassLoader());
 		if (subClass)
 		{
 			if (Modifier.isPrivate(method.getModifiers()))
@@ -122,7 +122,7 @@ public class ProxyTool
 		boolean staticMethod = Modifier.isStatic(method.getModifiers());
 		Class[] params = method.getParameterTypes();
 
-      ClassGenerator cg = new ClassGenerator();
+		ClassGenerator cg = new ClassGenerator();
 		cg.setClassLoader(useThisClassLoader ? MethodProxy.class.getClassLoader() : c.getClassLoader());
 		String namePrefix = c.getName();
 		if (namePrefix.startsWith("java."))
@@ -205,11 +205,11 @@ public class ProxyTool
 		Map returnCodeParams = new HashMap();
 		if (staticMethod)
 		{
-         returnCodeParams.put("target", ClassGenerator.getClassName(c));
+			returnCodeParams.put("target", ClassGenerator.getClassName(c));
 		}
 		else
 		{
-         returnCodeParams.put("target", "((" + ClassGenerator.getClassName(c) + ") target)");
+			returnCodeParams.put("target", "((" + ClassGenerator.getClassName(c) + ") target)");
 		}
 		returnCodeParams.put("method", method.getName());
 		StringAppender paramsBuf = StringTool.createStringAppender(params.length * 8);
@@ -282,12 +282,12 @@ public class ProxyTool
 	 */
 	private static MethodProxy getCachedMethodProxy(Class c, Method method, boolean paramCheck)
 	{
-      Map methodCache = (Map) methodProxyCache.getProperty(c);
+		Map methodCache = (Map) methodProxyCache.getProperty(c);
 		if (methodCache == null)
 		{
 			return null;
 		}
-      MethodProxyKey key = new MethodProxyKey(method.getName(), paramCheck, method.getParameterTypes());
+		MethodProxyKey key = new MethodProxyKey(method.getName(), paramCheck, method.getParameterTypes());
 		return (MethodProxy) methodCache.get(key);
 	}
 
@@ -296,13 +296,13 @@ public class ProxyTool
 	 */
 	private static void putMethodProxy(Class c, Method method, boolean paramCheck, MethodProxy proxy)
 	{
-      Map methodCache = (Map) methodProxyCache.getProperty(c);
+		Map methodCache = (Map) methodProxyCache.getProperty(c);
 		if (methodCache == null)
 		{
 			methodCache = new HashMap();
 			methodProxyCache.setProperty(c, methodCache);
 		}
-      MethodProxyKey key = new MethodProxyKey(method.getName(), paramCheck, method.getParameterTypes());
+		MethodProxyKey key = new MethodProxyKey(method.getName(), paramCheck, method.getParameterTypes());
 		methodCache.put(key, proxy);
 	}
 
@@ -314,10 +314,10 @@ public class ProxyTool
 	/**
 	 * 方法调用代理存放的键值.
 	 */
-   static class MethodProxyKey
+	static class MethodProxyKey
 	{
-      private String methodName;
-      private boolean paramCheck;
+		private String methodName;
+		private boolean paramCheck;
 		private Class[] params;
 		public MethodProxyKey(String methodName, boolean paramCheck, Class[] params)
 		{
@@ -333,8 +333,8 @@ public class ProxyTool
 				MethodProxyKey key = (MethodProxyKey) obj;
 				if (this.methodName.equals(key.methodName) && this.paramCheck == key.paramCheck)
 				{
-               Class[] params1 = this.params;
-               Class[] params2 = key.params;
+					Class[] params1 = this.params;
+					Class[] params2 = key.params;
 					if (params1.length == params2.length)
 					{
 						for (int i = 0; i < params1.length; i++)
@@ -353,8 +353,14 @@ public class ProxyTool
 
 		public int hashCode()
 		{
-			return this.methodName.hashCode() ^ this.params.length ^ (this.paramCheck ? 1231 : 1237);
+			if (this.hash == -1)
+			{
+				this.hash = ("method:".concat(this.methodName).hashCode()) ^ (this.params.length << 12)
+						^ (this.paramCheck ? 1231 : 1237);
+			}
+			return this.hash;
 		}
+		private int hash = -1;
 
 	}
 
@@ -366,7 +372,7 @@ public class ProxyTool
 	/**
 	 * 基本类型需要检查的类型的对应表.
 	 */
-   static final Map primitiveCheckCache = new HashMap();
+	static final Map primitiveCheckCache = new HashMap();
 
 	/**
 	 * 代码段资源.

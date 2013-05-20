@@ -496,20 +496,20 @@ if (${src}${levelIndex}[i${levelIndex}] != null)
 
 # 数组转换中对数组中间段进行赋值的代码片断
 ## array2array_def
-${srcType}[]${arrayDef} ${src}${nextIndex} = ${src}${levelIndex}[i${levelIndex}];
-${destType}[]${arrayDef} ${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${arrayDef};
+${srcType}[]${srcArrayDef} ${src}${nextIndex} = ${src}${levelIndex}[i${levelIndex}];
+${destType}[]${destArrayDef} ${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${destArrayDef};
 
 # 数组转换中对数组中间段进行赋值的代码片断 包含对目标数组长度的判断
 ## array2array_def_withDest
-${srcType}[]${arrayDef} ${src}${nextIndex} = ${src}${levelIndex}[i${levelIndex}];
-${destType}[]${arrayDef} ${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}];
+${srcType}[]${srcArrayDef} ${src}${nextIndex} = ${src}${levelIndex}[i${levelIndex}];
+${destType}[]${destArrayDef} ${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}];
 if (${dest}${nextIndex} == null)
 {
-	${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${arrayDef};
+	${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${destArrayDef};
 }
 else if (${dest}${nextIndex}.length < ${src}${nextIndex}.length)
 {
-	${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${arrayDef};
+	${dest}${levelIndex}[i${levelIndex}] = new ${destType}[${src}${nextIndex}.length]${destArrayDef};
 	System.arraycopy(${dest}${levelIndex}[i${levelIndex}], 0, ${dest}${nextIndex}, 0, ${dest}${nextIndex}.length);
 	${dest}${nextIndex} = ${dest}${levelIndex}[i${levelIndex}];
 }
@@ -517,88 +517,111 @@ else if (${dest}${nextIndex}.length < ${src}${nextIndex}.length)
 
 # 判断是否为基本类型的数组类型并转换成外覆类型
 ## checkAndConvertPrimitiveArrayType
-if (${arrayObj} instanceof int${arrayDef})
-{
-	int${arrayDef} tmpArr = (int${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof byte${arrayDef})
-{
-	byte${arrayDef} tmpArr = (byte${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof double${arrayDef})
-{
-	double${arrayDef} tmpArr = (double${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof boolean${arrayDef})
-{
-	boolean${arrayDef} tmpArr = (boolean${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof long${arrayDef})
-{
-	long${arrayDef} tmpArr = (long${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof char${arrayDef})
-{
-	char${arrayDef} tmpArr = (char${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof float${arrayDef})
-{
-	float${arrayDef} tmpArr = (float${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else if (${arrayObj} instanceof short${arrayDef})
-{
-	short${arrayDef} tmpArr = (short${arrayDef}) ${arrayObj};
-	return this.wrapArray(tmpArr);
-}
-else
+if (${arrayObj} == null)
 {
 	return null;
 }
+String cName = ${arrayObj}.getClass().getName();
+int length = cName.length();
+if (length == ${arrayLevel} + 1)
+{
+	char flag = cName.charAt(${arrayLevel});
+	if (flag != ';')
+	{
+		if (flag < 'I')
+		{
+			// B byte C char F float D dougle
+			if (flag == 'D')
+			{
+				double${arrayDef} tmpArr = (double${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'B')
+			{
+				byte${arrayDef} tmpArr = (byte${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'C')
+			{
+				char${arrayDef} tmpArr = (char${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'F')
+			{
+				float${arrayDef} tmpArr = (float${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+		}
+		else
+		{
+			// I int J long S short Z boolean
+			if (flag == 'I')
+			{
+				int${arrayDef} tmpArr = (int${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'Z')
+			{
+				boolean${arrayDef} tmpArr = (boolean${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'J')
+			{
+				long${arrayDef} tmpArr = (long${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+			else if (flag == 'S')
+			{
+				short${arrayDef} tmpArr = (short${arrayDef}) ${arrayObj};
+				return this.wrapArray(tmpArr);
+			}
+		}
+	}
+}
+return null;
 
 # 将数组转换成需要的数组类型
 ## convertArrayType
-if (${arrayObj} instanceof ${cellType}${arrayDef})
+if (${arrayObj} instanceof ${destType}${destArrayDef})
 {
 	return ${arrayObj};
 }
-else if (${arrayObj} instanceof Object${arrayDef})
+else if (${arrayObj} instanceof Object${srcArrayDef})
 {
-	return this.convertArray((Object${arrayDef}) ${arrayObj}, ${converter});
+	return this.convertArray((Object${srcArrayDef}) ${arrayObj}, ${converter}, ${needThrow});
 }
 else
 {
-	Object${arrayDef} tmpArr = (Object${arrayDef}) ArrayTool.wrapPrimitiveArray(${arrayLevel}, ${arrayObj});
+	Object${srcArrayDef} tmpArr = (Object${srcArrayDef}) ArrayTool.wrapPrimitiveArray(${arrayLevel}, ${arrayObj});
 	if (tmpArr != null)
 	{
-		return this.convertArray(tmpArr, ${converter});
+		return this.convertArray(tmpArr, ${converter}, ${needThrow});
 	}
 }
 return null;
 
 # 将数组转换成需要的数组类型 需要将元素值赋值到目标数组中
 ## convertArrayType.withDest
-if (${arrayObj} instanceof ${cellType}${arrayDef} && ${destArr} == null)
+if (${arrayObj} instanceof ${destType}${destArrayDef} && ${destArr} == null)
 {
+	// 如果${destArr}不为null, 则会在后面两个else子句中执行
 	return ${arrayObj};
 }
-else if (${arrayObj} instanceof Object${arrayDef})
+else if (${arrayObj} instanceof Object${srcArrayDef})
 {
-	return this.convertArray((Object${arrayDef}) ${arrayObj}, (${cellType}${arrayDef}) ${destArr}, ${converter});
+	return this.convertArray((Object${srcArrayDef}) ${arrayObj}, (${destType}${destArrayDef}) ${destArr}, ${converter}, ${needThrow});
 }
 else
 {
-	Object${arrayDef} tmpArr = (Object${arrayDef}) ArrayTool.wrapPrimitiveArray(${arrayLevel}, ${arrayObj});
+	Object${srcArrayDef} tmpArr = (Object${srcArrayDef}) ArrayTool.wrapPrimitiveArray(${arrayLevel}, ${arrayObj});
 	if (tmpArr != null)
 	{
-		return this.convertArray(tmpArr, (${cellType}${arrayDef}) ${destArr}, ${converter});
+		return this.convertArray(tmpArr, (${destType}${destArrayDef}) ${destArr}, ${converter}, ${needThrow});
 	}
+}
+if (${needThrow})
+{
+	return null;
 }
 return ${destArr};
 
@@ -673,7 +696,6 @@ else if (tmpObj instanceof ResultRow)
 }
 else if (BeanTool.checkBean(tmpObj.getClass()))
 {
-
 	${cellType} tb = ${dest}${levelIndex}[i${levelIndex}] == null ? new ${cellType}() : ${dest}${levelIndex}[i${levelIndex}];
 	BeanMap _beanMap = BeanTool.getBeanMap(tmpObj);
 	_beanMap.setBean2Map(true);
@@ -698,6 +720,10 @@ else if (${converter} instanceof ValueConverter)
 		}
 	}
 }
+else if (${needThrow} && tmpObj != null)
+{
+	throw new ClassCastException("Can't cast [" + tmpObj + "](" + tmpObj.getClass() + ") to (${cellType}).");
+}
 
 # 数组中的元素类型转换成map
 ## arrayCell.convert.map
@@ -707,13 +733,17 @@ ${dest}${levelIndex}[i${levelIndex}] = _beanMap;
 
 # 数组中的元素类型对无法转换的类型进行判断并转换
 ## arrayCell.convert.other
-if (${src}${levelIndex}[i${levelIndex}] instanceof ${cellType})
+Object tmpObj = ${src}${levelIndex}[i${levelIndex}];
+if (tmpObj instanceof ${cellType})
 {
-	${dest}${levelIndex}[i${levelIndex}] = (${cellType}) ${src}${levelIndex}[i${levelIndex}];
+	${dest}${levelIndex}[i${levelIndex}] = (${cellType}) tmpObj;
 }
 else if (${converter} instanceof ValueConverter)
 {
-	${dest}${levelIndex}[i${levelIndex}] = (${cellType}) ((ValueConverter) ${converter})
-			.convert(${src}${levelIndex}[i${levelIndex}]);
+	${dest}${levelIndex}[i${levelIndex}] = (${cellType}) ((ValueConverter) ${converter}).convert(tmpObj);
+}
+else if (${needThrow} && tmpObj != null)
+{
+	throw new ClassCastException("Can't cast [" + tmpObj + "](" + tmpObj.getClass() + ") to (${cellType}).");
 }
 
