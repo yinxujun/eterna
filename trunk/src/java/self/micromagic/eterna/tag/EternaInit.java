@@ -55,7 +55,7 @@ public class EternaInit extends InitBaseTag
 	 */
 	public static final String PARAM_DEBUF_FLAG = "___debug";
 
-   /**
+	/**
 	 * 初始化的JS脚本.
 	 */
 	private static final String INIT_JS;
@@ -133,7 +133,7 @@ public class EternaInit extends InitBaseTag
 			{
 				out.println("</head>");
 				out.println("<body>");
-            if (!StringTool.isEmpty(this.includeBegin))
+				if (!StringTool.isEmpty(this.includeBegin))
 				{
 					this.pageContext.include(this.includeBegin);
 				}
@@ -151,7 +151,7 @@ public class EternaInit extends InitBaseTag
 			}
 			if (this.printHTML == PRINT_HTML_ALL)
 			{
-            if (!StringTool.isEmpty(this.includeEnd))
+				if (!StringTool.isEmpty(this.includeEnd))
 				{
 					this.pageContext.include(this.includeEnd);
 				}
@@ -199,7 +199,7 @@ public class EternaInit extends InitBaseTag
 		}
 		else if (!this.checkDebugStr(debug))
 		{
-         debug = "0";
+			debug = "0";
 		}
 		out.println("var eterna_debug = " + debug + ";");
 		out.println("var _eterna;");
@@ -210,7 +210,7 @@ public class EternaInit extends InitBaseTag
 	 */
 	private boolean checkDebugStr(String debug)
 	{
-      if (debug.length() > 2 && debug.charAt(0) == '0' && Character.toLowerCase(debug.charAt(1)) == 'x')
+		if (debug.length() > 2 && debug.charAt(0) == '0' && Character.toLowerCase(debug.charAt(1)) == 'x')
 		{
 			try
 			{

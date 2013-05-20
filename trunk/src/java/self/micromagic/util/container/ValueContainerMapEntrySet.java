@@ -100,7 +100,7 @@ class ValueContainerMapEntrySet extends AbstractSet
 		Map tmpMap = null;
 		if ((tmpMap = this.entryMap) == null)
 		{
-			return this.vcm.get(key) != null;
+			return this.vcm.containsKey(key);
 		}
 		else
 		{
@@ -131,7 +131,14 @@ class ValueContainerMapEntrySet extends AbstractSet
 			else
 			{
 				Object value = this.vContainer.getValue(entry.getKey());
-				return Utility.objectEquals(value, entry.getValue());
+				if (value != null)
+				{
+					return value.equals(entry.getValue());
+				}
+				else if (entry.getValue() == null)
+				{
+					return this.vContainer.containsKey(entry.getKey());
+				}
 			}
 		}
 		return false;

@@ -58,7 +58,7 @@ public class ExportCSV extends AbstractExportExecute
 			HttpServletResponse response = data.getHttpServletResponse();
 			if (!saveExport && response != null)
 			{
-				response.setContentType("application/excel");
+				response.setContentType("text/csv; charset=" + this.encodeName);
 				response.setHeader("Content-disposition", "attachment; filename="
 						+ Utils.dealString2URL(this.getFileName(data) + ".csv", this.fileNameEncode));
 				out = new OutputStreamWriter(data.getOutputStream(), this.encodeName);
@@ -66,9 +66,9 @@ public class ExportCSV extends AbstractExportExecute
 			else
 			{
 				MemoryStream ms = new MemoryStream(1, 1024 * 4);
-				out = new OutputStreamWriter(data.getOutputStream(), this.encodeName);
+				out = new OutputStreamWriter(ms.getOutputStream(), this.encodeName);
 				Map raMap = data.getRequestAttributeMap();
-				raMap.put(DOWNLOAD_CONTENTTYPE, "application/excel");
+				raMap.put(DOWNLOAD_CONTENTTYPE, "text/csv; charset=" + this.encodeName);
 				raMap.put(DOWNLOAD_FILENAME, Utils.dealString2URL(this.getFileName(data) + ".csv", this.fileNameEncode));
 				raMap.put(DOWNLOAD_STREAM, ms.getInputStream());
 			}
@@ -85,10 +85,7 @@ public class ExportCSV extends AbstractExportExecute
 				// 这里可能是需要接管数据库链接, 所以使用完后需要自行释放
 				ritr.close();
 			}
-			if (out != null)
-			{
-				out.close();
-			}
+			this.closeOutput(out);
 		}
 		return null;
 	}

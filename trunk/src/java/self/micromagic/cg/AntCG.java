@@ -65,6 +65,15 @@ public class AntCG
 	private static final String ANT_TOOL_CONFIG_PREFIX = "self.micromagic.compile.ant.";
 
 	/**
+	 * 配置文件中对ant产生的相关文件是否要放到一个通过UID生成的路径中.
+	 * 一般来说, 使用ant进行编译是在测试环境中, 只会运行在一个jvm中, 但如果需要运行多个jvm
+	 * 而编译路径设置的一样, 那就会发生冲突, 可以通过这个设置将各个jvm的编译的路径设置到
+	 * 通过UID设成的唯一目录下.
+	 * 默认值为: false.
+	 */
+	public static final String ANT_TOOL_UID_PATH_PROPERTY = "self.micromagic.compile.ant.uidPath";
+
+	/**
 	 * 使用ant生成一个类.
 	 */
 	public Class createClass(ClassGenerator cg)
@@ -281,7 +290,7 @@ public class AntCG
 		{
 			srcPath = System.getProperty("java.io.tmpdir");
 		}
-		return srcPath;
+		return resolvePath(srcPath);
 	}
 
 	/**
@@ -294,8 +303,31 @@ public class AntCG
 		{
 			destPath = System.getProperty("java.io.tmpdir");
 		}
-		return destPath;
+		return resolvePath(destPath);
 	}
+
+	/**
+	 * 根据ANT_TOOL_UID_PATH_PROPERTY设置的值来判断是否需要加上唯一的路径.
+	 *
+	 * @see #ANT_TOOL_UID_PATH_PROPERTY
+	 */
+	private static String resolvePath(String path)
+	{
+		String addUID = Utility.getProperty(ANT_TOOL_UID_PATH_PROPERTY);
+		if (addUID == null)
+		{
+			return path;
+		}
+		if ("true".equalsIgnoreCase(addUID))
+		{
+			return (new File(path, uidPath)).getPath();
+		}
+		else
+		{
+			return path;
+		}
+	}
+	private static String uidPath = Utility.getUID();
 
 	/**
 	 * 获得使用的编译器名称.

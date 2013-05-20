@@ -17,12 +17,10 @@
 package self.micromagic.eterna.model;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +35,7 @@ import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
 import self.micromagic.cg.ClassGenerator;
 import self.micromagic.cg.ClassKeyCache;
+import self.micromagic.cg.ArrayTool;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.eterna.model.impl.AbstractExecute;
 import self.micromagic.eterna.search.SearchAdapter;
@@ -167,7 +166,7 @@ public class AppDataLogExecute extends AbstractExecute
 	 */
 	public static synchronized void registerBeanPrinter(Class beanClass, BeanPrinter p)
 	{
-      if (beanClass != null && p != null)
+		if (beanClass != null && p != null)
 		{
 			beanPrinterCache.setProperty(beanClass, p);
 		}
@@ -311,7 +310,7 @@ public class AppDataLogExecute extends AbstractExecute
 		private void printMap(Element parent, Map map)
 				throws Exception
 		{
-			parent.addAttribute("count", String.valueOf(map.entrySet().size()));
+			parent.addAttribute("count", Integer.toString(map.entrySet().size()));
 			Iterator entrys = map.entrySet().iterator();
 			while (entrys.hasNext())
 			{
@@ -324,10 +323,64 @@ public class AppDataLogExecute extends AbstractExecute
 			}
 		}
 
+		/**
+		 * 输出一个对象数组.
+		 */
+		private void printObjectArray(Element parent, Object[] array)
+				throws Exception
+		{
+			parent.addAttribute("count", Integer.toString(array.length));
+			for (int i = 0; i < array.length; i++)
+			{
+				Element vNode = parent.addElement("value");
+				vNode.addAttribute("index", Integer.toString(i));
+				this.printObject(vNode, array[i]);
+			}
+		}
+
+		/**
+		 * 输出一个外覆类数组.
+		 */
+		private void printWrapperArray(Element parent, Object[] array)
+				throws Exception
+		{
+			parent.addAttribute("count", Integer.toString(array.length));
+			String type = null;
+			String className = null;
+			for (int i = 0; i < array.length; i++)
+			{
+				Element vNode = parent.addElement("value");
+				vNode.addAttribute("index", Integer.toString(i));
+				Object value = array[i];
+				if (type == null)
+				{
+					if (value instanceof Boolean)
+					{
+						type = "boolean";
+					}
+					else if (value instanceof Number)
+					{
+						type = "number";
+						className = ClassGenerator.getClassName(value.getClass());
+					}
+					else
+					{
+						type = "char";
+					}
+				}
+				vNode.addAttribute("type", type);
+				if (className != null)
+				{
+					parent.addAttribute("class", ClassGenerator.getClassName(value.getClass()));
+				}
+				parent.addAttribute("value", String.valueOf(value));
+			}
+		}
+
 		private void printCollection(Element parent, Collection collection)
 				throws Exception
 		{
-			parent.addAttribute("count", String.valueOf(collection.size()));
+			parent.addAttribute("count", Integer.toString(collection.size()));
 			if (collection.size() > 0)
 			{
 				int index = 0;
@@ -335,7 +388,7 @@ public class AppDataLogExecute extends AbstractExecute
 				while (itr.hasNext())
 				{
 					Element vNode = parent.addElement("value");
-					vNode.addAttribute("index", String.valueOf(index));
+					vNode.addAttribute("index", Integer.toString(index));
 					this.printObject(vNode, itr.next());
 					index++;
 				}
@@ -348,7 +401,7 @@ public class AppDataLogExecute extends AbstractExecute
 			parent.addAttribute("type", "ResultRow");
 			ResultMetaData rmd = row.getResultIterator().getMetaData();
 			int count = rmd.getColumnCount();
-			parent.addAttribute("columnCount", String.valueOf(count));
+			parent.addAttribute("columnCount", Integer.toString(count));
 			for (int i = 1; i <= count; i++)
 			{
 				if (rmd.getColumnReader(i).isValid())
@@ -366,7 +419,7 @@ public class AppDataLogExecute extends AbstractExecute
 		{
 			parent.addAttribute("type", "ResultIterator");
 			int rowCount = ritr.getRecordCount();
-			parent.addAttribute("rowCount", String.valueOf(rowCount));
+			parent.addAttribute("rowCount", Integer.toString(rowCount));
 			int printCount = 5;
 			if (rowCount < printCount)
 			{
@@ -378,7 +431,7 @@ public class AppDataLogExecute extends AbstractExecute
 				if (row != null)
 				{
 					Element vNode = parent.addElement("value");
-					vNode.addAttribute("index", String.valueOf(i + 1));
+					vNode.addAttribute("index", Integer.toString(i + 1));
 					printResultRow(vNode, row);
 				}
 			}
@@ -399,7 +452,7 @@ public class AppDataLogExecute extends AbstractExecute
 			while (hasNext.value)
 			{
 				Element vNode = parent.addElement("value");
-				vNode.addAttribute("index", String.valueOf(index - 1));
+				vNode.addAttribute("index", Integer.toString(index - 1));
 				this.printObject(vNode, obj);
 				obj = itr.prefetch(++index, hasNext);
 			}
@@ -465,12 +518,12 @@ public class AppDataLogExecute extends AbstractExecute
 			{
 				parent.addAttribute("type", "SearchAdapter.Result");
 				SearchAdapter.Result result = (SearchAdapter.Result) value;
-				parent.addAttribute("pageNum", String.valueOf(result.pageNum));
-				parent.addAttribute("pageSize", String.valueOf(result.pageSize));
+				parent.addAttribute("pageNum", Integer.toString(result.pageNum));
+				parent.addAttribute("pageSize", Integer.toString(result.pageSize));
 				parent.addAttribute("searchName", result.searchName);
 				if (result.queryResult.isRealRecordCountAvailable())
 				{
-					parent.addAttribute("totalCount", String.valueOf(result.queryResult.getRealRecordCount()));
+					parent.addAttribute("totalCount", Integer.toString(result.queryResult.getRealRecordCount()));
 				}
 				if (result.singleOrderName != null)
 				{
@@ -577,28 +630,29 @@ public class AppDataLogExecute extends AbstractExecute
 				vNode.addAttribute("key", tKey);
 				this.printObject(vNode, tValue);
 			}
-			else if (value.getClass().isArray())
+			else if (ClassGenerator.isArray(value.getClass()))
 			{
 				parent.addAttribute("type", "Array");
 				if (this.checkAndPush(parent, value))
 				{
-					if (value.getClass().getComponentType().isPrimitive())
+					char flag = value.getClass().getName().charAt(1);
+					if (flag == 'L' || flag == '[')
 					{
-						// 如果是基本类型, 需要以反射的方式获取每个元素
-						int length = Array.getLength(value);
-						ArrayList arr = new ArrayList(length);
-						for (int i = 0; i < length; i++)
-						{
-							arr.add(Array.get(value, i));
-						}
-						this.printCollection(parent, arr);
+						this.printObjectArray(parent, (Object[]) value);
 					}
 					else
 					{
-						this.printCollection(parent, Arrays.asList((Object[]) value));
+						// 如果是基本类型, 则转成外覆类
+						Object[] tmpArr = (Object[]) ArrayTool.wrapPrimitiveArray(1, value);
+						this.printWrapperArray(parent, tmpArr);
 					}
 					this.pop();
 				}
+			}
+			else if (value instanceof Character)
+			{
+				parent.addAttribute("type", "Character");
+				parent.addAttribute("value", String.valueOf(value));
 			}
 			else
 			{

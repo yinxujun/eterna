@@ -922,7 +922,7 @@ public class PropertiesManager
 	 * 如果需要使用则可将这个变量设为true, 否则默认值为false,
 	 * 表示使用软引用.
 	 */
- 	public static boolean weakRefMember = false;
+	public static boolean weakRefMember = false;
 
 	/**
 	 * 单个属性的管理器, 给默认的配置变化监听者使用.

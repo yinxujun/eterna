@@ -665,7 +665,7 @@ public class FactoryManager
 		{
 			return false;
 		}
-      return instanceMap.remove(factoryManager.getId()) != null;
+		return instanceMap.remove(factoryManager.getId()) != null;
 	}
 
 	/**

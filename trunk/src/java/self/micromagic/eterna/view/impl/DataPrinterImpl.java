@@ -159,21 +159,62 @@ public class DataPrinterImpl extends AbstractGenerator
 		{
 			this.printEnumeration(out, (Enumeration) value);
 		}
-		else if (value instanceof Object[])
+		else if (ClassGenerator.isArray(value.getClass()))
 		{
-			this.print(out, (Object[]) value);
-		}
-		else if (value instanceof int[])
-		{
-			this.print(out, (int[]) value);
-		}
-		else if (value instanceof byte[])
-		{
-			this.print(out, (byte[]) value);
-		}
-		else if (value instanceof double[])
-		{
-			this.print(out, (double[]) value);
+			char flag = value.getClass().getName().charAt(1);
+			if (flag == 'L' || flag == '[')
+			{
+				// Object array
+				this.print(out, (Object[]) value);
+			}
+			else if (flag < 'I')
+			{
+				// B byte C char F float D dougle
+				if (flag == 'D')
+				{
+					this.print(out, (double[]) value);
+				}
+				else if (flag == 'B')
+				{
+					this.print(out, (byte[]) value);
+				}
+				else if (flag == 'C')
+				{
+					this.print(out, (char[]) value);
+				}
+				else if (flag == 'F')
+				{
+					this.print(out, (float[]) value);
+				}
+				else
+				{
+					throw new Error("Error class:" + value.getClass().getName() + ".");
+				}
+			}
+			else
+			{
+				// I int J long S short Z boolean
+				if (flag == 'I')
+				{
+					this.print(out, (int[]) value);
+				}
+				else if (flag == 'Z')
+				{
+					this.print(out, (boolean[]) value);
+				}
+				else if (flag == 'J')
+				{
+					this.print(out, (long[]) value);
+				}
+				else if (flag == 'S')
+				{
+					this.print(out, (short[]) value);
+				}
+				else
+				{
+					throw new Error("Error class:" + value.getClass().getName() + ".");
+				}
+			}
 		}
 		else if (value instanceof Date)
 		{
@@ -191,14 +232,6 @@ public class DataPrinterImpl extends AbstractGenerator
 			Date d = ((Calendar) value).getTime();
 			this.print(out, this.dateFormat.format(d));
 		}
-		else if (value instanceof boolean[])
-		{
-			this.print(out, (boolean[]) value);
-		}
-		else if (value instanceof long[])
-		{
-			this.print(out, (long[]) value);
-		}
 		else if (value instanceof Map.Entry)
 		{
 			Map.Entry entry = (Map.Entry) value;
@@ -209,18 +242,6 @@ public class DataPrinterImpl extends AbstractGenerator
 			out.write(",\"value\":");
 			this.print(out, tValue);
 			out.write('}');
-		}
-		else if (value instanceof char[])
-		{
-			this.print(out, (char[]) value);
-		}
-		else if (value instanceof float[])
-		{
-			this.print(out, (float[]) value);
-		}
-		else if (value instanceof short[])
-		{
-			this.print(out, (short[]) value);
 		}
 		else
 		{
@@ -318,11 +339,11 @@ public class DataPrinterImpl extends AbstractGenerator
 				}
 				this.stringCoder.toJsonString(out, rmd.getColumnName(i));
 				out.write("\":");
-				out.write(String.valueOf(i));
+				out.write(Integer.toString(i));
 			}
 		}
 		out.write("},rowCount:");
-		out.write(String.valueOf(ritr.getRecordCount()));
+		out.write(Integer.toString(ritr.getRecordCount()));
 		out.write(",rows:[");
 		boolean nextRow = false;
 		while (ritr.hasNext())

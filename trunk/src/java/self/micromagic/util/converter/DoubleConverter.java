@@ -116,15 +116,15 @@ public class DoubleConverter extends ObjectConverter
 		{
 			return 0;
 		}
-		Object tmpObj = this.changeByPropertyEditor(value);
-		if (tmpObj instanceof Double)
-		{
-			return ((Double) tmpObj).doubleValue();
-		}
 		try
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof Double)
+				{
+					return ((Double) tmpObj).doubleValue();
+				}
 				return Double.parseDouble(value);
 			}
 			else

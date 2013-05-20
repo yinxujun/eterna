@@ -117,15 +117,15 @@ public class IntegerConverter extends ObjectConverter
 		{
 			return 0;
 		}
-		Object tmpObj = this.changeByPropertyEditor(value);
-		if (tmpObj instanceof Integer)
-		{
-			return ((Integer) tmpObj).intValue();
-		}
 		try
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof Integer)
+				{
+					return ((Integer) tmpObj).intValue();
+				}
 				return Integer.parseInt(value);
 			}
 			else

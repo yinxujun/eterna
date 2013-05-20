@@ -328,16 +328,24 @@ public class BeanTool
 						.append("		throws Exception").appendln().append('{').toString();
 				endCode = "}";
 				String bodyCode = "return new " + ClassGenerator.getClassName(beanClass) + "();";
-				BeanPropertyReader tmpBPR;
-				tmpBPR = (BeanPropertyReader) createPropertyProcesser("P_init",
-						beanClass, UnitProcesser.BeanProperty.class, BeanPropertyReader.class,
-						beginCode, bodyCode, endCode, imports);
-				((UnitProcesser.BeanProperty) tmpBPR).setMember(beanClass.getConstructor(new Class[0]));
-				CellDescriptor tmpBMC = new CellDescriptor();
-				tmpBMC.setName("<init>");
-				tmpBMC.setReadProcesser(tmpBPR);
-				tmpBMC.setCellType(beanClass);
-				tmpBMC.setBeanType(true);
+				CellDescriptor tmpBMC = null;
+				try
+				{
+					BeanPropertyReader tmpBPR = (BeanPropertyReader) createPropertyProcesser("P_init",
+							beanClass, UnitProcesser.BeanProperty.class, BeanPropertyReader.class,
+							beginCode, bodyCode, endCode, imports);
+					((UnitProcesser.BeanProperty) tmpBPR).setMember(beanClass.getConstructor(new Class[0]));
+					tmpBMC = new CellDescriptor();
+					tmpBMC.setName("<init>");
+					tmpBMC.setReadProcesser(tmpBPR);
+					tmpBMC.setCellType(beanClass);
+					tmpBMC.setBeanType(true);
+				}
+				catch (RuntimeException ex)
+				{
+					throw ex;
+				}
+				catch (Throwable ex) {}
 
 				bd = new BeanDescriptor(beanClass, psInfo, tmpBMC);
 			}
@@ -838,7 +846,7 @@ public class BeanTool
 	static Object createPropertyProcesser(String suffix, Class beanClass, Class interfaceClass,
 			String beginCode, String bodyCode, String endCode, String[] imports)
 	{
-      return createPropertyProcesser(suffix, beanClass, null, interfaceClass,
+		return createPropertyProcesser(suffix, beanClass, null, interfaceClass,
 				beginCode, bodyCode, endCode, imports);
 	}
 

@@ -84,6 +84,11 @@ public class TimeConverter extends ObjectConverter
 		{
 			return this.convertToTime((String) value, format);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof java.sql.Time)
+		{
+			return (java.sql.Time) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -111,6 +116,11 @@ public class TimeConverter extends ObjectConverter
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof java.sql.Time)
+				{
+					return (java.sql.Time) tmpObj;
+				}
 				return new java.sql.Time(FormatTool.parseTime(value).getTime());
 			}
 			else

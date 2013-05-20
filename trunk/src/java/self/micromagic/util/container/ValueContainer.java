@@ -19,12 +19,22 @@ package self.micromagic.util.container;
 import java.util.Iterator;
 import java.util.Enumeration;
 
+/**
+ * 一个数据容器, 可通过这个容器方便得构造一个map对象.
+ *
+ * @see ValueContainerMap
+ */
 public interface ValueContainer
 {
 	/**
 	 * Get the value at the key.
 	 */
 	Object getValue(Object key);
+
+	/**
+	 * Check this container contains the key.
+	 */
+	boolean containsKey(Object key);
 
 	/**
 	 * Set the value to the key.

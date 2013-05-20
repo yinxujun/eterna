@@ -29,17 +29,19 @@ public interface ArrayConverter
 	 * @param array      需要被转换的数组
 	 * @param destArr    目标数组对象
 	 * @param converter  类型转换器, 可以是BeanMap或ValueConverter
+	 * @param needThrow  当给出的数组不是基本类型数组时, 是否要抛出异常
 	 * @return  转换后的数组
 	 */
-	Object convertArray(Object array, Object destArr, Object converter) throws Exception;
+	Object convertArray(Object array, Object destArr, Object converter, boolean needThrow) throws Exception;
 
 	/**
 	 * 处理数组类型的转换.
 	 *
 	 * @param array      需要被转换的数组
 	 * @param converter  类型转换器, 可以是BeanMap或ValueConverter
+	 * @param needThrow  当给出的数组不是基本类型数组时, 是否要抛出异常
 	 * @return  转换后的数组
 	 */
-	Object convertArray(Object array, Object converter) throws Exception;
+	Object convertArray(Object array, Object converter, boolean needThrow) throws Exception;
 
 }

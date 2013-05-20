@@ -16,7 +16,6 @@
 
 package self.micromagic.util.converter;
 
-import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -67,16 +66,21 @@ public class ReaderConverter extends ObjectConverter
 		}
 		if (value instanceof char[])
 		{
-			return new StringReader(new String((char[]) value));
+			return this.convertToReader(new String((char[]) value));
 		}
 		if (value instanceof String)
 		{
-			return new StringReader((String) value);
+			return this.convertToReader((String) value);
+		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof Reader)
+		{
+			return (Reader) tmpObj;
 		}
 		if (value instanceof String[])
 		{
 			String str = StringTool.linkStringArr((String[]) value, ",");
-			return new StringReader(str);
+			return this.convertToReader(str);
 		}
 		if (value instanceof ObjectRef)
 		{

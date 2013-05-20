@@ -91,6 +91,11 @@ public class StreamConverter extends ObjectConverter
 		{
 			return this.convertToStream((String) value, charset);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof InputStream)
+		{
+			return (InputStream) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = StringTool.linkStringArr((String[]) value, ",");
@@ -118,6 +123,11 @@ public class StreamConverter extends ObjectConverter
 		{
 			if (charset == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof InputStream)
+				{
+					return (InputStream) tmpObj;
+				}
 				return new ByteArrayInputStream(value.getBytes("8859_1"));
 			}
 			else

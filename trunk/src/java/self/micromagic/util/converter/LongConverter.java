@@ -116,15 +116,15 @@ public class LongConverter extends ObjectConverter
 		{
 			return 0;
 		}
-		Object tmpObj = this.changeByPropertyEditor(value);
-		if (tmpObj instanceof Long)
-		{
-			return ((Long) tmpObj).longValue();
-		}
 		try
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof Long)
+				{
+					return ((Long) tmpObj).longValue();
+				}
 				return Long.parseLong(value);
 			}
 			else

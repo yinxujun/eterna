@@ -91,6 +91,11 @@ public class BytesConverter extends ObjectConverter
 		{
 			return this.convertToBytes((String) value, charset);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof byte[])
+		{
+			return (byte[]) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = StringTool.linkStringArr((String[]) value, ",");
@@ -118,6 +123,11 @@ public class BytesConverter extends ObjectConverter
 		{
 			if (charset == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof byte[])
+				{
+					return (byte[]) tmpObj;
+				}
 				return value.getBytes("8859_1");
 			}
 			else

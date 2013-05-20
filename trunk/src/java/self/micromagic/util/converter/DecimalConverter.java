@@ -84,6 +84,11 @@ public class DecimalConverter extends ObjectConverter
 		{
 			return this.convertToDecimal((String) value, format);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof BigDecimal)
+		{
+			return (BigDecimal) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -123,6 +128,11 @@ public class DecimalConverter extends ObjectConverter
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof BigDecimal)
+				{
+					return (BigDecimal) tmpObj;
+				}
 				return new BigDecimal(value);
 			}
 			else

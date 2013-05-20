@@ -27,7 +27,7 @@ import javax.servlet.ServletRequest;
 
 import self.micromagic.util.Utility;
 
-public class RequestParameterMap
+public class RequestParameterMap extends AbstractContainerSetting
 		implements Map
 {
 	/**
@@ -55,12 +55,12 @@ public class RequestParameterMap
 	private Map originParamMap;
 	private boolean readOnly = true;
 	private boolean selfMap = false;
-	private boolean parseValue = PARSE_PARAM;
 
 	private RequestParameterMap(Map requestMap)
 	{
 		this.paramMap = requestMap;
 		this.originParamMap = this.paramMap;
+		this.parseValue = PARSE_PARAM;
 	}
 
 	private RequestParameterMap(Map requestMap, boolean readOnly)
@@ -73,6 +73,7 @@ public class RequestParameterMap
 	{
 		this.paramMap = request.getParameterMap();
 		this.originParamMap = this.paramMap;
+		this.parseValue = PARSE_PARAM;
 	}
 
 	private RequestParameterMap(ServletRequest request, boolean readOnly)
@@ -159,27 +160,6 @@ public class RequestParameterMap
 	}
 
 	/**
-	 * 获取是否要对读取的value进行处理.
-	 */
-	public boolean isParseValue()
-	{
-		return parseValue;
-	}
-
-	/**
-	 * 设置是否要对获取的value进行处理. <p>
-	 * 如果设为<code>true</code>, 则如果给的名称为普通的名字, 则通过getFirstParam方法
-	 * 获取第一个字符串, 如果给的名称是以"[]"结尾的, 则以字符串数组的形式返回.
-	 * 如果设为<code>false</code>, 则不作处理, 直接放回.
-	 *
-	 * @see #getFirstParam
-	 */
-	public void setParseValue(boolean parseValue)
-	{
-		this.parseValue = parseValue;
-	}
-
-	/**
 	 * 获取此参数map是否是只读的.
 	 */
 	public boolean isReadOnly()
@@ -221,9 +201,9 @@ public class RequestParameterMap
 				return this.getFirstString(key);
 			}
 			String strKey = key.toString();
-			if (strKey.endsWith("[]"))
+			if (strKey.endsWith(this.parseSuffix))
 			{
-				Object value = this.paramMap.get(strKey.substring(0, strKey.length() - 2));
+				Object value = this.paramMap.get(strKey.substring(0, strKey.length() - this.parseSuffix.length()));
 				if (value == null)
 				{
 					return null;

@@ -84,14 +84,15 @@ public class BigIntegerConverter extends ObjectConverter
 		{
 			return this.convertToBigInteger((String) value, format);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof BigInteger)
+		{
+			return (BigInteger) tmpObj;
+		}
 		if (value instanceof String[])
 		{
-			try
-			{
-				String str = RequestParameterMap.getFirstParam(value);
-				return this.convertToBigInteger(str, format);
-			}
-			catch (NumberFormatException ex) {}
+			String str = RequestParameterMap.getFirstParam(value);
+			return this.convertToBigInteger(str, format);
 		}
 		if (value instanceof ObjectRef)
 		{
@@ -127,6 +128,11 @@ public class BigIntegerConverter extends ObjectConverter
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof BigInteger)
+				{
+					return (BigInteger) tmpObj;
+				}
 				return new BigInteger(value);
 			}
 			else

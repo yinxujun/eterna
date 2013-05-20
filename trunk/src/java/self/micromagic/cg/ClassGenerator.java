@@ -17,7 +17,6 @@
 package self.micromagic.cg;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -187,7 +186,7 @@ public class ClassGenerator
 		{
 			Map.Entry entry = (Map.Entry) itr.next();
 			ClassLoader cl = (ClassLoader) entry.getValue();
-         if (tmpCheck.add(cl))
+			if (tmpCheck.add(cl))
 			{
 				result.add(entry.getKey());
 			}
@@ -446,7 +445,14 @@ public class ClassGenerator
 				tmpSuffix = "$" + suffix + "$$ECG_" + (CLASS_GENERATOR_ID++);
 			}
 		}
-		cg.setClassName("cg." + baseClass.getName() + tmpSuffix);
+		if (isArray(baseClass))
+		{
+			throw new CGException("The base class can't be an array.");
+		}
+		else
+		{
+			cg.setClassName("cg." + baseClass.getName() + tmpSuffix);
+		}
 		cg.addInterface(interfaceClass);
 		if (imports != null)
 		{
@@ -513,13 +519,13 @@ public class ClassGenerator
 	 */
 	public static Class getArrayElementType(Class arrayClass, IntegerRef levelRef)
 	{
-		if (arrayClass == null || !arrayClass.isArray())
+		if (arrayClass == null || !isArray(arrayClass))
 		{
 			return null;
 		}
 		int level = 0;
 		Class tmpClass = arrayClass;
-		while (tmpClass.isArray())
+		while (isArray(tmpClass))
 		{
 			tmpClass = tmpClass.getComponentType();
 			level++;
@@ -538,7 +544,7 @@ public class ClassGenerator
 	 */
 	public static String getClassName(Class c)
 	{
-		if (c.isArray())
+		if (isArray(c))
 		{
 			IntegerRef level = new IntegerRef();
 			Class type = getArrayElementType(c, level);
@@ -549,6 +555,14 @@ public class ClassGenerator
 			return arrDef.toString();
 		}
 		return nameAccessor.getName(c);
+	}
+
+	/**
+	 * 判断给出的类型是否为一个数组.
+	 */
+	public static boolean isArray(Class c)
+	{
+		return c != null && c.getName().charAt(0) == '[';
 	}
 
 	/**

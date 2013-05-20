@@ -84,6 +84,11 @@ public class TimestampConverter extends ObjectConverter
 		{
 			return this.convertToTimestamp((String) value, format);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof java.sql.Timestamp)
+		{
+			return (java.sql.Timestamp) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -111,6 +116,11 @@ public class TimestampConverter extends ObjectConverter
 		{
 			if (format == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof java.sql.Timestamp)
+				{
+					return (java.sql.Timestamp) tmpObj;
+				}
 				return new java.sql.Timestamp(FormatTool.parseDatetime(value).getTime());
 			}
 			else

@@ -90,6 +90,11 @@ public class UtilDateConverter extends ObjectConverter
 		{
 			return this.convertToDate((String) value, formats);
 		}
+		Object tmpObj = this.changeByPropertyEditor(value);
+		if (tmpObj instanceof java.util.Date)
+		{
+			return (java.util.Date) tmpObj;
+		}
 		if (value instanceof String[])
 		{
 			String str = RequestParameterMap.getFirstParam(value);
@@ -122,6 +127,11 @@ public class UtilDateConverter extends ObjectConverter
 		{
 			if (formats == null)
 			{
+				Object tmpObj = this.changeByPropertyEditor(value);
+				if (tmpObj instanceof java.util.Date)
+				{
+					return (java.util.Date) tmpObj;
+				}
 				try
 				{
 					return FormatTool.parseDatetime(value);
