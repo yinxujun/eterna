@@ -65,6 +65,11 @@ public class CookieContainer extends AbstractContainerSetting
 	private boolean compressValue = true;
 
 	/**
+	 * 需要进行压缩的最小尺寸.
+	 */
+	private int minCompressSize = 32;
+
+	/**
 	 * 通过此构造函数创建的容器只能进行读取.
 	 *
 	 * @param request  cookie信息所在的request对象
@@ -120,7 +125,7 @@ public class CookieContainer extends AbstractContainerSetting
 	 */
 	public boolean isCompressValue()
 	{
-		return compressValue;
+		return this.compressValue;
 	}
 
 	/**
@@ -129,6 +134,24 @@ public class CookieContainer extends AbstractContainerSetting
 	public void setCompressValue(boolean compressValue)
 	{
 		this.compressValue = compressValue;
+	}
+
+	/**
+	 * 在以String类型设置cookie的值时, 需要压缩的最小尺寸.
+	 * 即字符串的长度大于这个值时才进行压缩.
+	 */
+	public int getMinCompressSize()
+	{
+		return this.minCompressSize;
+	}
+
+	/**
+	 * 设置在以String类型设置cookie的值时, 需要压缩的最小尺寸.
+	 * 即字符串的长度大于这个值时才进行压缩.
+	 */
+	public void setMinCompressSize(int size)
+	{
+		this.minCompressSize = size;
 	}
 
 	private String encodeStr(String value)
@@ -331,7 +354,7 @@ public class CookieContainer extends AbstractContainerSetting
 	 */
 	private String doDeflater(String str, BooleanRef ziped)
 	{
-		if (str.length() < MIN_COMPRESS_SIZE)
+		if (str.length() < this.minCompressSize)
 		{
 			ziped.value = false;
 			return str;
@@ -353,9 +376,5 @@ public class CookieContainer extends AbstractContainerSetting
 			throw new Error();
 		}
 	}
-	/**
-	 * 对字符串进行压缩的最小尺寸.
-	 */
-	private static final int MIN_COMPRESS_SIZE = 32;
 
 }

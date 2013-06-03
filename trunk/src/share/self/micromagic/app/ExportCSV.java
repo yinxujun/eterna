@@ -34,7 +34,6 @@ import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.MemoryStream;
 import self.micromagic.util.Utility;
-import self.micromagic.util.Utils;
 
 /**
  * 将ResultIterator导出成csv格式
@@ -59,8 +58,8 @@ public class ExportCSV extends AbstractExportExecute
 			if (!saveExport && response != null)
 			{
 				response.setContentType("text/csv; charset=" + this.encodeName);
-				response.setHeader("Content-disposition", "attachment; filename="
-						+ Utils.dealString2URL(this.getFileName(data) + ".csv", this.fileNameEncode));
+				response.setHeader("Content-disposition", "attachment; "
+						+ getFileNameParam(data, this.getFileName(data) + ".csv", this.fileNameEncode));
 				out = new OutputStreamWriter(data.getOutputStream(), this.encodeName);
 			}
 			else
@@ -69,7 +68,7 @@ public class ExportCSV extends AbstractExportExecute
 				out = new OutputStreamWriter(ms.getOutputStream(), this.encodeName);
 				Map raMap = data.getRequestAttributeMap();
 				raMap.put(DOWNLOAD_CONTENTTYPE, "text/csv; charset=" + this.encodeName);
-				raMap.put(DOWNLOAD_FILENAME, Utils.dealString2URL(this.getFileName(data) + ".csv", this.fileNameEncode));
+				raMap.put(DOWNLOAD_FILENAME, this.getFileName(data) + ".csv");
 				raMap.put(DOWNLOAD_STREAM, ms.getInputStream());
 			}
 			this.dealExportCSV(out, ritr, data, conn);

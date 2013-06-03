@@ -40,7 +40,6 @@ import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.util.MemoryStream;
-import self.micromagic.util.Utils;
 
 /**
  * 注: 使用此类进行导出excel时, 请将model的transactionType设为hold
@@ -69,8 +68,8 @@ public class ExportExcelExecute extends AbstractExportExecute
 			if (!saveExport && response != null)
 			{
 				response.setContentType("application/vnd.ms-excel");
-				response.setHeader("Content-disposition", "attachment; filename="
-						+ Utils.dealString2URL(this.getFileName(data) + ".xls", this.fileNameEncode));
+				response.setHeader("Content-disposition", "attachment; "
+						+ getFileNameParam(data, this.getFileName(data) + ".xls", this.fileNameEncode));
 				out = data.getOutputStream();
 				workbook = this.createWorkBook(data, out);
 			}
@@ -81,7 +80,7 @@ public class ExportExcelExecute extends AbstractExportExecute
 				workbook = this.createWorkBook(data, out);
 				Map raMap = data.getRequestAttributeMap();
 				raMap.put(DOWNLOAD_CONTENTTYPE, "application/vnd.ms-excel");
-				raMap.put(DOWNLOAD_FILENAME, Utils.dealString2URL(this.getFileName(data) + ".xls", this.fileNameEncode));
+				raMap.put(DOWNLOAD_FILENAME, this.getFileName(data) + ".xls");
 				raMap.put(DOWNLOAD_STREAM, ms.getInputStream());
 			}
 			this.dealExportExcel(workbook, ritr, data, conn);

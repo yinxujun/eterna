@@ -22,6 +22,8 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.servlet.http.HttpServletRequest;
+
 import self.micromagic.eterna.model.ModelAdapter;
 import self.micromagic.eterna.model.Execute;
 import self.micromagic.eterna.model.AppData;
@@ -151,6 +153,28 @@ public abstract class AbstractExportExecute extends AbstractExecute
 			}
 		}
 		this.holdConnection = model.getTransactionType() ==  ModelAdapter.T_HOLD;
+	}
+
+	/**
+	 * 获取文件名称模块的参数.
+	 */
+	public static String getFileNameParam(AppData data, String fileName, String charset)
+	{
+		boolean firefox = false;
+		HttpServletRequest request = data.getHttpServletRequest();
+		if (request != null)
+		{
+			String agent = request.getHeader("User-Agent");
+			firefox = agent.indexOf("Firefox") != -1;
+		}
+		if (firefox)
+		{
+			return "filename*=" + charset + "''" + Utils.dealString2URL(fileName, charset);
+		}
+		else
+		{
+			return "filename=" + Utils.dealString2URL(fileName, charset);
+		}
 	}
 
 	/**
