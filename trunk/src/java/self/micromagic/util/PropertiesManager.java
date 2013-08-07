@@ -24,6 +24,8 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -283,6 +285,33 @@ public class PropertiesManager
 		String oldParent = this.properties.getProperty(PARENT_PROPERTIES_OLD);
 		this.loadParentProperties(temp, this.properties.getProperty(PARENT_PROPERTIES, oldParent));
 		return temp;
+	}
+
+	/**
+	 * 以集合的形式返回所有属性名称.
+	 */
+	public Set getPropertyNames()
+	{
+		Set result = new HashSet();
+		this.fillPropertyNames(result);
+		return result;
+	}
+	/**
+	 * 将当前管理的属性名填入到(集合类型的)参数中.
+	 *
+	 * @param result  属性名需要放入的集合.
+	 */
+	protected void fillPropertyNames(Set result)
+	{
+		if (this.parent != null)
+		{
+			this.parent.fillPropertyNames(result);
+		}
+		Enumeration e = this.properties.propertyNames();
+		while (e.hasMoreElements())
+		{
+			result.add(e.nextElement());
+		}
 	}
 
 	/**
@@ -568,7 +597,7 @@ public class PropertiesManager
 	}
 
 	/**
-	 * 载子父配置
+	 * 载入父配置
 	 */
 	private void loadChildProperties(Properties props, String nowName)
 			throws IOException
