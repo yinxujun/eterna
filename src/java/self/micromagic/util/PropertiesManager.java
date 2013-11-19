@@ -315,6 +315,24 @@ public class PropertiesManager
 	}
 
 	/**
+	 * 判断管理器中是否包含某个键值.
+	 *
+	 * @param key          需要判断的键值
+	 * @param onlyCurrent  设为true表示仅判断当前管理器, 不包含父管理器中的键值
+	 */
+	public boolean contains(String key, boolean onlyCurrent)
+	{
+		if (onlyCurrent)
+		{
+			return this.properties.contains(key);
+		}
+		else
+		{
+			return this.getProperty(key) != null;
+		}
+	}
+
+	/**
 	 * 获取属性值.
 	 *
 	 * @param key  属性所在的键值

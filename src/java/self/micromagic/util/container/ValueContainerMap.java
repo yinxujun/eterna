@@ -157,6 +157,19 @@ public class ValueContainerMap extends AbstractMap
 		this.vEntrySet.setKeepEntry(keepEntry);
 	}
 
+	/**
+	 * 切换当前的数据容器.
+	 * 当数据容器发生改变时, 可以通过此方法切换成新的数据容器.
+	 */
+	public void changeContainer(ValueContainer vContainer)
+	{
+		if (vContainer != null && vContainer != this.vContainer)
+		{
+			this.vContainer = vContainer;
+			this.vEntrySet = new ValueContainerMapEntrySet(this, this.vContainer);
+		}
+	}
+
 	public boolean containsKey(Object key)
 	{
 		return this.vEntrySet.containsKey(key);
@@ -183,7 +196,7 @@ public class ValueContainerMap extends AbstractMap
 	}
 
 
-	private static class ResultRowContainer
+	public static class ResultRowContainer
 			implements ValueContainer
 	{
 		private ResultRow row;
@@ -279,7 +292,7 @@ public class ValueContainerMap extends AbstractMap
 
 	}
 
-	private static class RequestAttributeContainer
+	public static class RequestAttributeContainer
 			implements ValueContainer
 	{
 		private ServletRequest request;
@@ -335,7 +348,7 @@ public class ValueContainerMap extends AbstractMap
 
 	}
 
-	private static class SessionAttributeContainer
+	public static class SessionAttributeContainer
 			implements ValueContainer
 	{
 		private HttpServletRequest request;
@@ -444,7 +457,7 @@ public class ValueContainerMap extends AbstractMap
 
 	}
 
-	private static class ApplicationAttributeContainer
+	public static class ApplicationAttributeContainer
 			implements ValueContainer
 	{
 		private ServletContext context;
