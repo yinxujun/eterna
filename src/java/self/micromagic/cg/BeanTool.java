@@ -55,6 +55,36 @@ public class BeanTool
 	public static final String CG_USE_DBC_PROPERTY = "self.micromagic.cg.use.defaultBeanChecker";
 
 	/**
+	 * 获取对象类型中的某个属性.
+	 *
+	 * @param c     对象类型
+	 * @param name  属性名称
+	 * @return  获取到的属性对象, 如果不存在则返回null
+	 */
+	public static Field getField(Class c, String name)
+	{
+		if (c.isInterface())
+		{
+			return null;
+		}
+		Field f = null;
+		try
+		{
+			f = c.getDeclaredField(name);
+		}
+		catch (Exception ex) {}
+		if (f == null)
+		{
+			Class p = c.getSuperclass();
+			if (p != null && p != Object.class)
+			{
+				f = getField(p, name);
+			}
+		}
+		return f;
+	}
+
+	/**
 	 * 通过map来对bean对象设置属性.
 	 *
 	 * @param bean    需要被设置属性的bean

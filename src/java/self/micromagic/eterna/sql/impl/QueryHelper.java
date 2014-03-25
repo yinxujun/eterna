@@ -180,6 +180,8 @@ public class QueryHelper
 				{
 					rs.last();
 				}
+				// 如果是最后一条, 需要将tmpRecordCount加1
+				// 因为下面分支中的循环在记录数小于start时会多记1
 				tmpRecordCount = hasRecord ? rs.getRow() : rs.getRow() + 1;
 			}
 			else
@@ -197,7 +199,7 @@ public class QueryHelper
 			}
 			else
 			{
-				// 没有记录数表示已经移到的最后一条, 临时记录数-1为总记录数
+				// 没有记录数表示已经移到的最后一条, 临时记录数减1为总记录数
 				this.realRecordCount = tmpRecordCount - 1;
 				this.realRecordCountAvailable = true;
 				this.hasMoreRecord = false;
@@ -222,6 +224,7 @@ public class QueryHelper
 				}
 				else
 				{
+					// 因为读取了所有记录, 所以可以设置总记录数
 					this.realRecordCount = tmpRecordCount;
 					this.realRecordCountAvailable = true;
 					this.hasMoreRecord = false;
@@ -243,6 +246,7 @@ public class QueryHelper
 				}
 				else
 				{
+					// 如果没有更多记录的话, 则可以确定总记录数
 					this.realRecordCountAvailable = true;
 				}
 
@@ -272,6 +276,7 @@ public class QueryHelper
 				{
 					if (!this.realRecordCountAvailable)
 					{
+						// 如果没有确定总记录数, 则需要执行统计查询
 						this.needCount = true;
 					}
 					else
@@ -404,6 +409,7 @@ public class QueryHelper
 				{
 					throw new ConfigurationException(ex);
 				}
+				// 如果是读取全部记录或使用自动计数, 则使用原始的语句
 				this.useOldSQL = (this.nowMaxRows == -1 && this.nowStartRow == 1)
 						|| this.nowTotalCount == QueryAdapter.TOTAL_COUNT_AUTO;
 				if (this.useOldSQL)
@@ -436,6 +442,7 @@ public class QueryHelper
 			ArrayList result = new ArrayList(this.nowMaxRows == -1 ? 32 : this.nowMaxRows);
 			if (this.nowMaxRows == -1)
 			{
+				// 没有限制获取的记录数时的处理
 				while (rs.next())
 				{
 					tmpRecordCount++;
@@ -450,8 +457,15 @@ public class QueryHelper
 				{
 					if (tmpRecordCount > 0)
 					{
+						// 必须读取到记录才能设置总记录数
 						this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
 						this.realRecordCountAvailable = true;
+					}
+					else if (totalCount == QueryAdapter.TOTAL_COUNT_COUNT)
+					{
+						// 如果没有获取到记录且需要统计计数, 则需要进行统计查询
+						// 因为这时可能起始行大于总记录数
+						this.needCount = true;
 					}
 					this.hasMoreRecord = false;
 				}
@@ -472,7 +486,8 @@ public class QueryHelper
 				}
 				else if (tmpRecordCount > 0)
 				{
-					this.realRecordCount = tmpRecordCount += this.nowStartRow - 1;
+					// 如果没有更多记录的话, 则可以确定总记录数
+					tmpRecordCount += this.nowStartRow - 1;
 					this.realRecordCountAvailable = true;
 				}
 
@@ -485,6 +500,7 @@ public class QueryHelper
 				{
 					if (!this.realRecordCountAvailable)
 					{
+						// 如果没有确定总记录数, 则需要执行统计查询
 						this.needCount = true;
 					}
 					else

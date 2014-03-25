@@ -322,7 +322,7 @@ public class ParamBindImpl extends AbstractGenerator
 						}
 						else
 						{
-							throw new ConfigurationException("Error src length:" + objs.length + ", reqared:" + this.names.length + ".");
+							throw new ConfigurationException("Error src length:" + objs.length + ", require:" + this.names.length + ".");
 						}
 					}
 					else

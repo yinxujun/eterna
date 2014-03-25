@@ -147,7 +147,7 @@ class CountQueryAdapter
 						Element nowNode = data.getCurrentNode();
 						if (nowNode != null)
 						{
-							AppDataLogExecute.printObject(nowNode.addElement("result"), result);
+							AppDataLogExecute.printObject(nowNode.addElement(this.getType() + "-result"), result);
 						}
 					}
 				}

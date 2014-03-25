@@ -207,8 +207,9 @@ public class PropertiesManager
 				{
 					msg.setString(preMsg + "The properties name:[" + this.propName + "] not found in class loader.");
 				}
-				else
+				else if (!PROPERTIES_NAME.equals(this.propName))
 				{
+					// 不是默认的名称才输出此信息
 					System.err.println(FormatTool.getCurrentDatetimeString()
 							+ ": The properties name:[" + this.propName + "] not found in class loader.");
 				}

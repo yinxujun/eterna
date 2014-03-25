@@ -37,6 +37,7 @@ import self.micromagic.eterna.model.AppData;
 import self.micromagic.eterna.model.AppDataLogExecute;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.share.EternaFactory;
+import self.micromagic.eterna.share.TypeManager;
 import self.micromagic.eterna.sql.QueryAdapter;
 import self.micromagic.eterna.sql.QueryAdapterGenerator;
 import self.micromagic.eterna.sql.ResultIterator;
@@ -44,8 +45,11 @@ import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultReaderManager;
 import self.micromagic.eterna.sql.ResultRow;
 import self.micromagic.eterna.sql.SQLAdapter;
+import self.micromagic.eterna.sql.impl.ResultReaders.ObjectReader;
 import self.micromagic.util.BooleanRef;
 import self.micromagic.util.StringTool;
+import self.micromagic.util.ObjectRef;
+import self.micromagic.util.converter.BooleanConverter;
 import self.micromagic.util.logging.TimeLogger;
 
 /**
@@ -59,6 +63,10 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 	private Set otherReaderManagerSet;
 	private Map tempNameToIndexMap;
 	private ResultReaderManager readerManager;
+	/**
+	 * 正对某个query的全局readerManager.
+	 */
+	private ObjectRef globalReaderManager;
 	private boolean readerManagerSetted;
 	private String readerManagerName;
 
@@ -97,6 +105,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		// 这里不需要初始化reader, 在createTempReaderManager中会通过
 		// ResultReaderManagerImpl对其初始化
 		*/
+		this.globalReaderManager = new ObjectRef();
 		this.readerManager = this.createTempReaderManager();
 		this.tempResultReaders = null;
 		this.tempNameToIndexMap = null;
@@ -126,11 +135,27 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		return SQL_TYPE_QUERY;
 	}
 
-	private ResultReaderManager createTempReaderManager()
+	/**
+	 * 创建一个ResultReaderManager的实现类.
+	 *
+	 * @param init  创建完后是否需要立刻执行初始化
+	 */
+	private ResultReaderManagerImpl createTempReaderManager0(boolean init)
 			throws ConfigurationException
 	{
 		ResultReaderManagerImpl temp = new ResultReaderManagerImpl();
 		temp.setName("<query>/" + this.getName());
+		if (init)
+		{
+			temp.initialize(this.getFactory());
+		}
+		return temp;
+	}
+
+	private ResultReaderManager createTempReaderManager()
+			throws ConfigurationException
+	{
+		ResultReaderManagerImpl temp = this.createTempReaderManager0(false);
 		temp.setParentName(this.readerManagerName);
 		temp.setReaderOrder(this.readerOrder);
 		boolean hasCheckIndexFlag = false;
@@ -159,7 +184,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		if (temp.getReaderCount() > 0)
 		{
 			// 当设置了baseReaderManager且没有checkIndex的设置时, 复制的默认值为true
-			boolean needCopy = this.readerManager != null && !hasCheckIndexFlag;
+			boolean needCopy = this.readerManagerName != null && !hasCheckIndexFlag;
 			String needCopyStr = (String) this.getAttribute(COPY_READERS_FLAG);
 			// 当设置了copyReaders时, 使用设置的值
 			if (needCopyStr != null)
@@ -168,10 +193,8 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			}
 			if (needCopy)
 			{
-				ResultReaderManagerImpl allReaders = new ResultReaderManagerImpl();
-				allReaders.setName("<query>/" + this.getName());
 				// 这里先执行初始化, 因为将要添加的reader都已被初始化过了
-				allReaders.initialize(this.getFactory());
+				ResultReaderManagerImpl allReaders = this.createTempReaderManager0(true);
 				Iterator itr = temp.getReaderList().iterator();
 				while (itr.hasNext())
 				{
@@ -192,6 +215,22 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 				temp = allReaders;
 			}
 			temp.lock();
+			String checkStr = (String) this.getAttribute(CHECK_READER_FLAG);
+			if (checkStr == null)
+			{
+				checkStr = (String) this.getFactory().getAttribute(CHECK_READER_FLAG);
+			}
+			boolean checkReader = false;
+			if (checkStr != null)
+			{
+				BooleanConverter converter = new BooleanConverter();
+				checkReader = converter.convertToBoolean(checkStr);
+			}
+			if (!checkReader)
+			{
+				// 当设置了reader且没有设置检查时就添加到全局中
+				this.globalReaderManager.setObject(temp);
+			}
 		}
 		return temp;
 	}
@@ -296,7 +335,16 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		other.tempResultReaders = this.tempResultReaders;
 		other.otherReaderManagerSet = this.otherReaderManagerSet;
 		other.tempNameToIndexMap = this.tempNameToIndexMap;
-		other.readerManager = this.readerManager;
+		other.globalReaderManager = this.globalReaderManager;
+		if (this.globalReaderManager.getObject() == null)
+		{
+			other.readerManager = this.readerManager;
+		}
+		else
+		{
+			// 如果当前query存在全局的ResultReaderManager则复制这个全局的
+			other.readerManager = (ResultReaderManager) this.globalReaderManager.getObject();
+		}
 		other.readerManagerName = this.readerManagerName;
 		other.forwardOnly = this.forwardOnly;
 		other.checkDatabaseName = this.checkDatabaseName;
@@ -505,10 +553,16 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 		}
 		try
 		{
-			if (this.readerManager.getReaderCount() == 0)
+			if (this.globalReaderManager.getObject() == null)
 			{
-				this.readerManager.setColNameSensitive(false);
-				this.initDefaultResultReaders(rs);
+				if (this.readerManager.getReaderCount() == 0)
+				{
+					this.readerManager = this.initDefaultResultReaders(rs);
+				}
+				else
+				{
+					this.readerManager = this.checkResultReaders(rs);
+				}
 			}
 		}
 		catch (Exception ex)
@@ -516,6 +570,161 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			log.warn("Init default ResultReaders error.", ex);
 		}
 		return this.readerManager;
+	}
+
+	/**
+	 * 当需要检查reader时, 根据查询结果进行检查.
+	 */
+	private ResultReaderManager checkResultReaders(ResultSet rs)
+			throws ConfigurationException, SQLException
+	{
+		ResultSetMetaData meta = rs.getMetaData();
+		int count = meta.getColumnCount();
+		List rReaders = new ArrayList(count);
+		Map readerMap = new HashMap(count * 2);
+		for (int i = 0; i < count; i++)
+		{
+			String colName = meta.getColumnLabel(i + 1).toUpperCase();  // 这个取到的是别名
+			int typeId = TypeManager.transSQLType(meta.getColumnType(i + 1));
+			if (readerMap.containsKey(colName))
+			{
+				// 如果列的别名已存在, 则直接下一个
+				continue;
+			}
+			ColumnInfo ci = new ColumnInfo(colName, typeId);
+			rReaders.add(ci);
+			readerMap.put(colName, ci);
+		}
+
+		// 检查reader中的配置是否在结果中存在
+		boolean hasMissing = false;
+		List oldReaders = this.readerManager.getReaderList();
+		List newReaders = new ArrayList(count);
+		Iterator itr = oldReaders.iterator();
+		while (itr.hasNext())
+		{
+			ResultReader r = (ResultReader) itr.next();
+			ColumnInfo tmp = null;
+			if (r.isUseColumnName())
+			{
+				tmp = (ColumnInfo) readerMap.get(r.getColumnName().toUpperCase());
+			}
+			if (r.isUseColumnIndex())
+			{
+				int tmpIndex = r.getColumnIndex();
+				if (tmpIndex > 0 && tmpIndex <= count)
+				{
+					tmp = (ColumnInfo) rReaders.get(tmpIndex - 1);
+				}
+			}
+			if (tmp != null)
+			{
+				// reader的设置在结果中存在
+				tmp.exists = true;
+				newReaders.add(r);
+			}
+			else
+			{
+				hasMissing = true;
+			}
+			tmp = (ColumnInfo) readerMap.get(r.getName().toUpperCase());
+			if (tmp != null)
+			{
+				// reader的字在结果中存在, 也要去除
+				tmp.exists = true;
+			}
+		}
+
+		// 将剩余的查询结果构造成reader
+		boolean hasColumn = false;
+		ResultReaderManagerImpl tmpRm = this.createTempReaderManager0(false);
+		tmpRm.setColNameSensitive(false);
+		itr = rReaders.iterator();
+		for (int i = 0; itr.hasNext(); i++)
+		{
+			ColumnInfo tmp = (ColumnInfo) itr.next();
+			if (!tmp.exists)
+			{
+				hasColumn = true;
+				// 如果结果中的列不在reader配置中, 则添加
+				String typeName = TypeManager.getTypeName(tmp.typeId);
+				ObjectReader reader = (ObjectReader) ResultReaders.createReader(typeName, tmp.colName);
+				reader.setColumnIndex(i + 1);
+				reader.setVisible(false);
+				tmpRm.addReader(reader);
+				newReaders.add(reader);
+			}
+		}
+		tmpRm.initialize(this.getFactory());
+
+		// 生成最终的reader列表
+		ResultReaderManager rm;
+		if (hasMissing || hasColumn)
+		{
+			rm = this.createTempReaderManager0(true);
+			rm.setColNameSensitive(!hasColumn);
+			itr = newReaders.iterator();
+			while (itr.hasNext())
+			{
+				rm.addReader((ResultReader) itr.next());
+			}
+			rm.lock();
+		}
+		else
+		{
+			rm = this.readerManager;
+		}
+		synchronized (AbstractQueryAdapter.class)
+		{
+			if (this.globalReaderManager.getObject() == null && !this.readerManagerSetted)
+			{
+				// 如果全局和本地都未设置, 则更新全局的
+				this.globalReaderManager.setObject(rm);
+			}
+		}
+		return rm;
+	}
+
+	/**
+	 * 当没有设置reader时, 根据查询结果初始化.
+	 */
+	private ResultReaderManager initDefaultResultReaders(ResultSet rs)
+			throws ConfigurationException, SQLException
+	{
+		ResultReaderManagerImpl rm = this.createTempReaderManager0(false);
+		rm.setColNameSensitive(false);
+		Map temp = new HashMap();
+		ResultSetMetaData meta = rs.getMetaData();
+		int count = meta.getColumnCount();
+		for (int i = 0; i < count; i++)
+		{
+			//String colName = meta.getColumnName(i + 1); // 这个在有些数据库取到的是原始列名
+			String colName = meta.getColumnLabel(i + 1);  // 这个取到的是别名
+			String name = colName;
+			if (temp.get(name) != null)
+			{
+				// 当存在重复的列名时, 后面的列加上索引号
+				name = colName + "+" + (i + 1);
+			}
+			temp.put(name, colName);
+			int typeId = TypeManager.transSQLType(meta.getColumnType(i + 1));
+			String typeName = TypeManager.getTypeName(typeId);
+			ObjectReader reader = (ObjectReader) ResultReaders.createReader(typeName, name);
+			reader.setColumnIndex(i + 1);
+			reader.setVisible(false);
+			rm.addReader(reader);
+		}
+		rm.initialize(this.getFactory());
+		rm.lock();
+		synchronized (AbstractQueryAdapter.class)
+		{
+			if (this.globalReaderManager.getObject() == null)
+			{
+				// 如果全局未设置, 则更新全局的
+				this.globalReaderManager.setObject(rm);
+			}
+		}
+		return rm;
 	}
 
 	public int getStartRow()
@@ -681,7 +890,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 						Element nowNode = data.getCurrentNode();
 						if (nowNode != null)
 						{
-							AppDataLogExecute.printObject(nowNode.addElement("result"), result);
+							AppDataLogExecute.printObject(nowNode.addElement(this.getType() + "-result"), result);
 						}
 					}
 				}
@@ -694,28 +903,6 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			{
 				stmt.close();
 			}
-		}
-	}
-
-	private void initDefaultResultReaders(ResultSet rs)
-			throws ConfigurationException, SQLException
-	{
-		Map temp = new HashMap();
-		ResultSetMetaData meta = rs.getMetaData();
-		int count = meta.getColumnCount();
-		for (int i = 0; i < count; i++)
-		{
-			String colname = meta.getColumnName(i + 1);
-			String name = colname;
-			if (temp.get(name) != null)
-			{
-				// 当存在重复的列名时, 后面的列加上索引号
-				name = colname + "+" + (i + 1);
-			}
-			temp.put(name, colname);
-			ResultReaders.ObjectReader reader = new ResultReaders.ObjectReader(name);
-			reader.setColumnIndex(i + 1);
-			this.readerManager.addReader(reader);
 		}
 	}
 
@@ -827,6 +1014,33 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			ritr.recordCount = this.recordCount;
 			ritr.realRecordCountAvailable = this.realRecordCountAvailable;
 			ritr.hasMoreRecord = this.hasMoreRecord;
+		}
+
+	}
+
+	/**
+	 * 存放查询结果中某列的信息.
+	 */
+	static class ColumnInfo
+	{
+		/**
+		 * 查询结果中的列名.
+		 */
+		public final String colName;
+		/**
+		 * 类型id.
+		 */
+		public final int typeId;
+
+		/**
+		 * 此列是否已在reader中存在.
+		 */
+		public boolean exists;
+
+		public ColumnInfo(String colName, int typeId)
+		{
+			this.colName = colName;
+			this.typeId = typeId;
 		}
 
 	}

@@ -90,6 +90,11 @@ public class FactoryManager
 	public static final Log log = Tool.log;
 
 	/**
+	 * 默认的配置文件名.
+	 */
+	public static final String DEFAULT_INIT_CONFIG = "cp:eterna.xml";
+
+	/**
 	 * 要进行全局初始化的文件列表.
 	 */
 	public static final String INIT_FILES_PROPERTY
@@ -487,48 +492,48 @@ public class FactoryManager
 	/**
 	 * 根据一个类及配置创建工厂管理器的实例.
 	 *
-	 * @param baseClass    初始化的基础类
-	 * @param initConfig   初始化的配置
-	 * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+	 * @param baseClass   初始化的基础类
+	 * @param initConfig  初始化的配置
+	 * @param regist      是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
 	 */
-	public static Instance createClassFactoryManager(Class baseClass, String initConfig, boolean registry)
+	public static Instance createClassFactoryManager(Class baseClass, String initConfig, boolean regist)
 	{
-		return createClassFactoryManager(baseClass, null, initConfig, null, registry);
+		return createClassFactoryManager(baseClass, null, initConfig, null, regist);
 	}
 
 	/**
 	 * 根据一个类及配置创建工厂管理器的实例.
 	 *
-	 * @param baseClass    初始化的基础类
-	 * @param baseObj      基础类的一个实例
-	 * @param initConfig   初始化的配置
-	 * @param registry     是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+	 * @param baseClass   初始化的基础类
+	 * @param baseObj     基础类的一个实例
+	 * @param initConfig  初始化的配置
+	 * @param regist      是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
 	 */
 	public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
-			String initConfig, boolean registry)
+			String initConfig, boolean regist)
 	{
-		return createClassFactoryManager(baseClass, baseObj, initConfig, null, registry);
+		return createClassFactoryManager(baseClass, baseObj, initConfig, null, regist);
 	}
 
 	/**
 	 * 根据一个类及配置创建工厂管理器的实例.
 	 *
-	 * @param baseClass        初始化的基础类
-	 * @param baseObj          基础类的一个实例
-	 * @param initConfig       初始化的配置
-	 * @param parentConfig     初始化的父配置
-	 * @param registry         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+	 * @param baseClass      初始化的基础类
+	 * @param baseObj        基础类的一个实例
+	 * @param initConfig     初始化的配置
+	 * @param parentConfig   初始化的父配置
+	 * @param regist         是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
 	 */
 	public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
-			String initConfig, String[] parentConfig, boolean registry)
+			String initConfig, String[] parentConfig, boolean regist)
 	{
 		Class instanceClass = null;
 		if (Instance.class.isAssignableFrom(baseClass))
 		{
 			instanceClass = baseClass;
 		}
-		return createClassFactoryManager(baseClass, baseObj, initConfig, parentConfig,
-				instanceClass, registry);
+		return createClassFactoryManager(baseClass, baseObj, null,
+				initConfig, parentConfig, instanceClass, regist);
 	}
 
 	/**
@@ -541,9 +546,57 @@ public class FactoryManager
 	 * @param instanceClass    工厂管理器的实现类
 	 * @param regist           是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
 	 */
-	public static synchronized Instance createClassFactoryManager(Class baseClass, Object baseObj,
+	public static Instance createClassFactoryManager(Class baseClass, Object baseObj,
 			String initConfig, String[] parentConfig, Class instanceClass, boolean regist)
 	{
+		ClassLoader cl = baseClass == null ? null : baseClass.getClassLoader();
+		return createClassFactoryManager(baseClass, baseObj, cl,
+				initConfig, parentConfig, instanceClass, regist);
+	}
+
+	/**
+	 * 根据一个ClassLoader及配置创建工厂管理器的实例.
+	 *
+	 * @param classLoader      所使用的ClassLoader, 如果未设置baseClass则必须给出ClassLoader
+	 * @param initConfig       初始化的配置
+	 * @param parentConfig     初始化的父配置
+	 * @param regist           是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+	 */
+	public static Instance createClassFactoryManager(ClassLoader classLoader,
+			String initConfig, String[] parentConfig, boolean regist)
+	{
+		return createClassFactoryManager(null, null, classLoader,
+				initConfig, parentConfig, null, regist);
+	}
+
+	/**
+	 * 根据一个类(或ClassLoader)及配置创建工厂管理器的实例.
+	 *
+	 * @param baseClass        初始化的基础类
+	 * @param baseObj          基础类的一个实例
+	 * @param classLoader      所使用的ClassLoader, 如果未设置baseClass则必须给出ClassLoader
+	 * @param initConfig       初始化的配置
+	 * @param parentConfig     初始化的父配置
+	 * @param instanceClass    工厂管理器的实现类
+	 * @param regist           是否需要重新注册此实例, 设为true则会将原来已存在的实例删除
+	 */
+	private static synchronized Instance createClassFactoryManager(Class baseClass, Object baseObj,
+			ClassLoader classLoader, String initConfig, String[] parentConfig,
+			Class instanceClass, boolean regist)
+	{
+		if (baseClass != null)
+		{
+			// 如果baseClass不为为null, 则强制设置classLoader
+			classLoader = baseClass.getClassLoader();
+		}
+		else if (classLoader == null)
+		{
+			// 如果baseClass和classLoader都为null, 则生成默认的classLoader
+			if ((classLoader = Thread.currentThread().getContextClassLoader()) == null)
+			{
+				classLoader = FactoryManager.class.getClassLoader();
+			}
+		}
 		Instance instance = null;
 		if (instanceClass != null)
 		{
@@ -553,7 +606,7 @@ public class FactoryManager
 				{
 					ObjectRef ref = new ObjectRef();
 					Constructor constructor = findConstructor(instanceClass, ref,
-							baseClass, baseObj, initConfig, parentConfig);
+							baseClass, baseObj, classLoader, initConfig, parentConfig);
 					if (constructor != null)
 					{
 						if (!constructor.isAccessible())
@@ -587,7 +640,7 @@ public class FactoryManager
 		}
 		if (instance == null)
 		{
-			if (EternaInitialize.class.isAssignableFrom(baseClass))
+			if (baseClass != null && EternaInitialize.class.isAssignableFrom(baseClass))
 			{
 				try
 				{
@@ -605,8 +658,8 @@ public class FactoryManager
 						{
 							autoReloadTime = (Long) method.invoke(baseObj, new Object[0]);
 						}
-						instance = new AutoReloadImpl(baseClass, baseObj, initConfig, parentConfig,
-								autoReloadTime.longValue());
+						instance = new AutoReloadImpl(baseClass, baseObj, baseClass.getClassLoader(),
+								initConfig, parentConfig, autoReloadTime.longValue());
 					}
 				}
 				catch (Throwable ex)
@@ -616,7 +669,7 @@ public class FactoryManager
 			}
 			if (instance == null)
 			{
-				instance = new ClassImpl(baseClass, baseObj, initConfig, parentConfig);
+				instance = new ClassImpl(baseClass, baseObj, classLoader, initConfig, parentConfig);
 			}
 		}
 		String id = instance.getId();
@@ -629,7 +682,7 @@ public class FactoryManager
 				{
 					ClassImpl ci = (ClassImpl) tmp;
 					// 如果基于的类相同则不重新加载（当使用了不同的ClassLoader时, 基于的类就会不同）
-					if (ci.baseClass == baseClass)
+					if ((baseClass == null && ci.classLoader == classLoader) || ci.baseClass == baseClass)
 					{
 						// 如果baseObj是一个监听者, 此方法会将其加入列表中
 						ci.addInitializedListener(baseObj);
@@ -674,12 +727,13 @@ public class FactoryManager
 	 * @param params           出参, 构造类时使用的参数
 	 * @param baseClass        初始化的基础类
 	 * @param baseObj          基础类的一个实例
+	 * @param classLoader      所使用的ClassLoader
 	 * @param initConfig       初始化的配置
 	 * @param parentConfig     初始化的父配置
 	 * @param instanceClass    工厂管理器的实现类
 	 */
 	private static Constructor findConstructor(Class instanceClass, ObjectRef params, Class baseClass,
-			Object baseObj, String initConfig, String[] parentConfig)
+			Object baseObj, ClassLoader classLoader, String initConfig, String[] parentConfig)
 	{
 		Constructor[] constructors = instanceClass.getDeclaredConstructors();
 		Constructor constructor = null;
@@ -701,6 +755,10 @@ public class FactoryManager
 					else if (Class.class == types[j])
 					{
 						tmpParams[j] = baseClass;
+					}
+					else if (ClassLoader.class == types[j])
+					{
+						tmpParams[j] = classLoader;
 					}
 					else if (String.class == types[j])
 					{
@@ -1117,21 +1175,21 @@ public class FactoryManager
 		 * 根据地址及基础类获取配置的数据流.
 		 *
 		 * @param locate       配置的地址
-		 * @param baseClass    初始化的基础类
+		 * @param classLoader  载入类所使用的ClassLoader
 		 */
-		protected InputStream getConfigStream(String locate, Class baseClass)
+		protected InputStream getConfigStream(String locate, ClassLoader classLoader)
 				throws IOException, ConfigurationException
 		{
 			if (locate.startsWith("cp:"))
 			{
 				URL url;
-				if (baseClass == null)
+				if (classLoader == null)
 				{
 					url = Utility.getContextClassLoader().getResource(locate.substring(3));
 				}
 				else
 				{
-					url = baseClass.getClassLoader().getResource(locate.substring(3));
+					url = classLoader.getResource(locate.substring(3));
 				}
 				if (url != null)
 				{
@@ -1292,14 +1350,14 @@ public class FactoryManager
 		 * 根据配置生成xml流并进行初始化.
 		 *
 		 * @param config       配置信息
-		 * @param baseClass    初始化使用的基本类
+		 * @param classLoader  载入类所使用的ClassLoader
 		 * @param digester     初始化的解析器
 		 *
 		 * @throws IOException               生成xml流时出现的异常
 		 * @throws ConfigurationException    初始化时出现的异常
 		 * @throws SAXException              解析xml时出现的异常
 		 */
-		protected void dealXML(String config, Class baseClass, Digester digester)
+		protected void dealXML(String config, ClassLoader classLoader, Digester digester)
 				throws IOException, ConfigurationException, SAXException
 		{
 			StringTokenizer token = new StringTokenizer(resolveLocate(config), ";");
@@ -1312,7 +1370,7 @@ public class FactoryManager
 				}
 				ConfigurationException.config = temp;
 				ConfigurationException.objName = null;
-				InputStream is = this.getConfigStream(temp, baseClass);
+				InputStream is = this.getConfigStream(temp, classLoader);
 				if (is != null)
 				{
 					log.debug("The XML locate is \"" + temp + "\".");
@@ -1776,10 +1834,18 @@ public class FactoryManager
 		protected String[] parentConfig;
 
 		protected Class baseClass;
+		protected ClassLoader classLoader;
 
-		public ClassImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig)
+		public ClassImpl(Class baseClass, Object baseObj, ClassLoader classLoader,
+				String initConfig, String[] parentConfig)
 		{
+			if (baseClass == null && initConfig == null)
+			{
+				// baseClass和initConfig都没设置时使用默认的
+				initConfig = DEFAULT_INIT_CONFIG;
+			}
 			this.baseClass = baseClass;
+			this.classLoader = classLoader;
 			this.initConfig = initConfig;
 			this.parentConfig = parentConfig;
 			if (baseObj instanceof ContainObject)
@@ -1808,7 +1874,7 @@ public class FactoryManager
 			if (this.instanceId == null)
 			{
 				String conf = getConfig(this.initConfig, this.parentConfig);
-				String baseName = ClassGenerator.getClassName(this.baseClass);
+				String baseName = this.baseClass == null ? "$" : ClassGenerator.getClassName(this.baseClass);
 				this.instanceId = this.createInstanceId(conf, baseName);
 			}
 			return this.instanceId;
@@ -1819,6 +1885,7 @@ public class FactoryManager
 			String tmp = getConfig(this.initConfig, this.parentConfig);
 			if (tmp == null)
 			{
+				// 如果config为null, 则baseClass不会为null
 				tmp = "cp:" + this.baseClass.getName().replace('.', '/') + ".xml";
 			}
 			return tmp;
@@ -1828,13 +1895,14 @@ public class FactoryManager
 				throws Throwable
 		{
 			ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
-			Thread.currentThread().setContextClassLoader(this.baseClass.getClassLoader());
+			Thread.currentThread().setContextClassLoader(this.classLoader);
 			try
 			{
 				Digester digester = this.createDigester();
+				// 如果config为null, 则baseClass不会为null
 				String filenames = this.initConfig == null ?
 						"cp:" + this.baseClass.getName().replace('.', '/') + ".xml" : this.initConfig;
-				this.dealXML(filenames, this.baseClass, digester);
+				this.dealXML(filenames, this.classLoader, digester);
 
 				if (this.parentConfig != null)
 				{
@@ -1847,7 +1915,7 @@ public class FactoryManager
 							FactoryManager.superInitLevel = i + 1;
 							try
 							{
-								this.dealXML(this.parentConfig[i], this.baseClass, digester);
+								this.dealXML(this.parentConfig[i], this.classLoader, digester);
 							}
 							finally
 							{
@@ -1878,10 +1946,10 @@ public class FactoryManager
 		private ConfigMonitor[] monitors = null;
 		private boolean atInitialize = false;
 
-		public AutoReloadImpl(Class baseClass, Object baseObj, String initConfig, String[] parentConfig,
-				long autoReloadTime)
+		public AutoReloadImpl(Class baseClass, Object baseObj, ClassLoader classLoader,
+				String initConfig, String[] parentConfig, long autoReloadTime)
 		{
-			super(baseClass, baseObj, initConfig, parentConfig);
+			super(baseClass, baseObj, classLoader, initConfig, parentConfig);
 			List tempList = new LinkedList(this.getFiles(initConfig));
 			if (parentConfig != null)
 			{
@@ -1921,7 +1989,8 @@ public class FactoryManager
 			List result = new ArrayList();
 			if (config == null)
 			{
-				URL url = this.baseClass.getClassLoader().getResource(
+				// 如果config为null, 则baseClass不会为null
+				URL url = this.classLoader.getResource(
 						this.baseClass.getName().replace('.', '/') + ".xml");
 				if (url != null && "file".equals(url.getProtocol()))
 				{
@@ -1944,7 +2013,7 @@ public class FactoryManager
 					}
 					if (tStr.startsWith("cp:"))
 					{
-						URL url = this.baseClass.getClassLoader().getResource(tStr.substring(3));
+						URL url = this.classLoader.getResource(tStr.substring(3));
 						if (url != null && "file".equals(url.getProtocol()))
 						{
 							temp = this.parseFileName(url.getFile(), url);
