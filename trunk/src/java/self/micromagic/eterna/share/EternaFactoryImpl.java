@@ -355,8 +355,16 @@ public class EternaFactoryImpl extends AbstractFactory
 			}
 
 			// 初始化, model-caller
-			ObjectLogRule.setObjName("modelCaller");
-			this.modelCaller.initModelCaller(this);
+			if (this.modelCaller == this.defaultModelCaller && this.shareEternaFactory != null)
+			{
+				// 如果未设置过model-caller且有共享工厂, 则使用共享工厂的
+				this.modelCaller = this.shareEternaFactory.getModelCaller();
+			}
+			else
+			{
+				ObjectLogRule.setObjName("modelCaller");
+				this.modelCaller.initModelCaller(this);
+			}
 
 			// 初始化, model
 			if (this.sameShare != null)

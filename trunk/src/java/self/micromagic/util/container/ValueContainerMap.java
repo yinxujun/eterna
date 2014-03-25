@@ -276,7 +276,7 @@ public class ValueContainerMap extends AbstractMap
 				List names = new ArrayList(rmd.getColumnCount());
 				for (int i = 0; i < count; i++)
 				{
-					names.add(rmd.getColumnReader(i + 1));
+					names.add(rmd.getColumnReader(i + 1).getName());
 				}
 				return new IteratorEnumeration(names.iterator());
 			}

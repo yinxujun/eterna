@@ -158,7 +158,7 @@ public class UpdateAdapterImpl extends SQLAdapterImpl
 						Element nowNode = data.getCurrentNode();
 						if (nowNode != null)
 						{
-							AppDataLogExecute.printObject(nowNode.addElement("result"), new Integer(result));
+							AppDataLogExecute.printObject(nowNode.addElement(this.getType() + "-result"), new Integer(result));
 						}
 					}
 				}

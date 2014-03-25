@@ -30,6 +30,14 @@ import self.micromagic.util.BooleanRef;
 public interface QueryAdapter extends SQLAdapter
 {
 	/**
+	 * 可设置查询前是否需要检查reader列表, 将结果中不存在的去除, 未设置的添加上. <p>
+	 * 如果设为true表示需要检查, 设为false(默认值)表示不需要检查.
+	 * 在query的attribute中设置, 仅对此quer有效.
+	 * 在factory的attribute中设置, 将对此工厂中的所有未设置的query有效.
+	 */
+	public static final String CHECK_READER_FLAG = "checkResultReader";
+
+	/**
 	 * 设置是否需要检查数据库名称的标签, 如果设为true(默认值)表示需要检查. <p>
 	 * 对于一些数据库, 当设置了startRow和maxRows时, 会添加获取记录数限制的语句.
 	 */

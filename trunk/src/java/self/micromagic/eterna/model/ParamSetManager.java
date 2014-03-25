@@ -218,6 +218,13 @@ public class ParamSetManager
 		return this.paramsValues[param.getIndex() - 1];
 	}
 
+	public boolean isParamSetted(String name)
+			throws ConfigurationException
+	{
+		SQLParameter param = this.sql.getParameter(name);
+		return this.paramsSetted[param.getIndex() - 1];
+	}
+
 	/**
 	 * 将所有的动态参数设为忽略非动态参数设为null. <p>
 	 *

@@ -50,7 +50,7 @@ public class TypeManager
 
 	public static final int TYPES_COUNT = 18;
 
-	private static Map paramMap = new HashMap();
+	private static Map typeMap = new HashMap();
 
 	private static int[] SQL_TYPES = new int[]{
 		Types.NULL,           //TYPE_IGNORE
@@ -73,7 +73,7 @@ public class TypeManager
 		Types.DECIMAL         //TYPE_DECIMAL
 	};
 
-	private static String[] paramNames = {
+	private static String[] typeNames = {
 		"ignore",
 		"String",
 		"int",
@@ -118,25 +118,25 @@ public class TypeManager
 
 	static
 	{
-		paramMap.put("ignore", Utility.INTEGER_0);
-		paramMap.put("String", Utility.INTEGER_1);
-		paramMap.put("int", Utility.INTEGER_2);
-		paramMap.put("double", Utility.INTEGER_3);
-		paramMap.put("Bytes", Utility.INTEGER_4);
-		paramMap.put("boolean", Utility.INTEGER_5);
-		paramMap.put("Date", Utility.INTEGER_6);
-		paramMap.put("Timestamp", Utility.INTEGER_7);
-		paramMap.put("Datetime", Utility.INTEGER_7); // 兼容Datetime的设置
-		paramMap.put("long", Utility.INTEGER_8);
-		paramMap.put("Time", Utility.INTEGER_9);
-		paramMap.put("short", Utility.INTEGER_10);
-		paramMap.put("byte", Utility.INTEGER_11);
-		paramMap.put("float", Utility.INTEGER_12);
-		paramMap.put("Object", Utility.INTEGER_13);
-		paramMap.put("BigString", Utility.INTEGER_14);
-		paramMap.put("Stream", Utility.INTEGER_15);
-		paramMap.put("Reader", new Integer(16));
-		paramMap.put("Decimal", new Integer(17));
+		typeMap.put("ignore", Utility.INTEGER_0);
+		typeMap.put("String", Utility.INTEGER_1);
+		typeMap.put("int", Utility.INTEGER_2);
+		typeMap.put("double", Utility.INTEGER_3);
+		typeMap.put("Bytes", Utility.INTEGER_4);
+		typeMap.put("boolean", Utility.INTEGER_5);
+		typeMap.put("Date", Utility.INTEGER_6);
+		typeMap.put("Timestamp", Utility.INTEGER_7);
+		typeMap.put("Datetime", Utility.INTEGER_7); // 兼容Datetime的设置
+		typeMap.put("long", Utility.INTEGER_8);
+		typeMap.put("Time", Utility.INTEGER_9);
+		typeMap.put("short", Utility.INTEGER_10);
+		typeMap.put("byte", Utility.INTEGER_11);
+		typeMap.put("float", Utility.INTEGER_12);
+		typeMap.put("Object", Utility.INTEGER_13);
+		typeMap.put("BigString", Utility.INTEGER_14);
+		typeMap.put("Stream", Utility.INTEGER_15);
+		typeMap.put("Reader", new Integer(16));
+		typeMap.put("Decimal", new Integer(17));
 
 		converters = new ValueConverter[javaTypes.length];
 		for (int i = 0; i < javaTypes.length; i++)
@@ -185,7 +185,7 @@ public class TypeManager
 			}
 			catch (Exception ex){}
 		}
-		Integer i = (Integer) paramMap.get(name);
+		Integer i = (Integer) typeMap.get(name);
 		return i == null ? TYPE_IGNORE : i.intValue() | param;
 	}
 
@@ -200,7 +200,7 @@ public class TypeManager
 	public static int getPureType(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return TYPE_IGNORE;
 		}
@@ -217,11 +217,11 @@ public class TypeManager
 	public static String getTypeName(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return null;
 		}
-		String temp = paramNames[realId];
+		String temp = typeNames[realId];
 		if (id > 0xffffff || id < 0)
 		{
 			temp += "(" + ((id & 0xffff00) >> 8) + "," + ((id & 0xff000000) >>> 24) + ")";
@@ -234,6 +234,22 @@ public class TypeManager
 	}
 
 	/**
+	 * 将一个java.sql.Types里的类型id翻译成这里的类型.
+	 */
+	public static int transSQLType(int sqlType)
+	{
+      for (int i = 0; i < SQL_TYPES.length; i++)
+		{
+			if (sqlType == SQL_TYPES[i])
+			{
+				return i;
+			}
+		}
+		// 如果没有匹配的, 默认为object类型
+		return TYPE_OBJECT;
+	}
+
+	/**
 	 * 获取类型id对应的SQL的类型.
 	 *
 	 * @param id  类型的id
@@ -242,7 +258,7 @@ public class TypeManager
 	public static int getSQLType(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return Types.NULL;
 		}
@@ -290,7 +306,7 @@ public class TypeManager
 	public static boolean isTypeNumber(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return false;
 		}
@@ -308,7 +324,7 @@ public class TypeManager
 	public static boolean isTypeDate(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return false;
 		}
@@ -324,7 +340,7 @@ public class TypeManager
 	public static boolean isTypeString(int id)
 	{
 		int realId = id & 0xff;
-		if (realId < 0 || realId >= paramNames.length)
+		if (realId < 0 || realId >= typeNames.length)
 		{
 			return false;
 		}

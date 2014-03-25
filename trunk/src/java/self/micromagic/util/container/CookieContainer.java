@@ -185,9 +185,9 @@ public class CookieContainer extends AbstractContainerSetting
 					return null;
 				}
 				String value = cookie.getValue();
-            if (value != null && value.startsWith(COMPRESS_VALUE_PREFIX))
+				if (value != null && value.startsWith(COMPRESS_VALUE_PREFIX))
 				{
-               return this.doInflater(value.substring(COMPRESS_VALUE_PREFIX.length()));
+					return this.doInflater(value.substring(COMPRESS_VALUE_PREFIX.length()));
 				}
 				return this.decodeStr(cookie.getValue());
 			}
