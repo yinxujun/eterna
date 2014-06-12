@@ -60,6 +60,14 @@ public class ParamSetManager
 		}
 	}
 
+	/**
+	 * 获取当前参数管理器所管理的SQLAdapter.
+	 */
+	public SQLAdapter getSQLAdapter()
+	{
+		return this.sql;
+	}
+
 	private Object getValues(Name[] names)
 	{
 		if (this.paramsCacheValues == null)

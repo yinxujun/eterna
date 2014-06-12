@@ -23,6 +23,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultReader;
 
 public class LimitFormat extends AbstractGenerator
 		implements ResultFormat, ResultFormatGenerator
@@ -34,17 +35,16 @@ public class LimitFormat extends AbstractGenerator
 	{
 	}
 
-	public String format(Object obj, Permission permission)
+	public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 			throws ConfigurationException
 	{
 		String temp = obj == null ? "" : obj.toString();
 		return Utils.formatLength(temp, this.limit);
 	}
 
-	public String format(Object obj, ResultRow row, Permission permission)
-			throws ConfigurationException
+	public boolean useEmptyString()
 	{
-		return this.format(obj, permission);
+		return true;
 	}
 
 	public Object create() throws ConfigurationException

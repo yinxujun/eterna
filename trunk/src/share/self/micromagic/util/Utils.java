@@ -1097,7 +1097,7 @@ public class Utils
 		{
 			return "";
 		}
-		String str = row.getFormated(name);
+		String str = row.getFormated(name).toString();
 		return str == null ? "" : toHTML ? Utils.dealString2HTML(str) : str;
 	}
 
@@ -1171,11 +1171,11 @@ public class Utils
 			}
 			if (toHTML)
 			{
-				Utils.dealString2HTML(this.row.getFormated(name), this.out, true);
+				Utils.dealString2HTML(this.row.getFormated(name).toString(), this.out, true);
 			}
 			else
 			{
-				this.out.write(this.row.getFormated(name));
+				this.out.write(this.row.getFormated(name).toString());
 			}
 		}
 

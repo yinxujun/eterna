@@ -28,6 +28,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.util.converter.BooleanConverter;
 
 public class ResultFormatGeneratorImpl extends AbstractGenerator
@@ -132,14 +133,14 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
 			return this.name;
 		}
 
-		public String format(Object obj, Permission permission)
+		public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 		{
 			return obj == null ? "" : this.format.format(obj);
 		}
 
-		public String format(Object obj, ResultRow row, Permission permission)
+		public boolean useEmptyString()
 		{
-			return obj == null ? "" : this.format.format(obj);
+			return true;
 		}
 
 	}
@@ -175,7 +176,7 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
 			return this.name;
 		}
 
-		public String format(Object obj, Permission permission)
+		public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 		{
 			if (obj == null)
 			{
@@ -185,14 +186,9 @@ public class ResultFormatGeneratorImpl extends AbstractGenerator
 			return v ? this.trueValue : this.falseValue;
 		}
 
-		public String format(Object obj, ResultRow row, Permission permission)
+		public boolean useEmptyString()
 		{
-			if (obj == null)
-			{
-				return "";
-			}
-			boolean v = booleanConverter.convertToBoolean(obj);
-			return v ? this.trueValue : this.falseValue;
+			return true;
 		}
 
 	}

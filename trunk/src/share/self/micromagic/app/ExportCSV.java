@@ -133,7 +133,7 @@ public class ExportCSV extends AbstractExportExecute
 				{
 					out.write(',');
 				}
-				this.writeString(out, row.getFormated(i + 1));
+				this.writeString(out, row.getFormated(i + 1).toString());
 			}
 		}
 	}

@@ -28,6 +28,40 @@ public interface ResultRow
 	ResultIterator getResultIterator() throws SQLException, ConfigurationException;
 
 	/**
+	 * 获取当前<code>ResultRow</code>在结果中的位置.
+	 * 如果在第一条记录则返回1, 第二条记录则返回2...
+	 */
+	int getRowNum() throws SQLException, ConfigurationException;
+
+	/**
+	 * 如果指定的列设置了format, 则以getFormated方式获取值.
+	 * 如果未设置, 则以getObject方式获取值.
+	 *
+	 * @param columnIndex  参数的索引值, 第一个是1, 第二个是2, ....
+	 * @return 格式化后的数据.
+	 *
+	 * @see #getFormated(int)
+	 * @see #getObject(int)
+	 * @exception SQLException 假如访问数据库时出错
+	 */
+	Object getSmartValue(int columnIndex) throws SQLException, ConfigurationException;
+
+	/**
+	 * 如果指定的列设置了format, 则以getFormated方式获取值.
+	 * 如果未设置, 则以getObject方式获取值.
+	 *
+	 * @param columnName  参数的名称.
+	 * @param notThrow    设为<code>true<code>时, 当对应名称的reader不存在时
+	 *                    不会抛出异常, 而只是返回null
+	 * @return 格式化后的数据.
+	 *
+	 * @see #getFormated(String)
+	 * @see #getObject(String)
+	 * @exception SQLException 假如访问数据库时出错
+	 */
+	Object getSmartValue(String columnName, boolean notThrow) throws SQLException, ConfigurationException;
+
+	/**
 	 * 在当前行<code>ResultRow</code>对象中取出格式化后指定的列.
 	 *
 	 * @param columnIndex  参数的索引值, 第一个是1, 第二个是2, ....
@@ -35,7 +69,7 @@ public interface ResultRow
 	 *
 	 * @exception SQLException 假如访问数据库时出错
 	 */
-	String getFormated(int columnIndex) throws SQLException, ConfigurationException;
+	Object getFormated(int columnIndex) throws SQLException, ConfigurationException;
 
 	/**
 	 * 在当前行<code>ResultRow</code>对象中取出格式化后指定的列.
@@ -45,7 +79,7 @@ public interface ResultRow
 	 *
 	 * @exception SQLException 假如访问数据库时出错
 	 */
-	String getFormated(String columnName) throws SQLException, ConfigurationException;
+	Object getFormated(String columnName) throws SQLException, ConfigurationException;
 
 	/**
 	 * Reports whether
@@ -55,6 +89,7 @@ public interface ResultRow
 	 * on a column to try to read its value and then call
 	 * the method <code>wasNull</code> to see if the value read was
 	 * SQL <code>NULL</code>.
+	 * 注: 此方法是非线程安全的.
 	 *
 	 * @return <code>true</code> if the last column value read was SQL
 	 *         <code>NULL</code> and <code>false</code> otherwise

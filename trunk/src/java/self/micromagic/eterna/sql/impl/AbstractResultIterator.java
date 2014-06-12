@@ -44,9 +44,15 @@ public abstract class AbstractResultIterator
 	protected ResultMetaData metaData;
 	protected QueryAdapter query;
 
+	/**
+	 * 当前的ResultIterator是否为最初构造的.
+	 */
+	protected boolean originItr;
+
 	public AbstractResultIterator(List readerList)
 	{
 		this.readerList = readerList;
+		this.originItr = true;
 	}
 
 	public AbstractResultIterator(ResultReaderManager readerManager, Permission permission)
@@ -54,6 +60,7 @@ public abstract class AbstractResultIterator
 	{
 		this.readerManager = readerManager;
 		this.readerList = readerManager.getReaderList(permission);
+		this.originItr = true;
 	}
 
 	protected AbstractResultIterator()
@@ -122,16 +129,30 @@ public abstract class AbstractResultIterator
 	{
 		if (this.preFetchList != null && this.preFetchList.size() > 0)
 		{
-			this.currentRow  = (ResultRow) this.preFetchList.remove(0);
+			this.currentRow = (ResultRow) this.preFetchList.remove(0);
 			return this.currentRow ;
 		}
-		this.currentRow = (ResultRow) this.resultItr.next();
+		this.currentRow = this.nextRow0();
 		return this.currentRow;
 	}
 
 	protected ResultRow nextRow0()
 	{
-		return (ResultRow) this.resultItr.next();
+		ResultRow row = (ResultRow) this.resultItr.next();
+		if (!this.originItr)
+		{
+			// 如果当前不是原始的ResultIterator, 需要调整返回的ResultRow
+			if (row.getClass() == ResultRowImpl.class)
+			{
+				// 如果是ResultRowImpl(且不是子类), 则进行复制
+				row = new ResultRowImpl((ResultRowImpl) row, this);
+			}
+			else
+			{
+				row = new ResultRowWrapper(this, row);
+			}
+		}
+		return row;
 	}
 
 	public boolean beforeFirst()
@@ -158,6 +179,7 @@ public abstract class AbstractResultIterator
 		other.currentRow = this.currentRow;
 		other.metaData = this.metaData;
 		other.query = this.query;
+		other.originItr = false;
 		other.beforeFirst();
 	}
 

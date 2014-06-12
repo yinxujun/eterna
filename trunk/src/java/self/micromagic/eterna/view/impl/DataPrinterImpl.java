@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import self.micromagic.cg.BeanMethodInfo;
 import self.micromagic.cg.BeanTool;
@@ -72,7 +73,13 @@ public class DataPrinterImpl extends AbstractGenerator
 			throws IOException, ConfigurationException
 	{
 		boolean first = true;
-		Iterator entrys = data.entrySet().iterator();
+		Set entrySet = data.entrySet();
+		if (entrySet == null)
+		{
+			// 对于某些实现不完善的map, 如果entry set为null则作为空的处理
+			return;
+		}
+		Iterator entrys = entrySet.iterator();
 		while (entrys.hasNext())
 		{
 			Map.Entry entry = (Map.Entry) entrys.next();
@@ -309,9 +316,8 @@ public class DataPrinterImpl extends AbstractGenerator
 					out.write('"');
 				}
 				this.stringCoder.toJsonString(out, rmd.getColumnName(i));
-				out.write("\":\"");
-				this.stringCoder.toJsonString(out, row.getFormated(i));
-				out.write('"');
+				out.write("\":");
+				this.print(out, row.getFormated(i));
 			}
 		}
 		out.write('}');
@@ -362,14 +368,9 @@ public class DataPrinterImpl extends AbstractGenerator
 			{
 				if (i > 1)
 				{
-					out.write(",\"");
+					out.write(',');
 				}
-				else
-				{
-					out.write('"');
-				}
-				this.stringCoder.toJsonString(out, row.getFormated(i));
-				out.write('"');
+				this.print(out, row.getFormated(i));
 			}
 			out.write(']');
 		}

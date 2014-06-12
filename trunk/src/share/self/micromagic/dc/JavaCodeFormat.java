@@ -23,6 +23,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.dc.CodeClassTool;
 import self.micromagic.util.StringTool;
 
@@ -82,20 +83,14 @@ public class JavaCodeFormat extends AbstractGenerator
 		}
 	}
 
-	public String format(Object obj, Permission permission)
-			throws ConfigurationException
-	{
-		return this.format(obj, null, permission);
-	}
-
-	public String format(Object obj, ResultRow row, Permission permission)
+	public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 			throws ConfigurationException
 	{
 		try
 		{
 			if (this.formatCode != null)
 			{
-				return this.formatCode.invoke(obj, row, permission);
+				return this.formatCode.invoke(obj, row, reader, permission);
 			}
 		}
 		catch (Exception ex)
@@ -107,6 +102,11 @@ public class JavaCodeFormat extends AbstractGenerator
 			throw new ConfigurationException(ex);
 		}
 		return "";
+	}
+
+	public boolean useEmptyString()
+	{
+		return true;
 	}
 
 	public String getType()
@@ -136,9 +136,9 @@ public class JavaCodeFormat extends AbstractGenerator
 		Class extendsClass = FormatCodeImpl.class;
 		if (extendsStr != null)
 		{
-			extendsClass = Class.forName(extendsStr);
+			extendsClass = Class.forName(extendsStr, true, Thread.currentThread().getContextClassLoader());
 		}
-		String methodHead = "public String invoke(Object obj, ResultRow row, Permission permission)"
+		String methodHead = "public Object invoke(Object obj, ResultRow row, ResultReader reader, Permission permission)"
 				+ "\n      throws Exception";
 		String[] iArr = null;
 		String imports = (String) this.getAttribute("imports");
@@ -166,7 +166,7 @@ public class JavaCodeFormat extends AbstractGenerator
 		public void setGenerator(JavaCodeFormat generator, EternaFactory factory)
 				throws ConfigurationException;
 
-		public String invoke(Object obj, ResultRow row, Permission permission)
+		public Object invoke(Object obj, ResultRow row, ResultReader reader, Permission permission)
 				throws Exception;
 
 	}

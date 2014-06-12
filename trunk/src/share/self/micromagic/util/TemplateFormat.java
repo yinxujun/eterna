@@ -25,6 +25,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultReader;
 
 /**
  * 增加一个format的例子：
@@ -53,7 +54,7 @@ public class TemplateFormat extends AbstractGenerator
 	{
 	}
 
-	public String format(Object obj, Permission permission)
+	public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 			throws ConfigurationException
 	{
 		if (this.needPermission != null && permission != null)
@@ -79,10 +80,9 @@ public class TemplateFormat extends AbstractGenerator
 		return buf.toString();
 	}
 
-	public String format(Object obj, ResultRow row, Permission permission)
-			throws ConfigurationException
+	public boolean useEmptyString()
 	{
-		return this.format(obj, permission);
+		return true;
 	}
 
 	protected void parseTemplate()
@@ -143,7 +143,7 @@ public class TemplateFormat extends AbstractGenerator
 		t.setPattern("s[v]dfdfds[v]df[v]");
 		t.parseTemplate();
 		System.out.println(java.util.Arrays.asList(t.patterns));
-		System.out.println(t.format("--", null));
+		System.out.println(t.format("--", null, null, null));
 	}
 
 }

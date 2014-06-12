@@ -87,7 +87,7 @@ public class JavaCodeExecute extends BaseExecute
 		Class extendsClass = ExecuteCodeImpl.class;
 		if (extendsStr != null)
 		{
-			extendsClass = Class.forName(extendsStr);
+			extendsClass = Class.forName(extendsStr, true, Thread.currentThread().getContextClassLoader());
 		}
 		String methodHead = "public Object invoke(AppData data, Connection conn)\n      throws Exception";
 		String[] iArr = null;

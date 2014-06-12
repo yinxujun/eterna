@@ -23,10 +23,12 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.model.AppData;
 
 public abstract class AbstractResultSetIterator
 		implements ResultIterator, Runnable
@@ -39,18 +41,25 @@ public abstract class AbstractResultSetIterator
 	private ResultSet resultSet;
 	protected List preFetchList;
 	protected ResultRow currentRow;
+	protected int rowNum;
 
 	private boolean hasNext;
 	private boolean isMovedNext;
 	private boolean closed;
+	private boolean dontClose;
 
 	public AbstractResultSetIterator(Connection conn, Statement stmt, ResultSet rs)
 	{
 		this.conn = conn;
 		this.stmt = stmt;
 		this.resultSet = rs;
-		Thread t = new Thread(this);
-		t.start();
+		Map attrMap = AppData.getCurrentData().getRequestAttributeMap();
+		this.dontClose = attrMap != null && "1".equals(attrMap.get(DONT_CLOSE_CONNECTION));
+		if (!this.dontClose)
+		{
+			Thread t = new Thread(this);
+			t.start();
+		}
 	}
 
 	private void moveToNext()
@@ -127,7 +136,8 @@ public abstract class AbstractResultSetIterator
 			if (this.hasMoreRow0())
 			{
 				this.isMovedNext = false;
-				this.preFetchList.add(this.getResultRow(this.resultSet));
+				this.rowNum++;
+				this.preFetchList.add(this.getResultRow(this.resultSet, this.rowNum));
 			}
 			else
 			{
@@ -154,13 +164,14 @@ public abstract class AbstractResultSetIterator
 		if (this.hasMoreRow())
 		{
 			this.isMovedNext = false;
-			this.currentRow = this.getResultRow(this.resultSet);
+			this.rowNum++;
+			this.currentRow = this.getResultRow(this.resultSet, this.rowNum);
 			return this.currentRow;
 		}
 		throw new NoSuchElementException();
 	}
 
-	protected abstract ResultRow getResultRow(ResultSet rs) throws SQLException;
+	protected abstract ResultRow getResultRow(ResultSet rs, int rowNum) throws SQLException;
 
 	public boolean beforeFirst()
 	{
@@ -168,6 +179,7 @@ public abstract class AbstractResultSetIterator
 		{
 			this.resultSet.beforeFirst();
 			this.currentRow = null;
+			this.rowNum = 0;
 			this.preFetchList = null;
 			return true;
 		}
@@ -182,6 +194,11 @@ public abstract class AbstractResultSetIterator
 	{
 		if (this.closed)
 		{
+			return;
+		}
+		if (this.dontClose)
+		{
+			this.closed = true;
 			return;
 		}
 		this.resultSet.close();

@@ -109,12 +109,16 @@ public abstract class ResultReaders
 
 		public ObjectReader(String name)
 		{
-			this.name = this.columnName = this.orderName = name;
+			this.name = this.columnName = name;
 		}
 
 		public void initialize(EternaFactory factory)
 				throws ConfigurationException
 		{
+			if (this.orderName == null)
+			{
+				this.orderName = this.columnName == null ? this.name : this.columnName;
+			}
 			if (this.formatName != null)
 			{
 				this.format = factory.getFormat(this.formatName);

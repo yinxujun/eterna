@@ -108,7 +108,7 @@ class CountQueryAdapter
 			rs.next();
 			Object[] values = new Object[]{new Integer(rs.getInt(1))};
 			CountResultIterator critr = new CountResultIterator(this.readerManager, this);
-			ResultRowImpl rowSet = new ResultRowImpl(values, critr, null);
+			ResultRowImpl rowSet = new ResultRowImpl(values, critr, 1, null);
 			ArrayList results = new ArrayList(2);
 			results.add(rowSet);
 			critr.setResult(results);

@@ -24,6 +24,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.digester.ConfigurationException;
 import self.micromagic.dc.CodeClassTool;
 import self.micromagic.util.StringTool;
+import self.micromagic.cg.ClassGenerator;
 
 /**
  * 动态编译java代码来构造一个ConditionBuilder.
@@ -129,9 +130,10 @@ public class JavaCodeConditionBuilder extends AbstractGenerator
 		Class extendsClass = ConditionBuilderCodeImpl.class;
 		if (extendsStr != null)
 		{
-			extendsClass = Class.forName(extendsStr);
+			extendsClass = Class.forName(extendsStr, true, Thread.currentThread().getContextClassLoader());
 		}
-		String methodHead = "public ConditionBuilder$Condition invoke(String colName, String value, "
+		String rType = ClassGenerator.getClassName(ConditionBuilder.Condition.class);
+		String methodHead = "public " + rType + " invoke(String colName, String value, "
 				+ "ConditionProperty cp)\n      throws Exception";
 		String[] iArr = null;
 		String imports = (String) this.getAttribute("imports");

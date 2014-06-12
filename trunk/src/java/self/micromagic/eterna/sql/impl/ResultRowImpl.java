@@ -29,6 +29,7 @@ import self.micromagic.eterna.sql.ResultIterator;
 import self.micromagic.eterna.sql.ResultMetaData;
 import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.util.StringAppender;
 import self.micromagic.util.StringTool;
 import self.micromagic.util.converter.BooleanConverter;
@@ -48,22 +49,42 @@ import self.micromagic.util.converter.TimestampConverter;
 
 public class ResultRowImpl implements ResultRow
 {
+	private static final Object NULL_FLAG = new Object();
+
 	private Object[] values;
 	private Permission permission;
 	private ResultMetaData metaData;
 	private ResultIterator resultIterator;
+	private int rowNum;
 
-	private String[] formateds;
+	private Object[] formateds;
 	private boolean wasNull;
 
-	public ResultRowImpl(Object[] values, ResultIterator resultIterator, Permission permission)
+	public ResultRowImpl(Object[] values, ResultIterator resultIterator, int rowNum, Permission permission)
 			throws ConfigurationException, SQLException
 	{
 		this.values = values;
-		this.formateds = new String[values.length];
+		this.formateds = new Object[values.length];
 		this.permission = permission;
 		this.resultIterator = resultIterator;
+		this.rowNum = rowNum;
 		this.metaData = resultIterator.getMetaData();
+	}
+
+	/**
+	 * 用于复制一个ResultRowImpl, 用于更新ResultIterator.
+	 *
+	 * @param old     原始的ResultRowImpl
+	 * @param newItr  新的ResultIterator
+	 */
+	ResultRowImpl(ResultRowImpl old, ResultIterator newItr)
+	{
+		this.values = old.values;
+		this.formateds = old.formateds;
+		this.permission = old.permission;
+		this.resultIterator = newItr;
+		this.rowNum = old.rowNum;
+		this.metaData = old.metaData;
 	}
 
 	public ResultIterator getResultIterator()
@@ -71,57 +92,105 @@ public class ResultRowImpl implements ResultRow
 		return this.resultIterator;
 	}
 
-	public String getFormated(int columnIndex)
+	public int getRowNum()
+	{
+		return this.rowNum;
+	}
+
+	public Object getSmartValue(int columnIndex)
+			throws ConfigurationException, SQLException
+	{
+		ResultReader reader = this.metaData.getColumnReader(columnIndex);
+		if (reader.getFormat() == null)
+		{
+			return this.getObject(columnIndex);
+		}
+		return this.getFormated(columnIndex);
+	}
+
+	public Object getSmartValue(String columnName, boolean notThrow)
+			throws ConfigurationException, SQLException
+	{
+		int index = this.metaData.findColumn(columnName, notThrow);
+		if (index == -1)
+		{
+			return null;
+		}
+		return this.getSmartValue(index);
+	}
+
+	public Object getFormated(int columnIndex)
 			throws ConfigurationException
 	{
 		int cIndex = columnIndex - 1;
 		if (this.values[cIndex] == null)
 		{
 			this.wasNull = true;
-			if (this.formateds[cIndex] != null)
+			Object tmp = this.formateds[cIndex];
+			if (tmp != null)
 			{
-				return this.formateds[cIndex];
+				return tmp == NULL_FLAG ? null : tmp;
 			}
 			ResultReader reader = this.metaData.getColumnReader(columnIndex);
-			if (reader.getFormat() != null)
+			ResultFormat format = reader.getFormat();
+			if (format != null)
 			{
-				String tmp = null;
 				try
 				{
-					tmp = reader.getFormat().format(null, this, this.permission);
+					tmp = format.format(null, this, reader, this.permission);
 				}
 				catch (Exception ex)
 				{
 					  SQLManager.log.warn(this.getFormatErrMsg(columnIndex), ex);
 				}
-				return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
+				if (tmp == null)
+				{
+					tmp = format.useEmptyString() ? "" : NULL_FLAG;
+				}
 			}
-			return this.formateds[cIndex] = "";
+			else
+			{
+				tmp = "";
+			}
+			this.formateds[cIndex] = tmp;
+			return tmp == NULL_FLAG ? null : tmp;
 		}
 		this.wasNull = false;
-		if (this.formateds[cIndex] != null)
+		Object tmp = this.formateds[cIndex];
+		if (tmp != null)
 		{
-			return this.formateds[cIndex];
+			return tmp == NULL_FLAG ? null : tmp;
 		}
 		ResultReader reader = this.metaData.getColumnReader(columnIndex);
-		if (reader.getFormat() == null)
+		ResultFormat format = reader.getFormat();
+		if (format == null)
 		{
-			this.formateds[cIndex] = strConvert.convertToString(this.values[cIndex]);
-			return this.formateds[cIndex];
+			tmp = strConvert.convertToString(this.values[cIndex]);
+			if (tmp == null)
+			{
+				tmp = "";
+			}
 		}
-		String tmp = null;
-		try
+		else
 		{
-			tmp = reader.getFormat().format(this.values[cIndex], this, this.permission);
+			try
+			{
+				tmp = format.format(this.values[cIndex], this, reader, this.permission);
+			}
+			catch (Exception ex)
+			{
+				  SQLManager.log.warn(this.getFormatErrMsg(columnIndex), ex);
+			}
+			if (tmp == null)
+			{
+				tmp = format.useEmptyString() ? "" : NULL_FLAG;
+			}
 		}
-		catch (Exception ex)
-		{
-			  SQLManager.log.warn(this.getFormatErrMsg(columnIndex), ex);
-		}
-		return tmp == null ? (this.formateds[cIndex] = "") : (this.formateds[cIndex] = tmp);
+		this.formateds[cIndex] = tmp;
+		return tmp == NULL_FLAG ? null : tmp;
 	}
 
-	public String getFormated(String columnName)
+	public Object getFormated(String columnName)
 			throws ConfigurationException
 	{
 		int index = this.metaData.findColumn(columnName, false);

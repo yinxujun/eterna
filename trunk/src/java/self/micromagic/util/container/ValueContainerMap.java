@@ -229,7 +229,7 @@ public class ValueContainerMap extends AbstractMap
 		{
 			try
 			{
-				return this.row.getObject(key == null ? null : key.toString(), true);
+				return this.row.getSmartValue(key == null ? null : key.toString(), true);
 			}
 			catch (SQLException ex)
 			{

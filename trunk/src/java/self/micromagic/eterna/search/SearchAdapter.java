@@ -34,22 +34,22 @@ import self.micromagic.eterna.view.DataPrinter;
  */
 public interface SearchAdapter
 {
-	static final String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
-	static final String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
+	String SESSION_SEARCH_MANAGER = "ETERNA_SESSION_SEARCH_MANAGER";
+	String SESSION_SEARCH_QUERY = "ETERNA_SESSION_SEARCH_QUERY";
 
 	/**
 	 * 设置单列排序的参数名后缀. <p>
 	 * 参数格式为: [searchName].order
 	 * 值为需要排序的reader名称.
 	 */
-	static final String SINGLE_ORDER_SUFIX = ".order";
+	String SINGLE_ORDER_SUFIX = ".order";
 
 	/**
 	 * 设置单列排序的类型. <p>
 	 * 参数格式为: [searchName].orderType
 	 * 值可以分别为 0 自动切换升序及降序, 1 升序, -1 降序
 	 */
-	static final String SINGLE_ORDER_TYPE = ".orderType";
+	String SINGLE_ORDER_TYPE = ".orderType";
 
 	/**
 	 * 设置默认每页行数的属性名称. <p>
@@ -60,7 +60,7 @@ public interface SearchAdapter
 	 *    </attributes>
 	 * </search>
 	 */
-	static final String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
+	String PAGE_SIZE_ATTRIBUTE = "SearchAdapter.Attribute.pageSize";
 
 	/**
 	 * 用于标志是否要强制读取列设置. <p>
@@ -73,7 +73,7 @@ public interface SearchAdapter
 	 * 注: 使用此标志强制读取的列设置不会被缓存, 也就是说下次强制读取表示未
 	 *     设置的话, 读取的列设置仍然是前一次缓存的值
 	 */
-	static final String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
+	String FORCE_LOAD_COLUMN_SETTING = "ETERNA_FORCE_LOAD_COLUMN_SETTING";
 
 	/**
 	 * 用于标志是否要读取所有的记录. <p>
@@ -83,7 +83,7 @@ public interface SearchAdapter
 	 * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
 	 * request.removeAttribute(SearchManager.READ_ALL_ROW);
 	 */
-	static final String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
+	String READ_ALL_ROW = "ETERNA_READ_ALL_ROW";
 
 	/**
 	 * 用于标志读取的记录数. <p>
@@ -93,7 +93,7 @@ public interface SearchAdapter
 	 * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
 	 * request.removeAttribute(SearchManager.READ_ROW_START_AND_COUNT);
 	 */
-	static final String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
+	String READ_ROW_START_AND_COUNT = "ETERNA_READ_ROW_START_AND_COUNT";
 
 	/**
 	 * 用于标志是否要读取所有的记录. <p>
@@ -104,7 +104,7 @@ public interface SearchAdapter
 	 * 此外, 如果需要把已设置的标志去除, 可以使用如下方法:
 	 * request.removeAttribute(SearchManager.HOLD_CONNECTION);
 	 */
-	static final String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
+	String HOLD_CONNECTION = "ETERNA_HODE_CONNECTION";
 
 	String getName() throws ConfigurationException;
 
