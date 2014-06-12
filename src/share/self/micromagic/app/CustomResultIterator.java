@@ -37,6 +37,7 @@ public class CustomResultIterator extends AbstractResultIterator
 {
 	private int recordCount = 0;
 	private Permission permission;
+	private int rowNum;
 
 	/**
 	 * @deprecated
@@ -77,7 +78,8 @@ public class CustomResultIterator extends AbstractResultIterator
 		}
 		try
 		{
-			ResultRow row = new ResultRowImpl(values, this, this.permission);
+			this.rowNum++;
+			ResultRow row = new ResultRowImpl(values, this, this.rowNum, this.permission);
 			if (autoAdd)
 			{
 				this.result.add(row);

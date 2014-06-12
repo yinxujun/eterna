@@ -310,8 +310,15 @@ public class AppDataLogExecute extends AbstractExecute
 		private void printMap(Element parent, Map map)
 				throws Exception
 		{
-			parent.addAttribute("count", Integer.toString(map.entrySet().size()));
-			Iterator entrys = map.entrySet().iterator();
+			Set entrySet = map.entrySet();
+			if (entrySet == null)
+			{
+				parent.addAttribute("error", "The map enrty set is null.");
+				parent.addAttribute("type", map.getClass().getName());
+				return;
+			}
+			parent.addAttribute("count", Integer.toString(entrySet.size()));
+			Iterator entrys = entrySet.iterator();
 			while (entrys.hasNext())
 			{
 				Map.Entry entry = (Map.Entry) entrys.next();
@@ -402,6 +409,7 @@ public class AppDataLogExecute extends AbstractExecute
 			ResultMetaData rmd = row.getResultIterator().getMetaData();
 			int count = rmd.getColumnCount();
 			parent.addAttribute("columnCount", Integer.toString(count));
+			Object value;
 			for (int i = 1; i <= count; i++)
 			{
 				if (rmd.getColumnReader(i).isValid())
@@ -409,7 +417,16 @@ public class AppDataLogExecute extends AbstractExecute
 					Element vNode = parent.addElement("value");
 					vNode.addAttribute("columnName", rmd.getColumnName(i));
 					vNode.addAttribute("type", TypeManager.getTypeName(rmd.getColumnReader(i).getType()));
-					vNode.addAttribute("value", row.getFormated(i));
+					value = row.getFormated(i);
+					if (value instanceof String)
+					{
+						vNode.addAttribute("value", (String) value);
+					}
+					else
+					{
+						Element tmp = vNode.addElement("object");
+						this.printObject(tmp, value);
+					}
 				}
 			}
 		}

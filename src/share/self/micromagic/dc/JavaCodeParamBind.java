@@ -173,7 +173,7 @@ public class JavaCodeParamBind extends AbstractGenerator
 		Class extendsClass = ParamBindCodeImpl.class;
 		if (extendsStr != null)
 		{
-			extendsClass = Class.forName(extendsStr);
+			extendsClass = Class.forName(extendsStr, true, Thread.currentThread().getContextClassLoader());
 		}
 		String methodHead = "public int invoke(AppData data, ParamSetManager psm, int loopIndex)"
 				+ "\n      throws Exception";

@@ -34,16 +34,32 @@ import self.micromagic.eterna.sql.preparer.ValuePreparer;
  */
 public interface SQLAdapter
 {
-	public static final String SQL_LOG_PROPERTY = "self.micromagic.eterna.sql.logType";
-	public static final int SQL_LOG_TYPE_NONE = -1;
-	public static final int SQL_LOG_TYPE_SAVE = 0x2;
-	public static final int SQL_LOG_TYPE_PRINT = 0x1;
-	public static final int SQL_LOG_TYPE_SPECIAL = 0x4;
+	/**
+	 * 配置中设置SQL日志等级的标识.
+	 */
+	String SQL_LOG_PROPERTY = "self.micromagic.eterna.sql.logType";
+	/**
+	 * 日志等级, 不记录.
+	 */
+	int SQL_LOG_TYPE_NONE = -1;
+	/**
+	 * 日志等级, 记录到内存.
+	 */
+	int SQL_LOG_TYPE_SAVE = 0x2;
+	/**
+	 * 日志等级, 记录到系统日志.
+	 */
+	int SQL_LOG_TYPE_PRINT = 0x1;
+	/**
+	 * 日志等级, 调用指定的日志记录对象.
+	 */
+	int SQL_LOG_TYPE_SPECIAL = 0x4;
 
-	public static final String SQL_TYPE_UPDATE = "update";
-	public static final String SQL_TYPE_QUERY = "query";
-	public static final String SQL_TYPE_COUNT = "count";
-	public static final String SQL_TYPE_SQL = "SQL";
+
+	String SQL_TYPE_UPDATE = "update";
+	String SQL_TYPE_QUERY = "query";
+	String SQL_TYPE_COUNT = "count";
+	String SQL_TYPE_SQL = "SQL";
 
 	/**
 	 * 获取本SQL适配器的名称.

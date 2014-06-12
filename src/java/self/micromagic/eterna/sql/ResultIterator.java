@@ -27,6 +27,11 @@ import self.micromagic.eterna.digester.ConfigurationException;
 public interface ResultIterator extends Iterator
 {
 	/**
+	 * 用于标志在保持连接的结果集中不要关闭连接.
+	 */
+	String DONT_CLOSE_CONNECTION = "ETERNA_DONT_CLOSE_CONNECTION";
+
+	/**
 	 * 获取这个<code>ResultIterator</code>的列数, 以及每列的名称 宽度
 	 * 标题 reader对象.
 	 */

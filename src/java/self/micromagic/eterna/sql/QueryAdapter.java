@@ -35,13 +35,13 @@ public interface QueryAdapter extends SQLAdapter
 	 * 在query的attribute中设置, 仅对此quer有效.
 	 * 在factory的attribute中设置, 将对此工厂中的所有未设置的query有效.
 	 */
-	public static final String CHECK_READER_FLAG = "checkResultReader";
+	String CHECK_READER_FLAG = "checkResultReader";
 
 	/**
 	 * 设置是否需要检查数据库名称的标签, 如果设为true(默认值)表示需要检查. <p>
 	 * 对于一些数据库, 当设置了startRow和maxRows时, 会添加获取记录数限制的语句.
 	 */
-	public static final String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
+	String CHECK_DATABASE_NAME_FLAG = "checkDatabaseName";
 
 	/**
 	 * 复制所有的ResultReader. <p>
@@ -52,27 +52,27 @@ public interface QueryAdapter extends SQLAdapter
 	 * @see ResultReaders.ObjectReader
 	 * @see ResultReaders.ObjectReader#setCheckIndex
 	 */
-	public static final String COPY_READERS_FLAG = "copyReaders";
+	String COPY_READERS_FLAG = "copyReaders";
 
 	/**
 	 * 可设置的其它ResultReaderManager的名称列表, 以逗号分割.
 	 */
-	public static final String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
+	String OTHER_READER_MANAGER_SET_FLAG = "otherReaderManagerSet";
 
 	/**
 	 * 自动计算总记录数, 通过循环ResultSet的next方法来计算.
 	 */
-	public static final int TOTAL_COUNT_AUTO = -1;
+	int TOTAL_COUNT_AUTO = -1;
 
 	/**
 	 * 不计算总记录数.
 	 */
-	public static final int TOTAL_COUNT_NONE = -2;
+	int TOTAL_COUNT_NONE = -2;
 
 	/**
 	 * 通过自动生成的count语句, 获取总记录数.
 	 */
-	public static final int TOTAL_COUNT_COUNT = -3;
+	int TOTAL_COUNT_COUNT = -3;
 
 	/**
 	 * 如果查询时要根据权限来控制列的显示, 请在执行前设置权限类.

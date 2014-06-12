@@ -128,7 +128,7 @@ public class JavaCodeParameterSetting
 		Class extendsClass = null;
 		if (extendsStr != null)
 		{
-			extendsClass = Class.forName(extendsStr);
+			extendsClass = Class.forName(extendsStr, true, Thread.currentThread().getContextClassLoader());
 		}
 		String methodHead = "public void invoke(QueryAdapter query, SearchAdapter search, boolean first, "
 				+ "AppData data, Connection conn)\n      throws Exception";

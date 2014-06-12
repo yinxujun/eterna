@@ -207,7 +207,7 @@ public class ExportExcelExecute extends AbstractExportExecute
 				else
 				{
 					jxl.write.Label label = new jxl.write.Label(i - skipColumnCount, rowIndex,
-							row.getFormated(i + 1), formats[i]);
+							row.getFormated(i + 1).toString(), formats[i]);
 					sheet.addCell(label);
 				}
 			}

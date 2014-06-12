@@ -25,6 +25,7 @@ import self.micromagic.eterna.share.EternaFactory;
 import self.micromagic.eterna.sql.ResultFormat;
 import self.micromagic.eterna.sql.ResultFormatGenerator;
 import self.micromagic.eterna.sql.ResultRow;
+import self.micromagic.eterna.sql.ResultReader;
 import self.micromagic.eterna.security.Permission;
 import self.micromagic.eterna.digester.ConfigurationException;
 import org.apache.commons.collections.ReferenceMap;
@@ -57,7 +58,7 @@ public class DictionaryFormat extends AbstractGenerator
 	{
 	}
 
-	public String format(Object obj, Permission permission)
+	public Object format(Object obj, ResultRow row, ResultReader reader, Permission permission)
 			throws ConfigurationException
 	{
 		if (this.needPermission != null && permission != null)
@@ -92,10 +93,9 @@ public class DictionaryFormat extends AbstractGenerator
 		return this.elseValue;
 	}
 
-	public String format(Object obj, ResultRow row, Permission permission)
-			throws ConfigurationException
+	public boolean useEmptyString()
 	{
-		return this.format(obj, permission);
+		return true;
 	}
 
 	protected void parseWords()

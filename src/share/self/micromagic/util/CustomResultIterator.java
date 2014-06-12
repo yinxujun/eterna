@@ -32,6 +32,7 @@ public class CustomResultIterator extends AbstractResultIterator
 {
 	private int recordCount = 0;
 	private Permission permission;
+	private int rowNum;
 
 	public CustomResultIterator(ResultReaderManager rrm, Permission permission)
 			throws ConfigurationException
@@ -55,7 +56,8 @@ public class CustomResultIterator extends AbstractResultIterator
 		}
 		try
 		{
-			ResultRow row = new ResultRowImpl(values, this, this.permission);
+			this.rowNum++;
+			ResultRow row = new ResultRowImpl(values, this, this.rowNum, this.permission);
 			this.result.add(row);
 			return row;
 		}

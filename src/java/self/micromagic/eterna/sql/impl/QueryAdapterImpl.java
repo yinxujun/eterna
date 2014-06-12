@@ -133,10 +133,10 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
 	}
 
 	protected ResultRow readResults(ResultReaderManager readerManager, Object[] row,
-			ResultIterator resultIterator)
+			ResultIterator resultIterator, int rowNum)
 			throws ConfigurationException, SQLException
 	{
-		ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator, this.getPermission0());
+		ResultRowImpl rowSet = new ResultRowImpl(row, resultIterator, rowNum, this.getPermission0());
 		return rowSet;
 	}
 
@@ -165,14 +165,14 @@ public class QueryAdapterImpl extends AbstractQueryAdapter
 			return this.metaData;
 		}
 
-		protected ResultRow getResultRow(ResultSet rs)
+		protected ResultRow getResultRow(ResultSet rs, int rowNum)
 				throws SQLException
 		{
 			Object[] values;
 			try
 			{
 				values = getResults(QueryAdapterImpl.this, this.readerList, rs);
-				return new ResultRowImpl(values, this, QueryAdapterImpl.this.getPermission0());
+				return new ResultRowImpl(values, this, rowNum, QueryAdapterImpl.this.getPermission0());
 			}
 			catch (ConfigurationException ex)
 			{

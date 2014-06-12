@@ -831,9 +831,10 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 			List tmpList = qh.readResults(rs, readerList);
 			ResultIteratorImpl ritr = new ResultIteratorImpl(readerManager, readerList, this);
 			ListIterator litr = tmpList.listIterator();
+			int rowNum = 1;
 			while (litr.hasNext())
 			{
-				ResultRow row = this.readResults(readerManager, (Object[]) litr.next(), ritr);
+				ResultRow row = this.readResults(readerManager, (Object[]) litr.next(), ritr, rowNum++);
 				litr.set(row);
 			}
 			ritr.setResult(tmpList);
@@ -949,7 +950,7 @@ public abstract class AbstractQueryAdapter extends SQLAdapterImpl
 	}
 
 	protected abstract ResultRow readResults(ResultReaderManager readerManager, Object[] row,
-			ResultIterator resultIterator)
+			ResultIterator resultIterator, int rowNum)
 			throws ConfigurationException, SQLException;
 
 	private static class ResultIteratorImpl extends AbstractResultIterator
